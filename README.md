@@ -1,3 +1,9 @@
+Important! This is largely an exploratory repo. Please look at
+[Flummox](https://github.com/acdlite/flummox) for a similar, more
+production ready, approach.
+
+---
+
 # Microcosm
 
 Microcosm is an experimental Flux based heavily on [Flummox](https://github.com/acdlite/flummox). It is an
