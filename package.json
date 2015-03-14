@@ -4,9 +4,9 @@
   "description": "An experimental flux implimentation",
   "main": "dist/Microcosm.js",
   "scripts": {
-    "prepublish"  : "NODE_ENV=production webpack -p",
-    "test"        : "NODE_ENV=test karma start",
-    "coveralls"   : "CONTINUOUS_INTEGRATION=true npm test && coveralls < coverage/report-lcov/lcov.info"
+    "prepublish": "NODE_ENV=production webpack -p",
+    "test": "NODE_ENV=test karma start",
+    "coveralls": "CONTINUOUS_INTEGRATION=true npm test && coveralls < coverage/report-lcov/lcov.info"
   },
   "license": "MIT",
   "dependencies": {

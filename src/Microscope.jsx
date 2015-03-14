@@ -1,48 +1,42 @@
-import Pure  from 'react-immutable-render-mixin'
 import React from 'react/addons'
 
 let Microscope = React.createClass({
-  mixins: [ Pure ],
 
   propTypes: {
-    flux  : React.PropTypes.object.isRequired,
-    watch : React.PropTypes.array.isRequired
+    flux : React.PropTypes.object.isRequired
   },
 
-  getInitialState() {
-    return this.getState()
+  getDefaultProps() {
+    return {
+      element: 'div'
+    }
   },
 
-  getState() {
-    let { flux, watch } = this.props
-
-    return watch.reduce(function(memo, key) {
-      memo[key] = flux.stores[key].state
-      return memo
-    }, {})
-  },
-
-  updateState() {
-    this.setState(this.getState())
+  tick() {
+    this.forceUpdate()
   },
 
   componentDidMount() {
-    this.props.flux.listen(this.updateState)
+    this.props.flux.listen(this.tick)
   },
 
   componentWillUnmount() {
-    this.props.flux.ignore(this.updateState)
+    this.props.flux.ignore(this.tick)
   },
 
   render() {
-    let { children, flux, ...other } = this.props
+    let { children, element, flux, ...other } = this.props
 
     let members = React.Children.map(children, Component => {
-      return React.addons.cloneWithProps(Component, { flux, ...this.state })
+      let { query } = Component.type
+      let data = query ? query(flux.stores) : null
+
+      return React.addons.cloneWithProps(Component, data)
     })
 
-    return <div { ...other }>{ members }</div>
+    return React.createElement(element, other, members)
   }
+
 })
 
 export default Microscope
