@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Boilerplate</title>
+  </head>
+  <body class="color-text-dark type-body-1">
+    <div id="app" class="flex-fill"></div>
+    <script src="assets/js/application.js" async></script>
+    <script>
+      WebFontConfig = {
+        google: { families: [ 'Roboto:500,400italic,700italic,300,700,500italic,300italic,400:latin' ] }
+      };
+      (function() {
+        var wf = document.createElement('script');
+        wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+                 '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+      })();
+    </script>
+    <script src="assets/cached/fetcher.js"></script>
+    <script>
+      Fetcher.loadIcons('Pocket_Icons', "assets/cached/icons.svg");
+    </script>
+  </body>
+</html>
