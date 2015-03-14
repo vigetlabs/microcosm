@@ -5,6 +5,7 @@ production ready, approach.
 ---
 
 ![https://travis-ci.org/vigetlabs/microcosm](https://travis-ci.org/vigetlabs/microcosm.svg)
+[![Coverage Status](https://coveralls.io/repos/vigetlabs/microcosm/badge.svg)](https://coveralls.io/r/vigetlabs/microcosm)
 
 ---
 
