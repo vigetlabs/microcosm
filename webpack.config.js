@@ -10,6 +10,7 @@ module.exports = {
 
   output: {
     filename: '[name].js',
+    libraryTarget: 'commonjs2',
     path: Path.join(__dirname, 'dist'),
     devtoolModuleFilenameTemplate: '[resource-path]'
   },
