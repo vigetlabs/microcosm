@@ -3,6 +3,8 @@ Important! This is largely an exploratory repo. Please look at
 production ready, approach.
 
 ---
+![https://travis-ci.org/vigetlabs/microcosm](https://travis-ci.org/vigetlabs/microcosm.svg)
+---
 
 # Microcosm
 
