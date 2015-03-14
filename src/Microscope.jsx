@@ -1,4 +1,5 @@
-import React from 'react/addons'
+import React from 'react'
+import query from 'query'
 
 let Microscope = React.createClass({
 
@@ -27,14 +28,7 @@ let Microscope = React.createClass({
   render() {
     let { children, element, flux, ...other } = this.props
 
-    let members = React.Children.map(children, Component => {
-      let { query } = Component.type
-      let data = query ? query(flux.stores) : null
-
-      return React.addons.cloneWithProps(Component, data)
-    })
-
-    return React.createElement(element, other, members)
+    return React.createElement(element, other, query(children, flux.stores))
   }
 
 })
