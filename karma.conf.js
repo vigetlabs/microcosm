@@ -20,7 +20,14 @@ module.exports = function(config) {
       'tests.webpack.js': [ 'webpack', 'sourcemap' ]
     },
 
-    reporters: [ 'nyan' ],
+    reporters: [ 'nyan', 'coverage' ],
+
+    coverageReporter: {
+      reporters: [
+        { type: 'html', subdir: 'report-html' },
+        { type: 'lcov', subdir: 'report-lcov' }
+      ]
+    },
 
     webpack: {
       devtool : 'inline-source-map',
@@ -28,7 +35,14 @@ module.exports = function(config) {
       resolve : webpack_config.resolve,
 
       module: {
-        loaders: webpack_config.module.loaders
+        loaders: webpack_config.module.loaders,
+        postLoaders: [
+          {
+            test: /\.jsx*$/,
+            exclude: /(__tests__|node_modules)\//,
+            loader: 'istanbul-instrumenter'
+          }
+        ]
       }
     },
 
