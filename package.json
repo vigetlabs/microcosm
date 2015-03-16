@@ -11,9 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "flux": ">= 2.0.1",
-    "immutable": "^3.6.4",
-    "react": ">= 0.12.0",
-    "react-immutable-render-mixin": "^0.8.0"
+    "react": ">= 0.12.0"
   },
   "devDependencies": {
     "babel": ">= 4.7.3",

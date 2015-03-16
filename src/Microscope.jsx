@@ -1,11 +1,18 @@
-import Pure      from 'react-immutable-render-mixin'
 import React     from 'react/addons'
 import transpose from './transpose'
 
-let Microscope = React.createClass({
+const Microscope = React.createClass({
+  mixins: [ React.addons.PureRenderMixin ],
+
   propTypes: {
     flux  : React.PropTypes.object.isRequired,
     watch : React.PropTypes.array.isRequired
+  },
+
+  getDefaultProps() {
+    return {
+      element: 'div'
+    }
   },
 
   getInitialState() {
@@ -13,7 +20,7 @@ let Microscope = React.createClass({
   },
 
   getState() {
-    let { flux, watch } = this.props
+    const { flux, watch } = this.props
 
     return watch.reduce(function(memo, key) {
       memo[key] = flux.stores[key].state
@@ -34,13 +41,13 @@ let Microscope = React.createClass({
   },
 
   render() {
-    let { children, flux, ...other } = this.props
+    const { children, element, flux, ...other } = this.props
 
-    let members = React.Children.map(children, Component => {
+    const members = React.Children.map(children, Component => {
       return React.addons.cloneWithProps(Component, { flux, ...this.state })
     })
 
-    return <div { ...other }>{ members }</div>
+    return React.createElement(element, other, members)
   }
 })
 
