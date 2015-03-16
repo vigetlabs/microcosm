@@ -1,5 +1,4 @@
-import React     from 'react/addons'
-import transpose from './transpose'
+import React from 'react/addons'
 
 const Microscope = React.createClass({
   mixins: [ React.addons.PureRenderMixin ],
