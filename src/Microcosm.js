@@ -28,11 +28,15 @@ export default class Microcosm {
     return this._heart.ignore
   }
 
+  get pump() {
+    return this._heart.pump
+  }
+
   _enqueue(payload) {
     for (let s in this.stores) {
       this.stores[s].send(payload)
     }
-    this._heart.beat()
+    this._heart.pump()
   }
 
   addActions(actions) {

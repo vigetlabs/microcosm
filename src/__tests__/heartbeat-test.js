@@ -8,7 +8,7 @@ describe ('Heartbeat', function() {
   it ('does not flush if there are no callbacks', function() {
     let spy = sinon.spy(window, 'requestAnimationFrame')
 
-    heart.beat()
+    heart.pump()
 
     spy.should.not.have.been.called
 
@@ -17,7 +17,7 @@ describe ('Heartbeat', function() {
 
   it ('can listen to callbacks', function(done) {
     heart.listen(done)
-    heart.beat()
+    heart.pump()
   })
 
   it ('batches subscriptions', function(done) {
@@ -26,7 +26,7 @@ describe ('Heartbeat', function() {
     heart.listen(stub)
 
     for (var i = 100; i > 0; i--) {
-      heart.beat()
+      heart.pump()
     }
 
     requestAnimationFrame(() => {
@@ -40,7 +40,7 @@ describe ('Heartbeat', function() {
 
     heart.listen(stub)
     heart.ignore(stub)
-    heart.beat()
+    heart.pump()
 
     requestAnimationFrame(() => {
       stub.should.not.have.been.called

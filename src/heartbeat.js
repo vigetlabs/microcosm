@@ -46,7 +46,7 @@ export default function() {
     /**
      * Trigger every callback in the Set
      */
-    beat() {
+    pump() {
       if (_callbacks.length > 0) {
         cancelAnimationFrame(_tick)
         _tick = requestAnimationFrame(_pump)
