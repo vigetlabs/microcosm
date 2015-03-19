@@ -19,10 +19,6 @@ export default class Store {
     // noop
   }
 
-  get all() {
-    return this.state
-  }
-
   send({ type, body }) {
     if (this._tasks && type in this._tasks) {
       this._tasks[type].call(this, body)

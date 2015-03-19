@@ -36,7 +36,7 @@ export default class Microcosm {
     for (let s in this.stores) {
       this.stores[s].send(payload)
     }
-    this._heart.pump()
+    this.pump()
   }
 
   addActions(actions) {
