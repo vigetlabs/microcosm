@@ -25,7 +25,7 @@ changes in state handled by pure functions.
 
 ## Opinions
 
-Microcosm injects a couple of opinions regarding the Flux
+Microcosm injects a a couple of opinions regarding the Flux
 architecture:
 
 1. Typically Flux uses CONSTANT values to pass messages from Actions
@@ -34,12 +34,31 @@ architecture:
 2. Microcosm expects immutability. When an action is fired, the
    associated handler in Stores are given the old state. State is
    updated by returning a new value.
-3. All Actions that return promises will wait to resolve before
+3. Stores do not contain data, they _shape_ it. See the section on
+   stores below.
+4. All Actions that return promises will wait to resolve before
    dispatching.
-4. It should be easily to embed in libraries. Additional features such
+5. It should be easily to embed in libraries. Additional features such
    should be able to layer on top.
-5. It should utilize language features over implementation details as
+6. It should utilize language features over implementation details as
    much as possible.
+
+## Design
+
+Without getting too lofty, this is roughly the ideal scenario for a
+Microcosm:
+
+```
+                                                    |--> [Store] ---|
+[app.send] ------> [Action] ------> [Dispatcher] ---+--> [Store] ---+--> [app.shouldUpdate?]
+   ^                                                |--> [Store] ---|            |
+   |                                                                             |
+   |                                                                             v
+[External Services] <--------------------------------------------------------- [YES]
+   |- User Interface
+   |- Router
+   |- Firebase sync
+```
 
 ## Writing a Microcosm
 
