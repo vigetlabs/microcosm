@@ -37,6 +37,8 @@ architecture:
 3. All Actions return promises when called. This allows error
    validation for forms and easy prefetching of information
    when rendering on the server.
+4. It should be easily to embed in libraries. Additional features
+   should be able to layer on top.
 
 ## How Actions work
 
