@@ -10,23 +10,7 @@
 export default class Heartbeat {
 
   constructor() {
-    this._tick = null
     this._callbacks = []
-  }
-
-  /**
-   * Callbacks are eventually executed, Heartbeat does not promise
-   * immediate consistency so that state propagation can be batched
-   */
-  _pump() {
-    /**
-     * Important: do not cache the length of _callbacks
-     * in the event a callback causes later subscriptions
-     * to disappear
-     */
-    for (var i = 0; i < this._callbacks.length; i++) {
-      this._callbacks[i]()
-    }
   }
 
   /**
@@ -48,9 +32,13 @@ export default class Heartbeat {
    * Trigger every callback in the Set
    */
   pump() {
-    if (this._callbacks.length > 0) {
-      cancelAnimationFrame(this._tick)
-      this._tick = requestAnimationFrame(this._pump.bind(this))
+    /**
+     * Important: do not cache the length of _callbacks
+     * in the event a callback causes later subscriptions
+     * to disappear
+     */
+    for (var i = 0; i < this._callbacks.length; i++) {
+      this._callbacks[i]()
     }
   }
 

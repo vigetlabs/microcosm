@@ -3,8 +3,8 @@ import contrast from 'contrast'
 
 export default {
 
-  getInitialState() {
-    return []
+  getInitialState(seed=[]) {
+    return seed
   },
 
   [Lists.add](state, params) {

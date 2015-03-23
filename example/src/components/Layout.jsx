@@ -24,7 +24,7 @@ let Layout = React.createClass({
   },
 
   componentDidMount() {
-    this.props.flux.listen(_ => this.setState(this.getState))
+    this.props.flux.listen(_ => this.setState(this.getState()))
   },
 
   render() {

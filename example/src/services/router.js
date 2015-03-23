@@ -4,6 +4,7 @@
  * quite give Microcosm the same stress test
  */
 
+import Route from 'actions/route'
 import page from 'page'
 
 let routes = {
@@ -13,10 +14,10 @@ let routes = {
 
 export default {
 
-  install(flux, action) {
+  install(flux) {
     Object.keys(routes).forEach(route => {
       page(route, function({ params }) {
-        flux.send(action, { handler: routes[route], params })
+        flux.send(Route.set, { handler: routes[route], params })
       })
     })
 

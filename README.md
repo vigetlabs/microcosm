@@ -34,9 +34,8 @@ architecture:
 2. Microcosm expects immutability. When an action is fired, the
    associated handler in Stores are given the old state. State is
    updated by returning a new value.
-3. All Actions return promises when called. This allows error
-   validation for forms and easy prefetching of information
-   when rendering on the server.
+3. All Actions that return promises will wait to resolve before
+   dispatching.
 4. It should be easily to embed in libraries. Additional features
    should be able to layer on top.
 

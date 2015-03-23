@@ -2,8 +2,8 @@ import Action from './Action'
 
 export default {
 
-  getInitialState() {
-    return 'test'
+  getInitialState(seed='test') {
+    return seed
   },
 
   [Action]() {

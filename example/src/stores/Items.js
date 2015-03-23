@@ -3,8 +3,8 @@ import Lists from 'actions/lists'
 
 export default {
 
-  getInitialState() {
-    return []
+  getInitialState(seed=[]) {
+    return seed
   },
 
   [Items.add](state, { list, name }) {

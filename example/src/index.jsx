@@ -1,17 +1,23 @@
 import 'style/app'
 
-import App     from './App'
-import Router  from './services/router'
-import Route   from './actions/route'
+import App     from 'App'
 import Layout  from 'components/Layout'
 import React   from 'react'
+import Router  from 'services/router'
+import Storage from 'services/storage'
 
-let flux = new App()
-let el   = document.getElementById('app')
+// Each app is a unique instance.
+// It will get its own state, useful for having multiple apps on
+// the same page or for independence between requests
+let app = new App()
 
-// Services
-Router.install(flux, Route.set)
+// Services are basically just listeners
+// that operate on an app instance
 
-requestAnimationFrame(function() {
-  React.render(<Layout flux={ flux } />, document.getElementById('app'))
-})
+// On change, this will save to local stoage
+Storage.install(app)
+
+// Pushes route actions as they occur
+Router.install(app)
+
+React.render(<Layout flux={ app } />, document.getElementById('app'))

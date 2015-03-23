@@ -5,7 +5,6 @@ import ListActions  from 'actions/lists'
 import ListItem     from 'fragments/ListItem'
 import React        from 'react'
 import TaskList     from 'fragments/TaskList'
-import { Link }     from 'react-router'
 
 let Home = React.createClass({
 

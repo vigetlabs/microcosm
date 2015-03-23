@@ -9,7 +9,7 @@ describe('Microcosm', function() {
 
     m.addStore(DummyStore)
 
-    m.stores.length.should.equal(1)
+    m.has(DummyStore).should.equal(true)
   })
 
   it ('gets default state for a store if it has not been assigned', function() {
@@ -24,14 +24,16 @@ describe('Microcosm', function() {
     let m = new Microcosm()
 
     m.addStore(DummyStore)
-    m.serialize().should.have.property('dummy', 'test')
+    m.toJSON().should.have.property('dummy', 'test')
   })
 
   it ('passes seed data to stores', function() {
     let seed = { fiz: 'buz' }
-    let m    = new Microcosm({ dummy: seed })
+    let m    = new Microcosm()
 
     m.addStore(DummyStore)
+
+    m.seed({ dummy: seed })
 
     m.get(DummyStore).should.equal(seed)
   })
@@ -47,13 +49,23 @@ describe('Microcosm', function() {
     m.get(DummyStore).fiz.should.equal('not-buz')
   })
 
-  it ('can send messages to the dispatcher', function(done) {
+  it ('can send sync messages to the dispatcher', function() {
     let m = new Microcosm()
 
     sinon.spy(m, 'dispatch')
 
-    m.send(Action).then(function() {
-      m.dispatch.should.have.been.calledWith(Action, true)
+    m.send(Action)
+    m.dispatch.should.have.been.calledWith(Action, true)
+  })
+
+  it ('can send async messages to the dispatcher', function(done) {
+    let m = new Microcosm()
+    let Async = () => Promise.resolve(true)
+
+    sinon.spy(m, 'dispatch')
+
+    m.send(Async).then(function() {
+      m.dispatch.should.have.been.calledWith(Async, true)
       done()
     })
   })
@@ -65,18 +77,17 @@ describe('Microcosm', function() {
 
     let spy = sinon.spy(DummyStore, Action.toString())
 
-    m.send(Action).then(function() {
-      spy.should.have.been.called
-      spy.restore()
-      done()
-    })
+    m.send(Action)
+    spy.should.have.been.called
+    spy.restore()
+    done()
   })
 
-  it('can handle actions without store responses', function(done) {
+  it('can handle actions without store responses', function() {
     let m = new Microcosm()
 
     m.addStore({ toString:() => 'another-store' })
-    m.send(Action).then(_ => done())
+    m.send(Action)
   })
 
 })

@@ -4,38 +4,49 @@
  * is that each application is its own fully encapsulated world
  */
 
-import Heartbeat   from 'Heartbeat'
-import promiseWrap from 'promiseWrap'
+import Heartbeat from 'Heartbeat'
 
 export default class Microcosm extends Heartbeat {
 
-  constructor(seed) {
+  constructor() {
     super()
 
-    this.stores = []
-    this._state = this.getInitialState(seed)
+    this._stores = []
+    this._state  = {}
   }
 
-  getInitialState(seed={}) {
-    return { ...seed }
+  seed(data) {
+    let insert = this._stores.filter(i => data[i])
+
+    insert.forEach(function(store) {
+      this.set(store, store.getInitialState(data[store]))
+    }, this)
   }
 
   set(key, value) {
     this._state = { ...this._state, [key]: value }
   }
 
-  get(store) {
-    return this._state[store] || store.getInitialState()
+  has(store) {
+    return this._stores.some(i => i == store)
+  }
+
+  get(store, seed) {
+    return this._state[store] || store.getInitialState(seed)
   }
 
   send(fn, params) {
-    let request = promiseWrap(fn(params))
+    let request = fn(params)
 
-    return request.then(body => this.dispatch(fn, body))
+    if (request instanceof Promise) {
+      return request.then(body => this.dispatch(fn, body))
+    }
+
+    return this.dispatch(fn, request)
   }
 
   dispatch(type, body) {
-    this._state = this.stores.reduce((state, store) => {
+    this._state = this._stores.reduce((state, store) => {
       if (type in store) {
         state[store] = store[type](this.get(store), body)
       }
@@ -48,11 +59,15 @@ export default class Microcosm extends Heartbeat {
   }
 
   addStore(...store) {
-    this.stores = this.stores.concat(store)
+    this._stores = this._stores.concat(store)
+  }
+
+  toJSON() {
+    return this.serialize()
   }
 
   serialize() {
-    return this.stores.reduce((memo, store) => {
+    return this._stores.reduce((memo, store) => {
       memo[store] = this.get(store)
       return memo
     }, {})
