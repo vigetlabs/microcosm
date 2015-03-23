@@ -38,6 +38,8 @@ architecture:
    dispatching.
 4. It should be easily to embed in libraries. Additional features such
    should be able to layer on top.
+5. It should utilize language features over implementation details as
+   much as possible.
 
 ## Writing a Microcosm
 
@@ -52,13 +54,14 @@ class MyApp extends Microcosm {
 ```
 
 A microcosm is solely responsible for managing a global state
-object. You get set this initial state with `getInitialState`, much
-like a react component:
+object. This value is assigned initially through `getInitialState`,
+much like a react component:
 
 ```javascript
 import Microcosm from 'microcosm'
 
 class MyApp extends Microcosm {
+  // This is actually the default implementation
   getInitialState() {
     return {}
   }
@@ -94,10 +97,10 @@ class MyApp extends Microcosm {
 Now the `Messages` store will be responsible for shaping the data kept
 within the `messages` key of this app's state.
 
-Requests to change this data can be handled with `Actions`. In
-microcosm, an action is simply a function that has been tagged with a
-unique identifier. The `tag` module included with `Microcosm` can do
-just that:
+Requests to change this data can be handled with `Actions`. An action
+is simply a function that has been tagged with a unique
+identifier. The `tag` module included with `Microcosm` can do just
+that:
 
 ```javascript
 import Microcosm, { tag } from 'microcosm'
@@ -185,7 +188,7 @@ Technically, this is even possible (but you didn't hear it from me):
 
 ```javascript
 let sum = (a, b) => a + b
-app.send(sum, 2, 3) // => 5
+app.send(sum)(2, 3) // => 5
 ```
 
 ## How Stores work
@@ -212,14 +215,18 @@ let MessageStore = {
 }
 ```
 
-Each Store instance manages a subset of a global state object owned by an
-individual Microcosm instance. By returning a new state object within responses
-to actions, they modify state.
+Each store manages a subset of a global state object owned by an
+individual Microcosm instance. By returning a new state object within
+responses to actions, they modify state.
 
-Microcosm will use `getInitialState` to produce the initial value for the subset
-a store manages.
+Microcosm will use `getInitialState` to produce the initial value for
+the subset a store manages.
 
-Unlike actions, stores must be registered with the system. There are two reason for this. First: to tell Microcosm what Stores should be responsible for managing state. Second: to dictate the priority of dispatcher multicasting (similar to `waitFor` in the standard Flux dispatcher)
+Unlike actions, stores must be registered with the system. There are
+two reason for this. First: to tell Microcosm what Stores should be
+responsible for managing state. Second: to dictate the priority of
+dispatcher multicasting (similar to `waitFor` in the standard Flux
+dispatcher)
 
 ```javascript
 class App extends Microcosm {
@@ -239,7 +246,7 @@ class App extends Microcosm {
 
 Similar to a `Map`, microcosms implement a `get` and `set`
 method. `set` should never be called directly, however it is exposed
-should you wish to define your own method of assignment. As for get:
+should you wish to define your own method of assignment. As for `get`:
 
 ```javascript
 app.get(Store)
