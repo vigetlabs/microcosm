@@ -15,11 +15,6 @@ module.exports = {
     devtoolModuleFilenameTemplate: '[resource-path]'
   },
 
-  externals: {
-    'flux': 'flux',
-    'immutable': 'immutable'
-  },
-
   resolve: {
     extensions: [ '', '.js', '.jsx', '.json' ],
     modulesDirectories: [ 'web_modules', 'node_modules', 'src' ]
