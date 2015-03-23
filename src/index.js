@@ -4,8 +4,5 @@
  * is that each application is its own fully encapsulated world
  */
 
-import tag       from './tag'
-import Microcosm from './Microcosm'
-
-export tag
-export default Microcosm
+export let tag = require('./tag')
+export default require('./Microcosm')
