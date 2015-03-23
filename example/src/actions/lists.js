@@ -8,14 +8,6 @@ export default tag({
 
   remove(id) {
     return id
-  },
-
-  append(params) {
-    return params
-  },
-
-  redact(item) {
-    return item
   }
 
 })
