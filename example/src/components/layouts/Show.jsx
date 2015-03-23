@@ -43,7 +43,7 @@ let Show = React.createClass({
 
   _onRemoveList() {
     this.props.flux.send(ListActions.remove, this.props.params.id)
-                   .then(() => page('/'))
+    page('/')
   },
 
   _onAddItem(list, name) {

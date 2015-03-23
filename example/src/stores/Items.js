@@ -1,6 +1,8 @@
 import Items from 'actions/items'
 import Lists from 'actions/lists'
 
+let id = 0
+
 export default {
 
   getInitialState(seed=[]) {
@@ -8,7 +10,11 @@ export default {
   },
 
   [Items.add](state, { list, name }) {
-    let record = { id: state.length, list: list.id, name }
+    let record = {
+      id   : `item-${id++}`,
+      list : list.id,
+      name : name
+    }
 
     return state.concat(record)
   },

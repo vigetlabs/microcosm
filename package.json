@@ -14,7 +14,9 @@
     "url": "git://github.com/vigetlabs/microcosm.git"
   },
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "is-equal-shallow": "^0.1.1"
+  },
   "devDependencies": {
     "autoprefixer-core": "^5.1.7",
     "babel": ">= 4.7.3",

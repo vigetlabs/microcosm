@@ -1,10 +1,10 @@
 ```
                                                        |--> [Store] ---|
-[Signal] --------> [Processing] -----> [Multicast] ----+--> [Store] ---+------> [Update Global State]
-   ^                   |- Auth                         |--> [Store] ---|         |
-   |                   |- Routing                                                |
+[Action] -------> [Processing] ------> [Dispatcher] ---+--> [Store] ---+------> [Update Global State]
+   ^                |- Auth                            |--> [Store] ---|         |
+   |                |- Routing                                                   |
    |                                                                             v
-   ^------------------------- [Signal] <------------ [User Interaction] <------ [Render]
+   ^------------------------- [Action] <------------ [User Interaction] <------ [Render]
    |                                                                             |
    ^                                                                             |
    |                                                                             |

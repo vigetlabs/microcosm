@@ -5,6 +5,7 @@
  */
 
 import Heartbeat from 'Heartbeat'
+import isEqual   from 'is-equal-shallow'
 
 export default class Microcosm extends Heartbeat {
 
@@ -12,7 +13,15 @@ export default class Microcosm extends Heartbeat {
     super()
 
     this._stores = []
-    this._state  = {}
+    this._state  = this.getInitialState()
+  }
+
+  shouldUpdate(prev, next) {
+    return isEqual(prev, next) == false
+  }
+
+  getInitialState() {
+    return {}
   }
 
   seed(data) {
@@ -46,14 +55,17 @@ export default class Microcosm extends Heartbeat {
   }
 
   dispatch(type, body) {
-    this._state = this._stores.reduce((state, store) => {
+    let next = this._stores.reduce((state, store) => {
       if (type in store) {
         state[store] = store[type](this.get(store), body)
       }
       return state
     }, { ...this._state })
 
-    this.pump()
+    if (this.shouldUpdate(this._state, next)) {
+      this._state = next
+      this.pump()
+    }
 
     return body
   }

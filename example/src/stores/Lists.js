@@ -1,6 +1,8 @@
 import Lists    from 'actions/lists'
 import contrast from 'contrast'
 
+let id = 0
+
 export default {
 
   getInitialState(seed=[]) {
@@ -8,7 +10,11 @@ export default {
   },
 
   [Lists.add](state, params) {
-    let record = { color : '#aaaaaa', id : state.length, ...params }
+    let record = {
+      color : '#aaaaaa',
+      id    : `list-${id++}`,
+      ...params
+    }
 
     record.contrast = contrast(record.color)
 

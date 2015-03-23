@@ -83,10 +83,15 @@ describe('Microcosm', function() {
     done()
   })
 
-  it('can handle actions without store responses', function() {
+  it('does not emit a change if no handler responds', function() {
     let m = new Microcosm()
 
-    m.addStore({ toString:() => 'another-store' })
+    m.listen(function() {
+      throw Error("Expected app to not respond but did")
+    })
+
+    m.addStore({ toString: () => 'another-store' })
+
     m.send(Action)
   })
 
