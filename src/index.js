@@ -8,4 +8,4 @@ import tag       from './tag'
 import Microcosm from './Microcosm'
 
 export tag
-export default require('./Microcosm')
+export default Microcosm
