@@ -44,8 +44,13 @@ export default class Microcosm extends Heartbeat {
     return this._state[store] || store.getInitialState(seed)
   }
 
-  send(fn, params) {
-    let request = fn(params)
+  send(fn, ...params) {
+    // Allow currying of send method for cleaner callbacks
+    if (params.length < fn.length) {
+      return this.send.bind(this, fn)
+    }
+
+    let request = fn(...params)
 
     if (request instanceof Promise) {
       return request.then(body => this.dispatch(fn, body))

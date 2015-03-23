@@ -95,4 +95,11 @@ describe('Microcosm', function() {
     m.send(Action)
   })
 
+  it ('can curry the send method', function() {
+    let m   = new Microcosm()
+    let add = (a, b) => a + b
+
+    m.send(add)(2, 3).should.equal(5)
+  })
+
 })

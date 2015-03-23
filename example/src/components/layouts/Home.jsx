@@ -20,14 +20,18 @@ let Home = React.createClass({
   },
 
   getList(list) {
-    let items = this.props.items.filter(i => i.list === list.id)
+    let { items, flux } = this.props
+    let items = items.filter(i => i.list === list.id)
 
-    return (
-      <ListItem key={ list.id } items={ items } list={ list } onDelete={ this._onDestroy } />
-    )
+    return (<ListItem key={ list.id }
+                      items={ items }
+                      list={ list }
+                      onDelete={ flux.send(ListActions.remove) } />)
   },
 
   render() {
+    let { flux } = this.props
+
     return (
       <main role="main">
         <header className="fill-primary relative ruled-bottom">
@@ -50,21 +54,13 @@ let Home = React.createClass({
 
         <AddList active={ this.state.openCreate }
                  onExit={ this._onToggle }
-                 onCreate={ this._onCreate } />
+                 onCreate={ flux.send(ListActions.add) } />
       </main>
     )
   },
 
   _onToggle() {
     this.setState({ openCreate: !this.state.openCreate })
-  },
-
-  _onDestroy(id) {
-    this.props.flux.send(ListActions.remove, id)
-  },
-
-  _onCreate(props) {
-    this.props.flux.send(ListActions.add, props)
   }
 
 })
