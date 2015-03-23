@@ -1,19 +1,11 @@
 ```
-                                                       |--> [Store] ---|
-[Action] -------> [Processing] ------> [Dispatcher] ---+--> [Store] ---+---> [Update Global State]
-   ^                |- Auth                            |--> [Store] ---|          |
-   |                |- Routing                                                    |
-   |                                                                       <Did It Changed?>
-   |                                                                              |
-   |                                                                              v
-   ^------------------------- [Action] <------------ [User Interaction] <----- [Render]
-   |                                                                              |
-   ^                                                                              |
-   |                                                                              |
-[Background Services] <-----------------------------------------------------------+
-   |- History API
-   |- Window Resize
-   |- Mouse move
-   |- Server request (for Progression)
+                                                    |--> [Store] ---|
+[App.send] ------> [Action] ------> [Dispatcher] ---+--> [Store] ---+--> [Update Global State?]
+   ^                                                |--> [Store] ---|          |
+   |                                                                           |
+   |                                                                           v
+[External Services] <------------------------------------------------------- [YES]
+   |- User Interface
+   |- Router
    |- Firebase sync
 ```
