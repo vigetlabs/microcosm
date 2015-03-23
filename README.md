@@ -36,22 +36,124 @@ architecture:
    updated by returning a new value.
 3. All Actions that return promises will wait to resolve before
    dispatching.
-4. It should be easily to embed in libraries. Additional features
+4. It should be easily to embed in libraries. Additional features such
    should be able to layer on top.
+
+## Writing a Microcosm
+
+A new app starts out as an extension of the `Microcosm` class:
+
+```javascript
+import Microcosm from 'microcosm'
+
+class MyApp extends Microcosm {
+  // Great things await
+}
+```
+
+A microcosm is solely responsible for managing a global state
+object. You get set this initial state with `getInitialState`, much
+like a react component:
+
+```javascript
+import Microcosm from 'microcosm'
+
+class MyApp extends Microcosm {
+  getInitialState() {
+    return {}
+  }
+}
+```
+
+Although a microcosm is exclusively responsible for managing its own
+state, `stores` shape how that data is changed:
+
+```javascript
+import Microcosm from 'microcosm'
+
+let Messages = {
+  getInitialState() {
+    return []
+  },
+  toString() {
+    return 'messages'
+  }
+}
+
+class MyApp extends Microcosm {
+  constructor() {
+    super()
+    this.addStore(Messages)
+  }
+  getInitialState() {
+    return {}
+  }
+}
+```
+
+Now the `Messages` store will be responsible for shaping the data kept
+within the `messages` key of this app's state.
+
+Requests to change this data can be handled with `Actions`. In
+microcosm, an action is simply a function that has been tagged with a
+unique identifier. The `tag` module included with `Microcosm` can do
+just that:
+
+```javascript
+import Microcosm, { tag } from 'microcosm'
+
+let Actions = {
+  createMessage(options) {
+    // Here, we are simply returning options. However this
+    // gives you an opportunity to modify parameters before they
+    // are sent to stores
+    return options
+  }
+}
+
+let Messages = {
+  getInitialState() {
+    return []
+  },
+  [Actions.createMessage](oldState, parameters) {
+    return oldState.concat(parameters)
+  },
+  toString() {
+    return 'messages'
+  }
+}
+
+class MyApp extends Microcosm {
+  constructor() {
+    super()
+    this.addStore(Messages)
+  }
+  getInitialState() {
+    return {}
+  }
+}
+```
+
+`MyApp` is now setup to accept actions, filtering them through the
+`Messages` store before saving them. More information on how to
+trigger actions and retrieve state follows.
 
 ## How Actions work
 
-Actions are simple objects that have been tagged with unique identifiers:
+Actions are simply functions. They must implement a `toString` method
+so that stores can know when to respond to them. For those familiar
+with traditional flux, this `toString` method replaces the need to
+maintain constants for each action type.
+
+Fortunately, the `tag` function makes this quite mangeable:
 
 ``` javascript
 import tag from 'microcosm/tag'
 
 let Messages = tag({
-
   create(message) {
     return { message, time: new Date() }
   }
-
 })
 ```
 
@@ -60,16 +162,36 @@ returning unique identifiers. This tells the Microcosm how to process
 actions (and lets them stringify to unique keys in Stores, seen
 later).
 
-You can fire them like:
+Microcosms implement a `send` method. This will run execute a given
+action with an arbitrary number of arguments (following the first).
+
+This works like:
 
 ```javascript
 app.send(Messages.create, 'This property will be passed to the dispatcher')
 ```
 
+### Currying actions
+
+`send` automatically curries invocations that do not include the
+expected number of arguments. To repeat the previous example with currying:
+
+```javascript
+let create = app.send(Messages.create)
+create('This property will be passed to the dispatcher')
+```
+
+Technically, this is even possible (but you didn't hear it from me):
+
+```javascript
+let sum = (a, b) => a + b
+app.send(sum, 2, 3) // => 5
+```
+
 ## How Stores work
 
 Stores are plain objects. They must implement a `getInitialState` and
-`toString()` method. They listen to actions by providing methods at
+`toString` method. They listen to actions by providing methods at
 the unique signature of an Action, like:
 
 ```javascript
@@ -104,10 +226,29 @@ class App extends Microcosm {
   constructor(seed) {
     super(seed)
 
+    // Called first:
     this.addStore(Messages)
+
+    // Called second:
+    this.addStore(OtherStoreThatDependsOnMessages)
   }
 }
 ```
+
+### Getting the value out of a store
+
+Similar to a `Map`, microcosms implement a `get` and `set`
+method. `set` should never be called directly, however it is exposed
+should you wish to define your own method of assignment. As for get:
+
+```javascript
+app.get(Store)
+```
+
+This works because the app accesses the internal state object
+(returned initially from `app.getInitialState`) using `Store` as a
+key. Since the store implements a `toString` method, it coerces into
+the proper key and returns the expected value.
 
 ## Additional Notes
 
