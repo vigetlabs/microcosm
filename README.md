@@ -1,6 +1,7 @@
-Important! This is largely an exploratory repo. Please look at
-[Flummox](https://github.com/acdlite/flummox) for a similar, more
-production ready, approach.
+Important! This is largely an exploratory repo, used to vet some ideas
+within Flux/React and support other Viget tools. We will follow semver
+to help prevent breaking changes, but **you should probably stay clear
+of this implementation.**
 
 ---
 
@@ -11,11 +12,16 @@ production ready, approach.
 
 # Microcosm
 
-Microcosm is an experimental Flux based heavily on [Flummox](https://github.com/acdlite/flummox). It is an
+Microcosm is an experimental Flux inspired by
+[Flummox](https://github.com/acdlite/flummox) and many ideas within
+[Elm](elm-lang.org). It is an
 [isomorphic](http://artsy.github.io/blog/2013/11/30/rendering-on-the-server-and-client-in-node-dot-js/)
-[Flux](facebook.github.io/flux). Specifically, it addresses the
-problem of isolating state between requests so that each page render
-does not leak information into the next.
+[Flux](facebook.github.io/flux).
+
+Specifically, it addresses the problem of isolating state between
+requests so that each page render does not leak information into the
+next. State is contained within each unique Microcosm instance with
+changes in state handled by pure functions.
 
 ## Opinions
 
@@ -23,11 +29,11 @@ Microcosm injects a couple of opinions regarding the Flux
 architecture:
 
 1. Typically Flux uses CONSTANT values to pass messages from Actions
-   to Stores. Microcosm automatically generates these based upon the
-   method names and registered identifiers of Action entities (more on
-   this later).
-2. Microcosm expects immutability. Stores change state by reassigning
-   the `state` property.
+   to Stores. Microcosm automatically generates these by assigning
+   each Action function a unique `toString` method.
+2. Microcosm expects immutability. When an action is fired, the
+   associated handler in Stores are given the old state. State is
+   updated by returning a new value.
 3. All Actions return promises when called. This allows error
    validation for forms and easy prefetching of information
    when rendering on the server.
