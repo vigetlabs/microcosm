@@ -1,8 +1,10 @@
 ```
                                                            |--> [Storage] ---|
-    [Signal] --------> [Processing] -----> [Multicast] ----+--> [Storage] ---+------> [Render]
+    [Signal] --------> [Processing] -----> [Multicast] ----+--> [Storage] ---+------> [Reduce Global State]
        ^                   |- Auth                         |--> [Storage] ---|         |
-       |                   |- Routing                                                  |
+       |                   |- Routing                                                  v
+       |                                                                              [Render]
+       |                                                                               |
        |                                                                               |
        +------------------------- [Signal] --------------------------------------------+
        |
@@ -16,9 +18,3 @@
        |- Firebase sync
 
 ```
-
-To determine:
-
-- Easier way to send new props
-- What does a router look like in this system?
-  - Does it redirect Signals?
