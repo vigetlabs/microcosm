@@ -37,7 +37,7 @@ export default class Microcosm extends Heartbeat {
   }
 
   has(store) {
-    return this._stores.some(i => i == store)
+    return this._stores.indexOf(store) > -1
   }
 
   get(store, seed) {
