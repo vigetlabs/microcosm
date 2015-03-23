@@ -102,27 +102,6 @@ class App extends Microcosm {
 }
 ```
 
-## Change propagation
-
-Every time an action is dispatched, it will then emit a change event
-on the Microcosm instance. The `Microscope` mixin can be used to update
-state for components that need to query stores:
-
-```javascript
-import React      from 'react'
-import Microscope from 'microcosm/microscope'
-
-let MessagesList = React.createClass({
-  render() {
-    return (
-      <Microscope watch={[ 'messages' ]}>
-        <Component>This component will get a message prop.</Component>
-      </Microscope>
-    )
-  }
-})
-```
-
 ## Additional Notes
 
 The philosophy behind change management is described very well in the

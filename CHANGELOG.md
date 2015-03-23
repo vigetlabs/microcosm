@@ -2,12 +2,27 @@
 
 ### 1.0.0
 
-- Actions must now be tagged with `microcosm/tag`. See README for usage.
-- Stores no longer inherit from `Store` base class. See README for usage.
-- Microcosms no longer require `addActions`
-- Stores must now be accessed with: `microcosm.get(Store)`
-- Actions are now fired with `send`: `microcosm.send(Action, params)`
-- Many more internal changes. See readme for an updated guide.
+This version adds many breaking changes to better support other
+libraries such as
+[Colonel Kurtz](https://github.com/vigetlabs/colonel-kurtz) and [Ars
+Arsenal](https://github.com/vigetlabs/ars-arsenal).
+
+In summary, these changes are an effort to alleviate the cumbersome
+nature of managing unique instances of Actions and Stores for each
+Microcosm instance. 1.0.0 moves away from this, instead relying on
+pure functions which an individual instance uses to operate upon a
+global state object.
+
+- Actions must now be tagged with `microcosm/tag`. For the time being,
+  this is to provide a unique identifier to each Action. It would be
+  nice in future versions to figure out a way to utilize `WeakMap`.
+- Stores are plain objects, no longer inheriting from `Store` base
+  class.
+- Stores must implement a `toString` method which returns a unique id.
+- State for a store must now be accessed with: `microcosm.get(Store)`
+- Microcosms no longer require `addActions`, actions are fired with
+  `microcosm.send(Action, params)`
+- Removed `Microscope` container component. Just use `listen`
 
 ### 0.2.0
 
