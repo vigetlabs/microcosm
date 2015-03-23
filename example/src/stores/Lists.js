@@ -1,7 +1,6 @@
 import Lists    from 'actions/lists'
 import contrast from 'contrast'
-
-let id = 0
+import uid      from 'uid'
 
 export default {
 
@@ -11,8 +10,8 @@ export default {
 
   [Lists.add](state, params) {
     let record = {
+      id    : uid(),
       color : '#aaaaaa',
-      id    : `list-${id++}`,
       ...params
     }
 

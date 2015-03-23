@@ -1,7 +1,6 @@
 import Items from 'actions/items'
 import Lists from 'actions/lists'
-
-let id = 0
+import uid      from 'uid'
 
 export default {
 
@@ -11,7 +10,7 @@ export default {
 
   [Items.add](state, { list, name }) {
     let record = {
-      id   : `item-${id++}`,
+      id   : uid(),
       list : list.id,
       name : name
     }

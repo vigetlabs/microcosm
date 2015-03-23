@@ -21,10 +21,9 @@ let Home = React.createClass({
 
   getList(list) {
     let { items, flux } = this.props
-    let items = items.filter(i => i.list === list.id)
 
     return (<ListItem key={ list.id }
-                      items={ items }
+                      items={ items.filter(i => i.list === list.id) }
                       list={ list }
                       onDelete={ flux.send(ListActions.remove) } />)
   },
