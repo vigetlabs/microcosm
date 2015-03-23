@@ -1,5 +1,18 @@
 # Changelog
 
+### 1.1.0
+
+- Better seeding. Added `Microcosm::seed` which accepts an
+object. For each known key, Microcosm will the associated store's
+`getInitialState` function and set the returned value.
+- Exposed `Microcosm::getInitialState` to configure the starting value
+  of the instance. This is useful for those wishing to use the
+  `immutable` npm package by Facebook.
+- Microcosm will not emit changes on dispatch unless the new state
+  fails a shallow equality check. This can be configured with
+  `Microcosm::shouldUpdate`
+- `Microcosm::send` is now curried.
+
 ### 1.0.0
 
 This version adds many breaking changes to better support other
