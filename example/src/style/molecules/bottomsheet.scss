@@ -1,0 +1,20 @@
+.bottomsheet {
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  width: 100%;
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
+}
+
+.bottomsheet__blackout {
+  background: rgba(#000, 0.2);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}

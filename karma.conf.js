@@ -1,23 +1,25 @@
 var Webpack = require('webpack')
 var webpack_config = require('./webpack.config')
 
-var isIntegration = process.env.CONTINUOUS_INTEGRATION
+var isIntegration = process.env.CONTINUOUS_INTEGRATION === 'true'
 
 module.exports = function(config) {
   config.set({
 
-    browsers: [ isIntegration === 'true' ? 'Firefox' : 'Chrome' ],
+    browsers: [ isIntegration ? 'Firefox' : 'Chrome' ],
 
-    singleRun: isIntegration === 'true',
+    singleRun: isIntegration,
 
     frameworks: [ 'mocha', 'sinon-chai' ],
 
     logLevel: config.LOG_ERROR,
 
-    files: [ 'tests.webpack.js' ],
+    files: [
+      'src/**/__tests__/*.js*'
+    ],
 
     preprocessors: {
-      'tests.webpack.js': [ 'webpack', 'sourcemap' ]
+      'src/**/__tests__/*.js*': [ 'webpack', 'sourcemap' ]
     },
 
     reporters: [ 'nyan', 'coverage' ],
@@ -30,12 +32,22 @@ module.exports = function(config) {
     },
 
     webpack: {
-      devtool : 'inline-source-map',
+      devtool : '#eval-source-map',
       plugins : webpack_config.plugins,
       resolve : webpack_config.resolve,
 
       module: {
-        loaders: webpack_config.module.loaders,
+        loaders: [
+          {
+            test    : /\.jsx*$/,
+            exclude : /node_modules/,
+            loader  : 'babel?experimental&loose&optional=runtime'
+          },
+          {
+            test    : /\.json$/,
+            loader  : 'json'
+          }
+        ],
         postLoaders: [
           {
             test: /\.jsx*$/,

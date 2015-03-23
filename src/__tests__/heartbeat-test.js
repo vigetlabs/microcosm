@@ -1,9 +1,9 @@
-import Heartbeat from '../heartbeat'
+import Heartbeat from '../Heartbeat'
 
 describe ('Heartbeat', function() {
   let heart
 
-  beforeEach(() => heart = Heartbeat())
+  beforeEach(() => heart = new Heartbeat())
 
   it ('does not flush if there are no callbacks', function() {
     let spy = sinon.spy(window, 'requestAnimationFrame')

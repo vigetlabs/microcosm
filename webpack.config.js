@@ -16,9 +16,6 @@ module.exports = {
   },
 
   externals: {
-    'react': 'react',
-    'react/addons': 'react/addons',
-    'react-immutable-render-mixin': 'react-immutable-render-mixin',
     'flux': 'flux',
     'immutable': 'immutable'
   },
@@ -33,7 +30,7 @@ module.exports = {
       {
         test    : /\.jsx*$/,
         exclude : /node_modules/,
-        loader  : 'source-map!babel?experimental'
+        loader  : 'babel?experimental&loose'
       },
       {
         test    : /\.json$/,

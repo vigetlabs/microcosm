@@ -1,0 +1,30 @@
+.list {
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+}
+
+.list__item {
+  + .list__item {
+    border-top: 1px solid rgba(#000, 0.1);
+  }
+}
+
+.list__item__link {
+  align-items: center;
+  color: rgba(#000, 0.875);
+  padding: 16px;
+  text-decoration: none;
+}
+
+.list__item__counter {
+  border-radius: 50%;
+  color: rgba(#fff, 0.875);
+  display: block;
+  font-size: 20px;
+  margin-right: 16px;
+  line-height: 40px;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+}

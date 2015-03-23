@@ -4,54 +4,57 @@
  * is that each application is its own fully encapsulated world
  */
 
-import Heartbeat from './heartbeat'
-import intent    from './intent'
-import prefix    from './prefix'
-import transpose from './transpose'
+import Heartbeat   from 'Heartbeat'
+import promiseWrap from 'promiseWrap'
 
-import { Dispatcher } from 'flux'
-
-export default class Microcosm {
+export default class Microcosm extends Heartbeat {
 
   constructor(seed) {
-    this._seed = seed || {}
-    this._heart = Heartbeat()
-    this._dispatcher = new Dispatcher()
-    this._dispatcher.register(this._enqueue.bind(this))
+    super()
+
+    this.stores = []
+    this._state = this.getInitialState(seed)
   }
 
-  get listen() {
-    return this._heart.listen
+  getInitialState(seed={}) {
+    return { ...seed }
   }
 
-  get ignore() {
-    return this._heart.ignore
+  set(key, value) {
+    this._state = { ...this._state, [key]: value }
   }
 
-  get pump() {
-    return this._heart.pump
+  get(store) {
+    return this._state[store] || store.getInitialState()
   }
 
-  _enqueue(payload) {
-    for (let s in this.stores) {
-      this.stores[s].send(payload)
-    }
+  send(fn, params) {
+    let request = promiseWrap(fn(params))
+
+    return request.then(body => this.dispatch(fn, body))
+  }
+
+  dispatch(type, body) {
+    this._state = this.stores.reduce((state, store) => {
+      if (type in store) {
+        state[store] = store[type](this.get(store), body)
+      }
+      return state
+    }, { ...this._state })
+
     this.pump()
+
+    return body
   }
 
-  addActions(actions) {
-    this.actions = transpose(actions, intent(this._dispatcher))
-  }
-
-  addStores(stores) {
-    let constants = transpose(this.actions, prefix)
-
-    this.stores = transpose(stores, (Store, id) => {
-      return new Store(constants, this._seed[id], this)
-    })
+  addStore(...store) {
+    this.stores = this.stores.concat(store)
   }
 
   serialize() {
-    return transpose(this.stores, store => store.serialize())
+    return this.stores.reduce((memo, store) => {
+      memo[store] = this.get(store)
+      return memo
+    }, {})
   }
 }

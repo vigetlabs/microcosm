@@ -1,23 +1,31 @@
 {
   "name": "microcosm",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "An experimental flux implimentation",
   "main": "dist/Microcosm.js",
   "scripts": {
     "prepublish": "NODE_ENV=production webpack -p",
     "test": "NODE_ENV=test karma start",
-    "coveralls": "CONTINUOUS_INTEGRATION=true npm test && coveralls < coverage/report-lcov/lcov.info"
+    "coveralls": "CONTINUOUS_INTEGRATION=true npm test && coveralls < coverage/report-lcov/lcov.info",
+    "example": "node example/server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vigetlabs/microcosm.git"
   },
   "license": "MIT",
-  "dependencies": {
-    "flux": ">= 2.0.1",
-    "react": ">= 0.12.0"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "autoprefixer-core": "^5.1.7",
     "babel": ">= 4.7.3",
     "babel-loader": ">= 4.1.0",
+    "babel-runtime": "^4.7.16",
     "chai": "^2.1.1",
+    "chroma-js": "^0.6.3",
     "coveralls": "^2.11.2",
+    "css-loader": "^0.9.0",
+    "css-mqpacker": "^3.1.0",
+    "csswring": "^3.0.2",
     "istanbul": "^0.3.5",
     "istanbul-instrumenter-loader": "^0.1.2",
     "json-loader": "^0.5.1",
@@ -31,8 +39,16 @@
     "karma-sinon-chai": "^0.3.0",
     "karma-sourcemap-loader": "^0.3.4",
     "karma-webpack": "^1.3.1",
+    "page": "^1.6.1",
+    "postcss-loader": "^0.3.0",
+    "raw-loader": "^0.5.1",
+    "react-hot-loader": "^1.2.3",
+    "react-router": "^0.13.1",
     "react-tools": ">= 0.12.2",
+    "route-recognizer": "^0.1.5",
+    "sass-loader": "^0.4.1",
     "source-map-loader": "^0.1.3",
+    "style-loader": "^0.8.2",
     "webpack": "^1.7.2",
     "webpack-dev-server": "^1.7.0"
   }

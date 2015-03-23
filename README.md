@@ -27,86 +27,77 @@ architecture:
    method names and registered identifiers of Action entities (more on
    this later).
 2. Microcosm expects immutability. Stores change state by reassigning
-   the `state` property. This property is a setter, which will trigger
-   an event if the object reference provided to it is different.
+   the `state` property.
 3. All Actions return promises when called. This allows error
-   validation for Pearl's forms and easy prefetching of information
+   validation for forms and easy prefetching of information
    when rendering on the server.
 
 ## How Actions work
 
-Actions are simple objects that are registered by a Microcosm:
+Actions are simple objects that have been tagged with unique identifiers:
 
 ``` javascript
-let Messages = {
+import tag from 'microcosm/tag'
+
+let Messages = tag({
+
   create(message) {
     return { message, time: new Date() }
   }
-}
+
+})
 ```
 
-They are registered within the constructor function of a Microcosm
+`tag` returns a clone of a given object with `toString()` methods which
+returning unique identifiers. This tells the Microcosm how to process
+actions (and lets them stringify to unique keys in Stores, seen
+later).
+
+You can fire them like:
 
 ```javascript
-class App extends Microcosm {
-  constructor(seed) {
-    super(seed)
-
-    this.addActions({
-      messages: Messages
-    })
-  }
-}
-```
-
-`addActions` will expose a version of `Messages` where each method has
-been wrapped with the required logic to queue actions in the
-system. In this case, they will be exposed like:
-
-```javascript
-let app = new App()
-
-app.actions.messages //=> { create }
+app.send(Messages.create, 'This property will be passed to the dispatcher')
 ```
 
 ## How Stores work
 
-A Store must extend from the Microcosm Store class:
+Stores are plain objects. They must implement a `getInitialState` and
+`toString()` method. They listen to actions by providing methods at
+the unique signature of an Action, like:
 
 ```javascript
 
-class Messages extends Store {
+let MessageStore = {
+
   getInitialState(seed) {
     return []
-  }
+  },
 
-  register(constants) {
-    return {
-      [constants.messages.create]: this.add
-    }
-  }
+  [Messages.create](oldState, message) {
+    return oldState.concat(message)
+  },
 
-  add(params) {
-    this.state = this.state.concat(params)
+  toString() {
+    return 'MessageStore'
   }
 }
 ```
 
-A couple of notes here. `getInitialState`, much like within a React
-component, determines the initial state of the Store when a Microcosm
-is instantiated. `register` tells Microcosm what actions the Store can
-listen to. Finally, updating state occurs through assignment.
+Each Store instance manages a subset of a global state object owned by an
+individual Microcosm instance. By returning a new state object within responses
+to actions, they modify state.
 
-Similarly to Actions, Stores must be registered:
+Microcosm will use `getInitialState` to produce the initial value for the subset
+a store manages.
+
+Unlike actions, stores must be registered with the system. There are two reason for this. First: to tell Microcosm what Stores should be responsible for managing state. Second: to dictate the priority of dispatcher multicasting (similar to `waitFor` in the standard Flux dispatcher)
 
 ```javascript
 class App extends Microcosm {
   constructor(seed) {
     super(seed)
 
-    this.addStores({
-      messages: Messages
-    })
+    this.addStore(Messages)
   }
 }
 ```
