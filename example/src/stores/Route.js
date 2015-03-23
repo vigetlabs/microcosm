@@ -11,7 +11,7 @@ export default {
   },
 
   toString() {
-    return 'history'
+    return 'route'
   }
 
 }
