@@ -1,12 +1,12 @@
 ```
-                                                           |--> [Storage] ---|
-    [Signal] --------> [Processing] -----> [Multicast] ----+--> [Storage] ---+------> [Reduce Global State]
-       ^                   |- Auth                         |--> [Storage] ---|         |
-       |                   |- Routing                                                  v
-       |                                                                              [Render]
-       |                                                                               |
-       |                                                                               |
-       +------------------------- [Signal] --------------------------------------------+
+                                                           |--> [Store] ---|
+    [Signal] --------> [Processing] -----> [Multicast] ----+--> [Store] ---+------> [Update Global State]
+       ^                   |- Auth                         |--> [Store] ---|         |
+       |                   |- Routing                                                v
+       |                                                                            [Render]
+       |                                                                             |
+       |                                                                             |
+       +------------------------- [Signal] ------------------------------------------+
        |
        ^
        |
