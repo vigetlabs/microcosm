@@ -16,12 +16,12 @@ export default class Microcosm extends Heartbeat {
     this._state  = this.getInitialState()
   }
 
-  shouldUpdate(prev, next) {
-    return isEqual(prev, next) == false
-  }
-
   getInitialState() {
     return {}
+  }
+
+  shouldUpdate(prev, next) {
+    return isEqual(prev, next) == false
   }
 
   seed(data) {
@@ -52,6 +52,8 @@ export default class Microcosm extends Heartbeat {
 
     let request = fn(...params)
 
+    // Actions some times return promises. When this happens, wait for
+    // them to resolve before moving on
     if (request instanceof Promise) {
       return request.then(body => this.dispatch(fn, body))
     }
@@ -59,19 +61,26 @@ export default class Microcosm extends Heartbeat {
     return this.dispatch(fn, request)
   }
 
-  dispatch(type, body) {
-    let next = this._stores.reduce((state, store) => {
-      if (type in store) {
-        state[store] = store[type](this.get(store), body)
-      }
-      return state
-    }, { ...this._state })
+  dispatch(action, body) {
+    // First get all stores that can repond to this action
+    let answerable = this._stores.filter(store => action in store)
 
+    // Next build the change set
+    let changes = answerable.reduce((state, store) => {
+      state[store] = store[action](this.get(store), body)
+      return state
+    }, {})
+
+    // Produce the next state by folding changes into the current state
+    let next = { ...this._state, ...changes }
+
+    // Finally, only trigger an event if state actually changed
     if (this.shouldUpdate(this._state, next)) {
       this._state = next
       this.pump()
     }
 
+    // Send back the body to the original signaler
     return body
   }
 
