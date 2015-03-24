@@ -75,18 +75,25 @@ export default class Microcosm extends Heartbeat {
     return body
   }
 
-  addStore(...store) {
-    this._stores = this._stores.concat(store)
+  addStore(...stores) {
+    this._stores = this._stores.concat(stores)
+  }
+
+  serialize(state) {
+    return this._stores.reduce((memo, store) => {
+      let state = this.get(store)
+
+      if ('serialize' in store) {
+        state = store.serialize(state)
+      }
+
+      memo[store] = state
+
+      return memo
+    }, {})
   }
 
   toJSON() {
-    return this.serialize()
-  }
-
-  serialize() {
-    return this._stores.reduce((memo, store) => {
-      memo[store] = this.get(store)
-      return memo
-    }, {})
+    return this.serialize(this.state)
   }
 }

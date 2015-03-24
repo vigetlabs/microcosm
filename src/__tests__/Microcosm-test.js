@@ -20,11 +20,30 @@ describe('Microcosm', function() {
     m.get(DummyStore).should.equal(DummyStore.getInitialState())
   })
 
-  it ('can serialize', function() {
+  it ('can serialize to JSON', function() {
     let m = new Microcosm()
 
     m.addStore(DummyStore)
     m.toJSON().should.have.property('dummy', 'test')
+  })
+
+  it ('runs through serialize methods on stores', function() {
+    let m = new Microcosm()
+
+    m.addStore({
+      getInitialState() {
+        return 'this will not display'
+      },
+      serialize(state) {
+        state.should.equal(this.getInitialState())
+        return 'this is a test'
+      },
+      toString() {
+        return 'serialize-test'
+      }
+    })
+
+    m.toJSON().should.have.property('serialize-test', 'this is a test')
   })
 
   it ('passes seed data to stores', function() {

@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.2.0
+
+- All stores can implement a `serialize` method which allows them to
+  shape how app state is serialized to JSON.
+
 ### 1.1.0
 
 - Better seeding. Added `Microcosm::seed` which accepts an
