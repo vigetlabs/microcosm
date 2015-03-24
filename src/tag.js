@@ -8,7 +8,7 @@ import transpose from 'transpose'
 
 let uid = 0
 
-export let infuse = fn => {
+let infuse = fn => {
   let copy = fn.bind(null)
   let id   = `_microcosm-${ uid++ }`
 
