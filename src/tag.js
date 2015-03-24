@@ -4,11 +4,9 @@
  * return a unique id when stringifyed
  */
 
-import transpose from 'transpose'
-
 let uid = 0
 
-let infuse = fn => {
+let decorate = fn => {
   let copy = fn.bind(null)
   let id   = `_microcosm-${ uid++ }`
 
@@ -17,4 +15,11 @@ let infuse = fn => {
   return copy
 }
 
-export default actions => transpose(actions, infuse)
+export default actions => {
+  let keys = Object.keys(actions)
+
+  return keys.reduce((memo, key) => {
+    memo[key] = decorate(actions[key], key)
+    return memo
+  }, {})
+}

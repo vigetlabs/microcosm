@@ -25,10 +25,10 @@ export default class Microcosm extends Heartbeat {
   }
 
   seed(data) {
-    let insert = this._stores.filter(i => data[i])
+    let clean = this.deserialize(data)
 
-    insert.forEach(function(store) {
-      this.set(store, store.getInitialState(data[store]))
+    Object.keys(clean).forEach(function(key) {
+      return this.set(key, clean[key])
     }, this)
   }
 
@@ -41,7 +41,7 @@ export default class Microcosm extends Heartbeat {
   }
 
   get(store, seed) {
-    return this._state[store] || store.getInitialState(seed)
+    return this._state[store]
   }
 
   send(fn, ...params) {
@@ -85,24 +85,37 @@ export default class Microcosm extends Heartbeat {
   }
 
   addStore(...stores) {
+    // Stores can provide a `getInitialState` method which dictates
+    // the expected initial state when the Store is added
+    var initializers = stores.filter(store => 'getInitialState' in store)
+
+    initializers.forEach(store => this.set(store, store.getInitialState()))
+
     this._stores = this._stores.concat(stores)
   }
 
-  serialize(state) {
-    return this._stores.reduce((memo, store) => {
-      let state = this.get(store)
+  serialize() {
+    // Stores can provide a `serialize` method which shapes how
+    // state is converted to JSON
+    let serializers = this._stores.filter(store => 'serialize' in store)
 
-      if ('serialize' in store) {
-        state = store.serialize(state)
-      }
-
-      memo[store] = state
-
+    return serializers.reduce((memo, store) => {
+      memo[store] = store.serialize(this.get(store))
       return memo
-    }, {})
+    }, { ...this._state })
+  }
+
+  deserialize(data) {
+    let safe = this._stores.filter(store => store in data)
+                           .filter(store => 'deserialize' in store)
+
+    return safe.reduce(function(memo, store) {
+      memo[store] = store.deserialize(data[store])
+      return memo
+    }, { ...data })
   }
 
   toJSON() {
-    return this.serialize(this.state)
+    return this.serialize()
   }
 }
