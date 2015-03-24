@@ -9,7 +9,7 @@ describe('Microcosm', function() {
 
     m.addStore(DummyStore)
 
-    m.has(DummyStore).should.equal(true)
+    m.get(DummyStore).should.equal('test')
   })
 
   it ('gets default state for a store if it has not been assigned', function() {
@@ -90,11 +90,10 @@ describe('Microcosm', function() {
   })
 
   it('can respond to actions', function(done) {
-    let m = new Microcosm()
+    let m   = new Microcosm()
+    let spy = sinon.spy(DummyStore, Action.toString())
 
     m.addStore(DummyStore)
-
-    let spy = sinon.spy(DummyStore, Action.toString())
 
     m.send(Action)
     spy.should.have.been.called

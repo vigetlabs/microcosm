@@ -10,10 +10,6 @@ export default {
     return true
   },
 
-  deserialize(data) {
-    return data
-  },
-
   toString() {
     return 'dummy'
   }

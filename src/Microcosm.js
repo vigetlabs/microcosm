@@ -5,6 +5,7 @@
  */
 
 import Heartbeat from 'Heartbeat'
+import Store     from 'Store'
 import isEqual   from 'is-equal-shallow'
 
 export default class Microcosm extends Heartbeat {
@@ -34,10 +35,6 @@ export default class Microcosm extends Heartbeat {
 
   set(key, value) {
     this._state = { ...this._state, [key]: value }
-  }
-
-  has(store) {
-    return this._stores.indexOf(store) > -1
   }
 
   get(store, seed) {
@@ -85,21 +82,17 @@ export default class Microcosm extends Heartbeat {
   }
 
   addStore(...stores) {
-    // Stores can provide a `getInitialState` method which dictates
-    // the expected initial state when the Store is added
-    var initializers = stores.filter(store => 'getInitialState' in store)
+    let validated = stores.map(store => {
+      return { ...Store, ...store }
+    })
 
-    initializers.forEach(store => this.set(store, store.getInitialState()))
+    validated.forEach(store => this.set(store, store.getInitialState()))
 
-    this._stores = this._stores.concat(stores)
+    this._stores = this._stores.concat(validated)
   }
 
   serialize() {
-    // Stores can provide a `serialize` method which shapes how
-    // state is converted to JSON
-    let serializers = this._stores.filter(store => 'serialize' in store)
-
-    return serializers.reduce((memo, store) => {
+    return this._stores.reduce((memo, store) => {
       memo[store] = store.serialize(this.get(store))
       return memo
     }, { ...this._state })
@@ -107,7 +100,6 @@ export default class Microcosm extends Heartbeat {
 
   deserialize(data) {
     let safe = this._stores.filter(store => store in data)
-                           .filter(store => 'deserialize' in store)
 
     return safe.reduce(function(memo, store) {
       memo[store] = store.deserialize(data[store])
