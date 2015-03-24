@@ -82,13 +82,17 @@ export default class Microcosm extends Heartbeat {
   }
 
   addStore(...stores) {
-    let validated = stores.map(store => {
-      return { ...Store, ...store }
-    })
+    this._stores = stores.reduce((pool, store) => {
+      // Make sure that the Store implements important life cycle
+      // methods
+      let valid = { ...Store, ...store }
 
-    validated.forEach(store => this.set(store, store.getInitialState()))
+      // Once verified, setup initial state
+      this.set(valid, valid.getInitialState())
 
-    this._stores = this._stores.concat(validated)
+      // Finally, add it to the pool of known stores
+      return pool.concat(valid)
+    }, this._stores)
   }
 
   serialize() {
@@ -99,9 +103,7 @@ export default class Microcosm extends Heartbeat {
   }
 
   deserialize(data) {
-    let safe = this._stores.filter(store => store in data)
-
-    return safe.reduce(function(memo, store) {
+    return this._stores.reduce(function(memo, store) {
       memo[store] = store.deserialize(data[store])
       return memo
     }, { ...data })
