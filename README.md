@@ -276,6 +276,23 @@ This works because the app accesses the internal state object
 key. Since the store implements a `toString` method, it coerces into
 the proper key and returns the expected value.
 
+## Listening to changes
+
+All Microcosm instances are event emitters. They emit a single change event that you can subscribe to like:
+
+```javascript
+let app = new Microcosm()
+
+// Add a callback
+app.listen(callback)
+
+// Remove a callback
+app.ignore(callback)
+
+// Force an emission
+app.pump()
+```
+
 ## Additional Notes
 
 The philosophy behind change management is described very well in the
