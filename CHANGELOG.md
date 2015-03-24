@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.2.1
+
+- Fix bug introduced with Tag by exposing ES6 module
+
 ### 1.2.0
 
 - All stores can implement a `serialize` method which allows them to
