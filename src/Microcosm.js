@@ -27,9 +27,9 @@ export default class Microcosm extends Heartbeat {
   seed(data) {
     let clean = this.deserialize(data)
 
-    Object.keys(clean).forEach(function(key) {
-      return this.set(key, clean[key])
-    }, this)
+    for (var key in clean) {
+      this.set(key, clean[key])
+    }
   }
 
   set(key, value) {
@@ -118,4 +118,5 @@ export default class Microcosm extends Heartbeat {
   toJSON() {
     return this.serialize()
   }
+
 }
