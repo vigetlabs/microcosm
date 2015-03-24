@@ -8,7 +8,7 @@
  *
  */
 
-export default (entity={}, fn, initial={}) => {
+export default (entity, fn, initial={}) => {
   let keys = Object.keys(entity)
 
   return keys.reduce((memo, key) => {

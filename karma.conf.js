@@ -15,11 +15,13 @@ module.exports = function(config) {
     logLevel: config.LOG_ERROR,
 
     files: [
-      'src/**/__tests__/*.js*'
+      'src/**/__tests__/*.js*',
+      'example/src/**/__tests__/*.js*'
     ],
 
     preprocessors: {
-      'src/**/__tests__/*.js*': [ 'webpack', 'sourcemap' ]
+      'src/**/__tests__/*.js*'     : [ 'webpack', 'sourcemap' ],
+      'example/src/**/__tests__/*.js*' : [ 'webpack', 'sourcemap' ]
     },
 
     reporters: [ 'nyan', 'coverage' ],

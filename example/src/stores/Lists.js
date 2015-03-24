@@ -1,5 +1,5 @@
-import Lists    from 'actions/lists'
-import contrast from 'contrast'
+import Lists    from '../actions/lists'
+import contrast from '../../lib/contrast'
 import uid      from 'uid'
 
 export default {

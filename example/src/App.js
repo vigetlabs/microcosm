@@ -1,6 +1,6 @@
-import Route     from 'stores/Route'
-import Items     from 'stores/Items'
-import Lists     from 'stores/Lists'
+import Route     from './stores/Route'
+import Items     from './stores/Items'
+import Lists     from './stores/Lists'
 import Microcosm from 'Microcosm'
 
 class Todos extends Microcosm {
