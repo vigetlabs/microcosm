@@ -12,7 +12,8 @@ it sets out to solve:
 1. Complete separation of state between instances of Microcosm without
 being bogged down by unique instances of Stores and Actions.
 2. Small enough for library use.
-3. Keep state in one place, Stores should _transform_ data, not keep it.
+3. Keep state in one place. Stores should _transform_ data, not keep
+   it.
 
 ## API
 
