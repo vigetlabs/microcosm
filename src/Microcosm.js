@@ -4,8 +4,8 @@
  * is that each application is its own fully encapsulated world
  */
 
-import Heartbeat from 'Heartbeat'
-import Store     from 'Store'
+import Heartbeat from './Heartbeat'
+import Store     from './Store'
 import isEqual   from 'is-equal-shallow'
 
 export default class Microcosm extends Heartbeat {
@@ -22,6 +22,8 @@ export default class Microcosm extends Heartbeat {
   }
 
   shouldUpdate(prev, next) {
+    // The default strategy for determining that state has changed
+    // is a simple shallow equals check
     return isEqual(prev, next) == false
   }
 

@@ -1,10 +1,6 @@
 /**
  * Heartbeat
- * Based on Diode, emits a heartbeat whenever any store state has changed.
- * When Stores change, they can use this entity to broadcast
- * that state has changed.
- *
- * See https://github.com/vigetlabs/diode
+ * A singular event emitter. Heartbeat simply pumps blood.
  */
 
 export default class Heartbeat {

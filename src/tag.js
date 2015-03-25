@@ -6,9 +6,11 @@
 
 let uid = 0
 
-let decorate = fn => {
+let isFunction = value => typeof value === 'function'
+
+let decorate = (fn, key) => {
   let copy = fn.bind(null)
-  let id   = `_microcosm-${ uid++ }`
+  let id   = `_${ key }_${ uid++ }`
 
   copy.toString = () => id
 
@@ -19,7 +21,10 @@ export default actions => {
   let keys = Object.keys(actions)
 
   return keys.reduce((memo, key) => {
-    memo[key] = decorate(actions[key], key)
+    let value = actions[key]
+
+    memo[key] = isFunction(value) ? decorate(value, key) : value
+
     return memo
   }, {})
 }

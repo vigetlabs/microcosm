@@ -1,6 +1,6 @@
 Important! This is largely an exploratory repo, used to vet some ideas
 within Flux/React and support other Viget tools. We will follow semver
-to help prevent breaking changes, but **you should probably stay clear
+to help maintain dependency stability, but **you should probably stay clear
 of this implementation.**
 
 ---
