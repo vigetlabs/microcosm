@@ -29,23 +29,31 @@ changes in state handled by pure functions.
 
 ## Opinions
 
-Microcosm injects a a couple of opinions regarding the Flux
+Microcosm inserts a couple of opinions regarding the Flux
 architecture:
 
-1. Typically Flux uses CONSTANT values to pass messages from Actions
-   to Stores. Microcosm automatically generates these by assigning
+1. Flux uses CONSTANT values to pass messages from Actions to
+   Stores. Microcosm automatically generates these by assigning
    each Action function a unique `toString` method.
 2. Microcosm expects immutability. When an action is fired, the
    associated handler in Stores are given the old state. State is
    updated by returning a new value.
-3. Stores do not contain data, they _shape_ it. See the section on
+3. Stores do not contain data, they _transform_ it. See the section on
    stores below.
 4. All Actions that return promises will wait to resolve before
    dispatching.
-5. It should be easily to embed in libraries. Additional features such
-   should be able to layer on top.
-6. It should utilize language features over implementation details as
-   much as possible.
+5. Utilize language features over library abstraction as much as
+   possible.
+
+## What problems does it attempt to solve?
+
+1. Complete isolation of state between instances. Server-side
+   JavaScript needs isolation of state between requests, client-side
+   libraries need easy containment from other instances on the page.
+2. A reasonable trade-off between the simplicity of singletons and the
+   state-isolation of class instances.
+3. Easy extension of core API and layering of features out of the
+   framework's scope.
 
 ## Design
 
