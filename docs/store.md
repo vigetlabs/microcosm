@@ -1,10 +1,19 @@
 # Stores
 
+1. [Overview](#overview)
+2. [API](#api)
+3. [Installing Stores](#installing-stores)
+4. [Listening to Actions](#listening-to-actions)
+
+## Overview
+
 The responsibility of a Store in Microcosm is to transform state from
 one form to the next. They do not provide any storage of their own
 (although technically this isn't enforced by Microcosm).
 
-Stores boil down to:
+## API
+
+Microcosms call several methods on Stores to help shape information:
 
 ```javascript
 var store = {

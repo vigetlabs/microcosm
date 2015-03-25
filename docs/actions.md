@@ -1,5 +1,11 @@
 # Actions
 
+1. [Overview](#overview)
+2. [Calling Actions](#calling-actions)
+3. [Currying](#currying)
+
+## Overview
+
 Actions, as values, describe the signals passed through Microcosm. As
 functions they allow one to prepare data before sending it to Stores
 for state transformation.
@@ -34,7 +40,7 @@ let app = new Microcosm()
 app.send(MyActions.doSomething)
 ```
 
-## Callback Shorthand
+## Currying
 
 `app.send` curries actions. This makes it easier to use actions as
 callbacks:

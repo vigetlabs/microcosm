@@ -18,16 +18,28 @@ export default class Microcosm extends Heartbeat {
   }
 
   getInitialState() {
+    // Assigns the default state. Most of the time this will not need
+    // to be overridden, however if using something like ImmutableJS,
+    // you could return a different data structure here.
     return {}
   }
 
   shouldUpdate(prev, next) {
+    // Whenever an action is dispatched, the resulting state
+    // modification will be diffed to identify if a change event
+    // should fire.
+    //
     // The default strategy for determining that state has changed
     // is a simple shallow equals check
     return isEqual(prev, next) == false
   }
 
   seed(data) {
+    // Tells the microcosm how it should handle data injected from
+    // sources.
+    //
+    // By default, it will clean the data with `deserialize` and
+    // then override the existing data set with the new values
     let clean = this.deserialize(data)
 
     for (var key in clean) {
@@ -36,11 +48,17 @@ export default class Microcosm extends Heartbeat {
   }
 
   set(key, value) {
+    // How state should be re-assigned. This function is useful to
+    // override with the particular method of assignment for the data
+    // structure returned from `getInitialState`
     this._state = { ...this._state, [key]: value }
   }
 
-  get(store, seed) {
-    return this._state[store]
+  get(key) {
+    // How state should be retrieved. This function is useful to
+    // override with the particular method of retrieval for the data
+    // structure returned from `getInitialState`
+    return this._state[key]
   }
 
   send(fn, ...params) {
