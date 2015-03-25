@@ -1,3 +1,7 @@
+[![NPM](https://nodei.co/npm/microcosm.png?compact=true)](https://npmjs.org/package/microcosm)
+
+---
+
 Important! This is largely an exploratory repo, used to vet some ideas
 within Flux/React and support other Viget tools. We will follow semver
 to help maintain dependency stability, but **you should probably stay clear
@@ -7,6 +11,7 @@ of this implementation.**
 
 [![Travis CI](https://travis-ci.org/vigetlabs/microcosm.svg)](https://travis-ci.org/vigetlabs/microcosm)
 [![Coverage Status](https://coveralls.io/repos/vigetlabs/microcosm/badge.svg)](https://coveralls.io/r/vigetlabs/microcosm)
+[![Package Quality](http://npm.packagequality.com/badge/microcosm.png)](http://packagequality.com/#?package=microcosm)
 
 ---
 
