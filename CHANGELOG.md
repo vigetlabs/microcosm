@@ -1,5 +1,13 @@
 # Changelog
 
+### 1.4.0
+
+- `Store.deserialize` returns the result of `getInitialState` if no
+  state is given
+- Added `Microcosm.swap` to perform diffing and emission on change
+- `Microcosm.seed` will now trigger a change event
+- `Heartbeat.js` now invokes callbacks with `callback.call(this)`
+
 ### 1.3.0
 
 - Microcosms will `set` the result of `getInitialState` when adding a store

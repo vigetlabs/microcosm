@@ -34,7 +34,7 @@ export default class Heartbeat {
      * to disappear
      */
     for (var i = 0; i < this._callbacks.length; i++) {
-      this._callbacks[i]()
+      this._callbacks[i].call(this)
     }
   }
 

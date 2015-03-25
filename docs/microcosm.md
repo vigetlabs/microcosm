@@ -41,6 +41,12 @@ class MyApp extends Microcosm {
     //
     // By default, it will clean the data with `deserialize` and
     // then override the existing data set with the new values
+    //
+    // seed will trigger a change event
+  }
+  swap(nextState) {
+    // Given a new state, if equality fails using `shouldUpdate`,
+    // assign the new state and emit an event
   }
   set(key, value) {
     // How state should be re-assigned. This function is useful to

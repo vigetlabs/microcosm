@@ -40,10 +40,14 @@ export default class Microcosm extends Heartbeat {
     //
     // By default, it will clean the data with `deserialize` and
     // then override the existing data set with the new values
-    let clean = this.deserialize(data)
+    this.swap(this.deserialize(data))
+  }
 
-    for (var key in clean) {
-      this.set(key, clean[key])
+  swap(next) {
+    // Given a next state, only trigger an event if state actually changed
+    if (this.shouldUpdate(this._state, next)) {
+      this._state = next
+      this.pump()
     }
   }
 
@@ -89,13 +93,7 @@ export default class Microcosm extends Heartbeat {
     }, {})
 
     // Produce the next state by folding changes into the current state
-    let next = { ...this._state, ...changes }
-
-    // Finally, only trigger an event if state actually changed
-    if (this.shouldUpdate(this._state, next)) {
-      this._state = next
-      this.pump()
-    }
+    this.swap({ ...this._state, ...changes })
 
     // Send back the body to the original signaler
     return body

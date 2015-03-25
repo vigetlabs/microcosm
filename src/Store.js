@@ -8,7 +8,7 @@ export default {
     return state
   },
 
-  deserialize(state) {
+  deserialize(state = this.getInitialState()) {
     return state
   },
 
