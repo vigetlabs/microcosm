@@ -11,7 +11,6 @@ of this implementation.**
 
 [![Travis CI](https://travis-ci.org/vigetlabs/microcosm.svg)](https://travis-ci.org/vigetlabs/microcosm)
 [![Coverage Status](https://coveralls.io/repos/vigetlabs/microcosm/badge.svg)](https://coveralls.io/r/vigetlabs/microcosm)
-[![Package Quality](http://npm.packagequality.com/badge/microcosm.png)](http://packagequality.com/#?package=microcosm)
 
 ---
 
