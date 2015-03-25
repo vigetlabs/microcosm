@@ -2,6 +2,7 @@
 
 1. [Overview](#overview)
 2. [API](#api)
+3. [Listening to Changes](#listening-to-changes)
 
 ## Overview
 
@@ -88,4 +89,22 @@ class MyApp extends Microcosm {
     // A default implementation of serialization. Just returns `this.serialize()`
   }
 }
+```
+
+## Listening to Changes
+
+All microcosms inherit from `src/Heartbeat.js`. Heartbeat is an event
+emitter with a single event:
+
+```javascript
+let app = new Microcosm()
+
+// Add a callback
+app.listen(callback)
+
+// Remove a callback
+app.ignore(callback)
+
+// Force an emission
+app.pump()
 ```
