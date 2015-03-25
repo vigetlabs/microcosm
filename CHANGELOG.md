@@ -1,5 +1,12 @@
 # Changelog
 
+### 1.3.0
+
+- Microcosms will `set` the result of `getInitialState` when adding a store
+- Microcosms will execute `deserialize` on stores when running `seed`
+- Adding a store will now fold its properties on top of a default set
+  of options. See `./src/Store.js` for details.
+
 ### 1.2.1
 
 - Fix bug introduced with Tag by exposing ES6 module
