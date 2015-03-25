@@ -47,9 +47,10 @@ architecture:
 
 ## What problems does it attempt to solve?
 
-1. Complete isolation of state between instances. Server-side
-   JavaScript needs isolation of state between requests, client-side
-   libraries need easy containment from other instances on the page.
+1. State isolation. Requests to render applications server-side should
+   be as stateless as possible. Client-side libraries (such as [Colonel
+   Kurtz](https://github.com/vigetlabs/colonel-kurtz)) need easy
+   containment from other instances on the page.
 2. A reasonable trade-off between the simplicity of singletons and the
    state-isolation of class instances.
 3. Easy extension of core API and layering of features out of the
