@@ -20,7 +20,7 @@ Microcosm is an experimental Flux inspired by
 [Flummox](https://github.com/acdlite/flummox) and many ideas within
 [Elm](elm-lang.org). It is an
 [isomorphic](http://artsy.github.io/blog/2013/11/30/rendering-on-the-server-and-client-in-node-dot-js/)
-[Flux](facebook.github.io/flux).
+[Flux](http://facebook.github.io/flux).
 
 Specifically, it addresses the problem of isolating state between
 requests so that each page render does not leak information into the
