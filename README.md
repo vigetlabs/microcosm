@@ -2,10 +2,14 @@
 
 ---
 
-Important! This is largely an exploratory repo, used to vet some ideas
-within Flux/React and support other Viget tools. We will follow semver
-to help maintain dependency stability, but **you should probably stay clear
-of this implementation.**
+### Heads up!
+
+**This is not the next big flux framework**. It is largely an attempt to
+simplify the authoring model for some other Viget tools. The roadmap
+for Microcosm is heavily influenced by the needs of those projects. We
+will follow [semver](http://semver.org/) to help maintain dependency
+stability, but for the time being **it is probably safest to stay
+clear of this project if you want stability.**
 
 ---
 
