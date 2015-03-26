@@ -57,13 +57,13 @@ describe('Microcosm', function() {
     m.get(DummyStore).should.equal(seed)
   })
 
-  it ('can assign new state', function() {
+  it ('can merge in new state', function() {
     let seed = { fiz: 'buz' }
     let m    = new Microcosm({ dummy: seed })
 
     m.addStore(DummyStore)
 
-    m.set(DummyStore, { fiz: 'not-buz'})
+    m.merge({ [DummyStore] : { fiz: 'not-buz'} })
 
     m.get(DummyStore).fiz.should.equal('not-buz')
   })
@@ -104,11 +104,11 @@ describe('Microcosm', function() {
   it('does not emit a change if no handler responds', function() {
     let m = new Microcosm()
 
+    m.addStore({ toString: () => 'another-store' })
+
     m.listen(function() {
       throw Error("Expected app to not respond but did")
     })
-
-    m.addStore({ toString: () => 'another-store' })
 
     m.send(Action)
   })

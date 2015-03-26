@@ -5,6 +5,9 @@
 - Replace default `Microcosm::send` currying with partial application
   using `Microcosm::prepare`
 - Throw an error if a store is added that does not have a unique identifier
+- `Microcosm::set` has been replaced with `Microcosm::merge`, so far
+  `set` has only been used internally to `Microcosm` and `merge` dries
+  a couple of things up
 
 #### More info on removing currying
 
