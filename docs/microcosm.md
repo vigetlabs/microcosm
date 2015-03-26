@@ -58,10 +58,13 @@ class MyApp extends Microcosm {
     // override with the particular method of retrieval for the data
     // structure returned from `getInitialState`
   }
+  prepare(fn, ...params) {
+    // Returns a partially applied version of `send`. Useful
+    // for concise callbacks in React components
+  }
   send(fn, ...params) {
     // Responsible for pushing an action through the system.
-    // `send` allows for currying of the `params` list is shorter than
-    // the accepted arguments of `fn
+    // `send`.
     //
     // If `fn(...params)` returns a promise, it will wait for this
     // promise to resolve.
