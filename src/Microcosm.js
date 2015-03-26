@@ -122,7 +122,7 @@ export default class Microcosm extends Heartbeat {
     return mapBy(this._stores, store => store.serialize(this.get(store)))
   }
 
-  deserialize(data) {
+  deserialize(data={}) {
     return mapBy(this._stores, store => store.deserialize(data[store]))
   }
 

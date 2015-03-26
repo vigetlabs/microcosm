@@ -1,6 +1,6 @@
 {
   "name": "microcosm",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "An experimental flux implimentation",
   "main": "dist/Microcosm.js",
   "scripts": {
@@ -43,8 +43,8 @@
     "page": "^1.6.1",
     "postcss-loader": "^0.3.0",
     "raw-loader": "^0.5.1",
-    "react-hot-loader": "^1.2.4",
     "react": ">= 0.13.1",
+    "react-hot-loader": "^1.2.4",
     "react-tools": ">= 0.13.1",
     "route-recognizer": "^0.1.5",
     "sass-loader": "^1.0.0",

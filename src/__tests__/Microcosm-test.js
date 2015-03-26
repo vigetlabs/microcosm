@@ -133,4 +133,12 @@ describe('Microcosm', function() {
     }
   })
 
+  it ('can handle undefined arguments in deserialize', function() {
+    let m = new Microcosm()
+
+    m.addStore({ toString() { return 'fiz' } })
+
+    m.deserialize()
+  })
+
 })

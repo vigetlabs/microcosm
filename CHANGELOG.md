@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.0.1
+
+- Fix issue where empty arguments would break deserialize
+
 ### 2.0.0
 
 - Replace default `Microcosm::send` currying with partial application
