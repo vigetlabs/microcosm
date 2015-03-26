@@ -108,7 +108,7 @@ export default class Microcosm extends Heartbeat {
 
     // Don't reassign stores that are already included
     // fail hard
-    assert(!this.has(safe), `A toString method within "${stores.join(', ')}" is not unique`)
+    assert(!this.has(safe), `A toString method within "${stores}" is not unique`)
 
     // Add the validated stores to the list of known entities
     this._stores = this._stores.concat(safe)
