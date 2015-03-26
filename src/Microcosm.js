@@ -115,7 +115,7 @@ export default class Microcosm extends Heartbeat {
     // Once verified, setup initial state.
     // This is done last so that any callbacks that need to reduce
     // over the current state have the latest list of stores
-    this.merge(mapBy(safe, s => s.getInitialState()))
+    this.merge(mapBy(safe, store => store.getInitialState()))
   }
 
   serialize() {
