@@ -206,23 +206,6 @@ This works like:
 app.send(Messages.create, 'This property will be passed to the dispatcher')
 ```
 
-### Currying actions
-
-`send` automatically curries invocations that do not include the
-expected number of arguments. To repeat the previous example with currying:
-
-```javascript
-let create = app.send(Messages.create)
-create('This property will be passed to the dispatcher')
-```
-
-Technically, this is even possible (but you didn't hear it from me):
-
-```javascript
-let sum = (a, b) => a + b
-app.send(sum)(2, 3) // => 5
-```
-
 ## How Stores work
 
 Stores are plain objects. They must implement a `getInitialState` and
