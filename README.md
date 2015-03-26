@@ -22,7 +22,7 @@ clear of this project if you want stability.**
 
 Microcosm is an experimental Flux inspired by
 [Flummox](https://github.com/acdlite/flummox) and many ideas within
-[Elm](elm-lang.org). It is an
+[Elm](http://elm-lang.org). It is an
 [isomorphic](http://artsy.github.io/blog/2013/11/30/rendering-on-the-server-and-client-in-node-dot-js/)
 [Flux](http://facebook.github.io/flux).
 
