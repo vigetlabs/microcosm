@@ -48,10 +48,10 @@ class MyApp extends Microcosm {
     // Given a new state, if equality fails using `shouldUpdate`,
     // assign the new state and emit an event
   }
-  set(key, value) {
+  merge(object) {
     // How state should be re-assigned. This function is useful to
-    // override with the particular method of assignment for the data
-    // structure returned from `getInitialState`
+    // override with the particular method of assignment for merging
+    // data for whatever is returned from from `getInitialState`
   }
   get(key) {
     // How state should be retrieved. This function is useful to
