@@ -106,8 +106,7 @@ export default class Microcosm extends Heartbeat {
     // Make sure that the Store implements important life cycle methods
     let safe = stores.map(s => assign(Store, s))
 
-    // Don't reassign stores that are already included
-    // fail hard
+    // Don't reassign stores that are already included fail hard
     assert(!this.has(safe), `A toString method within "${stores}" is not unique`)
 
     // Add the validated stores to the list of known entities
