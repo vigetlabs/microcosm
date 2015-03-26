@@ -113,11 +113,24 @@ describe('Microcosm', function() {
     m.send(Action)
   })
 
-  it ('can curry the send method', function() {
+  it ('can partially apply actions', function() {
     let m   = new Microcosm()
-    let add = (a, b) => a + b
+    let add = (a=0, b=0) => a + b
 
-    m.send(add)(2, 3).should.equal(5)
+    m.prepare(add)(2, 3).should.equal(5)
+    m.prepare(add, 4)(1).should.equal(5)
+    m.prepare(add)(1).should.equal(1)
+  })
+
+  it ('throws an error of a stores toString is not unique', function(done) {
+    let m   = new Microcosm()
+    m.addStore({ toString() { return 'fiz' } })
+
+    try {
+      m.addStore({ toString() { return 'fiz' } })
+    } catch(x) {
+      done()
+    }
   })
 
 })

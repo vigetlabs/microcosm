@@ -51,6 +51,10 @@ export default class Microcosm extends Heartbeat {
     }
   }
 
+  has(...stores) {
+    return stores.some(a => this._stores.some(b => `${a}` === `${b}`))
+  }
+
   set(key, value) {
     // How state should be re-assigned. This function is useful to
     // override with the particular method of assignment for the data
@@ -65,13 +69,12 @@ export default class Microcosm extends Heartbeat {
     return this._state[key]
   }
 
-  send(fn, ...params) {
-    // Allow currying of send method for cleaner callbacks
-    if (params.length < fn.length) {
-      return this.send.bind(this, fn)
-    }
+  prepare(fn, ...buffer) {
+    return this.send.bind(this, fn, ...buffer)
+  }
 
-    let request = fn(...params)
+  send(fn, ...params) {
+    let request = fn.apply(this, params)
 
     // Actions some times return promises. When this happens, wait for
     // them to resolve before moving on
@@ -100,31 +103,35 @@ export default class Microcosm extends Heartbeat {
   }
 
   addStore(...stores) {
-    this._stores = stores.reduce((pool, store) => {
-      // Make sure that the Store implements important life cycle
-      // methods
-      let valid = { ...Store, ...store }
+    // Make sure that the Store implements important life cycle methods
+    let safe = stores.map(store => {
+      return { ...Store, ...store }
+    })
 
-      // Once verified, setup initial state
-      this.set(valid, valid.getInitialState())
+    // Don't reassign stores that are already included
+    // fail hard
+    if (this.has(safe)) {
+      throw Error(`A toString method within "${stores.join(', ')}" is not unique`)
+    }
 
-      // Finally, add it to the pool of known stores
-      return pool.concat(valid)
-    }, this._stores)
+    // Once verified, setup initial state
+    safe.forEach(store => this.set(store, store.getInitialState()))
+
+    this._stores = this._stores.concat(safe)
   }
 
   serialize() {
     return this._stores.reduce((memo, store) => {
       memo[store] = store.serialize(this.get(store))
       return memo
-    }, { ...this._state })
+    }, {})
   }
 
   deserialize(data) {
     return this._stores.reduce(function(memo, store) {
       memo[store] = store.deserialize(data[store])
       return memo
-    }, { ...data })
+    }, {})
   }
 
   toJSON() {

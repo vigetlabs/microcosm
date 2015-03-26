@@ -15,7 +15,7 @@ let routes = [
 export default {
 
   install(app) {
-    let action = app.send(Route.set)
+    let action = app.prepare(Route.set)
 
     // Create a callback for each route that pushes the event
     // into the app's dispatcher

@@ -1,4 +1,5 @@
 var Webpack = require('webpack')
+var config  = require('./webpack.config')
 
 module.exports = {
   devtool : '#eval-source-map',

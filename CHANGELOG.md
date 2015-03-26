@@ -1,5 +1,36 @@
 # Changelog
 
+### 2.0.0
+
+- Replace default `Microcosm::send` currying with partial application
+  using `Microcosm::prepare`
+- Throw an error if a store is added that does not have a unique identifier
+
+#### More info on removing currying
+
+Currying has been removed `Microcosm::send`. This was overly clever
+and somewhat malicious. If an action has default arguments, JavaScript
+has no way (to my knowledge) of communicating it. One (me) could get into a
+situation where it is unclear why an action has not fired properly
+(insufficient arguments when expecting fallback defaults).
+
+In a language without static typing, this can be particularly hard to debug.
+
+In most cases, partial application is sufficient. In light of this,
+actions can be "buffered up" up with `Microcosm::prepare`:
+
+```javascript
+// Old
+let curried = app.send(Action)
+
+// New
+let partial = app.prepare(Action)
+```
+
+`Microcosm::prepare` is basically just `fn.bind()` under the
+hood. Actions should not use context whatsoever, so this should be a
+reasonable caveat.
+
 ### 1.4.0
 
 - `Store.deserialize` returns the result of `getInitialState` if no

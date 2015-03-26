@@ -25,7 +25,7 @@ let Home = React.createClass({
     return (<ListItem key={ list.id }
                       items={ items.filter(i => i.list === list.id) }
                       list={ list }
-                      onDelete={ flux.send(ListActions.remove) } />)
+                      onDelete={ flux.prepare(ListActions.remove) } />)
   },
 
   render() {
@@ -53,7 +53,7 @@ let Home = React.createClass({
 
         <AddList active={ this.state.openCreate }
                  onExit={ this._onToggle }
-                 onCreate={ flux.send(ListActions.add) } />
+                 onCreate={ flux.prepare(ListActions.add) } />
       </main>
     )
   },
