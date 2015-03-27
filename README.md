@@ -262,9 +262,7 @@ class App extends Microcosm {
 
 ### Getting the value out of a store
 
-Similar to a `Map`, microcosms implement a `get` and `set`
-method. `set` should never be called directly, however it is exposed
-should you wish to define your own method of assignment. As for `get`:
+Microcosms implement a `get` method:
 
 ```javascript
 app.get(Store)
