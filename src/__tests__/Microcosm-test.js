@@ -141,4 +141,16 @@ describe('Microcosm', function() {
     m.deserialize()
   })
 
+  it ('passes the options argument from the constructor to getInitialState', function() {
+    class MyApp extends Microcosm {
+      getInitialState(options) {
+        return options
+      }
+    }
+
+    let app = new MyApp('test')
+
+    app._state.should.equal('test')
+  })
+
 })
