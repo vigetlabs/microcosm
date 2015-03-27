@@ -101,10 +101,29 @@ describe('Microcosm', function() {
     done()
   })
 
-  it('does not emit a change if no handler responds', function() {
+  it ('does not emit a change if no handler responds', function() {
     let m = new Microcosm()
 
     m.addStore({ toString: () => 'another-store' })
+
+    m.listen(function() {
+      throw Error("Expected app to not respond but did")
+    })
+
+    m.send(Action)
+  })
+
+  it ('does not emit a change state does not change', function() {
+    let m = new Microcosm({ foo: [] })
+
+    m.addStore({
+      [Action](state) {
+        return state
+      },
+      toString() {
+        return 'foo'
+      }
+    })
 
     m.listen(function() {
       throw Error("Expected app to not respond but did")

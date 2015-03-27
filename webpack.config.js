@@ -15,6 +15,8 @@ module.exports = {
     devtoolModuleFilenameTemplate: '[resource-path]'
   },
 
+  plugins: [],
+
   resolve: {
     extensions: [ '', '.js', '.jsx', '.json' ],
     modulesDirectories: [ 'web_modules', 'node_modules', 'src' ]

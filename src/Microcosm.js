@@ -7,7 +7,7 @@
 import Store   from './Store'
 import assert  from './assert'
 import assign  from './assign'
-import isEqual from 'is-equal-shallow'
+import isEqual from './shallowEquals'
 import mapBy   from './mapBy'
 import pulse   from './pulse'
 

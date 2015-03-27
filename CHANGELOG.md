@@ -1,5 +1,9 @@
 # Changelog
 
+### 3.2.0
+
+- Changed default shouldUpdate algorithm
+
 ### 3.1.0
 
 - `Microcosm::getInitialState()` now accepts an `options`
