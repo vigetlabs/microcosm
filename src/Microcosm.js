@@ -13,10 +13,10 @@ import pulse   from './pulse'
 
 export default class Microcosm {
 
-  constructor() {
+  constructor(options) {
     pulse(this)
 
-    this._state  = this.getInitialState()
+    this._state  = this.getInitialState(options)
     this._stores = []
   }
 

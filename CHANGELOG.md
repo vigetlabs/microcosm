@@ -1,5 +1,10 @@
 # Changelog
 
+### 3.1.0
+
+- `Microcosm::getInitialState()` now accepts an `options`
+  argument. This argument is passed down from the constructor.
+
 ### 3.0.0
 
 - Changed data update pattern to more closely match
