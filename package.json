@@ -1,7 +1,7 @@
 {
   "name": "microcosm",
   "version": "3.0.0",
-  "description": "An experimental flux implimentation",
+  "description": "A functional flux architecture",
   "main": "dist/Microcosm.js",
   "scripts": {
     "coveralls": "CONTINUOUS_INTEGRATION=true npm test && coveralls < coverage/report-lcov/lcov.info",
