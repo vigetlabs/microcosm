@@ -1,6 +1,6 @@
 /**
  * Microcosm
- * An isomorphic flux implimentation. The strength of Microcosm
+ * An isomorphic flux implementation. The strength of Microcosm
  * is that each application is its own fully encapsulated world
  */
 
