@@ -1,6 +1,6 @@
 {
   "name": "microcosm",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "A functional flux architecture",
   "main": "dist/Microcosm.js",
   "scripts": {
@@ -14,9 +14,7 @@
     "url": "git://github.com/vigetlabs/microcosm.git"
   },
   "license": "MIT",
-  "dependencies": {
-    "is-equal-shallow": "^0.1.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "autoprefixer-core": "^5.1.7",
     "babel": ">= 4.7.16",
