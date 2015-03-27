@@ -4,20 +4,20 @@
  * is that each application is its own fully encapsulated world
  */
 
-import Heartbeat from './Heartbeat'
-import Store     from './Store'
-import assert    from './assert'
-import assign    from './assign'
-import isEqual   from 'is-equal-shallow'
-import mapBy     from './mapBy'
+import Store   from './Store'
+import assert  from './assert'
+import assign  from './assign'
+import isEqual from 'is-equal-shallow'
+import mapBy   from './mapBy'
+import pulse   from './pulse'
 
-export default class Microcosm extends Heartbeat {
+export default class Microcosm {
 
   constructor() {
-    super()
+    pulse(this)
 
-    this._stores = []
     this._state  = this.getInitialState()
+    this._stores = []
   }
 
   getInitialState() {
@@ -34,20 +34,13 @@ export default class Microcosm extends Heartbeat {
     //
     // The default strategy for determining that state has changed
     // is a simple shallow equals check
-    return isEqual(prev, next) == false
+    return isEqual(prev, next) === false
   }
 
-  seed(data) {
-    // Tells the microcosm how it should handle data injected from
-    // sources.
-    //
-    // By default, it will clean the data with `deserialize` and
-    // then override the existing data set with the new values
-    this.swap(this.deserialize(data))
-  }
-
-  has(...stores) {
-    return stores.some(a => this._stores.some(b => `${a}` === `${b}`))
+  has(key) {
+    // Does this instance of microcosm contain the given store?
+    // Important: Uses the unique identifier, not the object reference
+    return this._stores.some(store => `${key}` === `${store}`)
   }
 
   get(key) {
@@ -58,6 +51,12 @@ export default class Microcosm extends Heartbeat {
   }
 
   swap(next) {
+    // Swap is basically a reset where the next state is the result of
+    // folding one object over the next
+    this.reset(assign(this._state, next))
+  }
+
+  reset(next) {
     // Given a next state, only trigger an event if state actually changed
     if (this.shouldUpdate(this._state, next)) {
       this._state = next
@@ -65,19 +64,12 @@ export default class Microcosm extends Heartbeat {
     }
   }
 
-  merge(obj) {
-    // How state should be re-assigned. This function is useful to
-    // override with the particular method of assignment for the data
-    // structure returned from `getInitialState`
-    this.swap(assign(this._state, obj))
-  }
-
   prepare(fn, ...buffer) {
     return this.send.bind(this, fn, ...buffer)
   }
 
   send(fn, ...params) {
-    let request = fn.apply(this, params)
+    const request = fn.apply(this, params)
 
     // Actions some times return promises. When this happens, wait for
     // them to resolve before moving on
@@ -90,32 +82,32 @@ export default class Microcosm extends Heartbeat {
 
   dispatch(action, body) {
     // First get all stores that can repond to this action
-    let answerable = this._stores.filter(store => action in store)
+    const answerable = this._stores.filter(store => action in store)
 
     // Next build the change set
-    let changes = mapBy(answerable, store => store[action](this.get(store), body))
+    const changes = mapBy(answerable, store => store[action](this.get(store), body))
 
-    // Produce the next state by mapBying changes into the current state
-    this.merge(changes)
+    // Produce the next state by merging changes into the current state
+    this.swap(changes)
 
     // Send back the body to the original signaler
     return body
   }
 
-  addStore(...stores) {
-    // Make sure that the Store implements important life cycle methods
-    let safe = stores.map(s => assign(Store, s))
+  addStore(store) {
+    // Make sure life cycle methods are included
+    const safe = assign(Store, store)
 
-    // Don't reassign stores that are already included fail hard
-    assert(!this.has(safe), `A toString method within "${stores}" is not unique`)
+    // Don't reassign stores that are already included. Fail hard.
+    assert(!this.has(safe), `Tried to add "${store}" but it is not unique`)
 
     // Add the validated stores to the list of known entities
-    this._stores = this._stores.concat(safe)
+    this._stores.push(safe)
 
-    // Once verified, setup initial state.
-    // This is done last so that any callbacks that need to reduce
-    // over the current state have the latest list of stores
-    this.merge(mapBy(safe, store => store.getInitialState()))
+    // Once verified, setup initial state. This is done last so that
+    // any callbacks that need to reduce over the current state have
+    // the latest list of stores
+    this.swap({ [safe] : safe.getInitialState() })
   }
 
   serialize() {
@@ -124,6 +116,15 @@ export default class Microcosm extends Heartbeat {
 
   deserialize(data={}) {
     return mapBy(this._stores, store => store.deserialize(data[store]))
+  }
+
+  seed(data) {
+    // Tells the microcosm how it should handle data injected from
+    // sources.
+    //
+    // By default, it will clean the data with `deserialize` and
+    // then reset the existing data set with the new values
+    this.reset(this.deserialize(data))
   }
 
   toJSON() {

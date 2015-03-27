@@ -1,0 +1,736 @@
+{
+  "errors": [],
+  "warnings": [
+    "Microcosm.js from UglifyJs\nNon-strict equality against boolean: == false [./src/Microcosm.js:37,11]"
+  ],
+  "version": "1.7.3",
+  "hash": "b03e2b15f8b6765e79bf",
+  "time": 927,
+  "assetsByChunkName": {
+    "Microcosm": [
+      "Microcosm.js",
+      "Microcosm.js.map"
+    ]
+  },
+  "assets": [
+    {
+      "name": "Microcosm.js",
+      "size": 4587,
+      "chunks": [
+        0
+      ],
+      "chunkNames": [
+        "Microcosm"
+      ],
+      "emitted": true
+    },
+    {
+      "name": "Microcosm.js.map",
+      "size": 30285,
+      "chunks": [
+        0
+      ],
+      "chunkNames": [
+        "Microcosm"
+      ],
+      "emitted": true
+    }
+  ],
+  "chunks": [
+    {
+      "id": 0,
+      "rendered": true,
+      "initial": true,
+      "entry": true,
+      "extraAsync": false,
+      "size": 10714,
+      "names": [
+        "Microcosm"
+      ],
+      "files": [
+        "Microcosm.js",
+        "Microcosm.js.map"
+      ],
+      "hash": "b46d5512d665238eeb31",
+      "parents": [],
+      "modules": [
+        {
+          "id": 0,
+          "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+          "name": "./src/index.js",
+          "size": 283,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": null,
+          "profile": {
+            "factory": 18,
+            "building": 429
+          },
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [],
+          "source": "\"use strict\";\n\nexports.__esModule = true;\n/**\n * Microcosm\n * An isomorphic flux implimentation. The strength of Microcosm\n * is that each application is its own fully encapsulated world\n */\n\nvar tag = require(\"./tag\");\nexports.tag = tag;\nexports[\"default\"] = require(\"./Microcosm\");"
+        },
+        {
+          "id": 1,
+          "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Heartbeat.js",
+          "name": "./src/Heartbeat.js",
+          "size": 942,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "profile": {
+            "factory": 6,
+            "building": 18
+          },
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 2,
+              "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+              "module": "./src/Microcosm.js",
+              "moduleName": "./src/Microcosm.js",
+              "type": "cjs require",
+              "userRequest": "./Heartbeat",
+              "loc": "15:32-54"
+            }
+          ],
+          "source": "/**\n * Heartbeat\n * A singular event emitter. Heartbeat simply pumps blood.\n */\n\n\"use strict\";\n\nfunction Heartbeat() {\n  var _callbacks = [];\n\n  /**\n   * Given a CALLBACK function, remove it from the Set of callbacks.\n   * Throws an error if the callback is not included in the Set.\n   */\n  this.ignore = function (callback) {\n    _callbacks = _callbacks.filter(function (i) {\n      return i !== callback;\n    });\n  },\n\n  /**\n   * Given a CALLBACK function, add it to the Set of all callbacks.\n   */\n  this.listen = function (callback) {\n    _callbacks = _callbacks.concat(callback);\n  };\n\n  /**\n   * Trigger every callback in the Set\n   */\n  this.pump = function () {\n    /**\n     * Important: do not cache the length of _callbacks\n     * in the event a callback causes later subscriptions\n     * to disappear\n     */\n    for (var i = 0; i < _callbacks.length; i++) {\n      _callbacks[i].call(this);\n    }\n  };\n}\n\nmodule.exports = Heartbeat;"
+        },
+        {
+          "id": 2,
+          "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "name": "./src/Microcosm.js",
+          "size": 6582,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+          "profile": {
+            "factory": 6,
+            "building": 185
+          },
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 0,
+              "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+              "module": "./src/index.js",
+              "moduleName": "./src/index.js",
+              "type": "cjs require",
+              "userRequest": "./Microcosm",
+              "loc": "12:21-43"
+            }
+          ],
+          "source": "\"use strict\";\n\nvar _interopRequire = function (obj) { return obj && obj.__esModule ? obj[\"default\"] : obj; };\n\nvar _inherits = function (subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };\n\nvar _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } };\n\n/**\n * Microcosm\n * An isomorphic flux implimentation. The strength of Microcosm\n * is that each application is its own fully encapsulated world\n */\n\nvar Heartbeat = _interopRequire(require(\"./Heartbeat\"));\n\nvar Store = _interopRequire(require(\"./Store\"));\n\nvar assert = _interopRequire(require(\"./assert\"));\n\nvar assign = _interopRequire(require(\"./assign\"));\n\nvar isEqual = _interopRequire(require(\"is-equal-shallow\"));\n\nvar mapBy = _interopRequire(require(\"./mapBy\"));\n\nvar Microcosm = (function (_Heartbeat) {\n  function Microcosm() {\n    _classCallCheck(this, Microcosm);\n\n    _Heartbeat.call(this);\n\n    this._stores = [];\n    this._state = this.getInitialState();\n  }\n\n  _inherits(Microcosm, _Heartbeat);\n\n  Microcosm.prototype.getInitialState = function getInitialState() {\n    // Assigns the default state. Most of the time this will not need\n    // to be overridden, however if using something like ImmutableJS,\n    // you could return a different data structure here.\n    return {};\n  };\n\n  Microcosm.prototype.shouldUpdate = function shouldUpdate(prev, next) {\n    // Whenever an action is dispatched, the resulting state\n    // modification will be diffed to identify if a change event\n    // should fire.\n    //\n    // The default strategy for determining that state has changed\n    // is a simple shallow equals check\n    return isEqual(prev, next) == false;\n  };\n\n  Microcosm.prototype.seed = function seed(data) {\n    // Tells the microcosm how it should handle data injected from\n    // sources.\n    //\n    // By default, it will clean the data with `deserialize` and\n    // then override the existing data set with the new values\n    this.swap(this.deserialize(data));\n  };\n\n  Microcosm.prototype.has = function has() {\n    var _this = this;\n\n    for (var _len = arguments.length, stores = Array(_len), _key = 0; _key < _len; _key++) {\n      stores[_key] = arguments[_key];\n    }\n\n    return stores.some(function (a) {\n      return _this._stores.some(function (b) {\n        return \"\" + a === \"\" + b;\n      });\n    });\n  };\n\n  Microcosm.prototype.get = function get(key) {\n    // How state should be retrieved. This function is useful to\n    // override with the particular method of retrieval for the data\n    // structure returned from `getInitialState`\n    return this._state[key];\n  };\n\n  Microcosm.prototype.swap = function swap(next) {\n    // Given a next state, only trigger an event if state actually changed\n    if (this.shouldUpdate(this._state, next)) {\n      this._state = next;\n      this.pump();\n    }\n  };\n\n  Microcosm.prototype.set = function set(key, value) {\n    // How a particular key should be re-assigned. This function can\n    // be overidden if the assignment method for the data structure\n    // returned by `getInitialState` is not a primitive\n    this.swap(assign(this._state, (function () {\n      var _assign = {};\n      _assign[key] = value;\n      return _assign;\n    })()));\n  };\n\n  Microcosm.prototype.merge = function merge(obj) {\n    // How state should be re-assigned. This function is useful to\n    // override with the particular method of assignment for the data\n    // structure returned from `getInitialState`\n    this.swap(assign(this._state, obj));\n  };\n\n  Microcosm.prototype.prepare = function prepare(fn) {\n    var _send;\n\n    for (var _len = arguments.length, buffer = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {\n      buffer[_key - 1] = arguments[_key];\n    }\n\n    return (_send = this.send).bind.apply(_send, [this, fn].concat(buffer));\n  };\n\n  Microcosm.prototype.send = function send(fn) {\n    var _this = this;\n\n    for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {\n      params[_key - 1] = arguments[_key];\n    }\n\n    var request = fn.apply(this, params);\n\n    // Actions some times return promises. When this happens, wait for\n    // them to resolve before moving on\n    if (request instanceof Promise) {\n      return request.then(function (body) {\n        return _this.dispatch(fn, body);\n      });\n    }\n\n    return this.dispatch(fn, request);\n  };\n\n  Microcosm.prototype.dispatch = function dispatch(action, body) {\n    var _this = this;\n\n    // First get all stores that can repond to this action\n    var answerable = this._stores.filter(function (store) {\n      return action in store;\n    });\n\n    // Next build the change set\n    var changes = mapBy(answerable, function (store) {\n      return store[action](_this.get(store), body);\n    });\n\n    // Produce the next state by merging changes into the current state\n    this.merge(changes);\n\n    // Send back the body to the original signaler\n    return body;\n  };\n\n  Microcosm.prototype.addStore = function addStore(store) {\n    // Make sure life cycle methods are included\n    var safe = assign(Store, store);\n\n    // Don't reassign stores that are already included. Fail hard.\n    assert(!this.has(safe), \"Tried to add \\\"\" + store + \"\\\" but it is not unique\");\n\n    // Add the validated stores to the list of known entities\n    this._stores = this._stores.concat(safe);\n\n    // Once verified, setup initial state. This is done last so that\n    // any callbacks that need to reduce over the current state have\n    // the latest list of stores\n    this.set(safe, safe.getInitialState());\n  };\n\n  Microcosm.prototype.serialize = function serialize() {\n    var _this = this;\n\n    return mapBy(this._stores, function (store) {\n      return store.serialize(_this.get(store));\n    });\n  };\n\n  Microcosm.prototype.deserialize = function deserialize() {\n    var data = arguments[0] === undefined ? {} : arguments[0];\n\n    return mapBy(this._stores, function (store) {\n      return store.deserialize(data[store]);\n    });\n  };\n\n  Microcosm.prototype.toJSON = function toJSON() {\n    return this.serialize();\n  };\n\n  return Microcosm;\n})(Heartbeat);\n\nmodule.exports = Microcosm;"
+        },
+        {
+          "id": 3,
+          "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Store.js",
+          "name": "./src/Store.js",
+          "size": 432,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "profile": {
+            "factory": 6,
+            "building": 29
+          },
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 2,
+              "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+              "module": "./src/Microcosm.js",
+              "moduleName": "./src/Microcosm.js",
+              "type": "cjs require",
+              "userRequest": "./Store",
+              "loc": "17:28-46"
+            }
+          ],
+          "source": "\"use strict\";\n\nmodule.exports = {\n\n  getInitialState: function getInitialState() {\n    return undefined;\n  },\n\n  serialize: function serialize(state) {\n    return state;\n  },\n\n  deserialize: function deserialize() {\n    var state = arguments[0] === undefined ? this.getInitialState() : arguments[0];\n\n    return state;\n  },\n\n  toString: function toString() {\n    throw new Error(\"Stores must implement a toString() method\");\n  }\n\n};"
+        },
+        {
+          "id": 4,
+          "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/assert.js",
+          "name": "./src/assert.js",
+          "size": 264,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "profile": {
+            "factory": 6,
+            "building": 36
+          },
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 2,
+              "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+              "module": "./src/Microcosm.js",
+              "moduleName": "./src/Microcosm.js",
+              "type": "cjs require",
+              "userRequest": "./assert",
+              "loc": "19:29-48"
+            }
+          ],
+          "source": "/**\n * assert\n * If not true, throw an error\n */\n\n\"use strict\";\n\nmodule.exports = assert;\n\nfunction assert(bool, message) {\n  if (!bool) {\n    var error = new Error(message);\n\n    // Remove `assert` from the stack\n    error.framesToPop = 1;\n\n    throw error;\n  }\n}"
+        },
+        {
+          "id": 5,
+          "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/assign.js",
+          "name": "./src/assign.js",
+          "size": 425,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "profile": {
+            "factory": 7,
+            "building": 45
+          },
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 2,
+              "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+              "module": "./src/Microcosm.js",
+              "moduleName": "./src/Microcosm.js",
+              "type": "cjs require",
+              "userRequest": "./assign",
+              "loc": "21:29-48"
+            }
+          ],
+          "source": "\"use strict\";\n\nvar _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };\n\n/**\n * assign\n * Non-destructively assign one object into another\n */\n\nmodule.exports = assign;\n\nfunction assign(a, b) {\n  return _extends({}, a, b);\n}"
+        },
+        {
+          "id": 6,
+          "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/mapBy.js",
+          "name": "./src/mapBy.js",
+          "size": 230,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "profile": {
+            "factory": 8,
+            "building": 50
+          },
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 2,
+              "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+              "module": "./src/Microcosm.js",
+              "moduleName": "./src/Microcosm.js",
+              "type": "cjs require",
+              "userRequest": "./mapBy",
+              "loc": "25:28-46"
+            }
+          ],
+          "source": "/*\n * MapBy\n * Take a list and reduce it into an object\n */\n\n\"use strict\";\n\nmodule.exports = mapBy;\n\nfunction mapBy(array, fn) {\n  return array.reduce(function (memo, next) {\n    memo[next] = fn(next);\n    return memo;\n  }, {});\n}"
+        },
+        {
+          "id": 7,
+          "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/tag.js",
+          "name": "./src/tag.js",
+          "size": 633,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+          "profile": {
+            "factory": 5,
+            "building": 36
+          },
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 0,
+              "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+              "module": "./src/index.js",
+              "moduleName": "./src/index.js",
+              "type": "cjs require",
+              "userRequest": "./tag",
+              "loc": "10:10-26"
+            }
+          ],
+          "source": "/**\n * Tag\n * Given an object of methods, modify each method to\n * return a unique id when stringifyed\n */\n\n\"use strict\";\n\nvar uid = 0;\n\nvar isFunction = function (value) {\n  return typeof value === \"function\";\n};\n\nvar decorate = function (fn, key) {\n  var copy = fn.bind(null);\n  var id = \"_\" + key + \"_\" + uid++;\n\n  copy.toString = function () {\n    return id;\n  };\n\n  return copy;\n};\n\nmodule.exports = function (actions) {\n  var keys = Object.keys(actions);\n\n  return keys.reduce(function (memo, key) {\n    var value = actions[key];\n\n    memo[key] = isFunction(value) ? decorate(value, key) : value;\n\n    return memo;\n  }, {});\n};"
+        },
+        {
+          "id": 8,
+          "identifier": "/Users/nate/Development/web/microcosm/node_modules/is-equal-shallow/index.js",
+          "name": "./~/is-equal-shallow/index.js",
+          "size": 489,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "profile": {
+            "factory": 9,
+            "building": 51
+          },
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 2,
+              "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+              "module": "./src/Microcosm.js",
+              "moduleName": "./src/Microcosm.js",
+              "type": "cjs require",
+              "userRequest": "is-equal-shallow",
+              "loc": "23:30-57"
+            }
+          ],
+          "source": "/*!\n * is-equal-shallow <https://github.com/jonschlinkert/is-equal-shallow>\n *\n * Copyright (c) 2015, Jon Schlinkert.\n * Licensed under the MIT License.\n */\n\n'use strict';\n\nvar isPrimitive = require('is-primitive');\n\nmodule.exports = function isEqual(a, b) {\n  if (!a && !b) { return true; }\n  if (!a && b || a && !b) { return false; }\n\n  for (var key in b) {\n    if (!isPrimitive(b[key]) || !a.hasOwnProperty(key) || (a[key] !== b[key])) {\n      return false;\n    }\n  }\n  return true;\n};\n"
+        },
+        {
+          "id": 9,
+          "identifier": "/Users/nate/Development/web/microcosm/node_modules/is-equal-shallow/node_modules/is-primitive/index.js",
+          "name": "./~/is-equal-shallow/~/is-primitive/index.js",
+          "size": 434,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "/Users/nate/Development/web/microcosm/node_modules/is-equal-shallow/index.js",
+          "profile": {
+            "factory": 4,
+            "building": 2
+          },
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 8,
+              "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/is-equal-shallow/index.js",
+              "module": "./~/is-equal-shallow/index.js",
+              "moduleName": "./~/is-equal-shallow/index.js",
+              "type": "cjs require",
+              "userRequest": "is-primitive",
+              "loc": "10:18-41"
+            }
+          ],
+          "source": "/*!\n * is-primitive <https://github.com/jonschlinkert/is-primitive>\n *\n * Copyright (c) 2014 Jon Schlinkert, contributors.\n * Licensed under the MIT License\n */\n\n'use strict';\n\n// see http://jsperf.com/testing-value-is-primitive/5\nmodule.exports = function isPrimitive(value) {\n  switch (typeof value) {\n    case \"string\":\n    case \"number\":\n    case \"boolean\":\n    case \"symbol\":\n      return true;\n    }\n\n  return value == null;\n};\n"
+        }
+      ],
+      "filteredModules": 0,
+      "origins": [
+        {
+          "moduleId": 0,
+          "module": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+          "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+          "moduleName": "./src/index.js",
+          "loc": "",
+          "name": "Microcosm",
+          "reasons": []
+        }
+      ]
+    }
+  ],
+  "modules": [
+    {
+      "id": 0,
+      "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+      "name": "./src/index.js",
+      "size": 283,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": null,
+      "profile": {
+        "factory": 18,
+        "building": 429
+      },
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [],
+      "source": "\"use strict\";\n\nexports.__esModule = true;\n/**\n * Microcosm\n * An isomorphic flux implimentation. The strength of Microcosm\n * is that each application is its own fully encapsulated world\n */\n\nvar tag = require(\"./tag\");\nexports.tag = tag;\nexports[\"default\"] = require(\"./Microcosm\");"
+    },
+    {
+      "id": 1,
+      "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Heartbeat.js",
+      "name": "./src/Heartbeat.js",
+      "size": 942,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+      "profile": {
+        "factory": 6,
+        "building": 18
+      },
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 2,
+          "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "module": "./src/Microcosm.js",
+          "moduleName": "./src/Microcosm.js",
+          "type": "cjs require",
+          "userRequest": "./Heartbeat",
+          "loc": "15:32-54"
+        }
+      ],
+      "source": "/**\n * Heartbeat\n * A singular event emitter. Heartbeat simply pumps blood.\n */\n\n\"use strict\";\n\nfunction Heartbeat() {\n  var _callbacks = [];\n\n  /**\n   * Given a CALLBACK function, remove it from the Set of callbacks.\n   * Throws an error if the callback is not included in the Set.\n   */\n  this.ignore = function (callback) {\n    _callbacks = _callbacks.filter(function (i) {\n      return i !== callback;\n    });\n  },\n\n  /**\n   * Given a CALLBACK function, add it to the Set of all callbacks.\n   */\n  this.listen = function (callback) {\n    _callbacks = _callbacks.concat(callback);\n  };\n\n  /**\n   * Trigger every callback in the Set\n   */\n  this.pump = function () {\n    /**\n     * Important: do not cache the length of _callbacks\n     * in the event a callback causes later subscriptions\n     * to disappear\n     */\n    for (var i = 0; i < _callbacks.length; i++) {\n      _callbacks[i].call(this);\n    }\n  };\n}\n\nmodule.exports = Heartbeat;"
+    },
+    {
+      "id": 2,
+      "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+      "name": "./src/Microcosm.js",
+      "size": 6582,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+      "profile": {
+        "factory": 6,
+        "building": 185
+      },
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+          "module": "./src/index.js",
+          "moduleName": "./src/index.js",
+          "type": "cjs require",
+          "userRequest": "./Microcosm",
+          "loc": "12:21-43"
+        }
+      ],
+      "source": "\"use strict\";\n\nvar _interopRequire = function (obj) { return obj && obj.__esModule ? obj[\"default\"] : obj; };\n\nvar _inherits = function (subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };\n\nvar _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } };\n\n/**\n * Microcosm\n * An isomorphic flux implimentation. The strength of Microcosm\n * is that each application is its own fully encapsulated world\n */\n\nvar Heartbeat = _interopRequire(require(\"./Heartbeat\"));\n\nvar Store = _interopRequire(require(\"./Store\"));\n\nvar assert = _interopRequire(require(\"./assert\"));\n\nvar assign = _interopRequire(require(\"./assign\"));\n\nvar isEqual = _interopRequire(require(\"is-equal-shallow\"));\n\nvar mapBy = _interopRequire(require(\"./mapBy\"));\n\nvar Microcosm = (function (_Heartbeat) {\n  function Microcosm() {\n    _classCallCheck(this, Microcosm);\n\n    _Heartbeat.call(this);\n\n    this._stores = [];\n    this._state = this.getInitialState();\n  }\n\n  _inherits(Microcosm, _Heartbeat);\n\n  Microcosm.prototype.getInitialState = function getInitialState() {\n    // Assigns the default state. Most of the time this will not need\n    // to be overridden, however if using something like ImmutableJS,\n    // you could return a different data structure here.\n    return {};\n  };\n\n  Microcosm.prototype.shouldUpdate = function shouldUpdate(prev, next) {\n    // Whenever an action is dispatched, the resulting state\n    // modification will be diffed to identify if a change event\n    // should fire.\n    //\n    // The default strategy for determining that state has changed\n    // is a simple shallow equals check\n    return isEqual(prev, next) == false;\n  };\n\n  Microcosm.prototype.seed = function seed(data) {\n    // Tells the microcosm how it should handle data injected from\n    // sources.\n    //\n    // By default, it will clean the data with `deserialize` and\n    // then override the existing data set with the new values\n    this.swap(this.deserialize(data));\n  };\n\n  Microcosm.prototype.has = function has() {\n    var _this = this;\n\n    for (var _len = arguments.length, stores = Array(_len), _key = 0; _key < _len; _key++) {\n      stores[_key] = arguments[_key];\n    }\n\n    return stores.some(function (a) {\n      return _this._stores.some(function (b) {\n        return \"\" + a === \"\" + b;\n      });\n    });\n  };\n\n  Microcosm.prototype.get = function get(key) {\n    // How state should be retrieved. This function is useful to\n    // override with the particular method of retrieval for the data\n    // structure returned from `getInitialState`\n    return this._state[key];\n  };\n\n  Microcosm.prototype.swap = function swap(next) {\n    // Given a next state, only trigger an event if state actually changed\n    if (this.shouldUpdate(this._state, next)) {\n      this._state = next;\n      this.pump();\n    }\n  };\n\n  Microcosm.prototype.set = function set(key, value) {\n    // How a particular key should be re-assigned. This function can\n    // be overidden if the assignment method for the data structure\n    // returned by `getInitialState` is not a primitive\n    this.swap(assign(this._state, (function () {\n      var _assign = {};\n      _assign[key] = value;\n      return _assign;\n    })()));\n  };\n\n  Microcosm.prototype.merge = function merge(obj) {\n    // How state should be re-assigned. This function is useful to\n    // override with the particular method of assignment for the data\n    // structure returned from `getInitialState`\n    this.swap(assign(this._state, obj));\n  };\n\n  Microcosm.prototype.prepare = function prepare(fn) {\n    var _send;\n\n    for (var _len = arguments.length, buffer = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {\n      buffer[_key - 1] = arguments[_key];\n    }\n\n    return (_send = this.send).bind.apply(_send, [this, fn].concat(buffer));\n  };\n\n  Microcosm.prototype.send = function send(fn) {\n    var _this = this;\n\n    for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {\n      params[_key - 1] = arguments[_key];\n    }\n\n    var request = fn.apply(this, params);\n\n    // Actions some times return promises. When this happens, wait for\n    // them to resolve before moving on\n    if (request instanceof Promise) {\n      return request.then(function (body) {\n        return _this.dispatch(fn, body);\n      });\n    }\n\n    return this.dispatch(fn, request);\n  };\n\n  Microcosm.prototype.dispatch = function dispatch(action, body) {\n    var _this = this;\n\n    // First get all stores that can repond to this action\n    var answerable = this._stores.filter(function (store) {\n      return action in store;\n    });\n\n    // Next build the change set\n    var changes = mapBy(answerable, function (store) {\n      return store[action](_this.get(store), body);\n    });\n\n    // Produce the next state by merging changes into the current state\n    this.merge(changes);\n\n    // Send back the body to the original signaler\n    return body;\n  };\n\n  Microcosm.prototype.addStore = function addStore(store) {\n    // Make sure life cycle methods are included\n    var safe = assign(Store, store);\n\n    // Don't reassign stores that are already included. Fail hard.\n    assert(!this.has(safe), \"Tried to add \\\"\" + store + \"\\\" but it is not unique\");\n\n    // Add the validated stores to the list of known entities\n    this._stores = this._stores.concat(safe);\n\n    // Once verified, setup initial state. This is done last so that\n    // any callbacks that need to reduce over the current state have\n    // the latest list of stores\n    this.set(safe, safe.getInitialState());\n  };\n\n  Microcosm.prototype.serialize = function serialize() {\n    var _this = this;\n\n    return mapBy(this._stores, function (store) {\n      return store.serialize(_this.get(store));\n    });\n  };\n\n  Microcosm.prototype.deserialize = function deserialize() {\n    var data = arguments[0] === undefined ? {} : arguments[0];\n\n    return mapBy(this._stores, function (store) {\n      return store.deserialize(data[store]);\n    });\n  };\n\n  Microcosm.prototype.toJSON = function toJSON() {\n    return this.serialize();\n  };\n\n  return Microcosm;\n})(Heartbeat);\n\nmodule.exports = Microcosm;"
+    },
+    {
+      "id": 3,
+      "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Store.js",
+      "name": "./src/Store.js",
+      "size": 432,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+      "profile": {
+        "factory": 6,
+        "building": 29
+      },
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 2,
+          "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "module": "./src/Microcosm.js",
+          "moduleName": "./src/Microcosm.js",
+          "type": "cjs require",
+          "userRequest": "./Store",
+          "loc": "17:28-46"
+        }
+      ],
+      "source": "\"use strict\";\n\nmodule.exports = {\n\n  getInitialState: function getInitialState() {\n    return undefined;\n  },\n\n  serialize: function serialize(state) {\n    return state;\n  },\n\n  deserialize: function deserialize() {\n    var state = arguments[0] === undefined ? this.getInitialState() : arguments[0];\n\n    return state;\n  },\n\n  toString: function toString() {\n    throw new Error(\"Stores must implement a toString() method\");\n  }\n\n};"
+    },
+    {
+      "id": 4,
+      "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/assert.js",
+      "name": "./src/assert.js",
+      "size": 264,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+      "profile": {
+        "factory": 6,
+        "building": 36
+      },
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 2,
+          "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "module": "./src/Microcosm.js",
+          "moduleName": "./src/Microcosm.js",
+          "type": "cjs require",
+          "userRequest": "./assert",
+          "loc": "19:29-48"
+        }
+      ],
+      "source": "/**\n * assert\n * If not true, throw an error\n */\n\n\"use strict\";\n\nmodule.exports = assert;\n\nfunction assert(bool, message) {\n  if (!bool) {\n    var error = new Error(message);\n\n    // Remove `assert` from the stack\n    error.framesToPop = 1;\n\n    throw error;\n  }\n}"
+    },
+    {
+      "id": 5,
+      "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/assign.js",
+      "name": "./src/assign.js",
+      "size": 425,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+      "profile": {
+        "factory": 7,
+        "building": 45
+      },
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 2,
+          "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "module": "./src/Microcosm.js",
+          "moduleName": "./src/Microcosm.js",
+          "type": "cjs require",
+          "userRequest": "./assign",
+          "loc": "21:29-48"
+        }
+      ],
+      "source": "\"use strict\";\n\nvar _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };\n\n/**\n * assign\n * Non-destructively assign one object into another\n */\n\nmodule.exports = assign;\n\nfunction assign(a, b) {\n  return _extends({}, a, b);\n}"
+    },
+    {
+      "id": 6,
+      "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/mapBy.js",
+      "name": "./src/mapBy.js",
+      "size": 230,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+      "profile": {
+        "factory": 8,
+        "building": 50
+      },
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 2,
+          "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "module": "./src/Microcosm.js",
+          "moduleName": "./src/Microcosm.js",
+          "type": "cjs require",
+          "userRequest": "./mapBy",
+          "loc": "25:28-46"
+        }
+      ],
+      "source": "/*\n * MapBy\n * Take a list and reduce it into an object\n */\n\n\"use strict\";\n\nmodule.exports = mapBy;\n\nfunction mapBy(array, fn) {\n  return array.reduce(function (memo, next) {\n    memo[next] = fn(next);\n    return memo;\n  }, {});\n}"
+    },
+    {
+      "id": 7,
+      "identifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/tag.js",
+      "name": "./src/tag.js",
+      "size": 633,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+      "profile": {
+        "factory": 5,
+        "building": 36
+      },
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/index.js",
+          "module": "./src/index.js",
+          "moduleName": "./src/index.js",
+          "type": "cjs require",
+          "userRequest": "./tag",
+          "loc": "10:10-26"
+        }
+      ],
+      "source": "/**\n * Tag\n * Given an object of methods, modify each method to\n * return a unique id when stringifyed\n */\n\n\"use strict\";\n\nvar uid = 0;\n\nvar isFunction = function (value) {\n  return typeof value === \"function\";\n};\n\nvar decorate = function (fn, key) {\n  var copy = fn.bind(null);\n  var id = \"_\" + key + \"_\" + uid++;\n\n  copy.toString = function () {\n    return id;\n  };\n\n  return copy;\n};\n\nmodule.exports = function (actions) {\n  var keys = Object.keys(actions);\n\n  return keys.reduce(function (memo, key) {\n    var value = actions[key];\n\n    memo[key] = isFunction(value) ? decorate(value, key) : value;\n\n    return memo;\n  }, {});\n};"
+    },
+    {
+      "id": 8,
+      "identifier": "/Users/nate/Development/web/microcosm/node_modules/is-equal-shallow/index.js",
+      "name": "./~/is-equal-shallow/index.js",
+      "size": 489,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+      "profile": {
+        "factory": 9,
+        "building": 51
+      },
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 2,
+          "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/babel-loader/index.js?experimental&loose!/Users/nate/Development/web/microcosm/src/Microcosm.js",
+          "module": "./src/Microcosm.js",
+          "moduleName": "./src/Microcosm.js",
+          "type": "cjs require",
+          "userRequest": "is-equal-shallow",
+          "loc": "23:30-57"
+        }
+      ],
+      "source": "/*!\n * is-equal-shallow <https://github.com/jonschlinkert/is-equal-shallow>\n *\n * Copyright (c) 2015, Jon Schlinkert.\n * Licensed under the MIT License.\n */\n\n'use strict';\n\nvar isPrimitive = require('is-primitive');\n\nmodule.exports = function isEqual(a, b) {\n  if (!a && !b) { return true; }\n  if (!a && b || a && !b) { return false; }\n\n  for (var key in b) {\n    if (!isPrimitive(b[key]) || !a.hasOwnProperty(key) || (a[key] !== b[key])) {\n      return false;\n    }\n  }\n  return true;\n};\n"
+    },
+    {
+      "id": 9,
+      "identifier": "/Users/nate/Development/web/microcosm/node_modules/is-equal-shallow/node_modules/is-primitive/index.js",
+      "name": "./~/is-equal-shallow/~/is-primitive/index.js",
+      "size": 434,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "/Users/nate/Development/web/microcosm/node_modules/is-equal-shallow/index.js",
+      "profile": {
+        "factory": 4,
+        "building": 2
+      },
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 8,
+          "moduleIdentifier": "/Users/nate/Development/web/microcosm/node_modules/is-equal-shallow/index.js",
+          "module": "./~/is-equal-shallow/index.js",
+          "moduleName": "./~/is-equal-shallow/index.js",
+          "type": "cjs require",
+          "userRequest": "is-primitive",
+          "loc": "10:18-41"
+        }
+      ],
+      "source": "/*!\n * is-primitive <https://github.com/jonschlinkert/is-primitive>\n *\n * Copyright (c) 2014 Jon Schlinkert, contributors.\n * Licensed under the MIT License\n */\n\n'use strict';\n\n// see http://jsperf.com/testing-value-is-primitive/5\nmodule.exports = function isPrimitive(value) {\n  switch (typeof value) {\n    case \"string\":\n    case \"number\":\n    case \"boolean\":\n    case \"symbol\":\n      return true;\n    }\n\n  return value == null;\n};\n"
+    }
+  ],
+  "filteredModules": 0,
+  "children": []
+}

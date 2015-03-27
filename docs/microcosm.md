@@ -35,23 +35,17 @@ class MyApp extends Microcosm {
     // The default strategy for determining that state has changed
     // is a simple shallow equals check
   }
-  seed(data) {
-    // Tells the microcosm how it should handle data injected from
-    // sources.
-    //
-    // By default, it will clean the data with `deserialize` and
-    // then override the existing data set with the new values
-    //
-    // seed will trigger a change event
+  has(store) {
+    // Does this instance of microcosm contain the given store?
+    // Important: Uses the unique identifier, not the object reference
   }
   swap(nextState) {
-    // Given a new state, if equality fails using `shouldUpdate`,
-    // assign the new state and emit an event
+    // Swap is basically a reset where the next state is the result of
+    // folding one object over the next
   }
-  merge(object) {
-    // How state should be re-assigned. This function is useful to
-    // override with the particular method of assignment for merging
-    // data for whatever is returned from from `getInitialState`
+  reset(next) {
+    // Given a next state, only trigger an event if state actually
+    // changed
   }
   get(key) {
     // How state should be retrieved. This function is useful to
@@ -93,6 +87,15 @@ class MyApp extends Microcosm {
     // Defines how to clean data before it is injected into the
     // This is used by seed. Like `serialize`, it reduces over all
     // stores, returning the result of `store.deserialize(data)`
+  }
+  seed(data) {
+    // Tells the microcosm how it should handle data injected from
+    // sources.
+    //
+    // By default, it will clean the data with `deserialize` and
+    // then override the existing data set with the new values
+    //
+    // seed will trigger a change event
   }
   toJSON() {
     // A default implementation of serialization. Just returns `this.serialize()`

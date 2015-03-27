@@ -4,13 +4,17 @@
  * return a unique id when stringifyed
  */
 
+import mapBy from './mapBy'
+
 let uid = 0
 
-let isFunction = value => typeof value === 'function'
+function isFunction (value) {
+  return typeof value === 'function'
+}
 
-let decorate = (fn, key) => {
-  let copy = fn.bind(null)
-  let id   = `_${ key }_${ uid++ }`
+function decorate (fn, key) {
+  const copy = fn.bind(null)
+  const id   = `_${ key }_${ uid++ }`
 
   copy.toString = () => id
 
@@ -18,13 +22,8 @@ let decorate = (fn, key) => {
 }
 
 export default actions => {
-  let keys = Object.keys(actions)
-
-  return keys.reduce((memo, key) => {
-    let value = actions[key]
-
-    memo[key] = isFunction(value) ? decorate(value, key) : value
-
-    return memo
-  }, {})
+  return mapBy(Object.keys(actions), function(key) {
+    const value = actions[key]
+    return isFunction(value) ? decorate(value, key) : value
+  })
 }

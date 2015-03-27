@@ -1,5 +1,24 @@
 # Changelog
 
+### 3.0.0
+
+- Changed data update pattern to more closely match
+  [Om](https://github.com/omcljs/om/wiki/Basic-Tutorial). This means
+  that `Microcosm::merge` has been replaced with
+  `Microcosm::swap`. Additionally, `Microcosm::reset` has been added
+  to completely obliterate old state.
+- `Microcosm::addStore` now only accepts one store at a time. It was
+  not being utilized, gives poorer error handling, and makes let less
+  clear the order in which Stores will process data.
+- The internal class `Heartbeat` was replaced with `pulse`. Pulse is a
+  function that can act as a factory or decorator. When given an
+  argument, it extends an object with emitter functionality, otherwise
+  it returns a new object that implements the same API. This
+  eliminates the possibility that the private `_callbacks` member of
+  `Heartbeat` was overridden. It also reduces the use of classical
+  inheritance, which yields some minor file size benefits by
+  polyfilling less of the `class` API.
+
 ### 2.0.1
 
 - Fix issue where empty arguments would break deserialize

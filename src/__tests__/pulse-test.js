@@ -1,9 +1,9 @@
-import Heartbeat from '../Heartbeat'
+import pulse from '../pulse'
 
-describe ('Heartbeat', function() {
+describe ('Pulse', function() {
   let heart
 
-  beforeEach(() => heart = new Heartbeat())
+  beforeEach(() => heart = pulse())
 
   it ('can listen to callbacks', function(done) {
     heart.listen(done)

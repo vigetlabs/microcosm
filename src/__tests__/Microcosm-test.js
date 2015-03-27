@@ -57,13 +57,13 @@ describe('Microcosm', function() {
     m.get(DummyStore).should.equal(seed)
   })
 
-  it ('can merge in new state', function() {
+  it ('can swap in new state', function() {
     let seed = { fiz: 'buz' }
     let m    = new Microcosm({ dummy: seed })
 
     m.addStore(DummyStore)
 
-    m.merge({ [DummyStore] : { fiz: 'not-buz'} })
+    m.swap({ [DummyStore] : { fiz: 'not-buz'} })
 
     m.get(DummyStore).fiz.should.equal('not-buz')
   })

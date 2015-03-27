@@ -1,6 +1,6 @@
 {
   "name": "microcosm",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "An experimental flux implimentation",
   "main": "dist/Microcosm.js",
   "scripts": {
