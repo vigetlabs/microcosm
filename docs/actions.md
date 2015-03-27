@@ -2,7 +2,7 @@
 
 1. [Overview](#overview)
 2. [Calling Actions](#calling-actions)
-3. [Currying](#currying)
+3. [Partial Application](#partial-application)
 
 ## Overview
 
@@ -40,13 +40,13 @@ let app = new Microcosm()
 app.send(MyActions.doSomething)
 ```
 
-## Currying
+## Partial Application
 
-`app.send` curries actions. This makes it easier to use actions as
+`app.prepare` partially applies an action. This makes it easier to use actions as
 callbacks:
 
 ```javascript
-<button onClick={ app.send(Action) }>Do something</button>
+<button onClick={ app.prepare(Action) }>Do something</button>
 ```
 
 ## Promises
