@@ -4,30 +4,37 @@ import Microcosm  from '../Microcosm'
 
 describe('Microcosm', function() {
 
-  it ('add stores', function() {
+  it ('can add stores', function() {
     let m = new Microcosm()
 
     m.addStore(DummyStore)
 
-    m.get(DummyStore).should.equal('test')
+    m.has(DummyStore).should.equal(true)
   })
 
-  it ('gets default state for a store if it has not been assigned', function() {
+  it ('gets default state for a store if it has not been assigned', function(done) {
     let m = new Microcosm()
 
     m.addStore(DummyStore)
 
-    m.get(DummyStore).should.equal(DummyStore.getInitialState())
+    m.start(function() {
+      m.get(DummyStore).should.equal(DummyStore.getInitialState())
+      done()
+    })
   })
 
-  it ('can serialize to JSON', function() {
+  it ('can serialize to JSON', function(done) {
     let m = new Microcosm()
 
     m.addStore(DummyStore)
-    m.toJSON().should.have.property('dummy', 'test')
+
+    m.start(function() {
+      m.toJSON().should.have.property('dummy', 'test')
+      done()
+    })
   })
 
-  it ('runs through serialize methods on stores', function() {
+  it ('runs through serialize methods on stores', function(done) {
     let m = new Microcosm()
 
     m.addStore({
@@ -43,7 +50,10 @@ describe('Microcosm', function() {
       }
     })
 
-    m.toJSON().should.have.property('serialize-test', 'this is a test')
+    m.start(function() {
+      m.toJSON().should.have.property('serialize-test', 'this is a test')
+      done()
+    })
   })
 
   it ('passes seed data to stores', function() {

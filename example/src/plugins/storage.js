@@ -21,9 +21,11 @@ export default {
     }
   },
 
-  install(app) {
+  register(app, options, next) {
     app.listen(() => this.save(app))
     app.seed(this.fetch())
+
+    next()
   }
 
 }

@@ -14,7 +14,7 @@ let routes = [
 
 export default {
 
-  install(app) {
+  register(app, options, next) {
     let action = app.prepare(Route.set)
 
     // Create a callback for each route that pushes the event
@@ -28,6 +28,8 @@ export default {
     })
 
     page.start()
+
+    next()
   }
 
 }

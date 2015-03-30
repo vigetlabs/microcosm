@@ -3,21 +3,23 @@ import 'style/app'
 import App     from 'App'
 import Layout  from 'components/Layout'
 import React   from 'react'
-import Router  from 'services/router'
-import Storage from 'services/storage'
+import Router  from 'plugins/router'
+import Storage from 'plugins/storage'
 
 // Each app is a unique instance.
 // It will get its own state, useful for having multiple apps on
 // the same page or for independence between requests
 let app = new App()
 
-// Services are basically just listeners
-// that operate on an app instance
+// Plugins run before an app starts. You can use them to bootstrap
+// behavior
 
-// On change, this will save to local stoage
-Storage.install(app)
+// Save to local stoage
+app.addPlugin(Storage)
 
 // Pushes route actions as they occur
-Router.install(app)
+app.addPlugin(Router)
 
-React.render(<Layout flux={ app } />, document.getElementById('app'))
+app.start(function() {
+  React.render(<Layout flux={ app } />, document.getElementById('app'))
+})

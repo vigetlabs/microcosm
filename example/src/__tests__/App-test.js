@@ -9,8 +9,10 @@ import Route        from '../stores/Route'
 describe('App', function() {
   var app;
 
-  beforeEach(function() {
+  beforeEach(function(done) {
     app = new App()
+
+    app.start(done)
   })
 
   describe('when sent a ListActions.add message', function() {

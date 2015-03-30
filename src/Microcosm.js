@@ -7,17 +7,20 @@
 import Store   from './Store'
 import assert  from './assert'
 import assign  from './assign'
+import install from './install'
 import isEqual from './shallowEquals'
 import mapBy   from './mapBy'
 import pulse   from './pulse'
 
 export default class Microcosm {
 
-  constructor(options) {
+  constructor(options={}) {
     pulse(this)
 
-    this._state  = this.getInitialState(options)
-    this._stores = []
+    this._options = options
+    this._plugins = []
+    this._state   = this.getInitialState(options)
+    this._stores  = []
   }
 
   getInitialState() {
@@ -102,6 +105,11 @@ export default class Microcosm {
     return body
   }
 
+  addPlugin(plugin) {
+    assert('register' in plugin, 'Plugins must have a register method.')
+    this._plugins.push(plugin)
+  }
+
   addStore(store) {
     // Make sure life cycle methods are included
     const safe = assign(Store, store)
@@ -111,11 +119,18 @@ export default class Microcosm {
 
     // Add the validated stores to the list of known entities
     this._stores.push(safe)
+  }
 
-    // Once verified, setup initial state. This is done last so that
-    // any callbacks that need to reduce over the current state have
-    // the latest list of stores
-    this.swap({ [safe] : safe.getInitialState() })
+  start(done) {
+    // Start by setting the initial state to the result of calling
+    // `getInitialState` on the microcosm and all of its stores
+    this._state = mapBy(this._stores,
+                        store => store.getInitialState(),
+                        this.getInitialState())
+
+    // Finally, queue plugins and then notify that installation has
+    // finished
+    install(this._plugins, this, done)
   }
 
   serialize() {
