@@ -1,12 +1,13 @@
 import Microcosm  from '../Microcosm'
 
-describe('Microcosm', function() {
+describe('Plugins', function() {
 
   it ('can add plugins', function(done) {
     let m = new Microcosm()
 
     m.addPlugin({
-      register: function(app, options, next) {
+      register(app, options, next) {
+        app.should.equal(m)
         next()
       }
     })
