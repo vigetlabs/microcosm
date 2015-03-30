@@ -1,5 +1,14 @@
 # Changelog
 
+### 3.3.0
+
+- `mapBy` internal function now accepts an initial value
+- Changed `Microcosm::dispatch` copy strategy. Instead of merging a
+  change set, it now directly modifies a clone of the previous
+  state.
+- Added `Microcosm::clone`. This method defines how state is copied
+  before dispatching an action.
+
 ### 3.2.0
 
 - Changed default shouldUpdate algorithm

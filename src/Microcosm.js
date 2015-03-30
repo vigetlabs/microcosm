@@ -80,15 +80,23 @@ export default class Microcosm {
     return this.dispatch(fn, request)
   }
 
+  clone() {
+    return Object.create(this._state)
+  }
+
   dispatch(action, body) {
+    let clone = this.clone()
+
     // First get all stores that can repond to this action
     const answerable = this._stores.filter(store => action in store)
 
     // Next build the change set
-    const changes = mapBy(answerable, store => store[action](this.get(store), body))
+    let next = mapBy(answerable,
+                     store => store[action](clone[store], body),
+                     clone)
 
     // Produce the next state by merging changes into the current state
-    this.swap(changes)
+    this.reset(next)
 
     // Send back the body to the original signaler
     return body
