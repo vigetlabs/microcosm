@@ -3,6 +3,7 @@
 1. [Overview](#overview)
 2. [API](#api)
 3. [Listening to Changes](#listening-to-changes)
+4. [Running an instance](#running-an-instance)
 
 ## Overview
 
@@ -68,13 +69,14 @@ class MyApp extends Microcosm {
     // resulting callbacks into a change set. If state changes, it
     // will trigger a change event after assigning the new state
   }
-  addStore(...stores) {
-    // For each store, folds over a default interface and then assigns
+  addStore(store) {
+    // Folds over a default interface and then assigns
     // the result of `store.getInitialState` to the associated key for
     // that store (defined by store.toString())
-    //
-    // Finally, it will concatenate the processed stores into the
-    // list of known stores.
+  }
+  addPlugin(plugin) {
+    // Verifies required api and adds available plugin. This will be
+    // called on app.start()
   }
   serialize(state) {
     // Transforms the internal state of a microcosm into a digestable
@@ -100,13 +102,13 @@ class MyApp extends Microcosm {
   toJSON() {
     // A default implementation of serialization. Just returns `this.serialize()`
   }
+  start(callback) {
+    // Setup initial state, run plugins, then execute callback
+  }
 }
 ```
 
-## Listening to Changes
-
-All microcosms inherit from `src/Heartbeat.js`. Heartbeat is an event
-emitter with a single event:
+## Listening to changes
 
 ```javascript
 let app = new Microcosm()
@@ -120,3 +122,15 @@ app.ignore(callback)
 // Force an emission
 app.pump()
 ```
+
+## Running an instance
+
+`Microcosm::start` begins an application. This will setup initial
+state, run plugins, then execute a callback:
+
+```
+let app = new Microcosm()
+
+app.start(function() {
+  // Now do something
+})

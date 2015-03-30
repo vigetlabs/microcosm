@@ -1,5 +1,13 @@
 # Changelog
 
+### 4.0.0
+
+- Added concept of plugins. Plugins provide a way to layer on
+  additional functionality. This has specifically been added so that
+  environment specific behavior may be added to an app.
+- Added `Microcosm::start`. Calling `start()` will bootstrap initial
+  state, run all plugins, then execute a callback.
+
 ### 3.3.0
 
 - `mapBy` internal function now accepts an initial value

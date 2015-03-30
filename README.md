@@ -290,6 +290,18 @@ app.ignore(callback)
 app.pump()
 ```
 
+## Booting things up
+
+`Microcosm::start` begins an application. This will setup initial
+state, run plugins, then execute a callback:
+
+```
+let app = new Microcosm()
+
+app.start(function() {
+  // Now do something
+})
+
 ## Additional Notes
 
 The philosophy behind change management is described very well in the
