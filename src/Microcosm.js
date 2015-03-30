@@ -91,9 +91,9 @@ export default class Microcosm {
     const answerable = this._stores.filter(store => action in store)
 
     // Next build the change set
-    let next = mapBy(answerable,
-                     store => store[action](clone[store], body),
-                     clone)
+    const next = mapBy(answerable,
+                       store => store[action](clone[store], body),
+                       clone)
 
     // Produce the next state by merging changes into the current state
     this.reset(next)
