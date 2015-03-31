@@ -5,6 +5,8 @@
 - Removed fallback from `Microcosm::pull` which returns all state
 - Added an `Upstream` and `Downstream` mixin, however it is
   experimental. More details will come as the feature develops.
+- `Microcosm::send` will throw an error if given an undefined
+  action parameter
 
 ### 5.0.0
 
