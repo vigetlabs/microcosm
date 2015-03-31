@@ -2,6 +2,7 @@
 
 ## Microcosm
 
+```
 Life Cycle
 +--------------+
 start - Resets initial state, installs all plugins, and then executes a callback
@@ -28,7 +29,6 @@ send     - Given a set of parameters, execute an action and forward that result 
 
 Events
 +--------------+
-
 listen - Add a callback listener
 ignore - Remove a callback listener
 emit   - Trigger an event
@@ -37,9 +37,11 @@ Install
 +--------------+
 addPlugin - Append an entry into the list of known plugins
 addStore  - Add an entry to the map of known stores
+```
 
 ## Store
 
+```
 Identity
 +--------------+
 toString - Must return a unique string identifying which key this store manages in global state
@@ -52,9 +54,12 @@ Serialization
 +--------------+
 deserialize - Returns a cleaned object given external data for the managed key
 serialize   - Returns a serialized object for the managed key
+```
 
 ## Plugin
 
+```
 Life Cycle
 +--------------+
 register - setup behavior to execute for a plugin when `Microcosm::start` is executed
+```
