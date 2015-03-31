@@ -44,6 +44,8 @@ export default class Microcosm {
   }
 
   send(fn, ...params) {
+    assert(fn, `send method expected an action, instead got ${ fn }`)
+
     const request = fn.apply(this, params)
 
     // Actions some times return promises. When this happens, wait for

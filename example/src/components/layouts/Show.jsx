@@ -8,15 +8,16 @@ import React       from 'react'
 import TaskList    from 'fragments/TaskList'
 import contrast    from 'contrast'
 import page        from 'page'
+import Upstream    from 'Upstream'
 
 let find = (array, pred) => array.filter(pred)[0]
 
 let Show = React.createClass({
+  mixins: [ Upstream ],
 
   render() {
-    let list   = find(this.props.lists, i => i.id == this.props.params.id)
-    let items  = this.props.items.filter(i => i.list == list.id)
-
+    let list  = find(this.props.lists, i => i.id == this.props.params.id)
+    let items = this.props.items.filter(i => i.list == list.id)
     let color = contrast(list.color)
 
     return (
@@ -33,25 +34,14 @@ let Show = React.createClass({
           </div>
         </header>
 
-        <TaskList list={ list }
-                  items={ items }
-                  onAddItem={ this._onAddItem }
-                  onRemoveItem={ this._onRemoveItem } />
+        <TaskList list={ list } items={ items } />
       </main>
     )
   },
 
   _onRemoveList() {
-    this.props.app.send(ListActions.remove, this.props.params.id)
+    this.send(ListActions.remove, this.props.params.id)
     page('/')
-  },
-
-  _onAddItem(list, name) {
-    this.props.app.send(ItemActions.add, { list, name })
-  },
-
-  _onRemoveItem(item) {
-    this.props.app.send(ItemActions.remove, item.id)
   }
 
 })

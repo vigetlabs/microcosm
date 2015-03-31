@@ -1,12 +1,13 @@
 import AddIcon      from 'icons/add'
 import AddList      from 'fragments/AddList'
 import Icon         from 'fragments/Icon'
-import ListActions  from 'actions/lists'
 import ListItem     from 'fragments/ListItem'
 import React        from 'react'
 import TaskList     from 'fragments/TaskList'
+import Upstream     from 'Upstream'
 
 let Home = React.createClass({
+  mixins: [ Upstream ],
 
   propTypes: {
     lists : React.PropTypes.array.isRequired,
@@ -24,8 +25,7 @@ let Home = React.createClass({
 
     return (<ListItem key={ list.id }
                       items={ items.filter(i => i.list === list.id) }
-                      list={ list }
-                      onDelete={ app.prepare(ListActions.remove) } />)
+                      list={ list } />)
   },
 
   render() {
@@ -51,9 +51,7 @@ let Home = React.createClass({
           </div>
         </div>
 
-        <AddList active={ this.state.openCreate }
-                 onExit={ this._onToggle }
-                 onCreate={ app.prepare(ListActions.add) } />
+        <AddList active={ this.state.openCreate } onExit={ this._onToggle } />
       </main>
     )
   },

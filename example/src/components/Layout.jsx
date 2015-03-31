@@ -1,7 +1,7 @@
-import React from 'react'
+import React    from 'react'
+import Upstream from 'Upstream'
 
 let Layout = React.createClass({
-
   propTypes: {
     app: React.PropTypes.object.isRequired
   },

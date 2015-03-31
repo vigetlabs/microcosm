@@ -1,8 +1,11 @@
 import AddItem      from './AddItem'
+import Downstream   from 'Downstream'
+import ItemActions  from 'actions/items'
 import React        from 'react'
 import TaskListItem from './TaskListItem'
 
 let TaskList = React.createClass({
+  mixins: [ Downstream ],
 
   propTypes: {
     list: React.PropTypes.object.isRequired
@@ -31,11 +34,11 @@ let TaskList = React.createClass({
   },
 
   _onAddItem(name) {
-    this.props.onAddItem(this.props.list, name)
+    this.send(ItemActions.add, { name, list: this.props.list})
   },
 
   _onRemoveItem(item) {
-    this.props.onRemoveItem(item)
+    this.send(ItemActions.remove, item.id)
   }
 
 })

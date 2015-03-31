@@ -1,13 +1,13 @@
-import React   from 'react'
-import AddItem from './AddItem'
+import AddItem     from './AddItem'
+import Downstream  from 'Downstream'
+import ListActions from 'actions/lists'
+import React       from 'react'
 
 let randomColor = () => '#'+Math.floor(Math.random()*16777215).toString(16);
 
 let AddList = React.createClass({
 
-  propTypes: {
-    onCreate: React.PropTypes.func.isRequired
-  },
+  mixins: [ Downstream ],
 
   getInitialState() {
     return {
@@ -41,10 +41,13 @@ let AddList = React.createClass({
   },
 
   _onAddList(name) {
-    this.props.onCreate({ name, color: this.state.color })
+    this.send(ListActions.add, { name, color: this.state.color })
+
     this.setState({ color: randomColor() })
+
     this.props.onExit()
   }
+
 })
 
 export default AddList

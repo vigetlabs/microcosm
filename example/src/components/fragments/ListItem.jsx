@@ -1,9 +1,12 @@
-import DeleteIcon from 'icons/delete'
-import Icon       from 'fragments/Icon'
-import React      from 'react'
-import Link       from 'fragments/Link'
+import DeleteIcon  from 'icons/delete'
+import Downstream  from 'Downstream'
+import Icon        from 'fragments/Icon'
+import Link        from 'fragments/Link'
+import React       from 'react'
+import ListActions from 'actions/lists'
 
 let ListItem = React.createClass({
+  mixins: [ Downstream ],
 
   propTypes: {
     list: React.PropTypes.object.isRequired
@@ -27,9 +30,8 @@ let ListItem = React.createClass({
   },
 
   _onRemoveItem() {
-    this.props.onDelete(this.props.list.id)
+    this.send(ListActions.remove, this.props.list.id)
   }
-
 })
 
 export default ListItem
