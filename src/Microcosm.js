@@ -21,8 +21,21 @@ export default class Microcosm {
     this._plugins = []
   }
 
+  push(data) {
+    this.commit(this.deserialize(data))
+  }
+
   pull(key) {
     return key ? this._state[key] : this._state
+  }
+
+  clone() {
+    return Object.create(this._state)
+  }
+
+  commit(next) {
+    this._state = next
+    this.emit()
   }
 
   prepare(fn, ...buffer) {
@@ -40,19 +53,6 @@ export default class Microcosm {
     }
 
     return this.dispatch(fn, request)
-  }
-
-  clone() {
-    return Object.create(this._state)
-  }
-
-  push(data) {
-    this.commit(this.deserialize(data))
-  }
-
-  commit(next) {
-    this._state = next
-    this.emit()
   }
 
   dispatch(action, body) {

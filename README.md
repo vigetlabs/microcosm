@@ -89,22 +89,8 @@ class MyApp extends Microcosm {
 ```
 
 A microcosm is solely responsible for managing a global state
-object. This value is assigned initially through `getInitialState`,
-much like a react component:
-
-```javascript
-import Microcosm from 'microcosm'
-
-class MyApp extends Microcosm {
-  // This is actually the default implementation
-  getInitialState() {
-    return {}
-  }
-}
-```
-
-Although a microcosm is exclusively responsible for managing its own
-state, `stores` shape how that data is changed:
+object. Although a microcosm is exclusively responsible for managing
+its own state, `stores` shape how that data is changed:
 
 ```javascript
 import Microcosm from 'microcosm'
@@ -122,9 +108,6 @@ class MyApp extends Microcosm {
   constructor() {
     super()
     this.addStore(Messages)
-  }
-  getInitialState() {
-    return {}
   }
 }
 ```
@@ -166,9 +149,6 @@ class MyApp extends Microcosm {
     super()
     this.addStore(Messages)
   }
-  getInitialState() {
-    return {}
-  }
 }
 ```
 
@@ -185,7 +165,7 @@ maintain constants for each action type.
 
 Fortunately, the `tag` function makes this quite mangeable:
 
-``` javascript
+```javascript
 import tag from 'microcosm/tag'
 
 let Messages = tag({
@@ -262,20 +242,20 @@ class App extends Microcosm {
 
 ### Getting the value out of a store
 
-Microcosms implement a `get` method:
+Microcosms implement a `pull` method:
 
 ```javascript
-app.get(Store)
+app.pull(Store)
 ```
 
-This works because the app accesses the internal state object
-(returned initially from `app.getInitialState`) using `Store` as a
-key. Since the store implements a `toString` method, it coerces into
-the proper key and returns the expected value.
+This works because the app accesses the internal state object using
+`Store` as a key. Since the store implements a `toString` method, it
+coerces into the proper key and returns the expected value.
 
 ## Listening to changes
 
-All Microcosm instances are event emitters. They emit a single change event that you can subscribe to like:
+All Microcosm instances are event emitters. They emit a single change
+event that you can subscribe to like:
 
 ```javascript
 let app = new Microcosm()
@@ -287,7 +267,7 @@ app.listen(callback)
 app.ignore(callback)
 
 // Force an emission
-app.pump()
+app.emit()
 ```
 
 ## Booting things up
@@ -295,15 +275,51 @@ app.pump()
 `Microcosm::start` begins an application. This will setup initial
 state, run plugins, then execute a callback:
 
-```
+```javascript
 let app = new Microcosm()
 
 app.start(function() {
   // Now do something
 })
+```
+
+## Adding plugins
+
+Plugins allow microcosm instances to be extended with additional
+functionality outside of the scope of the framework. The only
+requirement is that they take the form of an object with a `register`
+method:
+
+```javascript
+let Logger = {
+
+  log(data) {
+    console.log('Change: ', data)
+  },
+
+  register(app, options, next) {
+    app.listen(i => log(app.toJSON()))
+  }
+
+}
+
+// The second argument of addPlugin contains options that will be
+// sent to the plugin
+app.addPlugin(logger, {})
+
+// Start executes all plugins in the order in which they are added
+app.start()
+```
+
 
 ## Additional Notes
 
 The philosophy behind change management is described very well in the
 [Advanced Performance](http://facebook.github.io/react/docs/advanced-performance.html)
 section of the React docs.
+
+## Inspiration
+
+- http://www.vpri.org/pdf/rn2008001_worlds.pdf
+- https://github.com/omcljs/om
+- https://elm-lang.org

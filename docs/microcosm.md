@@ -21,37 +21,24 @@ being bogged down by unique instances of Stores and Actions.
 
 ```javascript
 class MyApp extends Microcosm {
-  getInitialState() {
-    // Assigns the default state. Most of the time this will not need
-    // to be overridden, however if using something like ImmutableJS,
-    // you could return a different data structure here.
+  push(data) {
+    // Tells the microcosm how it should handle data injected from
+    // sources.
     //
-    // By default, it will return {}
+    // By default, it will clean the data with `deserialize` and
+    // then override the existing data set with the new values
   }
-  shouldUpdate(prev, next) {
-    // Whenever an action is dispatched, the resulting state
-    // modification will be diffed to identify if a change event
-    // should fire.
-    //
-    // The default strategy for determining that state has changed
-    // is a simple shallow equals check
+  pull(key) {
+    // If a key is provided, return that entry in state. Otherwise
+    // return all state
   }
-  has(store) {
-    // Does this instance of microcosm contain the given store?
-    // Important: Uses the unique identifier, not the object reference
+  clone() {
+    // return an object who's prototype is the previous state. This is
+    // used for revisions to data
   }
-  swap(nextState) {
-    // Swap is basically a reset where the next state is the result of
-    // folding one object over the next
-  }
-  reset(next) {
+  commit(next) {
     // Given a next state, only trigger an event if state actually
     // changed
-  }
-  get(key) {
-    // How state should be retrieved. This function is useful to
-    // override with the particular method of retrieval for the data
-    // structure returned from `getInitialState`
   }
   prepare(fn, ...params) {
     // Returns a partially applied version of `send`. Useful
@@ -90,20 +77,14 @@ class MyApp extends Microcosm {
     // This is used by seed. Like `serialize`, it reduces over all
     // stores, returning the result of `store.deserialize(data)`
   }
-  seed(data) {
-    // Tells the microcosm how it should handle data injected from
-    // sources.
-    //
-    // By default, it will clean the data with `deserialize` and
-    // then override the existing data set with the new values
-    //
-    // seed will trigger a change event
-  }
   toJSON() {
     // A default implementation of serialization. Just returns `this.serialize()`
   }
-  start(callback) {
-    // Setup initial state, run plugins, then execute callback
+  toObject() {
+    // Return a flat copy of state
+  }
+  start(...callbacks) {
+    // Setup initial state, run plugins, then execute callbacks
   }
 }
 ```
@@ -120,7 +101,7 @@ app.listen(callback)
 app.ignore(callback)
 
 // Force an emission
-app.pump()
+app.emit()
 ```
 
 ## Running an instance
