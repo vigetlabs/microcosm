@@ -23,7 +23,7 @@ export default {
 
   register(app, options, next) {
     app.listen(() => this.save(app))
-    app.funnel(this.fetch())
+    app.push(this.fetch())
 
     next()
   }
