@@ -4,7 +4,7 @@
  * return a unique id when stringifyed
  */
 
-import mapBy from './mapBy'
+import remap from './remap'
 
 let uid = 0
 
@@ -22,8 +22,7 @@ function decorate (fn, key) {
 }
 
 export default actions => {
-  return mapBy(Object.keys(actions), function(key) {
-    const value = actions[key]
+  return remap(actions, function(value, key) {
     return isFunction(value) ? decorate(value, key) : value
   })
 }

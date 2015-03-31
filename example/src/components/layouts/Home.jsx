@@ -20,16 +20,16 @@ let Home = React.createClass({
   },
 
   getList(list) {
-    let { items, flux } = this.props
+    let { items, app } = this.props
 
     return (<ListItem key={ list.id }
                       items={ items.filter(i => i.list === list.id) }
                       list={ list }
-                      onDelete={ flux.prepare(ListActions.remove) } />)
+                      onDelete={ app.prepare(ListActions.remove) } />)
   },
 
   render() {
-    let { flux } = this.props
+    let { app, lists } = this.props
 
     return (
       <main role="main">
@@ -46,14 +46,14 @@ let Home = React.createClass({
         <div className="container">
           <div className="fill-white margin-6-top-reverse margin-8-right shadow-1 radius-2 relative">
             <ul className="list">
-              { this.props.lists.map(this.getList) }
+              { lists.map(this.getList) }
             </ul>
           </div>
         </div>
 
         <AddList active={ this.state.openCreate }
                  onExit={ this._onToggle }
-                 onCreate={ flux.prepare(ListActions.add) } />
+                 onCreate={ app.prepare(ListActions.add) } />
       </main>
     )
   },

@@ -6,7 +6,9 @@
 export default function install ([plugin, ...tail], app, callback) {
   if (!plugin) return callback()
 
-  plugin.register(app, app._options, function(err) {
+  let [ driver, options ] = plugin
+
+  driver.register(app, options, function(err) {
     if (err) throw err
     install(tail, app, callback)
   })

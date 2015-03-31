@@ -9,7 +9,7 @@ describe('Microcosm', function() {
 
     m.addStore(DummyStore)
 
-    m.has(DummyStore).should.equal(true)
+    m._stores.should.have.property(DummyStore)
   })
 
   it ('gets default state for a store if it has not been assigned', function(done) {
@@ -19,8 +19,7 @@ describe('Microcosm', function() {
 
     m.start(function() {
       m.get(DummyStore).should.equal(DummyStore.getInitialState())
-      done()
-    })
+    }, done)
   })
 
   it ('can serialize to JSON', function(done) {
@@ -56,26 +55,15 @@ describe('Microcosm', function() {
     })
   })
 
-  it ('passes seed data to stores', function() {
-    let seed = { fiz: 'buz' }
-    let m    = new Microcosm()
+  it ('can funnel data into stores', function() {
+    let mixture = { fiz: 'buz' }
+    let m       = new Microcosm()
 
     m.addStore(DummyStore)
 
-    m.seed({ dummy: seed })
+    m.funnel({ dummy: mixture })
 
-    m.get(DummyStore).should.equal(seed)
-  })
-
-  it ('can swap in new state', function() {
-    let seed = { fiz: 'buz' }
-    let m    = new Microcosm({ dummy: seed })
-
-    m.addStore(DummyStore)
-
-    m.swap({ [DummyStore] : { fiz: 'not-buz'} })
-
-    m.get(DummyStore).fiz.should.equal('not-buz')
+    m.get(DummyStore).should.equal(mixture)
   })
 
   it ('can send sync messages to the dispatcher', function() {
@@ -123,25 +111,6 @@ describe('Microcosm', function() {
     m.send(Action)
   })
 
-  it ('does not emit a change state does not change', function() {
-    let m = new Microcosm({ foo: [] })
-
-    m.addStore({
-      [Action](state) {
-        return state
-      },
-      toString() {
-        return 'foo'
-      }
-    })
-
-    m.listen(function() {
-      throw Error("Expected app to not respond but did")
-    })
-
-    m.send(Action)
-  })
-
   it ('can partially apply actions', function() {
     let m   = new Microcosm()
     let add = (a=0, b=0) => a + b
@@ -170,16 +139,14 @@ describe('Microcosm', function() {
     m.deserialize()
   })
 
-  it ('passes the options argument from the constructor to getInitialState', function() {
-    class MyApp extends Microcosm {
-      getInitialState(options) {
-        return options
-      }
-    }
 
-    let app = new MyApp('test')
+  it ('can turn into a flat object', function() {
+    let m = new Microcosm()
 
-    app._state.should.equal('test')
+    m.commit(Object.create({ foo: 'bar' }))
+
+    m.toObject().should.have.property('foo', 'bar')
   })
+
 
 })

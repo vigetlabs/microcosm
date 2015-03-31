@@ -1,6 +1,6 @@
 {
   "name": "microcosm",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "A functional flux architecture",
   "main": "dist/Microcosm.js",
   "scripts": {

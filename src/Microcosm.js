@@ -1,70 +1,28 @@
 /**
  * Microcosm
  * An isomorphic flux implementation. The strength of Microcosm
- * is that each application is its own fully encapsulated world
+ * is that each application is its own fully encapsulated world.
  */
 
 import Store   from './Store'
 import assert  from './assert'
-import assign  from './assign'
+import copyIf  from './copyIf'
 import install from './install'
-import isEqual from './shallowEquals'
-import mapBy   from './mapBy'
 import pulse   from './pulse'
+import remap   from './remap'
 
 export default class Microcosm {
 
-  constructor(options={}) {
+  constructor() {
     pulse(this)
 
-    this._options = options
+    this._state   = {}
+    this._stores  = {}
     this._plugins = []
-    this._state   = this.getInitialState(options)
-    this._stores  = []
-  }
-
-  getInitialState() {
-    // Assigns the default state. Most of the time this will not need
-    // to be overridden, however if using something like ImmutableJS,
-    // you could return a different data structure here.
-    return {}
-  }
-
-  shouldUpdate(prev, next) {
-    // Whenever an action is dispatched, the resulting state
-    // modification will be diffed to identify if a change event
-    // should fire.
-    //
-    // The default strategy for determining that state has changed
-    // is a simple shallow equals check
-    return isEqual(prev, next) === false
-  }
-
-  has(key) {
-    // Does this instance of microcosm contain the given store?
-    // Important: Uses the unique identifier, not the object reference
-    return this._stores.some(store => `${key}` === `${store}`)
   }
 
   get(key) {
-    // How state should be retrieved. This function is useful to
-    // override with the particular method of retrieval for the data
-    // structure returned from `getInitialState`
     return this._state[key]
-  }
-
-  swap(next) {
-    // Swap is basically a reset where the next state is the result of
-    // folding one object over the next
-    this.reset(assign(this._state, next))
-  }
-
-  reset(next) {
-    // Given a next state, only trigger an event if state actually changed
-    if (this.shouldUpdate(this._state, next)) {
-      this._state = next
-      this.pump()
-    }
   }
 
   prepare(fn, ...buffer) {
@@ -87,71 +45,71 @@ export default class Microcosm {
     return Object.create(this._state)
   }
 
+  funnel(data) {
+    this.commit(this.deserialize(data))
+  }
+
+  commit(next) {
+    this._state = next
+    this.pump()
+  }
+
   dispatch(action, body) {
-    let clone = this.clone()
+    let changes = copyIf(this._stores, store => action in store)
 
-    // First get all stores that can repond to this action
-    const answerable = this._stores.filter(store => action in store)
+    if (Object.keys(changes).length > 0) {
+      let clone  = this.clone()
 
-    // Next build the change set
-    const next = mapBy(answerable,
-                       store => store[action](clone[store], body),
-                       clone)
+      let staged = remap(changes,
+                         store => store[action](clone[store], body),
+                         clone)
 
-    // Produce the next state by merging changes into the current state
-    this.reset(next)
+      this.commit(staged)
+    }
 
-    // Send back the body to the original signaler
     return body
   }
 
-  addPlugin(plugin) {
+  addPlugin(plugin, options) {
     assert('register' in plugin, 'Plugins must have a register method.')
-    this._plugins.push(plugin)
+    this._plugins.push([ plugin, options ])
   }
 
   addStore(store) {
     // Make sure life cycle methods are included
-    const safe = assign(Store, store)
+    const safe = { ...Store, ...store }
 
     // Don't reassign stores that are already included. Fail hard.
-    assert(!this.has(safe), `Tried to add "${store}" but it is not unique`)
+    assert(!this._stores[store], `Tried to add "${store}" but it is not unique`)
 
     // Add the validated stores to the list of known entities
-    this._stores.push(safe)
-  }
-
-  start(done) {
-    // Start by setting the initial state to the result of calling
-    // `getInitialState` on the microcosm and all of its stores
-    this._state = mapBy(this._stores,
-                        store => store.getInitialState(),
-                        this.getInitialState())
-
-    // Finally, queue plugins and then notify that installation has
-    // finished
-    install(this._plugins, this, done)
+    this._stores[safe] = safe
   }
 
   serialize() {
-    return mapBy(this._stores, store => store.serialize(this.get(store)))
+    return remap(this._stores, store => store.serialize(this.get(store)))
   }
 
   deserialize(data={}) {
-    return mapBy(this._stores, store => store.deserialize(data[store]))
-  }
-
-  seed(data) {
-    // Tells the microcosm how it should handle data injected from
-    // sources.
-    //
-    // By default, it will clean the data with `deserialize` and
-    // then reset the existing data set with the new values
-    this.reset(this.deserialize(data))
+    return remap(this._stores, store => store.deserialize(data[store]))
   }
 
   toJSON() {
     return this.serialize()
+  }
+
+  toObject() {
+    return copyIf(this._state, () => true)
+  }
+
+  start(...next) {
+    // Start by producing the initial state
+    this._state = remap(this._stores, store => store.getInitialState())
+
+    // Queue plugins and then notify that installation has finished
+    install(this._plugins, this, function() {
+      next.forEach(callback => callback())
+    })
   }
 
 }

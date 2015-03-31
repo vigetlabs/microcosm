@@ -42,16 +42,16 @@ let Show = React.createClass({
   },
 
   _onRemoveList() {
-    this.props.flux.send(ListActions.remove, this.props.params.id)
+    this.props.app.send(ListActions.remove, this.props.params.id)
     page('/')
   },
 
   _onAddItem(list, name) {
-    this.props.flux.send(ItemActions.add, { list, name })
+    this.props.app.send(ItemActions.add, { list, name })
   },
 
   _onRemoveItem(item) {
-    this.props.flux.send(ItemActions.remove, item.id)
+    this.props.app.send(ItemActions.remove, item.id)
   }
 
 })
