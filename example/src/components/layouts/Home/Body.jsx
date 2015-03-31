@@ -8,11 +8,9 @@ let Body = React.createClass({
   },
 
   getList(list) {
-    let { items } = this.props
+    let children = this.props.items.filter(i => i.list === list.id)
 
-    return (<ListItem key={ list.id }
-                      items={ items.filter(i => i.list === list.id) }
-                      list={ list } />)
+    return (<ListItem key={ list.id } items={ children } list={ list } />)
   },
 
   render() {
