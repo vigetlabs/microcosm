@@ -21,8 +21,8 @@ export default class Microcosm {
     this._plugins = []
   }
 
-  get(key) {
-    return this._state[key]
+  pull(key) {
+    return key ? this._state[key] : this._state
   }
 
   prepare(fn, ...buffer) {
@@ -87,7 +87,7 @@ export default class Microcosm {
   }
 
   serialize() {
-    return remap(this._stores, store => store.serialize(this.get(store)))
+    return remap(this._stores, store => store.serialize(this.pull(store)))
   }
 
   deserialize(data={}) {

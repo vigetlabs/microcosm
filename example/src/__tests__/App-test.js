@@ -23,7 +23,7 @@ describe('App', function() {
     })
 
     it ('should create a new list with the proper name', function() {
-      app.get(Lists)[0].should.have.property('name', name)
+      app.pull(Lists)[0].should.have.property('name', name)
     })
 
   })
@@ -33,11 +33,11 @@ describe('App', function() {
 
     beforeEach(function() {
       app.send(ListActions.add, { name })
-      app.send(ListActions.remove, app.get(Lists)[0].id)
+      app.send(ListActions.remove, app.pull(Lists)[0].id)
     })
 
     it ('should remove the list by id', function() {
-      app.get(Lists).length.should.equal(0)
+      app.pull(Lists).length.should.equal(0)
     })
 
   })
@@ -47,11 +47,11 @@ describe('App', function() {
 
     beforeEach(function() {
       app.send(ListActions.add, { name: 'parent' })
-      app.send(ItemActions.add, { name, list: app.get(Lists)[0] })
+      app.send(ItemActions.add, { name, list: app.pull(Lists)[0] })
     })
 
     it ('should create a new item with the proper name', function() {
-      app.get(Items)[0].should.have.property('name', name)
+      app.pull(Items)[0].should.have.property('name', name)
     })
 
   })
@@ -61,12 +61,12 @@ describe('App', function() {
 
     beforeEach(function() {
       app.send(ListActions.add, { name: 'parent' })
-      app.send(ItemActions.add, { name, list: app.get(Lists)[0] })
-      app.send(ItemActions.remove, app.get(Items)[0].id)
+      app.send(ItemActions.add, { name, list: app.pull(Lists)[0] })
+      app.send(ItemActions.remove, app.pull(Items)[0].id)
     })
 
     it ('remove the item by id', function() {
-      app.get(Items).length.should.equal(0)
+      app.pull(Items).length.should.equal(0)
     })
 
   })
@@ -76,12 +76,12 @@ describe('App', function() {
 
     beforeEach(function() {
       app.send(ListActions.add, { name: 'parent' })
-      app.send(ItemActions.add, { name, list: app.get(Lists)[0] })
-      app.send(ListActions.remove, app.get(Lists)[0].id)
+      app.send(ItemActions.add, { name, list: app.pull(Lists)[0] })
+      app.send(ListActions.remove, app.pull(Lists)[0].id)
     })
 
     it ('removes all child items', function() {
-      app.get(Items).length.should.equal(0)
+      app.pull(Items).length.should.equal(0)
     })
 
   })
@@ -94,7 +94,7 @@ describe('App', function() {
     })
 
     it ('simply updates the state with the provided parameters', function() {
-      app.get(Route).should.eql(params)
+      app.pull(Route).should.eql(params)
     })
 
   })

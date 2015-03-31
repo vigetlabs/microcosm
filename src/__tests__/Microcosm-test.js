@@ -12,13 +12,13 @@ describe('Microcosm', function() {
     m._stores.should.have.property(DummyStore)
   })
 
-  it ('gets default state for a store if it has not been assigned', function(done) {
+  it ('pulls default state for a store if it has not been assigned', function(done) {
     let m = new Microcosm()
 
     m.addStore(DummyStore)
 
     m.start(function() {
-      m.get(DummyStore).should.equal(DummyStore.getInitialState())
+      m.pull(DummyStore).should.equal(DummyStore.getInitialState())
     }, done)
   })
 
@@ -55,15 +55,13 @@ describe('Microcosm', function() {
     })
   })
 
-  it ('can funnel data into stores', function() {
+  it ('can push data into stores', function() {
     let mixture = { fiz: 'buz' }
     let m       = new Microcosm()
 
     m.addStore(DummyStore)
-
-    m.funnel({ dummy: mixture })
-
-    m.get(DummyStore).should.equal(mixture)
+    m.push({ dummy: mixture })
+    m.pull(DummyStore).should.equal(mixture)
   })
 
   it ('can send sync messages to the dispatcher', function() {
