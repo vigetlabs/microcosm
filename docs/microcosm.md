@@ -115,3 +115,4 @@ let app = new Microcosm()
 app.start(function() {
   // Now do something
 })
+```
