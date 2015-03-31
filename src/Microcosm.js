@@ -26,6 +26,7 @@ export default class Microcosm {
   }
 
   prepare(fn, ...buffer) {
+    assert(typeof fn === 'function', 'prepare was called with no callable action.')
     return this.send.bind(this, fn, ...buffer)
   }
 

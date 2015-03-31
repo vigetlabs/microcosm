@@ -146,5 +146,14 @@ describe('Microcosm', function() {
     m.toObject().should.have.property('foo', 'bar')
   })
 
+  it ('throws an error if prepared without a function value', function(done) {
+    let m = new Microcosm()
+
+    try {
+      m.prepare(null)
+    } catch(x) {
+      done()
+    }
+  })
 
 })
