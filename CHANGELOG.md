@@ -1,5 +1,9 @@
 # Changelog
 
+### 5.1.1
+
+- Fix build process mistake :-/
+
 ### 5.1.0
 
 - Removed fallback from `Microcosm::pull` which returns all state

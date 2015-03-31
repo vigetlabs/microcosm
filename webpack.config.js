@@ -5,9 +5,7 @@ module.exports = {
   devtool : 'source-map',
 
   entry: {
-    Microcosm  : './src/index.js',
-    Upstream   : './src/Upstream',
-    Downstream : './src/Downstream'
+    Microcosm : './src/index.js'
   },
 
   output: {
