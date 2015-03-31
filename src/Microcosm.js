@@ -51,7 +51,7 @@ export default class Microcosm {
 
   commit(next) {
     this._state = next
-    this.pump()
+    this.emit()
   }
 
   dispatch(action, body) {

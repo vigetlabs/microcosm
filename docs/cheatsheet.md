@@ -26,6 +26,13 @@ dispatch - Send an action and payload to all stores
 prepare  - Partially apply the `send` method
 send     - Given a set of parameters, execute an action and forward that result to `dispatch`
 
+Events
++--------------+
+
+listen - Add a callback listener
+ignore - Remove a callback listener
+emit   - Trigger an event
+
 Install
 +--------------+
 addPlugin - Append an entry into the list of known plugins

@@ -1,6 +1,6 @@
 /**
  * Pulse
- * A singular event emitter. Pulse is simply the result of pumping
+ * A singular event emitter. Pulse is simply the result of pulseing
  * blood.
  *
  * This is a factory/decorator depending on usage. There are some
@@ -28,7 +28,7 @@ function pulse (infuse={}) {
   /**
    * Trigger every callback in the Set
    */
-  infuse.pump = function () {
+  infuse.emit = function () {
     /**
      * Important: do not cache the length of _callbacks
      * in the event a callback causes later subscriptions

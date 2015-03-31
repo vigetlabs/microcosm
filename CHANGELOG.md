@@ -10,21 +10,24 @@ been made.
 
 - Renamed `Microcosm::seed` to `Microcosm::funnel`
 - Removed `Microcosm::has`
-- Removed 'Microcosm::getInitialState'. the `Store` API still provides
+- Removed `Microcosm::getInitialState`. the `Store` API still provides
   this function, however it is the expectation of the system that
   value of state is a primitive object. This is so that Microcosm
   always knows how to smartly clone its state, regardless of if
   another data library is used for its values.
-- Removed 'Microcosm::swap', this was an internal API that is no
+- Removed `Microcosm::swap`, this was an internal API that is no
   longer required
-- Renamed `Microcosm::reset` to `Microcosm::commit
-- Removed 'Microcosm::shouldUpdate'. If no stores respond to an
+- Renamed `Microcosm::reset` to `Microcosm::commit`
+- Removed `Microcosm::shouldUpdate`. If no stores respond to an
   action, a change event will not fire anyway. Placing this concern in
   the view layer keeps React's `shouldComponentUpdate` as the single
   responsibility for this task.
 - Added `Microcosm::toObject`
 - Internal function `mapBy` has been renamed to `remap`. It now
   operates primarily upon objects.
+- `Microcosm::pump` is now `Microcosm::emit`, this is to better match
+  existing event emitter libraries (including the one in Node's
+  standard library)
 
 As an additional illustration, the Microcosm API has been logistically
 sorted within `./cheatsheet.md`

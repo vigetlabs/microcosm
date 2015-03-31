@@ -7,7 +7,7 @@ describe ('Pulse', function() {
 
   it ('can listen to callbacks', function(done) {
     heart.listen(done)
-    heart.pump()
+    heart.emit()
   })
 
   it ('can ignore callbacks', function() {
@@ -16,7 +16,7 @@ describe ('Pulse', function() {
     heart.listen(stub)
     heart.ignore(stub)
 
-    heart.pump()
+    heart.emit()
 
     stub.should.not.have.been.called
   })
