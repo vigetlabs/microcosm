@@ -11,8 +11,8 @@ Data Operations
 +--------------+
 clone  - Return a new object whose prototype is the last state
 commit - Assign a new state, trigger an event
-funnel - Commit the result of deserializing a set of data
 get    - Provided a key, return that entry in the state object
+push   - Replace state with the result of deserializing a set of data
 
 Serialization
 +--------------+

@@ -45,7 +45,7 @@ export default class Microcosm {
     return Object.create(this._state)
   }
 
-  funnel(data) {
+  push(data) {
     this.commit(this.deserialize(data))
   }
 

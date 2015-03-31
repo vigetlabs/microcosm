@@ -8,7 +8,7 @@ improve consistency and internal APIs have been refactored. The
 overall surface area of the app has been reduced and more opinions have
 been made.
 
-- Renamed `Microcosm::seed` to `Microcosm::funnel`
+- Renamed `Microcosm::seed` to `Microcosm::push`
 - Removed `Microcosm::has`
 - Removed `Microcosm::getInitialState`. the `Store` API still provides
   this function, however it is the expectation of the system that
