@@ -1,5 +1,11 @@
 # Changelog
 
+### 5.1.0
+
+- Removed fallback from `Microcosm::pull` which returns all state
+- Added an `Upstream` and `Downstream` mixin, however it is
+  experimental. More details will come as the feature develops.
+
 ### 5.0.0
 
 Version 5 represents an attempt to address some growth pains from

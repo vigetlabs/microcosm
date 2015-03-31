@@ -26,7 +26,7 @@ export default class Microcosm {
   }
 
   pull(key) {
-    return key ? this._state[key] : this._state
+    return this._state[key]
   }
 
   clone() {
