@@ -4,7 +4,8 @@ import React    from 'react'
 let Body = React.createClass({
 
   propTypes: {
-    lists: React.PropTypes.array.isRequired
+    lists : React.PropTypes.array.isRequired,
+    items : React.PropTypes.array.isRequired
   },
 
   getList(list) {
