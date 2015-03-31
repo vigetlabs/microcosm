@@ -12,7 +12,6 @@ export default {
   },
 
   send(action, ...params) {
-    let { app } = this.props
-    app.send(action, ...params)
+    this.props.app.send(action, ...params)
   }
 }

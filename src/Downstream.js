@@ -6,7 +6,6 @@ export default {
   },
 
   send(action, ...params) {
-    let { app } = this.context
-    app.send(action, ...params)
+    this.context.app.send(action, ...params)
   }
 }
