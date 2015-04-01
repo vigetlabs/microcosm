@@ -5,7 +5,5 @@
  */
 
 export let tag = require('./tag')
-export let Upstream = require('./Upstream')
-export let Downstream = require('./Downstream')
 
 export default require('./Microcosm')

@@ -1,6 +1,6 @@
 /**
- * CopyIf
- * Copy wanted keys from an object
+ * RemapIf
+ * Remap wanted keys from an object
  */
 
 export default function (object, predicate) {

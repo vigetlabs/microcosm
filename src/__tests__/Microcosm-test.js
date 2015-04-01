@@ -3,157 +3,209 @@ import DummyStore from './fixtures/DummyStore'
 import Microcosm  from '../Microcosm'
 
 describe('Microcosm', function() {
+  let app;
 
-  it ('can add stores', function() {
-    let m = new Microcosm()
-
-    m.addStore(DummyStore)
-
-    m._stores.should.have.property(DummyStore)
+  beforeEach(function(done) {
+    app = new Microcosm()
+    app.addStore(DummyStore)
+    app.start(done)
   })
 
-  it ('pulls default state for a store if it has not been assigned', function(done) {
-    let m = new Microcosm()
+  describe('Microcosm::push', function() {
+    it ('runs deserialize before committing results', function() {
+      app.push({ dummy: 'test' })
+      app.pull(DummyStore).should.equal('test')
+    })
 
-    m.addStore(DummyStore)
-
-    m.start(function() {
-      m.pull(DummyStore).should.equal(DummyStore.getInitialState())
-    }, done)
-  })
-
-  it ('can serialize to JSON', function(done) {
-    let m = new Microcosm()
-
-    m.addStore(DummyStore)
-
-    m.start(function() {
-      m.toJSON().should.have.property('dummy', 'test')
-      done()
+    it ('leads to an event', function(done) {
+      app.listen(done)
+      app.push({ dummy: 'test' })
     })
   })
 
-  it ('runs through serialize methods on stores', function(done) {
-    let m = new Microcosm()
+  describe('Microcosm::pull', function() {
+    it ('pulls default state for a store if it has not been assigned', function() {
+      app.pull(DummyStore).should.equal(DummyStore.getInitialState())
+    })
 
-    m.addStore({
-      getInitialState() {
-        return 'this will not display'
-      },
-      serialize(state) {
-        state.should.equal(this.getInitialState())
-        return 'this is a test'
-      },
-      toString() {
-        return 'serialize-test'
+    it ('can process data directly from pull', function() {
+      let answer = app.pull(DummyStore, i => DummyStore.getInitialState())
+      answer.should.equal(DummyStore.getInitialState())
+    })
+
+    it ('can inject additional arguments', function() {
+      let is = (a, b) => a === b
+
+      app.pull(DummyStore, is, 'test').should.equal(true)
+      app.pull(DummyStore, is, 'fiz').should.equal(false)
+    })
+  })
+
+  describe('Microcosm::commit', function() {
+    it ('assigns new state', function() {
+      app.commit({ foo: 'bar' })
+      app.pull('foo').should.equal('bar')
+    })
+
+    it ('leads to an event', function(done) {
+      app.listen(done)
+      app.commit('test')
+    })
+  })
+
+  describe('Microcosm::prepare', function() {
+    it ('partially apply Microcosm::send', function() {
+      let add = (a=0, b=0) => a + b
+
+      app.prepare(add)(2, 3).should.equal(5)
+      app.prepare(add, 4)(1).should.equal(5)
+      app.prepare(add)(1).should.equal(1)
+    })
+
+    it ('throws an error if not given function', function(done) {
+      try {
+        app.prepare(undefined)
+      } catch(x) {
+        done()
       }
     })
+  })
 
-    m.start(function() {
-      m.toJSON().should.have.property('serialize-test', 'this is a test')
-      done()
+  describe('Microcosm:send', function() {
+    it ('sends a messages to the dispatcher', function() {
+      sinon.spy(app, 'dispatch')
+      app.send(Action)
+      app.dispatch.should.have.been.calledWith(Action, true)
+    })
+
+    it ('can send async messages to the dispatcher', function(done) {
+      let Async = () => Promise.resolve(true)
+
+      sinon.spy(app, 'dispatch')
+
+      app.send(Async).then(function() {
+        app.dispatch.should.have.been.calledWith(Async, true)
+        done()
+      })
+    })
+
+    it ('throws an error if not sent a truthy', function(done) {
+      try {
+        app.send(undefined)
+      } catch(x) {
+        done()
+      }
     })
   })
 
-  it ('can push data into stores', function() {
-    let mixture = { fiz: 'buz' }
-    let m       = new Microcosm()
+  describe('Microcosm::dispatch', function() {
+    let local;
 
-    m.addStore(DummyStore)
-    m.push({ dummy: mixture })
-    m.pull(DummyStore).should.equal(mixture)
+    beforeEach(function(done) {
+      local = new Microcosm()
+      local.addStore({ respond: () => true, toString: () => 'another-store' })
+      local.start(done)
+    })
+
+    it ('does not emit a change if no handler responds', function() {
+      local.listen(function() {
+        throw Error("Expected app to not respond but did")
+      })
+
+      local.dispatch(Action)
+    })
+
+    it ('commits changes if a store can respond', function(done) {
+      local.listen(done)
+      local.dispatch('respond')
+    })
+
   })
 
-  it ('can send sync messages to the dispatcher', function() {
-    let m = new Microcosm()
+  describe('Microcosm::addPlugin', function() {
+    it ('pushes a plugin into a list', function() {
+      app.addPlugin({ register() {} })
+      app._plugins.length.should.equal(1)
+    })
 
-    sinon.spy(m, 'dispatch')
-
-    m.send(Action)
-    m.dispatch.should.have.been.calledWith(Action, true)
-  })
-
-  it ('can send async messages to the dispatcher', function(done) {
-    let m = new Microcosm()
-    let Async = () => Promise.resolve(true)
-
-    sinon.spy(m, 'dispatch')
-
-    m.send(Async).then(function() {
-      m.dispatch.should.have.been.calledWith(Async, true)
-      done()
+    it ('throws an error if a register function is not provided', function(done) {
+      try {
+        app.addPlugin({ })
+      } catch(x) {
+        done()
+      }
     })
   })
 
-  it('can respond to actions', function(done) {
-    let m   = new Microcosm()
-    let spy = sinon.spy(DummyStore, Action.toString())
-
-    m.addStore(DummyStore)
-
-    m.send(Action)
-    spy.should.have.been.called
-    spy.restore()
-    done()
-  })
-
-  it ('does not emit a change if no handler responds', function() {
-    let m = new Microcosm()
-
-    m.addStore({ toString: () => 'another-store' })
-
-    m.listen(function() {
-      throw Error("Expected app to not respond but did")
+  describe('Microcosm::addStore', function() {
+    it ('can add stores', function() {
+      app._stores.should.have.property(DummyStore)
     })
 
-    m.send(Action)
+    it ('throws an error of a stores toString is not unique', function(done) {
+      app.addStore({ toString() { return 'fiz' } })
+
+      try {
+        app.addStore({ toString() { return 'fiz' } })
+      } catch(x) {
+        done()
+      }
+    })
   })
 
-  it ('can partially apply actions', function() {
-    let m   = new Microcosm()
-    let add = (a=0, b=0) => a + b
+  describe('Microcosm::serialize', function() {
+    it ('can serialize to JSON', function() {
+      sinon.spy(app, 'serialize')
 
-    m.prepare(add)(2, 3).should.equal(5)
-    m.prepare(add, 4)(1).should.equal(5)
-    m.prepare(add)(1).should.equal(1)
+      let data = app.toJSON()
+
+      data.should.have.property('dummy', 'test')
+      app.serialize.should.have.been.called
+    })
+
+    it ('runs through serialize methods on stores', function() {
+      app.addStore({
+        getInitialState() {
+          return 'this will not display'
+        },
+        serialize() {
+          return 'this is a test'
+        },
+        toString() {
+          return 'serialize-test'
+        }
+      })
+
+      app.toJSON().should.have.property('serialize-test', 'this is a test')
+    })
   })
 
-  it ('throws an error of a stores toString is not unique', function(done) {
-    let m   = new Microcosm()
-    m.addStore({ toString() { return 'fiz' } })
-
-    try {
-      m.addStore({ toString() { return 'fiz' } })
-    } catch(x) {
-      done()
-    }
+  describe('Microcosm::deserialize', function() {
+    it ('can handle undefined arguments in deserialize', function() {
+      app.addStore({ toString() { return 'fiz' } })
+      app.deserialize()
+    })
   })
 
-  it ('can handle undefined arguments in deserialize', function() {
-    let m = new Microcosm()
-
-    m.addStore({ toString() { return 'fiz' } })
-
-    m.deserialize()
+  describe('Microcosm::toObject', function() {
+    it ('can turn into a flat object', function() {
+      app.commit(Object.create({ foo: 'bar' }))
+      app.toObject().should.have.property('foo', 'bar')
+    })
   })
 
+  describe('Microcosm::start', function() {
+    it ('can run multiple callbacks', function(done) {
+      let app = new Microcosm()
+      let a   = sinon.mock()
+      let b   = sinon.mock()
 
-  it ('can turn into a flat object', function() {
-    let m = new Microcosm()
-
-    m.commit(Object.create({ foo: 'bar' }))
-
-    m.toObject().should.have.property('foo', 'bar')
-  })
-
-  it ('throws an error if prepared without a function value', function(done) {
-    let m = new Microcosm()
-
-    try {
-      m.prepare(null)
-    } catch(x) {
-      done()
-    }
+      app.start(a, b, function() {
+        a.should.have.been.called
+        b.should.have.been.called
+        done()
+      })
+    })
   })
 
 })

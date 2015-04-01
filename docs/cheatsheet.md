@@ -9,7 +9,6 @@ start - Resets initial state, installs all plugins, and then executes a callback
 
 Data Operations
 +--------------+
-clone  - Return a new object whose prototype is the last state
 commit - Assign a new state, trigger an event
 pull   - Provided a key, return that entry in the state object
 push   - Replace state with the result of deserializing a set of data

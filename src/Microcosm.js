@@ -4,12 +4,16 @@
  * is that each application is its own fully encapsulated world.
  */
 
+import Action  from './Action'
+import Plugin  from './Plugin'
 import Store   from './Store'
 import assert  from './assert'
-import copyIf  from './copyIf'
+import clone   from './clone'
 import install from './install'
 import pulse   from './pulse'
 import remap   from './remap'
+import remapIf from './remapIf'
+import send    from './send'
 
 export default class Microcosm {
 
@@ -25,12 +29,9 @@ export default class Microcosm {
     this.commit(this.deserialize(data))
   }
 
-  pull(key) {
-    return this._state[key]
-  }
-
-  clone() {
-    return Object.create(this._state)
+  pull(key, fn, ...args) {
+    let val = this._state[key]
+    return typeof fn === 'function' ? fn.call(this, val, ...args) : val
   }
 
   commit(next) {
@@ -39,33 +40,20 @@ export default class Microcosm {
   }
 
   prepare(fn, ...buffer) {
-    assert(typeof fn === 'function', 'prepare was called with no callable action.')
+    Action.validate(fn)
     return this.send.bind(this, fn, ...buffer)
   }
 
   send(fn, ...params) {
-    assert(fn, `send method expected an action, instead got ${ fn }`)
-
-    const request = fn.apply(this, params)
-
-    // Actions some times return promises. When this happens, wait for
-    // them to resolve before moving on
-    if (request instanceof Promise) {
-      return request.then(body => this.dispatch(fn, body))
-    }
-
-    return this.dispatch(fn, request)
+    return send(this, fn, ...params)
   }
 
   dispatch(action, body) {
-    let changes = copyIf(this._stores, store => action in store)
+    let actors = remapIf(this._stores, store => action in store)
 
-    if (Object.keys(changes).length > 0) {
-      let clone  = this.clone()
-
-      let staged = remap(changes,
-                         store => store[action](clone[store], body),
-                         clone)
+    if (Object.keys(actors).length > 0) {
+      let copy   = clone(this._state)
+      let staged = remap(actors, store => store[action](copy[store], body), copy)
 
       this.commit(staged)
     }
@@ -74,7 +62,8 @@ export default class Microcosm {
   }
 
   addPlugin(plugin, options) {
-    assert('register' in plugin, 'Plugins must have a register method.')
+    Plugin.validate(plugin)
+
     this._plugins.push([ plugin, options ])
   }
 
@@ -102,7 +91,7 @@ export default class Microcosm {
   }
 
   toObject() {
-    return copyIf(this._state, () => true)
+    return remapIf(this._state, () => true)
   }
 
   start(...next) {

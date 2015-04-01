@@ -1,5 +1,13 @@
 # Changelog
 
+### 5.2.0
+
+- `Microcosm::pull` accepts a callback that allows you to modify the
+result. This should help to make data queries more terse.
+- Removed `Microcosm::clone`, the functionality is not gone, but it
+  has been internalized to mitigate the cost of future changes
+- Removed mixins from main payload to improve size
+
 ### 5.1.1
 
 - Fix build process mistake :-/
