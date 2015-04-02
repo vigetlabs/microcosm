@@ -1,5 +1,4 @@
 import AddItem     from './AddItem'
-import Downstream  from 'Downstream'
 import ListActions from 'actions/lists'
 import React       from 'react'
 import classNames  from 'classnames'

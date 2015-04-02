@@ -1,5 +1,4 @@
 import AddItem      from './AddItem'
-import Downstream   from 'Downstream'
 import ItemActions  from 'actions/items'
 import React        from 'react'
 import TaskListItem from './TaskListItem'
