@@ -45,7 +45,12 @@ module.exports = function(config) {
           {
             test    : /\.jsx*$/,
             exclude : /node_modules/,
-            loader  : 'babel?experimental&loose&optional=runtime'
+            loader  : 'babel',
+            query   : {
+              stage: 0,
+              loose: true,
+              optional: ['runtime']
+            }
           },
           {
             test    : /\.json$/,

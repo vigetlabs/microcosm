@@ -27,7 +27,11 @@ module.exports = {
       {
         test    : /\.jsx*$/,
         exclude : /node_modules/,
-        loader  : 'babel?experimental&loose'
+        loader  : 'babel',
+        query   : {
+          stage: 0,
+          loose: true
+        }
       },
       {
         test    : /\.json$/,

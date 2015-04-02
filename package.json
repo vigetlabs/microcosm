@@ -18,9 +18,9 @@
   "dependencies": {},
   "devDependencies": {
     "autoprefixer-core": "^5.1.7",
-    "babel": ">= 4.7.16",
-    "babel-loader": ">= 4.2.0",
-    "babel-runtime": "^4.7.16",
+    "babel": "^5.x.x",
+    "babel-loader": "^5.x.x",
+    "babel-runtime": "^5.x.x",
     "chai": "^2.1.2",
     "classnames": "^1.2.0",
     "coveralls": "^2.11.2",
