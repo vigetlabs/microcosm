@@ -13,6 +13,7 @@ import install from './install'
 import pulse   from './pulse'
 import remap   from './remap'
 import remapIf from './remapIf'
+import getIn   from './getIn'
 
 export default class Microcosm {
 
@@ -39,7 +40,7 @@ export default class Microcosm {
   }
 
   pull(key, fn, ...args) {
-    let val = this._state[key]
+    let val = getIn(this._state, key)
     return typeof fn === 'function' ? fn.call(this, val, ...args) : val
   }
 

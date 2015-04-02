@@ -28,6 +28,11 @@ describe('Microcosm', function() {
       app.pull(DummyStore).should.equal(DummyStore.getInitialState())
     })
 
+    it ('pulls multiple values', function() {
+      app.replace({ dummy: ['test'] })
+      app.pull(['dummy', 0]).should.equal('test')
+    })
+
     it ('can process data directly from pull', function() {
       let answer = app.pull(DummyStore, i => DummyStore.getInitialState())
       answer.should.equal(DummyStore.getInitialState())

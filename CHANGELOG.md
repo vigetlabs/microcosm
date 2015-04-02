@@ -1,5 +1,10 @@
 # Changelog
 
+### 6.1.0
+
+- `Microcosm::pull` can now accept an array of keys for the first
+  argument. This will traverse the nested keys of state to calculate value.
+
 ### 6.0.0
 
 6.0.0 is the second effort to reduce the surface area of the Microcosm API.
