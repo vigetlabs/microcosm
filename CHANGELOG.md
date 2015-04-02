@@ -1,5 +1,16 @@
 # Changelog
 
+### 6.0.0
+
+6.0.0 is the second effort to reduce the surface area of the Microcosm API.
+
+- Removed `Upstream` and `Downstream` mixins. They used the
+  undocumented context API and introduced some complexity in testing
+- `Microcosm::send` is now `Microcosm::push`
+- `Microcosm::push` is now `Microcosm::replace`
+- `Microcosm::dispatch` and `Microcosm::commit` are now private. These
+  are important methods that should not be overridden
+
 ### 5.2.0
 
 - `Microcosm::pull` accepts a callback that allows you to modify the

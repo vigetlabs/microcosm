@@ -4,7 +4,7 @@ import Icon       from 'fragments/Icon'
 import Link       from 'fragments/Link'
 import React      from 'react'
 
-let Banner = React.createClass({
+export default React.createClass({
 
   propTypes: {
     list     : React.PropTypes.object.isRequired,
@@ -14,8 +14,10 @@ let Banner = React.createClass({
   render() {
     let { list, onRemove } = this.props
 
+    let { color, contrast, name } = list
+
     return (
-      <header className="ruled-bottom" style={{ background: list.color, color: list.contrast }}>
+      <header className="ruled-bottom" style={{ background: color, color: contrast }}>
         <div className="flex pad-2">
           <div className="flex-grow">
             <Icon src={ BackIcon } element={ Link } href="/" />
@@ -23,12 +25,10 @@ let Banner = React.createClass({
           <Icon src={ DeleteIcon } onClick={ onRemove } />
         </div>
         <div className="container pad-2-top pad-7-bottom">
-          <h1 className="type-display">{ list.name }</h1>
+          <h1 className="type-display">{ name }</h1>
         </div>
       </header>
     )
   }
 
 })
-
-export default Banner

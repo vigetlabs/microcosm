@@ -2,12 +2,10 @@ import AddList  from 'fragments/AddList'
 import Banner   from './Banner'
 import Body     from './Body'
 import React    from 'react'
-import Upstream from 'Upstream'
 
 let Home = React.createClass({
-  mixins: [ Upstream ],
-
   propTypes: {
+    app   : React.PropTypes.object.isRequired,
     lists : React.PropTypes.array.isRequired,
     items : React.PropTypes.array.isRequired
   },
@@ -19,11 +17,13 @@ let Home = React.createClass({
   },
 
   render() {
+    let { app, lists, items } = this.props
+
     return (
       <main role="main">
         <Banner onToggle={ this._onToggle } />
-        <Body lists={ this.props.lists } items={ this.props.items } />
-        <AddList active={ this.state.openCreate } onExit={ this._onToggle } />
+        <Body app={ app } lists={ lists } items={ items } />
+        <AddList app={ app } active={ this.state.openCreate } onExit={ this._onToggle } />
       </main>
     )
   },

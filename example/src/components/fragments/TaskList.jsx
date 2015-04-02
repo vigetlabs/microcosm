@@ -4,19 +4,19 @@ import ItemActions  from 'actions/items'
 import React        from 'react'
 import TaskListItem from './TaskListItem'
 
-let TaskList = React.createClass({
-  mixins: [ Downstream ],
+export default React.createClass({
 
   propTypes: {
-    list: React.PropTypes.object.isRequired
+    app  : React.PropTypes.object.isRequired,
+    list : React.PropTypes.object.isRequired
   },
 
   getItem(item) {
-    return (<TaskListItem key={ item.id } item={ item } onDelete={ this._onRemoveItem } />)
+    return (<TaskListItem key={ item.id } item={ item } onRemove={ this._onRemoveItem } />)
   },
 
   render() {
-    let { color, id, name } = this.props.list
+    let { items, list } = this.props
 
     return (
       <section className="container pad-1-bottom">
@@ -26,7 +26,7 @@ let TaskList = React.createClass({
 
         <div className="fill-white shadow-1 radius-2 relative">
           <ul className="list">
-            { this.props.items.map(this.getItem) }
+            { items.map(this.getItem) }
           </ul>
         </div>
       </section>
@@ -34,13 +34,13 @@ let TaskList = React.createClass({
   },
 
   _onAddItem(name) {
-    this.send(ItemActions.add, { name, list: this.props.list})
+    let { app, list } = this.props
+
+    app.push(ItemActions.add, { name, list })
   },
 
   _onRemoveItem(item) {
-    this.send(ItemActions.remove, item.id)
+    this.props.app.push(ItemActions.remove, item.id)
   }
 
 })
-
-export default TaskList

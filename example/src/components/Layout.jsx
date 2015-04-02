@@ -1,5 +1,4 @@
-import React    from 'react'
-import Upstream from 'Upstream'
+import React from 'react'
 
 let Layout = React.createClass({
   propTypes: {
@@ -7,10 +6,10 @@ let Layout = React.createClass({
   },
 
   render() {
-    let { items, lists, route } = this.props
+    let { app, items, lists, route } = this.props
 
     return React.createElement(route.handler, {
-      app   : this.props.app,
+      app    : app,
       items  : items,
       lists  : lists,
       params : route.params,

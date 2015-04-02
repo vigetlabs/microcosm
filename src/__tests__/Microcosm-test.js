@@ -11,15 +11,15 @@ describe('Microcosm', function() {
     app.start(done)
   })
 
-  describe('Microcosm::push', function() {
+  describe('Microcosm::replace', function() {
     it ('runs deserialize before committing results', function() {
-      app.push({ dummy: 'test' })
+      app.replace({ dummy: 'test' })
       app.pull(DummyStore).should.equal('test')
     })
 
     it ('leads to an event', function(done) {
       app.listen(done)
-      app.push({ dummy: 'test' })
+      app.replace({ dummy: 'test' })
     })
   })
 
@@ -41,20 +41,20 @@ describe('Microcosm', function() {
     })
   })
 
-  describe('Microcosm::commit', function() {
+  describe('Microcosm::_commit', function() {
     it ('assigns new state', function() {
-      app.commit({ foo: 'bar' })
+      app._commit({ foo: 'bar' })
       app.pull('foo').should.equal('bar')
     })
 
     it ('leads to an event', function(done) {
       app.listen(done)
-      app.commit('test')
+      app._commit('test')
     })
   })
 
   describe('Microcosm::prepare', function() {
-    it ('partially apply Microcosm::send', function() {
+    it ('partially apply Microcosm::push', function() {
       let add = (a=0, b=0) => a + b
 
       app.prepare(add)(2, 3).should.equal(5)
@@ -71,34 +71,34 @@ describe('Microcosm', function() {
     })
   })
 
-  describe('Microcosm:send', function() {
+  describe('Microcosm:push', function() {
     it ('sends a messages to the dispatcher', function() {
-      sinon.spy(app, 'dispatch')
-      app.send(Action)
-      app.dispatch.should.have.been.calledWith(Action, true)
+      sinon.spy(app, '_dispatch')
+      app.push(Action)
+      app._dispatch.should.have.been.calledWith(Action, true)
     })
 
     it ('can send async messages to the dispatcher', function(done) {
       let Async = () => Promise.resolve(true)
 
-      sinon.spy(app, 'dispatch')
+      sinon.spy(app, '_dispatch')
 
-      app.send(Async).then(function() {
-        app.dispatch.should.have.been.calledWith(Async, true)
+      app.push(Async).then(function() {
+        app._dispatch.should.have.been.calledWith(Async, true)
         done()
       })
     })
 
     it ('throws an error if not sent a truthy', function(done) {
       try {
-        app.send(undefined)
+        app.push(undefined)
       } catch(x) {
         done()
       }
     })
   })
 
-  describe('Microcosm::dispatch', function() {
+  describe('Microcosm::_dispatch', function() {
     let local;
 
     beforeEach(function(done) {
@@ -112,12 +112,12 @@ describe('Microcosm', function() {
         throw Error("Expected app to not respond but did")
       })
 
-      local.dispatch(Action)
+      local._dispatch(Action)
     })
 
     it ('commits changes if a store can respond', function(done) {
       local.listen(done)
-      local.dispatch('respond')
+      local._dispatch('respond')
     })
 
   })
@@ -189,7 +189,7 @@ describe('Microcosm', function() {
 
   describe('Microcosm::toObject', function() {
     it ('can turn into a flat object', function() {
-      app.commit(Object.create({ foo: 'bar' }))
+      app._commit(Object.create({ foo: 'bar' }))
       app.toObject().should.have.property('foo', 'bar')
     })
   })

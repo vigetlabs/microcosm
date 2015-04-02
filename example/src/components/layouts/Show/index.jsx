@@ -2,31 +2,32 @@ import Banner      from './Banner'
 import ListActions from 'actions/lists'
 import React       from 'react'
 import TaskList    from 'fragments/TaskList'
-import Upstream    from 'Upstream'
-import find        from 'find'
+import children    from 'children'
+import findBy      from 'findBy'
 import page        from 'page'
 
-let Show = React.createClass({
-  mixins: [ Upstream ],
+export default React.createClass({
 
   render() {
-    let { items, lists, params, props } = this.props
+    let { app, params } = this.props
 
-    let list = find(lists, i => i.id == params.id)
+    let list  = app.pull('lists', findBy, params.id)
+    let items = app.pull('items', children, list)
 
     return (
       <main role="main">
         <Banner list={ list } onRemove={ this._onRemoveList } />
-        <TaskList list={ list } items={ items.filter(i => i.list == list.id) } />
+        <TaskList app={ app } list={ list } items={ items } />
       </main>
     )
   },
 
   _onRemoveList() {
-    this.send(ListActions.remove, this.props.params.id)
+    let { app, params } = this.props
+
+    app.push(ListActions.remove, params.id)
+
     page('/')
   }
 
 })
-
-export default Show

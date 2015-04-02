@@ -5,7 +5,8 @@ import React      from 'react'
 let TaskListItem = React.createClass({
 
   propTypes: {
-    item : React.PropTypes.object.isRequired
+    item     : React.PropTypes.object.isRequired,
+    onRemove : React.PropTypes.func.isRequired
   },
 
   render() {
@@ -20,7 +21,7 @@ let TaskListItem = React.createClass({
   },
 
   _onRemoveItem() {
-    this.props.onDelete(this.props.item)
+    this.props.onRemove(this.props.item)
   }
 })
 

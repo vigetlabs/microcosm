@@ -23,7 +23,7 @@ export default {
 
   register(app, options, next) {
     app.listen(() => this.save(app))
-    app.push(this.fetch())
+    app.replace(this.fetch())
 
     next()
   }

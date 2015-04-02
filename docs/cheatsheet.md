@@ -7,11 +7,12 @@ Life Cycle
 +--------------+
 start - Resets initial state, installs all plugins, and then executes a callback
 
-Data Operations
+Data
 +--------------+
-commit - Assign a new state, trigger an event
-pull   - Provided a key, return that entry in the state object
-push   - Replace state with the result of deserializing a set of data
+pull    - Provided a key, return that entry in the state object
+push    - Queue up an action, potentially changing data
+prepare - Partially apply the `push` method
+replace - Replace state with the result of deserializing a set of data
 
 Serialization
 +--------------+
@@ -20,19 +21,13 @@ serialize   - Convert internal data into an acceptable external format
 toJSON      - Serialize to JSON (calls `serialize` by default)
 toObject    - Return a flat copy of the latest revision of state
 
-Message passing
-+--------------+
-dispatch - Send an action and payload to all stores
-prepare  - Partially apply the `send` method
-send     - Given a set of parameters, execute an action and forward that result to `dispatch`
-
 Events
 +--------------+
 listen - Add a callback listener
 ignore - Remove a callback listener
 emit   - Trigger an event
 
-Install
+Configure
 +--------------+
 addPlugin - Append an entry into the list of known plugins
 addStore  - Add an entry to the map of known stores

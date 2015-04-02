@@ -13,7 +13,6 @@ import install from './install'
 import pulse   from './pulse'
 import remap   from './remap'
 import remapIf from './remapIf'
-import send    from './send'
 
 export default class Microcosm {
 
@@ -25,8 +24,18 @@ export default class Microcosm {
     this._plugins = []
   }
 
-  push(data) {
-    this.commit(this.deserialize(data))
+  push(signal, ...params) {
+    Action.validate(signal)
+
+    const request = signal(...params)
+
+    // Actions some times return promises. When this happens, wait for
+    // them to resolve before moving on
+    if (request instanceof Promise) {
+      return request.then(body => this._dispatch(signal, body))
+    }
+
+    return this._dispatch(signal, request)
   }
 
   pull(key, fn, ...args) {
@@ -34,28 +43,28 @@ export default class Microcosm {
     return typeof fn === 'function' ? fn.call(this, val, ...args) : val
   }
 
-  commit(next) {
+  prepare(fn, ...buffer) {
+    Action.validate(fn)
+    return this.push.bind(this, fn, ...buffer)
+  }
+
+  replace(data) {
+    this._commit(this.deserialize(data))
+  }
+
+  _commit(next) {
     this._state = next
     this.emit()
   }
 
-  prepare(fn, ...buffer) {
-    Action.validate(fn)
-    return this.send.bind(this, fn, ...buffer)
-  }
-
-  send(fn, ...params) {
-    return send(this, fn, ...params)
-  }
-
-  dispatch(action, body) {
+  _dispatch(action, body) {
     let actors = remapIf(this._stores, store => action in store)
 
     if (Object.keys(actors).length > 0) {
       let copy   = clone(this._state)
       let staged = remap(actors, store => store[action](copy[store], body), copy)
 
-      this.commit(staged)
+      this._commit(staged)
     }
 
     return body

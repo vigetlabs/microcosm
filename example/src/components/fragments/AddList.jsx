@@ -2,12 +2,15 @@ import AddItem     from './AddItem'
 import Downstream  from 'Downstream'
 import ListActions from 'actions/lists'
 import React       from 'react'
+import classNames  from 'classnames'
 
 let randomColor = () => '#'+Math.floor(Math.random()*16777215).toString(16);
 
 let AddList = React.createClass({
 
-  mixins: [ Downstream ],
+  propTypes: {
+    app : React.PropTypes.object.isRequired
+  },
 
   getInitialState() {
     return {
@@ -16,36 +19,32 @@ let AddList = React.createClass({
   },
 
   render() {
-    let className = 'bottomsheet'
-
-    if (this.props.active) {
-      className += ' is-active'
-    }
+    let { active, onExit } = this.props
 
     return (
-      <div className={ className }>
-        <div className="bottomsheet__blackout" onClick={ this.props.onExit } />
+      <div className={ classNames('bottomsheet', { 'is-active' : active }) }>
+        <div className="bottomsheet__blackout" onClick={ onExit } />
         <div className="container relative pad-2-top pad-4-bottom fill-white shadow-1 radius-2">
           <AddItem onSubmit={ this._onAddList } />
           <label className="label">Background Color</label>
-          <input type="color"
-                 value={ this.state.color }
-                 onChange={ this._onColorChange } />
+          <input type="color" value={ this.state.color } onChange={ this._onChange } />
         </div>
       </div>
     )
   },
 
-  _onColorChange({ target }) {
+  _onChange({ target }) {
     this.setState({ color: target.value })
   },
 
   _onAddList(name) {
-    this.send(ListActions.add, { name, color: this.state.color })
+    let { app, onExit } = this.props
+
+    app.push(ListActions.add, { name, color: this.state.color })
 
     this.setState({ color: randomColor() })
 
-    this.props.onExit()
+    onExit()
   }
 
 })

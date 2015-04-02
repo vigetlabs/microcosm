@@ -11,7 +11,6 @@ describe('App', function() {
 
   beforeEach(function(done) {
     app = new App()
-
     app.start(done)
   })
 
@@ -19,7 +18,7 @@ describe('App', function() {
     var name = 'My todo list'
 
     beforeEach(function() {
-      app.send(ListActions.add, { name })
+      app.push(ListActions.add, { name })
     })
 
     it ('should create a new list with the proper name', function() {
@@ -32,8 +31,8 @@ describe('App', function() {
     var name = 'My todo list'
 
     beforeEach(function() {
-      app.send(ListActions.add, { name })
-      app.send(ListActions.remove, app.pull(Lists)[0].id)
+      app.push(ListActions.add, { name })
+      app.push(ListActions.remove, app.pull(Lists)[0].id)
     })
 
     it ('should remove the list by id', function() {
@@ -46,8 +45,8 @@ describe('App', function() {
     var name = 'My task'
 
     beforeEach(function() {
-      app.send(ListActions.add, { name: 'parent' })
-      app.send(ItemActions.add, { name, list: app.pull(Lists)[0] })
+      app.push(ListActions.add, { name: 'parent' })
+      app.push(ItemActions.add, { name, list: app.pull(Lists)[0] })
     })
 
     it ('should create a new item with the proper name', function() {
@@ -60,9 +59,9 @@ describe('App', function() {
     var name = 'My task'
 
     beforeEach(function() {
-      app.send(ListActions.add, { name: 'parent' })
-      app.send(ItemActions.add, { name, list: app.pull(Lists)[0] })
-      app.send(ItemActions.remove, app.pull(Items)[0].id)
+      app.push(ListActions.add, { name: 'parent' })
+      app.push(ItemActions.add, { name, list: app.pull(Lists)[0] })
+      app.push(ItemActions.remove, app.pull(Items)[0].id)
     })
 
     it ('remove the item by id', function() {
@@ -75,9 +74,9 @@ describe('App', function() {
     var name = 'My task'
 
     beforeEach(function() {
-      app.send(ListActions.add, { name: 'parent' })
-      app.send(ItemActions.add, { name, list: app.pull(Lists)[0] })
-      app.send(ListActions.remove, app.pull(Lists)[0].id)
+      app.push(ListActions.add, { name: 'parent' })
+      app.push(ItemActions.add, { name, list: app.pull(Lists)[0] })
+      app.push(ListActions.remove, app.pull(Lists)[0].id)
     })
 
     it ('removes all child items', function() {
@@ -90,7 +89,7 @@ describe('App', function() {
     var params = { pathname: 'my/route' }
 
     beforeEach(function() {
-      app.send(RouteActions.set, params)
+      app.push(RouteActions.set, params)
     })
 
     it ('simply updates the state with the provided parameters', function() {
