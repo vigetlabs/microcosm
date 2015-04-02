@@ -3,13 +3,12 @@
  * Enumerate through a list of keys to get a value
  */
 
-export default function getIn (obj, key) {
-  let val  = obj
+export default function getIn (target, key) {
   let keys = [].concat(key)
 
   while(keys.length) {
-    val = val[`${keys.shift()}`]
+    target = target[`${keys.shift()}`]
   }
 
-  return val
+  return target
 }
