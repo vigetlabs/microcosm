@@ -7,7 +7,7 @@ Life Cycle
 +--------------+
 start - Resets initial state, installs all plugins, and then executes a callback
 
-Data
+State Management
 +--------------+
 pull    - Provided a key, return that entry in the state object
 push    - Queue up an action, potentially changing data
