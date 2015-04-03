@@ -4,10 +4,11 @@ Thanks you for considering a contribution to Microcosm!
 
 Microcosm is built using tools written for
 [nodejs](http://nodejs.org). We recommend installing Node with
-[nvm](https://github.com/creationix/nvm).
+[nvm](https://github.com/creationix/nvm). this also means that
+dependencies are managed with an [`npm`](npmjs.org) `package.json`
+file.
 
-Dependencies are managed with an [`npm`](npmjs.org) `package.json`
-file. You can install dependencies with:
+You can install dependencies with:
 
 ```bash
 npm install
