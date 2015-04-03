@@ -33,7 +33,7 @@ This will host the demo at `http://localhost:8080`.
 
 ## Testing
 
-Microcosm uses [Karma](karma-runner.github.io). You can run tests
+Microcosm uses [Karma](https://karma-runner.github.io). You can run tests
 with:
 
 ```bash
