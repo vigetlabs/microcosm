@@ -5,20 +5,20 @@
  */
 
 import Action  from './Action'
+import Diode   from 'diode'
 import Plugin  from './Plugin'
 import Store   from './Store'
 import assert  from './assert'
 import clone   from './clone'
+import getIn   from './getIn'
 import install from './install'
-import pulse   from './pulse'
 import remap   from './remap'
 import remapIf from './remapIf'
-import getIn   from './getIn'
 
 export default class Microcosm {
 
   constructor() {
-    pulse(this)
+    Diode.decorate(this)
 
     this._state   = {}
     this._stores  = {}

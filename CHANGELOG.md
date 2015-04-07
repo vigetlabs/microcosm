@@ -1,5 +1,11 @@
 # Changelog
 
+### 6.2.0
+
+- Microcosm's event system has been replaced with
+  [Diode](https://github.com/vigetlabs/diode). The APIs are the
+  same. This should not lead to any breaking changes.
+
 ### 6.1.0
 
 - `Microcosm::pull` can now accept an array of keys for the first
