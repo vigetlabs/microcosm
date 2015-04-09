@@ -46,15 +46,15 @@ describe('Microcosm', function() {
     })
   })
 
-  describe('Microcosm::_commit', function() {
+  describe('Microcosm::commit', function() {
     it ('assigns new state', function() {
-      app._commit({ foo: 'bar' })
+      app.commit({ foo: 'bar' })
       app.pull('foo').should.equal('bar')
     })
 
     it ('leads to an event', function(done) {
       app.listen(done)
-      app._commit('test')
+      app.commit('test')
     })
   })
 
@@ -78,18 +78,18 @@ describe('Microcosm', function() {
 
   describe('Microcosm:push', function() {
     it ('sends a messages to the dispatcher', function() {
-      sinon.spy(app, '_dispatch')
+      sinon.spy(app, 'dispatch')
       app.push(Action)
-      app._dispatch.should.have.been.calledWith(Action, true)
+      app.dispatch.should.have.been.calledWith(Action, true)
     })
 
     it ('can send async messages to the dispatcher', function(done) {
       let Async = () => Promise.resolve(true)
 
-      sinon.spy(app, '_dispatch')
+      sinon.spy(app, 'dispatch')
 
       app.push(Async).then(function() {
-        app._dispatch.should.have.been.calledWith(Async, true)
+        app.dispatch.should.have.been.calledWith(Async, true)
         done()
       })
     })
@@ -103,7 +103,7 @@ describe('Microcosm', function() {
     })
   })
 
-  describe('Microcosm::_dispatch', function() {
+  describe('Microcosm::dispatch', function() {
     let local;
 
     beforeEach(function(done) {
@@ -117,12 +117,12 @@ describe('Microcosm', function() {
         throw Error("Expected app to not respond but did")
       })
 
-      local._dispatch(Action)
+      local.dispatch(Action)
     })
 
     it ('commits changes if a store can respond', function(done) {
       local.listen(done)
-      local._dispatch('respond')
+      local.dispatch('respond')
     })
 
   })
@@ -194,7 +194,7 @@ describe('Microcosm', function() {
 
   describe('Microcosm::toObject', function() {
     it ('can turn into a flat object', function() {
-      app._commit(Object.create({ foo: 'bar' }))
+      app.commit(Object.create({ foo: 'bar' }))
       app.toObject().should.have.property('foo', 'bar')
     })
   })

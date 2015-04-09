@@ -33,10 +33,10 @@ export default class Microcosm {
     // Actions some times return promises. When this happens, wait for
     // them to resolve before moving on
     if (request instanceof Promise) {
-      return request.then(body => this._dispatch(signal, body))
+      return request.then(body => this.dispatch(signal, body))
     }
 
-    return this._dispatch(signal, request)
+    return this.dispatch(signal, request)
   }
 
   pull(key, fn, ...args) {
@@ -50,22 +50,22 @@ export default class Microcosm {
   }
 
   replace(data) {
-    this._commit(this.deserialize(data))
+    this.commit(this.deserialize(data))
   }
 
-  _commit(next) {
+  commit(next) {
     this._state = next
     this.emit()
   }
 
-  _dispatch(action, body) {
+  dispatch(action, body) {
     let actors = remapIf(this._stores, store => action in store)
 
     if (Object.keys(actors).length > 0) {
       let copy   = clone(this._state)
       let staged = remap(actors, store => store[action](copy[store], body), copy)
 
-      this._commit(staged)
+      this.commit(staged)
     }
 
     return body

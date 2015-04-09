@@ -1,5 +1,9 @@
 # Changelog
 
+### 6.2.1
+
+- Externalize some methods to fix extension
+
 ### 6.2.0
 
 - Microcosm's event system has been replaced with

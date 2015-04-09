@@ -52,7 +52,7 @@ module.exports = {
       {
         test    : /\.jsx*$/,
         exclude : /node_modules/,
-        loader  : 'react-hot!babel?experimental&loose'
+        loader  : 'react-hot!babel?stage=1&loose'
       },
       {
         test    : /\.json$/,
