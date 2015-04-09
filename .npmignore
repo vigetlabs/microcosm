@@ -1,0 +1,6 @@
+example
+docs
+src
+karma.config.js
+webpack.config.js
+webpack.example.config.js
