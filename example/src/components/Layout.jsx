@@ -6,13 +6,11 @@ let Layout = React.createClass({
   },
 
   render() {
-    let { app, items, lists, route } = this.props
+    let { app } = this.props
 
-    return React.createElement(route.handler, {
+    return React.createElement(app.get(['route', 'handler']), {
       app    : app,
-      items  : items,
-      lists  : lists,
-      params : route.params,
+      params : app.get(['route', 'params'])
     })
   }
 })

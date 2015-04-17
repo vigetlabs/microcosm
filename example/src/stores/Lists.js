@@ -4,8 +4,8 @@ import uid      from 'uid'
 
 export default {
 
-  getInitialState(seed=[]) {
-    return seed
+  getInitialState() {
+    return {}
   },
 
   [Lists.add](state, params) {
@@ -17,11 +17,11 @@ export default {
 
     record.contrast = contrast(record.color)
 
-    return state.concat(record)
+    state.set(record.id, record)
   },
 
   [Lists.remove](state, id) {
-    return state.filter(list => list.id != id)
+    state.remove(id)
   },
 
   toString() {

@@ -5,9 +5,7 @@ import React    from 'react'
 
 let Home = React.createClass({
   propTypes: {
-    app   : React.PropTypes.object.isRequired,
-    lists : React.PropTypes.array.isRequired,
-    items : React.PropTypes.array.isRequired
+    app   : React.PropTypes.object.isRequired
   },
 
   getInitialState() {
@@ -17,12 +15,12 @@ let Home = React.createClass({
   },
 
   render() {
-    let { app, lists, items } = this.props
+    let { app } = this.props
 
     return (
       <main role="main">
         <Banner onToggle={ this._onToggle } />
-        <Body app={ app } lists={ lists } items={ items } />
+        <Body lists={ app.graft('lists') } items={ app.graft('items') } />
         <AddList app={ app } active={ this.state.openCreate } onExit={ this._onToggle } />
       </main>
     )

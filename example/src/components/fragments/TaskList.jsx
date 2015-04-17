@@ -6,8 +6,8 @@ import TaskListItem from './TaskListItem'
 export default React.createClass({
 
   propTypes: {
-    app  : React.PropTypes.object.isRequired,
-    list : React.PropTypes.object.isRequired
+    items : React.PropTypes.object.isRequired,
+    list  : React.PropTypes.object.isRequired
   },
 
   getItem(item) {
@@ -25,7 +25,7 @@ export default React.createClass({
 
         <div className="fill-white shadow-1 radius-2 relative">
           <ul className="list">
-            { items.map(this.getItem) }
+            { items.filter(i => i.list === list.get('id')).map(this.getItem) }
           </ul>
         </div>
       </section>
@@ -33,13 +33,13 @@ export default React.createClass({
   },
 
   _onAddItem(name) {
-    let { app, list } = this.props
+    let { list } = this.props
 
-    app.push(ItemActions.add, { name, list })
+    list.push(ItemActions.add, { name, list: list.valueOf() })
   },
 
   _onRemoveItem(item) {
-    this.props.app.push(ItemActions.remove, item.id)
+    this.props.list.push(ItemActions.remove, item.id)
   }
 
 })

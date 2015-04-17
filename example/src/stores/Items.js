@@ -4,8 +4,8 @@ import uid      from 'uid'
 
 export default {
 
-  getInitialState(seed=[]) {
-    return seed
+  getInitialState() {
+    return {}
   },
 
   [Items.add](state, { list, name }) {
@@ -15,15 +15,17 @@ export default {
       name : name
     }
 
-    return state.concat(record)
+    state.set(record.id, record)
   },
 
   [Items.remove](state, unwanted) {
-    return state.filter(item => item.id !== unwanted)
+    state.remove(unwanted)
   },
 
   [Lists.remove](state, unwanted) {
-    return state.filter(item => item.list !== unwanted)
+    state.filter(i => i.list === unwanted)
+         .map(i => i.id)
+         .forEach(state.remove, state)
   },
 
   toString() {

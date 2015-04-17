@@ -13,13 +13,13 @@ class Todos extends Microcosm {
     // here:
 
     // 1. Lists
-    this.addStore(Lists)
+    this.addStore('lists', Lists)
 
     // 2. List Items
-    this.addStore(Items)
+    this.addStore('items', Items)
 
     // 3. History
-    this.addStore(Route)
+    this.addStore('route', Route)
   }
 
 }

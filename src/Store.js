@@ -10,10 +10,6 @@ export default {
 
   deserialize(state = this.getInitialState()) {
     return state
-  },
-
-  toString() {
-    throw new Error('Stores must implement a toString() method')
   }
 
 }

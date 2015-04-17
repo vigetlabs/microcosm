@@ -16,7 +16,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "diode": "^4.0.0"
+    "diode": "^4.0.0",
+    "foliage": "^0.9.0"
   },
   "devDependencies": {
     "autoprefixer-core": "^5.1.7",

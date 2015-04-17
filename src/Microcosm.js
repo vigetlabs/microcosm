@@ -6,21 +6,21 @@
 
 import Action  from './Action'
 import Diode   from 'diode'
+import Foliage from 'foliage'
 import Plugin  from './Plugin'
 import Store   from './Store'
 import assert  from './assert'
-import clone   from './clone'
-import getIn   from './getIn'
 import install from './install'
 import remap   from './remap'
 import remapIf from './remapIf'
 
-export default class Microcosm {
+export default class Microcosm extends Foliage {
 
   constructor() {
+    super()
+
     Diode.decorate(this)
 
-    this._state   = {}
     this._stores  = {}
     this._plugins = []
   }
@@ -36,12 +36,7 @@ export default class Microcosm {
       return request.then(body => this.dispatch(signal, body))
     }
 
-    return this.dispatch(signal, request)
-  }
-
-  pull(key, fn, ...args) {
-    let val = getIn(this._state, key)
-    return typeof fn === 'function' ? fn.call(this, val, ...args) : val
+    return this._root.dispatch(signal, request)
   }
 
   prepare(fn, ...buffer) {
@@ -53,20 +48,15 @@ export default class Microcosm {
     this.commit(this.deserialize(data))
   }
 
-  commit(next) {
-    this._state = next
-    this.emit()
-  }
-
   dispatch(action, body) {
     let actors = remapIf(this._stores, store => action in store)
 
-    if (Object.keys(actors).length > 0) {
-      let copy   = clone(this._state)
-      let staged = remap(actors, store => store[action](copy[store], body), copy)
-
-      this.commit(staged)
+    for (var key in actors) {
+      let actor = this._stores[key]
+      actor[action](this.graft(key), body)
     }
+
+    this.emit()
 
     return body
   }
@@ -77,23 +67,21 @@ export default class Microcosm {
     this._plugins.push([ plugin, options ])
   }
 
-  addStore(store) {
-    // Make sure life cycle methods are included
-    const safe = { ...Store, ...store }
-
+  addStore(key, store) {
     // Don't reassign stores that are already included. Fail hard.
-    assert(!this._stores[store], `Tried to add "${store}" but it is not unique`)
+    assert(!this._stores[key], `Tried store with key of "${key}" but it already exists!`)
 
-    // Add the validated stores to the list of known entities
-    this._stores[safe] = safe
+    // Make sure life cycle methods are included and then
+    // add the validated stores to the list of known entities
+    this._stores[key] = { ...Store, ...store }
   }
 
   serialize() {
-    return remap(this._stores, store => store.serialize(this.pull(store)))
+    return remap(this._stores, (store, key) => store.serialize(this.get(key)))
   }
 
   deserialize(data={}) {
-    return remap(this._stores, store => store.deserialize(data[store]))
+    return remap(this._stores, (store, key) => store.deserialize(data[key]))
   }
 
   toJSON() {
@@ -106,7 +94,7 @@ export default class Microcosm {
 
   start(...next) {
     // Start by producing the initial state
-    this._state = remap(this._stores, store => store.getInitialState())
+    this.commit(remap(this._stores, store => store.getInitialState()))
 
     // Queue plugins and then notify that installation has finished
     install(this._plugins, this, function() {
