@@ -26,10 +26,6 @@ export default {
     state.filter(i => i.list === unwanted)
          .map(i => i.id)
          .forEach(state.remove, state)
-  },
-
-  toString() {
-    return 'items'
   }
 
 }

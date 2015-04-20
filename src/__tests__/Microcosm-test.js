@@ -7,54 +7,19 @@ describe('Microcosm', function() {
 
   beforeEach(function(done) {
     app = new Microcosm()
-    app.addStore(DummyStore)
+    app.addStore('dummy', DummyStore)
     app.start(done)
   })
 
   describe('Microcosm::replace', function() {
     it ('runs deserialize before committing results', function() {
       app.replace({ dummy: 'test' })
-      app.pull(DummyStore).should.equal('test')
+      app.get('dummy').should.equal('test')
     })
 
     it ('leads to an event', function(done) {
       app.listen(done)
       app.replace({ dummy: 'test' })
-    })
-  })
-
-  describe('Microcosm::pull', function() {
-    it ('pulls default state for a store if it has not been assigned', function() {
-      app.pull(DummyStore).should.equal(DummyStore.getInitialState())
-    })
-
-    it ('pulls multiple values', function() {
-      app.replace({ dummy: ['test'] })
-      app.pull(['dummy', 0]).should.equal('test')
-    })
-
-    it ('can process data directly from pull', function() {
-      let answer = app.pull(DummyStore, i => DummyStore.getInitialState())
-      answer.should.equal(DummyStore.getInitialState())
-    })
-
-    it ('can inject additional arguments', function() {
-      let is = (a, b) => a === b
-
-      app.pull(DummyStore, is, 'test').should.equal(true)
-      app.pull(DummyStore, is, 'fiz').should.equal(false)
-    })
-  })
-
-  describe('Microcosm::commit', function() {
-    it ('assigns new state', function() {
-      app.commit({ foo: 'bar' })
-      app.pull('foo').should.equal('bar')
-    })
-
-    it ('leads to an event', function(done) {
-      app.listen(done)
-      app.commit('test')
     })
   })
 
@@ -65,14 +30,6 @@ describe('Microcosm', function() {
       app.prepare(add)(2, 3).should.equal(5)
       app.prepare(add, 4)(1).should.equal(5)
       app.prepare(add)(1).should.equal(1)
-    })
-
-    it ('throws an error if not given function', function(done) {
-      try {
-        app.prepare(undefined)
-      } catch(x) {
-        done()
-      }
     })
   })
 
@@ -108,7 +65,7 @@ describe('Microcosm', function() {
 
     beforeEach(function(done) {
       local = new Microcosm()
-      local.addStore({ respond: () => true, toString: () => 'another-store' })
+      local.addStore('another-store', { respond: () => true })
       local.start(done)
     })
 
@@ -144,17 +101,7 @@ describe('Microcosm', function() {
 
   describe('Microcosm::addStore', function() {
     it ('can add stores', function() {
-      app._stores.should.have.property(DummyStore)
-    })
-
-    it ('throws an error of a stores toString is not unique', function(done) {
-      app.addStore({ toString() { return 'fiz' } })
-
-      try {
-        app.addStore({ toString() { return 'fiz' } })
-      } catch(x) {
-        done()
-      }
+      app._stores.should.have.property('dummy')
     })
   })
 
@@ -169,15 +116,12 @@ describe('Microcosm', function() {
     })
 
     it ('runs through serialize methods on stores', function() {
-      app.addStore({
+      app.addStore('serialize-test', {
         getInitialState() {
           return 'this will not display'
         },
         serialize() {
           return 'this is a test'
-        },
-        toString() {
-          return 'serialize-test'
         }
       })
 
@@ -189,13 +133,6 @@ describe('Microcosm', function() {
     it ('can handle undefined arguments in deserialize', function() {
       app.addStore({ toString() { return 'fiz' } })
       app.deserialize()
-    })
-  })
-
-  describe('Microcosm::toObject', function() {
-    it ('can turn into a flat object', function() {
-      app.commit(Object.create({ foo: 'bar' }))
-      app.toObject().should.have.property('foo', 'bar')
     })
   })
 

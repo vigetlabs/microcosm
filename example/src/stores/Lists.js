@@ -22,10 +22,6 @@ export default {
 
   [Lists.remove](state, id) {
     state.remove(id)
-  },
-
-  toString() {
-    return 'lists'
   }
 
 }

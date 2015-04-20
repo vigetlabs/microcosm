@@ -4,15 +4,12 @@
  * is that each application is its own fully encapsulated world.
  */
 
-import Action  from './Action'
 import Diode   from 'diode'
 import Foliage from 'foliage'
 import Plugin  from './Plugin'
 import Store   from './Store'
-import assert  from './assert'
 import install from './install'
 import remap   from './remap'
-import remapIf from './remapIf'
 
 export default class Microcosm extends Foliage {
 
@@ -26,8 +23,6 @@ export default class Microcosm extends Foliage {
   }
 
   push(signal, ...params) {
-    Action.validate(signal)
-
     const request = signal(...params)
 
     // Actions some times return promises. When this happens, wait for
@@ -40,23 +35,29 @@ export default class Microcosm extends Foliage {
   }
 
   prepare(fn, ...buffer) {
-    Action.validate(fn)
     return this.push.bind(this, fn, ...buffer)
   }
 
   replace(data) {
     this.commit(this.deserialize(data))
+    this.emit()
   }
 
   dispatch(action, body) {
-    let actors = remapIf(this._stores, store => action in store)
+    let dirty = false
 
-    for (var key in actors) {
-      let actor = this._stores[key]
-      actor[action](this.graft(key), body)
+    for (var key in this._stores) {
+      let actor = this._stores[key][action]
+
+      if (actor) {
+        actor(this.refine(key), body)
+        dirty = true
+      }
     }
 
-    this.emit()
+    if (dirty) {
+      this.emit()
+    }
 
     return body
   }
@@ -68,9 +69,6 @@ export default class Microcosm extends Foliage {
   }
 
   addStore(key, store) {
-    // Don't reassign stores that are already included. Fail hard.
-    assert(!this._stores[key], `Tried store with key of "${key}" but it already exists!`)
-
     // Make sure life cycle methods are included and then
     // add the validated stores to the list of known entities
     this._stores[key] = { ...Store, ...store }
@@ -86,10 +84,6 @@ export default class Microcosm extends Foliage {
 
   toJSON() {
     return this.serialize()
-  }
-
-  toObject() {
-    return remapIf(this._state, () => true)
   }
 
   start(...next) {

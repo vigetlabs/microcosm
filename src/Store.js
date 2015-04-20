@@ -1,5 +1,4 @@
 export default {
-
   getInitialState() {
     return undefined
   },
@@ -11,5 +10,4 @@ export default {
   deserialize(state = this.getInitialState()) {
     return state
   }
-
 }

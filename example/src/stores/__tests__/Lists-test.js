@@ -1,20 +1,21 @@
 import Lists       from '../Lists'
 import ListActions from '../../actions/lists'
+import Foliage     from 'foliage'
 
 describe('Lists Store', function() {
 
-  it ('sets its default state to an empty array', function() {
-    Lists.getInitialState().should.eql([])
-  })
-
-  it ('returns provided state if given', function() {
-    let seed = [{}]
-    Lists.getInitialState(seed).should.eql(seed)
+  it ('sets its default state to an empty object', function() {
+    Lists.getInitialState().should.eql({})
   })
 
   it ('sets a contrasting color when creating a record', function() {
-    Lists[ListActions.add]([], { color: '#000000' })[0].should.have.property('contrast', 'white')
-    Lists[ListActions.add]([], { color: 'ffffff' })[0].should.have.property('contrast', 'black')
+    let state = new Foliage()
+
+    Lists[ListActions.add](state, { color: '#000000' })
+    state.last().contrast.should.equal('white')
+
+    Lists[ListActions.add](state, { color: 'ffffff' })
+    state.last().contrast.should.equal('black')
   })
 
 })

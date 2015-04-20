@@ -23,7 +23,8 @@ module.exports = {
   },
 
   externals: {
-    diode: 'diode'
+    diode   : 'diode',
+    foliage : 'foliage'
   },
 
   module: {
@@ -33,8 +34,9 @@ module.exports = {
         exclude : /node_modules/,
         loader  : 'babel',
         query   : {
-          stage: 1,
-          loose: true
+          stage : 1,
+          loose : true,
+          blacklist : [ 'useStrict' ]
         }
       },
       {

@@ -22,7 +22,7 @@ describe('App', function() {
     })
 
     it ('should create a new list with the proper name', function() {
-      app.pull(Lists)[0].should.have.property('name', name)
+      app.refine('lists').first().should.have.property('name', name)
     })
 
   })
@@ -32,11 +32,11 @@ describe('App', function() {
 
     beforeEach(function() {
       app.push(ListActions.add, { name })
-      app.push(ListActions.remove, app.pull(Lists)[0].id)
+      app.push(ListActions.remove, app.refine('lists').first().id)
     })
 
     it ('should remove the list by id', function() {
-      app.pull(Lists).length.should.equal(0)
+      app.refine('lists').size().should.equal(0)
     })
 
   })
@@ -46,11 +46,11 @@ describe('App', function() {
 
     beforeEach(function() {
       app.push(ListActions.add, { name: 'parent' })
-      app.push(ItemActions.add, { name, list: app.pull(Lists)[0] })
+      app.push(ItemActions.add, { name, list: app.refine('lists').first() })
     })
 
     it ('should create a new item with the proper name', function() {
-      app.pull(Items)[0].should.have.property('name', name)
+      app.refine('items').first().should.have.property('name', name)
     })
 
   })
@@ -60,12 +60,12 @@ describe('App', function() {
 
     beforeEach(function() {
       app.push(ListActions.add, { name: 'parent' })
-      app.push(ItemActions.add, { name, list: app.pull(Lists)[0] })
-      app.push(ItemActions.remove, app.pull(Items)[0].id)
+      app.push(ItemActions.add, { name, list: app.refine('lists').first() })
+      app.push(ItemActions.remove, app.refine('items').first().id)
     })
 
     it ('remove the item by id', function() {
-      app.pull(Items).length.should.equal(0)
+      app.refine('items').size().should.equal(0)
     })
 
   })
@@ -75,25 +75,24 @@ describe('App', function() {
 
     beforeEach(function() {
       app.push(ListActions.add, { name: 'parent' })
-      app.push(ItemActions.add, { name, list: app.pull(Lists)[0] })
-      app.push(ListActions.remove, app.pull(Lists)[0].id)
+      app.push(ItemActions.add, { name, list: app.refine('lists').first() })
+      app.push(ListActions.remove, app.refine('lists').first().id)
     })
 
     it ('removes all child items', function() {
-      app.pull(Items).length.should.equal(0)
+      app.refine('items').size().should.equal(0)
     })
 
   })
 
   describe('when sent a RouteActions.set message', function() {
-    var params = { pathname: 'my/route' }
-
-    beforeEach(function() {
-      app.push(RouteActions.set, params)
-    })
 
     it ('simply updates the state with the provided parameters', function() {
-      app.pull(Route).should.eql(params)
+      var params = { params: 'my/route' }
+
+      app.push(RouteActions.set, params)
+
+      app.refine('route').valueOf().should.eql(params)
     })
 
   })

@@ -6,12 +6,8 @@ export default {
     return {}
   },
 
-  [Route.set](state, { params, handler }) {
-    state.set({ params, handler })
-  },
-
-  toString() {
-    return 'route'
+  [Route.set](state, params) {
+    state.set(params)
   }
 
 }
