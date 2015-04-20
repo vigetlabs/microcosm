@@ -16,11 +16,10 @@ let Body = React.createClass({
       return a + (b.list === list.id)
     }, 0)
 
-    return (
-      <ListItem key={ list.id }
-                count={ count}
-                list={ list }
-                onRemove={ this._onRemoveList } />)
+    return (<ListItem key={ list.id }
+                      count={ count }
+                      list={ list }
+                      onRemove={ this._onRemoveList } />)
   },
 
   render() {

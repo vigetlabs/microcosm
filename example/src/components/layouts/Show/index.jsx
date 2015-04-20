@@ -9,8 +9,8 @@ export default React.createClass({
   render() {
     let { app, params } = this.props
 
-    let list  = app.graft(['lists', params.id])
-    let items = app.graft('items')
+    let list  = app.refine(['lists', params.id])
+    let items = app.refine('items')
 
     return (
       <main role="main">
