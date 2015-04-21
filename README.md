@@ -98,16 +98,13 @@ import Microcosm from 'microcosm'
 let Messages = {
   getInitialState() {
     return []
-  },
-  toString() {
-    return 'messages'
   }
 }
 
 class MyApp extends Microcosm {
   constructor() {
     super()
-    this.addStore(Messages)
+    this.addStore('messages', Messages)
   }
 }
 ```
@@ -138,16 +135,13 @@ let Messages = {
   },
   [Actions.createMessage](oldState, parameters) {
     return oldState.concat(parameters)
-  },
-  toString() {
-    return 'messages'
   }
 }
 
 class MyApp extends Microcosm {
   constructor() {
     super()
-    this.addStore(Messages)
+    this.addStore('messages', Messages)
   }
 }
 ```
@@ -191,9 +185,8 @@ app.send(Messages.create, 'This property will be passed to the dispatcher')
 
 ## How Stores work
 
-Stores are plain objects. They must implement a `getInitialState` and
-`toString` method. They listen to actions by providing methods at
-the unique signature of an Action, like:
+Stores are plain objects. They listen to actions by providing methods
+at the unique signature of an Action, like:
 
 ```javascript
 
@@ -205,10 +198,6 @@ let MessageStore = {
 
   [Messages.create](oldState, message) {
     return oldState.concat(message)
-  },
-
-  toString() {
-    return 'MessageStore'
   }
 }
 ```
@@ -218,7 +207,7 @@ individual Microcosm instance. By returning a new state object within
 responses to actions, they modify state.
 
 Microcosm will use `getInitialState` to produce the initial value for
-the subset a store manages.
+the subset a store manages when an instance is started.
 
 Unlike actions, stores must be registered with the system. There are
 two reason for this. First: to tell Microcosm what Stores should be
@@ -232,25 +221,23 @@ class App extends Microcosm {
     super(seed)
 
     // Called first:
-    this.addStore(Messages)
+    this.addStore('messages', Messages)
 
     // Called second:
-    this.addStore(OtherStoreThatDependsOnMessages)
+    this.addStore('other-store', OtherStoreThatDependsOnMessages)
   }
 }
 ```
 
 ### Getting the value out of a store
 
-Microcosms implement a `pull` method:
+Microcosms implement a `get` method:
 
 ```javascript
-app.pull(Store)
+app.get('messages')
 ```
 
-This works because the app accesses the internal state object using
-`Store` as a key. Since the store implements a `toString` method, it
-coerces into the proper key and returns the expected value.
+This will pull the `messages` key out of global application state.
 
 ## Listening to changes
 

@@ -8,6 +8,9 @@
 - `pull` is now `get`, as it is inherited from Microcosm
 - Microcosm is actually an extension of Foliage, so it now includes
   all Foliage methods.
+- Microcosm no longer uses toString() to get the key for Stores. This
+  was decided upon so that it is easier to reason about what a Store
+  is responsible for when hooking it into a Microcosm.
 
 ### 6.2.1
 

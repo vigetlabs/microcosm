@@ -25,18 +25,9 @@ var store = {
   },
   deserialize(state) {
     // parse data when app.seed is called
-  },
-  toString() {
-     // return a unique identifier
   }
+
 }
-```
-
-Of these methods, only the `toString` method is required. If this
-method is not implemented Microcosm will quickly throw an error:
-
-```
-Stores must implement a toString() method
 ```
 
 ## Installing Stores
@@ -46,25 +37,19 @@ Microcosms must add stores:
 ```javascript
 let app = new Microcosm()
 
-let MyStore = {
-  toString() {
-    return 'mystore'
-  }
-}
+let MyStore = {}
 
-app.addStore(MyStore)
+app.addStore('my-store', MyStore)
 ```
 
 This will mix the given store on top of a set of defaults (see
-`src/Store.js`) and run `getInitialState()` if it is
-provided. Additionally, the Micocosm instance will now be configured
-to use `MyStore` to manage state under the `mystore` key (because of
-the `toString` method).
+`src/Store.js`). Additionally, the Micocosm instance will now be
+configured to use `MyStore` to manage state under the `my-store` key.
 
 This state can be accessed like:
 
 ```javascript
-app.get(MyStore)
+app.get('my-store')
 ```
 
 ## Listening to Actions
@@ -74,14 +59,10 @@ Stores listen to actions by implement them as methods:
 ```javascript
 let MyStore = {
   [Action.add](state, record) {
-    return state.concat(record)
-  },
-  toString() {
-    return 'my-store'
+    state.set(record.id, record)
   }
 }
 ```
 
 The first argument of this method will always be the application state
-for the given key provided by `toString()`. It is the responsibility
-of the store to return the next state as a result of actions.
+for the particular key the Store is responsible for.

@@ -9,7 +9,7 @@ start - Resets initial state, installs all plugins, and then executes a callback
 
 State Management
 +--------------+
-pull    - Provided a key, return that entry in the state object
+get     - Provided a key, return that entry in the state object
 push    - Queue up an action, potentially changing data
 prepare - Partially apply the `push` method
 replace - Replace state with the result of deserializing a set of data
@@ -36,10 +36,6 @@ addStore  - Add an entry to the map of known stores
 ## Store
 
 ```
-Identity
-+--------------+
-toString - Must return a unique string identifying which key this store manages in global state
-
 Life Cycle
 +--------------+
 getInitialState - Determines the initial state required to operate. Called on `Microcosm::start`
