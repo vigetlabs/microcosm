@@ -89,14 +89,6 @@ describe('Microcosm', function() {
       app.addPlugin({ register() {} })
       app._plugins.length.should.equal(1)
     })
-
-    it ('throws an error if a register function is not provided', function(done) {
-      try {
-        app.addPlugin({ })
-      } catch(x) {
-        done()
-      }
-    })
   })
 
   describe('Microcosm::addStore', function() {

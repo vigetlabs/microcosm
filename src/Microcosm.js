@@ -4,14 +4,13 @@
  * is that each application is its own fully encapsulated world.
  */
 
-import Diode   from 'diode'
-import Foliage from 'foliage'
-import Plugin  from './Plugin'
-import Store   from './Store'
-import install from './install'
-import remap   from './remap'
+const Diode   = require('diode')
+const Foliage = require('foliage')
+const Store   = require('./Store')
+const install = require('./install')
+const remap   = require('./remap')
 
-export default class Microcosm extends Foliage {
+module.exports = class Microcosm extends Foliage {
 
   constructor() {
     super()
@@ -63,8 +62,6 @@ export default class Microcosm extends Foliage {
   }
 
   addPlugin(plugin, options) {
-    Plugin.validate(plugin)
-
     this._plugins.push([ plugin, options ])
   }
 

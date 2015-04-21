@@ -6,7 +6,7 @@ var isIntegration = process.env.CONTINUOUS_INTEGRATION === 'true'
 module.exports = function(config) {
   config.set({
 
-    browsers: [ isIntegration ? 'Firefox' : 'Chrome' ],
+    browsers: ['Firefox'],
 
     singleRun: isIntegration,
 
@@ -24,7 +24,7 @@ module.exports = function(config) {
       'example/src/**/__tests__/*.js*' : [ 'webpack', 'sourcemap' ]
     },
 
-    reporters: [ 'nyan', 'coverage' ],
+    reporters: [ 'spec', 'coverage' ],
 
     coverageReporter: {
       reporters: [

@@ -4,7 +4,7 @@
  * given a transformation function
  */
 
-export default function remap (obj, transform, initial={}) {
+module.exports = function remap (obj, transform, initial={}) {
   let keys = Object.keys(obj)
 
   return keys.reduce(function(memo, key) {

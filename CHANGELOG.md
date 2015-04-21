@@ -1,5 +1,14 @@
 # Changelog
 
+### 7.0.0
+
+- Internally, Microcosm now uses
+  [Foliage](https://github.com/vigetlabs/foliage) for state
+  management.
+- `pull` is now `get`, as it is inherited from Microcosm
+- Microcosm is actually an extension of Foliage, so it now includes
+  all Foliage methods.
+
 ### 6.2.1
 
 - Externalize some methods to fix extension
