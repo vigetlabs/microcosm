@@ -5,7 +5,7 @@ import uid      from 'uid'
 export default {
 
   getInitialState() {
-    return {}
+    return []
   },
 
   [Lists.add](state, params) {
@@ -17,11 +17,11 @@ export default {
 
     record.contrast = contrast(record.color)
 
-    state.set(record.id, record)
+    return state.concat(record)
   },
 
   [Lists.remove](state, id) {
-    state.remove(id)
+    return state.filter(i => i.id !== id)
   }
 
 }

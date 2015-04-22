@@ -9,13 +9,13 @@ export default React.createClass({
   render() {
     let { app, params } = this.props
 
-    let list  = app.refine(['lists', params.id])
+    let list  = app.refine('lists').find(i => i.id === params.id)
     let items = app.refine('items')
 
     return (
       <main role="main">
         <Banner list={ list } onRemove={ this._onRemoveList } />
-        <TaskList list={ list } items={ items } />
+        <TaskList app={ app } list={ list } items={ items } />
       </main>
     )
   },

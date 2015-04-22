@@ -49,7 +49,7 @@ module.exports = class Microcosm extends Foliage {
       let actor = this._stores[key][action]
 
       if (actor) {
-        actor(this.refine(key), body)
+        this.set(key, actor(this.get(key), body))
         dirty = true
       }
     }

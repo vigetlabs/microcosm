@@ -7,7 +7,7 @@ export default {
   },
 
   [Route.set](state, params) {
-    state.set(params)
+    return params
   }
 
 }

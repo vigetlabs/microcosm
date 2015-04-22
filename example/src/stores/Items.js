@@ -5,7 +5,7 @@ import uid      from 'uid'
 export default {
 
   getInitialState() {
-    return {}
+    return []
   },
 
   [Items.add](state, { list, name }) {
@@ -15,17 +15,15 @@ export default {
       name : name
     }
 
-    state.set(record.id, record)
+    return state.concat(record)
   },
 
   [Items.remove](state, unwanted) {
-    state.remove(unwanted)
+    return state.filter(i => i.id !== unwanted)
   },
 
   [Lists.remove](state, unwanted) {
-    state.filter(i => i.list === unwanted)
-         .map(i => i.id)
-         .forEach(state.remove, state)
+    return state.filter(i => i.list !== unwanted)
   }
 
 }

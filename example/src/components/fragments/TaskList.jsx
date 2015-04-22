@@ -25,7 +25,7 @@ export default React.createClass({
 
         <div className="fill-white shadow-1 radius-2 relative">
           <ul className="list">
-            { items.filter(i => i.list === list.get('id')).map(this.getItem) }
+            { items.filter(i => i.list === list.id).map(this.getItem) }
           </ul>
         </div>
       </section>
@@ -33,13 +33,13 @@ export default React.createClass({
   },
 
   _onAddItem(name) {
-    let { list } = this.props
+    let { app, list } = this.props
 
-    list.push(ItemActions.add, { name, list: list.valueOf() })
+    app.push(ItemActions.add, { name, list })
   },
 
   _onRemoveItem(item) {
-    this.props.list.push(ItemActions.remove, item.id)
+    this.props.app.push(ItemActions.remove, item.id)
   }
 
 })
