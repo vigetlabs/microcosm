@@ -1,6 +1,6 @@
 ```
                                                     |--> [Store] ---|
-[app.send] ------> [Action] ------> [Dispatcher] ---+--> [Store] ---+--> [app.shouldUpdate?]
+[app.push] ------> [Action] ------> [Dispatcher] ---+--> [Store] ---+--> [app.shouldUpdate?]
    ^                                                |--> [Store] ---|            |
    |                                                                             |
    |                                                                             v
