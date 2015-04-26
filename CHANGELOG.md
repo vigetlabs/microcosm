@@ -5,7 +5,7 @@
 - Internally, Microcosm now uses
   [Foliage](https://github.com/vigetlabs/foliage) for state
   management.
-- `pull` is now `get`, as it is inherited from Microcosm
+- `pull` is now `get`, as it is inherited from Foliage
 - Microcosm is actually an extension of Foliage, so it now includes
   all Foliage methods.
 - Microcosm no longer uses toString() to get the key for Stores. This
