@@ -39,7 +39,6 @@ module.exports = {
 
   postcss: [
     require('autoprefixer-core'),
-    require('css-mqpacker'),
     require('csswring')
   ],
 
