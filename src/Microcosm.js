@@ -91,6 +91,8 @@ module.exports = class Microcosm extends Foliage {
     install(this._plugins, this, function() {
       next.forEach(callback => callback())
     })
+
+    return this
   }
 
 }
