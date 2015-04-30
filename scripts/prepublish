@@ -5,10 +5,12 @@ rm -rf dist
 # Process javascript
 $(npm bin)/babel -d dist src
 
-cp package.json dist/package.json
 cp readme.md dist/readme.md
 cp LICENSE.md dist/LICENSE.md
 cp -r docs dist/docs
+
+# Rewrite the package.json for for the distribution folder
+node -p 'p=require("./package");p.main="index.js";p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > dist/package.json
 
 # Remove tests
 find -X dist -type d -name __tests__ | xargs rm -rf

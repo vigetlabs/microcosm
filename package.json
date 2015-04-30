@@ -2,7 +2,7 @@
   "name": "microcosm",
   "version": "7.1.0-rc1",
   "description": "A functional flux architecture",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "coveralls": "CONTINUOUS_INTEGRATION=true npm test && coveralls < coverage/report-lcov/lcov.info",
     "prepublish": "./scripts/prepublish",
