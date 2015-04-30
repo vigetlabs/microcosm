@@ -4,6 +4,5 @@
  * is that each application is its own fully encapsulated world
  */
 
-export let tag = require('./tag')
-
-export default require('./Microcosm')
+module.exports     = require('./Microcosm')
+module.exports.tag = require('./tag')
