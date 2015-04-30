@@ -1,6 +1,19 @@
 # Changelog
 
-### 7.0.0
+## 7.1.0 (Not released)
+
+### Noticeable changes
+
+- `Microcosm::start` will return itself
+
+### Internal improvements
+
+- Replaced all uses of ES6 modules with CommonJS. This was causing
+  issues in non-ES6 module projects.
+- Microcosm publishes as separate modules now. Ideally, this will make
+  internal pieces easier to reuse and help with debugging.
+
+## 7.0.0
 
 - Internally, Microcosm now uses
   [Foliage](https://github.com/vigetlabs/foliage) for state
@@ -12,22 +25,22 @@
   was decided upon so that it is easier to reason about what a Store
   is responsible for when hooking it into a Microcosm.
 
-### 6.2.1
+## 6.2.1
 
 - Externalize some methods to fix extension
 
-### 6.2.0
+## 6.2.0
 
 - Microcosm's event system has been replaced with
   [Diode](https://github.com/vigetlabs/diode). The APIs are the
   same. This should not lead to any breaking changes.
 
-### 6.1.0
+## 6.1.0
 
 - `Microcosm::pull` can now accept an array of keys for the first
   argument. This will traverse the nested keys of state to calculate value.
 
-### 6.0.0
+## 6.0.0
 
 6.0.0 is the second effort to reduce the surface area of the Microcosm API.
 
@@ -38,7 +51,7 @@
 - `Microcosm::dispatch` and `Microcosm::commit` are now private. These
   are important methods that should not be overridden
 
-### 5.2.0
+## 5.2.0
 
 - `Microcosm::pull` accepts a callback that allows you to modify the
 result. This should help to make data queries more terse.
@@ -46,11 +59,11 @@ result. This should help to make data queries more terse.
   has been internalized to mitigate the cost of future changes
 - Removed mixins from main payload to improve size
 
-### 5.1.1
+## 5.1.1
 
 - Fix build process mistake :-/
 
-### 5.1.0
+## 5.1.0
 
 - Removed fallback from `Microcosm::pull` which returns all state
 - Added an `Upstream` and `Downstream` mixin, however it is
@@ -58,7 +71,7 @@ result. This should help to make data queries more terse.
 - `Microcosm::send` will throw an error if given an undefined
   action parameter
 
-### 5.0.0
+## 5.0.0
 
 Version 5 represents an attempt to address some growth pains from
 rapidly adding new features to Microcosm. Names have been changed to
@@ -91,7 +104,7 @@ been made.
 As an additional illustration, the Microcosm API has been logistically
 sorted within `./cheatsheet.md`
 
-### 4.0.0
+## 4.0.0
 
 - Added concept of plugins. Plugins provide a way to layer on
   additional functionality. This has specifically been added so that
@@ -99,7 +112,7 @@ sorted within `./cheatsheet.md`
 - Added `Microcosm::start`. Calling `start()` will bootstrap initial
   state, run all plugins, then execute a callback.
 
-### 3.3.0
+## 3.3.0
 
 - `mapBy` internal function now accepts an initial value
 - Changed `Microcosm::dispatch` copy strategy. Instead of merging a
@@ -108,16 +121,16 @@ sorted within `./cheatsheet.md`
 - Added `Microcosm::clone`. This method defines how state is copied
   before dispatching an action.
 
-### 3.2.0
+## 3.2.0
 
 - Changed default shouldUpdate algorithm
 
-### 3.1.0
+## 3.1.0
 
 - `Microcosm::getInitialState()` now accepts an `options`
   argument. This argument is passed down from the constructor.
 
-### 3.0.0
+## 3.0.0
 
 - Changed data update pattern to more closely match
   [Om](https://github.com/omcljs/om/wiki/Basic-Tutorial). This means
@@ -136,11 +149,11 @@ sorted within `./cheatsheet.md`
   inheritance, which yields some minor file size benefits by
   polyfilling less of the `class` API.
 
-### 2.0.1
+## 2.0.1
 
 - Fix issue where empty arguments would break deserialize
 
-### 2.0.0
+## 2.0.0
 
 - Replace default `Microcosm::send` currying with partial application
   using `Microcosm::prepare`
@@ -149,7 +162,7 @@ sorted within `./cheatsheet.md`
   `set` has only been used internally to `Microcosm` and `merge` dries
   a couple of things up
 
-#### More info on removing currying
+### More info on removing currying
 
 Currying has been removed `Microcosm::send`. This was overly clever
 and somewhat malicious. If an action has default arguments, JavaScript
@@ -174,7 +187,7 @@ let partial = app.prepare(Action)
 hood. Actions should not use context whatsoever, so this should be a
 reasonable caveat.
 
-### 1.4.0
+## 1.4.0
 
 - `Store.deserialize` returns the result of `getInitialState` if no
   state is given
@@ -182,23 +195,23 @@ reasonable caveat.
 - `Microcosm.seed` will now trigger a change event
 - `Heartbeat.js` now invokes callbacks with `callback.call(this)`
 
-### 1.3.0
+## 1.3.0
 
 - Microcosms will `set` the result of `getInitialState` when adding a store
 - Microcosms will execute `deserialize` on stores when running `seed`
 - Adding a store will now fold its properties on top of a default set
   of options. See `./src/Store.js` for details.
 
-### 1.2.1
+## 1.2.1
 
 - Fix bug introduced with Tag by exposing ES6 module
 
-### 1.2.0
+## 1.2.0
 
 - All stores can implement a `serialize` method which allows them to
   shape how app state is serialized to JSON.
 
-### 1.1.0
+## 1.1.0
 
 - Better seeding. Added `Microcosm::seed` which accepts an
 object. For each known key, Microcosm will the associated store's
@@ -211,7 +224,7 @@ object. For each known key, Microcosm will the associated store's
   `Microcosm::shouldUpdate`
 - `Microcosm::send` is now curried.
 
-### 1.0.0
+## 1.0.0
 
 This version adds many breaking changes to better support other
 libraries such as
@@ -235,10 +248,10 @@ global state object.
   `microcosm.send(Action, params)`
 - Removed `Microscope` container component. Just use `listen`
 
-### 0.2.0
+## 0.2.0
 
 - Remove `get all()` from `Store`. This is to reduce namespace collisions. Stores should define their own getters.
 
-### 0.1.0
+## 0.1.0
 
 - Added a `pump` method to `Microcosm` instances. This exposes the heartbeat used to propagate change.
