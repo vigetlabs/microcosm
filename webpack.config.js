@@ -1,48 +1,66 @@
 var Webpack = require('webpack')
-var Path    = require('path')
 
 module.exports = {
-  devtool : 'source-map',
+  devtool : '#eval-source-map',
 
-  entry: {
-    Microcosm : './src/index.js'
-  },
+  entry: [
+    "webpack-dev-server/client?http://localhost:8080",
+    'webpack/hot/only-dev-server',
+    './example/src/index.jsx'
+  ],
 
   output: {
-    filename: '[name].js',
-    libraryTarget: 'commonjs2',
-    path: Path.join(__dirname, 'dist'),
-    devtoolModuleFilenameTemplate: '[resource-path]'
+    filename: 'example/assets/js/application.js',
+    path: __dirname + '/example',
+    publicPath: '/'
   },
-
-  plugins: [],
 
   resolve: {
-    extensions: [ '', '.js', '.jsx', '.json' ],
-    modulesDirectories: [ 'web_modules', 'node_modules', 'src' ]
+    extensions: [ '', '.js', '.jsx', '.json', '.scss', '.svg' ],
+    modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'example/src/components', 'example/assets', 'example/lib', 'example/src' ]
   },
 
-  externals: {
-    diode   : 'diode',
-    foliage : 'foliage'
+  plugins: [
+    new Webpack.HotModuleReplacementPlugin(),
+    new Webpack.NoErrorsPlugin(),
+    new Webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('development')
+    })
+  ],
+
+  node: {
+    console: false,
+    process: false,
+    global: true,
+    Buffer: false,
+    __filename: 'mock',
+    __dirname: 'mock'
   },
+
+  postcss: [
+    require('autoprefixer-core'),
+    require('csswring')
+  ],
 
   module: {
     loaders: [
       {
+        test    : /\.s*(c|a)ss$/,
+        loader  : 'style!css!postcss!sass'
+      },
+      {
         test    : /\.jsx*$/,
         exclude : /node_modules/,
-        loader  : 'babel',
-        query   : {
-          stage : 1,
-          loose : true,
-          blacklist : [ 'useStrict' ]
-        }
+        loader  : 'react-hot!babel?stage=1&loose'
       },
       {
         test    : /\.json$/,
         loader  : 'json'
-      }
+      },
+      {
+        test    : /\.(svg)$/,
+        loader  : 'raw'
+      },
     ]
   }
 }

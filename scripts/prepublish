@@ -7,6 +7,8 @@ $(npm bin)/babel -d dist src
 
 cp package.json dist/package.json
 cp readme.md dist/readme.md
+cp LICENSE.md dist/LICENSE.md
+cp -r docs dist/docs
 
 # Remove tests
 find -X dist -type d -name __tests__ | xargs rm -rf
