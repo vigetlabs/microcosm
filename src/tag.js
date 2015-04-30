@@ -4,7 +4,7 @@
  * return a unique id when stringifyed
  */
 
-import remap from './remap'
+let remap = require('./remap')
 
 let uid = 0
 
@@ -21,7 +21,7 @@ function decorate (fn, key) {
   return copy
 }
 
-export default actions => {
+module.exports = actions => {
   return remap(actions, function(value, key) {
     return isFunction(value) ? decorate(value, key) : value
   })
