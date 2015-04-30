@@ -1,6 +1,6 @@
-import Action     from './fixtures/Action'
-import DummyStore from './fixtures/DummyStore'
-import Microcosm  from '../Microcosm'
+let Action     = require('./fixtures/Action')
+let DummyStore = require('./fixtures/DummyStore')
+let Microcosm  = require('../Microcosm')
 
 describe('Microcosm', function() {
   let app;
