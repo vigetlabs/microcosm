@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+rm -rf dist
+
+# Process javascript
+$(npm bin)/babel -d dist src
+
+cp package.json dist/package.json
+cp readme.md dist/readme.md
+
+# Remove tests
+find -X dist -type d -name __tests__ | xargs rm -rf

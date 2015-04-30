@@ -1,11 +1,11 @@
 {
   "name": "microcosm",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "description": "A functional flux architecture",
-  "main": "dist/Microcosm.js",
+  "main": "dist/index.js",
   "scripts": {
     "coveralls": "CONTINUOUS_INTEGRATION=true npm test && coveralls < coverage/report-lcov/lcov.info",
-    "prepublish": "NODE_ENV=production webpack -p",
+    "prepublish": "./scripts/prepublish",
     "start": "node example/server",
     "test": "NODE_ENV=test karma start",
     "test:once": "CONTINUOUS_INTEGRATION=true npm test"
