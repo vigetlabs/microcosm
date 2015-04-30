@@ -8,7 +8,8 @@
     "prepublish": "./scripts/prepublish",
     "start": "node example/server",
     "test": "NODE_ENV=test karma start",
-    "test:once": "CONTINUOUS_INTEGRATION=true npm test"
+    "test:once": "CONTINUOUS_INTEGRATION=true npm test",
+    "release": "./scripts/release"
   },
   "repository": {
     "type": "git",
