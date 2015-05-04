@@ -1,6 +1,6 @@
 {
   "name": "microcosm",
-  "version": "7.1.0",
+  "version": "7.1.1",
   "description": "A functional flux architecture",
   "main": "src/index.js",
   "scripts": {
@@ -18,7 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "diode": "^4.0.0",
-    "foliage": "^0.15.x"
+    "foliage": "^0.16.0"
   },
   "devDependencies": {
     "autoprefixer-core": "^5.x.x",

@@ -1,5 +1,9 @@
 # Changelog
 
+## 7.1.1
+
+- Bumped Foliage to a newer version
+
 ## 7.1.0
 
 ### Noticeable changes
