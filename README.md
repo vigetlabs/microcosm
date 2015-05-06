@@ -1,4 +1,4 @@
-[![NPM](https://nodei.co/npm/microcosm.png?compact=true)](https://npmjs.org/package/microcosm)
+![microcososm](https://raw.githubusercontent.com/vigetlabs/microcosm/master/docs/assets/microcososm.svg)
 
 ---
 
@@ -19,6 +19,8 @@ clear of this project if you want stability.**
 ---
 
 # Microcosm
+
+[![NPM](https://nodei.co/npm/microcosm.png?compact=true)](https://npmjs.org/package/microcosm)
 
 Microcosm is a Flux implementation inspired by [Om](https://github.com/omcljs/om),
 [Flummox](https://github.com/acdlite/flummox) and [Elm](http://elm-lang.org). It is an
