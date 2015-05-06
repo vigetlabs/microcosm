@@ -1,14 +1,10 @@
 var Webpack = require('webpack')
 var webpack_config = require('./webpack.config')
 
-var isIntegration = process.env.CONTINUOUS_INTEGRATION === 'true'
-
 module.exports = function(config) {
   config.set({
 
-    browsers: ['Firefox'],
-
-    singleRun: isIntegration,
+    browsers: [ 'Firefox', 'Chrome' ],
 
     frameworks: [ 'mocha', 'sinon-chai' ],
 
