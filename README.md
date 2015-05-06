@@ -1,4 +1,4 @@
-![microcososm](https://raw.githubusercontent.com/vigetlabs/microcosm/master/docs/assets/microcososm.svg)
+![microcososm](http://f.cl.ly/items/36051G3A2M443z3v3U3b/microcososm.svg)
 
 ---
 
