@@ -13,7 +13,7 @@ clear of this project if you want stability.**
 
 ---
 
-[![Travis CI](https://travis-ci.org/vigetlabs/microcosm.svg)](https://travis-ci.org/vigetlabs/microcosm)
+[![Circle CI](https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg)](https://circleci.com/gh/vigetlabs/microcosm)
 [![Coverage Status](https://coveralls.io/repos/vigetlabs/microcosm/badge.svg)](https://coveralls.io/r/vigetlabs/microcosm)
 
 ---
