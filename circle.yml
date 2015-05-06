@@ -1,6 +1,6 @@
 machine:
   environment:
-    COVERALLS_REPO_TOKEN=gRaqgAEimStG5js1JQiGxPdoOJrXqSNkQ
+    COVERALLS_REPO_TOKEN: gRaqgAEimStG5js1JQiGxPdoOJrXqSNkQ
 test:
   post:
     - npm run coveralls
