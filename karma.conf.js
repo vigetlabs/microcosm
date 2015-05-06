@@ -42,7 +42,7 @@ module.exports = function(config) {
             exclude : /node_modules/,
             loader  : 'babel',
             query   : {
-              stage: 0,
+              stage: 1,
               loose: true,
               optional: ['runtime']
             }
