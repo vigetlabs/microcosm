@@ -1,5 +1,6 @@
 machine:
   environment:
+    COVERALLS_SERVICE_NAME: circle-ci
     COVERALLS_REPO_TOKEN: gRaqgAEimStG5js1JQiGxPdoOJrXqSNkQ
 test:
   post:
