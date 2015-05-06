@@ -7,8 +7,8 @@
     "coveralls": "CONTINUOUS_INTEGRATION=true npm test && coveralls < coverage/report-lcov/lcov.info",
     "prepublish": "./scripts/prepublish",
     "start": "node example/server",
-    "test": "NODE_ENV=test karma start",
-    "test:once": "CONTINUOUS_INTEGRATION=true npm test",
+    "test": "NODE_ENV=test karma start --single-run",
+    "test:watch": "NODE_ENV=test karma start",
     "release": "./scripts/release"
   },
   "repository": {
