@@ -1,10 +1,17 @@
-var Webpack = require('webpack')
+var Webpack        = require('webpack')
 var webpack_config = require('./webpack.config')
+var isMac          = require('os').platform() === 'darwin'
 
 module.exports = function(config) {
+  var browsers = [ 'Chrome', 'Firefox' ]
+
+  if (isMac) {
+    browsers.push('Safari')
+  }
+
   config.set({
 
-    browsers: [ 'Chrome', 'Firefox' ],
+    browsers: browsers,
 
     frameworks: [ 'mocha', 'sinon-chai' ],
 
