@@ -4,7 +4,7 @@ var webpack_config = require('./webpack.config')
 module.exports = function(config) {
   config.set({
 
-    browsers: [ 'Firefox', 'Chrome' ],
+    browsers: [ 'Chrome', 'Firefox' ],
 
     frameworks: [ 'mocha', 'sinon-chai' ],
 
@@ -23,10 +23,9 @@ module.exports = function(config) {
     reporters: [ 'spec', 'coverage' ],
 
     coverageReporter: {
-      reporters: [
-        { type: 'html', subdir: 'report-html' },
-        { type: 'lcov', subdir: 'report-lcov' }
-      ]
+      type: 'html',
+      subdir: '.',
+      dir: process.env.CIRCLE_ARTIFACTS || 'coverage'
     },
 
     webpack: {
