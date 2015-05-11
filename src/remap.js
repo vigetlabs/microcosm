@@ -1,7 +1,11 @@
-/*
- * remap
- * Take an object and assign new values onto another object
- * given a transformation function
+/**
+ *  Remap
+ *
+ *  Reduces over a value, setting the current index/key
+ *  to the result of a given function.
+ *
+ *  For example:
+ *  remap({ foo: 'bar' }, word => word.toUpperCase()) = { foo: 'BAR' }
  */
 
 module.exports = function remap (obj, transform, initial={}) {
