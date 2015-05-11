@@ -4,7 +4,7 @@
 
 ### Heads up!
 
-**This is not the next big flux framework**. It is largely an attempt to
+**This is not the next big flux framework**. It is an attempt to
 simplify the authoring model for some other Viget tools. The roadmap
 for Microcosm is heavily influenced by the needs of those projects. We
 will follow [semver](http://semver.org/) to help maintain dependency
@@ -16,8 +16,6 @@ clear of this project if you want stability.**
 [![Circle CI](https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg)](https://circleci.com/gh/vigetlabs/microcosm)
 
 ---
-
-# Microcosm
 
 [![NPM](https://nodei.co/npm/microcosm.png?compact=true)](https://npmjs.org/package/microcosm)
 

@@ -1,61 +1,19 @@
 var Webpack = require('webpack')
 
 module.exports = {
-  devtool : '#eval-source-map',
-
-  entry: [
-    "webpack-dev-server/client?http://localhost:8080",
-    'webpack/hot/only-dev-server',
-    './example/src/index.jsx'
-  ],
-
-  output: {
-    filename: 'example/assets/js/application.js',
-    path: __dirname + '/example',
-    publicPath: '/'
-  },
+  devtool : 'source-map',
 
   resolve: {
     extensions: [ '', '.js', '.jsx', '.json', '.scss', '.svg' ],
-    modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'example/src/components', 'example/assets', 'example/lib', 'example/src' ]
+    modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'example' ]
   },
-
-  plugins: [
-    new Webpack.HotModuleReplacementPlugin(),
-    new Webpack.NoErrorsPlugin(),
-    new Webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development')
-    })
-  ],
-
-  node: {
-    console: false,
-    process: false,
-    global: true,
-    Buffer: false,
-    __filename: 'mock',
-    __dirname: 'mock'
-  },
-
-  postcss: [
-    require('autoprefixer-core'),
-    require('csswring')
-  ],
 
   module: {
     loaders: [
       {
-        test    : /\.s*(c|a)ss$/,
-        loader  : 'style!css!postcss!sass'
-      },
-      {
         test    : /\.jsx*$/,
         exclude : /node_modules/,
-        loader  : 'react-hot!babel?stage=1&loose'
-      },
-      {
-        test    : /\.json$/,
-        loader  : 'json'
+        loader  : 'babel'
       },
       {
         test    : /\.(svg)$/,

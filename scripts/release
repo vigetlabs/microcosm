@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-npm run prepublish
-npm publish dist

@@ -1,10 +1,8 @@
-var WebpackDevServer = require("webpack-dev-server");
-var webpack = require("webpack");
-var config = require('../webpack.config')
+var Server  = require("webpack-dev-server")
+var Webpack = require("webpack")
+var config  = require('./webpack.config')
 
-var compiler = webpack(config)
-
-var server = new WebpackDevServer(compiler, {
+var server = new Server(Webpack(config), {
   hot: true,
   contentBase: './example',
   noInfo: true,

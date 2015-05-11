@@ -1,21 +1,13 @@
 var Webpack        = require('webpack')
 var webpack_config = require('./webpack.config')
-var isMac          = require('os').platform() === 'darwin'
 
 module.exports = function(config) {
-  var browsers = [ 'Chrome', 'Firefox' ]
-
-  if (isMac) {
-    browsers.push('Safari')
-  }
-
   config.set({
-
-    browsers: browsers,
+    browsers: [ 'Chrome' ],
 
     frameworks: [ 'mocha', 'sinon-chai' ],
 
-    logLevel: config.LOG_ERROR,
+    autoWatchBatchDelay: 400,
 
     files: [
       'src/**/__tests__/*.js*',
@@ -23,7 +15,7 @@ module.exports = function(config) {
     ],
 
     preprocessors: {
-      'src/**/__tests__/*.js*'     : [ 'webpack', 'sourcemap' ],
+      'src/**/__tests__/*.js*' : [ 'webpack', 'sourcemap' ],
       'example/src/**/__tests__/*.js*' : [ 'webpack', 'sourcemap' ]
     },
 
@@ -37,28 +29,15 @@ module.exports = function(config) {
 
     webpack: {
       devtool : '#eval-source-map',
-      plugins : webpack_config.plugins.concat([
-        new Webpack.IgnorePlugin(/\.s*(c|a)ss$/)
-      ]),
       resolve : webpack_config.resolve,
 
       module: {
-        loaders: [
-          {
-            test    : /\.jsx*$/,
-            exclude : /node_modules/,
-            loader  : 'babel',
-            query   : {
-              stage: 1,
-              loose: true,
-              optional: ['runtime']
-            }
-          },
-          {
-            test    : /\.json$/,
-            loader  : 'json'
-          }
-        ],
+        loaders: [{
+          test    : /\.jsx*$/,
+          exclude : /node_modules/,
+          loader  : 'babel',
+          query   : { optional: ['runtime'] }
+        }],
         postLoaders: [
           {
             test: /\.jsx*$/,
