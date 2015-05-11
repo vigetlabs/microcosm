@@ -39,7 +39,9 @@ export default React.createClass({
   },
 
   _onRemoveItem(item) {
-    this.props.app.push(ItemActions.remove, item.id)
+    let { app } = this.props
+
+    app.push(ItemActions.remove, item.id)
   }
 
 })

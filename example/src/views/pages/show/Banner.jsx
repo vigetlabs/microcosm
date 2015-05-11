@@ -1,7 +1,7 @@
-import BackIcon   from 'icons/arrow-back'
-import DeleteIcon from 'icons/delete'
-import Icon       from 'fragments/Icon'
-import Link       from 'fragments/Link'
+import BackIcon   from 'assets/icons/arrow-back'
+import DeleteIcon from 'assets/icons/delete'
+import Icon       from 'views/parts/Icon'
+import Link       from 'views/parts/Link'
 import React      from 'react'
 
 export default React.createClass({

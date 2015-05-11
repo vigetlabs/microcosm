@@ -1,4 +1,4 @@
-import AddList  from 'fragments/AddList'
+import AddList  from 'views/parts/AddList'
 import Banner   from './Banner'
 import Body     from './Body'
 import React    from 'react'

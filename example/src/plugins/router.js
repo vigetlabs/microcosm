@@ -8,8 +8,8 @@ import Route from 'actions/route'
 import page from 'page'
 
 let routes = [
-  { path: '/',         handler: require('../components/layouts/Home') },
-  { path: '/list/:id', handler: require('../components/layouts/Show') }
+  { path: '/',         handler: require('../views/pages/home') },
+  { path: '/list/:id', handler: require('../views/pages/show') }
 ]
 
 export default {

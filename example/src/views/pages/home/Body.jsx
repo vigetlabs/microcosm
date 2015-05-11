@@ -1,5 +1,5 @@
 import ListActions from 'actions/lists'
-import ListItem    from 'fragments/ListItem'
+import ListItem    from 'views/parts/ListItem'
 import React       from 'react'
 
 let Body = React.createClass({

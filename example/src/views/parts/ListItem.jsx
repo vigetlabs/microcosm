@@ -1,6 +1,6 @@
-import DeleteIcon  from 'icons/delete'
-import Icon        from 'fragments/Icon'
-import Link        from 'fragments/Link'
+import DeleteIcon  from 'assets/icons/delete'
+import Icon        from './Icon'
+import Link        from './Link'
 import React       from 'react'
 
 let ListItem = React.createClass({

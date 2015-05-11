@@ -1,5 +1,5 @@
-import AddIcon from 'icons/add'
-import Icon    from 'fragments/Icon'
+import AddIcon from 'assets/icons/add'
+import Icon    from 'views/parts/Icon'
 import React   from 'react'
 
 let Banner = React.createClass({

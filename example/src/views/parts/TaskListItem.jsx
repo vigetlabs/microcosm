@@ -1,5 +1,5 @@
-import DeleteIcon from 'icons/delete'
-import Icon       from 'fragments/Icon'
+import DeleteIcon from 'assets/icons/delete'
+import Icon       from './Icon'
 import React      from 'react'
 
 let TaskListItem = React.createClass({
