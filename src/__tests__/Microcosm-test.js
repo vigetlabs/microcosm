@@ -87,13 +87,13 @@ describe('Microcosm', function() {
   describe('Microcosm::addPlugin', function() {
     it ('pushes a plugin into a list', function() {
       app.addPlugin({ register() {} })
-      app._plugins.length.should.equal(1)
+      app.plugins.length.should.equal(1)
     })
   })
 
   describe('Microcosm::addStore', function() {
     it ('can add stores', function() {
-      app._stores.should.have.property('dummy')
+      app.stores.should.have.property('dummy')
     })
   })
 

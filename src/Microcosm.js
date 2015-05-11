@@ -10,15 +10,15 @@ const Store   = require('./Store')
 const install = require('./install')
 const remap   = require('./remap')
 
-module.exports = class Microcosm extends Foliage {
+class Microcosm extends Foliage {
 
   constructor() {
     super()
 
     Diode.decorate(this)
 
-    this._stores  = {}
-    this._plugins = []
+    this.stores  = {}
+    this.plugins = []
   }
 
   push(signal, ...params) {
@@ -45,8 +45,8 @@ module.exports = class Microcosm extends Foliage {
   dispatch(action, body) {
     let dirty = false
 
-    for (var key in this._stores) {
-      let actor = this._stores[key][action]
+    for (var key in this.stores) {
+      let actor = this.stores[key][action]
 
       if (actor) {
         this.set(key, actor(this.get(key), body))
@@ -62,21 +62,21 @@ module.exports = class Microcosm extends Foliage {
   }
 
   addPlugin(plugin, options) {
-    this._plugins.push([ plugin, options ])
+    this.plugins.push([ plugin, options ])
   }
 
   addStore(key, store) {
     // Make sure life cycle methods are included and then
     // add the validated stores to the list of known entities
-    this._stores[key] = { ...Store, ...store }
+    this.stores[key] = { ...Store, ...store }
   }
 
   serialize() {
-    return remap(this._stores, (store, key) => store.serialize(this.get(key)))
+    return remap(this.stores, (store, key) => store.serialize(this.get(key)))
   }
 
   deserialize(data={}) {
-    return remap(this._stores, (store, key) => store.deserialize(data[key]))
+    return remap(this.stores, (store, key) => store.deserialize(data[key]))
   }
 
   toJSON() {
@@ -85,10 +85,10 @@ module.exports = class Microcosm extends Foliage {
 
   start(...next) {
     // Start by producing the initial state
-    this.commit(remap(this._stores, store => store.getInitialState()))
+    this.commit(remap(this.stores, store => store.getInitialState()))
 
     // Queue plugins and then notify that installation has finished
-    install(this._plugins, this, function() {
+    install(this.plugins, this, function() {
       next.forEach(callback => callback())
     })
 
@@ -96,3 +96,6 @@ module.exports = class Microcosm extends Foliage {
   }
 
 }
+
+module.exports     = Microcosm
+module.exports.tag = require('./tag')
