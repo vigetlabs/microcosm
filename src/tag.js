@@ -5,24 +5,21 @@
  */
 
 let remap = require('./remap')
-
-let uid = 0
-
-function isFunction (value) {
-  return typeof value === 'function'
-}
+let uid    = 0
 
 function decorate (fn, key) {
-  const copy = fn.bind(null)
-  const id   = `_${ key }_${ uid++ }`
+  if (typeof fn !== 'function') return fn
 
-  copy.toString = () => id
+  uid += 1
+
+  const copy = fn.bind(null)
+  const tag  = `_${ key }_${ uid }`
+
+  copy.toString = () => tag
 
   return copy
 }
 
-module.exports = actions => {
-  return remap(actions, function(value, key) {
-    return isFunction(value) ? decorate(value, key) : value
-  })
+module.exports = function(actions) {
+  return remap(actions, decorate)
 }
