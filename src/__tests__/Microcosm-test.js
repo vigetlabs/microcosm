@@ -24,47 +24,90 @@ describe('Microcosm', function() {
   })
 
   describe('::prepare', function() {
-    it ('partially apply ::push', function() {
-      app.prepare(a => a + 2, 3)(function(error, result) {
-        result.should.equal(5)
+    it ('partially applies ::push', function() {
+      app.prepare(a => a + 2, 3)().should.equal(5)
+    })
+
+    it ('partially applies ::push with a callback', function() {
+      app.prepare((a, next) => next(null, 'yes'))(function(error, result) {
+        result.should.equal('yes')
       })
     })
   })
 
   describe('::push', function() {
 
-    it ('sends a messages to the dispatcher', function(done) {
-      sinon.spy(app, 'dispatch')
+    describe('when sending an action with callback', function() {
 
-      app.push((params, done) => done(), 'params', function() {
-        app.dispatch.should.have.been.called
-        done()
+      it ('sends a messages to the dispatcher', function(done) {
+        sinon.spy(app, 'dispatch')
+
+        app.push((params, next) => setTimeout(next, 100), 'params', function() {
+          app.dispatch.should.have.been.called
+          done()
+        })
+      })
+
+      it ('does not dispatch when an error is provided', function(done) {
+        let warn = (params, next) => next('issue')
+
+        sinon.spy(app, 'dispatch')
+
+        app.push(warn, 'params', function(error) {
+          error.should.equal('issue')
+          app.dispatch.should.not.have.been.called
+          done()
+        })
       })
     })
 
-    it ('can send async messages to the dispatcher', function(done) {
-      let Async = function(params, next) {
-        setTimeout(next, 100)
-      }
+    describe('when sending an action that returns a promise', function() {
 
-      sinon.spy(app, 'dispatch')
+      it ('sends a messages to the dispatcher', function(done) {
+        sinon.spy(app, 'dispatch')
 
-      app.push(Async, 'params', function() {
-        app.dispatch.should.have.been.called
-        done()
+        app.push(i => Promise.resolve(i), true).then(function() {
+          app.dispatch.should.have.been.called
+          done()
+        })
+      })
+
+      it ('does not dispatch a rejected promise', function(done) {
+        let warn = params => Promise.reject('issue')
+
+        sinon.spy(app, 'dispatch')
+
+        app.push(warn, 'params').catch(function(error) {
+          error.should.equal('issue')
+          app.dispatch.should.not.have.been.called
+          done()
+        })
+      })
+
+      it ('executes callbacks with the rejected error', function(done) {
+        let warn = params => Promise.reject('issue')
+
+        sinon.spy(app, 'dispatch')
+
+        app.push(warn, 'params', function(error) {
+          error.should.equal('issue')
+          app.dispatch.should.not.have.been.called
+          done()
+        })
       })
     })
 
-    it ('does not dispatch errors', function(done) {
-      let warn = (params, next) => next('issue')
+    describe('when sending an action that returns a value', function() {
 
-      sinon.spy(app, 'dispatch')
+      it ('sends a messages to the dispatcher', function() {
+        let good = params => 'yes'
 
-      app.push(warn, 'params', function(error) {
-        error.should.equal('issue')
-        app.dispatch.should.not.have.been.called
-        done()
+        sinon.spy(app, 'dispatch')
+
+        app.push(good)
+        app.dispatch.should.have.been.called
       })
+
     })
 
   })

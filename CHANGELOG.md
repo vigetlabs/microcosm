@@ -1,10 +1,12 @@
 # Changelog
 
-## 8.0.0
+## 7.2.0
 
-- Action creators now have the signature `action(params,
+### Noticeable changes
+
+- Action creators can now have the signature `action(params,
   callback)`. This is an error-first callback (like node). If an error
-  is provided, it will not dispatch an action.
+  is provided, it will not dispatch an action. See below about this breaking update.
 - Stores now contain the logic to determine if they should respond to
   an action. This is defined in `willRespondTo`.
 - Stores now contain the logic for how it transforms values. This
@@ -16,6 +18,22 @@
 - `Microcosm::deserialize` will now only operate on the keys provided
   by the seed object. This means that data passed into `replace`
   will only blow way keys provided in the data object.
+
+### Breaking Changes
+
+Actions will follow the error-first callback convention if more than one argument is provided to them. This means that all configuration for an action should be passed as a single argument. If you are using multiple arguments in your actions, consider changing something like:
+
+```javascript
+action: function(id, value) {}
+```
+
+To the following:
+
+```javascript
+action: function(params) {
+  // params => { id: id, value: value }
+}
+```
 
 ## 7.1.1
 

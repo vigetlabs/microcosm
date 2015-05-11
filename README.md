@@ -42,7 +42,8 @@ architecture:
    updated by returning a new value.
 3. Stores do not contain data, they _transform_ it. See the section on
    stores below.
-4. Actions follow the error-first callbacks, dispatching on success
+4. Actions must either return a value, promise, or follow the
+   error-first callbacks convention, dispatching on success.
 5. Utilize language features over library abstraction as much as
    possible.
 
