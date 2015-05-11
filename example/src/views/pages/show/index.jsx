@@ -26,7 +26,8 @@ export default React.createClass({
 
   _onRemoveList() {
     let { app, params } = this.props
-    app.push(ListActions.remove, params.id, this.goHome)
+    app.push(ListActions.remove, params.id)
+    this.goHome()
   }
 
 })
