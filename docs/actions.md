@@ -51,8 +51,3 @@ callbacks:
 ```javascript
 <button onClick={ app.prepare(Action) }>Do something</button>
 ```
-
-## Promises
-
-Microcosms will wait for Actions that return promises, only
-dispatching if they resolve successfully.

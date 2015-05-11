@@ -46,7 +46,7 @@ architecture:
 5. Utilize language features over library abstraction as much as
    possible.
 
-## What problems does it attempt to solve?
+## What problems does it solve?
 
 1. State isolation. Requests to render applications server-side should
    be as stateless as possible. Client-side libraries (such as [Colonel
