@@ -11,7 +11,7 @@ describe('Microcosm', function() {
     app.start(done)
   })
 
-  describe('Microcosm::replace', function() {
+  describe('::replace', function() {
     it ('runs deserialize before committing results', function() {
       app.replace({ dummy: 'test' })
       app.get('dummy').should.equal('test')
@@ -23,58 +23,59 @@ describe('Microcosm', function() {
     })
   })
 
-  describe('Microcosm::prepare', function() {
-    it ('partially apply Microcosm::push', function() {
-      let add = (a=0, b=0) => a + b
-
-      app.prepare(add)(2, 3).should.equal(5)
-      app.prepare(add, 4)(1).should.equal(5)
-      app.prepare(add)(1).should.equal(1)
+  describe('::prepare', function() {
+    it ('partially apply ::push', function() {
+      app.prepare(a => a + 2, 3)(function(error, result) {
+        result.should.equal(5)
+      })
     })
   })
 
-  describe('Microcosm:push', function() {
-    it ('sends a messages to the dispatcher', function() {
-      sinon.spy(app, 'dispatch')
-      app.push(Action)
-      app.dispatch.should.have.been.calledWith(Action, true)
-    })
+  describe('::push', function() {
 
-    it ('can send async messages to the dispatcher', function(done) {
-      let Async = () => Promise.resolve(true)
-
+    it ('sends a messages to the dispatcher', function(done) {
       sinon.spy(app, 'dispatch')
 
-      app.push(Async).then(function() {
-        app.dispatch.should.have.been.calledWith(Async, true)
+      app.push((params, done) => done(), 'params', function() {
+        app.dispatch.should.have.been.called
         done()
       })
     })
 
-    it ('throws an error if not sent a truthy', function(done) {
-      try {
-        app.push(undefined)
-      } catch(x) {
-        done()
+    it ('can send async messages to the dispatcher', function(done) {
+      let Async = function(params, next) {
+        setTimeout(next, 100)
       }
+
+      sinon.spy(app, 'dispatch')
+
+      app.push(Async, 'params', function() {
+        app.dispatch.should.have.been.called
+        done()
+      })
     })
+
+    it ('does not dispatch errors', function(done) {
+      let warn = (params, next) => next('issue')
+
+      sinon.spy(app, 'dispatch')
+
+      app.push(warn, 'params', function(error) {
+        error.should.equal('issue')
+        app.dispatch.should.not.have.been.called
+        done()
+      })
+    })
+
   })
 
-  describe('Microcosm::dispatch', function() {
+  describe('::dispatch', function() {
     let local;
 
     beforeEach(function(done) {
       local = new Microcosm()
       local.addStore('another-store', { respond: () => true })
       local.start(done)
-    })
-
-    it ('does not emit a change if no handler responds', function() {
-      local.listen(function() {
-        throw Error("Expected app to not respond but did")
-      })
-
-      local.dispatch(Action)
     })
 
     it ('commits changes if a store can respond', function(done) {
@@ -84,20 +85,14 @@ describe('Microcosm', function() {
 
   })
 
-  describe('Microcosm::addPlugin', function() {
+  describe('::addPlugin', function() {
     it ('pushes a plugin into a list', function() {
       app.addPlugin({ register() {} })
       app.plugins.length.should.equal(1)
     })
   })
 
-  describe('Microcosm::addStore', function() {
-    it ('can add stores', function() {
-      app.stores.should.have.property('dummy')
-    })
-  })
-
-  describe('Microcosm::serialize', function() {
+  describe('::serialize', function() {
     it ('can serialize to JSON', function() {
       sinon.spy(app, 'serialize')
 
@@ -121,14 +116,14 @@ describe('Microcosm', function() {
     })
   })
 
-  describe('Microcosm::deserialize', function() {
-    it ('can handle undefined arguments in deserialize', function() {
-      app.addStore({ toString() { return 'fiz' } })
+  describe('::deserialize', function() {
+    it ('handles undefined arguments', function() {
+      app.addStore('fiz', {})
       app.deserialize()
     })
   })
 
-  describe('Microcosm::start', function() {
+  describe('::start', function() {
     it ('can run multiple callbacks', function(done) {
       let app = new Microcosm()
       let a   = sinon.mock()

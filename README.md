@@ -42,12 +42,11 @@ architecture:
    updated by returning a new value.
 3. Stores do not contain data, they _transform_ it. See the section on
    stores below.
-4. All Actions that return promises will wait to resolve before
-   dispatching.
+4. Actions follow the error-first callbacks, dispatching on success
 5. Utilize language features over library abstraction as much as
    possible.
 
-## What problems does it attempt to solve?
+## What problems does it solve?
 
 1. State isolation. Requests to render applications server-side should
    be as stateless as possible. Client-side libraries (such as [Colonel
@@ -162,8 +161,8 @@ Fortunately, the `tag` function makes this quite mangeable:
 import tag from 'microcosm/tag'
 
 let Messages = tag({
-  create(message) {
-    return { message, time: new Date() }
+  create(message, send) {
+    send(null, { message, time: new Date() })
   }
 })
 ```

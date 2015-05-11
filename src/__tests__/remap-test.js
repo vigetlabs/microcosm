@@ -1,18 +1,19 @@
 import remap from '../remap'
 
 describe('remap', function() {
+  let first, second;
 
-  it ('sets the initial state to a default object', function() {
-    let answer = remap({ a: 1 }, value => value + 1)
-
-    answer.a.should.equal(2)
+  beforeEach(function() {
+    first  = { a: 1 }
+    second = remap(first, value => value + 1)
   })
 
-  it ('can seed from an existing object', function() {
-    let answer = remap({ a: 1 }, value => value + 1, { b: 2 })
+  it ('returns a new object', function() {
+    second.should.not.equal(first)
+  })
 
-    answer.a.should.equal(2)
-    answer.b.should.equal(2)
+  it ('transforms each key according to the provided function', function() {
+    second.should.have.property('a', 2)
   })
 
 })

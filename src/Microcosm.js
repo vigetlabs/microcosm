@@ -21,62 +21,41 @@ class Microcosm extends Foliage {
     this.plugins = []
   }
 
-  push(signal, ...params) {
-    const request = signal(...params)
-
-    // Actions some times return promises. When this happens, wait for
-    // them to resolve before moving on
-    if (request instanceof Promise) {
-      return request.then(body => this.dispatch(signal, body))
-    }
-
-    return this._root.dispatch(signal, request)
+  getInitialState() {
+    return remap(this.stores, store => store.getInitialState())
   }
 
-  prepare(fn, ...buffer) {
-    return this.push.bind(this, fn, ...buffer)
-  }
-
-  replace(data) {
-    this.commit(this.deserialize(data))
+  reset() {
+    this.commit(this.getInitialState())
     this.emit()
   }
 
-  dispatch(action, body) {
-    let dirty = false
+  replace(data) {
+    let clean = this.deserialize(data)
 
-    for (var key in this.stores) {
-      let actor = this.stores[key][action]
-
-      if (actor) {
-        this.set(key, actor(this.get(key), body))
-        dirty = true
-      }
+    for (let key in clean) {
+      this.set(key, clean[key])
     }
 
-    if (dirty) {
-      this.emit()
-    }
-
-    return body
+    this.emit()
   }
 
   addPlugin(plugin, options) {
     this.plugins.push([ plugin, options ])
   }
 
-  addStore(key, store) {
-    // Make sure life cycle methods are included and then
-    // add the validated stores to the list of known entities
-    this.stores[key] = { ...Store, ...store }
+  addStore(key, config) {
+    this.stores[key] = new Store(config, key)
   }
 
   serialize() {
-    return remap(this.stores, (store, key) => store.serialize(this.get(key)))
+    return remap(this.stores, store => store.serialize(this.get(store)))
   }
 
   deserialize(data={}) {
-    return remap(this.stores, (store, key) => store.deserialize(data[key]))
+    return remap(data, (state, key) => {
+      return this.stores[key].deserialize(state)
+    })
   }
 
   toJSON() {
@@ -84,8 +63,7 @@ class Microcosm extends Foliage {
   }
 
   start(...next) {
-    // Start by producing the initial state
-    this.commit(remap(this.stores, store => store.getInitialState()))
+    this.reset()
 
     // Queue plugins and then notify that installation has finished
     install(this.plugins, this, function() {
@@ -95,7 +73,35 @@ class Microcosm extends Foliage {
     return this
   }
 
+  prepare(action, ...buffer) {
+    return this.push.bind(this, action, ...buffer)
+  }
+
+  push(action, params, ...next) {
+    let app = this.getRoot()
+
+    action(params, function(error, result) {
+      if (!error) {
+        app.dispatch(action, result)
+      }
+
+      next.forEach(fn => fn(error, result))
+    })
+  }
+
+  dispatch(action, params) {
+    for (var key in this.stores) {
+      let state = this.get(key)
+      let next  = this.stores[key].transform(state, action, params)
+
+      if (state !== next) {
+        this.set(key, next)
+        this.volley()
+      }
+    }
+  }
+
 }
 
-module.exports     = Microcosm
+module.exports = Microcosm
 module.exports.tag = require('./tag')
