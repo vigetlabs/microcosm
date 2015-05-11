@@ -1,13 +1,13 @@
-import tag from 'tag'
+import { tag } from 'Microcosm'
 
 export default tag({
 
-  add(params) {
-    return params
+  add(params, send) {
+    send(null, params)
   },
 
-  remove(id) {
-    return id
+  remove(id, send) {
+    send(null, id)
   }
 
 })

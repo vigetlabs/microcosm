@@ -1,5 +1,22 @@
 # Changelog
 
+## 8.0.0
+
+- Action creators now have the signature `action(params,
+  callback)`. This is an error-first callback (like node). If an error
+  is provided, it will not dispatch an action.
+- Stores now contain the logic to determine if they should respond to
+  an action. This is defined in `willRespondTo`.
+- Stores now contain the logic for how it transforms values. This
+  logic is contained under `transform`.
+- Added `getInitialState` method to Microcosm. By default, it will
+  return the reduced result of calling `getInitialState` on stores.
+- Added `reset` method to Microcosm. It will set an instance's state
+  to the result of calling `getInitialState`
+- `Microcosm::deserialize` will now only operate on the keys provided
+  by the seed object. This means that data passed into `replace`
+  will only blow way keys provided in the data object.
+
 ## 7.1.1
 
 - Bumped Foliage to a newer version
