@@ -6,6 +6,7 @@
 
 const Diode   = require('diode')
 const Foliage = require('foliage')
+const Signal  = require('./Signal')
 const Store   = require('./Store')
 const install = require('./install')
 const remap   = require('./remap')
@@ -80,7 +81,7 @@ class Microcosm extends Foliage {
   push(action, params, ...next) {
     let app = this.getRoot()
 
-    action(params, function(error, result) {
+    return Signal(action, params, function (error, result) {
       if (!error) {
         app.dispatch(action, result)
       }
@@ -99,6 +100,8 @@ class Microcosm extends Foliage {
         this.volley()
       }
     }
+
+    return params
   }
 
 }
