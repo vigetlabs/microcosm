@@ -19,8 +19,8 @@ import { tag } from 'tag'
 
 let MyActions = tag({
 
-  doSomething(params) {
-    return params
+  doSomething(params, send) {
+    send(null, params)
   }
 
 }
@@ -28,6 +28,9 @@ let MyActions = tag({
 
 Tag will clone an object and set a `toString` method on each key. This
 `toString` method returns a unique identifier for the action.
+
+`send` is required to dispatch an action. This is an error-first
+callback. If an error is given, it will not dispatch an action.
 
 ## Calling actions
 
