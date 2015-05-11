@@ -1,9 +1,9 @@
-import tag from 'tag'
+import { tag } from 'Microcosm'
 
 export default tag({
 
-  set(params) {
-    return params
+  set(params, send) {
+    send(null, params)
   }
 
 })

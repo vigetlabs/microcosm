@@ -1,5 +1,13 @@
 # Changelog
 
+## 8.0.0
+
+- Action creators now have the signature `action(params,
+  callback)`. This is an error-first callback (like node). If an error
+  is provided, it will not dispatch an action.
+- Stores now contain the logic to determine if they should respond to
+  an action. This is defined in `willRespondTo`.
+
 ## 7.1.1
 
 - Bumped Foliage to a newer version
