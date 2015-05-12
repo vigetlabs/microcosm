@@ -10,6 +10,7 @@ const Signal  = require('./Signal')
 const Store   = require('./Store')
 const install = require('./install')
 const remap   = require('./remap')
+const run     = require('./run')
 
 class Microcosm extends Foliage {
 
@@ -32,12 +33,7 @@ class Microcosm extends Foliage {
   }
 
   replace(data) {
-    let clean = this.deserialize(data)
-
-    for (let key in clean) {
-      this.set(key, clean[key])
-    }
-
+    this.update(this.deserialize(data))
     this.emit()
   }
 
@@ -63,13 +59,11 @@ class Microcosm extends Foliage {
     return this.serialize()
   }
 
-  start(...next) {
+  start(...callbacks) {
     this.reset()
 
     // Queue plugins and then notify that installation has finished
-    install(this.plugins, this, function() {
-      next.forEach(callback => callback())
-    })
+    install(this.plugins, this, () => run(callbacks, [], this))
 
     return this
   }
@@ -78,7 +72,7 @@ class Microcosm extends Foliage {
     return this.push.bind(this, action, ...buffer)
   }
 
-  push(action, params, ...next) {
+  push(action, params, ...callbacks) {
     let app = this.getRoot()
 
     return Signal(action, params, function (error, result) {
@@ -86,7 +80,7 @@ class Microcosm extends Foliage {
         app.dispatch(action, result)
       }
 
-      next.forEach(fn => fn(error, result))
+      run(callbacks, [ error, result ], app)
     })
   }
 
