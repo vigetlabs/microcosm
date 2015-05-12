@@ -21,7 +21,7 @@
 
 ### Breaking Changes
 
-Actions will follow the error-first callback convention if more than one argument is provided to them. This means that all configuration for an action should be passed as a single argument. If you are using multiple arguments in your actions, consider changing something like:
+Actions will follow the [error-first callback convention](http://thenodeway.io/posts/understanding-error-first-callbacks/) if more than one argument is provided to them. This means that all configuration for an action should be passed as a single argument. If you are using multiple arguments in your actions, consider changing something like:
 
 ```javascript
 action: function(id, value) {}
