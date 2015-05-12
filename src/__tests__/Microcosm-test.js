@@ -39,7 +39,7 @@ describe('Microcosm', function() {
 
     describe('when sending an action with callback', function() {
 
-      it ('sends a messages to the dispatcher', function(done) {
+      it ('sends a message to the dispatcher', function(done) {
         sinon.spy(app, 'dispatch')
 
         app.push((params, next) => setTimeout(next, 100), 'params', function() {
@@ -160,9 +160,12 @@ describe('Microcosm', function() {
   })
 
   describe('::deserialize', function() {
-    it ('handles undefined arguments', function() {
+    it ('handles cases where no value was passed', function() {
       app.addStore('fiz', {})
-      app.deserialize()
+
+      let cleaned = app.deserialize()
+
+      cleaned.should.not.have.property('fiz')
     })
   })
 
