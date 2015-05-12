@@ -3,7 +3,7 @@
  * A simple FIFO queue for installing plugins
  */
 
-module.exports = function install ([plugin, ...tail], app, callback) {
+let install = function ([plugin, ...tail], app, callback) {
   if (!plugin) return callback()
 
   let [ driver, options ] = plugin
@@ -13,3 +13,5 @@ module.exports = function install ([plugin, ...tail], app, callback) {
     install(tail, app, callback)
   })
 }
+
+module.exports = install
