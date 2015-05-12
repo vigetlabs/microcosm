@@ -4,11 +4,12 @@
  * a given function
  */
 
-module.exports = function remap (obj, transform) {
-  const keys = Object.keys(obj)
+module.exports = function (obj, transform) {
+  let map = {}
 
-  return keys.reduce(function(memo, key) {
-    memo[key] = transform(obj[key], key, obj)
-    return memo
-  }, {})
+  for (var key in obj) {
+    map[key] = transform(obj[key], key, obj)
+  }
+
+  return map
 }
