@@ -3,10 +3,10 @@
   "loose": true,
   "sourceMaps": "inline",
   "optional"  : [
+    "minification.inlineExpressions",
     "minification.propertyLiterals",
     "minification.memberExpressionLiterals",
-    "utility.inlineEnvironmentVariables",
-    "utility.inlineExpressions"
+    "utility.inlineEnvironmentVariables"
   ],
   "blacklist" : [ "strict" ]
 }
