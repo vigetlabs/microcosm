@@ -5,6 +5,10 @@
  */
 
 function Signal (action, params, next) {
+  if (typeof action !== 'function') {
+    throw TypeError(`${ action } is not a function. Is app.push() being called with the wrong value?`)
+  }
+
   let strategy = action.length >= 2 ? withCallback : withValue
 
   return strategy(action, params, next)

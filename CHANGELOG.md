@@ -6,7 +6,8 @@
 
 - Action creators can now have the signature `action(params,
   callback)`. This is an error-first callback (like node). If an error
-  is provided, it will not dispatch an action. See below about this breaking update.
+  is provided, it will not dispatch an action. See below about this
+  breaking update.
 - Stores now contain the logic to determine if they should respond to
   an action. This is defined in `willRespondTo`.
 - Stores now contain the logic for how it transforms values. This
@@ -18,6 +19,8 @@
 - `Microcosm::deserialize` will now only operate on the keys provided
   by the seed object. This means that data passed into `replace`
   will only blow way keys provided in the data object.
+- The signaling logic for dispatching actions will throw an error if
+  the action provided is not a function
 
 ### Breaking Changes
 

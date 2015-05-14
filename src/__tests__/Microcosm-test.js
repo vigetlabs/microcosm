@@ -37,6 +37,15 @@ describe('Microcosm', function() {
 
   describe('::push', function() {
 
+    it ('throws an error if asked to push a non-function value', function(done) {
+      try {
+        app.push(null)
+      } catch(x) {
+        x.should.be.instanceof(TypeError)
+        done()
+      }
+    })
+
     describe('when sending an action with callback', function() {
 
       it ('sends a message to the dispatcher', function(done) {
