@@ -19,7 +19,7 @@ describe('Microcosm', function() {
 
     it ('leads to an event', function(done) {
       app.listen(done)
-      app.replace({ dummy: 'test' })
+      app.replace({ dummy: 'diff' })
     })
   })
 

@@ -20,7 +20,7 @@ let Home = React.createClass({
     return (
       <main role="main">
         <Banner onToggle={ this._onToggle } />
-        <Body lists={ app.refine('lists') } items={ app.refine('items') } />
+        <Body app={ app } lists={ app.get('lists') } items={ app.get('items') } />
         <AddList app={ app } active={ this.state.openCreate } onExit={ this._onToggle } />
       </main>
     )

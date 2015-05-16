@@ -6,7 +6,7 @@ import TaskListItem from './TaskListItem'
 export default React.createClass({
 
   propTypes: {
-    items : React.PropTypes.object.isRequired,
+    items : React.PropTypes.array.isRequired,
     list  : React.PropTypes.object.isRequired
   },
 

@@ -5,7 +5,6 @@
  */
 
 const Diode   = require('diode')
-const Foliage = require('foliage')
 const Signal  = require('./Signal')
 const Store   = require('./Store')
 const install = require('./install')
@@ -13,52 +12,79 @@ const remap   = require('./remap')
 const run     = require('./run')
 const tag     = require('./tag')
 
-class Microcosm extends Foliage {
+function Microcosm() {
+  Diode.decorate(this)
 
-  constructor() {
-    super()
+  this.state   = {}
+  this.stores  = {}
+  this.plugins = []
+}
 
-    Diode.decorate(this)
-
-    this.stores  = {}
-    this.plugins = []
-  }
+Microcosm.prototype = {
 
   getInitialState() {
     return remap(this.stores, store => store.getInitialState())
-  }
+  },
+
+  commit(state) {
+    this.state = state
+    this.volley()
+  },
+
+  get(key) {
+    return this.state[key]
+  },
+
+  set(key, value) {
+    let current = this.get(key)
+
+    if (current !== value) {
+      this.state[key] = value
+      this.volley()
+    }
+  },
 
   reset() {
     this.commit(this.getInitialState())
-    this.emit()
-  }
+  },
 
   replace(data) {
-    this.update(this.deserialize(data))
-    this.emit()
-  }
+    let cleaned = this.deserialize(data)
+
+    for (let key in cleaned) {
+      this.set(key, cleaned[key])
+    }
+  },
 
   addPlugin(plugin, options) {
     this.plugins.push([ plugin, options ])
-  }
+  },
 
   addStore(key, config) {
     this.stores[key] = new Store(config, key)
-  }
+  },
 
   serialize() {
     return remap(this.stores, store => store.serialize(this.get(store)))
-  }
+  },
 
   deserialize(data={}) {
     return remap(data, (state, key) => {
       return this.stores[key].deserialize(state)
     })
-  }
+  },
 
   toJSON() {
     return this.serialize()
-  }
+  },
+
+  valueOf() {
+    return this.state
+  },
+
+  toObject() {
+    return this.valueOf()
+  },
 
   start() {
     this.reset()
@@ -67,31 +93,26 @@ class Microcosm extends Foliage {
     install(this.plugins, this, () => run(arguments, [], this))
 
     return this
-  }
+  },
 
   push(action, params, ...callbacks) {
-    let app = this.getRoot()
-
-    return Signal(action, params, function (error, result) {
+    return Signal(action, params, (error, result) => {
       if (!error) {
-        app.dispatch(action, result)
+        this.dispatch(action, result)
       }
 
-      run(callbacks, [ error, result ], app)
+      run(callbacks, [ error, result ], this)
     })
-  }
+  },
 
   dispatch(action, params) {
     tag(action)
 
-    for (var key in this.stores) {
+    for (let key in this.stores) {
       let state = this.get(key)
-      let next  = this.stores[key].send(state, action, params)
+      let store = this.stores[key]
 
-      if (state !== next) {
-        this.set(key, next)
-        this.volley()
-      }
+      this.set(key, store.send(state, action, params))
     }
 
     return params

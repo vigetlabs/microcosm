@@ -5,8 +5,8 @@ import React       from 'react'
 let Body = React.createClass({
 
   propTypes: {
-    lists : React.PropTypes.object.isRequired,
-    items : React.PropTypes.object.isRequired
+    lists : React.PropTypes.array.isRequired,
+    items : React.PropTypes.array.isRequired
   },
 
   getList(list) {
@@ -35,7 +35,7 @@ let Body = React.createClass({
   },
 
   _onRemoveList(id) {
-    this.props.lists.push(ListActions.remove, id)
+    this.props.app.push(ListActions.remove, id)
   }
 
 })

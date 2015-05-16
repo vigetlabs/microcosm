@@ -11,15 +11,15 @@ export default React.createClass({
   },
 
   render() {
-    let { app, params } = this.props
+    let { app, lists, items, params } = this.props
 
-    let list  = app.refine('lists').find(i => i.id === params.id)
-    let items = app.refine('items')
+    let list     = lists.filter(i => i.id === params.id)[0]
+    let children = items.filter(i => i.list === list.id)
 
     return (
       <main role="main">
         <Banner list={ list } onRemove={ this._onRemoveList } />
-        <TaskList app={ app } list={ list } items={ items } />
+        <TaskList app={ app } list={ list } items={ children } />
       </main>
     )
   },

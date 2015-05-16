@@ -14,7 +14,7 @@ export default React.createClass({
   render() {
     let { list, onRemove } = this.props
 
-    let { color, contrast, name } = list.valueOf()
+    let { color, contrast, name } = list
 
     return (
       <header className="ruled-bottom" style={{ background: color, color: contrast }}>

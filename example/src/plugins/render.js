@@ -9,7 +9,7 @@ import Layout from '../views/layout'
 export default {
 
   render(app, el) {
-    React.render(<Layout app={ app } />, el)
+    React.render(<Layout app={ app } { ...app.toObject() }/>, el)
   },
 
   register(app, { el }, next) {
