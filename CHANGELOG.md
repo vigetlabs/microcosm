@@ -1,6 +1,6 @@
 # Changelog
 
-## 7.2.0
+## 7.2.0 (Not released)
 
 ### Noticeable changes
 
@@ -8,10 +8,10 @@
   callback)`. This is an error-first callback (like node). If an error
   is provided, it will not dispatch an action. See below about this
   breaking update.
-- Stores now contain the logic to determine if they should respond to
-  an action. This is defined in `willRespondTo`.
-- Stores now contain the logic for how it transforms values. This
-  logic is contained under `transform`.
+- Stores now contain the logic for how it should receive an action.
+  logic is contained under `send`.
+- Stores now contain the logic to determine what method should resolve
+  an action sent to it. This is defined in `register`
 - Added `getInitialState` method to Microcosm. By default, it will
   return the reduced result of calling `getInitialState` on stores.
 - Added `reset` method to Microcosm. It will set an instance's state
@@ -21,8 +21,11 @@
   will only blow way keys provided in the data object.
 - The signaling logic for dispatching actions will throw an error if
   the action provided is not a function
+- internalized tag, it will now lazy evaluate as actions are fired
 
 ### Breaking Changes
+
+Remove all uses of the `tag` module
 
 Actions will follow the [error-first callback convention](http://thenodeway.io/posts/understanding-error-first-callbacks/) if more than one argument is provided to them. This means that all configuration for an action should be passed as a single argument. If you are using multiple arguments in your actions, consider changing something like:
 

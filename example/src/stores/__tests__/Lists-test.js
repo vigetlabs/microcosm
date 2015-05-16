@@ -1,5 +1,4 @@
 import Lists       from '../Lists'
-import ListActions from '../../actions/lists'
 import Foliage     from 'foliage'
 
 describe('Lists Store', function() {
@@ -9,10 +8,10 @@ describe('Lists Store', function() {
   })
 
   it ('sets a contrasting color when creating a record', function() {
-    let a = Lists[ListActions.add]([], { color: '#000000' })
+    let a = Lists.add([], { color: '#000000' })
     a.pop().contrast.should.equal('white')
 
-    let b = Lists[ListActions.add]([], { color: 'ffffff' })
+    let b = Lists.add([], { color: 'ffffff' })
     b.pop().contrast.should.equal('black')
   })
 

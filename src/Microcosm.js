@@ -11,6 +11,7 @@ const Store   = require('./Store')
 const install = require('./install')
 const remap   = require('./remap')
 const run     = require('./run')
+const tag     = require('./tag')
 
 class Microcosm extends Foliage {
 
@@ -59,17 +60,13 @@ class Microcosm extends Foliage {
     return this.serialize()
   }
 
-  start(...callbacks) {
+  start() {
     this.reset()
 
     // Queue plugins and then notify that installation has finished
-    install(this.plugins, this, () => run(callbacks, [], this))
+    install(this.plugins, this, () => run(arguments, [], this))
 
     return this
-  }
-
-  prepare(action, ...buffer) {
-    return this.push.bind(this, action, ...buffer)
   }
 
   push(action, params, ...callbacks) {
@@ -85,9 +82,11 @@ class Microcosm extends Foliage {
   }
 
   dispatch(action, params) {
+    tag(action)
+
     for (var key in this.stores) {
       let state = this.get(key)
-      let next  = this.stores[key].transform(state, action, params)
+      let next  = this.stores[key].send(state, action, params)
 
       if (state !== next) {
         this.set(key, next)
@@ -101,4 +100,3 @@ class Microcosm extends Foliage {
 }
 
 module.exports = Microcosm
-module.exports.tag = require('./tag')

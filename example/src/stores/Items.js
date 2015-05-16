@@ -8,7 +8,15 @@ export default {
     return []
   },
 
-  [Items.add](state, { list, name }) {
+  register() {
+    return {
+      [Items.add]    : this.add,
+      [Items.remove] : this.remove,
+      [Lists.remove] : this.removeListItems
+    }
+  },
+
+  add(state, { list, name }) {
     let record = {
       id   : uid(),
       list : list.id,
@@ -18,11 +26,11 @@ export default {
     return state.concat(record)
   },
 
-  [Items.remove](state, unwanted) {
+  remove(state, unwanted) {
     return state.filter(i => i.id !== unwanted)
   },
 
-  [Lists.remove](state, unwanted) {
+  removeListItems(state, unwanted) {
     return state.filter(i => i.list !== unwanted)
   }
 

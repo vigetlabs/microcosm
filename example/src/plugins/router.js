@@ -15,7 +15,7 @@ let routes = [
 export default {
 
   register(app, options, next) {
-    let action = app.prepare(Route.set)
+    let action = app.push.bind(app, Route.set)
 
     // Create a callback for each route that pushes the event
     // into the app's dispatcher

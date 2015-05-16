@@ -1,6 +1,4 @@
-import { tag } from 'Microcosm'
-
-export default tag({
+export default {
 
   add(params) {
     return params
@@ -10,4 +8,4 @@ export default tag({
     return id
   }
 
-})
+}

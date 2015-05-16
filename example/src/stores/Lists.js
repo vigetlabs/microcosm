@@ -8,7 +8,14 @@ export default {
     return []
   },
 
-  [Lists.add](state, params) {
+  register() {
+    return {
+      [Lists.add]    : this.add,
+      [Lists.remove] : this.remove
+    }
+  },
+
+  add(state, params) {
     let record = {
       id    : uid(),
       color : '#aaaaaa',
@@ -20,7 +27,7 @@ export default {
     return state.concat(record)
   },
 
-  [Lists.remove](state, id) {
+  remove(state, id) {
     return state.filter(i => i.id !== id)
   }
 

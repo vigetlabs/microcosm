@@ -23,18 +23,6 @@ describe('Microcosm', function() {
     })
   })
 
-  describe('::prepare', function() {
-    it ('partially applies ::push', function() {
-      app.prepare(a => a + 2, 3)().should.equal(5)
-    })
-
-    it ('partially applies ::push with a callback', function() {
-      app.prepare((a, next) => next(null, 'yes'))(function(error, result) {
-        result.should.equal('yes')
-      })
-    })
-  })
-
   describe('::push', function() {
 
     it ('throws an error if asked to push a non-function value', function(done) {

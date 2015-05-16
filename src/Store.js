@@ -3,6 +3,8 @@
  * Used to provide default values for a store configuration
  */
 
+let skip = i => i
+
 function Store (config, id) {
   // Fold configuration over self
   for (var i in config) {
@@ -13,22 +15,17 @@ function Store (config, id) {
 }
 
 Store.prototype = {
-  getInitialState() {},
+  getInitialState : skip,
+  serialize       : skip,
+  deserialize     : skip,
 
-  willRespondTo(action) {
-    return action in this
+  register() {
+    return this
   },
 
-  transform(state, action, params) {
-    return this.willRespondTo(action) ? this[action](state, params) : state
-  },
-
-  serialize(state) {
-    return state
-  },
-
-  deserialize(state) {
-    return state
+  send(state, action, params) {
+    let task = this.register()[action]
+    return task? task(state, params) : state
   }
 }
 

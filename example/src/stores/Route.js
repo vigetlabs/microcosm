@@ -6,7 +6,13 @@ export default {
     return {}
   },
 
-  [Route.set](state, params) {
+  register() {
+    return {
+      [Route.set]: this.set
+    }
+  },
+
+  set(state, params) {
     return params
   }
 
