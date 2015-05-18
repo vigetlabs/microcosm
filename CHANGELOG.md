@@ -25,7 +25,9 @@
 
 ### Breaking Changes
 
-Remove all uses of the `tag` module
+Remove all uses of the `tag` module.
+
+#### Changes to Actions
 
 Actions will follow the [error-first callback convention](http://thenodeway.io/posts/understanding-error-first-callbacks/) if more than one argument is provided to them. This means that all configuration for an action should be passed as a single argument. If you are using multiple arguments in your actions, consider changing something like:
 
@@ -38,6 +40,29 @@ To the following:
 ```javascript
 action: function(params) {
   // params => { id: id, value: value }
+}
+```
+
+#### Changes to Stores
+
+Stores now communicate to a Microcosm using the `register` method. Instead of:
+
+```javascript
+var MyStore = {
+  [Action.add](state, params){}
+}
+```
+
+`Action.add` should be referenced inside of `register`:
+
+```javascript
+var MyStore = {
+  register() {
+    return {
+      [Action.add]: this.add
+    }
+  },
+  add(state, params){}
 }
 ```
 
