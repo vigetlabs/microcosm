@@ -19,16 +19,13 @@ other tools.
   logic is contained under `send`.
 - Stores now contain the logic to determine what method should resolve
   an action sent to it. This is defined in `register`
-- Added `getInitialState` method to Microcosm. By default, it will
-  return the reduced result of calling `getInitialState` on stores.
-- Added `reset` method to Microcosm. It will set an instance's state
-  to the result of calling `getInitialState`
 - `Microcosm::deserialize` will now only operate on the keys provided
   by the seed object. This means that data passed into `replace`
   will only blow way keys provided in the data object.
 - The signaling logic for dispatching actions will throw an error if
   the action provided is not a function
-- internalized tag, it will now lazy evaluate as actions are fired
+- Internalized tag, it will now lazy evaluate as actions are fired
+- Microcosm no longer relies on Foliage.
 
 ### Breaking Changes
 
