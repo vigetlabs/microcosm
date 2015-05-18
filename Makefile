@@ -9,7 +9,6 @@ JS      = $(shell find src -name '*.js' ! -path '*/__tests__/*')
 .FORCE: javascript-min
 
 build: package.json README.md LICENSE.md docs javascript javascript-min
-	make audit
 
 $(DIST):
 	@mkdir -p $(DIST)
@@ -27,7 +26,7 @@ javascript: $(DIST)
 	@$(BABEL) -d $^ $(JS)
 
 javascript-min: javascript
-	@$(WEBPACK) -p src/microcosm.js $(DIST)/microcosm.build.js \
+	@$(WEBPACK) -p src/Microcosm.js $(DIST)/microcosm.build.js \
 	--devtool sourcemap --output-library-target commonjs2
 
 
@@ -40,7 +39,7 @@ example:
 clean:
 	@rm -rf $(DIST)
 
-audit: $(DIST)/microcosm.build.js
+audit:
 	@echo "Compressed Size:"
 	@cat $^ | wc -c
 	@echo "Gzipped Size:"
