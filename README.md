@@ -1,7 +1,7 @@
 ![Microcososm](http://f.cl.ly/items/36051G3A2M443z3v3U3b/microcososm.svg)
 ---
 
-A variant of [Flux](https://facebook.github.io/flux/) framework with
+A variant of [Flux](https://facebook.github.io/flux/) with
 central, isolated state.
 
 Microcosm makes it easier to control and modify state. in a pure,
