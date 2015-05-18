@@ -26,11 +26,6 @@ Microcosm.prototype = {
     return remap(this.stores, store => store.getInitialState())
   },
 
-  commit(state) {
-    this.state = state
-    this.volley()
-  },
-
   get(key) {
     return this.state[key]
   },
@@ -44,8 +39,13 @@ Microcosm.prototype = {
     }
   },
 
+  _commit(state) {
+    this.state = state
+    this.volley()
+  },
+
   reset() {
-    this.commit(this.getInitialState())
+    this._commit(this.getInitialState())
   },
 
   replace(data) {
@@ -74,12 +74,12 @@ Microcosm.prototype = {
     })
   },
 
-  toJSON() {
-    return this.serialize()
+  valueOf() {
+    return remap(this.state, i => i)
   },
 
-  valueOf() {
-    return this.state
+  toJSON() {
+    return this.serialize()
   },
 
   toObject() {

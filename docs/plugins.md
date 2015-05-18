@@ -6,16 +6,22 @@
 
 ## Overview
 
-Plugins provide a way to extend an application. They attempt to solve
-the problem of providing environment specific behavior. For example,
-when rendering on the server you often want to fetch data ahead of
-time, while in the browser you may need to establish a connection to
-websocket events or extract data from local storage.
+Plugins provide a couple of valuable features to Microcosm:
+
+1. **Side-effects**. Plugins are a great place to handle things like
+saving global state to localStorage or syncing with a service like
+Firebase.
+2. **Bootstrapping**. Microcosm blocks initializing until a `next()`
+callback is executed by a plugin. This allows apps to fetch data ahead
+of time or establish a web socket connection.
+3. **Monitoring**. Plugins provide a great way to "jack-in" to an
+application and listen for particular events to occur.
 
 ## Making a plugin
 
-Plugins are inspired by the API provided by HapiJS. This is no
-coincidence. Future version of Microcosm will aspire for greater
+Plugins are inspired by the API provided by
+[HapiJS](hapijs.com). Future version of Microcosm will aspire for
+greater
 adherence to the Hapi API to help share code and provide consistency.
 
 At the moment, the only requirement is that plugins implement a
@@ -39,7 +45,6 @@ For example: What if you want to fetch data before an application begins?
 import Route from 'stores/route'
 
 let Prefetcher = {
-
   register(app, options, next) {
     let route = app.get(Route)
 
@@ -47,7 +52,6 @@ let Prefetcher = {
          .then(app.seed)
          .then(i => next)
   }
-
 }
 ```
 
@@ -60,7 +64,6 @@ Plugins can fail, for example what if fetching data returns a 500? The
 import Route from 'stores/route'
 
 let Prefetcher = {
-
   register(app, options, next) {
     let route = app.get(Route)
 
@@ -69,7 +72,6 @@ let Prefetcher = {
          .then(i => next)
          .catch(error => next(error))
   }
-
 }
 ```
 

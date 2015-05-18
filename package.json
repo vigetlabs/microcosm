@@ -2,7 +2,7 @@
   "name": "microcosm",
   "version": "7.1.1",
   "private": true,
-  "description": "A functional flux architecture",
+  "description": "A variant of Facebook's Flux with centralized, isolated state",
   "main": "src/Microcosm.js",
   "scripts": {
     "prepublish": "make build",
@@ -15,6 +15,10 @@
     "type": "git",
     "url": "git://github.com/vigetlabs/microcosm.git"
   },
+  "keywords": [
+    "react",
+    "flux"
+  ],
   "license": "MIT",
   "dependencies": {
     "diode": "~4.0",

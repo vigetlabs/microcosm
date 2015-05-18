@@ -1,53 +1,95 @@
 # Actions
 
 1. [Overview](#overview)
-2. [Calling Actions](#calling-actions)
-3. [Partial Application](#partial-application)
+2. [Firing Actions](#firing-actions)
+2. [Three ways to write actions](three-ways-to-write-actions)
 
 ## Overview
 
-Actions, as values, describe the signals passed through Microcosm. As
-functions they allow one to prepare data before sending it to Stores
-for state transformation.
-
-Microcosm takes advantage of the `toString` method to coerce Actions
-into unique identifiers. This allows Actions to be passed around like
-values, fulfilling the role of constant values in traditional flux:
+Actions shape the signals passed through Microcosm. They allow one to
+prepare data before sending it to stores to be transformed into new
+state.
 
 ```javascript
-import { tag } from 'tag'
-
-let MyActions = tag({
-
-  doSomething(params, send) {
-    send(null, params)
+let MyActions = {
+  doSomething(params) {
+    // These params will be forwarded to all stores
+    // listening to this action
+    return params
   }
-
 }
 ```
 
-Tag will clone an object and set a `toString` method on each key. This
-`toString` method returns a unique identifier for the action.
+## Firing actions
 
-`send` is required to dispatch an action. This is an error-first
-callback. If an error is given, it will not dispatch an action.
-
-## Calling actions
-
-Microcosms send signals. Otherwise there would be no way to figure out
+Actions must be sent within the context of a particular instance of
+Microcosm. Otherwise there would be no way to figure out
 which instance of a Microcosm should change data:
 
 ```javascript
 let app = new Microcosm()
-
-app.send(MyActions.doSomething)
+app.send(MyActions.doSomething, parameters, function(error, result) {
+  // an optional callback with success/failure information
+})
 ```
 
-## Partial Application
+## Three ways to write actions
 
-`app.prepare` partially applies an action. This makes it easier to use actions as
-callbacks:
+Actions can follow three patterns.
+
+1. [Return a value](#return-a-value)
+2. [Return a promise](#return-a-promise)
+3. [Error-first callback](#error-first-callback)
+
+### Return a value
 
 ```javascript
-<button onClick={ app.prepare(Action) }>Do something</button>
+let MyActions = {
+  doSomething(params) {
+    return params
+  }
+}
 ```
+
+The simplest way to build an action is to simply return a value. This
+works well if an action can not fail and is not asynchronous.
+
+### Return a promise
+
+```javascript
+let MyActions = {
+  doSomething(params) {
+    return new Promise(function(resolve, reject) {
+        if ('name' in params === false) {
+          throw new Error('Please provide a name!')
+        } else {
+          resolve(params)
+        }
+    })
+  }
+}
+```
+
+**In Microcosm actions to handle asynchronous operations**. In the
+case above, Microcosm will wait for the promise and only dispatch if
+it was resolved.
+
+### Error-first callback
+
+```javascript
+let MyActions = {
+  doSomething(params, next) {
+    if ('name' in params === false) {
+      callback(new Error('Please provide a name!'))
+    } else {
+      callback(null, params)
+    }
+  }
+}
+```
+
+The error-first callback style provides an alternative way to perform
+asynchronous operations. In this approach, errors are sent as the
+first argument of the callback and data is sent as the second
+argument. This convention is followed by many JavaScript libraries and
+has been added to better support them.

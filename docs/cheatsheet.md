@@ -5,14 +5,18 @@
 ```
 Life Cycle
 +--------------+
-start - Resets initial state, installs all plugins, and then executes a callback
+start - Calls reset(), installs all plugins, and then executes a callback
 
 State Management
 +--------------+
 get     - Provided a key, return that entry in the state object
 push    - Queue up an action, potentially changing data
-prepare - Partially apply the `push` method
 replace - Replace state with the result of deserializing a set of data
+reset   - Replace state with the result of calling `getInitialState`
+
+Life Cycle
++--------------+
+getInitialState - Reduces the result of calling `getInitialState` on all stores
 
 Serialization
 +--------------+
