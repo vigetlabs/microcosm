@@ -1,100 +1,132 @@
 # Hello, Microcosm
 
+This tutorial will walk through creating a simple Flux application
+with Microcosm. It will not go into usage with React, and is designed
+to provide a high level overview of features.
+
+**Heads up!** Microcosm heavily embraces ES6 JavaScript. For those
+unfamiliar with newer JavaScript concepts, check out the fantastic
+documentation about these new additions and how to bring them to your
+project over at [BabelJS](http://babeljs.io).
+
+## Getting started with Microcosm
+
 A new app starts out as an extension of the `Microcosm` class:
 
 ```javascript
 import Microcosm from 'microcosm'
 
-class MyApp extends Microcosm {
-  // Great things await
+class SolarSystem extends Microcosm {
+  constructor() {
+    super()
+    // We'll put some stuff here later
+  }
 }
 ```
 
-A microcosm is solely responsible for managing a global state
-object. Although a microcosm is exclusively responsible for managing
-its own state, `stores` shape how that data is changed:
+A Microcosm provides a central place to keep information. This
+makes it easy to isolate state and simplify working with data. This is
+particularly useful when doing server-side rendering, where it is
+useful to isolate state between requests and send associated
+application data down with pre-rendered HTML (`Microcosm::toJSON`).
+
+In order to operate on that data, however, Microcosm delegates data
+transformation to Stores.
+
+A Store is simply a JavaScript configuration object that teaches a
+Microcosm how to operate on data. A Store can respond to Actions sent
+to a Microcosm, transforming data into the next state.
+
+One of those configuration settings of Stores is `getInitialState`,
+which tells the Microcosm what value the Store will first begin to
+operate upon:
 
 ```javascript
 import Microcosm from 'microcosm'
 
-let Messages = {
+let Planets = {
   getInitialState() {
     return []
   }
 }
 
-class MyApp extends Microcosm {
+class SolarSystem extends Microcosm {
   constructor() {
     super()
-    this.addStore('messages', Messages)
+    this.addStore('planets', Planets)
   }
 }
 ```
 
-Now the `Messages` store will be responsible for shaping the data kept
-within the `messages` key of this app's state.
+In the code above, we have told the `SolarSystem` to add `Planets`
+store under the `'planets'` key. This means that the Store will be
+used to transform value represented by `'planets'` in the `SolarSystem`'s
+database.
 
-Requests to change this data can be handled with `Actions`. An action
-is simply a function that has been tagged with a unique
-identifier. The `tag` module included with `Microcosm` can do just
-that:
+In order to trigger that process, `Actions` are "pushed" into an
+instance of Microcosm. An Action is a function that follows a
+particular pattern. Microcosm will send the result of that function on
+to Stores:
 
 ```javascript
-import Microcosm, { tag } from 'microcosm'
+import Microcosm from 'microcosm'
 
 let Actions = {
-  createMessage(options) {
+  addPlanet(options) {
     // Here, we are simply returning options. However this
     // gives you an opportunity to modify parameters before they
-    // are sent to stores
+    // are sent to stores.
+    //
+    // More options for Actions can be found in docs/api/actions.md
     return options
   }
 }
 
-let Messages = {
+let Planets = {
   getInitialState() {
     return []
   },
-  [Actions.createMessage](oldState, parameters) {
-    return oldState.concat(parameters)
+  register() {
+    return {
+      [Actions.addPlanet]: this.add
+    }
+  },
+  add(planets, params) {
+    return planets.concat(params)
   }
 }
 
-class MyApp extends Microcosm {
+class SolarSystem extends Microcosm {
   constructor() {
     super()
-    this.addStore('messages', Messages)
+    this.addStore('planets', Planets)
   }
 }
 ```
 
-`MyApp` is now setup to accept actions, filtering them through the
-`Messages` store before saving them. More information on how to
-trigger actions and retrieve state follows.
+When the `SolarSystem` triggers `Actions.addPlanet`, it will call that
+function and send the result of it to the `Planets` store. In the
+`register` function of `Planets`, we've defined that it should forward
+`Actions.addPlanet` to `Planets.add`. `Planets.add` is then
+responsible for returning a new list of planets based upon the
+previous value and the parameters it was sent from the action.
 
-## How Actions work
+## More on how Actions work
 
-Actions are simply functions. They must implement a `toString` method
-so that stores can know when to respond to them. For those familiar
-with traditional flux, this `toString` method replaces the need to
-maintain constants for each action type.
-
-Fortunately, the `tag` function makes this quite mangeable:
+Actions are simply functions that generate information Stores need to
+transform data.
 
 ```javascript
-import tag from 'microcosm/tag'
-
-let Messages = tag({
-  create(message, send) {
-    send(null, { message, time: new Date() })
+let Actions = {
+  addPlanet(params) {
+    return params
   }
-})
+}
 ```
 
-`tag` returns a clone of a given object with `toString()` methods which
-returning unique identifiers. This tells the Microcosm how to process
-actions (and lets them stringify to unique keys in Stores, seen
-later).
+Actions can take a couple of forms. In the case above, we simply take
+`params` and return it back. There are more sophisticated ways to
+build actions described in [`actions.md`](../actions.md).
 
 Microcosms implement a `send` method. This will run execute a given
 action with an arbitrary number of arguments (following the first).
@@ -102,26 +134,31 @@ action with an arbitrary number of arguments (following the first).
 This works like:
 
 ```javascript
-app.send(Messages.create, 'This property will be passed to the dispatcher')
+app.send(Actions.addPlanet, { name: 'Saturn' })
 ```
 
-
+This will command the app to trigger `Actions.addPlanet`, taking the
+result of that function and forwarding it to all Stores. Stores
+implement a `register` function that dictates whether or not they can
+respond to that message.
 
 ## How Stores work
 
-Stores are plain objects. They listen to actions by providing methods
-at the unique signature of an Action, like:
+Stores are plain objects. They listen to actions by providing a
+`register` method that hooks into Actions:
 
 ```javascript
-
-let MessageStore = {
-
+let Planets = {
   getInitialState(seed) {
     return []
   },
-
-  [Messages.create](oldState, message) {
-    return oldState.concat(message)
+  register() {
+    return {
+      [Actions.addPlanet]: this.add
+    }
+  },
+  add(planets, props) {
+    return planets.concat(props)
   }
 }
 ```
@@ -139,33 +176,19 @@ responsible for managing state. Second: to dictate the priority of
 dispatcher multicasting (similar to `waitFor` in the standard Flux
 dispatcher)
 
-```javascript
-class App extends Microcosm {
-  constructor(seed) {
-    super(seed)
-
-    // Called first:
-    this.addStore('messages', Messages)
-
-    // Called second:
-    this.addStore('other-store', OtherStoreThatDependsOnMessages)
-  }
-}
-```
-
 ### Getting the value out of a store
 
 Microcosms implement a `get` method:
 
 ```javascript
-app.get('messages')
+app.get('planets')
 ```
 
-This will pull the `messages` key out of global application state.
+This will pull the `'planets'` key out of global application state.
 
 ## Listening to changes
 
-All Microcosm instances are event emitters. They emit a single change
+All Microcosm instances are simple event emitters. They emit a single change
 event that you can subscribe to like:
 
 ```javascript
@@ -184,7 +207,7 @@ app.emit()
 ## Booting things up
 
 `Microcosm::start` begins an application. This will setup initial
-state, run plugins, then execute a callback:
+state and then execute a callback:
 
 ```javascript
 let app = new Microcosm()

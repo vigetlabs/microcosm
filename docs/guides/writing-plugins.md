@@ -1,8 +1,8 @@
-# Plugins
+# Writing Plugins
 
 ## Introduction
 
-Plugins allow microcosm instances to be extended with additional
+Plugins allow Microcosm instances to be extended with additional
 functionality outside of the scope of the framework. The only
 requirement is that they take the form of an object with a `register`
 method:
@@ -25,7 +25,7 @@ let Logger = {
 }
 
 // The second argument of addPlugin contains options that will be
-// sent to the plugin
+// sent to the plugin via the second argument of `addPlugin`:
 app.addPlugin(logger, {})
 
 // Start executes all plugins in the order in which they are added

@@ -5,7 +5,7 @@ WEBPACK = $(BIN)/webpack
 DIST    = dist
 JS      = $(shell find src -name '*.js' ! -path '*/__tests__/*')
 
-.PHONY: clean test test-watch release example
+.PHONY: clean test test-watch release example website
 .FORCE: javascript-min
 
 build: package.json README.md LICENSE.md docs javascript javascript-min
@@ -45,6 +45,9 @@ audit: $(DIST)/microcosm.build.js
 	@cat $^ | wc -c
 	@echo "Gzipped Size:"
 	@gzip -c $^ | wc -c
+
+website:
+	git subtree push --prefix site origin gh-pages
 
 test:
 	NODE_ENV=test $(KARMA) start --single-run
