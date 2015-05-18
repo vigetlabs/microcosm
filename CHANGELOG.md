@@ -2,12 +2,19 @@
 
 ## 8.0.0 (Not released)
 
+This release marks the first move towards generalizing Microcosm for
+larger applications. There have been some growing pains, however the
+framework now benefits from significantly better integration with
+other tools.
+
 ### Noticeable changes
 
 - Action creators can now have the signature `action(params,
   callback)`. This is an error-first callback (like node). If an error
   is provided, it will not dispatch an action. See below about this
   breaking update.
+- Removed `Microcosm::prepare`, it is too easy to get the signature
+  wrong when binding actions.
 - Stores now contain the logic for how it should receive an action.
   logic is contained under `send`.
 - Stores now contain the logic to determine what method should resolve
@@ -25,7 +32,8 @@
 
 ### Breaking Changes
 
-Remove all uses of the `tag` module.
+- Remove all uses of the `tag` module.
+- Replace `app.prepare` usage with `app.push`.
 
 #### Changes to Actions
 
