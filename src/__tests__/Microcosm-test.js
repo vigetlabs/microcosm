@@ -87,13 +87,13 @@ describe('Microcosm', function() {
     describe('when sending an action that returns a value', function() {
 
       it ('sends a messages to the dispatcher', function() {
-        let good = params => 'yes'
+        let add = (one, two) => one + two
 
         sinon.spy(app, 'dispatch')
 
-        app.push(good, 'one', 'two')
+        app.push(add, 1, 2)
 
-        app.dispatch.should.have.been.calledWith(good, 'one', 'two')
+        app.dispatch.should.have.been.calledWith(add, 3)
       })
 
     })

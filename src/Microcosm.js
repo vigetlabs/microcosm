@@ -81,18 +81,18 @@ class Microcosm extends Foliage {
     return this.push.bind(this, action, ...buffer)
   }
 
-  dispatch(action, params) {
+  dispatch(action, payload) {
     tag(action)
 
     for (let key in this.stores) {
       let state = this.get(key)
       let store = this.stores[key]
 
-      this.set(key, store.send(state, action, params))
+      this.set(key, store.send(state, action, payload))
       this.volley()
     }
 
-    return params
+    return payload
   }
 
 }
