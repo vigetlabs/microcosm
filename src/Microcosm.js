@@ -5,6 +5,7 @@
  */
 
 const Diode   = require('diode')
+const Foliage = require('foliage')
 const Signal  = require('./Signal')
 const Store   = require('./Store')
 const install = require('./install')
@@ -12,79 +13,59 @@ const remap   = require('./remap')
 const run     = require('./run')
 const tag     = require('./tag')
 
-function Microcosm() {
-  Diode.decorate(this)
+class Microcosm extends Foliage {
 
-  this.state   = {}
-  this.stores  = {}
-  this.plugins = []
-}
+  constructor() {
+    super()
 
-Microcosm.prototype = {
+    Diode.decorate(this)
+
+    this.stores  = {}
+    this.plugins = []
+  }
 
   getInitialState() {
     return remap(this.stores, store => store.getInitialState())
-  },
-
-  get(key) {
-    return this.state[key]
-  },
-
-  set(key, value) {
-    let current = this.get(key)
-
-    if (current !== value) {
-      this.state[key] = value
-      this.volley()
-    }
-  },
-
-  _commit(state) {
-    this.state = state
-    this.volley()
-  },
+  }
 
   reset() {
-    this._commit(this.getInitialState())
-  },
+    this.commit(this.getInitialState())
+  }
 
   replace(data) {
     let cleaned = this.deserialize(data)
 
     for (let key in cleaned) {
       this.set(key, cleaned[key])
+      this.volley()
     }
-  },
+  }
 
   addPlugin(plugin, options) {
     this.plugins.push([ plugin, options ])
-  },
+  }
 
   addStore(key, config) {
     this.stores[key] = new Store(config, key)
-  },
+  }
 
   serialize() {
     return remap(this.stores, store => store.serialize(this.get(store)))
-  },
+  }
 
   deserialize(data={}) {
     return remap(data, (state, key) => {
       return this.stores[key].deserialize(state)
     })
-  },
-
-  valueOf() {
-    return remap(this.state, i => i)
-  },
+  }
 
   toJSON() {
     return this.serialize()
-  },
+  }
 
   toObject() {
     return this.valueOf()
-  },
+  }
 
   start() {
     this.reset()
@@ -93,7 +74,7 @@ Microcosm.prototype = {
     install(this.plugins, this, () => run(arguments, [], this))
 
     return this
-  },
+  }
 
   push(action, params, ...callbacks) {
     return Signal(action, params, (error, result) => {
@@ -103,7 +84,7 @@ Microcosm.prototype = {
 
       run(callbacks, [ error, result ], this)
     })
-  },
+  }
 
   dispatch(action, params) {
     tag(action)
@@ -113,6 +94,7 @@ Microcosm.prototype = {
       let store = this.stores[key]
 
       this.set(key, store.send(state, action, params))
+      this.volley()
     }
 
     return params

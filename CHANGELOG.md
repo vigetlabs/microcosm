@@ -25,7 +25,6 @@ other tools.
 - The signaling logic for dispatching actions will throw an error if
   the action provided is not a function
 - Internalized tag, it will now lazy evaluate as actions are fired
-- Microcosm no longer relies on Foliage.
 
 ### Breaking Changes
 
