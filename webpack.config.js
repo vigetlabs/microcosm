@@ -14,10 +14,6 @@ module.exports = {
     })
   ],
 
-  node: {
-    process: false
-  },
-
   module: {
     loaders: [
       {

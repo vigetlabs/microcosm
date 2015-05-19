@@ -1,11 +1,11 @@
 export default {
 
-  add(params, send) {
-    send(null, params)
+  add(params) {
+    return params
   },
 
-  remove(id, send) {
-    send(null, id)
+  remove(id) {
+    return id
   }
 
 }

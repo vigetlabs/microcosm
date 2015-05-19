@@ -1,7 +1,7 @@
 export default {
 
-  set(params, send) {
-    send(null, params)
+  set(params) {
+    return params
   }
 
 }

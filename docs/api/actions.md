@@ -2,7 +2,7 @@
 
 1. [Overview](#overview)
 2. [Firing Actions](#firing-actions)
-2. [Three ways to write actions](three-ways-to-write-actions)
+2. [The two ways to write actions](three-ways-to-write-actions)
 
 ## Overview
 
@@ -28,18 +28,15 @@ which instance of a Microcosm should change data:
 
 ```javascript
 let app = new Microcosm()
-app.send(MyActions.doSomething, parameters, function(error, result) {
-  // an optional callback with success/failure information
-})
+app.send(MyActions.doSomething, paramOne, paramTwo)
 ```
 
-## Three ways to write actions
+## Two ways to write actions
 
-Actions can follow three patterns.
+Actions can follow two patterns.
 
 1. [Return a value](#return-a-value)
 2. [Return a promise](#return-a-promise)
-3. [Error-first callback](#error-first-callback)
 
 ### Return a value
 
@@ -73,23 +70,3 @@ let MyActions = {
 **In Microcosm actions to handle asynchronous operations**. In the
 case above, Microcosm will wait for the promise and only dispatch if
 it was resolved.
-
-### Error-first callback
-
-```javascript
-let MyActions = {
-  doSomething(params, next) {
-    if ('name' in params === false) {
-      callback(new Error('Please provide a name!'))
-    } else {
-      callback(null, params)
-    }
-  }
-}
-```
-
-The error-first callback style provides an alternative way to perform
-asynchronous operations. In this approach, errors are sent as the
-first argument of the callback and data is sent as the second
-argument. This convention is followed by many JavaScript libraries and
-has been added to better support them.

@@ -11,6 +11,7 @@ State Management
 +--------------+
 get     - Provided a key, return that entry in the state object
 push    - Queue up an action, potentially changing data
+prepare - Partially apply push
 replace - Replace state with the result of deserializing a set of data
 reset   - Replace state with the result of calling `getInitialState`
 

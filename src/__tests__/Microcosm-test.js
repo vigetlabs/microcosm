@@ -16,9 +16,9 @@ describe('Microcosm', function() {
       let spy    = sinon.spy(app, 'deserialize')
       let sample = { dummy: 'test' }
 
-      app.listen(function(state) {
+      app.listen(function() {
         spy.should.have.been.calledWith(sample)
-        state.should.eql(sample)
+        app.get('dummy').should.equal('test')
         done()
       })
 
@@ -62,7 +62,6 @@ describe('Microcosm', function() {
     })
 
     describe('when sending an action that returns a promise', function() {
-
       it ('sends a messages to the dispatcher', function(done) {
         sinon.spy(app, 'dispatch')
 
@@ -83,18 +82,6 @@ describe('Microcosm', function() {
           done()
         })
       })
-
-      it ('executes callbacks with the rejected error', function(done) {
-        let warn = params => Promise.reject('issue')
-
-        sinon.spy(app, 'dispatch')
-
-        app.push(warn, 'params', function(error) {
-          error.should.equal('issue')
-          app.dispatch.should.not.have.been.called
-          done()
-        })
-      })
     })
 
     describe('when sending an action that returns a value', function() {
@@ -104,8 +91,9 @@ describe('Microcosm', function() {
 
         sinon.spy(app, 'dispatch')
 
-        app.push(good)
-        app.dispatch.should.have.been.called
+        app.push(good, 'one', 'two')
+
+        app.dispatch.should.have.been.calledWith(good, 'one', 'two')
       })
 
     })
@@ -182,7 +170,7 @@ describe('Microcosm', function() {
       })
     })
 
-    it ('throws an error if given a non-function callback', function(done) {
+    it ('throws an error if given a non-function callback', function() {
       let app = new Microcosm()
 
       try {

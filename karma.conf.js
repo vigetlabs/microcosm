@@ -19,7 +19,7 @@ module.exports = function(config) {
       'example/src/**/__tests__/*.js*' : [ 'webpack', 'sourcemap' ]
     },
 
-    reporters: [ 'spec', 'coverage' ],
+    reporters: [ 'nyan', 'coverage' ],
 
     coverageReporter: {
       type: 'html',

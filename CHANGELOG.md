@@ -9,12 +9,6 @@ other tools.
 
 ### Noticeable changes
 
-- Action creators can now have the signature `action(params,
-  callback)`. This is an error-first callback (like node). If an error
-  is provided, it will not dispatch an action. See below about this
-  breaking update.
-- Removed `Microcosm::prepare`, it is too easy to get the signature
-  wrong when binding actions.
 - Stores now contain the logic for how it should receive an action.
   logic is contained under `send`.
 - Stores now contain the logic to determine what method should resolve
@@ -29,23 +23,6 @@ other tools.
 ### Breaking Changes
 
 - Remove all uses of the `tag` module.
-- Replace `app.prepare` usage with `app.push`.
-
-#### Changes to Actions
-
-Actions will follow the [error-first callback convention](http://thenodeway.io/posts/understanding-error-first-callbacks/) if more than one argument is provided to them. This means that all configuration for an action should be passed as a single argument. If you are using multiple arguments in your actions, consider changing something like:
-
-```javascript
-action: function(id, value) {}
-```
-
-To the following:
-
-```javascript
-action: function(params) {
-  // params => { id: id, value: value }
-}
-```
 
 #### Changes to Stores
 

@@ -30,11 +30,8 @@ class Microcosm extends Foliage {
   }
 
   replace(data) {
-    let cleaned = this.deserialize(data)
-
-    for (let key in cleaned) {
-      this.set(key, cleaned[key])
-    }
+    this.update(this.deserialize(data))
+    this.volley()
   }
 
   addPlugin(plugin, options) {
@@ -69,19 +66,19 @@ class Microcosm extends Foliage {
     this.reset()
 
     // Queue plugins and then notify that installation has finished
-    install(this.plugins, this, () => run(callbacks, [], this), 'start')
+    install(this.plugins, this, () => run(callbacks, [], this, 'start'))
 
     return this
   }
 
-  push(action, params, ...callbacks) {
-    return Signal(action, params, (error, result) => {
-      if (!error) {
-        this.dispatch(action, result)
-      }
-
-      run(callbacks, [ error, result ], this, 'push')
+  push(action, ...params) {
+    return Signal(action, params, result => {
+      this.dispatch(action, result)
     })
+  }
+
+  prepare(action, ...buffer) {
+    return this.push.bind(this, action, ...buffer)
   }
 
   dispatch(action, params) {
