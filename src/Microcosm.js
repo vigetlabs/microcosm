@@ -69,7 +69,7 @@ class Microcosm extends Foliage {
     this.reset()
 
     // Queue plugins and then notify that installation has finished
-    install(this.plugins, this, () => run(callbacks, [], this))
+    install(this.plugins, this, () => run(callbacks, [], this), 'start')
 
     return this
   }
@@ -80,7 +80,7 @@ class Microcosm extends Foliage {
         this.dispatch(action, result)
       }
 
-      run(callbacks, [ error, result ], this)
+      run(callbacks, [ error, result ], this, 'push')
     })
   }
 

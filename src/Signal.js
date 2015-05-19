@@ -5,7 +5,7 @@
  */
 
 function Signal (action, params, next) {
-  if (typeof action !== 'function') {
+  if (process.env.NODE_ENV !== 'production' && typeof action !== 'function') {
     throw TypeError(`${ action } is not a function. Is app.push() being called with the wrong value?`)
   }
 

@@ -181,6 +181,17 @@ describe('Microcosm', function() {
         done()
       })
     })
+
+    it ('throws an error if given a non-function callback', function(done) {
+      let app = new Microcosm()
+
+      try {
+        app.start('this will break')
+      } catch(error) {
+        error.should.be.instanceof(TypeError)
+        error.message.should.include('start')
+      }
+    })
   })
 
 })

@@ -26,8 +26,10 @@ javascript: $(DIST)
 	@$(BABEL) -d $^ $(JS)
 
 javascript-min: javascript
-	@$(WEBPACK) -p src/Microcosm.js $(DIST)/microcosm.build.js \
-	--devtool sourcemap --output-library-target commonjs2
+	@NODE_ENV=production \
+	$(WEBPACK) -p dist/src/Microcosm.js $(DIST)/microcosm.build.js \
+	--devtool sourcemap --output-library-target commonjs2 \
+	--optimize-minimize --optimize-occurence-order --optimize-dedupe
 
 
 release: clean build

@@ -3,13 +3,11 @@
  * Execute a list of callbacks
  */
 
-const isDevelopment = process.env.NODE_ENV !== 'production'
-
-module.exports = function (callbacks, args, scope) {
+module.exports = function (callbacks, args, scope, origin='run') {
   for (let i = 0; i < callbacks.length; i++) {
 
-    if (isDevelopment && typeof callbacks[i] !== 'function') {
-      throw TypeError('Microcosm expected callback but instead got: ' + typeof callbacks[i])
+    if (process.env.NODE_ENV !== 'production' && typeof callbacks[i] !== 'function') {
+      throw TypeError(`Microcosm::${origin} expected callback but instead got: ${typeof callbacks[i]}`)
     }
 
     callbacks[i].apply(scope, args)
