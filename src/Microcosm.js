@@ -4,7 +4,6 @@
  * is that each application is its own fully encapsulated world.
  */
 
-const Diode   = require('diode')
 const Foliage = require('foliage')
 const Signal  = require('./Signal')
 const Store   = require('./Store')
@@ -17,8 +16,6 @@ class Microcosm extends Foliage {
 
   constructor() {
     super()
-
-    Diode.decorate(this)
 
     this.stores  = {}
     this.plugins = []
@@ -37,7 +34,6 @@ class Microcosm extends Foliage {
 
     for (let key in cleaned) {
       this.set(key, cleaned[key])
-      this.volley()
     }
   }
 
@@ -67,11 +63,13 @@ class Microcosm extends Foliage {
     return this.valueOf()
   }
 
-  start() {
+  start(/*...callbacks*/) {
+    let callbacks = arguments
+
     this.reset()
 
     // Queue plugins and then notify that installation has finished
-    install(this.plugins, this, () => run(arguments, [], this))
+    install(this.plugins, this, () => run(callbacks, [], this))
 
     return this
   }

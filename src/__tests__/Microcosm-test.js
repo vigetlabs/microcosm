@@ -12,14 +12,17 @@ describe('Microcosm', function() {
   })
 
   describe('::replace', function() {
-    it ('runs deserialize before committing results', function() {
-      app.replace({ dummy: 'test' })
-      app.get('dummy').should.equal('test')
-    })
+    it ('runs deserialize before committing results', function(done) {
+      let spy    = sinon.spy(app, 'deserialize')
+      let sample = { dummy: 'test' }
 
-    it ('leads to an event', function(done) {
-      app.listen(done)
-      app.replace({ dummy: 'diff' })
+      app.listen(function(state) {
+        spy.should.have.been.calledWith(sample)
+        state.should.eql(sample)
+        done()
+      })
+
+      app.replace(sample)
     })
   })
 
