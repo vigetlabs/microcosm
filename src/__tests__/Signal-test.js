@@ -4,7 +4,7 @@ describe('Signal', function() {
 
   it ('throws an error if its given action is not a function', function(done) {
     try {
-      Signal(null)
+      new Signal(null)
     } catch(error) {
       error.should.be.instanceOf(TypeError)
       done()
@@ -12,7 +12,9 @@ describe('Signal', function() {
   })
 
   it ('waits for promises before calling next', function(done) {
-    Signal(params => Promise.resolve(params), [true], params => {
+    let signal = new Signal(params => Promise.resolve(params), [true])
+
+    signal.pipe(params => {
       params.should.equal(true)
       done()
     })

@@ -1,11 +1,6 @@
 # Changelog
 
-## 8.0.0 (Not released)
-
-This release marks the first move towards generalizing Microcosm for
-larger applications. There have been some growing pains, however the
-framework now benefits from significantly better integration with
-other tools.
+## 8.0.0
 
 ### Noticeable changes
 
@@ -19,6 +14,7 @@ other tools.
 - The signaling logic for dispatching actions will throw an error if
   the action provided is not a function
 - Internalized tag, it will now lazy evaluate as actions are fired
+- Upgraded Foliage, Microcosm now contains `subscribe`, `unsubscribe`, and `publish` aliases for `listen`, `ignore`, and `publish`
 
 ### Breaking Changes
 
@@ -26,7 +22,8 @@ other tools.
 
 #### Changes to Stores
 
-Stores now communicate to a Microcosm using the `register` method. Instead of:
+Before this release, stores would listen to actions using the
+stringified value of their functions:
 
 ```javascript
 var MyStore = {
@@ -34,7 +31,12 @@ var MyStore = {
 }
 ```
 
-`Action.add` should be referenced inside of `register`:
+This was terse, however required actions to be tagged with a special
+helper method. It also required any module that needed access to a
+Store's method to also know what actions it implemented.
+
+To address these concerns, Stores now communicate with a Microcosm
+using the `register` method:
 
 ```javascript
 var MyStore = {
@@ -46,6 +48,8 @@ var MyStore = {
   add(state, params){}
 }
 ```
+
+Under the hood, Microcosm tags functions automatically.
 
 ## 7.1.1
 
