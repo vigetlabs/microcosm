@@ -128,13 +128,13 @@ Actions can take a couple of forms. In the case above, we simply take
 `params` and return it back. There are more sophisticated ways to
 build actions described in [`actions.md`](../actions.md).
 
-Microcosms implement a `send` method. This will run execute a given
+Microcosms implement a `push` method. This will run execute a given
 action with an arbitrary number of arguments (following the first).
 
 This works like:
 
 ```javascript
-app.send(Actions.addPlanet, { name: 'Saturn' })
+app.push(Actions.addPlanet, { name: 'Saturn' })
 ```
 
 This will command the app to trigger `Actions.addPlanet`, taking the
