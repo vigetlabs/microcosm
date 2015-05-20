@@ -26,6 +26,7 @@
   "devDependencies": {
     "autoprefixer-loader": "^1.2.0",
     "babel": "~5",
+    "babel-core": "^5.4.4",
     "babel-loader": "~5",
     "babel-runtime": "~5",
     "chai": "~2",
