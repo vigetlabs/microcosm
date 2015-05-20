@@ -10,7 +10,11 @@ all state encapsulated in one place. This design seeks to achieve a
 reasonable trade off between the simplicity of singletons and the
 privacy of class instances.
 
+---
+
 [![Circle CI](https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg)](https://circleci.com/gh/vigetlabs/microcosm)
+
+---
 
 ## Overview
 
@@ -20,7 +24,11 @@ stores as singletons, however they do not contain any state.
 Actions are called within the context of a particular instance of Microcosm:
 
 ```javascript
-  app.push(Action, parameters)
+  let Action = function(params) {
+    return params
+  }
+
+  app.push(Action, params)
 ```
 
 Stores hold no state. Stores are collections of functions that transform
