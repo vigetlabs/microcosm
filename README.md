@@ -23,12 +23,17 @@ Actions are called within the context of a particular instance of Microcosm:
   app.push(Action, parameters)
 ```
 
-Stores hold no state, transforming old data and parameters into a new
-state:
+Stores hold no state. Stores are collections of functions that transform
+old data into new data, with a hook that `register`s them with the Microcosm.
 
 ```javascript
 let Store = {
-  addRecord(state, params) {
+  register() {
+    return {
+      [Action] : this.add
+    }
+  },
+  add(state, params) {
     return state.concat(params)
   }
 }
