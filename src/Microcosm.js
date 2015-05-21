@@ -1,10 +1,10 @@
 /**
- * Microcosm
  * An isomorphic flux implementation. The strength of Microcosm
  * is that each application is its own fully encapsulated world.
  */
 
 const Foliage = require('foliage')
+const Plugin  = require('./Plugin')
 const Signal  = require('./Signal')
 const Store   = require('./Store')
 const install = require('./install')

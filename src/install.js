@@ -6,9 +6,7 @@
 let install = function ([plugin, ...tail], app, callback) {
   if (!plugin) return callback()
 
-  let [ driver, options ] = plugin
-
-  driver.register(app, options, function(err) {
+  plugin.start(app, function(err) {
     if (err) throw err
     install(tail, app, callback)
   })
