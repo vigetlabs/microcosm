@@ -1,7 +1,6 @@
 /**
- * Signal
- * Handles the various ways in which an action can be resolved. Currently,
- * it handles values, and promises
+ * Handles the various ways in which an action can be resolved.
+ * Currently, it handles values, and promises
  */
 
 function Signal (action, params) {

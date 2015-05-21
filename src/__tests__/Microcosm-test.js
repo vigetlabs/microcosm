@@ -148,12 +148,14 @@ describe('Microcosm', function() {
   })
 
   describe('::deserialize', function() {
-    it ('handles cases where no value was passed', function() {
-      app.addStore('fiz', {})
+    [ null, undefined ].forEach(function(type) {
+      it (`handles cases where the value is ${ type }`, function() {
+        app.addStore('fiz', {})
 
-      let cleaned = app.deserialize()
+        let cleaned = app.deserialize(type)
 
-      cleaned.should.not.have.property('fiz')
+        cleaned.should.not.have.property('fiz')
+      })
     })
   })
 

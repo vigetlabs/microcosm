@@ -8,13 +8,15 @@
 
 ### `getInitialState()`
 
-Generates the starting state of a Microcosm instance whenever its
-`start` method is called. By default, this calls `getInitialState` on
-all stores and reduces those results into an object based upon the
-keys those stores have been assigned to (see `addStore`).
+Generates the starting state a microcosm starts with. The reduction of
+calling `getInitialState` on all stores.
 
 This function is usually not called directly. However it is open to
 extension. The only requirement is that it returns an object primitive.
+
+### `reset()`
+
+Resets state to the result of calling `getInitialState()`
 
 ### `get(key)`
 
@@ -38,10 +40,6 @@ This method is used internally to update state and it shouldn't
 typically be used directly. However it is exposed in case a plugin
 wants to keep track of some state unique to an app.
 
-### `reset()`
-
-Resets state to the result of calling `getInitialState()`
-
 ### `replace(data)`
 
 Executes `deserialize` on the provided data and then merges it into
@@ -58,9 +56,9 @@ app.replace({
 
 ### `addPlugin(plugin, options)`
 
-Pushes a plugin in to the registry for a given app. When `app.start()`
-is called, it will execute plugins in the order in which they have
-been added using this function.
+Pushes a plugin in to the registry for a given microcosm.
+When `app.start()` is called, it will execute plugins in the order in
+which they have been added using this function.
 
 [See the documentation on plugins](plugins.md).
 
@@ -142,6 +140,10 @@ the resulting parameters to registered stores for transformation.
 ```javascript
 app.push(createPlanet, { name: 'Merkur' })
 ```
+
+### `prepare(action, ...arguments)`
+
+Partially applies `push`.
 
 ### `dispatch(action, params)`
 
