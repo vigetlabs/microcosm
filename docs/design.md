@@ -5,7 +5,7 @@ Microcosm:
 
 ```
                                               |-→ [Store] -|
-[app.send] ---→ [Action] ---→ [app.dispatch] -+-→ [Store] -+-→ [update?]
+[app.push] ---→ [Action] ---→ [app.dispatch] -+-→ [Store] -+-→ [update?]
    ↑                                          |-→ [Store] -|       |
    |                                                               |
    |                                                               ↓
