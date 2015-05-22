@@ -1,11 +1,9 @@
-export default {
-
-  add(params) {
-    return params
-  },
-
-  remove(id) {
-    return id
-  }
-
+function add(params) {
+  return params
 }
+
+function remove(id) {
+  return id
+}
+
+export default { add, remove }

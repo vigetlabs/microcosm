@@ -1,7 +1,5 @@
-export default {
-
-  set(params) {
-    return params
-  }
-
+function set(params) {
+  return params
 }
+
+export default { set }
