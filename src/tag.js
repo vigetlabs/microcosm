@@ -6,8 +6,12 @@
 const uid = require('uid')
 
 module.exports = function(fn) {
+  let name = fn.name || 'microcosm_action'
+  let mark = uid()
+
   if (!fn.hasOwnProperty('toString')) {
-    var mark = uid()
-    fn.toString = () => 'microcosm_tagged_' + mark
+    fn.toString = () => `${ name }_${ mark }`
   }
+
+  return fn
 }

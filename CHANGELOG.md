@@ -5,6 +5,7 @@
 ## Internal Changes
 
 - Added plugin class to manage defaults
+- `tag` now includes the name of the function in `toString()`
 
 ## 8.0.0
 
