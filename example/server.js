@@ -3,7 +3,6 @@ var Webpack = require("webpack")
 var config  = require('./webpack.config')
 
 var server = new Server(Webpack(config), {
-  hot: true,
   contentBase: './example',
   noInfo: true,
   stats: { colors: true },

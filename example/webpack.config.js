@@ -16,8 +16,7 @@ config.output = {
 }
 
 config.plugins = [
-  new Webpack.HotModuleReplacementPlugin(),
-  new Webpack.NoErrorsPlugin()
+  new Webpack.HotModuleReplacementPlugin()
 ]
 
 config.module.loaders.unshift(
