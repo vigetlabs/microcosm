@@ -64,8 +64,8 @@ class Microcosm extends Foliage {
    * @param {Object} options - Options passed to the plugin on start
    * @return this
    */
-  addPlugin(plugin, options) {
-    this.plugins.push([plugin, options])
+  addPlugin(config, options) {
+    this.plugins.push(new Plugin(config, options))
     return this
   }
 

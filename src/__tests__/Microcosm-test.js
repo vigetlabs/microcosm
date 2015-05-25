@@ -117,9 +117,16 @@ describe('Microcosm', function() {
   })
 
   describe('::addPlugin', function() {
-    it ('pushes a plugin into a list', function() {
-      app.addPlugin({ register() {} })
-      app.plugins.length.should.equal(1)
+    it ('pushes a plugin into a list', function(done) {
+      let app = new Microcosm()
+
+      app.addPlugin({
+        register(app, options, next) {
+          done()
+        }
+      })
+
+      app.start()
     })
   })
 
