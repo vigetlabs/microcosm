@@ -15,8 +15,8 @@ module.exports = function(config) {
     ],
 
     preprocessors: {
-      'src/**/__tests__/*.js*' : [ 'webpack', 'sourcemap' ],
-      'example/src/**/__tests__/*.js*' : [ 'webpack', 'sourcemap' ]
+      'src/**/__tests__/*.js*' : [ 'webpack',],
+      'example/src/**/__tests__/*.js*' : [ 'webpack' ]
     },
 
     reporters: [ 'nyan', 'coverage' ],
@@ -28,7 +28,7 @@ module.exports = function(config) {
     },
 
     webpack: {
-      devtool : '#eval-source-map',
+      devtool : 'inline-source-map',
       resolve : webpack_config.resolve,
 
       module: {
