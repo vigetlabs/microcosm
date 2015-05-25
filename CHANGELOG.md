@@ -1,5 +1,11 @@
 # Changelog
 
+## 8.1.0 (Not released)
+
+## Internal Changes
+
+- Added plugin class to manage defaults
+
 ## 8.0.0
 
 ### Noticeable changes
