@@ -20,11 +20,11 @@ Store.prototype = {
   deserialize     : skip,
 
   register() {
-    return this
+    return {}
   },
 
   send(state, action, params) {
-    let task = this.register()[action]
+    let task  = this.register()[action]
     return task? task(state, params) : state
   }
 }

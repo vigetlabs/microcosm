@@ -2,7 +2,13 @@
 
 ## 8.1.0 (Not released)
 
-## Internal Changes
+### Noticeable changes
+
+- Stores no longer return `this` from `register()` by default. **This is
+  a potentially breaking change**, however should not pose a problem to
+  projects using idiomatic Store registration.
+
+### Internal Changes
 
 - Added plugin class to manage defaults
 - `tag` now includes the name of the function in `toString()`
