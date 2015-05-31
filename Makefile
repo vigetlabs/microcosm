@@ -36,7 +36,11 @@ release: clean build
 	npm publish $(DIST)
 
 example:
-	node example/server
+	@$(BIN)/webpack-dev-server \
+	--config examples/webpack.config.js \
+	--content-base examples \
+	--publicPath assets \
+	--historyApiFallback true
 
 clean:
 	@rm -rf $(DIST)

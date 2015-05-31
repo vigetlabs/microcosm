@@ -8,7 +8,7 @@ function Signal (action, params) {
     throw TypeError(`${ action } is not a function. Was app.push() called with the wrong value?`)
   }
 
-  this.value = action(...params)
+  this.value = action.apply(undefined, params)
 }
 
 Signal.prototype = {

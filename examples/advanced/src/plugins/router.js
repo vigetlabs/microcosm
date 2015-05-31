@@ -7,8 +7,10 @@
 import Route from 'actions/route'
 import page from 'page'
 
+page.base('/advanced')
+
 let routes = [
-  { path: '/',         handler: require('../views/pages/home') },
+  { path: '/', handler: require('../views/pages/home') },
   { path: '/list/:id', handler: require('../views/pages/show') }
 ]
 
@@ -27,7 +29,7 @@ export default {
       page(path, ({ params }) => action({ handler, params }))
     })
 
-    page.start()
+    page.start({ hashbang: true })
 
     next()
   }

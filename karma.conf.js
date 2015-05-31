@@ -11,20 +11,24 @@ module.exports = function(config) {
 
     files: [
       'src/**/__tests__/*.js*',
-      'example/src/**/__tests__/*.js*'
+      'examples/**/__tests__/*.js*'
     ],
 
     preprocessors: {
-      'src/**/__tests__/*.js*' : [ 'webpack',],
-      'example/src/**/__tests__/*.js*' : [ 'webpack' ]
+      'src/**/__tests__/*.js*' : [ 'webpack', 'sourcemap' ],
+      'examples/**/__tests__/*.js*' : [ 'webpack', 'sourcemap' ]
     },
 
-    reporters: [ 'nyan', 'coverage' ],
+    reporters: [ 'mocha', 'coverage' ],
+
+    mochaReporter: {
+      output: 'minimal'
+    },
 
     coverageReporter: {
-      type: 'html',
-      subdir: '.',
-      dir: process.env.CIRCLE_ARTIFACTS || 'coverage'
+      dir    : process.env.CIRCLE_ARTIFACTS || 'coverage',
+      type   : 'html',
+      subdir : '.'
     },
 
     webpack: {

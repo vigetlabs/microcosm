@@ -1,4 +1,4 @@
-import 'style/app'
+import './style/app'
 
 import App     from 'App'
 import Router  from 'plugins/router'
@@ -21,7 +21,7 @@ app.addPlugin(Router)
 
 // Render changes to the screen
 app.addPlugin(Render, {
-  el: document.getElementById('app')
+  el: document.body
 })
 
 // Starting the application will run through all plugins

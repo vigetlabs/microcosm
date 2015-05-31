@@ -1,11 +1,9 @@
 var Webpack = require('webpack')
 
 module.exports = {
-  devtool : 'source-map',
-
   resolve: {
     extensions: [ '', '.js', '.jsx', '.json', '.scss', '.svg' ],
-    modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'example' ]
+    modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'examples/advanced' ]
   },
 
   plugins: [
@@ -15,19 +13,10 @@ module.exports = {
   ],
 
   module: {
-    loaders: [
-      {
-        test     : /\.jsx*$/,
-        exclude  : /node_modules/,
-        loader   : 'babel',
-        query    : {
-          optional : [ 'utility.inlineEnvironmentVariables' ]
-        }
-      },
-      {
-        test    : /\.(svg)$/,
-        loader  : 'raw'
-      }
-    ]
+    loaders: [{
+      test     : /\.jsx*$/,
+      exclude  : /node_modules/,
+      loader   : 'babel'
+    }]
   }
 }

@@ -155,7 +155,9 @@ class Microcosm extends Foliage {
    */
   push(action, ...params) {
     let signal = new Signal(action, params)
-    return signal.pipe(result => this.dispatch(action, result))
+    let dispatch = this.dispatch.bind(this, action)
+
+    return signal.pipe(dispatch)
   }
 
   /**
