@@ -1,4 +1,4 @@
-import Chart     from './chart'
+import Viget     from './Viget'
 import Microcosm from 'Microcosm'
 import React     from 'react'
 
@@ -35,7 +35,7 @@ var body = document.body
 requestAnimationFrame(function loop () {
   requestAnimationFrame(loop)
   app.push(updateCircle)
-  React.render(<Chart circle={ app.get('circle')}/>, body)
+  React.render(<Viget circle={ app.get('circle')}/>, body)
 })
 
 app.start()
