@@ -32,10 +32,13 @@ app.addStore('circle', {
 
 var body = document.body
 
+app.listen(function() {
+  React.render(<Viget circle={ app.get('circle')}/>, body)
+})
+
 requestAnimationFrame(function loop () {
   requestAnimationFrame(loop)
   app.push(updateCircle)
-  React.render(<Viget circle={ app.get('circle')}/>, body)
 })
 
 app.start()
