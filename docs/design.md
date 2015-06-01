@@ -19,7 +19,7 @@ Microcosm:
 
 1. **Initialize**. Performed by `app.start()`. This gathers initial state
    from stores and boots plugins.
-2. **Fire Action**. Performed by `app.send(action, params)`. Pushes an
+2. **Fire Action**. Performed by `app.push(action, params)`. Pushes an
    action into the queue. If it succeeds, dispatch it to the stores.
 3. **Store reconciliation**. Each store that is registered to respond
    to the action returns a new state by operating on a given old state
