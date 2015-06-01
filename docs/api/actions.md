@@ -28,7 +28,7 @@ which instance of a Microcosm should change data:
 
 ```javascript
 let app = new Microcosm()
-app.send(MyActions.doSomething, paramOne, paramTwo)
+app.push(MyActions.doSomething, paramOne, paramTwo)
 ```
 
 ## Two ways to write actions
