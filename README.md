@@ -74,7 +74,7 @@ let Store = {
 [Hello, Microcosm](docs/guides/hello-microcosm.md) is a great place to
 start. With that background, [Design](docs/design.md) may help to
 provide an additional high level overview of how things work. Beyond
-that, check out [the example app](example/src/index.jsx).
+that, check out [the example apps](examples).
 
 ## Documentation
 
