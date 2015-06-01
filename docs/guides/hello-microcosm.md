@@ -126,7 +126,7 @@ let Actions = {
 
 Actions can take a couple of forms. In the case above, we simply take
 `params` and return it back. There are more sophisticated ways to
-build actions described in [`actions.md`](../actions.md).
+build actions described in [`actions.md`](../api/actions.md).
 
 Microcosms implement a `push` method. This will run execute a given
 action with an arbitrary number of arguments (following the first).
