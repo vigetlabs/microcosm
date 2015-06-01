@@ -7,6 +7,7 @@
 - Stores no longer return `this` from `register()` by default. **This is
   a potentially breaking change**, however should not pose a problem to
   projects using idiomatic Store registration.
+- Scope of store reducers when dispatching will always be the Store
 
 ### Internal Changes
 
