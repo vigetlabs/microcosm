@@ -7,6 +7,7 @@
 - Stores no longer return `this` from `register()` by default. **This is
   a potentially breaking change**, however should not pose a problem to
   projects using idiomatic Store registration.
+- Unique ids for plugins and actions are internally generated
 
 ### Internal Changes
 

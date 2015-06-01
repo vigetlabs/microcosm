@@ -1,11 +1,11 @@
-const uid = require('uid')
+let uid = 0
 
 function Plugin(config, options) {
   for (var i in config) {
     this[i] = config[i]
   }
 
-  this.name    = this.name || 'microcosm_plugin_' + uid()
+  this.name    = this.name || 'microcosm_plugin_' + uid++
   this.options = options
 }
 
