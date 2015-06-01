@@ -7,4 +7,18 @@ describe('Store', function() {
     store.toString().should.equal('sample')
   })
 
+  it ('always sends actions in the context of the store', function() {
+    let store = new Store({
+      register() {
+        return {
+          test() {
+            return this
+          }
+        }
+      }
+    }, 'sample')
+
+    store.send({}, 'test', {}).should.equal(store)
+  })
+
 })

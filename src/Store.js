@@ -25,7 +25,7 @@ Store.prototype = {
 
   send(state, action, params) {
     let task  = this.register()[action]
-    return task? task(state, params) : state
+    return task? task.call(this, state, params) : state
   }
 }
 
