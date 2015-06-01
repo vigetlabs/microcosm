@@ -2,7 +2,7 @@
 
 1. [Overview](#overview)
 2. [Firing Actions](#firing-actions)
-2. [The two ways to write actions](three-ways-to-write-actions)
+2. [The two ways to write actions](#two-ways-to-write-actions)
 
 ## Overview
 
