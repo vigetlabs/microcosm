@@ -7,11 +7,11 @@
  * @return Object
  */
 
-module.exports = function (obj, transform) {
+module.exports = function (obj, transform, scope) {
   let map = {}
 
   for (var key in obj) {
-    map[key] = transform(obj[key], key, obj)
+    map[key] = transform.call(scope, obj[key], key, obj)
   }
 
   return map

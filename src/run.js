@@ -3,7 +3,7 @@
  * Execute a list of callbacks
  */
 
-module.exports = function (callbacks, args, scope, origin='run') {
+module.exports = function (callbacks, args, scope, origin) {
   for (let i = 0; i < callbacks.length; i++) {
 
     if (process.env.NODE_ENV !== 'production' && typeof callbacks[i] !== 'function') {

@@ -7,7 +7,8 @@ config.devtool = 'eval-source-map'
 
 config.entry = {
   'advanced' : './advanced/src/index',
-  'simple-svg' : './simple-svg/index'
+  'simple-svg' : './simple-svg/index',
+  'optimistic-updates' : './optimistic-updates/index'
 }
 
 config.output = {

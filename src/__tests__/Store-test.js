@@ -36,4 +36,11 @@ describe('Store', function() {
     }
   })
 
+  it ('returns state if it can not respond', function() {
+    let store = new Store({}, 'sample')
+    let state = {}
+
+    Store.send(store, 'wut', state).should.equal(state)
+  })
+
 })

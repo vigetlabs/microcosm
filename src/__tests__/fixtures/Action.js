@@ -1,4 +1,4 @@
-let Action = () => true
+let Action = param => param
 
 Action.toString = () => 'action'
 

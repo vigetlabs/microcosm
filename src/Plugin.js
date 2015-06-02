@@ -8,10 +8,6 @@ function Plugin(config, options) {
 }
 
 Plugin.prototype = {
-  start(app, next) {
-    return this.register(app, this.options, next)
-  },
-
   register(app, options, next) {
     next()
   },

@@ -6,4 +6,8 @@ describe('tag', function() {
     tag(function test() {}).toString().should.include('test')
   })
 
+  it ('assigns a default name', function() {
+    tag({}).toString().should.include('microcosm_action')
+  })
+
 })

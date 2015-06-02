@@ -32,4 +32,8 @@ Store.send = function (store, action, state, params) {
   return task ? task.call(store, state, params) : state
 }
 
+Store.taskFor = function (store, action) {
+  return store.register()[action]
+}
+
 module.exports = Store
