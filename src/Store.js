@@ -3,7 +3,7 @@
  * Used to provide default values for a store configuration
  */
 
-let skip = i => i
+let identity = i => i
 
 function Store (config, id) {
   // Fold configuration over self
@@ -15,9 +15,9 @@ function Store (config, id) {
 }
 
 Store.prototype = {
-  getInitialState : skip,
-  serialize       : skip,
-  deserialize     : skip,
+  getInitialState : identity,
+  serialize       : identity,
+  deserialize     : identity,
 
   register() {
     return {}
