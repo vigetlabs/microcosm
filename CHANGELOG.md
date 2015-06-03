@@ -1,6 +1,6 @@
 # Changelog
 
-## 8.1.0 (Not released)
+## 8.1.0
 
 ### Noticeable changes
 
