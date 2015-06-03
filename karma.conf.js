@@ -25,6 +25,12 @@ module.exports = function(config) {
       output: 'minimal'
     },
 
+    client: {
+      mocha: {
+        timeout: 500
+      }
+    },
+
     coverageReporter: {
       dir    : process.env.CIRCLE_ARTIFACTS || 'coverage',
       type   : 'html',
