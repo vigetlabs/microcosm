@@ -79,7 +79,12 @@ class Microcosm extends Foliage {
    * @return this
    */
   addStore(key, config) {
+    if (process.env.NODE_ENV !== 'production' && typeof key !== 'string') {
+      throw TypeError(`Microcosm::addStore expected string key but was given: ${ typeof key }. Did you forget to include the key?`)
+    }
+
     this.stores[key] = new Store(config, key)
+
     return this
   }
 
