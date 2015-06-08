@@ -14,11 +14,11 @@ describe('Microcosm', function() {
   describe('::replace', function() {
     it ('runs deserialize before committing results', function(done) {
       let spy    = sinon.spy(app, 'deserialize')
-      let sample = { dummy: 'test' }
+      let sample = { dummy: 'different' }
 
       app.listen(function() {
         spy.should.have.been.calledWith(sample)
-        app.get('dummy').should.equal('test')
+        app.get('dummy').should.equal('different')
         done()
       })
 
