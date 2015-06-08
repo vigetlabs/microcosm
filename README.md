@@ -78,7 +78,7 @@ that, check out [the example apps](examples).
 
 ## Examples
 
-Examples can found in the [`./examples`](./examples) directory. To run these examples:
+Examples can be found in the [`./examples`](./examples) directory. To run these examples:
 
 ```bash
 npm install
