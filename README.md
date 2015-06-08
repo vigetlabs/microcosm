@@ -76,6 +76,17 @@ start. With that background, [Design](docs/design.md) may help to
 provide an additional high level overview of how things work. Beyond
 that, check out [the example apps](examples).
 
+## Examples
+
+Examples can found in the [`./examples'](./examples) directory. To run these examples:
+
+```bash
+npm install
+npm start
+```
+
+This will run [`webpack-dev-server`](https://github.com/webpack/webpack-dev-server) at [http://localhost:8080](http://localhost:8080). From there, examples can be viewed by navigating to their associated path, such as [http://localhost:8080/simple-svg](http://localhost:8080/simple-svg).
+
 ## Documentation
 
 There is documentation [here](docs). This includes high level
