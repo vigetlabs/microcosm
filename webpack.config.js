@@ -3,7 +3,10 @@ var Webpack = require('webpack')
 module.exports = {
   resolve: {
     extensions: [ '', '.js', '.jsx', '.json', '.scss', '.svg' ],
-    modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'examples/advanced' ]
+    modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'examples/advanced' ],
+    alias: {
+      react: 'react/dist/react.min.js'
+    }
   },
 
   plugins: [
@@ -13,6 +16,7 @@ module.exports = {
   ],
 
   module: {
+    noParse: [ 'react' ],
     loaders: [{
       test     : /\.jsx*$/,
       exclude  : /node_modules/,
