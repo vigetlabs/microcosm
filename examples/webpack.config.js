@@ -1,8 +1,9 @@
-var config = Object.create(require('../webpack.config'))
-var path   = require('path')
+var webpack = require('webpack')
+var config  = Object.create(require('../webpack.config'))
+var path    = require('path')
 
 config.context = __dirname
-config.devtool = 'inline-source-map'
+config.devtool = 'eval-source-map'
 
 config.entry = {
   'advanced' : './advanced/src/index',
@@ -13,6 +14,8 @@ config.output = {
   filename: '[name].js',
   path: path.join(__dirname, 'assets', 'js')
 }
+
+config.postcss = [ require('autoprefixer-core') ]
 
 config.module.loaders = [
   {
@@ -25,7 +28,7 @@ config.module.loaders = [
   },
   {
     test    : /\.s*(c|a)ss$/,
-    loader  : 'style!css!autoprefixer!sass'
+    loader  : 'style!css!postcss!sass'
   },
   {
     test    : /\.(svg)$/,

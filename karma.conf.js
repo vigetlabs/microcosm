@@ -42,11 +42,15 @@ module.exports = function(config) {
       resolve : webpack_config.resolve,
 
       module: {
+        noParse: webpack_config.module.noParse,
         loaders: [{
           test    : /\.jsx*$/,
           exclude : /node_modules/,
           loader  : 'babel',
-          query   : { optional: ['runtime'] }
+          query   : {
+            auxiliaryComment: "istanbul ignore next",
+            optional: ["runtime"]
+          }
         }],
         postLoaders: [
           {
