@@ -9,6 +9,7 @@ JS      = $(shell find src -name '*.js' ! -path '*/__tests__/*')
 .FORCE: javascript-min
 
 build: package.json README.md LICENSE.md docs javascript javascript-min
+	@make audit
 
 $(DIST):
 	@mkdir -p $(DIST)
@@ -47,9 +48,9 @@ clean:
 
 audit:
 	@echo "Compressed Size:"
-	@cat $^ | wc -c
+	@cat $(DIST)/microcosm.build.js | wc -c
 	@echo "Gzipped Size:"
-	@gzip -c $^ | wc -c
+	@gzip -c $(DIST)/microcosm.build.js | wc -c
 
 website:
 	git subtree push --prefix site origin gh-pages
