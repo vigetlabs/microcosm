@@ -10,6 +10,8 @@ all data encapsulated in one place. This design seeks to achieve a
 reasonable trade off between the simplicity of singletons and the
 privacy of class instances.
 
+For a deeper dive, check out the [docs](./docs) or continue below.
+
 ---
 
 [![Circle CI](https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg)](https://circleci.com/gh/vigetlabs/microcosm)
