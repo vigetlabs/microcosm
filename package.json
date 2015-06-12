@@ -21,6 +21,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "babel-plugin-object-assign": "^1.1.0",
     "foliage": "~0.21.0"
   },
   "devDependencies": {

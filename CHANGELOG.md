@@ -1,5 +1,28 @@
 # Changelog
 
+## 8.2.0
+
+## Internal Changes
+
+- Upgrade Foliage to `0.21.0`.
+- Moved `Store.prototype.send` to `Store.send`. This has always been
+  an internal API, however those using this method for testing will
+  need to update. This change is motivated by a desire to reduce as
+  much surface area from Store instances as possible.
+- We now use `babel-plugin-object-assign` for extension
+
+## Upgrading
+
+For those using `Store.prototype.send`, the following change is
+necessary:
+
+```javascript
+// Before
+store.send(state, action, payload)
+//After
+Store.send(action, store, state, payload)
+```
+
 ## 8.1.0
 
 ### Noticeable changes

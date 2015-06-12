@@ -3,5 +3,6 @@
   "loose": true,
   "sourceMaps": "inline",
   "blacklist" : [ "strict" ],
-  "optional"  : []
+  "optional"  : [],
+  "plugins": [ "object-assign" ]
 }

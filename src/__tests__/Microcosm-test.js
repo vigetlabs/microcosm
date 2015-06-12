@@ -105,12 +105,16 @@ describe('Microcosm', function() {
 
     beforeEach(function(done) {
       local = new Microcosm()
-      local.addStore('another-store', { respond: () => true })
+      local.addStore('another-store', {
+        register() {
+          return { respond: () => true }
+        }
+      })
       local.start(done)
     })
 
     it ('commits changes if a store can respond', function(done) {
-      local.listen(done)
+      local.listen(_ => done())
       local.dispatch('respond')
     })
 

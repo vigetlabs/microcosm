@@ -4,13 +4,10 @@
  */
 
 let identity = i => i
+let isDev    = process.env.NODE_ENV !== 'production'
 
 function Store (config, id) {
-  // Fold configuration over self
-  for (var i in config) {
-    this[i] = config[i]
-  }
-
+  Object.assign(this, config)
   this.toString = () => id
 }
 
@@ -21,12 +18,18 @@ Store.prototype = {
 
   register() {
     return {}
-  },
-
-  send(state, action, params) {
-    let task  = this.register()[action]
-    return task? task.call(this, state, params) : state
   }
+}
+
+Store.send = function (action, store, state, params) {
+  let tasks = store.register()
+  let task  = tasks[action]
+
+  if (isDev && action in tasks && typeof task !== 'function') {
+    throw TypeError(`${ store } registered ${ action } with non-function value`)
+  }
+
+  return task ? task.call(store, state, params) : state
 }
 
 module.exports = Store

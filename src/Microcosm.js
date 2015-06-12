@@ -19,8 +19,7 @@ function Microcosm() {
   this.plugins = []
 }
 
-Microcosm.prototype = {
-  ...Foliage.prototype,
+Microcosm.prototype = Object.assign({}, Foliage.prototype, {
 
   /**
    * Generates the initial state a microcosm starts with. The reduction
@@ -200,13 +199,12 @@ Microcosm.prototype = {
       let state = this.get(key)
       let store = this.stores[key]
 
-      this.set(key, store.send(state, action, payload))
-      this.volley()
+      this.set(key, Store.send(action, store, state, payload))
     }
 
     return payload
   }
 
-}
+})
 
 module.exports = Microcosm

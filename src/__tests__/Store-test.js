@@ -18,7 +18,22 @@ describe('Store', function() {
       }
     }, 'sample')
 
-    store.send({}, 'test', {}).should.equal(store)
+    Store.send('test', store).should.equal(store)
+  })
+
+  it ('validates that handlers are functions', function(done) {
+    let store = {
+      register() {
+        return { test: null }
+      }
+    }
+
+    try {
+      Store.send('test', store)
+    } catch(x) {
+      x.should.be.instanceOf(TypeError)
+      done()
+    }
   })
 
 })

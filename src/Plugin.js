@@ -1,9 +1,7 @@
 let uid = 0
 
 function Plugin(config, options) {
-  for (var i in config) {
-    this[i] = config[i]
-  }
+  Object.assign(this, config)
 
   this.name    = this.name || 'microcosm_plugin_' + uid++
   this.options = options
