@@ -21,7 +21,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "foliage": "~0.20.0"
+    "foliage": "~0.21.0"
   },
   "devDependencies": {
     "autoprefixer-core": "^5.2.0",
