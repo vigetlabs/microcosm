@@ -21,7 +21,7 @@ Store.prototype = {
   }
 }
 
-Store.send = function (action, store, state, params) {
+Store.send = function (store, action, state, params) {
   let tasks = store.register()
   let task  = tasks[action]
 

@@ -20,7 +20,7 @@ necessary:
 // Before
 store.send(state, action, payload)
 //After
-Store.send(action, store, state, payload)
+Store.send(store, action, state, payload)
 ```
 
 ## 8.1.0

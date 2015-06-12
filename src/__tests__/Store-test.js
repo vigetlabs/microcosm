@@ -18,7 +18,7 @@ describe('Store', function() {
       }
     }, 'sample')
 
-    Store.send('test', store).should.equal(store)
+    Store.send(store, 'test').should.equal(store)
   })
 
   it ('validates that handlers are functions', function(done) {
@@ -29,7 +29,7 @@ describe('Store', function() {
     }
 
     try {
-      Store.send('test', store)
+      Store.send(store, 'test')
     } catch(x) {
       x.should.be.instanceOf(TypeError)
       done()

@@ -199,7 +199,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
       let state = this.get(key)
       let store = this.stores[key]
 
-      this.set(key, Store.send(action, store, state, payload))
+      this.set(key, Store.send(store, action, state, payload))
     }
 
     return payload
