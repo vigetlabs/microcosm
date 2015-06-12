@@ -100,6 +100,33 @@ describe('Microcosm', function() {
 
   })
 
+  describe('::addStore', function() {
+    it ('throws an error if no key is given', function(done) {
+      try {
+        new Microcosm().addStore({})
+      } catch(x) {
+        x.should.be.instanceOf(TypeError)
+        done()
+      }
+    })
+  })
+
+  describe('::toObject', function() {
+    it ('aliases valueOf', function() {
+      sinon.spy(app, 'valueOf')
+      app.toObject()
+      app.valueOf.should.have.been.called
+    })
+  })
+
+  describe('::prepare', function() {
+    it ('binds arguments to push', function() {
+      sinon.stub(app, 'push')
+      app.prepare('action', 1, 2)(3)
+      app.push.should.have.been.calledWith('action', 1, 2, 3)
+    })
+  })
+
   describe('::dispatch', function() {
     let local;
 
