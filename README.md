@@ -26,27 +26,38 @@ stores as singletons, however they do not contain any state.
 Actions are called within the context of a particular instance of Microcosm:
 
 ```javascript
-  let Action = function(params) {
+  let addPlanet = function(params) {
     return params
   }
 
-  app.push(Action, params)
+  app.push(addPlanet, params)
 ```
 
 Stores hold no state. Stores are collections of functions that transform
 old data into new data, with a hook that `register`s them with the Microcosm.
 
 ```javascript
-let Store = {
+let Planets = {
   register() {
     return {
-      [Action] : this.add
+      [addPlanet] : this.add
     }
   },
-  add(state, params) {
-    return state.concat(params)
+  add(planets, props) {
+    return planets.concat(props)
   }
 }
+
+let app = new Microcosm()
+
+// All state is contained in `app`, but transformed with `Planets`
+app.addStore(Planets, 'planets')
+```
+
+From there, an app's state can be sent down your React component tree:
+
+``` javascript
+React.render(<SolarSystem app={ app } planets={ app.get('planets') } />, document.body)
 ```
 
 ## Opinions
