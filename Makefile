@@ -3,7 +3,7 @@ BABEL   = $(BIN)/babel
 KARMA   = $(BIN)/karma
 WEBPACK = $(BIN)/webpack
 DIST    = dist
-JS      = $(shell find src -name '*.js' ! -path '*/__tests__/*')
+JS      = $(shell find src -name '*.js*' ! -path '*/__tests__/*')
 
 .PHONY: clean test test-watch release example website
 .FORCE: javascript-min

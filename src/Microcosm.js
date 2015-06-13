@@ -1,32 +1,40 @@
-/**
- * An isomorphic flux implementation. The strength of Microcosm
- * is that each application is its own fully encapsulated world.
- */
-
-let Foliage = require('foliage')
-let Plugin  = require('./Plugin')
-let Signal  = require('./Signal')
-let Store   = require('./Store')
-let install = require('./install')
-let remap   = require('./remap')
-let run     = require('./run')
-let tag     = require('./tag')
+let Foliage    = require('foliage')
+let Microscope = require('./Microscope')
+let Plugin     = require('./Plugin')
+let React      = require('react')
+let Signal     = require('./Signal')
+let Store      = require('./Store')
+let install    = require('./install')
+let remap      = require('./remap')
+let run        = require('./run')
+let tag        = require('./tag')
 
 function Microcosm() {
   Foliage.apply(this, arguments)
 
   this.stores  = {}
   this.plugins = []
+
+  // For Debugging purposes
+  this.constructor.displayName = 'Microcosm'
 }
 
 Microcosm.prototype = Object.assign({}, Foliage.prototype, {
+
+  /**
+   * Allows Microcosm to be used as a component, defering to the
+   * <Microscope /> component
+   */
+  render() {
+    return React.createElement(Microscope, this.props)
+  },
 
   /**
    * Generates the initial state a microcosm starts with. The reduction
    * of calling `getInitialState` on all stores.
    * @return Object
    */
-  getInitialState() {
+  _getInitialState() {
     return remap(this.stores, store => store.getInitialState())
   },
 
@@ -35,7 +43,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
    * @return this
    */
   reset() {
-    this.commit(this.getInitialState())
+    this.commit(this._getInitialState())
     return this
   },
 
@@ -204,7 +212,10 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
 
     return payload
   }
-
 })
 
-module.exports = Microcosm
+module.exports   = Microcosm
+
+Microcosm.get    = require('foliage/src/get')
+Microcosm.set    = require('foliage/src/assoc')
+Microcosm.remove = require('foliage/src/dissoc')

@@ -1,44 +1,18 @@
-import Viget     from './Viget'
-import Microcosm from 'Microcosm'
-import React     from 'react'
+import Circle     from './stores/Circle'
+import Microcosm  from 'Microcosm'
+import React      from 'react'
+import Viget      from './components/Viget'
+import { update } from './actions/circle'
 
 let app = new Microcosm()
 
-function updateCircle() {
-  let time = Date.now()
+app.addStore('circle', Circle)
 
-  return {
-    cx : 150 + 50 * Math.sin(time / 200),
-    cy : 150 + 35 * Math.cos(time / 200),
-    r  : 12 + 8 * Math.cos(time / 200)
-  }
-}
+app.start(function() {
+  requestAnimationFrame(function loop () {
+    requestAnimationFrame(loop)
+    app.push(update)
+  })
 
-app.addStore('circle', {
-  getInitialState() {
-    return { cx: 100, cy: 100, r: 10 }
-  },
-
-  register() {
-    return {
-      [updateCircle]: this.set
-    }
-  },
-
-  set(old, next) {
-    return next
-  }
+  React.render(<Microcosm instance={ app }><Viget /></Microcosm>, document.body)
 })
-
-var body = document.body
-
-app.listen(function() {
-  React.render(<Viget circle={ app.get('circle')}/>, body)
-})
-
-requestAnimationFrame(function loop () {
-  requestAnimationFrame(loop)
-  app.push(updateCircle)
-})
-
-app.start()

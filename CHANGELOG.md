@@ -4,12 +4,13 @@
 
 ## Internal Changes
 
-- Upgrade Foliage to `0.21.0`.
+- Upgrade Foliage to `0.22.0`.
 - Moved `Store.prototype.send` to `Store.send`. This has always been
   an internal API, however those using this method for testing will
   need to update. This change is motivated by a desire to reduce as
   much surface area from Store instances as possible.
 - We now use `babel-plugin-object-assign` for extension
+- Launched `<Microcosm />` component style (private feature for the time being)
 
 ## Upgrading
 
