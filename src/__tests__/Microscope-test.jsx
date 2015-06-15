@@ -43,4 +43,17 @@ describe('<Microscope />', function() {
     app.ignore.should.have.been.called
   })
 
+  describe('statics', function() {
+    it ('includes Foliage set', function() {
+      Microcosm.set.should.equal(require('foliage/src/set'))
+    })
+
+    it ('includes Foliage get', function() {
+      Microcosm.get.should.equal(require('foliage/src/get'))
+    })
+
+    it ('includes Foliage remove', function() {
+      Microcosm.remove.should.equal(require('foliage/src/remove'))
+    })
+  })
 })

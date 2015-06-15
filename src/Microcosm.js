@@ -245,5 +245,5 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
 module.exports   = Microcosm
 
 Microcosm.get    = require('foliage/src/get')
-Microcosm.set    = require('foliage/src/assoc')
-Microcosm.remove = require('foliage/src/dissoc')
+Microcosm.set    = require('foliage/src/set')
+Microcosm.remove = require('foliage/src/remove')
