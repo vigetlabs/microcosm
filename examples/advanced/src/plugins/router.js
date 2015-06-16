@@ -14,24 +14,20 @@ let routes = [
   { path: '/list/:id', handler: require('../views/pages/show') }
 ]
 
-export default {
+export function register (app, options, next) {
+  let action = app.push.bind(app, Route.set)
 
-  register(app, options, next) {
-    let action = app.push.bind(app, Route.set)
+  // Create a callback for each route that pushes the event
+  // into the app's dispatcher
+  //
+  // TODO: Ideally, we'd detect that the route changed and
+  // reduce down to a route/handler within the associated
+  // store or action
+  routes.forEach(({ path, handler }) => {
+    page(path, ({ params }) => action({ handler, params }))
+  })
 
-    // Create a callback for each route that pushes the event
-    // into the app's dispatcher
-    //
-    // TODO: Ideally, we'd detect that the route changed and
-    // reduce down to a route/handler within the associated
-    // store or action
-    routes.forEach(({ path, handler }) => {
-      page(path, ({ params }) => action({ handler, params }))
-    })
+  page.start({ hashbang: true })
 
-    page.start({ hashbang: true })
-
-    next()
-  }
-
+  next()
 }

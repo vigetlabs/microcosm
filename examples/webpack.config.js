@@ -2,8 +2,9 @@ var webpack = require('webpack')
 var config  = Object.create(require('../webpack.config'))
 var path    = require('path')
 
-config.context = __dirname
-config.devtool = 'eval-source-map'
+config.context   = __dirname
+config.devtool   = 'inline-source-map'
+config.externals = {}
 
 config.entry = {
   'advanced' : './advanced/src/index',
@@ -24,7 +25,7 @@ config.module.loaders = [
     exclude  : /node_modules/,
     loader   : 'babel',
     query    : {
-    optional : ['runtime']
+      optional : ['runtime']
     }
   },
   {

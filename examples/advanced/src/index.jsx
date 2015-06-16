@@ -1,9 +1,9 @@
 import './style/app'
 
-import App     from 'App'
-import Router  from 'plugins/router'
-import Storage from 'plugins/storage'
-import Render  from 'plugins/render'
+import App from 'App'
+import * as Router from 'plugins/router'
+import * as Storage from 'plugins/storage'
+import * as Render from 'plugins/render'
 
 // Each app is a unique instance.
 // It will get its own state, useful for having multiple apps on

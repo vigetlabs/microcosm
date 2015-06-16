@@ -3,13 +3,17 @@
  * Render changes to the screen
  */
 
-import React     from 'react'
 import Layout    from '../views/layout'
 import Microcosm from 'Microcosm'
+import React     from 'react'
 
-export default {
-  register(app, { el }, next) {
-    React.render(<Microcosm instance={ app }><Layout app={ app } /></Microcosm>, el)
-    next()
-  }
+export function register (app, { el }, next) {
+  let ui = (
+    <Microcosm instance={ app }>
+      <Layout app={ app } />
+    </Microcosm>
+  )
+
+  React.render(ui, el)
+  next()
 }
