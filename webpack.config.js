@@ -3,7 +3,7 @@ var Webpack = require('webpack')
 module.exports = {
   resolve: {
     extensions: [ '', '.js', '.jsx', '.json', '.scss', '.svg' ],
-    modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'examples/advanced' ]
+    modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'examples/advanced', __dirname ]
   },
 
   externals: {

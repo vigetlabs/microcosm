@@ -1,34 +1,21 @@
-let Foliage    = require('foliage')
-let Microscope = require('./Microscope')
-let Plugin     = require('./Plugin')
-let React      = require('react')
-let Store      = require('./Store')
-let install    = require('./install')
-let remap      = require('./remap')
-let run        = require('./run')
-let signal     = require('./signal')
-let tag        = require('./tag')
+let Foliage = require('foliage')
+let Plugin  = require('./Plugin')
+let React   = require('react')
+let Store   = require('./Store')
+let install = require('./install')
+let remap   = require('./remap')
+let run     = require('./run')
+let signal  = require('./signal')
+let tag     = require('./tag')
 
 function Microcosm() {
   Foliage.apply(this, arguments)
 
   this.stores  = {}
   this.plugins = []
-
-  // For Debugging purposes
-  this.constructor.displayName = 'Microcosm'
 }
 
 Microcosm.prototype = Object.assign({}, Foliage.prototype, {
-
-  /**
-   * Allows Microcosm to be used as a component, defering to the
-   * <Microscope /> component
-   */
-  render() {
-    return React.createElement(Microscope, this.props)
-  },
-
   /**
    * Generates the initial state a microcosm starts with. The reduction
    * of calling `getInitialState` on all stores.

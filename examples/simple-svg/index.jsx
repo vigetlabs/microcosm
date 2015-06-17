@@ -1,5 +1,6 @@
 import Circle     from './stores/Circle'
 import Microcosm  from 'Microcosm'
+import Microscope from 'addons/microscope'
 import React      from 'react'
 import Viget      from './components/Viget'
 import { update } from './actions/circle'
@@ -14,5 +15,5 @@ app.start(function() {
     app.push(update)
   })
 
-  React.render(<Microcosm instance={ app }><Viget /></Microcosm>, document.body)
+  React.render(<Microscope instance={ app }><Viget /></Microscope>, document.body)
 })

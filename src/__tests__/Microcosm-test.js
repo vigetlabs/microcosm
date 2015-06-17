@@ -1,8 +1,6 @@
 let Action     = require('./fixtures/Action')
 let DummyStore = require('./fixtures/DummyStore')
 let Microcosm  = require('../Microcosm')
-let React      = require('react/addons')
-let render     = React.addons.TestUtils.renderIntoDocument
 let Store      = require('../Store')
 
 describe('Microcosm', function() {
@@ -173,13 +171,6 @@ describe('Microcosm', function() {
         error.should.be.instanceof(TypeError)
         error.message.should.include('start')
       }
-    })
-  })
-
-  describe('::render', function() {
-    it ('renders a Microscope', function() {
-      let el = render(<Microcosm instance={ app }><p></p></Microcosm>)
-      el.props.instance.should.equal(app)
     })
   })
 

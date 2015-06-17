@@ -1,6 +1,6 @@
 let React = require('react/addons')
-let Microscope = require('../Microscope')
-let Microcosm = require('../Microcosm')
+let Microscope = require('../index')
+let Microcosm = require('../../../src/Microcosm')
 let render = React.addons.TestUtils.renderIntoDocument
 
 describe('<Microscope />', function() {

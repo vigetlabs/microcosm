@@ -1,6 +1,6 @@
 # Changelog
 
-## 8.2.0
+## 8.2.0 (not released)
 
 ## Internal Changes
 
@@ -10,7 +10,13 @@
   need to update. This change is motivated by a desire to reduce as
   much surface area from Store instances as possible.
 - We now use `babel-plugin-object-assign` for extension
-- Launched `<Microcosm />` component style (private feature for the time being)
+- Added `<Microscope />` component (private feature for the time being)
+- Added optimistic updates (private feature)
+
+## Fixes
+
+- Store responses to actions will always be called within the scope of
+  the store.
 
 ## Upgrading
 
