@@ -1,6 +1,6 @@
 {
   "name": "microcosm",
-  "version": "8.2.0-rc1",
+  "version": "8.2.0-rc2",
   "private": true,
   "description": "A variant of Facebook's Flux with centralized, isolated state",
   "main": "src/Microcosm.js",
@@ -21,7 +21,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "foliage": "~0.22.0"
+    "foliage": "~0.24.0"
   },
   "devDependencies": {
     "autoprefixer-core": "^5.2.0",

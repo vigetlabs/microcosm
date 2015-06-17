@@ -174,4 +174,18 @@ describe('Microcosm', function() {
     })
   })
 
+  it ('allows extension - Address loose mode babel bug', function() {
+    class MyApp extends Microcosm {
+      constructor() {
+        super()
+        console.log(this.stores)
+        this.addStore('foo', {})
+      }
+    }
+
+    let app = new MyApp()
+
+    app.stores.should.have.property('foo')
+  })
+
 })

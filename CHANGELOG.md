@@ -17,6 +17,8 @@
 
 - Store responses to actions will always be called within the scope of
   the store.
+- Use class syntax to get around strange class inheritance issue in
+babel loose mode
 
 ## Upgrading
 

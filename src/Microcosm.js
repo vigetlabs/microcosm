@@ -8,31 +8,31 @@ let run     = require('./run')
 let signal  = require('./signal')
 let tag     = require('./tag')
 
-function Microcosm() {
-  Foliage.apply(this, arguments)
+class Microcosm extends Foliage {
+  constructor() {
+    super()
 
-  this.stores  = {}
-  this.plugins = []
-}
+    this.stores  = {}
+    this.plugins = []
+  }
 
-Microcosm.prototype = Object.assign({}, Foliage.prototype, {
   /**
    * Generates the initial state a microcosm starts with. The reduction
    * of calling `getInitialState` on all stores.
    * @return Object
    */
-  _getInitialState() {
+  getInitialState() {
     return remap(this.stores, store => store.getInitialState())
-  },
+  }
 
   /**
    * Resets state to the result of calling `getInitialState()`
    * @return this
    */
   reset() {
-    this.commit(this._getInitialState())
+    this.commit(this.getInitialState())
     return this
-  },
+  }
 
   /**
    * Executes `deserialize` on the provided data and then merges it into
@@ -46,7 +46,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
   replace(data) {
     this.update(this.deserialize(data))
     return this
-  },
+  }
 
   /**
    * Pushes a plugin in to the registry for a given microcosm.
@@ -60,7 +60,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
   addPlugin(config, options) {
     this.plugins.push(new Plugin(config, options))
     return this
-  },
+  }
 
   /**
    * Generates a store based on the provided `config` and assigns it to
@@ -79,7 +79,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
     this.stores[key] = new Store(config, key)
 
     return this
-  },
+  }
 
   /**
    * Returns an object that is the result of transforming application state
@@ -89,7 +89,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
    */
   serialize() {
     return remap(this.stores, (store, key) => store.serialize(this.get(key)))
-  },
+  }
 
   /**
    * For each key in the provided `data` parameter, transform it using
@@ -103,7 +103,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
     return remap(data, (state, key) => {
       return this.stores[key].deserialize(state)
     })
-  },
+  }
 
   /**
    * Alias for `serialize`
@@ -111,7 +111,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
    */
   toJSON() {
     return this.serialize()
-  },
+  }
 
   /**
    * Returns a clone of the current application state
@@ -119,7 +119,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
    */
   toObject() {
     return this.valueOf()
-  },
+  }
 
   /**
    * Starts an application. It does a couple of things:
@@ -141,7 +141,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
     install(this.plugins, this, () => run(callbacks, [], this, 'start'))
 
     return this
-  },
+  }
 
   /**
    * Partially applies `push`.
@@ -152,7 +152,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
    */
   prepare(action, ...params) {
     return this.push.bind(this, action, ...params)
-  },
+  }
 
   /**
    * For a given STATE, revert all keys in a CHANGESET
@@ -170,20 +170,20 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
     })
 
     this.update(resolution)
-  },
+  }
 
   /**
    * Get the state managed by all stores that can respond to a given action
    */
   stateFor(action) {
     let stores = Object.keys(this.stores)
-                       .filter(key => Store.taskFor(this.stores[key], action))
+          .filter(key => Store.taskFor(this.stores[key], action))
 
     return stores.reduce((memo, key) => {
       memo[key] = this.get(key)
       return memo
     }, {})
-  },
+  }
 
   /**
    * Resolves an action. If it resolved successfully, it dispatches that
@@ -211,7 +211,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
     let reject = () => this.rollback(state, changes)
 
     return signal(resolve, reject, action.apply(this, params))
-  },
+  }
 
   /**
    * Sends a message to each known store asking if it can respond to the
@@ -227,7 +227,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
       return Store.send(this.stores[key], action, subset, body)
     })
   }
-})
+}
 
 module.exports   = Microcosm
 
