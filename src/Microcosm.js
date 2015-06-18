@@ -8,13 +8,18 @@ let run     = require('./run')
 let signal  = require('./signal')
 let tag     = require('./tag')
 
-class Microcosm extends Foliage {
+let Microcosm = function() {
+  return Microcosm.prototype.constructor.apply(this, arguments)
+}
+
+Microcosm.prototype = Object.assign({}, Foliage.prototype, {
+
   constructor() {
-    super()
+    Foliage.apply(this, arguments)
 
     this.stores  = {}
     this.plugins = []
-  }
+  },
 
   /**
    * Generates the initial state a microcosm starts with. The reduction
@@ -23,7 +28,7 @@ class Microcosm extends Foliage {
    */
   getInitialState() {
     return remap(this.stores, store => store.getInitialState())
-  }
+  },
 
   /**
    * Resets state to the result of calling `getInitialState()`
@@ -32,7 +37,7 @@ class Microcosm extends Foliage {
   reset() {
     this.commit(this.getInitialState())
     return this
-  }
+  },
 
   /**
    * Executes `deserialize` on the provided data and then merges it into
@@ -46,7 +51,7 @@ class Microcosm extends Foliage {
   replace(data) {
     this.update(this.deserialize(data))
     return this
-  }
+  },
 
   /**
    * Pushes a plugin in to the registry for a given microcosm.
@@ -60,7 +65,7 @@ class Microcosm extends Foliage {
   addPlugin(config, options) {
     this.plugins.push(new Plugin(config, options))
     return this
-  }
+  },
 
   /**
    * Generates a store based on the provided `config` and assigns it to
@@ -79,7 +84,7 @@ class Microcosm extends Foliage {
     this.stores[key] = new Store(config, key)
 
     return this
-  }
+  },
 
   /**
    * Returns an object that is the result of transforming application state
@@ -89,7 +94,7 @@ class Microcosm extends Foliage {
    */
   serialize() {
     return remap(this.stores, (store, key) => store.serialize(this.get(key)))
-  }
+  },
 
   /**
    * For each key in the provided `data` parameter, transform it using
@@ -103,7 +108,7 @@ class Microcosm extends Foliage {
     return remap(data, (state, key) => {
       return this.stores[key].deserialize(state)
     })
-  }
+  },
 
   /**
    * Alias for `serialize`
@@ -111,7 +116,7 @@ class Microcosm extends Foliage {
    */
   toJSON() {
     return this.serialize()
-  }
+  },
 
   /**
    * Returns a clone of the current application state
@@ -119,7 +124,7 @@ class Microcosm extends Foliage {
    */
   toObject() {
     return this.valueOf()
-  }
+  },
 
   /**
    * Starts an application. It does a couple of things:
@@ -141,7 +146,7 @@ class Microcosm extends Foliage {
     install(this.plugins, this, () => run(callbacks, [], this, 'start'))
 
     return this
-  }
+  },
 
   /**
    * Partially applies `push`.
@@ -152,7 +157,7 @@ class Microcosm extends Foliage {
    */
   prepare(action, ...params) {
     return this.push.bind(this, action, ...params)
-  }
+  },
 
   /**
    * For a given STATE, revert all keys in a CHANGESET
@@ -170,7 +175,7 @@ class Microcosm extends Foliage {
     })
 
     this.update(resolution)
-  }
+  },
 
   /**
    * Get the state managed by all stores that can respond to a given action
@@ -183,7 +188,7 @@ class Microcosm extends Foliage {
       memo[key] = this.get(key)
       return memo
     }, {})
-  }
+  },
 
   /**
    * Resolves an action. If it resolved successfully, it dispatches that
@@ -211,7 +216,7 @@ class Microcosm extends Foliage {
     let reject = () => this.rollback(state, changes)
 
     return signal(resolve, reject, action.apply(this, params))
-  }
+  },
 
   /**
    * Sends a message to each known store asking if it can respond to the
@@ -227,10 +232,9 @@ class Microcosm extends Foliage {
       return Store.send(this.stores[key], action, subset, body)
     })
   }
-}
+})
 
 module.exports   = Microcosm
-
 Microcosm.get    = require('foliage/src/get')
 Microcosm.set    = require('foliage/src/set')
 Microcosm.remove = require('foliage/src/remove')

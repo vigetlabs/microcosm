@@ -178,7 +178,6 @@ describe('Microcosm', function() {
     class MyApp extends Microcosm {
       constructor() {
         super()
-        console.log(this.stores)
         this.addStore('foo', {})
       }
     }
