@@ -9,17 +9,15 @@ let signal  = require('./signal')
 let tag     = require('./tag')
 
 let Microcosm = function() {
-  return Microcosm.prototype.constructor.apply(this, arguments)
+  Foliage.apply(this, arguments)
+
+  this.stores  = {}
+  this.plugins = []
 }
 
 Microcosm.prototype = Object.assign({}, Foliage.prototype, {
 
-  constructor() {
-    Foliage.apply(this, arguments)
-
-    this.stores  = {}
-    this.plugins = []
-  },
+  constructor: Microcosm,
 
   /**
    * Generates the initial state a microcosm starts with. The reduction
