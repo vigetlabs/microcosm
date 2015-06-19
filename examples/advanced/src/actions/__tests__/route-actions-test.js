@@ -15,7 +15,7 @@ describe('Route Actions', function() {
 
       app.push(RouteActions.set, params)
 
-      app.get('route').should.eql(params)
+      app.state.route.should.eql(params)
     })
   })
 })

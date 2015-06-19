@@ -32,7 +32,7 @@ App.addStore('users', {
 App.start()
 
 App.listen(function() {
-  console.log(App.get('users'))
+  console.log(App.state.users)
 })
 
 App.push(createUser, { name: 'Nate' })

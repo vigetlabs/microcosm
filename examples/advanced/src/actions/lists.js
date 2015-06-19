@@ -1,5 +1,7 @@
+import uid from 'uid'
+
 function add(params) {
-  return params
+  return Object.assign({ id: uid() }, params)
 }
 
 function remove(id) {

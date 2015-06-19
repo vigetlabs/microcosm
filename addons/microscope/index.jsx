@@ -8,7 +8,7 @@ module.exports = React.createClass({
   },
 
   getState() {
-    return this.props.instance.toObject()
+    return this.props.instance.state
   },
 
   updateState() {

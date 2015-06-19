@@ -4,17 +4,25 @@ let Microcosm = require('../../../src/Microcosm')
 let render = React.addons.TestUtils.renderIntoDocument
 
 describe('<Microscope />', function() {
+  let test = function test() {}
   let app;
 
   beforeEach(function(done) {
     app = new Microcosm()
+    app.addStore('key', {
+      register() {
+        return {
+          [test]: state => 'value'
+        }
+      }
+    })
     app.start(done)
   })
 
   it ('keeps up to date with an instance', function(done) {
     let el = render(<Microscope instance={ app }><p /></Microscope>)
 
-    app.set('key', 'value')
+    app.push(test)
 
     setTimeout(function() {
       el.state.key.should.equal('value')
@@ -43,17 +51,4 @@ describe('<Microscope />', function() {
     app.ignore.should.have.been.called
   })
 
-  describe('statics', function() {
-    it ('includes Foliage set', function() {
-      Microcosm.set.should.equal(require('foliage/src/set'))
-    })
-
-    it ('includes Foliage get', function() {
-      Microcosm.get.should.equal(require('foliage/src/get'))
-    })
-
-    it ('includes Foliage remove', function() {
-      Microcosm.remove.should.equal(require('foliage/src/remove'))
-    })
-  })
 })

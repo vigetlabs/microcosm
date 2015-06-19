@@ -7,8 +7,6 @@ module.exports = function(config) {
 
     frameworks: [ 'mocha', 'sinon-chai' ],
 
-    autoWatchBatchDelay: 400,
-
     files: [
       'src/**/__tests__/*.js*',
       'examples/**/__tests__/*.js*',
@@ -29,7 +27,7 @@ module.exports = function(config) {
 
     client: {
       mocha: {
-        timeout: 500
+        timeout: 750
       }
     },
 

@@ -1,6 +1,5 @@
 {
   "stage": 1,
-  "loose": true,
   "sourceMaps": "inline",
   "blacklist" : [ "strict" ],
   "optional"  : [],

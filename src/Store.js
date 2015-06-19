@@ -3,37 +3,29 @@
  * Used to provide default values for a store configuration
  */
 
-let identity = i => i
-let isDev    = process.env.NODE_ENV !== 'production'
+let attempt = require('./attempt')
+let tag     = require('./tag')
 
-function Store (config, id) {
-  Object.assign(this, config)
-  this.toString = () => id
-}
+let Store = {
+  getInitialState(store) {
+    return attempt(store, 'getInitialState')
+  },
 
-Store.prototype = {
-  getInitialState : identity,
-  serialize       : identity,
-  deserialize     : identity,
+  serialize(store, state) {
+    return attempt(store, 'serialize', [ state ], state)
+  },
 
-  register() {
-    return {}
+  deserialize(store, state) {
+    return attempt(store, 'deserialize', [ state ], state)
+  },
+
+  send(store, state, transaction) {
+    let { action, body } = transaction
+
+    tag(action)
+
+    return attempt(attempt(store, 'register'), action.toString(), [ state, body ], state, store)
   }
-}
-
-Store.send = function (store, action, state, params) {
-  let tasks = store.register()
-  let task  = tasks[action]
-
-  if (isDev && action in tasks && typeof task !== 'function') {
-    throw TypeError(`${ store } registered ${ action } with non-function value`)
-  }
-
-  return task ? task.call(store, state, params) : state
-}
-
-Store.taskFor = function (store, action) {
-  return store.register()[action]
 }
 
 module.exports = Store

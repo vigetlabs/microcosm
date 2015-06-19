@@ -1,5 +1,4 @@
-import Lists       from '../Lists'
-import Foliage     from 'foliage'
+import Lists from '../Lists'
 
 describe('Lists Store', function() {
 

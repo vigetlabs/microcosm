@@ -1,67 +1,180 @@
-let Foliage = require('foliage')
-let Plugin  = require('./Plugin')
-let React   = require('react')
+/**
+ * Microcosm
+ * A variant of Flux with central, isolated state.
+ *
+ * Microcosm makes it easier to control and modify state. It uses
+ * pure, singleton Stores and Actions, keeping all state encapsulated
+ * in one place.
+ */
+
+let Diode   = require('diode')
 let Store   = require('./Store')
 let install = require('./install')
+let plugin  = require('./plugin')
 let remap   = require('./remap')
-let run     = require('./run')
 let signal  = require('./signal')
-let tag     = require('./tag')
 
 let Microcosm = function() {
-  Foliage.apply(this, arguments)
+  /**
+   * Microcosm uses Diode for event emission. Diode is an event emitter
+   * with a single event.
+   * https://github.com/vigetlabs/diode
+   */
+  Diode(this)
 
-  this.stores  = {}
-  this.plugins = []
+  this.base         = {}
+  this.state        = this.base
+
+  this.plugins      = []
+  this.stores       = {}
+  this.transactions = []
 }
 
-Microcosm.prototype = Object.assign({}, Foliage.prototype, {
-
+Microcosm.prototype = {
   constructor: Microcosm,
 
   /**
-   * Generates the initial state a microcosm starts with. The reduction
-   * of calling `getInitialState` on all stores.
-   * @return Object
+   * Generates the initial state a microcosm starts with. Called whenever
+   * a microcosm runs start().
    */
   getInitialState() {
-    return remap(this.stores, store => store.getInitialState())
+    return remap(this.stores, Store.getInitialState)
   },
 
   /**
-   * Resets state to the result of calling `getInitialState()`
-   * @return this
+   * Given a state and transaction, return a transformed state
+   * based upon Stores that can respond to the transaction.
    */
-  reset() {
-    this.commit(this.getInitialState())
-    return this
+  dispatch(state, transaction) {
+    return remap(this.stores, (store, key) => {
+      return Store.send(store, state[key], transaction)
+    })
   },
 
   /**
-   * Executes `deserialize` on the provided data and then merges it into
-   * the current application state. This function is great for
-   * bootstrapping data when rendering from the server. It will not
-   * blow away keys that haven't been provided.
+   * For each transaction, determine if it can be "squashed down" into
+   * base state.
    *
-   * @param {Object} data - A JavaScript object of data to replace
-   * @return this
+   * Note: This is an internal operation and will not emit a change. No
+   * "public" state is modified
+   */
+  squash() {
+
+    // Until coming across an incomplete transaction...
+    while (this.transactions.length && this.transactions[0].done) {
+
+      // ... extract out the earliest transaction...
+      let change = this.transactions.shift()
+
+      // ... and merge it into base state if there are no errors.
+      if (!change.error) {
+        this.base = this.dispatch(this.base, change)
+      }
+    }
+  },
+
+  /**
+   * Apply a given set of transactions on top of a given base state
+   */
+  rollforward(transactions, state) {
+    return transactions.filter(t => t.processed)
+                       .reduce(this.dispatch.bind(this), state)
+  },
+
+  /**
+   * The core state modification function. `transact` squashes down
+   * changes that can be deallocated and then then applies "pending" changes
+   * on top.
+   *
+   * If state changes, it will emit en event.
+   */
+  transact() {
+    let old = this.state
+
+    this.squash()
+
+    let next = this.rollforward(this.transactions, this.base)
+
+    if (next !== old) {
+      this.state = next
+      this.emit(next, old)
+    }
+  },
+
+  /**
+   * Partially applies `push`.
+   */
+  prepare(action, ...params) {
+    return this.push.bind(this, action, ...params)
+  },
+
+  /**
+   * Resolves an action. As that action signals changes, it will update
+   * a unique transaction. If an error occurs, it will mark it for clean up
+   * and the change will disappear from history.
+   */
+  push(action, ...params) {
+    if (process.env.NODE_ENV !== 'production' && typeof action !== 'function') {
+      throw TypeError(`Tried to push ${ action }, but is not a function.`)
+    }
+
+    let transaction = {
+      action,
+      error     : undefined,
+      body      : undefined,
+      done      : false,
+      processed : false
+    }
+
+    this.transactions.push(transaction)
+
+    return signal((error, body, done) => {
+      // Mark the transaction as processed
+      // so that it will be operated upon
+      transaction.processed = true
+
+      if (error) {
+        transaction.done  = true
+        transaction.error = error
+      }
+
+      if (!transaction.done) {
+        transaction.body = body
+      }
+
+      transaction.done = transaction.done || done
+
+      this.transact()
+
+      return body
+    }, action.apply(this, params))
+  },
+
+  /**
+   * Clear all outstanding transactions and assign base state
+   * to a given object (or getInitialState())
+   */
+  reset(state = this.getInitialState()) {
+    this.transactions = []
+    this.base = state
+
+    return this.transact()
+  },
+
+  /**
+   * Resets to a given state, passing it through deserialize first
    */
   replace(data) {
-    this.update(this.deserialize(data))
-    return this
+    return this.reset(this.deserialize(data))
   },
 
   /**
    * Pushes a plugin in to the registry for a given microcosm.
    * When `app.start()` is called, it will execute plugins in
    * the order in which they have been added using this function.
-   *
-   * @param {Object} plugin  - The plugin that will be added
-   * @param {Object} options - Options passed to the plugin on start
-   * @return this
    */
   addPlugin(config, options) {
-    this.plugins.push(new Plugin(config, options))
+    this.plugins.push(plugin(config, options, this))
     return this
   },
 
@@ -69,17 +182,13 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
    * Generates a store based on the provided `config` and assigns it to
    * manage the provided `key`. Whenever this store responds to an action,
    * it will be provided the current state for that particular key.
-   *
-   * @param {String} key - The key in global state the store will manage
-   * @param {Object} config - Configuration options to build a new store
-   * @return this
    */
   addStore(key, config) {
     if (process.env.NODE_ENV !== 'production' && arguments.length <= 1) {
       throw TypeError(`Microcosm::addStore expected string key but was given: ${ typeof key }. Did you forget to include the key?`)
     }
 
-    this.stores[key] = new Store(config, key)
+    this.stores[key] = config
 
     return this
   },
@@ -87,41 +196,31 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
   /**
    * Returns an object that is the result of transforming application state
    * according to the `serialize` method described by each store.
-   *
-   * @return Object
    */
   serialize() {
-    return remap(this.stores, (store, key) => store.serialize(this.get(key)))
+    return remap(this.stores, (store, key) => Store.serialize(store, this.state[key]))
   },
 
   /**
    * For each key in the provided `data` parameter, transform it using
    * the `deserialize` method provided by the store managing that key.
    * Then fold the deserialized data over the current application state.
-   *
-   * @param {Object} data - Data to deserialize
-   * @return Object
    */
   deserialize(data) {
-    return remap(data, (state, key) => {
-      return this.stores[key].deserialize(state)
+    if (data == void 0) {
+      return this.state
+    }
+
+    return remap(this.stores, (store, key) => {
+      return Store.deserialize(store, data[key], data[key])
     })
   },
 
   /**
    * Alias for `serialize`
-   * @return Object
    */
   toJSON() {
     return this.serialize()
-  },
-
-  /**
-   * Returns a clone of the current application state
-   * @return Object
-   */
-  toObject() {
-    return this.valueOf()
   },
 
   /**
@@ -129,114 +228,19 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
    *
    * 1. Calls `this.reset()` to determine initial state
    * 2. Runs through all plugins, it will terminate if any fail
-   * 3. Executes the provided list of callbacks, passing along any errors
+   * 3. Executes the provided callback, passing along any errors
    *    generated if installing plugins fails.
-   *
-   * @param {...Function} callbacks - Callbacks to run after plugins install
-   * @return Microcosm
    */
-  start(/*...callbacks*/) {
-    let callbacks = arguments
-
+  start(...callbacks) {
     this.reset()
 
     // Queue plugins and then notify that installation has finished
-    install(this.plugins, this, () => run(callbacks, [], this, 'start'))
+    install(this.plugins, error => {
+      callbacks.forEach(cb => cb.call(this, error, this))
+    })
 
     return this
-  },
-
-  /**
-   * Partially applies `push`.
-   *
-   * @param {Function} action - The action to bind
-   * @param {...any} params - Prefilled arguments
-   * @return function
-   */
-  prepare(action, ...params) {
-    return this.push.bind(this, action, ...params)
-  },
-
-  /**
-   * For a given STATE, revert all keys in a CHANGESET
-   * to the original, unless new facts have changed the current value
-   *
-   * @param {Object} base
-   * @param {Object} head
-   */
-  rollback(state, changes) {
-    let resolution = remap(changes, (head, key) => {
-      let base    = state[key]
-      let current = this.get(key)
-
-      return current !== head && current !== base ? current : base
-    })
-
-    this.update(resolution)
-  },
-
-  /**
-   * Get the state managed by all stores that can respond to a given action
-   */
-  stateFor(action) {
-    let stores = Object.keys(this.stores)
-          .filter(key => Store.taskFor(this.stores[key], action))
-
-    return stores.reduce((memo, key) => {
-      memo[key] = this.get(key)
-      return memo
-    }, {})
-  },
-
-  /**
-   * Resolves an action. If it resolved successfully, it dispatches that
-   * the resulting parameters to registered stores for transformation.
-   *
-   * @param {Function} action - The action to dispatch
-   * @param {...any} params - Arguments the action is called with
-   * @return action result
-   */
-  push(action, ...params) {
-    if (process.env.NODE_ENV !== 'production' && typeof action !== 'function') {
-      throw TypeError(`Tried to push ${ action }, but is not a function.`)
-    }
-
-    tag(action)
-
-    let changes = null
-    let state   = this.stateFor(action)
-
-    let resolve = body => {
-      changes = this.dispatch(state, action, body)
-      return this.update(changes)
-    }
-
-    let reject = () => {
-      if (changes) {
-        this.rollback(state, changes)
-      }
-    }
-
-    return signal(resolve, reject, action.apply(this, params))
-  },
-
-  /**
-   * Sends a message to each known store asking if it can respond to the
-   * provided action. If so, takes the returned new state for that store's
-   * managed key and assigns it as new state.
-   *
-   * @param {Object} state - The current state object to seed stores with
-   * @param {Function} action - The action to send to each store
-   * @param {any} body - The payload of the action
-   */
-  dispatch(state, action, body) {
-    return remap(state, (subset, key) => {
-      return Store.send(this.stores[key], action, subset, body)
-    })
   }
-})
+}
 
-module.exports   = Microcosm
-Microcosm.get    = require('foliage/src/get')
-Microcosm.set    = require('foliage/src/set')
-Microcosm.remove = require('foliage/src/remove')
+module.exports = Microcosm

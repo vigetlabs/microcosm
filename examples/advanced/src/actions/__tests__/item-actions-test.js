@@ -15,11 +15,11 @@ describe('Item Actions', function() {
 
     beforeEach(function() {
       app.push(ListActions.add, { name: 'parent' })
-      app.push(ItemActions.add, { name, list: app.get(['lists', 0]).id })
+      app.push(ItemActions.add, { name, list: app.state.lists[0].id })
     })
 
     it ('should create a new item with the proper name', function() {
-      app.get(['items', 0, 'name']).should.equal(name)
+      app.state.items[0].name.should.equal(name)
     })
 
   })
@@ -29,12 +29,12 @@ describe('Item Actions', function() {
 
     beforeEach(function() {
       app.push(ListActions.add, { name: 'parent' })
-      app.push(ItemActions.add, { name, list: app.get(['lists', 0, 'id']) })
-      app.push(ItemActions.remove, app.get(['items', 0, 'id']))
+      app.push(ItemActions.add, { name, list: app.state.lists[0].id })
+      app.push(ItemActions.remove, app.state.items[0].id)
     })
 
     it ('remove the item by id', function() {
-      app.get('items').length.should.equal(0)
+      app.state.items.length.should.equal(0)
     })
 
   })

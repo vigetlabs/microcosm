@@ -1,75 +1,103 @@
 let Microcosm  = require('../Microcosm')
+let Promise = require('promise')
 
 describe('When dispatching generators', function() {
-  function* singular(n) {
-    yield n
-  }
 
-  function* multiple(n) {
-    yield n
-    yield n + 1
-  }
+  it ('properly reduces when yielding primitives', function() {
+    let app = new Microcosm()
 
-  function* resolve(n) {
-    yield n
-    yield Promise.resolve(n + 1)
-  }
-
-  function* reject(n) {
-    yield n
-    yield new Promise((resolve, reject) => setTimeout(reject, 50))
-  }
-
-  let app;
-
-  let TestStore = {
-    getInitialState: () => 1,
-    register() {
-      return {
-        [singular]: this.sum,
-        [multiple]: this.sum,
-        [resolve] : this.sum,
-        [reject]  : this.sum
-      }
-    },
-    sum(a, b) {
-      return a + b
+    function* single(n) {
+      yield n
     }
-  }
 
-  beforeEach(function(done) {
-    app = new Microcosm()
-    app.addStore('test', TestStore)
-    app.start(done)
+    app.addStore('test', {
+      getInitialState: () => 0,
+      register() {
+        return { [single]: (a, b) => a + b }
+      }
+    })
+
+    app.start()
+    app.push(single, 2)
+
+    app.state.test.should.equal(2)
   })
 
-  it ('properly reduces when yielding primitives', function(done) {
-    app.listen(function() {
-      app.get('test').should.equal(3)
-      done()
-    }).push(singular, 2)
-  })
+  it ('properly reduces multiple values', function() {
+    let app = new Microcosm()
 
-  it ('properly reduces multiple values', function(done) {
-    app.listen(function() {
-      app.get('test').should.equal(4)
-      done()
-    }).push(multiple, 2)
+    function* multiple(n) {
+      yield n
+      yield n + 1
+    }
+
+    app.addStore('test', {
+      getInitialState: () => 0,
+      register() {
+        return { [multiple]: (a, b) => a + b }
+      }
+    })
+
+    app.start()
+    app.push(multiple, 2)
+
+    app.state.test.should.equal(3)
   })
 
   it ('waits for all promises in the chain to resolve', function(done) {
-    app.listen(function() {
-      app.get('test').should.equal(4)
+    let app = new Microcosm()
+
+    function* resolve(n) {
+      yield n
+      yield Promise.resolve(n + 1)
+    }
+
+    app.addStore('test', {
+      getInitialState: () => 0,
+      register() {
+        return { [resolve]: (a, b) => a + b }
+      }
+    })
+
+    app.start()
+
+    app.push(resolve, 2).done(function() {
+      app.state.test.should.equal(3)
       done()
-    }).push(resolve, 2)
+    })
   })
 
   it ('respects future changes when it fails', function(done) {
-    app.push(reject, 1).catch(function() {
-      app.get('test').should.equal(6)
-      done()
-    }).catch(e => console.log(e))
+    let app = new Microcosm()
 
-    app.push(singular, 4)
+    function* single(n) {
+      yield n
+    }
+
+    function* reject(n) {
+      yield n
+      yield new Promise((resolve, reject) => setTimeout(function() {
+        reject('Rejected promise')
+      }, 50))
+    }
+
+    app.addStore('test', {
+      getInitialState: () => 0,
+      register() {
+        return {
+          [single]: (a, b) => a + b,
+          [reject]: (a, b) => a + b
+        }
+      }
+    })
+
+    app.start()
+
+    app.push(reject, 1).done(null, function(error) {
+      app.state.test.should.equal(4)
+      done()
+    })
+
+    app.push(single, 4)
   })
 })

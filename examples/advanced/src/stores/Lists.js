@@ -1,6 +1,5 @@
 import Lists    from '../actions/lists'
 import contrast from '../../lib/contrast'
-import uid      from 'uid'
 
 export default {
 
@@ -16,11 +15,9 @@ export default {
   },
 
   add(state, params) {
-    let record = {
-      id    : uid(),
+    let record = Object.assign({
       color : '#aaaaaa',
-      ...params
-    }
+    }, params)
 
     record.contrast = contrast(record.color)
 

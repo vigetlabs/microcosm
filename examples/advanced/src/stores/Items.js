@@ -1,6 +1,5 @@
 import Items from 'actions/items'
 import Lists from 'actions/lists'
-import uid      from 'uid'
 
 export default {
 
@@ -16,14 +15,10 @@ export default {
     }
   },
 
-  add(state, { list, name }) {
-    let record = {
-      id   : uid(),
-      list : list.id,
-      name : name
-    }
-
-    return state.concat(record)
+  add(state, params) {
+    return state.concat(
+      Object.assign({}, params, { list: params.list.id })
+    )
   },
 
   remove(state, unwanted) {
