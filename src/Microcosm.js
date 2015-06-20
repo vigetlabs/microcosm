@@ -203,7 +203,7 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
 
     tag(action)
 
-    let changes = {}
+    let changes = null
     let state   = this.stateFor(action)
 
     let resolve = body => {
@@ -211,7 +211,11 @@ Microcosm.prototype = Object.assign({}, Foliage.prototype, {
       return this.update(changes)
     }
 
-    let reject = () => this.rollback(state, changes)
+    let reject = () => {
+      if (changes) {
+        this.rollback(state, changes)
+      }
+    }
 
     return signal(resolve, reject, action.apply(this, params))
   },
