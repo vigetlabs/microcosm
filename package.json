@@ -1,6 +1,6 @@
 {
   "name": "microcosm",
-  "version": "9.0.0-alpha",
+  "version": "9.0.0-beta",
   "private": true,
   "description": "A variant of Facebook's Flux with centralized, isolated state",
   "main": "src/Microcosm.js",
