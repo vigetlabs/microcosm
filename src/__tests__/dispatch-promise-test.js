@@ -2,6 +2,9 @@ let Microcosm = require('../Microcosm')
 let Promise   = require('promise')
 
 describe('When dispatching promises', function() {
+  let pass = function(n) {
+    return n
+  }
   let single = function(n) {
     return Promise.resolve(n)
   }
@@ -11,16 +14,26 @@ describe('When dispatching promises', function() {
       setTimeout(reject, 50)
     })
   }
+  let late = function(n) {
+    return new Promise(function (resolve, reject) {
+      setTimeout(_ => resolve(n), 50)
+    })
+  }
   let app;
 
   let TestStore = {
     getInitialState: () => 1,
     register() {
       return {
-        [single] : (a, b) => b,
-        [chain]  : (a, b) => b,
-        [error]  : (a, b) => b
+        [single] : this.sum,
+        [chain]  : this.sum,
+        [error]  : this.sum,
+        [late]   : this.sum,
+        [pass]   : this.sum
       }
+    },
+    sum(a, b) {
+      return a + b
     }
   }
 
@@ -31,10 +44,10 @@ describe('When dispatching promises', function() {
   })
 
   it ('waits for the promise to resolve', function(done) {
-    app.listen(function() {
-      app.state.test.should.equal(2)
+    app.push(single, 2).done(function() {
+      app.state.test.should.equal(3)
       done()
-    }).push(single, 2)
+    })
   })
 
   it ('does not dispatch if the promise fails', function(done) {
@@ -48,17 +61,33 @@ describe('When dispatching promises', function() {
 
   it ('waits for all promises in the chain to resolve', function(done) {
     app.push(chain, 1).done(function() {
-      app.state.test.should.equal(1)
+      app.state.test.should.equal(2)
       done()
     })
   })
 
   it ('respects future changes when it fails', function(done) {
     app.push(error, 1).done(null, function() {
-      app.state.test.should.equal(4)
+      app.state.test.should.equal(5)
       done()
     })
 
     app.push(single, 4)
+  })
+
+  it ('does not dispatch transactions for unresolved promises', function(done) {
+    let spy = sinon.spy(TestStore, 'sum')
+
+    app.push(late, 1).done(function() {
+      app.state.test.should.equal(6)
+
+      // Twice for 'pass' and once for 'late'
+      spy.should.have.been.calledThrice
+      done()
+    })
+
+    app.push(pass, 4)
+
+    spy.should.have.been.calledOnce
   })
 })

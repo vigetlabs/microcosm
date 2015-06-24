@@ -46,6 +46,11 @@ Microcosm.prototype = {
    * based upon Stores that can respond to the transaction.
    */
   dispatch(state, transaction) {
+    // Don't bother if the transaction has no body
+    if ('body' in transaction === false) {
+      return state
+    }
+
     return remap(this.stores, (store, key) => {
       return Store.send(store, state[key], transaction)
     })
@@ -58,8 +63,7 @@ Microcosm.prototype = {
    * Note: This is an internal operation and will not emit a change. No
    * "public" state is modified
    */
-  squash() {
-
+  rebase() {
     // Until coming across an incomplete transaction...
     while (this.transactions.length && this.transactions[0].done) {
 
@@ -74,26 +78,18 @@ Microcosm.prototype = {
   },
 
   /**
-   * Apply a given set of transactions on top of a given base state
-   */
-  rollforward(transactions, state) {
-    return transactions.filter(t => t.processed)
-                       .reduce(this.dispatch.bind(this), state)
-  },
-
-  /**
-   * The core state modification function. `transact` squashes down
+   * The core state modification function. `rollforward` squashes down
    * changes that can be deallocated and then then applies "pending" changes
    * on top.
    *
    * If state changes, it will emit en event.
    */
-  transact() {
+  rollforward() {
     let old = this.state
 
-    this.squash()
+    this.rebase()
 
-    let next = this.rollforward(this.transactions, this.base)
+    let next = this.transactions.reduce(this.dispatch.bind(this), this.base)
 
     if (next !== old) {
       this.state = next
@@ -118,21 +114,11 @@ Microcosm.prototype = {
       throw TypeError(`Tried to push ${ action }, but is not a function.`)
     }
 
-    let transaction = {
-      action,
-      error     : undefined,
-      body      : undefined,
-      done      : false,
-      processed : false
-    }
+    let transaction = { action, done: false }
 
     this.transactions.push(transaction)
 
     return signal((error, body, done) => {
-      // Mark the transaction as processed
-      // so that it will be operated upon
-      transaction.processed = true
-
       if (error) {
         transaction.done  = true
         transaction.error = error
@@ -144,7 +130,7 @@ Microcosm.prototype = {
 
       transaction.done = transaction.done || done
 
-      this.transact()
+      this.rollforward()
 
       return body
     }, action.apply(this, params))
@@ -158,7 +144,7 @@ Microcosm.prototype = {
     this.transactions = []
     this.base = state
 
-    return this.transact()
+    return this.rollforward()
   },
 
   /**

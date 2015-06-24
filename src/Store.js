@@ -7,6 +7,7 @@ let attempt = require('./attempt')
 let tag     = require('./tag')
 
 let Store = {
+
   getInitialState(store) {
     return attempt(store, 'getInitialState')
   },
@@ -19,13 +20,18 @@ let Store = {
     return attempt(store, 'deserialize', [ state ], state)
   },
 
+  register(store) {
+    return attempt(store, 'register', [], undefined, store)
+  },
+
   send(store, state, transaction) {
     let { action, body } = transaction
 
     tag(action)
 
-    return attempt(attempt(store, 'register'), action.toString(), [ state, body ], state, store)
+    return attempt(Store.register(store), action.toString(), [ state, body ], state, store)
   }
+
 }
 
 module.exports = Store
