@@ -15,12 +15,12 @@ let Home = React.createClass({
   },
 
   render() {
-    let { app } = this.props
+    let { app, lists, items } = this.props
 
     return (
       <main role="main">
         <Banner onToggle={ this._onToggle } />
-        <Body app={ app } lists={ app.get('lists') } items={ app.get('items') } />
+        <Body app={ app } lists={ lists } items={ items } />
         <AddList app={ app } active={ this.state.openCreate } onExit={ this._onToggle } />
       </main>
     )
