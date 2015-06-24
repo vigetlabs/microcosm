@@ -42,16 +42,20 @@ Transaction.prototype = {
     this.publish()
   },
 
+  is(state) {
+    return this.state === state
+  },
+
   isInactive() {
-    return this.state === INACTIVE
+    return this.is(INACTIVE) || this.is(ABORTED)
   },
 
   isValid() {
-    return this.state !== ABORTED
+    return this.is(ABORTED) === false
   },
 
   isFinished() {
-    return this.state === COMPLETE
+    return this.is(COMPLETE)
   }
 
 }
