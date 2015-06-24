@@ -3,32 +3,31 @@
  * Currently, it handles values, and promises
  */
 
-let REJECTED_PROMISE = new Error({ message: 'Promise rejected' })
+let isPromise  = require('is-promise')
+let isIterator = require('is-iterator-like')
 
-module.exports = function signal (next, body) {
-  let pipe = signal.bind(null, next)
+module.exports = function signal (resolve, reject, body) {
+  let pipe = signal.bind(null, resolve, reject)
 
-  // Is it a promise?
-  if (body && typeof body.then === 'function') {
-    // Important! Do not return this chain so that
-    // error handing can be conducted in the client
-    body.then(pipe, function(err) {
-      // This is so that an error is always defined
-      next(err || REJECTED_PROMISE)
+  if (isPromise(body)) {
+    return body.then(pipe, function(error) {
+      reject(error)
+
+      // Throw so future error handling can occur
+      throw error
     })
-
-    return body
   }
 
   /**
-   * Is it a generator?
+   * Is it an iterator?
+   *
    * Generators produce "child signals" that process sequentially.
    * When a child signal finishes processing, it acts as the state
    * for the signal until the next iteration is processed.
    *
    * TODO: This is too branchy. How can we make this less complex?
    */
-  if (body && typeof body.next === 'function') {
+  if (isIterator(body)) {
     // 1. Get the first iteration
     let { value, done } = body.next()
 
@@ -36,21 +35,18 @@ module.exports = function signal (next, body) {
       let { value, done } = body.next()
 
       // 2. Send a signal for this iteration
-      return signal(function(error, result) {
-        // If it fails, halt the signal and return an error
-        if (error) {
-          return next(error, result, true)
-        }
+      let progress = function (result) {
+        resolve(result, done)
 
-        // Otherwise pass the new signal state along
-        next(error, result, done)
-
-        // If no more iterations exist, stop. Otherwise repeat.
+        // 3. If done, return the result, otherwise step
+        // into the next iteration
         return done ? result : step(value)
-      }, params)
+      }
+
+      return signal(progress, reject, params)
 
     }(value))
   }
 
-  return next(null, body, true)
+  return resolve(body, true)
 }

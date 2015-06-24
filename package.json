@@ -21,7 +21,9 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "diode": "~4.4"
+    "diode": "~4.4",
+    "is-iterator-like": "^1.0.4",
+    "is-promise": "^2.0.0"
   },
   "devDependencies": {
     "autoprefixer-core": "~5.2",

@@ -7,12 +7,12 @@
  * in one place.
  */
 
-let Diode   = require('diode')
-let Store   = require('./Store')
-let install = require('./install')
-let plugin  = require('./plugin')
-let remap   = require('./remap')
-let signal  = require('./signal')
+let Diode       = require('diode')
+let Store       = require('./Store')
+let Transaction = require('./Transaction')
+let install     = require('./install')
+let plugin      = require('./plugin')
+let remap       = require('./remap')
 
 let Microcosm = function() {
   /**
@@ -46,8 +46,8 @@ Microcosm.prototype = {
    * based upon Stores that can respond to the transaction.
    */
   dispatch(state, transaction) {
-    // Don't bother if the transaction has no body
-    if ('body' in transaction === false) {
+    // Ignore if the transaction hasn't started
+    if (transaction.isInactive()) {
       return state
     }
 
@@ -64,16 +64,13 @@ Microcosm.prototype = {
    * "public" state is modified
    */
   rebase() {
+    // Clean up erroneous transactions
+    this.transactions = this.transactions.filter(t => t.isValid())
+
     // Until coming across an incomplete transaction...
-    while (this.transactions.length && this.transactions[0].done) {
-
+    while (this.transactions.length && this.transactions[0].isFinished()) {
       // ... extract out the earliest transaction...
-      let change = this.transactions.shift()
-
-      // ... and merge it into base state if there are no errors.
-      if (!change.error) {
-        this.base = this.dispatch(this.base, change)
-      }
+      this.base = this.dispatch(this.base, this.transactions.shift())
     }
   },
 
@@ -114,26 +111,13 @@ Microcosm.prototype = {
       throw TypeError(`Tried to push ${ action }, but is not a function.`)
     }
 
-    let transaction = { action, done: false }
+    let transaction = new Transaction(action, params)
+
+    transaction.listen(this.rollforward.bind(this))
 
     this.transactions.push(transaction)
 
-    return signal((error, body, done) => {
-      if (error) {
-        transaction.done  = true
-        transaction.error = error
-      }
-
-      if (!transaction.done) {
-        transaction.body = body
-      }
-
-      transaction.done = transaction.done || done
-
-      this.rollforward()
-
-      return body
-    }, action.apply(this, params))
+    return transaction.run(params)
   },
 
   /**
