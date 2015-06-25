@@ -1,24 +1,32 @@
 # Changelog
 
-## 8.2.0 (not released)
+## 9.0.0 (not released)
+
+## Breaking Changes
+
+- Microcosm now uses transactions to process state. When an action is pushed,
+  an associated transaction will be created. Transactions are processed in the
+  order in which `app.push` is called.
+- Added a mechanism for optimistic updates using generators in actions (more docs coming)
+- Removed Foliage
+- Instead of `app.get` or `app.toObject()` to retrieve state, use `app.state`
+
+## 8.2.0
 
 ## Internal Changes
 
-- Upgrade Foliage to `0.22.0`.
+- Upgrade Foliage to `0.24.0`.
 - Moved `Store.prototype.send` to `Store.send`. This has always been
   an internal API, however those using this method for testing will
   need to update. This change is motivated by a desire to reduce as
   much surface area from Store instances as possible.
 - We now use `babel-plugin-object-assign` for extension
-- Added `<Microscope />` component (private feature for the time being)
-- Added optimistic updates (private feature)
+- Microcosm is compiled in normal babel mode (not loose)
 
 ## Fixes
 
-- Store responses to actions will always be called within the scope of
-  the store.
-- Use class syntax to get around strange class inheritance issue in
-babel loose mode
+- Store responses to actions will always be called within the scope of the store.
+- Addressed classical inheritance issue not caught from `loose` babel compilation
 
 ## Upgrading
 
@@ -28,7 +36,7 @@ necessary:
 ```javascript
 // Before
 store.send(state, action, payload)
-//After
+// After
 Store.send(store, action, state, payload)
 ```
 
