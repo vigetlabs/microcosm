@@ -6,8 +6,11 @@ export default {
     return 'test'
   },
 
-  [Action]() {
-    return true
+  register() {
+    return {
+      [Action]() {
+        return true
+      }
+    }
   }
-
 }

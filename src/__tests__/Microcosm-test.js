@@ -21,7 +21,7 @@ describe('Microcosm', function() {
 
     new MyApp().stores.should.have.property('foo')
   })
-  
+
   describe('::replace', function() {
     it ('runs deserialize before committing results', function(done) {
       let spy    = sinon.spy(app, 'deserialize')
@@ -211,8 +211,8 @@ describe('Microcosm', function() {
   describe('::start', function() {
     it ('can run multiple callbacks', function(done) {
       let app = new Microcosm()
-      let a   = sinon.mock()
-      let b   = sinon.mock()
+      let a   = sinon.stub()
+      let b   = sinon.stub()
 
       app.start(a, b, function() {
         a.should.have.been.called
