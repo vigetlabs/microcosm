@@ -9,11 +9,11 @@ start - Calls reset(), installs all plugins, and then executes a callback
 
 State Management
 +--------------+
-get     - Provided a key, return that entry in the state object
 push    - Queue up an action, potentially changing data
 prepare - Partially apply push
 replace - Replace state with the result of deserializing a set of data
 reset   - Replace state with the result of calling `getInitialState`
+state   - An object reference to current application state
 
 Life Cycle
 +--------------+
@@ -24,13 +24,12 @@ Serialization
 deserialize - Parse external data into an acceptable format
 serialize   - Convert internal data into an acceptable external format
 toJSON      - Serialize to JSON (calls `serialize` by default)
-toObject    - Return a flat copy of the latest revision of state
 
 Events
 +--------------+
-listen - Add a callback listener
-ignore - Remove a callback listener
-emit   - Trigger an event
+listen - Add a callback listener. Aliases: subscribe
+ignore - Remove a callback listener. Aliases: unsubscribe
+emit   - Trigger an event. Aliases: publish
 
 Configure
 +--------------+
