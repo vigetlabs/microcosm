@@ -4,12 +4,18 @@
 
 ## Internal Changes
 
-- Upgrade Foliage to `0.21.0`.
+- Upgrade Foliage to `0.24.0`.
 - Moved `Store.prototype.send` to `Store.send`. This has always been
   an internal API, however those using this method for testing will
   need to update. This change is motivated by a desire to reduce as
   much surface area from Store instances as possible.
 - We now use `babel-plugin-object-assign` for extension
+- Microcosm is compiled in normal babel mode (not loose)
+
+## Fixes
+
+- Store responses to actions will always be called within the scope of the store.
+- Addressed classical inheritance issue not caught from `loose` babel compilation
 
 ## Upgrading
 
@@ -19,7 +25,7 @@ necessary:
 ```javascript
 // Before
 store.send(state, action, payload)
-//After
+// After
 Store.send(store, action, state, payload)
 ```
 

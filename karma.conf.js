@@ -48,7 +48,7 @@ module.exports = function(config) {
           exclude : /node_modules/,
           loader  : 'babel',
           query   : {
-            auxiliaryComment: "istanbul ignore next",
+            auxiliaryCommentBefore: "istanbul ignore next",
             optional: ["runtime"]
           }
         }],

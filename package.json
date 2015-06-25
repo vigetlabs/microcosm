@@ -21,8 +21,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "babel-plugin-object-assign": "^1.1.0",
-    "foliage": "~0.21.0"
+    "foliage": "~0.24.0"
   },
   "devDependencies": {
     "autoprefixer-core": "^5.2.0",
@@ -30,6 +29,7 @@
     "babel-core": "^5.4.4",
     "babel-loader": "~5",
     "babel-runtime": "~5",
+    "babel-plugin-object-assign": "~1.1",
     "chai": "~3",
     "classnames": "~2",
     "css-loader": "~0.14",

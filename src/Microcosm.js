@@ -21,6 +21,8 @@ function Microcosm() {
 
 Microcosm.prototype = Object.assign({}, Foliage.prototype, {
 
+  constructor: Microcosm,
+
   /**
    * Generates the initial state a microcosm starts with. The reduction
    * of calling `getInitialState` on all stores.

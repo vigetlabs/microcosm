@@ -11,6 +11,17 @@ describe('Microcosm', function() {
     app.start(done)
   })
 
+  it ('can be extended - Address loose mode Babel bug', function() {
+    class MyApp extends Microcosm {
+      constructor() {
+        super()
+        this.addStore('foo', {})
+      }
+    }
+
+    new MyApp().stores.should.have.property('foo')
+  })
+  
   describe('::replace', function() {
     it ('runs deserialize before committing results', function(done) {
       let spy    = sinon.spy(app, 'deserialize')
