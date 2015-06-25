@@ -10,6 +10,7 @@
 - Added a mechanism for optimistic updates using generators in actions (more docs coming)
 - Removed Foliage
 - Instead of `app.get` or `app.toObject()` to retrieve state, use `app.state`
+- Change events are no longer batched with requestAnimationFrame. They will emit synchronously. This is to prevent unexpected behavior when performing operations
 
 ## 8.2.0
 
