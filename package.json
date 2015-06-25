@@ -22,15 +22,15 @@
   "license": "MIT",
   "dependencies": {
     "diode": "~4.4",
-    "is-iterator-like": "~1.0.1",
-    "is-promise": "~2.0.0"
+    "is-promise": "~2.0",
+    "is-generator": "~1.0"
   },
   "devDependencies": {
     "autoprefixer-core": "~5.2",
     "babel": "~5",
     "babel-core": "~5",
     "babel-loader": "~5",
-    "babel-plugin-object-assign": "~1.1",
+    "babel-plugin-object-assign": "~1.2",
     "babel-runtime": "~5",
     "chai": "~3",
     "classnames": "~2",
@@ -38,10 +38,10 @@
     "istanbul": "~0.3",
     "istanbul-instrumenter-loader": "~0.1",
     "karma": "~0.12",
-    "karma-chrome-launcher": "~0.1",
+    "karma-chrome-launcher": "~0.2", 
     "karma-cli": "~0.0",
     "karma-coverage": "~0.4",
-    "karma-mocha": "~0.1",
+    "karma-mocha": "~0.2",
     "karma-mocha-reporter": "~1.0",
     "karma-sinon-chai": "~1.0",
     "karma-sourcemap-loader": "~0.3",

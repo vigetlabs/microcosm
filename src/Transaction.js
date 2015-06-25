@@ -22,13 +22,11 @@ Transaction.prototype = {
   constructor: Transaction,
 
   run() {
-    let body = this.action.apply(this, this.params)
-
-    return signal(this.resolve.bind(this), this.reject.bind(this), body)
+    return signal(this.action, this.params, this.resolve, this.reject, this)
   },
 
   resolve(body, done) {
-    this.body  = body
+    this.body = body
 
     this.state = this.isFinished() || done ? COMPLETE : PARTIAL
 

@@ -1,16 +1,14 @@
 /**
  * Handles the various ways in which an action can be resolved.
- * Currently, it handles values, and promises
+ * Currently, it handles values and promises
  */
 
-let isPromise  = require('is-promise')
-let isIterator = require('is-iterator-like')
+let isPromise   = require('is-promise')
+let isGenerator = require('is-generator').fn
 
-module.exports = function signal (resolve, reject, body) {
-  let pipe = signal.bind(null, resolve, reject)
-
+function evaluate (body, resolve, reject) {
   if (isPromise(body)) {
-    return body.then(pipe, function(error) {
+    return body.then(resolve, function(error) {
       reject(error)
 
       // Throw so future error handling can occur
@@ -18,35 +16,28 @@ module.exports = function signal (resolve, reject, body) {
     })
   }
 
-  /**
-   * Is it an iterator?
-   *
-   * Generators produce "child signals" that process sequentially.
-   * When a child signal finishes processing, it acts as the state
-   * for the signal until the next iteration is processed.
-   *
-   * TODO: This is too branchy. How can we make this less complex?
-   */
-  if (isIterator(body)) {
-    // 1. Get the first iteration
-    let { value, done } = body.next()
-
-    return (function step(params) {
-      let { value, done } = body.next()
-
-      // 2. Send a signal for this iteration
-      let progress = function (result) {
-        resolve(result, done)
-
-        // 3. If done, return the result, otherwise step
-        // into the next iteration
-        return done ? result : step(value)
-      }
-
-      return signal(progress, reject, params)
-
-    }(value))
-  }
-
   return resolve(body, true)
+}
+
+function chain(iterator, resolve, reject) {
+  let { value } = iterator.next()
+
+  return (function step (params) {
+    let { value, done } = iterator.next()
+
+    return evaluate(params, function(result) {
+
+      resolve(result, done)
+
+      return done ? result : step(value)
+    }, reject)
+
+  }(value))
+}
+
+module.exports = function signal (action, params, resolve, reject, scope) {
+  let value     = action.apply(scope, params)
+  let processor = isGenerator(action) ? chain : evaluate
+
+  return processor(value, resolve.bind(scope), reject.bind(scope))
 }
