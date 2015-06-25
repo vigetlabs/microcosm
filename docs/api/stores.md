@@ -1,19 +1,6 @@
-# Stores
+# Stores API
 
-1. [Overview](#overview)
-2. [API](#api)
-3. [Installing Stores](#installing-stores)
-4. [Listening to Actions](#listening-to-actions)
-5. [Serializing State](#serializing-state)
-6. [Deserializing State](#deserialize-state)
-
-## Overview
-
-Stores take data and transform it into a new state. They do not
-provide any storage of their (although technically this isn't enforced
-by Microcosm).
-
-## API
+Stores do not enforce any particular structure. However specific methods can be defined on stores to configure specific behavior within Microcosm.
 
 ### `getInitialState()`
 
@@ -89,96 +76,4 @@ var Planets = {
 }
 
 app.push(Actions.add, { name: 'earth' }) // this will add Earth
-```
-
-### `send(state, actions, params)`
-
-Checks to see if the store can perform the given `action` using
-`register()`. If the action is defined in the mapping returned by
-`register()`, it will call the associated method with `state` and
-`params`
-
-This method isn't typically used directly, however it is open for
-extension should you have opinions on how the store should be sent
-messages.
-
-## Installing Stores
-
-Microcosms must add stores:
-
-```javascript
-let solarSystem = new Microcosm()
-
-let Planets = {
-  getInitialState() {
-    return []
-  }
-}
-
-solarSystem.addStore('planets', Planets)
-```
-
-This will mix the given store on top of a set of defaults (see
-`src/Store.js`). Additionally, the Micocosm instance will now be
-configured to use `MyStore` to manage state under the `my-store` key.
-
-This state can be accessed like:
-
-```javascript
-app.get('planets')
-```
-
-## Listening to Actions
-
-Stores listen to actions by implementing a register method:
-
-```javascript
-let Planets = {
-  getInitialState() {
-    return []
-  },
-  register() {
-    return {
-      [Actions.add]: this.add
-    }
-  },
-  add(planets, props) {
-    return planets.concat(props)
-  }
-}
-```
-
-The first argument of this method will always be the application state
-for the particular key the Store is responsible for.
-
-## Serializing State
-
-Each store implements a `serialize` method. By default, this method
-simply returns the current state. However `serialize` provides the
-opportunity to reshape data before it leaves the system:
-
-```
-let Planets = {
-  //... other methods
-  serialize(planets) {
-    return planets.filter(planet => planet.name !== 'Pluto')
-  }
-}
-```
-
-## Deserializing State
-
-In contrast to `serialize`, `deserialize` allows one to parse data
-before it _enters_ the system:
-
-```
-let Planets = {
-  //... other methods
-  deserialize(rawPlanets) {
-    // Sort planets by diameter
-    return rawPlanets.sort(function(a, b) {
-      return a.diameter - b.diameter
-    })
-  }
-}
 ```
