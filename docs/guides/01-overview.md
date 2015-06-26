@@ -1,21 +1,16 @@
 # Microcosm at a glance
 
-Microcosm began as a way to organize complicated React component libraries. State isolation and simplicity are primary concerns in this environment; they frame many of the decisions within the framework:
+Microcosm is a variant of [Flux](https://facebook.github.io/flux/) that controls and modifies state in a pure, centralized way.
 
-1. Central, isolated state
-2. Easy data serialization
-3. Small, extendable API
+Stores and action creators are collections of pure functions; they have no data of their own. They tell a Microcosm how it should transform itself from one state to the next.
 
-This document is largely exploratory. We will touch on all the key areas, but it won't take long.
+This design seeks to achieve a reasonable trade off between the simplicity of singletons and the privacy of class instances.
 
-**Heads up!** Microcosm heavily embraces ES6 JavaScript. For those
-unfamiliar with newer JavaScript concepts, check out the fantastic
-documentation about these new additions and how to bring them to your
-project over at [BabelJS](http://babeljs.io).
+In this guide, we'll explore some of these concepts through a basic Microcosm implementation.
 
-## Building a Microcosm
+## Constructing a Microcosm
 
-A Microcosm provides a central place to keep information. Although you can instantiate one directly, extending it using the ES6 class keyword provides a way to keep configuration logic in one place.
+A Microcosm provides a central place to keep information. Although you can instantiate one directly, extending it using the ES6 `class` keyword provides a way to keep configuration logic in one place.
 
 ```javascript
 import Microcosm from 'microcosm'
@@ -23,7 +18,8 @@ import Microcosm from 'microcosm'
 class SolarSystem extends Microcosm {
 	constructor() {
 		super()
-		// More will go here
+		// Configuration goes here.
+		// Isolated from the outside world
 	}
 }
 
@@ -34,20 +30,41 @@ app.start(function() {
 })
 ```
 
-`SolarSystem` will own all application state. It keeps this in a central object that can be accessed from `app.state`. In order to operate on state, however, Microcosm delegates data transformation to Stores.
+Each `SolarSystem` instance will have its own state. In the example above, it can be accessed from `app.state` once it has started.
 
 ## Stores - Kind manipulators of state
 
-A store is a JavaScript configuration object that teaches Microcosm how to operate on data. A store manages a particular key of the data object managed by a Microcosm instance. Whenever an action is sent into Microcosm, it will delegate to stores to determine how to respond to it and ultimately transform into the next state.
+A store is a JavaScript configuration object that teaches Microcosm how to operate on data. They operate on a single key, defined when it is registered:
 
-One of those configuration settings of Stores is `getInitialState`, which tells the Microcosm what value the store will start with:
+```javascript
+import Microcosm from 'microcosm'
+
+let Planets = {}
+
+class SolarSystem extends Microcosm {
+  constructor() {
+    super()
+    // Planets will now teach SolarSystem
+    // how to manage the 'plants' data
+    this.addStore('planets', Planets)
+  }
+}
+
+let app = new SolarSystem()
+
+app.start(function() {
+	console.log('Hello, Microcosm')
+})
+```
+
+There are a couple of special method stores can implement to describe state at certain points in the Microcosm lifecycle. One of those methods is `getInitialState`, which tells the Microcosm what value the store will start with:
 
 ```javascript
 import Microcosm from 'microcosm'
 
 let Planets = {
   getInitialState() {
-    return []
+    return [{ name: 'Mercury' }]
   }
 }
 
@@ -61,19 +78,20 @@ class SolarSystem extends Microcosm {
 let app = new SolarSystem()
 
 app.start(function() {
-	console.log(app.state.planets) // Empty!
+	console.log(app.state.planets) // [{ name: 'Mercury' }]
 })
 ```
 
-In the code above, we have told the `SolarSystem` that the `Planets` store will manage data under the `'planets'` key. However, at the moment, `Planets` is not configured to respond to actions sent into `SolarSystem`.
+Now a `SolarSystem` will always start with the planet Mercury.
 
-## Actions - The language of the system
 
-Actions provide an identity to the types of events that trigger changes to application state. In Microcosm, they are basic functions that return values - that's it.
+## Action Creators - Signaling that state should change
 
-Of course, there's a bit more to it than that. Actions can return more than primitive values. If you return Promise, Microcosm will wait for it to resolve. Actions can even be ES6 generators if you wish to progressively operate within the same space (more on this in future guides).
+Action creators (commonly shortened to "actions") provide an identity to the types of events that trigger changes to application state. Microcosm only expects that they are functions that return values.
 
-The important thing about actions is that they represent an account of things that have happened. Microcosm reduces an action into a primitive value, communicates that result to stores for processing:
+Of course there is sophistication in _what_ they return. For example Microcosm will wait for Promises to resolve before doing anything with them. However this will be covered in a later guide specifically about actions.
+
+The important thing about actions is that they represent an account something that has happened. Microcosm keeps a ledger of the output to perform discrete operations on state:
 
 ```javascript
 import Microcosm from 'microcosm'
@@ -83,13 +101,13 @@ function addPlanet(options) {
   // gives you an opportunity to modify parameters before they
   // are sent to stores.
   //
-	// More options for Actions can be found in docs/api/actions.md
+  // More options for Actions can be found in docs/api/actions.md
   return options
 }
 
 let Planets = {
   getInitialState() {
-    return []
+    return [{ name: 'Mercury' }]
   },
   register() {
     return {
@@ -111,13 +129,21 @@ class SolarSystem extends Microcosm {
 let app = new SolarSystem()
 
 app.start(function() {
-	app.push(Actions.addPlanet, { name: 'Earth' })
-	console.log(app.state.planets) // [{ name: 'Earth' }]
+	app.push(Actions.addPlanet, { name: 'Venus' })
+	console.log(app.state.planets) // [{ name: 'Mercury' }, { name: 'Venus' }]
 })
 ```
 
-When the `SolarSystem` sees `addPlanet` was pushed, it will call it within the context of the individual app and send the result of it to the `Planets` store. In the `register` function of `Planets`, we've defined that it should forward `addPlanet` to `Planets.add`. `Planets.add` is then responsible for returning a new list of planets based upon the previous value and the parameters it was sent from the action.
+When the `SolarSystem` sees `addPlanet` was pushed, it will invoke it within the context of the individual app and send the result the `Planets` store.
+
+The critical component in `Planets` is `register`: a function that returns a map associating actions with methods on the Store.
+
+In this case, `addPlanet` maps directly to the `Planets.add` method. This works because Microcosm assigns a unique `toString()` method to each action, reduces down to a key in this map.
+
+The result is that `addPlanet` will translate into an invocation of `Planet.add`, appending the provided information to the end of the `planets` list.
 
 ## Wrapping up
 
-As it pertains to the Microcosm lifecycle, we've just about come full circle. Future guides will dig deeper into the specifics of each step and provide guidance when using Microcosm in unison with React.
+As it pertains to the Microcosm lifecycle, we've just about come full circle. The next guide moves into the specifics of stores. Check it out!
+
+[Guide 2: Stores](./02-stores.md)
