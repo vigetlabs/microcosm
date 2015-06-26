@@ -1,5 +1,11 @@
 # Changelog
 
+## 8.3.0
+
+## Noticeable changes
+
+- Microcosm will emit events synchronously. In the past, it would use requestAnimationFrame to batch together changes. However this can cause unexpected consequences when sequentially performing otherwise synchronous operations. For those who wish to preserve this behavior, consider using debounce to "choke" high frequency changes.
+
 ## 8.2.0
 
 ## Internal Changes
