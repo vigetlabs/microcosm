@@ -52,9 +52,6 @@ audit:
 	@echo "Gzipped Size:"
 	@gzip -c $(DIST)/microcosm.build.js | wc -c
 
-website:
-	git subtree push --prefix site origin gh-pages
-
 test:
 	NODE_ENV=test $(KARMA) start --single-run
 

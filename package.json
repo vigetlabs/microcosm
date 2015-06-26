@@ -54,6 +54,7 @@
     "react": "~0.13",
     "sass-loader": "~1.0",
     "style-loader": "~0.12",
+    "swig": "^1.4.2",
     "uid": "0.0.2",
     "webpack": "~1",
     "webpack-dev-server": "~1"
