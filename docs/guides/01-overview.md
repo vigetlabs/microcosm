@@ -16,17 +16,17 @@ A Microcosm provides a central place to keep information. Although you can insta
 import Microcosm from 'microcosm'
 
 class SolarSystem extends Microcosm {
-	constructor() {
-		super()
-		// Configuration goes here.
-		// Isolated from the outside world
+  constructor() {
+    super()
+    // Configuration goes here.
+    // Isolated from the outside world
 	}
 }
 
 let app = new SolarSystem()
 
 app.start(function() {
-	console.log('Hello, Microcosm.')
+  console.log('Hello, Microcosm.')
 })
 ```
 
@@ -53,7 +53,7 @@ class SolarSystem extends Microcosm {
 let app = new SolarSystem()
 
 app.start(function() {
-	console.log('Hello, Microcosm')
+  console.log('Hello, Microcosm')
 })
 ```
 
@@ -78,12 +78,11 @@ class SolarSystem extends Microcosm {
 let app = new SolarSystem()
 
 app.start(function() {
-	console.log(app.state.planets) // [{ name: 'Mercury' }]
+  console.log(app.state.planets) // [{ name: 'Mercury' }]
 })
 ```
 
 Now a `SolarSystem` will always start with the planet Mercury.
-
 
 ## Action Creators - Signaling that state should change
 
@@ -91,7 +90,7 @@ Action creators (commonly shortened to "actions") provide an identity to the typ
 
 Of course there is sophistication in _what_ they return. For example Microcosm will wait for Promises to resolve before doing anything with them. However this will be covered in a later guide specifically about actions.
 
-The important thing about actions is that they represent an account something that has happened. Microcosm keeps a ledger of the output to perform discrete operations on state:
+The important thing about actions is that they represent an account of something that has happened. Microcosm keeps a ledger of the output to perform discrete operations on state:
 
 ```javascript
 import Microcosm from 'microcosm'
@@ -100,8 +99,6 @@ function addPlanet(options) {
   // Here, we are simply returning options. However this
   // gives you an opportunity to modify parameters before they
   // are sent to stores.
-  //
-  // More options for Actions can be found in docs/api/actions.md
   return options
 }
 
@@ -129,8 +126,8 @@ class SolarSystem extends Microcosm {
 let app = new SolarSystem()
 
 app.start(function() {
-	app.push(Actions.addPlanet, { name: 'Venus' })
-	console.log(app.state.planets) // [{ name: 'Mercury' }, { name: 'Venus' }]
+  app.push(Actions.addPlanet, { name: 'Venus' })
+  console.log(app.state.planets) // [{ name: 'Mercury' }, { name: 'Venus' }]
 })
 ```
 
