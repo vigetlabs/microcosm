@@ -1,6 +1,6 @@
 {
   "name": "microcosm",
-  "version": "9.0.0-beta-3",
+  "version": "9.0.0-beta-4",
   "private": true,
   "description": "A variant of Facebook's Flux with centralized, isolated state",
   "main": "src/Microcosm.js",
@@ -38,7 +38,7 @@
     "istanbul": "~0.3",
     "istanbul-instrumenter-loader": "~0.1",
     "karma": "~0.12",
-    "karma-chrome-launcher": "~0.2", 
+    "karma-chrome-launcher": "~0.2",
     "karma-cli": "~0.0",
     "karma-coverage": "~0.4",
     "karma-mocha": "~0.2",
