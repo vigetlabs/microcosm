@@ -3,16 +3,16 @@
  * A simple FIFO queue for installing plugins
  */
 
-let install = function (plugins, done) {
+function install (plugins, callback) {
   if (!plugins.length) {
-    return done(null)
+    return callback(null)
   }
 
   let Plugin = plugins[0]
-  let tail   = plugins.slice(1)
+  let tail = plugins.slice(1)
 
   return new Plugin(function(err) {
-    err ? done(err) : install(tail, done)
+    err ? callback(err) : install(tail, callback)
   })
 }
 

@@ -11,7 +11,7 @@
 
 html,
 body {
-  color: rgba(0, 0, 0, 0.88);
+  color: rgba(0, 0, 0, 0.65);
   font: 400 16px/1.5 Roboto, sans-serif;
   margin: 0;
 }
@@ -40,7 +40,6 @@ b {
 }
 
 .type-subheading {
-  color: rgba(0, 0, 0, 0.65);
   font-size: 1.3em;
   font-weight: 300;
   margin: 0 0 16px;
@@ -52,7 +51,7 @@ img {
 }
 
 .container {
-  padding: 10px;
+  padding: 10px 0;
   max-width: 600px;
   margin: 24px auto;
 }
@@ -69,7 +68,7 @@ img {
 }
 
 .site__header__brand {
-  display: inline-block;
+  float: left;
   margin: 14px 16px 12px;
   height: 20px;
   position: relative;
@@ -85,7 +84,7 @@ img {
 .site__header__nav {
   text-align: right;
   float: right;
-  padding: 16px 4px;
+  padding: 16px 8px;
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -97,8 +96,7 @@ img {
 
 .terminal {
   border-radius: 4px;
-  margin-bottom: 36px;
-  padding: 10px;
+  margin-bottom: 12px;
 }
 
 .terminal:before {
@@ -138,5 +136,5 @@ code b {
 .sr-only {
   clip: rect(0, 0, 0, 0);
   position: absolute;
-  margin: -1;x
+  margin: -1px;
 }
