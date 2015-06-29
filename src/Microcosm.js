@@ -1,12 +1,3 @@
-/**
- * Microcosm
- * A variant of Flux with central, isolated state.
- *
- * Microcosm makes it easier to control and modify state. It uses
- * pure, singleton Stores and Actions, keeping all state encapsulated
- * in one place.
- */
-
 let Diode       = require('diode')
 let Store       = require('./Store')
 let Transaction = require('./Transaction')
@@ -24,7 +15,6 @@ let Microcosm = function() {
 
   this.base         = {}
   this.state        = this.base
-
   this.plugins      = []
   this.stores       = {}
   this.transactions = []
@@ -42,56 +32,76 @@ Microcosm.prototype = {
   },
 
   /**
-   * Given a state and transaction, return a transformed state
-   * based upon Stores that can respond to the transaction.
+   * Called before a transaction is squashed into base state. This method
+   * is useful to override if you wish to preserve transaction history
+   * beyond outstanding transactions.
    */
-  dispatch(state, transaction) {
-    // Ignore if the transaction hasn't started
-    if (transaction.isInactive()) {
-      return state
-    }
-
-    return remap(this.stores, (store, key) => {
-      return Store.send(store, state[key], transaction)
-    })
+  shouldTransactionMerge(item, all) {
+    return item.done
   },
 
   /**
-   * For each transaction, determine if it can be "squashed down" into
-   * base state.
-   *
-   * Note: This is an internal operation and will not emit a change. No
-   * "public" state is modified
+   * Used to determine if a transaction should be purged during `clean()`
    */
-  rebase() {
-    // Clean up erroneous transactions
-    this.transactions = this.transactions.filter(t => t.isValid())
+  transactionIsValid(item) {
+    return !item.error
+  },
 
-    // Until coming across an incomplete transaction...
-    while (this.transactions.length && this.transactions[0].isFinished()) {
-      // ... extract out the earliest transaction...
+  /*
+   * Before dispatching, this function is called on every transaction
+   */
+  shouldTransactionDispatch(item) {
+    return item.active
+  },
+
+  /**
+   * Remove invalid transactions
+   */
+  clean() {
+    this.transactions = this.transactions.filter(this.transactionIsValid)
+  },
+
+  /**
+   * Starting from the beginning, consecutively fold complete transactions into
+   * base state and remove them from the transaction list.
+   */
+  squash() {
+    while (this.transactions.length && this.shouldTransactionMerge(this.transactions[0], this.transactions)) {
       this.base = this.dispatch(this.base, this.transactions.shift())
     }
   },
 
   /**
-   * The core state modification function. `rollforward` squashes down
-   * changes that can be deallocated and then then applies "pending" changes
-   * on top.
-   *
-   * If state changes, it will emit en event.
+   * Dispatch all outstanding, active transactions upon base state to determine
+   * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    let old = this.state
+    let next = this.transactions.filter(this.shouldTransactionDispatch)
+                                .reduce(this.dispatch.bind(this), this.base)
 
-    this.rebase()
-
-    let next = this.transactions.reduce(this.dispatch.bind(this), this.base)
-
-    if (next !== old) {
+    if (next !== this.state) {
       this.state = next
-      this.emit(next, old)
+      this.emit(this.state)
     }
+  },
+
+  /**
+   * Engages the transaction life cycle.
+   *
+   * 1. Clean up erroneous transactions
+   * 2. Squash down complete transactions
+   * 3. Roll outstanding changes forward into new state
+   */
+  transact() {
+    this.clean()
+    this.squash()
+    this.rollforward()
+  },
+
+  dispatch(state, transaction) {
+    return remap(this.stores, function(store, key) {
+      return Store.send(store, state[key], transaction)
+    })
   },
 
   /**
@@ -111,9 +121,9 @@ Microcosm.prototype = {
       throw TypeError(`Tried to push ${ action }, but is not a function.`)
     }
 
-    let transaction = new Transaction(action, params)
+    let transaction = new Transaction(action, params, this.transact.bind(this))
 
-    transaction.listen(this.rollforward.bind(this))
+    transaction.listen(this.transact.bind(this))
 
     this.transactions.push(transaction)
 
@@ -124,11 +134,11 @@ Microcosm.prototype = {
    * Clear all outstanding transactions and assign base state
    * to a given object (or getInitialState())
    */
-  reset(state = this.getInitialState()) {
-    this.transactions = []
+  reset(state=this.getInitialState(), transactions=[]) {
+    this.transactions = transactions
     this.base = state
 
-    return this.rollforward()
+    return this.transact()
   },
 
   /**
@@ -181,8 +191,8 @@ Microcosm.prototype = {
       return this.state
     }
 
-    return remap(this.stores, (store, key) => {
-      return Store.deserialize(store, data[key], data[key])
+    return remap(this.stores, function(store, key) {
+      return Store.deserialize(store, data[key])
     })
   },
 

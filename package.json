@@ -39,7 +39,7 @@
     "istanbul-instrumenter-loader": "~0.1",
     "karma": "~0.12",
     "karma-chrome-launcher": "~0.2",
-    "karma-cli": "~0.0",
+    "karma-cli": "~0.1",
     "karma-coverage": "~0.4",
     "karma-mocha": "~0.2",
     "karma-mocha-reporter": "~1.0",

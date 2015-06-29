@@ -7,7 +7,9 @@ let isPromise   = require('is-promise')
 let isGenerator = require('is-generator').fn
 
 function evaluate (body, resolve, reject) {
+
   if (isPromise(body)) {
+
     return body.then(resolve, function(error) {
       reject(error)
 
@@ -22,7 +24,7 @@ function evaluate (body, resolve, reject) {
 function chain(iterator, resolve, reject) {
   let { value } = iterator.next()
 
-  return (function step (params) {
+  function step (params) {
     let { value, done } = iterator.next()
 
     return evaluate(params, function(result) {
@@ -31,8 +33,9 @@ function chain(iterator, resolve, reject) {
 
       return done ? result : step(value)
     }, reject)
+  }
 
-  }(value))
+  return step(value)
 }
 
 module.exports = function signal (action, params, resolve, reject, scope) {

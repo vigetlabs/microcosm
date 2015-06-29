@@ -1,59 +1,41 @@
 let Diode  = require('diode')
 let signal = require('./signal')
 
-const INACTIVE = 'INACTIVE'
-const PARTIAL  = 'PARTIAL'
-const ABORTED  = 'ABORTED'
-const COMPLETE = 'COMPLETE'
-
 function Transaction(action, params) {
   Diode(this)
 
   this.action = action
   this.params = params
-
-  this.body   = null
-  this.error  = null
-  this.state  = INACTIVE
+  this.timestamp = Date.now()
 }
 
 Transaction.prototype = {
 
   constructor: Transaction,
 
+  active : false,
+  body   : null,
+  done   : false,
+  error  : null,
+
   run() {
     return signal(this.action, this.params, this.resolve, this.reject, this)
   },
 
   resolve(body, done) {
-    this.body = body
-
-    this.state = this.isFinished() || done ? COMPLETE : PARTIAL
+    this.active = true
+    this.body   = body
+    this.done   = this.done || done
 
     this.publish()
   },
 
   reject(error) {
-    this.error = error
-    this.state = ABORTED
+    this.active = false
+    this.error  = error || new Error("Transaction failed")
+    this.done   = true
 
     this.publish()
-  },
-
-  is(state) {
-    return this.state === state
-  },
-
-  isInactive() {
-    return this.is(INACTIVE) || this.is(ABORTED)
-  },
-
-  isValid() {
-    return this.is(ABORTED) === false
-  },
-
-  isFinished() {
-    return this.is(COMPLETE)
   }
 
 }
