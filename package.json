@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "diode": "~4.4",
-    "is-promise": "^2.1",
+    "is-promise": "^2.0",
     "is-generator": "^1.0"
   },
   "devDependencies": {
