@@ -107,8 +107,8 @@ Microcosm.prototype = {
   /**
    * Partially applies `push`.
    */
-  prepare(action, ...params) {
-    return this.push.bind(this, action, ...params)
+  prepare(action, params) {
+    return (more, callback) => this.push(action, [].concat(params, more), callback)
   },
 
   /**
@@ -116,12 +116,12 @@ Microcosm.prototype = {
    * a unique transaction. If an error occurs, it will mark it for clean up
    * and the change will disappear from history.
    */
-  push(action, ...params) {
+  push(action, params, callback) {
     if (process.env.NODE_ENV !== 'production' && typeof action !== 'function') {
       throw TypeError(`Tried to push ${ action }, but is not a function.`)
     }
 
-    let transaction = new Transaction(action, params, this.transact.bind(this))
+    let transaction = new Transaction(action, params, callback)
 
     transaction.listen(this.transact.bind(this))
 

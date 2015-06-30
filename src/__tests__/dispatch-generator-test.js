@@ -38,10 +38,9 @@ describe('When dispatching generators', function() {
       }
     })
 
-    app.start()
-    app.push(multiple, 2)
-
-    app.state.test.should.equal(3)
+    app.start().push(multiple, 2, function() {
+      app.state.test.should.equal(3)
+    })
   })
 
   it ('waits for all promises in the chain to resolve', function(done) {
@@ -59,9 +58,7 @@ describe('When dispatching generators', function() {
       }
     })
 
-    app.start()
-
-    app.push(resolve, 2).done(function() {
+    app.start().push(resolve, 2, function() {
       app.state.test.should.equal(3)
       done()
     })

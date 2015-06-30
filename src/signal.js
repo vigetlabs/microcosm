@@ -3,44 +3,13 @@
  * Currently, it handles values and promises
  */
 
-let isPromise   = require('is-promise')
+let chain       = require('./chain')
 let isGenerator = require('is-generator').fn
+let nodeify     = require('./nodeify')
 
-function evaluate (body, resolve, reject) {
+module.exports = function signal (action, params, callback) {
+  let value     = action.apply(null, params)
+  let processor = isGenerator(action) ? chain : nodeify
 
-  if (isPromise(body)) {
-
-    return body.then(resolve, function(error) {
-      reject(error)
-
-      // Throw so future error handling can occur
-      throw error
-    })
-  }
-
-  return resolve(body, true)
-}
-
-function chain(iterator, resolve, reject) {
-  let { value } = iterator.next()
-
-  function step (params) {
-    let { value, done } = iterator.next()
-
-    return evaluate(params, function(result) {
-
-      resolve(result, done)
-
-      return done ? result : step(value)
-    }, reject)
-  }
-
-  return step(value)
-}
-
-module.exports = function signal (action, params, resolve, reject, scope) {
-  let value     = action.apply(scope, params)
-  let processor = isGenerator(action) ? chain : evaluate
-
-  return processor(value, resolve.bind(scope), reject.bind(scope))
+  return processor(value, callback)
 }

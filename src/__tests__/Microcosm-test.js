@@ -38,8 +38,8 @@ describe('Microcosm', function() {
 
   it ('binds arguments to push', function() {
     sinon.stub(app, 'push')
-    app.prepare('action', 1, 2)(3)
-    app.push.should.have.been.calledWith('action', 1, 2, 3)
+    app.prepare('action', [ 1, 2 ])(3)
+    app.push.should.have.been.calledWith('action', [ 1, 2, 3 ])
   })
 
   it ('throws an error if asked to push a non-function value', function(done) {

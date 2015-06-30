@@ -18,9 +18,9 @@ describe('When dispatching primitive values', function() {
   })
 
   it ('properly reduces from a store', function(done) {
-    app.listen(function() {
+    app.push(add, 2, function() {
       app.state.test.should.equal(app.stores.test.getInitialState() + 2)
       done()
-    }).push(add, 2)
+    })
   })
 })

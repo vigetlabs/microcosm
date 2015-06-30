@@ -1,12 +1,17 @@
 let Diode  = require('diode')
 let signal = require('./signal')
+let noop   = a => a
 
-function Transaction(action, params) {
+function Transaction(action, params, callback=noop) {
   Diode(this)
 
   this.action = action
-  this.params = params
+
+  // Ensure an array
+  this.params = [].concat(params)
+
   this.timestamp = Date.now()
+  this.callback = callback
 }
 
 Transaction.prototype = {
@@ -18,24 +23,29 @@ Transaction.prototype = {
   done   : false,
   error  : null,
 
+  finish(error, body) {
+    // This is a neat trick to get around the promise try/catch
+    // https://github.com/then/promise/blob/master/src/done.js
+    setTimeout(this.callback.bind(this, error, body), 0)
+  },
+
+  isComplete() {
+    return this.error || this.done
+  },
+
   run() {
-    return signal(this.action, this.params, this.resolve, this.reject, this)
-  },
+    return signal(this.action, this.params, (error, body, pending) => {
+      this.active = true
+      this.body   = body
+      this.done   = this.done || !pending
+      this.error  = error
 
-  resolve(body, done) {
-    this.active = true
-    this.body   = body
-    this.done   = this.done || done
+      this.publish()
 
-    this.publish()
-  },
-
-  reject(error) {
-    this.active = false
-    this.error  = error || new Error("Transaction failed")
-    this.done   = true
-
-    this.publish()
+      if (this.isComplete()) {
+        this.finish(error, body)
+      }
+    })
   }
 
 }

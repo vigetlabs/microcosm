@@ -43,7 +43,7 @@ describe('When dispatching promises', function() {
     app.start(done)
   })
 
-  it ('waits for the promise to resolve', function(done) {
+  it ('returns the promise from app.push', function(done) {
     app.push(single, 2).done(function() {
       app.state.test.should.equal(3)
       done()
@@ -52,22 +52,21 @@ describe('When dispatching promises', function() {
 
   it ('does not dispatch if the promise fails', function(done) {
     sinon.spy(app, 'dispatch')
-
-    app.push(error).done(null, function() {
+    app.push(error, [], function() {
       app.dispatch.should.not.have.been.called
       done()
     })
   })
 
   it ('waits for all promises in the chain to resolve', function(done) {
-    app.push(chain, 1).done(function() {
+    app.push(chain, 1, function() {
       app.state.test.should.equal(2)
       done()
     })
   })
 
   it ('respects future changes when it fails', function(done) {
-    app.push(error, 1).done(null, function() {
+    app.push(error, 1, function() {
       app.state.test.should.equal(5)
       done()
     })
@@ -78,7 +77,7 @@ describe('When dispatching promises', function() {
   it ('does not dispatch transactions for unresolved promises', function(done) {
     let spy = sinon.spy(TestStore, 'sum')
 
-    app.push(late, 1).done(function() {
+    app.push(late, 1, function() {
       app.state.test.should.equal(6)
 
       // Twice for 'pass' and once for 'late'
