@@ -7,8 +7,6 @@ let isPromise = require('is-promise')
 const DEFAULT_ERROR = new Error('Rejected Promise')
 
 module.exports = function nodeify (promise, callback) {
-  // Loose check until this lands:
-  // https://github.com/then/is-promise/pull/3
   if (!isPromise(promise)) {
     return callback(null, promise)
   }
