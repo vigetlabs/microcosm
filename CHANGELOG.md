@@ -11,6 +11,8 @@
 - Removed Foliage
 - Instead of `app.get` or `app.toObject()` to retrieve state, use `app.state`
 - Change events are no longer batched with requestAnimationFrame. They will emit synchronously. This is to prevent unexpected behavior when performing operations
+- The signature for `app.push` is now `app.push(action, [...arguments], callback)`
+- The signature for `app.prepare` is now `app.prepare(action, [...arguments])`
 
 ## 8.2.0
 
