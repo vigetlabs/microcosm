@@ -134,8 +134,8 @@ Microcosm.prototype = {
    * Clear all outstanding transactions and assign base state
    * to a given object (or getInitialState())
    */
-  reset(state=this.getInitialState()) {
-    this.transactions = []
+  reset(state=this.getInitialState(), transactions=[]) {
+    this.transactions = transactions
     this.base = state
 
     return this.transact()
