@@ -38,10 +38,10 @@ var Planets = {
   },
   register() {
     return {
-      [add]: this.add
+      [addPlanet]: this.addPlanet
     }
   },
-  add(planets, params) {
+  addPlanet(planets, params) {
     return planets.concat(params)
   }
 }
