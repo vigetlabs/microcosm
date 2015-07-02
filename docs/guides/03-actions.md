@@ -1,8 +1,10 @@
 # Actions
 
-Microcosm is a transactional system. When an action is pushed into a Microcosm it creates a transaction to represent it.
+Microcosm is a transactional system. Whenever an action is invoked, a transaction will be created to represent the process of resolving it into primitive values. They be resolved, rejected, or notify progress.
 
-At their most basic, actions return primitive values.
+When an transaction updates, Microcosm runs through all outstanding transactions to determine the new application state. For example, if a Promise is returned from an action, Microcosm will wait for it to resolve. The value the Promise eventually returns will then be dispatched to stores.
+
+In more complicated scenarios, actions can fail and their associated transactions will be rejected. However at their most basic, actions return primitive values:
 
 ```javascript
 function doSomething (params) {
@@ -12,7 +14,12 @@ function doSomething (params) {
 }
 ```
 
-The action creator above is synchronous. Parameters are immediately forwarded to stores and processed.
+The action above is synchronous; there is no waiting involved. Parameters are immediately dispatched to stores and processed. Under the hood, the following steps occur:
+
+1. Create a transaction for `doSomething`
+2. Resolve `doSomething`; mark transaction as complete
+3. Dispatch `doSomething` to stores
+4. Save new state, emit change
 
 Not all action creators are synchronous. To account for this, Microcosm has the ability to process Promises.
 
@@ -26,9 +33,23 @@ function getPlanets(params) {
 
 **In Microcosm, actions handle all asynchronous operations**. It will wait for the promise complete and only move a transaction forward if it resolves successfully.
 
+What if it were to fail? If a returned Promise is rejected, the associated transaction is rejected as well. Microcosm will eliminate it from the list of valid transactions and state will be redetermined as if the transaction never occurred:
+
+```javascript
+function failure(params) {
+  return Promise.reject('Nope')
+}
+
+app.push(failure, [], function(error) {
+  assert.equal(error, 'Nope')
+})
+```
+
+In the example above, nothing will be dispatched. Nothing will change.
+
 ## Pending state
 
-An action may need to resolve to "pending state". For example, many chat applications optimistically update a user's interface before persisting it and forwarding the message to other clients.
+Chat applications often implement optimistic updating. When a user sends a message, it immediately shows up on their user interface and is persisted to other clients in the background. This sort of immediate feedback makes apps feel intuitive and responsive.
 
 This sort of behavior is problematic to in the context of previous examples. Microcosm expects functions to return a single value.
 
@@ -46,6 +67,23 @@ Using generators in actions brings us back to the subject of transactions. Each 
 First, local parameters are resolved. Stores listening to `postMessage` can add these parameters and indicate within application UI that the message has not sent yet (indiciated with `pending: true`). When the second operation is resolved, the transaction will update itself with the new operation and complete.
 
 Since the transaction was "pending", it will be reprocessed as if the original `yield` never happened. This prevents you from needing to clean up "stale" operations.
+
+But what if you wanted to keep the failed message and let the user resend it? Simply chain off of the promise and report the error:
+
+```javascript
+function* postMessage(params) {
+  yield { ...params, pending: true }
+  yield ajax.post('http://myapi.com/messages', params)
+            .catch(error => { ...params, error })
+}
+```
+
+By attaching the error, the user interface can give accurate feedback on the problem. Maybe the user lost their internet connection or your API returned a 500 status code.
+
+In either case, you have flexibility in error handling. Options include:
+
+1. **Handle the error in the callback provided in `app.push`.** State will be rolled back, but you can still alert the user.
+2. **Catch a rejected promise and forward the error to stores.** This is useful if you want to persist an optimistic update and indicate something is wrong with the associated data.
 
 ## Wrapping up
 
