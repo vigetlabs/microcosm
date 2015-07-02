@@ -21,7 +21,7 @@ The action above is synchronous; there is no waiting involved. Parameters are im
 3. Dispatch `doSomething` to stores
 4. Save new state, emit change
 
-Not all action creators are synchronous. To account for this, Microcosm has the ability to process Promises.
+Not all actions are synchronous. To account for this, Microcosm has the ability to process Promises.
 
 The following example assumes a given library `ajax` which returns a Promise to represent an XHR request.
 

@@ -17,7 +17,7 @@ Also check out the [Babel](http://babeljs.io/) JavaScript compiler. It breaks do
 
 Microcosm distinguishes itself from traditional Flux in a number of ways:
 
-**A microcosm owns all state.** Stores and action creators are collections of pure functions; they have no data of their own. They tell a Microcosm how it should transform itself from one state to the next.
+**A microcosm owns all state.** Stores and actions are collections of pure functions; they have no data of their own. They tell a Microcosm how it should transform itself from one state to the next.
 
 **Microcosm is a transactional system**. Microcosm keeps track of all outstanding actions and operates on them sequentially as they resolve, in the order they were originally invoked.
 
@@ -99,9 +99,9 @@ app.start(function() {
 
 Now a `SolarSystem` will always start with the planet Mercury.
 
-## Action Creators - Signaling that state should change
+## Actions - Signaling that state should change
 
-Action creators (commonly shortened to "actions") provide an identity to the types of events that trigger changes to application state. Microcosm only expects that they are functions that return values.
+Actions provide an identity to the types of events that trigger changes to application state. Microcosm only expects that they are functions that return values.
 
 Of course there is sophistication in _what_ they return. For example Microcosm will wait for Promises to resolve before doing anything with them. However this will be covered in a later guide specifically about actions.
 
