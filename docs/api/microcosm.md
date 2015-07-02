@@ -18,28 +18,6 @@ extension. The only requirement is that it returns an object primitive.
 
 Resets state to the result of calling `getInitialState()`
 
-### `get(key)`
-
-Returns the current value for a given `key`. This key is often managed
-by a Store.
-
-```javascript
-app.get('planets') // => [{ name: 'Mercury'}, { name: 'Venus' }, ...]
-```
-
-### `set(key, value)`
-
-For the given `key`, replaces its value. This will trigger a change
-event.
-
-```javascript
-app.set('planets', [{ name: 'Naboo' }])
-```
-
-This method is used internally to update state and it shouldn't
-typically be used directly. However it is exposed in case a plugin
-wants to keep track of some state unique to an app.
-
 ### `replace(data)`
 
 Executes `deserialize` on the provided data and then merges it into
@@ -97,70 +75,25 @@ fold the deserialized data over the current application state.
 app.deserialize(data) // => cleaned data
 ```
 
-### `valueOf()`
-
-Returns a clone of the current application state
-
-```javascript
-app.valueOf() // => clone of app state
-```
-
 ### `toJSON()`
 
 Alias for `serialize`
 
-### `toObject()`
+### `push(action, [...action arguments], callback)`
 
-Alias for `valueOf()
-
-### `start(...callbacks)`
-
-Starts an application. It does a couple of things:
-
-1. Calls `this.reset()` to determine initial state
-2. Runs through all plugins, it will terminate if any fail
-3. Executes the provided list of callbacks, passing along any errors
-   generated if installing plugins fails.
+Resolves an action. Sends the result and any errors to a given error-first callback.
 
 ```javascript
-app.start(function(error) {
-  if (!error) {
-    console.log("Enter hyperspace!")
+app.push(createPlanet, [{ name: 'Merkur' }], function(error, body) {
+  if (error) {
+    handleError(error)
   }
 })
 ```
 
-### `push(action, ...params)`
+### `prepare(action, [...action arguments])`
 
-Resolves an action. If it resolved successfully, it dispatches that
-the resulting parameters to registered stores for transformation.
-
-[See the documentation on actions](actions.md).
-
-```javascript
-app.push(createPlanet, { name: 'Merkur' })
-```
-
-### `prepare(action, ...arguments)`
-
-Partially applies `push`.
-
-### `dispatch(action, params)`
-
-Sends a message to each known store asking if it can respond to the
-provided action. If so, takes the returned new state for that store's
-managed key and assigns it as new state.
-
-This will trigger a change event if any of the stores return a new
-state.
-
-Normally, this function is not called directly. `dispatch` is fire and
-forget. For almost every use case, `app.push` should be instead as it
-provides a mechanism for error handing and callbacks.
-
-```javascript
-app.dispatch(createPlanet, { name: 'Coruscant' })
-```
+Partially applies `push`. Sucessive calls will append new parameters (see `push()`)
 
 ## Listening to changes
 
@@ -185,7 +118,7 @@ state, run plugins, then execute a callback:
 ```
 let app = new Microcosm()
 
-app.start(function() {
+app.start(function(error) {
   // Now do something
 })
 ```
