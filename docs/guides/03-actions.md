@@ -1,6 +1,6 @@
 # Actions
 
-Microcosm is a transactional system. Whenever an action is invoked, a transaction will be created to represent the process of resolving it into primitive values. They be resolved, rejected, or notify progress.
+Microcosm is a transactional system. Whenever an action is invoked, a transaction will be created to represent the process of resolving it.
 
 When an transaction updates, Microcosm runs through all outstanding transactions to determine the new application state. For example, if a Promise is returned from an action, Microcosm will wait for it to resolve. The value the Promise eventually returns will then be dispatched to stores.
 
