@@ -42,7 +42,7 @@ example:
 	--publicPath assets \
 	--historyApiFallback true
 
-website:
+site:
 	make -C site
 
 clean:
