@@ -32,7 +32,6 @@ javascript-min: javascript
 	--devtool sourcemap --output-library-target commonjs2 \
 	--optimize-minimize --optimize-occurence-order --optimize-dedupe
 
-
 release: clean build
 	npm publish $(DIST)
 
@@ -42,6 +41,9 @@ example:
 	--content-base examples \
 	--publicPath assets \
 	--historyApiFallback true
+
+website:
+	make -C site
 
 clean:
 	@rm -rf $(DIST)
