@@ -98,6 +98,14 @@ Microcosm.prototype = {
     this.rollforward()
   },
 
+  /**
+   * Dispatch takes an existing state and performs the result of a transaction
+   * on top of it. This is different than other Flux implementations, there
+   * are no side-effects.
+   *
+   * Dispatch answers the question:
+   * "What will change when I account for a transaction?"
+   */
   dispatch(state, transaction) {
     return remap(this.stores, function(store, key) {
       return Store.send(store, state[key], transaction)
