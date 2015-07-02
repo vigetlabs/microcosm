@@ -54,4 +54,13 @@ let Logger = {
 ```
 
 In the case above, `Logger` will disallow the system from starting
-because it can not operate correctly.
+because it can not operate correctly. The error will be forwarded to the callback argument of `app.start` for additional processing:
+
+```javascript
+app.addPlugin(Logger)
+app.start(function(error) {
+  if (error) {
+    console.error("An error occurred booting the app:", error)
+  }
+})
+```

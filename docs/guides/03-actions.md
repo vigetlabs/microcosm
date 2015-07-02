@@ -30,7 +30,7 @@ function getPlanets(params) {
 
 An action may need to resolve to "pending state". For example, many chat applications optimistically update a user's interface before persisting it and forwarding the message to other clients.
 
-This sort of behavior is problematic to in the context of previous examples. Traditionally functions only return a single value.
+This sort of behavior is problematic to in the context of previous examples. Microcosm expects functions to return a single value.
 
 To get around this, Microcosm uses ES6 generator functions:
 

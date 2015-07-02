@@ -1,12 +1,27 @@
-# Microcosm at a glance
+# Overview
 
-Microcosm is a variant of [Flux](https://facebook.github.io/flux/) that controls and modifies state in a pure, centralized way.
+This guide assumes some prior knowledge of [Facebook's Flux](http://facebook.github.io/flux/docs/overview.html#content) architectural pattern. If this is your first encounter with Flux, a couple of concepts may feel alien. We recommend familiarizing yourself with the following ideas:
 
-Stores and action creators are collections of pure functions; they have no data of their own. They tell a Microcosm how it should transform itself from one state to the next.
+- [Flux structure and data flow](http://facebook.github.io/flux/docs/overview.html#structure-and-data-flow)
+- [Flux actions](http://facebook.github.io/flux/docs/overview.html#actions)
 
-This design seeks to achieve a reasonable trade off between the simplicity of singletons and the privacy of class instances.
+Microcosm also leans on a couple of new language features in the JavaScript 2015 specification. These features are:
 
-In this guide, we'll explore some of these concepts through a basic Microcosm implementation.
+- [Classes](http://babeljs.io/docs/learn-es2015/#classes)
+- [Computed keys](http://babeljs.io/docs/learn-es2015/#enhanced-object-literals), like `{ [name]: value }`.
+- [Generators](http://babeljs.io/docs/learn-es2015/#generators). Only necessary for optimistic updates, covered in later guides.
+
+Also check out the [Babel](http://babeljs.io/) JavaScript compiler. It breaks down new language features into code browsers understand. [It's also easy to integrate into most build systems](http://babeljs.io/docs/setup/).
+
+## Microcosm at a glance
+
+Microcosm distinguishes itself from traditional Flux in a number of ways:
+
+**A microcosm owns all state.** Stores and action creators are collections of pure functions; they have no data of their own. They tell a Microcosm how it should transform itself from one state to the next.
+
+**Microcosm is a transactional system**. Microcosm keeps track of all outstanding actions and operates on them sequentially as they resolve, in the order they were originally invoked.
+
+This design seeks to achieve a reasonable trade off between the simplicity of singletons and the privacy of class instances. In this guide, we'll break some of that down through a basic implementation.
 
 ## Constructing a Microcosm
 

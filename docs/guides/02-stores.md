@@ -1,6 +1,6 @@
 # Stores
 
-Stores in Microcosm do not hold their own data. Instead, they transform data from one state to the next.
+Stores in Microcosm do not hold their own data. Instead they transform data from one state to the next.
 
 This guide will go into the specifics of this process, starting with the beginning of the Microcosm lifecycle.
 
