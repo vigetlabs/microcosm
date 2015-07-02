@@ -5,8 +5,9 @@ A variant of [Flux](https://facebook.github.io/flux/) with
 central, isolated state.
 
 Microcosm makes it easier to control and modify state in a pure,
-centralized way. It uses stateless, singleton Stores and Actions, keeping
-all data encapsulated in one place. This design seeks to achieve a
+centralized way. It thinks of stores and actions as stateless, collections of pure functions, keeping all data encapsulated in one place.
+
+This design seeks to achieve a
 reasonable trade off between the simplicity of singletons and the
 privacy of class instances.
 
@@ -20,17 +21,16 @@ For a deeper dive, check out the [docs](./docs) or continue below.
 
 ## Overview
 
-Within the context of the Flux model, Microcosm treats actions and
-stores as singletons, however they do not contain any state.
+Microcosm treats actions and stores as singletons, however they do not contain any state.
 
 Actions are called within the context of a particular instance of Microcosm:
 
 ```javascript
-  let addPlanet = function(params) {
-    return params
-  }
+let addPlanet = function (params) {
+  return params
+}
 
-  app.push(addPlanet, params)
+app.push(addPlanet, params)
 ```
 
 Stores hold no state. Stores are collections of functions that transform
@@ -81,6 +81,10 @@ React.render(<SolarSystem app={ app } planets={ app.get('planets') } />, documen
    statelessly in other entities.
 3. Easy extension of core API and layering of features out of the
    framework's scope.
+
+## What is it probably not good for?
+
+Large applications. There's nothing stopping you from doing it, but Microcosm is tested against small to medium sized apps. If the ideas in Microcosm are attractive for your large application, check out [NuclearJS](https://github.com/optimizely/nuclear-js/).
 
 ## Tutorials
 
