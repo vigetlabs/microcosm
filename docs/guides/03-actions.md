@@ -49,11 +49,11 @@ In the example above, nothing will be dispatched. Nothing will change.
 
 ## Pending state
 
-Chat applications often implement optimistic updating. When a user sends a message, it immediately shows up on their user interface and is persisted to other clients in the background. This sort of immediate feedback makes apps feel intuitive and responsive.
+Chat applications often implement optimistic updating. When a user sends a message, it immediately shows up on their user interface and is persisted to other clients in the background. This makes apps feel intuitive and responsive.
 
-This sort of behavior is problematic to in the context of previous examples. Microcosm expects functions to return a single value.
+Functions can only return a single value. This has been fine for previous examples, however it is problematic for the scenario above.
 
-To get around this, Microcosm uses ES6 generator functions:
+To account for this, Microcosm uses ES6 generator functions to describe sequences of states:
 
 ```javascript
 function* postMessage(params) {
