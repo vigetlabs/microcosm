@@ -16,6 +16,7 @@ function reply(message) {
 }
 
 export default function fakeJAX(message) {
+  // Fake some latency
   const DELAY = 500 + Math.random() * 500
 
   return new Promise(function(resolve, reject) {
