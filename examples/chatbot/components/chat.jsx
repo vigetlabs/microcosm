@@ -7,9 +7,13 @@ export default React.createClass({
 
   render() {
     const { app, messages } = this.props
+    const say = messages.filter(m => m.user === 'Eliza').pop()
 
     return (
       <div className="chat">
+        <div className="audible" aria-live="assertive">
+          { say.user + ' said: ' + say.message }
+        </div>
         <Conversation messages={ messages } />
         <Form onSubmit={ app.prepare(sendChat) } />
       </div>
