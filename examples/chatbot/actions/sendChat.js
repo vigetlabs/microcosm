@@ -3,10 +3,13 @@ import uid from 'uid'
 
 /**
  * `sendChat` is an ES6 generator. Generators use the `yield` keyword to create
- * unique iterations in an ES6 iterable.
+ * steps in an ES6 iterable.
  *
  * Microcosm processes each of these iterations sequentially, using the most
  * recently resolved iteration as the payload of the action.
+ *
+ * More on generators:
+ * http://babeljs.io/docs/learn-es2015/#generators
  */
 export default function* sendChat (message) {
   const question = {
