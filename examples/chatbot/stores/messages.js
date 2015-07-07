@@ -1,8 +1,10 @@
 import sendChat from '../actions/sendChat'
 import bot from '../lib/bot'
+import uid from 'uid'
 
 function getInitialState() {
   return [{
+    id      : uid(),
     message : bot.getInitial(),
     user    : 'Eliza',
     time    : new Date()
