@@ -11,7 +11,7 @@ export default React.createClass({
 
     return (
       <div className="chat">
-        <div className="audible" aria-live="assertive">
+        <div className="audible" aria-live="polite">
           { say.user + ' said: ' + say.message }
         </div>
         <Conversation messages={ messages } />
