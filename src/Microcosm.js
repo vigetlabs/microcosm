@@ -16,7 +16,7 @@ let Microcosm = function() {
   /**
    * Represents all "merged" transactions. Whenever a transaction completes,
    * the result is folded into base state and the transaction object is
-   * "released". This let's transactions execute in a predicable order while
+   * "released". This lets transactions execute in a predicable order while
    * not soaking up memory keeping them forever.
    */
   this.base = {}
