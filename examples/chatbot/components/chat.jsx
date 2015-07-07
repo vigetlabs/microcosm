@@ -6,7 +6,7 @@ import sendChat from '../actions/sendChat'
 export default React.createClass({
 
   render() {
-    const { app, messages} = this.props
+    const { app, messages } = this.props
 
     return (
       <div className="chat">
