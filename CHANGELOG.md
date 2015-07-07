@@ -27,6 +27,11 @@ For those using the Foliage API, consider using Foliage within Stores themselves
 
 `app.push` should continue to work as expected when only one parameter is pushed to an action, however those pushing multiple parameters should make the following change:
 
+### Getting app state
+
+All instances of `app.get('key')` should be replaced with `app.state.key`, sort of like
+if it were a React component.
+
 ```
 // Before:
 app.push(action, 'one', 'two',' 'three')
