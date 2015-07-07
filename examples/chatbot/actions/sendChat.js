@@ -12,6 +12,7 @@ import uid from 'uid'
  * http://babeljs.io/docs/learn-es2015/#generators
  */
 export default function* sendChat (message) {
+  console.log(arguments)
   const question = {
     message,
     id   : uid(),

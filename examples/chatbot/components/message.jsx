@@ -19,7 +19,7 @@ export default React.createClass({
     return (
       <li className={ pending ? 'loading' : null }>
         <b>{ user } </b>
-        <time datetime={ time.toString() }>
+        <time dateTime={ time.toString() }>
           { time.toDateString() } { status }
         </time>
         <blockquote>{ message }</blockquote>

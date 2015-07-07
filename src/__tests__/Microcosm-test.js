@@ -42,6 +42,16 @@ describe('Microcosm', function() {
     app.push.should.have.been.calledWith('action', [ 1, 2, 3 ])
   })
 
+  it ('prepare handles cases with no arguments', function() {
+    sinon.stub(app, 'push')
+    
+    app.prepare('action')(3)
+    app.push.should.have.been.calledWith('action', [ 3 ])
+
+    app.prepare('action', 3)(1)
+    app.push.should.have.been.calledWith('action', [ 3, 1 ])
+  })
+
   it ('throws an error if asked to push a non-function value', function(done) {
     try {
       app.push(null)

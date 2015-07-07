@@ -5,15 +5,13 @@ import sendChat from '../actions/sendChat'
 
 export default React.createClass({
 
-  send(message) {
-    this.props.app.push(sendChat, message)
-  },
-
   render() {
+    const { app, messages} = this.props
+
     return (
       <div className="chat">
-        <Conversation messages={ this.props.messages } />
-        <Form onSubmit={ this.send } />
+        <Conversation messages={ messages } />
+        <Form onSubmit={ app.prepare(sendChat) } />
       </div>
     )
   }
