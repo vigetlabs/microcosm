@@ -36,7 +36,7 @@ export default React.createClass({
     return (
       <form onSubmit={ this.send }>
         <label className="audible" htmlFor="chat">Respond to Eliza:</label>
-        <input id="chat" type="text" onChange={ this.setMessage } value={ message } autoComplete="off" autofocus />
+        <input id="chat" type="text" onChange={ this.setMessage } value={ message } autoComplete="off" />
         <input type="submit" value="Reply" disabled={ message.length <= 0 } />
       </form>
     )

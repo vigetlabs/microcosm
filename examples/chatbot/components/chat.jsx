@@ -7,7 +7,7 @@ export default React.createClass({
 
   render() {
     const { app, messages } = this.props
-    const say = messages.filter(m => m.user === 'Eliza').pop()
+    const say = messages.filter(m => m.user !== 'You').pop()
 
     return (
       <div className="chat">
