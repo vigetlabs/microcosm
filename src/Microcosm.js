@@ -1,9 +1,9 @@
-let Diode       = require('diode')
-let Store       = require('./Store')
+let Diode = require('diode')
+let Store = require('./Store')
 let Transaction = require('./Transaction')
-let install     = require('./install')
-let plugin      = require('./plugin')
-let remap       = require('./remap')
+let install = require('./install')
+let plugin = require('./plugin')
+let remap = require('./remap')
 
 let Microcosm = function() {
   /**
@@ -13,10 +13,23 @@ let Microcosm = function() {
    */
   Diode(this)
 
-  this.base         = {}
-  this.state        = this.base
-  this.plugins      = []
-  this.stores       = {}
+  /**
+   * Represents all "merged" transactions. Whenever a transaction completes,
+   * the result is folded into base state and the transaction object is
+   * "released". This let's transactions execute in a predicable order while
+   * not soaking up memory keeping them forever.
+   */
+  this.base = {}
+
+  /**
+   * Holds publically available state. The result of folding all incomplete
+   * transactions over base state. This property can safely be referenced when
+   * retrieving application state.
+   */
+  this.state = this.base
+
+  this.plugins = []
+  this.stores = {}
   this.transactions = []
 }
 
