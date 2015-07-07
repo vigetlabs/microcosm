@@ -3,8 +3,8 @@ import uid from 'uid'
 
 export default function* sendChat (message) {
   const question = {
-    id: uid(),
     message,
+    id   : uid(),
     time : new Date(),
     user : 'You',
   }
