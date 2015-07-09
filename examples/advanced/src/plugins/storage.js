@@ -19,8 +19,10 @@ function fetch() {
   }
 }
 
-export function register (app, options, next) {
+function register (app, options, next) {
   app.listen(() => save(app))
   app.replace(fetch())
   next()
 }
+
+export default { register }

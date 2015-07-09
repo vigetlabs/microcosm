@@ -7,7 +7,7 @@ import Layout     from '../views/layout'
 import Microscope from 'addons/microscope'
 import React      from 'react'
 
-export function register (app, { el }, next) {
+function register (app, { el }, next) {
   let ui = (
     <Microscope instance={ app }>
       <Layout app={ app } />
@@ -17,3 +17,5 @@ export function register (app, { el }, next) {
   React.render(ui, el)
   next()
 }
+
+export default { register }

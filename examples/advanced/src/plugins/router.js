@@ -14,7 +14,7 @@ let routes = [
   { path: '/list/:id', handler: require('../views/pages/show') }
 ]
 
-export function register (app, options, next) {
+function register (app, options, next) {
   let action = app.push.bind(app, Route.set)
 
   // Create a callback for each route that pushes the event
@@ -31,3 +31,5 @@ export function register (app, options, next) {
 
   next()
 }
+
+export default { register }
