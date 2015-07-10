@@ -1,8 +1,6 @@
-BIN  = $$(npm bin)
-SWIG = $(BIN)/swig
-SASS = $(BIN)/node-sass
-SVGO = $(BIN)/svgo
-SYNC = $(BIN)/browser-sync
+SHELL := /bin/bash
+PATH  := ../node_modules/.bin:$(PATH)
+
 DATA = ../package.json
 
 stylesheets = dist/css/style.css
@@ -18,19 +16,19 @@ install:
 watch:
 	@echo "Watching src for changes..."
 	@fswatch -0 src | xargs -0 -n1 -I{} make -j8 &\
-	$(SYNC) start --files "dist/css/*.css" "dist/*.html" --server dist
+	browser-sync start --files "dist/css/*.css" "dist/*.html" --server dist
 
 dist:
 	@mkdir -p dist/{images,css}
 
 dist/%.svg: src/%.svg
-	$(SVGO) $^ $@
+	svgo $^ $@
 
 dist/%.png: src/%.png
 	cat $^ > $@
 
 dist/css/%.css: src/scss/%.scss
-	$(SASS) $^ > $@
+	node-sass $^ > $@
 
 dist/%.html: src/%.html
-	$(SWIG) render $^ -j $(DATA) > $@
+	swig render $^ -j $(DATA) > $@

@@ -1,9 +1,7 @@
-BIN     = $$(npm bin)
-BABEL   = $(BIN)/babel
-KARMA   = $(BIN)/karma
-WEBPACK = $(BIN)/webpack
-DIST    = dist
-JS      = $(shell find src -name '*.js*' ! -path '*/__tests__/*') $(shell find addons -name '*.js*' ! -path '*/__tests__/*')
+SHELL := /bin/bash
+PATH  := node_modules/.bin:$(PATH)
+DIST  := dist
+JS    := $(shell find src -name '*.js*' ! -path '*/__tests__/*') $(shell find addons -name '*.js*' ! -path '*/__tests__/*')
 
 .PHONY: clean test test-watch release example website
 .FORCE: javascript-min
@@ -24,11 +22,11 @@ docs: $(DIST)
 	cp -r $@ $^
 
 javascript: $(DIST)
-	@$(BABEL) -d $^ $(JS)
+	@babel -d $^ $(JS)
 
 javascript-min: javascript
 	@NODE_ENV=production \
-	$(WEBPACK) -p dist/src/Microcosm.js $(DIST)/microcosm.build.js \
+	webpack -p dist/src/Microcosm.js $(DIST)/microcosm.build.js \
 	--devtool sourcemap --output-library-target commonjs2 \
 	--optimize-minimize --optimize-occurence-order --optimize-dedupe
 
@@ -36,7 +34,7 @@ release: clean build
 	npm publish $(DIST)
 
 example:
-	@$(BIN)/webpack-dev-server \
+	@webpack-dev-server \
 	--config examples/webpack.config.js \
 	--content-base examples \
 	--publicPath assets \
@@ -55,7 +53,7 @@ audit:
 	@gzip -c $(DIST)/microcosm.build.js | wc -c
 
 test:
-	NODE_ENV=test $(KARMA) start --single-run
+	NODE_ENV=test karma start --single-run
 
 test-watch:
-	NODE_ENV=test $(KARMA) start
+	NODE_ENV=test karma start
