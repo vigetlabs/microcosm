@@ -17,7 +17,7 @@ Also check out the [Babel](http://babeljs.io/) JavaScript compiler. It breaks do
 
 Microcosm distinguishes itself from traditional Flux in a number of ways:
 
-**A microcosm owns all state.** Stores and actions are collections of pure functions; they have no data of their own. They tell a Microcosm how it should transform itself from one state to the next.
+**Data is kept in one place.** Stores and actions are collections of pure functions; they have no state of their own. They provide instructions for how a microcosm how it should update itself.
 
 **Microcosm is a transactional system**. Microcosm keeps track of all outstanding actions and operates on them sequentially as they resolve, in the order they were originally invoked.
 
@@ -25,7 +25,7 @@ This design seeks to achieve a reasonable trade off between the simplicity of si
 
 ## Constructing a Microcosm
 
-A Microcosm provides a central place to keep information. Although you can instantiate one directly, extending it using the ES6 `class` keyword provides a way to keep configuration logic in one place.
+A microcosm provides a central place to keep information. Although you can instantiate one directly, extending it using the ES6 `class` keyword provides a way to keep configuration logic in one place.
 
 ```javascript
 import Microcosm from 'microcosm'

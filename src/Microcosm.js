@@ -1,10 +1,10 @@
 let Diode = require('diode')
 let Store = require('./Store')
 let Transaction = require('./Transaction')
+let flatten = require('./flatten')
 let install = require('./install')
 let plugin = require('./plugin')
 let remap = require('./remap')
-let flatten = require('./flatten')
 
 let noop = a => a
 
