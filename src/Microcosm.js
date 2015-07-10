@@ -4,6 +4,9 @@ let Transaction = require('./Transaction')
 let install = require('./install')
 let plugin = require('./plugin')
 let remap = require('./remap')
+let flatten = require('./flatten')
+
+let noop = a => a
 
 let Microcosm = function() {
   /**
@@ -56,8 +59,8 @@ Microcosm.prototype = {
   /**
    * Used to determine if a transaction should be purged during `clean()`
    */
-  transactionIsValid(item) {
-    return !item.error
+  shouldRejectTransaction(item) {
+    return item.error
   },
 
   /*
@@ -70,8 +73,10 @@ Microcosm.prototype = {
   /**
    * Remove invalid transactions
    */
-  clean() {
-    this.transactions = this.transactions.filter(this.transactionIsValid)
+  clean(transaction) {
+    if (this.shouldRejectTransaction(transaction)) {
+      this.transactions = this.transactions.filter(t => t !== transaction)
+    }
   },
 
   /**
@@ -89,8 +94,7 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    let next = this.transactions.filter(this.shouldTransactionDispatch)
-                                .reduce(this.dispatch.bind(this), this.base)
+    let next = this.transactions.reduce(this.dispatch.bind(this), this.base)
 
     if (next !== this.state) {
       this.state = next
@@ -101,12 +105,10 @@ Microcosm.prototype = {
   /**
    * Engages the transaction life cycle.
    *
-   * 1. Clean up erroneous transactions
-   * 2. Squash down complete transactions
-   * 3. Roll outstanding changes forward into new state
+   * 1. Squash down complete transactions
+   * 2. Roll outstanding changes forward into new state
    */
   transact() {
-    this.clean()
     this.squash()
     this.rollforward()
   },
@@ -120,6 +122,10 @@ Microcosm.prototype = {
    * "What will change when I account for a transaction?"
    */
   dispatch(state, transaction) {
+    if (this.shouldTransactionDispatch(transaction) === false) {
+      return state
+    }
+
     return remap(this.stores, function(store, key) {
       return Store.send(store, state[key], transaction)
     })
@@ -129,7 +135,7 @@ Microcosm.prototype = {
    * Partially applies `push`.
    */
   prepare(action, params=[]) {
-    return (more, callback) => this.push(action, [].concat(params, more), callback)
+    return (more, callback) => this.push(action, flatten(params, more), callback)
   },
 
   /**
@@ -137,18 +143,16 @@ Microcosm.prototype = {
    * a unique transaction. If an error occurs, it will mark it for clean up
    * and the change will disappear from history.
    */
-  push(action, params, callback) {
+  push(action, params, callback=noop) {
     if (process.env.NODE_ENV !== 'production' && typeof action !== 'function') {
       throw TypeError(`Tried to push ${ action }, but is not a function.`)
     }
 
-    let transaction = new Transaction(action, params, callback)
-
-    transaction.listen(this.transact.bind(this))
+    let transaction = new Transaction(action, params)
 
     this.transactions.push(transaction)
 
-    return transaction.run(params)
+    return transaction.run(callback, this.clean.bind(this, transaction), this.transact.bind(this))
   },
 
   /**
