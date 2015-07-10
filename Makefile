@@ -33,6 +33,9 @@ javascript-min: javascript
 release: clean build
 	npm publish $(DIST)
 
+prerelease: clean build
+	npm publish $(DIST) --tag beta
+
 example:
 	@webpack-dev-server \
 	--config examples/webpack.config.js \
