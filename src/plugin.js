@@ -7,20 +7,16 @@
  * of a Microcosm.
  */
 
-module.exports = function PluginFactory(config, options, app) {
-
-  let Plugin = function(callback) {
-    this.app = app
-    this.options = options
-
+const defaults = {
+  __start(callback) {
     this.register(this.app, this.options, callback)
+  },
+
+  register(app, options, next) {
+    next()
   }
+}
 
-  Plugin.prototype = config
-
-  if (process.env.NODE_ENV !== 'production' && typeof config.register !== 'function') {
-    throw new TypeError("Plugins must include a register method.")
-  }
-
-  return Plugin
+module.exports = function PluginFactory(config, options, app) {
+  return Object.assign({ app, options }, defaults, config)
 }

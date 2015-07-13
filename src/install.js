@@ -8,10 +8,10 @@ function install (plugins, callback) {
     return callback(null)
   }
 
-  let Plugin = plugins[0]
-  let tail = plugins.slice(1)
+  let plugin = plugins[0]
+  let tail   = plugins.slice(1)
 
-  return new Plugin(function(err) {
+  return plugin.__start(function(err) {
     err ? callback(err) : install(tail, callback)
   })
 }
