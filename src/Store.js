@@ -3,35 +3,22 @@
  * Used to provide default values for a store configuration
  */
 
-let attempt = require('./attempt')
-let tag     = require('./tag')
-
-let Store = {
-
-  getInitialState(store) {
-    return attempt(store, 'getInitialState')
-  },
-
-  serialize(store, state) {
-    return attempt(store, 'serialize', [ state ], state)
-  },
-
-  deserialize(store, state) {
-    return attempt(store, 'deserialize', [ state ], state)
-  },
-
-  register(store) {
-    return attempt(store, 'register', [], undefined, store)
-  },
-
-  send(store, state, transaction) {
-    let { action, body } = transaction
-
-    tag(action)
-
-    return attempt(Store.register(store), action.toString(), [ state, body ], state, store)
+exports.getInitialState = function (store) {
+  if ('getInitialState' in store) {
+    return store.getInitialState()
   }
-
 }
 
-module.exports = Store
+exports.serialize = function (store, state) {
+  return 'serialize' in store ? store.serialize(state) : state
+}
+
+exports.deserialize = function (store, raw) {
+  return 'deserialize' in store ? store.deserialize(raw) : raw
+}
+
+exports.send = function (store, state, { payload, type }) {
+  let handler = 'register' in store ? store.register()[type] : false
+
+  return handler ? handler.call(store, state, payload) : state
+}

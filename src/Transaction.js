@@ -1,48 +1,41 @@
 let signal  = require('./signal')
 let flatten = require('./flatten')
 
-function Transaction(action, params) {
-  this.action = action
-
-  // Ensure an array
-  this.params = flatten(params)
-  this.timestamp = Date.now()
+function isComplete(transaction) {
+  return transaction.error || transaction.meta.done
 }
 
-Transaction.prototype = {
-
-  constructor: Transaction,
-
-  active : false,
-  body   : null,
-  done   : false,
-  error  : null,
-
-  isComplete() {
-    return this.error || this.done
-  },
-
-  run(resolve, reject, progress) {
-    return signal(this.action, this.params, (error, body, pending) => {
-      this.active = true
-      this.body   = body
-      this.done   = this.done || !pending
-      this.error  = error
-
-      if (error) {
-        reject(error)
-      }
-
-      progress()
-
-      if (this.isComplete()) {
-        // This is a neat trick to get around the promise try/catch
-        // https://github.com/then/promise/blob/master/src/done.js
-        setTimeout(resolve.bind(this, error, body), 0)
-      }
-    })
+exports.create = function (type) {
+  return {
+    type,
+    payload: null,
+    meta: {
+      active: false,
+      done: false
+    },
+    error: null
   }
-
 }
 
-module.exports = Transaction
+exports.run = function (transaction, body, progress, reject, callback, scope) {
+
+  return signal(body, function (error, payload, pending) {
+    transaction.payload = payload
+    transaction.error = error
+
+    transaction.meta.active = true
+    transaction.meta.done = isComplete(transaction) || !pending
+
+    if (error) {
+      reject.call(scope, transaction)
+    }
+
+    progress.call(scope, transaction)
+
+    if (callback && isComplete(transaction)) {
+      // This is a neat trick to get around the promise try/catch
+      // https://github.com/then/promise/blob/master/src/done.js
+      setTimeout(callback.bind(scope, error, payload), 0)
+    }
+  })
+}

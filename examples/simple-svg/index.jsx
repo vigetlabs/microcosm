@@ -11,8 +11,8 @@ app.addStore('circle', Circle)
 
 app.start(function () {
   requestAnimationFrame(function loop () {
-    requestAnimationFrame(loop)
     app.push(update)
+    requestAnimationFrame(loop)
   })
 
   React.render(<Microscope instance={ app }><Viget /></Microscope>,

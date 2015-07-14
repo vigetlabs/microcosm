@@ -5,7 +5,7 @@
 
 let uid = 0
 
-module.exports = function(fn) {
+module.exports = function tag (fn) {
   let name = fn.name || 'microcosm_action'
   let mark = uid++
 

@@ -5,8 +5,7 @@ let flatten = require('./flatten')
 let install = require('./install')
 let plugin = require('./plugin')
 let remap = require('./remap')
-
-let noop = a => a
+let tag = require('./tag')
 
 let Microcosm = function() {
   /**
@@ -52,8 +51,8 @@ Microcosm.prototype = {
    * is useful to override if you wish to preserve transaction history
    * beyond outstanding transactions.
    */
-  shouldTransactionMerge(item, all) {
-    return item.done
+  shouldTransactionMerge(transaction) {
+    return transaction.meta.done
   },
 
   /**
@@ -66,8 +65,8 @@ Microcosm.prototype = {
   /*
    * Before dispatching, this function is called on every transaction
    */
-  shouldTransactionDispatch(item) {
-    return item.active
+  shouldTransactionDispatch(transaction) {
+    return transaction.meta.active
   },
 
   /**
@@ -75,7 +74,7 @@ Microcosm.prototype = {
    */
   clean(transaction) {
     if (this.shouldRejectTransaction(transaction)) {
-      this.transactions = this.transactions.filter(t => t !== transaction)
+      this.transactions.splice(this.transactions.indexOf(transaction), 1)
     }
   },
 
@@ -83,11 +82,16 @@ Microcosm.prototype = {
    * Starting from the beginning, consecutively fold complete transactions into
    * base state and remove them from the transaction list.
    */
-  squash() {
-    while (this.transactions.length && this.shouldTransactionMerge(this.transactions[0], this.transactions)) {
-      this.base = this.dispatch(this.base, this.transactions.shift())
-    }
-  },
+   reconcile(transaction) {
+     let isFirst = this.transactions[0] === transaction
+
+     if (isFirst && this.shouldTransactionMerge(transaction, this.transactions)) {
+       this.base = this.dispatch(this.base, transaction)
+       this.transactions.shift()
+     }
+
+     this.rollforward()
+   },
 
   /**
    * Dispatch all outstanding, active transactions upon base state to determine
@@ -100,17 +104,6 @@ Microcosm.prototype = {
       this.state = next
       this.emit(this.state)
     }
-  },
-
-  /**
-   * Engages the transaction life cycle.
-   *
-   * 1. Squash down complete transactions
-   * 2. Roll outstanding changes forward into new state
-   */
-  transact() {
-    this.squash()
-    this.rollforward()
   },
 
   /**
@@ -143,16 +136,17 @@ Microcosm.prototype = {
    * a unique transaction. If an error occurs, it will mark it for clean up
    * and the change will disappear from history.
    */
-  push(action, params, callback=noop) {
+  push(action, params, callback) {
     if (process.env.NODE_ENV !== 'production' && typeof action !== 'function') {
-      throw TypeError(`Tried to push ${ action }, but is not a function.`)
+      throw TypeError(`Tried to create Transaction for ${ action }, but it is not a function.`)
     }
 
-    let transaction = new Transaction(action, params)
+    let transaction = Transaction.create(tag(action).toString())
+    let body = action.apply(null, flatten(params))
 
     this.transactions.push(transaction)
 
-    return transaction.run(callback, this.clean.bind(this, transaction), this.transact.bind(this))
+    return Transaction.run(transaction, body, this.reconcile, this.clean, callback, this)
   },
 
   /**
@@ -163,7 +157,7 @@ Microcosm.prototype = {
     this.transactions = transactions
     this.base = state
 
-    return this.transact()
+    return this.rollforward()
   },
 
   /**

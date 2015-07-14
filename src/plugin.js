@@ -13,7 +13,7 @@ const defaults = {
   },
 
   register(app, options, next) {
-    next()
+    next(null)
   }
 }
 

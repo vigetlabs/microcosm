@@ -24,8 +24,8 @@ Plugins are inspired by the API provided by
 greater
 adherence to the Hapi API to help share code and provide consistency.
 
-At the moment, the only requirement is that plugins implement a
-`register` method:
+Plugins implement a `register` method that is called whenever an application is
+started:
 
 ```javascript
 let LazyPlugin = {

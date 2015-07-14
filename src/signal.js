@@ -4,12 +4,11 @@
  */
 
 let chain       = require('./chain')
-let isGenerator = require('is-generator').fn
+let isGenerator = require('is-generator')
 let nodeify     = require('./nodeify')
 
-module.exports = function signal (action, params, callback) {
-  let value     = action.apply(null, params)
-  let processor = isGenerator(action) ? chain : nodeify
+module.exports = function signal (value, callback) {
+  let processor = isGenerator(value) ? chain : nodeify
 
   return processor(value, callback)
 }

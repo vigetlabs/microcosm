@@ -7,7 +7,7 @@
  * @return Object
  */
 
-module.exports = function (obj, transform, scope) {
+module.exports = function remap (obj, transform, scope) {
   let map = {}
 
   for (var key in obj) {
