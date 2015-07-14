@@ -1,3 +1,9 @@
+/**
+ * Transaction
+ * An account of what has happened. Follows the standard action specification here:
+ * https://github.com/acdlite/flux-standard-action
+ */
+
 let signal  = require('./signal')
 let flatten = require('./flatten')
 
