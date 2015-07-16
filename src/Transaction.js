@@ -6,7 +6,7 @@
 
 let signal = require('./signal')
 
-exports.create = function (type) {
+function create (type) {
   return {
     type,
     payload: null,
@@ -18,8 +18,8 @@ exports.create = function (type) {
   }
 }
 
-exports.run = function (transaction, body, update, reject, callback, scope) {
-  return signal(body, function (error, payload, done) {
+function run (transaction, body, update, reject, callback, scope) {
+  return signal(body, function updateTransaction (error, payload, done) {
     transaction.meta.active = true
     transaction.meta.done = done
 
@@ -39,3 +39,5 @@ exports.run = function (transaction, body, update, reject, callback, scope) {
     }
   })
 }
+
+module.exports = { run, create }

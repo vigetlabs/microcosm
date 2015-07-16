@@ -7,6 +7,8 @@ let plugin = require('./plugin')
 let remap = require('./remap')
 let tag = require('./tag')
 
+const EMPTY_ARRAY = []
+
 let Microcosm = function() {
   /**
    * Microcosm uses Diode for event emission. Diode is an event emitter
@@ -68,22 +70,22 @@ Microcosm.prototype = {
   release(transaction) {
     this.transactions.splice(this.transactions.indexOf(transaction), 1)
 
-    this.rollforward()
+    return this.rollforward()
   },
 
   /**
    * Starting from the beginning, consecutively fold complete transactions into
    * base state and remove them from the transaction list.
    */
-   reconcile(transaction) {
-     let isFirst = this.transactions[0] === transaction
+   reconcile() {
+     let first = this.transactions[0]
 
-     if (isFirst && this.shouldTransactionMerge(transaction, this.transactions)) {
-       this.base = this.dispatch(this.base, transaction)
-       this.transactions.shift()
+     if (this.shouldTransactionMerge(first, this.transactions)) {
+       this.base = this.dispatch(this.base, first)
+       return this.release(first)
      }
 
-     this.rollforward()
+     return this.rollforward()
    },
 
   /**
@@ -148,7 +150,7 @@ Microcosm.prototype = {
    * Clear all outstanding transactions and assign base state
    * to a given object (or getInitialState())
    */
-  reset(state=this.getInitialState(), transactions=[]) {
+  reset(state=this.getInitialState(), transactions=EMPTY_ARRAY) {
     this.transactions = flatten(transactions)
     this.base = state
 
