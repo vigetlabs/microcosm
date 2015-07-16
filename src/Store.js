@@ -4,21 +4,19 @@
  */
 
 exports.getInitialState = function (store) {
-  if ('getInitialState' in store) {
-    return store.getInitialState()
-  }
+  return store.getInitialState? store.getInitialState() : undefined
 }
 
 exports.serialize = function (store, state) {
-  return 'serialize' in store ? store.serialize(state) : state
+  return store.serialize? store.serialize(state) : state
 }
 
 exports.deserialize = function (store, raw) {
-  return 'deserialize' in store ? store.deserialize(raw) : raw
+  return store.deserialize? store.deserialize(raw) : raw
 }
 
 exports.send = function (store, state, { payload, type }) {
-  let handler = 'register' in store ? store.register()[type] : false
+  let handler = store.register? store.register()[type] : false
 
   return handler ? handler.call(store, state, payload) : state
 }

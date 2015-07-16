@@ -1,33 +1,57 @@
 let Microcosm = require('../Microcosm')
-let Store     = require('../Store')
+let Store = require('../Store')
+let Transaction = require('../Transaction')
 
 describe('Stores', function() {
 
-  it ('throws an error if no key is given in addStore', function(done) {
-    try {
-      new Microcosm().addStore({})
-    } catch(x) {
-      x.should.be.instanceOf(TypeError)
-      done()
-    }
+  describe('serialize', function() {
+
+    it ('returns state if no serialize method is defined', function() {
+      Store.serialize({}, 'state').should.equal('state')
+    })
+
+    it ('invokes serialize if defined', function() {
+      Store.serialize({
+        serialize(state) {
+          return state.toUpperCase()
+        }
+      }, 'state').should.equal('STATE')
+    })
+
   })
 
-  it ('always sends actions in the context of the store', function(done) {
-    let app  = new Microcosm()
-    let test = function test () {}
+  describe('deserialize', function() {
+    it ('returns state if no deserialize method is defined', function() {
+      Store.deserialize({}, 'state').should.equal('state')
+    })
 
-    let store = {
-      register() {
-        return {
-          [test](state) {
-            this.should.equal(store)
-            done()
+    it ('invokes deserialize if defined', function() {
+      Store.deserialize({
+        deserialize(state) {
+          return state.toUpperCase()
+        }
+      }, 'state').should.equal('STATE')
+    })
+  })
+
+  describe('send', function() {
+    it ('always sends actions in the context of the store', function() {
+      let store = {
+        register() {
+          return {
+            test(state) {
+              this.should.equal(store)
+            }
           }
         }
       }
-    }
 
-    app.addStore('test', store).push(test)
+      Store.send(store, 'state', Transaction.create('test'))
+    })
+
+    it ('returns state if a handler is not provided', function() {
+      Store.send({}, 'state', Transaction.create('fiz')).should.equal('state')
+    })
   })
 
 })

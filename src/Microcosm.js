@@ -97,6 +97,8 @@ Microcosm.prototype = {
       this.state = next
       this.emit(this.state)
     }
+
+    return this
   },
 
   /**
@@ -147,7 +149,7 @@ Microcosm.prototype = {
    * to a given object (or getInitialState())
    */
   reset(state=this.getInitialState(), transactions=[]) {
-    this.transactions = transactions
+    this.transactions = flatten(transactions)
     this.base = state
 
     return this.rollforward()
