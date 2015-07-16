@@ -4,12 +4,7 @@
  * https://github.com/acdlite/flux-standard-action
  */
 
-let signal  = require('./signal')
-let flatten = require('./flatten')
-
-function isComplete(transaction) {
-  return transaction.error || transaction.meta.done
-}
+let signal = require('./signal')
 
 exports.create = function (type) {
   return {
@@ -19,26 +14,25 @@ exports.create = function (type) {
       active: false,
       done: false
     },
-    error: null
+    error: false
   }
 }
 
-exports.run = function (transaction, body, progress, reject, callback, scope) {
-
-  return signal(body, function (error, payload, pending) {
-    transaction.payload = payload
-    transaction.error = error
-
+exports.run = function (transaction, body, update, reject, callback, scope) {
+  return signal(body, function (error, payload, done) {
     transaction.meta.active = true
-    transaction.meta.done = isComplete(transaction) || !pending
+    transaction.meta.done = done
 
     if (error) {
+      transaction.error = true
+      transaction.payload = error
       reject.call(scope, transaction)
+    } else {
+      transaction.payload = payload
+      update.call(scope, transaction)
     }
 
-    progress.call(scope, transaction)
-
-    if (callback && isComplete(transaction)) {
+    if (done && callback) {
       // This is a neat trick to get around the promise try/catch
       // https://github.com/then/promise/blob/master/src/done.js
       setTimeout(callback.bind(scope, error, payload), 0)

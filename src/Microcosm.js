@@ -72,10 +72,12 @@ Microcosm.prototype = {
   /**
    * Remove invalid transactions
    */
-  clean(transaction) {
+  reject(transaction) {
     if (this.shouldRejectTransaction(transaction)) {
       this.transactions.splice(this.transactions.indexOf(transaction), 1)
     }
+
+    this.rollforward()
   },
 
   /**
@@ -146,7 +148,7 @@ Microcosm.prototype = {
 
     this.transactions.push(transaction)
 
-    return Transaction.run(transaction, body, this.reconcile, this.clean, callback, this)
+    return Transaction.run(transaction, body, this.reconcile, this.reject, callback, this)
   },
 
   /**
