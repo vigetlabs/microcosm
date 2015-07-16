@@ -4,7 +4,7 @@ export default React.createClass({
   getDefaultProps() {
     return {
       title: 'Microcosm SVG Chart Example',
-      height: 250,
+      height: 300,
       width: 250
     }
   },
