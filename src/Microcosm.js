@@ -55,13 +55,6 @@ Microcosm.prototype = {
     return transaction.meta.done
   },
 
-  /**
-   * Used to determine if a transaction should be purged during `clean()`
-   */
-  shouldRejectTransaction(item) {
-    return item.error
-  },
-
   /*
    * Before dispatching, this function is called on every transaction
    */
@@ -70,12 +63,10 @@ Microcosm.prototype = {
   },
 
   /**
-   * Remove invalid transactions
+   * Remove a transactions
    */
-  reject(transaction) {
-    if (this.shouldRejectTransaction(transaction)) {
-      this.transactions.splice(this.transactions.indexOf(transaction), 1)
-    }
+  release(transaction) {
+    this.transactions.splice(this.transactions.indexOf(transaction), 1)
 
     this.rollforward()
   },
@@ -148,7 +139,7 @@ Microcosm.prototype = {
 
     this.transactions.push(transaction)
 
-    return Transaction.run(transaction, body, this.reconcile, this.reject, callback, this)
+    return Transaction.run(transaction, body, this.reconcile, this.release, callback, this)
   },
 
   /**
