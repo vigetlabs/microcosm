@@ -7,6 +7,8 @@ let plugin = require('./plugin')
 let remap = require('./remap')
 let tag = require('./tag')
 
+const EMPTY_ARRAY = []
+
 let Microcosm = function() {
   /**
    * Microcosm uses Diode for event emission. Diode is an event emitter
@@ -148,8 +150,8 @@ Microcosm.prototype = {
    * Clear all outstanding transactions and assign base state
    * to a given object (or getInitialState())
    */
-  reset(state=this.getInitialState(), transactions=[]) {
-    this.transactions = flatten(transactions)
+  reset(state=this.getInitialState(), transactions=EMPTY_ARRAY) {
+    this.transactions = flatten(transactions) // Prevent accidental mutation
     this.base = state
 
     return this.rollforward()
