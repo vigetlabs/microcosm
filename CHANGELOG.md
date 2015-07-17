@@ -1,8 +1,15 @@
 # Changelog
 
+## 9.1.0
+
+### Internal changes
+
+- Updates to the way transactions are created and rolled forward to improve
+  efficiency and support dev tool development
+
 ## 9.0.0
 
-## Noticeable changes
+### Noticeable changes
 
 - Microcosm now uses transactions to process state. When an action is pushed,
   an associated transaction will be created. Transactions are processed in the
@@ -10,20 +17,20 @@
 - Added a mechanism for optimistic updates using generators in actions.
 - `app.push` accepts a callback as the third argument which will be invoked when an action is completely resolved (More in breaking changes)
 
-## Breaking Changes
+### Breaking Changes
 
 - Removed Foliage. Microcosm no longer extends from Foliage and its API is no longer available.
 - Instead of `app.get` or `app.toObject()` to retrieve state, use `app.state`.
 - The signature for `app.push` is now `app.push(action, [...arguments], callback)`.
 - The signature for `app.prepare` is now `app.prepare(action, [...arguments])`.
 
-## Upgrading
+### Upgrading
 
-### Foliage
+#### Foliage
 
 For those using the Foliage API, consider using Foliage within Stores themselves.
 
-### app.push
+#### app.push
 
 `app.push` should continue to work as expected when only one parameter is pushed to an action, however those pushing multiple parameters should make the following change:
 
@@ -45,24 +52,24 @@ app.push(action, params, function(error, body) {
 })
 ```
 
-### Getting app state
+#### Getting app state
 
 All instances of `app.get('key')` should be replaced with `app.state.key`, sort of like
 if it were a React Component
 
 ## 8.3.0
 
-## Breaking changes
+### Breaking changes
 
 - Microcosm will emit events synchronously.
 
-## Upgrading
+### Upgrading
 
 In the past, Microcosm would use requestAnimationFrame to batch together changes. However this can cause unexpected consequences when sequentially performing otherwise synchronous operations. For those who wish to preserve this behavior, consider using debounce to "choke" high frequency changes.
 
 ## 8.2.0
 
-## Internal Changes
+### Internal Changes
 
 - Upgrade Foliage to `0.24.0`.
 - Moved `Store.prototype.send` to `Store.send`. This has always been
@@ -72,12 +79,12 @@ In the past, Microcosm would use requestAnimationFrame to batch together changes
 - We now use `babel-plugin-object-assign` for extension
 - Microcosm is compiled in normal babel mode (not loose)
 
-## Fixes
+### Fixes
 
 - Store responses to actions will always be called within the scope of the store.
 - Addressed classical inheritance issue not caught from `loose` babel compilation
 
-## Upgrading
+### Upgrading
 
 For those using `Store.prototype.send`, the following change is
 necessary:
