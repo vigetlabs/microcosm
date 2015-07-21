@@ -20,6 +20,12 @@
     "flux"
   ],
   "license": "MIT",
+  "babel": {
+    "stage": 1,
+    "sourceMaps": "inline",
+    "blacklist": [ "strict" ],
+    "plugins": [ "object-assign" ]
+  },
   "dependencies": {
     "diode": "~5.0",
     "is-promise": "^2.0",
