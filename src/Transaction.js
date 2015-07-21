@@ -4,7 +4,7 @@
  * https://github.com/acdlite/flux-standard-action
  */
 
-let signal = require('./signal')
+let async = require('./async')
 
 function create (type) {
   return {
@@ -19,7 +19,7 @@ function create (type) {
 }
 
 function run (transaction, body, update, reject, callback, scope) {
-  return signal(body, function updateTransaction (error, payload, done) {
+  return async(body, function updateTransaction (error, payload, done) {
     transaction.meta.active = true
     transaction.meta.done = done
 
