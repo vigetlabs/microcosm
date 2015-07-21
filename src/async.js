@@ -15,7 +15,7 @@ const DEFAULT_ERROR = new Error('Rejected Promise')
  * @param {any} promise - The target value
  * @param {Function} callback - An error-first callback
  */
-function nodeify (promise, callback) {
+let nodeify = function (promise, callback) {
   if (!isPromise(promise)) {
     return callback(null, promise, true)
   }
@@ -32,7 +32,7 @@ function nodeify (promise, callback) {
  * @param {Iterator} iterator - An iterable collection
  * @param {Function} callback - An error-first callback
  */
-function waterfall (iterator, callback) {
+let waterfall = function (iterator, callback) {
   return nodeify(iterator.next().value, function step (error, body) {
     let { done, value } = iterator.next()
 
@@ -49,7 +49,7 @@ function waterfall (iterator, callback) {
  * @param {any} value - The compared value
  * @param {Function} callback - An error-first callback
  */
-function chain (value, callback) {
+let chain = function (value, callback) {
   return (isGenerator(value) ? waterfall : nodeify)(value, callback)
 }
 
