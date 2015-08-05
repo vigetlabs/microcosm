@@ -17,7 +17,7 @@ Also check out the [Babel](http://babeljs.io/) JavaScript compiler. It breaks do
 
 Microcosm distinguishes itself from traditional Flux in a number of ways:
 
-**Data is kept in one place.** Stores and actions are collections of pure functions; they have no state of their own. They provide instructions for how a microcosm how it should update itself.
+**Data is kept in one place.** Stores and actions are collections of pure functions; they have no state of their own. They provide instructions for how a microcosm should update itself.
 
 **Microcosm is a transactional system**. Microcosm keeps track of all outstanding actions and operates on them sequentially as they resolve, in the order they were originally invoked.
 
