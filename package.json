@@ -23,8 +23,12 @@
   "babel": {
     "stage": 1,
     "sourceMaps": "inline",
-    "blacklist": [ "strict" ],
-    "plugins": [ "object-assign" ]
+    "blacklist": [
+      "strict"
+    ],
+    "plugins": [
+      "object-assign"
+    ]
   },
   "dependencies": {
     "diode": "~5.0",
@@ -43,6 +47,7 @@
     "classnames": "~2",
     "css-loader": "~0.15",
     "elizabot": "0.0.2",
+    "flux-standard-action": "^0.6.0",
     "istanbul": "~0.3",
     "istanbul-instrumenter-loader": "~0.1",
     "karma": "~>0.13.4",

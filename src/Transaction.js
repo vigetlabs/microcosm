@@ -6,10 +6,10 @@
 
 let async = require('./async')
 
-function create (type) {
+function create (type, payload=null) {
   return {
     type,
-    payload: null,
+    payload,
     meta: {
       active: false,
       done: false
