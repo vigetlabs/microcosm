@@ -16,7 +16,7 @@ export default {
 
   add(state, params) {
     let record = Object.assign({
-      color : '#aaaaaa',
+      color : '#aaaaaa'
     }, params)
 
     record.contrast = contrast(record.color)
