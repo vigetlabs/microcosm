@@ -69,7 +69,10 @@ Microcosm.prototype = {
    */
   release(transaction) {
     this.transactions.splice(this.transactions.indexOf(transaction), 1)
+  },
 
+  transactionDidFail(transaction) {
+    this.release(transaction)
     return this.rollforward()
   },
 
@@ -77,12 +80,12 @@ Microcosm.prototype = {
    * Starting from the beginning, consecutively fold complete transactions into
    * base state and remove them from the transaction list.
    */
-   reconcile() {
+  transactionDidUpdate() {
      let first = this.transactions[0]
 
      if (this.shouldTransactionMerge(first, this.transactions)) {
        this.base = this.dispatch(this.base, first)
-       return this.release(first)
+       this.release(first)
      }
 
      return this.rollforward()
@@ -143,7 +146,7 @@ Microcosm.prototype = {
 
     this.transactions.push(transaction)
 
-    return Transaction.run(transaction, body, this.reconcile, this.release, callback, this)
+    return Transaction.run(transaction, body, this.transactionDidUpdate, this.transactionDidFail, callback, this)
   },
 
   /**
@@ -237,6 +240,7 @@ Microcosm.prototype = {
 
     return this
   }
+
 }
 
 module.exports = Microcosm
