@@ -33,6 +33,9 @@ javascript-min: javascript
 release: clean build
 	npm publish $(DIST)
 
+release-beta: clean build
+	npm publish $(DIST) --tag=beta
+
 prerelease: clean build
 	npm publish $(DIST) --tag beta
 
