@@ -27,6 +27,7 @@ function register (app, options, next) {
     page(path, ({ params }) => action({ handler, params }))
   })
 
+  page.base(window.location.pathname)
   page.start({ hashbang: true })
 
   next()
