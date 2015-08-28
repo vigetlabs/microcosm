@@ -1,7 +1,7 @@
-import AddItem      from './AddItem'
-import ItemActions  from 'actions/items'
-import React        from 'react'
+import AddItem from './AddItem'
+import React from 'react'
 import TaskListItem from './TaskListItem'
+import { addItem, removeItem } from 'actions/items'
 
 export default React.createClass({
 
@@ -35,13 +35,13 @@ export default React.createClass({
   _onAddItem(name) {
     let { app, list } = this.props
 
-    app.push(ItemActions.add, { name, list })
+    app.push(addItem, { name, list })
   },
 
   _onRemoveItem(item) {
     let { app } = this.props
 
-    app.push(ItemActions.remove, item.id)
+    app.push(removeItem, item.id)
   }
 
 })

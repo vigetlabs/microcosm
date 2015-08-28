@@ -1,5 +1,3 @@
-function set(params) {
+export function updateRoute (params) {
   return params
 }
-
-export default { set }

@@ -1,31 +1,28 @@
-import Lists    from '../actions/lists'
 import contrast from '../../lib/contrast'
+import { addList, removeList } from '../actions/lists'
+import { willStart } from 'src/Microcosm'
 
-export default {
+function getInitialState() {
+  return []
+}
 
-  getInitialState() {
-    return []
-  },
+function add(state, params) {
+  let record = Object.assign({
+    color : '#aaaaaa'
+  }, params)
 
-  register() {
-    return {
-      [Lists.add]    : this.add,
-      [Lists.remove] : this.remove
-    }
-  },
+  record.contrast = contrast(record.color)
 
-  add(state, params) {
-    let record = Object.assign({
-      color : '#aaaaaa'
-    }, params)
+  return state.concat(record)
+}
 
-    record.contrast = contrast(record.color)
+function remove(state, id) {
+  return state.filter(i => i.id !== id)
+}
 
-    return state.concat(record)
-  },
-
-  remove(state, id) {
-    return state.filter(i => i.id !== id)
+export default function register() {
+  return {
+    [addList]    : add,
+    [removeList] : remove
   }
-
 }

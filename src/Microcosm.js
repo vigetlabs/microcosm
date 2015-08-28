@@ -6,6 +6,7 @@ let install = require('./install')
 let plugin = require('./plugin')
 let remap = require('./remap')
 let tag = require('./tag')
+let lifecycle = require('./lifecycle')
 
 const EMPTY_ARRAY = []
 
@@ -242,5 +243,8 @@ Microcosm.prototype = {
   }
 
 }
+
+// Assign externally visible life cycle actions
+Object.assign(Microcosm, lifecycle)
 
 module.exports = Microcosm

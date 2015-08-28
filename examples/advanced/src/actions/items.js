@@ -1,11 +1,9 @@
 import uid from 'uid'
 
-function add(params) {
-  return Object.assign({ id: uid() }, params)
+export function addItem (params) {
+  return { id: uid(), ...params }
 }
 
-function remove(id) {
+export function removeItem (id) {
   return id
 }
-
-export default { add, remove }

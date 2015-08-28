@@ -4,8 +4,8 @@
  * quite give Microcosm the same stress test
  */
 
-import Route from 'actions/route'
 import page from 'page'
+import { updateRoute } from 'actions/route'
 
 page.base('/advanced')
 
@@ -15,7 +15,7 @@ let routes = [
 ]
 
 function register (app, options, next) {
-  let action = app.push.bind(app, Route.set)
+  let action = app.prepare(updateRoute)
 
   // Create a callback for each route that pushes the event
   // into the app's dispatcher

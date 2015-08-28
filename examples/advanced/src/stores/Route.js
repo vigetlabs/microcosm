@@ -1,19 +1,17 @@
-import Route from 'actions/route'
+import { updateRoute } from 'actions/route'
+import { willStart } from 'src/Microcosm'
 
-export default {
+function getInitialState() {
+  return {}
+}
 
-  getInitialState() {
-    return {}
-  },
+function set (state, params) {
+  return params
+}
 
-  register() {
-    return {
-      [Route.set]: this.set
-    }
-  },
-
-  set(state, params) {
-    return params
+export default function register() {
+  return {
+    [willStart]   : getInitialState,
+    [updateRoute] : set
   }
-
 }
