@@ -1,13 +1,14 @@
 let tag = require('../tag')
+let assert = require('assert')
 
 describe('tag', function() {
 
   it ('includes the function name', function() {
-    tag(function test() {}).toString().should.include('test')
+    assert.equal(tag(function test() {}).toString().search('test'), 0)
   })
 
   it ('assigns a default name', function() {
-    tag({}).toString().should.include('microcosm_action')
+    assert.equal(tag({}).toString().search('microcosm_action'), 0)
   })
 
 })

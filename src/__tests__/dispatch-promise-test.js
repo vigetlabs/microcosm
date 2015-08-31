@@ -1,5 +1,6 @@
 let Microcosm = require('../Microcosm')
 let Promise   = require('promise')
+let assert    = require('assert')
 
 describe('When dispatching promises', function() {
   let pass = function(n) {
@@ -45,29 +46,32 @@ describe('When dispatching promises', function() {
 
   it ('returns the promise from app.push', function(done) {
     app.push(single, 2).done(function() {
-      app.state.test.should.equal(3)
+      assert.equal(app.state.test, 3)
       done()
     })
   })
 
   it ('does not dispatch if the promise fails', function(done) {
-    sinon.spy(app, 'dispatch')
-    app.push(error, [], function() {
-      app.dispatch.should.not.have.been.called
+    app.dispatch = function() {
+      done(new Error('Dispatch should not have been called!'))
+    }
+
+    app.push(error, [], function(error) {
+      assert.ok(error instanceof Error)
       done()
     })
   })
 
   it ('waits for all promises in the chain to resolve', function(done) {
     app.push(chain, 1, function() {
-      app.state.test.should.equal(2)
+      assert.equal(app.state.test, 2)
       done()
     })
   })
 
   it ('respects future changes when it fails', function(done) {
     app.push(error, 1, function() {
-      app.state.test.should.equal(5)
+      assert.equal(app.state.test, 5)
       done()
     })
 
@@ -75,18 +79,11 @@ describe('When dispatching promises', function() {
   })
 
   it ('does not dispatch transactions for unresolved promises', function(done) {
-    let spy = sinon.spy(TestStore, 'sum')
-
     app.push(late, 1, function() {
-      app.state.test.should.equal(6)
-
-      // Twice for 'pass' and once for 'late'
-      spy.should.have.been.calledThrice
+      assert.equal(app.state.test, 6)
       done()
     })
 
     app.push(pass, 4)
-
-    spy.should.have.been.calledOnce
   })
 })

@@ -1,8 +1,8 @@
 let Action      = require('./fixtures/Action')
 let DummyStore  = require('./fixtures/DummyStore')
 let Microcosm   = require('../Microcosm')
-let Store       = require('../Store')
 let Transaction = require('../Transaction')
+let assert      = require('assert')
 
 describe('Microcosm', function() {
   let app;
@@ -21,56 +21,48 @@ describe('Microcosm', function() {
       }
     }
 
-    new MyApp().stores.should.have.property('foo')
+    assert.ok('foo' in new MyApp().stores)
   })
 
   describe('reset', function() {
     let dummy = Transaction.create('test')
-    let transactions = [dummy]
+    let transactions = [ dummy ]
 
     it ('can reset with specific transactions', function() {
-      app.reset({}, transactions).transactions.should.eql([dummy])
+      assert.deepEqual(app.reset({}, transactions).transactions, [ dummy ])
     })
 
     it ('copies the array when given transactions on reset', function() {
-      app.reset({}, transactions).transactions.should.not.equal(transactions)
+      assert.notEqual(app.reset({}, transactions).transactions, transactions)
     })
   })
 
-  it ('deserializes when replace is invoked', function(done) {
-    let spy    = sinon.spy(app, 'deserialize')
-    let sample = { dummy: 'different' }
-
+  it ('deserializes when replace is invoked', function() {
     app.listen(function() {
-      spy.should.have.been.calledWith(sample)
-      app.state.dummy.should.equal('different')
-      done()
+      assert.equal(app.state.dummy, 'DIFFERENT')
     })
 
-    app.replace(sample)
+    app.replace({ dummy: 'different' })
   })
 
   it ('binds arguments to push', function() {
-    sinon.stub(app, 'push')
-    app.prepare('action', [ 1, 2 ])(3)
-    app.push.should.have.been.calledWith('action', [ 1, 2, 3 ])
+    app.prepare(function(...args) {
+      assert.deepEqual(args, [ 1, 2, 3 ])
+    }, [ 1, 2 ])(3)
   })
 
   it ('prepare handles cases with no arguments', function() {
-    sinon.stub(app, 'push')
+    let expected = 3
+    let test = a => assert.equal(a, expected)
 
-    app.prepare('action')(3)
-    app.push.should.have.been.calledWith('action', [ 3 ])
-
-    app.prepare('action', 3)(1)
-    app.push.should.have.been.calledWith('action', [ 3, 1 ])
+    app.prepare(test)(expected)
   })
 
   it ('throws an error if asked to push a non-function value', function(done) {
     try {
       app.push(null)
     } catch(x) {
-      x.should.be.instanceof(TypeError)
+      assert(x instanceof TypeError)
       done()
     }
   })
@@ -79,20 +71,14 @@ describe('Microcosm', function() {
     try {
       new Microcosm().addStore({})
     } catch(x) {
-      x.should.be.instanceOf(TypeError)
+      assert(x instanceof TypeError)
       done()
     }
   })
 
   it ('can run multiple callbacks', function(done) {
     let app = new Microcosm()
-    let a   = sinon.stub()
-    let b   = sinon.stub()
 
-    app.start(a, b, function() {
-      a.should.have.been.called
-      b.should.have.been.called
-      done()
-    })
+    app.start(() => {}, done)
   })
 })

@@ -1,4 +1,5 @@
 let Microcosm = require('../Microcosm')
+let assert = require('assert')
 
 describe('Serialization', function() {
 
@@ -14,7 +15,7 @@ describe('Serialization', function() {
       }
     })
 
-    app.toJSON().should.have.property('serialize-test', 'this is a test')
+    assert.equal(app.toJSON()['serialize-test'], 'this is a test')
   })
 
   it ('properly deserializes nully values', function() {
@@ -22,7 +23,7 @@ describe('Serialization', function() {
 
     app.addStore('fiz', {})
 
-    app.deserialize(null).should.not.have.property('fiz')
-    app.deserialize(undefined).should.not.have.property('fiz')
+    assert.equal(false, 'fiz' in app.deserialize(null))
+    assert.equal(false, 'fiz' in app.deserialize(undefined))
   })
 })

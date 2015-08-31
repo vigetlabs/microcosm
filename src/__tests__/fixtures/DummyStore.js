@@ -9,5 +9,9 @@ export default {
     return {
       [Action]: (old, next) => next
     }
+  },
+
+  deserialize(state) {
+    return state.toUpperCase()
   }
 }

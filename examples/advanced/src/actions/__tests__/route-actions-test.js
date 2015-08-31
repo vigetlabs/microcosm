@@ -1,5 +1,6 @@
 import App          from '../../App'
 import RouteActions from '../route'
+import assert from 'assert'
 
 describe('Route Actions', function() {
   var app;
@@ -15,7 +16,7 @@ describe('Route Actions', function() {
 
       app.push(RouteActions.set, params)
 
-      app.state.route.should.eql(params)
+      assert.deepEqual(app.state.route, params)
     })
   })
 })

@@ -1,5 +1,5 @@
-import Items from 'actions/items'
-import Lists from 'actions/lists'
+import Items from '../actions/items'
+import Lists from '../actions/lists'
 
 export default {
 

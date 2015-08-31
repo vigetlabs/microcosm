@@ -2,6 +2,7 @@ let React = require('react/addons')
 let Microscope = require('../index')
 let Microcosm = require('../../../src/Microcosm')
 let render = React.addons.TestUtils.renderIntoDocument
+let assert = require('assert')
 
 describe('<Microscope />', function() {
   let test = function test() {}
@@ -25,7 +26,7 @@ describe('<Microscope />', function() {
     app.push(test)
 
     setTimeout(function() {
-      el.state.key.should.equal('value')
+      assert.equal(el.state.key, 'value')
       done()
     }, 100)
   })
@@ -33,22 +34,21 @@ describe('<Microscope />', function() {
   it ('does not wrap single children', function() {
     let el = render(<Microscope instance={ app }><p/></Microscope>)
 
-    el.getDOMNode().tagName.should.equal('P')
+    assert.equal(el.getDOMNode().tagName, 'P')
   })
 
   it ('wraps multiple children in a span', function() {
     let el = render(<Microscope instance={ app }><p/><p/></Microscope>)
 
-    el.getDOMNode().tagName.should.equal('SPAN')
+    assert.equal(el.getDOMNode().tagName, 'SPAN')
   })
 
   it ('unsubscribes when unmounting', function() {
-    sinon.spy(app, 'ignore')
 
     React.render(<Microscope instance={ app }><p/><p/></Microscope>, document.body)
     React.render(<div />, document.body)
 
-    app.ignore.should.have.been.called
+    app.emit()
   })
 
 })

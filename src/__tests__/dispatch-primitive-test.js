@@ -1,4 +1,5 @@
 let Microcosm = require('../Microcosm')
+let assert    = require('assert')
 
 describe('When dispatching primitive values', function() {
   let app = new Microcosm()
@@ -19,7 +20,7 @@ describe('When dispatching primitive values', function() {
 
   it ('properly reduces from a store', function(done) {
     app.push(add, 2, function() {
-      app.state.test.should.equal(app.stores.test.getInitialState() + 2)
+      assert.equal(app.state.test, app.stores.test.getInitialState() + 2)
       done()
     })
   })

@@ -1,4 +1,4 @@
-import Route from 'actions/route'
+import Route from '../actions/route'
 
 export default {
 

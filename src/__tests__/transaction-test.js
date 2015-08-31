@@ -1,12 +1,13 @@
 let Transaction = require('../Transaction')
+let assert = require('assert')
 let { isFSA } = require('flux-standard-action')
 
 describe('Transactions', function() {
   it ('uses the flux standard action spec', function() {
-    isFSA(Transaction.create('test')).should.equal(true)
+    assert(isFSA(Transaction.create('test')))
   })
 
   it ('can set a payload when created', function() {
-    Transaction.create('test', 'body').payload.should.equal('body')
+    assert.equal(Transaction.create('test', 'body').payload, 'body')
   })
 })

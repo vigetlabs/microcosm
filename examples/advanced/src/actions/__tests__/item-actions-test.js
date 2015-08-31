@@ -1,6 +1,7 @@
 import App         from '../../App'
 import ItemActions from '../items'
 import ListActions from '../lists'
+import assert from 'assert'
 
 describe('Item Actions', function() {
   var app;
@@ -19,7 +20,7 @@ describe('Item Actions', function() {
     })
 
     it ('should create a new item with the proper name', function() {
-      app.state.items[0].name.should.equal(name)
+      assert.equal(app.state.items[0].name, name)
     })
 
   })
@@ -34,7 +35,7 @@ describe('Item Actions', function() {
     })
 
     it ('remove the item by id', function() {
-      app.state.items.length.should.equal(0)
+      assert.equal(app.state.items, 0)
     })
 
   })

@@ -1,36 +1,43 @@
 let Microcosm = require('../Microcosm')
 let Store = require('../Store')
 let Transaction = require('../Transaction')
+let assert = require('assert')
 
 describe('Stores', function() {
 
   describe('serialize', function() {
 
     it ('returns state if no serialize method is defined', function() {
-      Store.serialize({}, 'state').should.equal('state')
+      let state = {}
+      assert.equal(Store.serialize({}, state), state)
     })
 
     it ('invokes serialize if defined', function() {
-      Store.serialize({
+      let answer = Store.serialize({
         serialize(state) {
           return state.toUpperCase()
         }
-      }, 'state').should.equal('STATE')
+      }, 'state')
+
+      assert.equal(answer, 'STATE')
     })
 
   })
 
   describe('deserialize', function() {
     it ('returns state if no deserialize method is defined', function() {
-      Store.deserialize({}, 'state').should.equal('state')
+      let state = {}
+      assert.equal(Store.deserialize({}, state), state)
     })
 
     it ('invokes deserialize if defined', function() {
-      Store.deserialize({
+      let answer = Store.deserialize({
         deserialize(state) {
           return state.toUpperCase()
         }
-      }, 'state').should.equal('STATE')
+      }, 'state')
+
+      assert.equal(answer, 'STATE')
     })
   })
 
@@ -40,7 +47,7 @@ describe('Stores', function() {
         register() {
           return {
             test(state) {
-              this.should.equal(store)
+              assert.equal(this, store)
             }
           }
         }
@@ -50,7 +57,8 @@ describe('Stores', function() {
     })
 
     it ('returns state if a handler is not provided', function() {
-      Store.send({}, 'state', Transaction.create('fiz')).should.equal('state')
+      let answer = Store.send({}, 'state', Transaction.create('fiz'))
+      assert.equal(answer, 'state')
     })
   })
 

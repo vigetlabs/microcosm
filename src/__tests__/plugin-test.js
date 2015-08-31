@@ -1,6 +1,8 @@
 let Microcosm = require('../Microcosm')
+let assert = require('assert')
 
 describe('Plugins', function() {
+
   it ('halts installation of plugins on error', function(done) {
     let app = new Microcosm()
 
@@ -17,7 +19,7 @@ describe('Plugins', function() {
     })
 
     app.start(function(error) {
-      error.should.equal('error')
+      assert.equal(error, 'error')
       done()
     })
   })
@@ -29,7 +31,7 @@ describe('Plugins', function() {
     app.addPlugin({
       register(app, options, next) {
         step = step + 1
-        step.should.equal(1)
+        assert.equal(step, 1)
         next()
       }
     })
@@ -37,7 +39,7 @@ describe('Plugins', function() {
     app.addPlugin({
       register(app, options, next) {
         step = step + 1
-        step.should.equal(2)
+        assert.equal(step, 2)
         next()
       }
     })
@@ -51,7 +53,7 @@ describe('Plugins', function() {
     try {
       app.addPlugin({})
     } catch(error) {
-      error.should.be.instanceOf(TypeError)
+      assert(error instanceof TypeError)
     }
 
     app.start(done)
@@ -73,7 +75,7 @@ describe('Plugins', function() {
 
     app.start(function() {
       instances[0].dirty = true
-      instances[1].should.not.have.property('dirty')
+      assert.equal('dirty' in instances[1], false)
     }, done)
   })
 
@@ -89,8 +91,9 @@ describe('Plugins', function() {
     try {
       app.start()
     } catch(error) {
-      expect(error).to.be.instanceOf(TypeError)
+      assert(error instanceof TypeError)
       done()
     }
   })
+
 })

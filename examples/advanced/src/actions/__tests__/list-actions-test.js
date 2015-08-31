@@ -1,6 +1,7 @@
 import App         from '../../App'
 import ListActions from '../lists'
 import ItemActions from '../items'
+import assert from 'assert'
 
 describe('List Actions', function() {
   var app;
@@ -18,7 +19,7 @@ describe('List Actions', function() {
     })
 
     it ('should create a new list with the proper name', function() {
-      app.state.lists[0].should.have.property('name', name)
+      assert.equal(app.state.lists[0].name, name)
     })
 
   })
@@ -32,7 +33,7 @@ describe('List Actions', function() {
     })
 
     it ('should remove the list by id', function() {
-      app.state.lists.length.should.equal(0)
+      assert.equal(app.state.lists.length, 0)
     })
 
   })
@@ -47,7 +48,7 @@ describe('List Actions', function() {
     })
 
     it ('removes all child items', function() {
-      app.state.items.length.should.equal(0)
+      assert.equal(app.state.items.length, 0)
     })
 
   })

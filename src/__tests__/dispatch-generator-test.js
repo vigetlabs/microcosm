@@ -1,5 +1,6 @@
 let Microcosm  = require('../Microcosm')
 let Promise = require('promise')
+let assert = require('assert')
 
 describe('When dispatching generators', function() {
 
@@ -20,7 +21,7 @@ describe('When dispatching generators', function() {
     app.start()
     app.push(single, 2)
 
-    app.state.test.should.equal(2)
+    assert.equal(app.state.test, 2)
   })
 
   it ('properly reduces multiple values', function() {
@@ -39,7 +40,7 @@ describe('When dispatching generators', function() {
     })
 
     app.start().push(multiple, 2, function() {
-      app.state.test.should.equal(3)
+      assert.equal(app.state.test, 3)
     })
   })
 
@@ -59,7 +60,7 @@ describe('When dispatching generators', function() {
     })
 
     app.start().push(resolve, 2, function() {
-      app.state.test.should.equal(3)
+      assert.equal(app.state.test, 3)
       done()
     })
   })
@@ -74,7 +75,7 @@ describe('When dispatching generators', function() {
     function* reject(n) {
       yield n
       yield new Promise((resolve, reject) => setTimeout(function() {
-        reject('Rejected promise')
+        reject(new Error('Rejected Promise'))
       }, 50))
     }
 
@@ -91,7 +92,8 @@ describe('When dispatching generators', function() {
     app.start()
 
     app.push(reject, 1).done(null, function(error) {
-      app.state.test.should.equal(4)
+      assert.equal(app.state.test, 4)
+      assert.ok(error instanceof Error)
       done()
     })
 

@@ -57,6 +57,10 @@ audit:
 
 test:
 	NODE_ENV=test karma start --single-run
+	NODE_ENV=test make test-fast
+
+test-fast: $(shell find {src,examples} -name '*-test.js')
+	@ mocha -R dot --compilers js:babel/register $^
 
 test-watch:
 	NODE_ENV=test karma start
