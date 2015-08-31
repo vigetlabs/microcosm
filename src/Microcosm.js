@@ -2,7 +2,6 @@ let Diode = require('diode')
 let Store = require('./Store')
 let Transaction = require('./Transaction')
 let flatten = require('./flatten')
-let install = require('./install')
 let plugin = require('./plugin')
 let remap = require('./remap')
 let tag = require('./tag')
@@ -234,7 +233,7 @@ Microcosm.prototype = {
     this.reset()
 
     // Queue plugins and then notify that installation has finished
-    install(this.plugins, error => {
+    plugin.install(this.plugins, error => {
       callbacks.forEach(cb => cb.call(this, error, this))
     })
 

@@ -7,14 +7,25 @@
  * of a Microcosm.
  */
 
-module.exports = function PluginFactory(config, options, app) {
+function PluginFactory(config, options, app) {
   return Object.assign({ app, options }, config)
 }
 
-module.exports.start = function start (plugin, callback) {
-  if ('register' in plugin) {
-    plugin.register(plugin.app, plugin.options, callback)
-  } else {
-    callback(null)
+function installPlugin (next, plugin) {
+  return function (error) {
+    // Halt execution of all future plugin installation if there is an error
+    if (error) {
+      return next(error)
+    }
+
+    // Plugins might not have a register method. In this case, just continue through
+    return plugin.register ? plugin.register(plugin.app, plugin.options, next) : next(null)
   }
 }
+
+function install (plugins, callback) {
+  return plugins.reduceRight(installPlugin, callback)(null)
+}
+
+module.exports = PluginFactory
+module.exports.install = install
