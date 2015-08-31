@@ -76,4 +76,21 @@ describe('Plugins', function() {
       instances[1].should.not.have.property('dirty')
     }, done)
   })
+
+  it ('throws an error if a register property is not a function', function(done) {
+    let app  = new Microcosm()
+
+    let Plugin = {
+      register: 'booyah'
+    }
+
+    app.addPlugin(Plugin)
+
+    try {
+      app.start()
+    } catch(error) {
+      expect(error).to.be.instanceOf(TypeError)
+      done()
+    }
+  })
 })

@@ -7,11 +7,19 @@
  * of a Microcosm.
  */
 
-function PluginFactory(config, options, app) {
+function PluginFactory (config, options, app) {
   return Object.assign({ app, options }, config)
 }
 
+function checkPlugin (plugin) {
+  if (process.env.NODE_ENV === 'development' && 'register' in plugin && typeof plugin.register !== 'function') {
+    throw TypeError('Expected register property of plugin to be a function, instead got ' + plugin.register)
+  }
+}
+
 function installPlugin (next, plugin) {
+  checkPlugin(plugin)
+
   return function (error) {
     // Halt execution of all future plugin installation if there is an error
     if (error) {
