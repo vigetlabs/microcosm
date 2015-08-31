@@ -6,6 +6,14 @@
 
 - Internalized `is-generator` package to reduce dependencies and cut
   some dead code.
+- Refactored the install process to prevent needless extension and
+  simplify the installation queue.
+
+### Upgrading
+
+All changes are purely internal polish. There should be no additional
+required action. The build is about 100 bytes smaller, but who's
+counting? :)
 
 ## 9.1.0
 

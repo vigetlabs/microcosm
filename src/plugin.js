@@ -7,16 +7,14 @@
  * of a Microcosm.
  */
 
-const defaults = {
-  __start(callback) {
-    this.register(this.app, this.options, callback)
-  },
-
-  register(app, options, next) {
-    next(null)
-  }
+module.exports = function PluginFactory(config, options, app) {
+  return Object.assign({ app, options }, config)
 }
 
-module.exports = function PluginFactory(config, options, app) {
-  return Object.assign({ app, options }, defaults, config)
+module.exports.start = function start (plugin, callback) {
+  if ('register' in plugin) {
+    plugin.register(plugin.app, plugin.options, callback)
+  } else {
+    callback(null)
+  }
 }

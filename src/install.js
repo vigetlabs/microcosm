@@ -1,19 +1,13 @@
 /**
- * Install
  * A simple FIFO queue for installing plugins
  */
 
-function install (plugins, callback) {
-  if (!plugins.length) {
-    return callback(null)
-  }
+let { start } = require('./plugin')
 
-  let plugin = plugins[0]
-  let tail   = plugins.slice(1)
+module.exports = function install (plugins, callback) {
 
-  return plugin.__start(function(err) {
-    err ? callback(err) : install(tail, callback)
-  })
+  return plugins.reduceRight(function(done, plugin) {
+
+    return error => error ? callback(error) : start(plugin, done)
+  }, callback)(null)
 }
-
-module.exports = install
