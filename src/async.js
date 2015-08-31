@@ -3,7 +3,7 @@
  * into chunks processable by transactions.
  */
 
-let isGenerator = require('is-generator')
+let isGenerator = require('./is-generator')
 let isPromise = require('is-promise')
 
 const DEFAULT_ERROR = new Error('Rejected Promise')

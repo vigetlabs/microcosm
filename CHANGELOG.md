@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.2.0 (not released)
+
+### Internal changes
+
+- Internalized `is-generator` package to reduce dependencies and cut
+  some dead code.
+
 ## 9.1.0
 
 ### Internal changes
