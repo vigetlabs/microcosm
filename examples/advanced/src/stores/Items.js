@@ -1,32 +1,30 @@
-import Items from 'actions/items'
-import Lists from 'actions/lists'
+import { willStart } from 'src/Microcosm'
+import { addItem, removeItem } from 'actions/items'
+import { removeList } from 'actions/lists'
 
-export default {
+function getInitialState() {
+  return []
+}
 
-  getInitialState() {
-    return []
-  },
+function add(state, params) {
+  return state.concat(
+    Object.assign({}, params, { list: params.list.id })
+  )
+}
 
-  register() {
-    return {
-      [Items.add]    : this.add,
-      [Items.remove] : this.remove,
-      [Lists.remove] : this.removeListItems
-    }
-  },
+function remove(state, unwanted) {
+  return state.filter(i => i.id !== unwanted)
+}
 
-  add(state, params) {
-    return state.concat(
-      Object.assign({}, params, { list: params.list.id })
-    )
-  },
+function removeListItems(state, unwanted) {
+  return state.filter(i => i.list !== unwanted)
+}
 
-  remove(state, unwanted) {
-    return state.filter(i => i.id !== unwanted)
-  },
-
-  removeListItems(state, unwanted) {
-    return state.filter(i => i.list !== unwanted)
+export default function register () {
+  return {
+    [addItem]    : add,
+    [removeItem] : remove,
+    [removeList] : removeListItems,
+    [willStart]  : getInitialState
   }
-
 }

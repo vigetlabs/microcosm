@@ -1,8 +1,8 @@
 import Banner      from './Banner'
-import ListActions from 'actions/lists'
 import React       from 'react'
 import TaskList    from 'views/parts/TaskList'
 import page        from 'page'
+import { removeList } from 'actions/lists'
 
 export default React.createClass({
 
@@ -27,7 +27,7 @@ export default React.createClass({
   _onRemoveList() {
     let { app, params } = this.props
 
-    app.push(ListActions.remove, params.id)
+    app.push(removeList, params.id)
 
     this.goHome()
   }

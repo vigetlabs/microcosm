@@ -1,6 +1,6 @@
-import ListActions from 'actions/lists'
-import ListItem    from 'views/parts/ListItem'
-import React       from 'react'
+import ListItem from 'views/parts/ListItem'
+import React from 'react'
+import { removeList } from 'actions/lists'
 
 let Body = React.createClass({
 
@@ -35,7 +35,7 @@ let Body = React.createClass({
   },
 
   _onRemoveList(id) {
-    this.props.app.push(ListActions.remove, id)
+    this.props.app.push(removeList, id)
   }
 
 })

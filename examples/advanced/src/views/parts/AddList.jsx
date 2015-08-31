@@ -1,7 +1,7 @@
 import AddItem     from './AddItem'
-import ListActions from 'actions/lists'
 import React       from 'react'
 import classNames  from 'classnames'
+import { addList } from 'actions/lists'
 
 let randomColor = () => '#'+Math.floor(Math.random()*16777215).toString(16);
 
@@ -39,7 +39,7 @@ let AddList = React.createClass({
   _onAddList(name) {
     let { app, onExit } = this.props
 
-    app.push(ListActions.add, { name, color: this.state.color })
+    app.push(addList, { name, color: this.state.color })
 
     this.setState({ color: randomColor() })
 
