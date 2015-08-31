@@ -62,5 +62,8 @@ test:
 test-fast: $(shell find {src,examples} -name '*-test.js')
 	@ mocha -R dot --compilers js:babel/register $^
 
+test-fast-watch: $(shell find {src,examples} -name '*-test.js')
+	@ mocha -R dot --compilers js:babel/register $^ -w
+
 test-watch:
 	NODE_ENV=test karma start
