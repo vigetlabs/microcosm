@@ -9,7 +9,7 @@ let tag = require('./tag')
 
 const EMPTY_ARRAY = []
 
-let Microcosm = function() {
+let Microcosm = function(stores={}) {
   /**
    * Microcosm uses Diode for event emission. Diode is an event emitter
    * with a single event.
@@ -33,7 +33,7 @@ let Microcosm = function() {
   this.state = this.base
 
   this.plugins = []
-  this.stores = {}
+  this.stores = remap(stores, (value, key) => this.addStore(key, value))
   this.transactions = []
 }
 
