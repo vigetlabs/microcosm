@@ -3,7 +3,6 @@ let Store = require('./Store')
 let Transaction = require('./Transaction')
 let flatten = require('./flatten')
 let plugin = require('./plugin')
-let remap = require('./remap')
 let tag = require('./tag')
 
 const EMPTY_ARRAY = []
@@ -32,7 +31,7 @@ let Microcosm = function() {
   this.state = this.base
 
   this.plugins = []
-  this.stores = {}
+  this.stores = []
   this.transactions = []
 }
 
@@ -44,7 +43,7 @@ Microcosm.prototype = {
    * a microcosm runs start().
    */
   getInitialState() {
-    return remap(this.stores, Store.getInitialState)
+    return Store.reduce(this.stores, {}, Store.getInitialState)
   },
 
   /**
@@ -80,15 +79,15 @@ Microcosm.prototype = {
    * base state and remove them from the transaction list.
    */
   transactionDidUpdate() {
-     let first = this.transactions[0]
+    let first = this.transactions[0]
 
-     if (this.shouldTransactionMerge(first, this.transactions)) {
-       this.base = this.dispatch(this.base, first)
-       this.release(first)
-     }
+    if (this.shouldTransactionMerge(first, this.transactions)) {
+      this.base = this.dispatch(this.base, first)
+      this.release(first)
+    }
 
-     return this.rollforward()
-   },
+    return this.rollforward()
+  },
 
   /**
    * Dispatch all outstanding, active transactions upon base state to determine
@@ -118,8 +117,8 @@ Microcosm.prototype = {
       return state
     }
 
-    return remap(this.stores, function(store, key) {
-      return Store.send(store, state[key], transaction)
+    return Store.reduce(this.stores, state, function(store, subset) {
+      return Store.send(store, subset, transaction)
     })
   },
 
@@ -181,12 +180,12 @@ Microcosm.prototype = {
    * manage the provided `key`. Whenever this store responds to an action,
    * it will be provided the current state for that particular key.
    */
-  addStore(key, config) {
+  addStore(key, store) {
     if (process.env.NODE_ENV !== 'production' && arguments.length <= 1) {
       throw TypeError(`Microcosm::addStore expected string key but was given: ${ typeof key }. Did you forget to include the key?`)
     }
 
-    this.stores[key] = config
+    this.stores.push([ key, store ])
 
     return this
   },
@@ -196,7 +195,7 @@ Microcosm.prototype = {
    * according to the `serialize` method described by each store.
    */
   serialize() {
-    return remap(this.stores, (store, key) => Store.serialize(store, this.state[key]))
+    return Store.reduce(this.stores, this.state, Store.serialize)
   },
 
   /**
@@ -209,9 +208,7 @@ Microcosm.prototype = {
       return this.state
     }
 
-    return remap(this.stores, function(store, key) {
-      return Store.deserialize(store, data[key])
-    })
+    return Store.reduce(this.stores, data, Store.deserialize)
   },
 
   /**
