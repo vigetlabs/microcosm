@@ -60,6 +60,35 @@ describe('Stores', function() {
       let answer = Store.send({}, 'state', Transaction.create('fiz'))
       assert.equal(answer, 'state')
     })
+
+    it ('handles cases when a store is a function', function() {
+      let store = function() {
+        return {
+          action: (a, b) => a * b
+        }
+      }
+
+      let answer = Store.send(store, 2, Transaction.create('action', 2))
+      assert.equal(answer, 4)
+    })
+
+    it ('allows handlers to not be functions', function() {
+      let store = function() {
+        return {
+          action: 5
+        }
+      }
+
+      let answer = Store.send(store, 2, Transaction.create('action'))
+      assert.equal(answer, 5)
+    })
+
+    it ('does not modify state in cases where no registration value is returned', function() {
+      let store = function() {}
+
+      let answer = Store.send(store, 10, Transaction.create('action'))
+      assert.equal(answer, 10)
+    })
   })
 
 })

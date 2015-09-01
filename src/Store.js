@@ -27,7 +27,19 @@ exports.deserialize = function (store, raw) {
 }
 
 exports.send = function (store, state, { payload, type }) {
-  let handler = store.register? store.register()[type] : false
+  let pool = null
 
-  return handler ? handler.call(store, state, payload) : state
+  if (typeof store === 'function') {
+    pool = store()
+  } else if (typeof store.register === 'function') {
+    pool = store.register()
+  }
+
+  if (pool == undefined || type in pool === false) {
+    return state
+  }
+
+  let handler = pool[type]
+
+  return typeof handler === 'function' ? handler.call(store, state, payload) : handler
 }
