@@ -56,8 +56,10 @@ audit:
 	@gzip -c $(DIST)/microcosm.build.js | wc -c
 
 test:
-	NODE_ENV=test karma start --single-run
-	NODE_ENV=test make test-fast
+	@ echo "Testing browsers..."
+	@ NODE_ENV=test karma start --single-run
+	@ echo "Testing node..."
+	@NODE_ENV=test make test-fast
 
 test-fast: $(shell find {src,examples} -name '*-test.js')
 	@ mocha -R dot --compilers js:babel/register $^

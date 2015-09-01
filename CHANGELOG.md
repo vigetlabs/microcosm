@@ -2,6 +2,12 @@
 
 ## 9.2.0 (not released)
 
+### Noticeable changes
+
+- Plugins will now validate that their `register` property is a
+  function. If this property is not present, it will skip this
+  validation and continue to the next plugin.
+
 ### Internal changes
 
 - Internalized `is-generator` package to reduce dependencies and cut
