@@ -35,7 +35,7 @@ exports.send = function (store, state, { payload, type }) {
     pool = store.register()
   }
 
-  if (pool == undefined || type in pool === false) {
+  if (pool == null || type in pool === false) {
     return state
   }
 
