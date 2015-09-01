@@ -1,6 +1,6 @@
 # Changelog
 
-## 9.2.0 (not released)
+## 9.2.0
 
 ### Noticeable changes
 
