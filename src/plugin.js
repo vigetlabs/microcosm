@@ -34,6 +34,6 @@ function installPlugin (next, { app, options, plugin }) {
   }
 }
 
-exports.install = function (app, plugins, callback) {
+exports.install = function (plugins, callback) {
   return plugins.reduceRight(installPlugin, callback)(null)
 }

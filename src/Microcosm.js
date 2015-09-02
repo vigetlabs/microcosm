@@ -230,7 +230,7 @@ Microcosm.prototype = {
     this.reset()
 
     // Queue plugins and then notify that installation has finished
-    plugin.install(this, this.plugins, error => {
+    plugin.install(this.plugins, error => {
       callbacks.forEach(cb => cb.call(this, error, this))
     })
 
