@@ -24,6 +24,23 @@ describe('Plugins', function() {
     })
   })
 
+  it ('a plugin can be a function', function(done) {
+    let app = new Microcosm()
+
+    app.addPlugin(function (app, options, next) {
+      next('error')
+    })
+
+    app.addPlugin(function (app, options, next) {
+      throw new Error('second plugin should not have registered')
+    })
+
+    app.start(function(error) {
+      assert.equal(error, 'error')
+      done()
+    })
+  })
+
   it ('installs plugins sequentially to add order', function(done) {
     let app  = new Microcosm()
     let step = 0

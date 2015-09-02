@@ -7,17 +7,13 @@
  * of a Microcosm.
  */
 
-function PluginFactory (config, options, app) {
-  return Object.assign({ app, options }, config)
-}
-
 function checkPlugin (plugin) {
-  if (process.env.NODE_ENV === 'development' && 'register' in plugin && typeof plugin.register !== 'function') {
-    throw TypeError('Expected register property of plugin to be a function, instead got ' + plugin.register)
+  if (process.env.NODE_ENV !== 'production' && typeof plugin !== 'function' && ('register' in plugin && typeof plugin.register !== 'function')) {
+    throw TypeError('Expected plugin to be a function or entity with a method property.')
   }
 }
 
-function installPlugin (next, plugin) {
+function installPlugin (next, { app, options, plugin }) {
   checkPlugin(plugin)
 
   return function (error) {
@@ -26,14 +22,18 @@ function installPlugin (next, plugin) {
       return next(error)
     }
 
+    if (typeof plugin == 'function') {
+      return plugin(app, options, next)
+    } else {
+      // Clone plugins to privatize state
+      plugin = Object.create(plugin)
+    }
+
     // Plugins might not have a register method. In this case, just continue through
-    return plugin.register ? plugin.register(plugin.app, plugin.options, next) : next(null)
+    return plugin.register ? plugin.register(app, options, next) : next(null)
   }
 }
 
-function install (plugins, callback) {
+exports.install = function (app, plugins, callback) {
   return plugins.reduceRight(installPlugin, callback)(null)
 }
-
-module.exports = PluginFactory
-module.exports.install = install
