@@ -170,8 +170,8 @@ Microcosm.prototype = {
    * When `app.start()` is called, it will execute plugins in
    * the order in which they have been added using this function.
    */
-  addPlugin(config, options) {
-    this.plugins.push(plugin(config, options, this))
+  addPlugin(plugin, options) {
+    this.plugins.push({ plugin, options, app: this })
     return this
   },
 
