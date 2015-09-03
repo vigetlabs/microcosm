@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.3.0
+
+### Noticeable changes
+
+- Store registration methods can return non-function values. When this
+  is the case, it will use this value as the new state.
+
 ## 9.2.0
 
 ### Noticeable changes
