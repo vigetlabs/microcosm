@@ -61,21 +61,12 @@ describe('Stores', function() {
       assert.equal(answer, 'state')
     })
 
-    it ('handles cases when a store is a function', function() {
-      let store = function() {
-        return {
-          action: (a, b) => a * b
-        }
-      }
-
-      let answer = Store.send(store, 2, Transaction.create('action', 2))
-      assert.equal(answer, 4)
-    })
-
     it ('allows handlers to not be functions', function() {
-      let store = function() {
-        return {
-          action: 5
+      let store = {
+        register() {
+          return {
+            action: 5
+          }
         }
       }
 

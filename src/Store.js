@@ -27,15 +27,9 @@ exports.deserialize = function (store, raw) {
 }
 
 exports.send = function (store, state, { payload, type }) {
-  let pool = null
+  let pool = store.register? store.register() : null
 
-  if (typeof store === 'function') {
-    pool = store()
-  } else if (typeof store.register === 'function') {
-    pool = store.register()
-  }
-
-  if (pool == null || type in pool === false) {
+  if (!pool || type in pool === false) {
     return state
   }
 
