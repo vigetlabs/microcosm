@@ -9,7 +9,7 @@
 
 function checkPlugin (plugin) {
   if (process.env.NODE_ENV !== 'production' && typeof plugin !== 'function' && ('register' in plugin && typeof plugin.register !== 'function')) {
-    throw TypeError('Expected plugin to be a function or entity with a method property.')
+    throw TypeError('A Microcosm plugin should be a function following the signature function(app, options, next) or an object with a register method of the same format.')
   }
 }
 
