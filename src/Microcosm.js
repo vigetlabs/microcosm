@@ -44,7 +44,7 @@ Microcosm.prototype = {
    * a microcosm runs start().
    */
   getInitialState() {
-    return this.dispatch({}, lifecycle.getInitialState.toTransaction())
+    return this.dispatch({}, lifecycle.getInitialState)
   },
 
   /**
@@ -95,7 +95,8 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    let next = this.transactions.reduce(this.dispatch.bind(this), this.base)
+    let next = this.transactions.filter(this.shouldTransactionDispatch, this)
+                                .reduce(this.dispatch.bind(this), this.base)
 
     if (next !== this.state) {
       this.state = next
@@ -114,10 +115,6 @@ Microcosm.prototype = {
    * "What will change when I account for a transaction?"
    */
   dispatch(state, transaction) {
-    if (this.shouldTransactionDispatch(transaction) === false) {
-      return state
-    }
-
     return this.stores.reduce(function(memo, item) {
       let key   = item[0]
       let store = item[1]
@@ -201,7 +198,7 @@ Microcosm.prototype = {
    * according to the `serialize` method described by each store.
    */
   serialize() {
-    return this.dispatch(this.state, lifecycle.serialize.toTransaction())
+    return this.dispatch(this.state, lifecycle.serialize)
   },
 
   /**
@@ -214,7 +211,7 @@ Microcosm.prototype = {
       return this.state
     }
 
-    return this.dispatch(data, lifecycle.deserialize.toTransaction())
+    return this.dispatch(data, lifecycle.deserialize)
   },
 
   /**

@@ -2,6 +2,7 @@
  * Send
  * Communicate an action to stores
  */
+
 module.exports = function send (store, state, { payload, type }) {
   if (type in store) {
     return store[type].call(store, state, payload)
