@@ -8,7 +8,7 @@ let async = require('./async')
 
 function create (type, payload=null) {
   return {
-    type,
+    type: `${ type }`,
     payload,
     meta: {
       active: false,

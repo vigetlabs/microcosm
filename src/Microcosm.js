@@ -139,7 +139,7 @@ Microcosm.prototype = {
       throw TypeError(`Tried to create Transaction for ${ action }, but it is not a function.`)
     }
 
-    let transaction = Transaction.create(tag(action).toString())
+    let transaction = Transaction.create(tag(action))
     let body = action.apply(null, flatten(params))
 
     this.transactions.push(transaction)
