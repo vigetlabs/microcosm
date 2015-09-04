@@ -1,9 +1,10 @@
 let Diode = require('diode')
-let Store = require('./Store')
+let send = require('./send')
 let Transaction = require('./Transaction')
 let flatten = require('./flatten')
 let plugin = require('./plugin')
 let tag = require('./tag')
+let lifecycle = require('./lifecycle')
 
 const EMPTY_ARRAY = []
 
@@ -43,7 +44,7 @@ Microcosm.prototype = {
    * a microcosm runs start().
    */
   getInitialState() {
-    return Store.reduce(this.stores, {}, Store.getInitialState)
+    return this.dispatch({}, lifecycle.getInitialState.toTransaction())
   },
 
   /**
@@ -117,9 +118,14 @@ Microcosm.prototype = {
       return state
     }
 
-    return Store.reduce(this.stores, state, function(store, subset) {
-      return Store.send(store, subset, transaction)
-    })
+    return this.stores.reduce(function(memo, item) {
+      let key   = item[0]
+      let store = item[1]
+
+      memo[key] = send(store, state[key], transaction)
+
+      return memo
+    }, {})
   },
 
   /**
@@ -195,7 +201,7 @@ Microcosm.prototype = {
    * according to the `serialize` method described by each store.
    */
   serialize() {
-    return Store.reduce(this.stores, this.state, Store.serialize)
+    return this.dispatch(this.state, lifecycle.serialize.toTransaction())
   },
 
   /**
@@ -208,7 +214,7 @@ Microcosm.prototype = {
       return this.state
     }
 
-    return Store.reduce(this.stores, data, Store.deserialize)
+    return this.dispatch(data, lifecycle.deserialize.toTransaction())
   },
 
   /**

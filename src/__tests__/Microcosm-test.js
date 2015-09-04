@@ -37,6 +37,14 @@ describe('Microcosm', function() {
     })
   })
 
+  it ('getInitialState collects starting state for all registered stores', function() {
+    let state = app.getInitialState()
+
+    new Map(app.stores).forEach(function(store, key) {
+      assert.equal(state[key], store.getInitialState())
+    })
+  })
+
   it ('deserializes when replace is invoked', function() {
     app.listen(function() {
       assert.equal(app.state.dummy, 'DIFFERENT')
