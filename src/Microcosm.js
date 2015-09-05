@@ -44,7 +44,7 @@ Microcosm.prototype = {
    * a microcosm runs start().
    */
   getInitialState() {
-    return this.dispatch({}, lifecycle.getInitialState)
+    return this.dispatch({}, lifecycle.willStart)
   },
 
   /**
@@ -198,7 +198,7 @@ Microcosm.prototype = {
    * according to the `serialize` method described by each store.
    */
   serialize() {
-    return this.dispatch(this.state, lifecycle.serialize)
+    return this.dispatch(this.state, lifecycle.willSerialize)
   },
 
   /**
@@ -211,7 +211,7 @@ Microcosm.prototype = {
       return this.state
     }
 
-    return this.dispatch(data, lifecycle.deserialize)
+    return this.dispatch(data, lifecycle.willDeserialize)
   },
 
   /**

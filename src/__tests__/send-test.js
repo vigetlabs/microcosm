@@ -2,6 +2,7 @@ let Microcosm = require('../Microcosm')
 let Transaction = require('../Transaction')
 let assert = require('assert')
 let send = require('../send')
+let lifecycle = require('../lifecycle')
 
 describe('send', function() {
 
@@ -38,10 +39,38 @@ describe('send', function() {
   })
 
   it ('does not modify state in cases where no registration value is returned', function() {
-    let store = function() {}
+    let store = {}
 
     let answer = send(store, 10, Transaction.create('action'))
     assert.equal(answer, 10)
+  })
+
+  describe('Lifecycle passthrough', function() {
+
+    it ('allows defined lifecycle methods to bypass the register function', function() {
+      let store = {
+        getInitialState() {
+          return 'test'
+        }
+      }
+
+      let answer = send(store, null, lifecycle.willStart)
+
+      assert.equal(answer, 'test')
+    })
+
+    it ('ignores methods defined by the store that are not lifecycle methods matching dispatched types', function() {
+      let store = {
+        foo() {
+          return 'test'
+        }
+      }
+
+      let answer = send(store, null, { type: 'foo' })
+
+      assert.equal(answer, null)
+    })
+
   })
 
 })

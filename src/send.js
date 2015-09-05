@@ -3,9 +3,11 @@
  * Communicate an action to stores
  */
 
+let { mapping } = require('./lifecycle')
+
 module.exports = function send (store, state, { payload, type }) {
-  if (type in store) {
-    return store[type].call(store, state, payload)
+  if (mapping[type] in store) {
+    return store[mapping[type]].call(store, state, payload)
   }
 
   let pool = typeof store.register === 'function' ? store.register() : false

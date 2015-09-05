@@ -4,12 +4,12 @@
  * actions.
  */
 
-const actions = [
-  'getInitialState',
-  'serialize',
-  'deserialize'
-]
+exports.mapping = {
+  'willStart'       : 'getInitialState',
+  'willSerialize'   : 'serialize',
+  'willDeserialize' : 'deserialize'
+}
 
-actions.forEach(function(type) {
+for (var type in exports.mapping) {
   exports[type] = { type }
-})
+}
