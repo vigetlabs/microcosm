@@ -4,39 +4,29 @@
  * https://github.com/acdlite/flux-standard-action
  */
 
-let coroutine = require('./coroutine')
-let eventually = require('./eventually')
+let id = 0
+let pool = []
 
-function create (type, payload=null) {
-  return {
-    type: `${ type }`,
-    payload,
-    meta: {
-      active: false,
-      done: false
-    },
-    error: false
-  }
+const blueprint = {
+  id       : null,
+  payload  : null,
+  type     : null,
+  error    : false,
+  complete : false
 }
 
-function run (transaction, body, update, reject, callback, scope) {
-  return coroutine(body, function updateTransaction (error, payload, done) {
-    transaction.meta.active = true
-    transaction.meta.done = done
+module.exports = function Transaction (type, payload=null) {
+  let transaction = pool.pop() || Object.create(blueprint)
 
-    if (error) {
-      transaction.error = true
-      transaction.payload = error
-      reject.call(scope, transaction)
-    } else {
-      transaction.payload = payload
-      update.call(scope, transaction)
-    }
+  transaction.id       = id++
+  transaction.payload  = payload
+  transaction.type     = type
+  transaction.error    = false
+  transaction.complete = false
 
-    if (done && callback) {
-      eventually(callback, scope, error, payload);
-    }
-  })
+  return transaction
 }
 
-module.exports = { run, create }
+module.exports.release = function(transaction) {
+  pool.push(transaction)
+}

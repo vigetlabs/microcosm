@@ -4,13 +4,15 @@
  * actions.
  */
 
-exports.mapping = {
+const mapping = {
   'willStart'       : 'getInitialState',
   'willSerialize'   : 'serialize',
   'willDeserialize' : 'deserialize'
 }
 
-for (let type in exports.mapping) {
-  exports[type] = { type }
+for (let type in mapping) {
+  exports[type] = n => n
   exports[type].toString = () => type
 }
+
+exports.mapping = mapping

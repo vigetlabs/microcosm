@@ -38,7 +38,7 @@ let waterfall = function (iterator, callback) {
 
     callback(error, body, done)
 
-    return error || done ? body : nodeify(value, step)
+    return done ? body : nodeify(value, step)
   })
 }
 
@@ -49,8 +49,6 @@ let waterfall = function (iterator, callback) {
  * @param {any} value - The compared value
  * @param {Function} callback - An error-first callback
  */
-let chain = function (value, callback) {
+module.exports = function (value, callback) {
   return (isGenerator(value) ? waterfall : nodeify)(value, callback)
 }
-
-module.exports = chain

@@ -17,11 +17,11 @@ describe('send', function() {
       }
     }
 
-    send(store, 'state', Transaction.create('test'))
+    send(store, 'state', Transaction('test'))
   })
 
   it ('returns state if a handler is not provided', function() {
-    let answer = send({}, 'state', Transaction.create('fiz'))
+    let answer = send({}, 'state', Transaction('fiz'))
     assert.equal(answer, 'state')
   })
 
@@ -34,14 +34,14 @@ describe('send', function() {
       }
     }
 
-    let answer = send(store, 2, Transaction.create('action'))
+    let answer = send(store, 2, Transaction('action'))
     assert.equal(answer, 5)
   })
 
   it ('does not modify state in cases where no registration value is returned', function() {
     let store = {}
 
-    let answer = send(store, 10, Transaction.create('action'))
+    let answer = send(store, 10, Transaction('action'))
     assert.equal(answer, 10)
   })
 
@@ -54,7 +54,7 @@ describe('send', function() {
         }
       }
 
-      let answer = send(store, null, lifecycle.willStart)
+      let answer = send(store, null, Transaction(lifecycle.willStart))
 
       assert.equal(answer, 'test')
     })
@@ -66,7 +66,7 @@ describe('send', function() {
         }
       }
 
-      let answer = send(store, null, lifecycle.willStart)
+      let answer = send(store, null, Transaction(lifecycle.willStart))
 
       assert.equal(answer, 'test')
     })

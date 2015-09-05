@@ -5,18 +5,21 @@
 
 let { mapping } = require('./lifecycle')
 
+function call(fn, scope, state, payload) {
+  return typeof fn === 'function' ? fn.call(scope, state, payload) : fn
+}
+
 module.exports = function send (store, state, { payload, type }) {
-  if (mapping[type] in store) {
-    return store[mapping[type]].call(store, state, payload)
+  let lifecycle = mapping[type]
+
+  if (lifecycle && lifecycle in store) {
+    return call(store[lifecycle], store, state, payload)
   }
 
-  let pool = typeof store.register === 'function' ? store.register() : false
+  let handlers = typeof store.register === 'function' ? store.register() : false
 
-  if (!pool || type in pool === false) {
+  if (!handlers || type in handlers === false) {
     return state
   }
-
-  let handler = pool[type]
-
-  return typeof handler === 'function' ? handler.call(store, state, payload) : handler
+  return call(handlers[type], store, state, payload)
 }

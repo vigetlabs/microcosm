@@ -1,12 +1,14 @@
 let Diode = require('diode')
-let send = require('./send')
 let Transaction = require('./Transaction')
+let coroutine = require('./coroutine')
 let flatten = require('./flatten')
-let plugin = require('./plugin')
-let tag = require('./tag')
+let install = require('./install')
 let lifecycle = require('./lifecycle')
-
-const EMPTY_ARRAY = []
+let send = require('./send')
+let tag = require('./tag')
+let eventually = require('./eventually')
+let sortById = require('./sortById')
+let has = require('./has')
 
 let Microcosm = function() {
   /**
@@ -39,68 +41,43 @@ let Microcosm = function() {
 Microcosm.prototype = {
   constructor: Microcosm,
 
-  /**
-   * Generates the initial state a microcosm starts with. Called whenever
-   * a microcosm runs start().
-   */
   getInitialState() {
-    return this.dispatch({}, lifecycle.willStart)
+    return this.dispatch({}, Transaction(lifecycle.willStart, this.state))
   },
 
-  /**
-   * Called before a transaction is squashed into base state. This method
-   * is useful to override if you wish to preserve transaction history
-   * beyond outstanding transactions.
-   */
-  shouldTransactionMerge(transaction) {
-    return transaction.meta.done
+  transactionWillUpdate(transaction, error, payload, complete) {
+    transaction.error    = error
+    transaction.payload  = payload
+    transaction.complete = complete
+
+    if (!complete && has(this.transactions, transaction) === false) {
+      this.transactions = this.transactions.concat(transaction).sort(sortById)
+    }
   },
 
-  /*
-   * Before dispatching, this function is called on every transaction
-   */
-  shouldTransactionDispatch(transaction) {
-    return transaction.meta.active
-  },
+  transactionWillClose(transaction) {
+    // Return to object pooling
+    Transaction.release(transaction)
 
-  /**
-   * Remove a transactions
-   */
-  release(transaction) {
-    this.transactions.splice(this.transactions.indexOf(transaction), 1)
-  },
-
-  transactionDidFail(transaction) {
-    this.release(transaction)
-    return this.rollforward()
-  },
-
-  /**
-   * Starting from the beginning, consecutively fold complete transactions into
-   * base state and remove them from the transaction list.
-   */
-  transactionDidUpdate() {
-    let first = this.transactions[0]
-
-    if (this.shouldTransactionMerge(first, this.transactions)) {
-      this.base = this.dispatch(this.base, first)
-      this.release(first)
+    if (has(this.transactions, transaction)) {
+      this.transactions.splice(this.transactions.indexOf(transaction), 1)
     }
 
-    return this.rollforward()
+    if (!transaction.error) {
+      this.base = this.dispatch(this.base, transaction)
+    }
   },
 
   /**
-   * Dispatch all outstanding, active transactions upon base state to determine
+   * Dispatch all open transactions upon base state to determine
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    let next = this.transactions.filter(this.shouldTransactionDispatch, this)
-                                .reduce(this.dispatch.bind(this), this.base)
+    let next = this.transactions.reduce(this.dispatch.bind(this), this.base)
 
     if (next !== this.state) {
-      this.state = next
-      this.emit(this.state)
+      this.state = next;
+      this.emit(next)
     }
 
     return this
@@ -138,25 +115,28 @@ Microcosm.prototype = {
    * and the change will disappear from history.
    */
   push(action, params, callback) {
-    if (process.env.NODE_ENV !== 'production' && typeof action !== 'function') {
-      throw TypeError(`Tried to create Transaction for ${ action }, but it is not a function.`)
-    }
-
-    let transaction = Transaction.create(tag(action))
+    let transaction = Transaction(tag(action))
     let body = action.apply(null, flatten(params))
 
-    this.transactions.push(transaction)
+    return coroutine(body, (error, payload, complete) => {
+      this.transactionWillUpdate(transaction, error, payload, complete)
 
-    return Transaction.run(transaction, body, this.transactionDidUpdate, this.transactionDidFail, callback, this)
+      if (complete) {
+        eventually(callback, this, error, payload)
+        this.transactionWillClose(transaction)
+      }
+
+      this.rollforward()
+    })
   },
 
   /**
    * Clear all outstanding transactions and assign base state
    * to a given object (or getInitialState())
    */
-  reset(state=this.getInitialState(), transactions=EMPTY_ARRAY) {
+  reset(state, transactions=[]) {
     this.transactions = flatten(transactions) // Prevent accidental mutation
-    this.base = state
+    this.base = Object.assign(this.getInitialState(), state)
 
     return this.rollforward()
   },
@@ -174,7 +154,7 @@ Microcosm.prototype = {
    * the order in which they have been added using this function.
    */
   addPlugin(config, options) {
-    this.plugins.push(plugin(config, options, this))
+    this.plugins.push({ app: this, options, ...config })
     return this
   },
 
@@ -198,7 +178,7 @@ Microcosm.prototype = {
    * according to the `serialize` method described by each store.
    */
   serialize() {
-    return this.dispatch(this.state, lifecycle.willSerialize)
+    return this.dispatch(this.state, Transaction(lifecycle.willSerialize))
   },
 
   /**
@@ -211,7 +191,7 @@ Microcosm.prototype = {
       return this.state
     }
 
-    return this.dispatch(data, lifecycle.willDeserialize)
+    return this.dispatch(data, Transaction(lifecycle.willDeserialize))
   },
 
   /**
@@ -233,7 +213,7 @@ Microcosm.prototype = {
     this.reset()
 
     // Queue plugins and then notify that installation has finished
-    plugin.install(this.plugins, error => {
+    install(this.plugins, error => {
       callbacks.forEach(cb => cb.call(this, error, this))
     })
 
