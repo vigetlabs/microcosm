@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.4.1
+
+### Internal changes
+
+- Fixed bug where lifecycle methods used as registered actions did not
+  properly stringify.
+
 ## 9.4.0
 
 ### Noticeable changes
