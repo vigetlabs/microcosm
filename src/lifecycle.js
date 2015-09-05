@@ -10,6 +10,7 @@ exports.mapping = {
   'willDeserialize' : 'deserialize'
 }
 
-for (var type in exports.mapping) {
+for (let type in exports.mapping) {
   exports[type] = { type }
+  exports[type].toString = () => type
 }

@@ -59,6 +59,18 @@ describe('send', function() {
       assert.equal(answer, 'test')
     })
 
+    it ('allows lifecycle methods as registered actions', function() {
+      let store = {
+        register() {
+          return { [lifecycle.willStart]: 'test' }
+        }
+      }
+
+      let answer = send(store, null, lifecycle.willStart)
+
+      assert.equal(answer, 'test')
+    })
+
     it ('ignores methods defined by the store that are not lifecycle methods matching dispatched types', function() {
       let store = {
         foo() {
