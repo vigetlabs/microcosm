@@ -1,5 +1,50 @@
 # Changelog
 
+## 9.4.0
+
+### Noticeable changes
+
+- Exposed lifecycle actions under `microcosm/lifecycle`. See the
+  upgrading section for more notes.
+
+### Internal changes
+
+- `getInitialState`, `serialize`, and `deserialize` are now triggered
+  by actions. We call them _lifecycle actions_. Their associated
+  counterparts are `willStart`, `willSerialize`, and
+  `willDeserialize`. There is no obligation to use these lifecycle
+  actions, the store methods should work all the same.
+
+### Upgrading
+
+This version adds lifecycle actions. This does not make any breaking
+change to the Microcosm API, however it provides us better internal
+consistency.
+
+These lifecycle actions are still undergoing development (names may
+change, etc, but we'll keep you posted). However if you would like to
+give them a spin, consider the following code example:
+
+```javascript
+import { willStart } from 'microcosm/lifecycle'
+import { addPlanet } from 'actions/planets'
+
+const Planets = {
+  reset() {
+    return []
+  },
+  add(records, item) {
+    return records.concat(item)
+  },
+  register() {
+    return {
+      [willStart] : Planets.reset,
+      [addPlanet] : Planets.add
+    }
+  }
+}
+```
+
 ## 9.3.0
 
 ### Noticeable changes
