@@ -117,3 +117,4 @@ the individual components of Microcosm.
 - [Elm Language](https://elm-lang.org)
 - [Flummox](https://github.com/acdlite/flummox)
 - [But the world is mutable](http://www.lispcast.com/the-world-is-mutable)
+- [Event Sourcing Pattern](http://martinfowler.com/eaaDev/EventSourcing.html)
