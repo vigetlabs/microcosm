@@ -1,5 +1,10 @@
 # Changelog
 
+## 9.5.0
+
+- Upgrade dependencies
+- Use fixed versions for dependencies
+
 ## 9.4.1
 
 ### Internal changes
