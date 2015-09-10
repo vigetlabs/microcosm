@@ -1,5 +1,3 @@
-var webpack_config = require('./webpack.config')
-
 module.exports = function (config) {
   config.set({
     browsers: [ 'Chrome' ],
@@ -32,10 +30,13 @@ module.exports = function (config) {
 
     webpack: {
       devtool: 'inline-source-map',
-      resolve: webpack_config.resolve,
+
+      resolve: {
+        extensions: [ '', '.js', '.jsx', '.json', '.scss', '.svg' ],
+        modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'examples/advanced', '..' ]
+      },
 
       module: {
-        noParse: webpack_config.module.noParse,
         loaders: [{
           test: /\.jsx*$/,
           exclude: /node_modules/,
@@ -45,6 +46,7 @@ module.exports = function (config) {
             optional: ['runtime']
           }
         }],
+
         postLoaders: [
           {
             test: /\.jsx*$/,

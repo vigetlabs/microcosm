@@ -18,7 +18,6 @@ module.exports = {
   resolve: {
     extensions: [ '', '.js', '.jsx', '.json', '.scss', '.svg' ],
     modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'examples/advanced', '..' ]
-
   },
 
   postcss: [ require('autoprefixer') ],
