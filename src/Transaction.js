@@ -5,6 +5,7 @@
  */
 
 let coroutine = require('./coroutine')
+let eventually = require('./eventually')
 
 function create (type, payload=null) {
   return {
@@ -33,9 +34,7 @@ function run (transaction, body, update, reject, callback, scope) {
     }
 
     if (done && callback) {
-      // This is a neat trick to get around the promise try/catch
-      // https://github.com/then/promise/blob/master/src/done.js
-      setTimeout(callback.bind(scope, error, payload), 0)
+      eventually(callback, scope, error, payload);
     }
   })
 }
