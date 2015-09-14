@@ -12,7 +12,7 @@ describe('When dispatching promises', function() {
   let chain  = n => Promise.resolve(n).then(n => Promise.resolve(n))
   let error  = function(n) {
     return new Promise(function (resolve, reject) {
-      setTimeout(reject, 50)
+      setTimeout(reject, 100)
     })
   }
   let late = function(n) {
@@ -20,6 +20,13 @@ describe('When dispatching promises', function() {
       setTimeout(_ => resolve(n), 50)
     })
   }
+
+  let throws = function(n) {
+    return new Promise(function() {
+      (this-will-fail-because-of-a-syntax-error)
+    })
+  }
+
   let app;
 
   let TestStore = {
@@ -28,11 +35,16 @@ describe('When dispatching promises', function() {
       return {
         [single] : this.sum,
         [chain]  : this.sum,
-        [error]  : this.sum,
+        [error]  : this.error,
         [late]   : this.sum,
         [pass]   : this.sum
       }
     },
+
+    error() {
+      throw new Error("TestStore.error should have never been called")
+    },
+
     sum(a, b) {
       return a + b
     }
@@ -51,14 +63,10 @@ describe('When dispatching promises', function() {
     })
   })
 
-  it ('does not dispatch if the promise fails', function(done) {
-    app.dispatch = function() {
-      done(new Error('Dispatch should not have been called!'))
-    }
-
-    app.push(error, [], function(error) {
-      assert.ok(error instanceof Error)
-      done()
+  it ('does not alter state if the promise fails', function(done) {
+    app.push(error, []).nodeify(function(error) {
+      assert.equal(app.state.test, app.getInitialState().test)
+      done(error)
     })
   })
 
@@ -70,20 +78,28 @@ describe('When dispatching promises', function() {
   })
 
   it ('respects future changes when it fails', function(done) {
-    app.push(error, 1, function() {
-      assert.equal(app.state.test, 5)
-      done()
+    app.push(error, 1).nodeify(function(error) {
+      assert.equal(app.state.test, 5, 'State was not the result of 5 + 1')
+      done(error)
     })
 
     app.push(single, 4)
   })
 
   it ('does not dispatch transactions for unresolved promises', function(done) {
-    app.push(late, 1, function() {
-      assert.equal(app.state.test, 6)
-      done()
+    app.push(late, 1, function(error) {
+      assert.equal(app.state.test, 6, 'should have been: 1 + 4 + 1 = 6')
+      done(error)
     })
 
     app.push(pass, 4)
+    assert.equal(app.state.test, 5, 'should have been: 1 + 4 = 5')
+  })
+
+  it ('handles errors thrown by promises', function(done) {
+    app.push(throws, 1, function(error) {
+      assert(error instanceof ReferenceError)
+      done()
+    })
   })
 })
