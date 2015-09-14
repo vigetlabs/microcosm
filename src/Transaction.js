@@ -4,7 +4,7 @@
  * https://github.com/acdlite/flux-standard-action
  */
 
-let async = require('./async')
+let coroutine = require('./coroutine')
 
 function create (type, payload=null) {
   return {
@@ -19,7 +19,7 @@ function create (type, payload=null) {
 }
 
 function run (transaction, body, update, reject, callback, scope) {
-  return async(body, function updateTransaction (error, payload, done) {
+  return coroutine(body, function updateTransaction (error, payload, done) {
     transaction.meta.active = true
     transaction.meta.done = done
 
