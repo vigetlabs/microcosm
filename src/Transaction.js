@@ -16,7 +16,7 @@ const BLUEPRINT = {
 let id = 0
 
 module.exports = function Transaction (type, payload=null) {
-  let transaction = pool.pop() || Object.create(blueprint)
+  let transaction = POOL.pop() || Object.create(BLUEPRINT)
 
   transaction.id       = id++
   transaction.payload  = payload
@@ -28,5 +28,5 @@ module.exports = function Transaction (type, payload=null) {
 }
 
 module.exports.release = function(transaction) {
-  pool.push(transaction)
+  POOL.push(transaction)
 }
