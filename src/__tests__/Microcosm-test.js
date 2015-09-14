@@ -25,7 +25,7 @@ describe('Microcosm', function() {
   })
 
   describe('reset', function() {
-    let dummy = Transaction.create('test')
+    let dummy = Transaction('test')
     let transactions = [ dummy ]
 
     it ('can reset with specific transactions', function() {

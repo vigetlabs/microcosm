@@ -8,7 +8,6 @@ let send = require('./send')
 let tag = require('./tag')
 let eventually = require('./eventually')
 let sortById = require('./sortById')
-let has = require('./has')
 
 let Microcosm = function() {
   /**
@@ -50,7 +49,7 @@ Microcosm.prototype = {
     transaction.payload  = payload
     transaction.complete = complete
 
-    if (!complete && has(this.transactions, transaction) === false) {
+    if (this.transactions.indexOf(transaction) === -1) {
       this.transactions = this.transactions.concat(transaction).sort(sortById)
     }
   },
@@ -59,9 +58,7 @@ Microcosm.prototype = {
     // Return to object pooling
     Transaction.release(transaction)
 
-    if (has(this.transactions, transaction)) {
-      this.transactions.splice(this.transactions.indexOf(transaction), 1)
-    }
+    this.transactions = this.transactions.filter(i => i !== transaction)
 
     if (!transaction.error) {
       this.base = this.dispatch(this.base, transaction)
