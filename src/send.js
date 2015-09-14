@@ -3,14 +3,14 @@
  * Communicate an action to stores
  */
 
-let { mapping } = require('./lifecycle')
+let { MAPPING } = require('./lifecycle')
 
 function call(fn, scope, state, payload) {
   return typeof fn === 'function' ? fn.call(scope, state, payload) : fn
 }
 
 module.exports = function send (store, state, { payload, type }) {
-  let lifecycle = mapping[type]
+  let lifecycle = MAPPING[type]
 
   if (lifecycle && lifecycle in store) {
     return call(store[lifecycle], store, state, payload)
