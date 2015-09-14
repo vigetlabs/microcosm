@@ -4,16 +4,16 @@
  * https://github.com/acdlite/flux-standard-action
  */
 
-let id = 0
-let pool = []
-
-const blueprint = {
+const POOL = []
+const BLUEPRINT = {
   id       : null,
   payload  : null,
   type     : null,
   error    : false,
   complete : false
 }
+
+let id = 0
 
 module.exports = function Transaction (type, payload=null) {
   let transaction = pool.pop() || Object.create(blueprint)
