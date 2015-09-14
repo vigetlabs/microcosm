@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.6.0 (not released)
+
+### Internal changes
+
+- Tweaks to lazy callback executed after `app.push` for better
+  optimization
+- Renamed `async` utility to `coroutine`
+
 ## 9.5.0
 
 - Upgrade dependencies
