@@ -1,1 +1,5 @@
-module.exports = Array.prototype.concat.bind([])
+const BASE = []
+
+module.exports = function() {
+  return BASE.concat(...arguments)
+}
