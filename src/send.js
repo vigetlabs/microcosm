@@ -21,5 +21,6 @@ module.exports = function send (store, state, { payload, type }) {
   if (!handlers || type in handlers === false) {
     return state
   }
+
   return call(handlers[type], store, state, payload)
 }

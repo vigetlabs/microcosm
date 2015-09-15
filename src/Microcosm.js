@@ -1,13 +1,12 @@
 let Diode = require('diode')
 let Transaction = require('./Transaction')
 let coroutine = require('./coroutine')
+let eventually = require('./eventually')
 let flatten = require('./flatten')
 let install = require('./install')
 let lifecycle = require('./lifecycle')
 let send = require('./send')
 let tag = require('./tag')
-let eventually = require('./eventually')
-let sortById = require('./sortById')
 
 let Microcosm = function() {
   /**
@@ -44,24 +43,26 @@ Microcosm.prototype = {
     return this.dispatch({}, Transaction(lifecycle.willStart, this.state))
   },
 
-  transactionWillUpdate(transaction, error, payload, complete) {
-    transaction.error    = error
-    transaction.payload  = payload
-    transaction.complete = complete
-
-    if (this.transactions.indexOf(transaction) === -1) {
-      this.transactions = this.transactions.concat(transaction).sort(sortById)
+  merge(transaction) {
+    if (!transaction.error) {
+      this.base = this.dispatch(this.base, transaction)
     }
   },
 
+  transactionWillOpen(transaction) {
+    this.transactions.push(transaction)
+  },
+
+  transactionWillUpdate(transaction, error, payload, complete) {
+    transaction.active   = !error
+    transaction.error    = error
+    transaction.payload  = payload
+    transaction.complete = complete
+  },
+
   transactionWillClose(transaction) {
-    // Return to object pooling
-    Transaction.release(transaction)
-
-    this.transactions = this.transactions.filter(i => i !== transaction)
-
-    if (!transaction.error) {
-      this.base = this.dispatch(this.base, transaction)
+    while (this.transactions.length && this.transactions[0].complete) {
+      this.merge(this.transactions.shift())
     }
   },
 
@@ -70,7 +71,13 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    let next = this.transactions.reduce(this.dispatch.bind(this), this.base)
+    let next = this.base
+
+    for (var i = 0; i < this.transactions.length; i++) {
+       if (this.transactions[i].active) {
+         next = this.dispatch(next, this.transactions[i])
+       }
+     }
 
     if (next !== this.state) {
       this.state = next;
@@ -115,6 +122,8 @@ Microcosm.prototype = {
     let transaction = Transaction(tag(action))
     let body = action.apply(null, flatten(params))
 
+    this.transactionWillOpen(transaction)
+
     return coroutine(body, (error, payload, complete) => {
       this.transactionWillUpdate(transaction, error, payload, complete)
 
@@ -132,7 +141,7 @@ Microcosm.prototype = {
    * to a given object (or getInitialState())
    */
   reset(state, transactions=[]) {
-    this.transactions = flatten(transactions) // Prevent accidental mutation
+    this.transactions = transactions.concat() // Prevent accidental mutation
     this.base = Object.assign(this.getInitialState(), state)
 
     return this.rollforward()
