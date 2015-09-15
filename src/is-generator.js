@@ -6,9 +6,7 @@
  * @return {Boolean}
  */
 
-function isGenerator (obj) {
+module.exports = function isGenerator (obj) {
   return obj && typeof obj.next === 'function'
              && typeof obj.throw === 'function'
 }
-
-module.exports = isGenerator
