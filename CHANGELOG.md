@@ -6,7 +6,9 @@
 
 - Tweaks to lazy callback executed after `app.push` for better
   optimization
+- Tweaks to `flatten` for better optimization
 - Renamed `async` utility to `coroutine`
+- Reworked transactions to expose future lifecycle methods
 
 ## 9.5.0
 
