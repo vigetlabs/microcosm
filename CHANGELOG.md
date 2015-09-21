@@ -2,6 +2,15 @@
 
 ## 9.6.0 (not released)
 
+### Noticeable changes
+
+- The `deserialize` lifecycle method is now provided the entire raw
+  state as the action parameters. This means that it is now available
+  as the second argument in store callbacks.
+- Similarly, the `serialize` lifecycle method is now provided the
+  entire app state in the action. This means that it is now available
+  as the second argument in store callbacks.
+
 ### Internal changes
 
 - Tweaks to lazy callback executed after `app.push` for better
@@ -9,6 +18,11 @@
 - Tweaks to `flatten` for better optimization
 - Renamed `async` utility to `coroutine`
 - Reworked transactions to expose future lifecycle methods
+- Retain 100% test coverage
+
+### Upgrading
+
+There are no breaking changes for this release.
 
 ## 9.5.0
 
