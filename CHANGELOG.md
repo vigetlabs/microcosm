@@ -1,6 +1,12 @@
 # Changelog
 
-## 9.6.0 (not released)
+## 9.7.0
+
+- The third argument of store callbacks now contains all application
+  state. The intention behind this addition is to allow for stores
+  that must make decisions based upon input from multiple sources.
+
+## 9.6.0
 
 ### Noticeable changes
 

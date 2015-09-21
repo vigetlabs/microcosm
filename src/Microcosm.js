@@ -102,7 +102,7 @@ Microcosm.prototype = {
       var key   = this.stores[i][0]
       var store = this.stores[i][1]
 
-      next[key] = send(store, state[key], transaction)
+      next[key] = send(store, key, state, transaction)
     }
 
     return next
@@ -121,7 +121,7 @@ Microcosm.prototype = {
    * and the change will disappear from history.
    */
   push(action, params, callback) {
-    let transaction = Transaction(tag(action))
+    let transaction = Transaction(tag(action), null)
     let body = action.apply(null, flatten(params))
 
     this.transactionWillOpen(transaction)
