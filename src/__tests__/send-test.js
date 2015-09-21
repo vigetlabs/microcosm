@@ -74,6 +74,56 @@ describe('sending actions', function() {
     app.push(action)
   })
 
+  it ('sends passes state from previous store operations', function() {
+    let app = new Microcosm()
+
+    let store = {
+      getInitialState() {
+        return 1
+      },
+      register() {
+        return { [action]: total => total + 1 }
+      }
+    }
+
+    app.addStore('one', store)
+       .addStore('one', store)
+
+    app.start()
+
+    app.push(action, [], function() {
+      assert.equal(app.state.one, 3)
+    })
+ })
+
+  it ('can make decisions from all app state based on prior operations', function() {
+    let app = new Microcosm()
+
+    app.addStore('count', {
+      getInitialState() {
+        return 0
+      },
+      register() {
+        return { [action]: total => total + 1 }
+      }
+    })
+
+    app.addStore('isEven', {
+      register() {
+        return {
+          [action]: (isEven, _, state) => !(state.count % 2)
+        }
+      }
+    })
+
+    app.start()
+
+    app.push(action, [], function() {
+      assert.equal(app.state.count, 1)
+      assert.equal(app.state.isEven, false)
+    })
+  })
+
   describe('Lifecycle passthrough', function() {
 
     it ('allows defined lifecycle methods to bypass the register function', function() {

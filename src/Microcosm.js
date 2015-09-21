@@ -96,12 +96,12 @@ Microcosm.prototype = {
    * "What will change when I account for a transaction?"
    */
   dispatch(state, transaction) {
-    let next = {}
+    let next = Object.assign({}, state)
 
     for (var i = 0; i < this.stores.length; i++) {
       var key   = this.stores[i][0]
       var store = this.stores[i][1]
-      var answer = send(store, key, state, transaction)
+      var answer = send(store, key, next, transaction)
 
       if (answer !== void 0) {
         next[key] = answer

@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.9.0 (Not released)
+
+### Noticeable changes
+
+- Each store will receive the reduced state from all prior
+  stores. This means that stores can respond to the result from prior
+  operations. This should not affect any stores that do not access the
+  third argument of store callbacks (all application state).
+
 ## 9.8.0
 
 ### Noticeable changes
