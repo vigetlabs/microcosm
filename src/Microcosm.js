@@ -184,7 +184,7 @@ Microcosm.prototype = {
    * according to the `serialize` method described by each store.
    */
   serialize() {
-    return this.dispatch(this.state, Transaction(lifecycle.willSerialize))
+    return this.dispatch(this.state, Transaction(lifecycle.willSerialize, this.state))
   },
 
   /**
@@ -197,7 +197,7 @@ Microcosm.prototype = {
       return this.state
     }
 
-    return this.dispatch(data, Transaction(lifecycle.willDeserialize))
+    return this.dispatch(data, Transaction(lifecycle.willDeserialize, data))
   },
 
   /**

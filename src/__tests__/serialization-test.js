@@ -18,6 +18,19 @@ describe('Serialization', function() {
     assert.equal(app.toJSON()['serialize-test'], 'this is a test')
   })
 
+  it ('sends all state as the second argument', function(done) {
+    let app = new Microcosm()
+
+    app.addStore('serialize-test', {
+      serialize(subset, state) {
+        assert.equal(state, app.state)
+        done()
+      }
+    })
+
+    app.start().toJSON()
+  })
+
   it ('properly deserializes nully values', function() {
     let app = new Microcosm()
 
@@ -25,5 +38,20 @@ describe('Serialization', function() {
 
     assert.equal(false, 'fiz' in app.deserialize(null))
     assert.equal(false, 'fiz' in app.deserialize(undefined))
+  })
+
+  it ('passes the raw data as the seconda argument of deserialize', function(done) {
+    let app = new Microcosm()
+
+    app.addStore('fiz', {
+      deserialize(subset, raw) {
+        assert.equal(subset, 'buzz')
+        assert.deepEqual(raw, { fiz: 'buzz' })
+        done()
+      }
+    })
+
+    app.start()
+    app.deserialize({ fiz: 'buzz'})
   })
 })

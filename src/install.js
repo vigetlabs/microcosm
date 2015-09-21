@@ -8,7 +8,7 @@
  */
 
 function checkPlugin (plugin) {
-  if (process.env.NODE_ENV === 'development' && ('register' in plugin) && typeof plugin.register !== 'function') {
+  if (process.env.NODE_ENV !== 'production' && ('register' in plugin) && typeof plugin.register !== 'function') {
     throw TypeError('Expected register property of plugin to be a function, instead got ' + plugin.register)
   }
 }

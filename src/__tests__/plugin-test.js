@@ -80,7 +80,7 @@ describe('Plugins', function() {
   })
 
   it ('throws an error if a register property is not a function', function(done) {
-    let app  = new Microcosm()
+    let app = new Microcosm()
 
     let Plugin = {
       register: 'booyah'
@@ -96,4 +96,7 @@ describe('Plugins', function() {
     }
   })
 
+  it ('does not throw error if no register property is given', function() {
+    return new Microcosm().addPlugin({})
+  })
 })
