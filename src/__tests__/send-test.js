@@ -34,6 +34,8 @@ describe('sending actions', function() {
       }
     })
 
+    app.start()
+
     app.push(action, [], function() {
       assert.equal(app.state.test, 'test')
     })
