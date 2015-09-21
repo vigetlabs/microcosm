@@ -96,14 +96,16 @@ Microcosm.prototype = {
    * "What will change when I account for a transaction?"
    */
   dispatch(state, transaction) {
-    return this.stores.reduce(function(memo, item) {
-      let key   = item[0]
-      let store = item[1]
+    let next = {}
 
-      memo[key] = send(store, state[key], transaction)
+    for (var i = 0; i < this.stores.length; i++) {
+      var key   = this.stores[i][0]
+      var store = this.stores[i][1]
 
-      return memo
-    }, {})
+      next[key] = send(store, state[key], transaction)
+    }
+
+    return next
   },
 
   /**
