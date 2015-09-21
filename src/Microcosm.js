@@ -101,8 +101,11 @@ Microcosm.prototype = {
     for (var i = 0; i < this.stores.length; i++) {
       var key   = this.stores[i][0]
       var store = this.stores[i][1]
+      var answer = send(store, key, state, transaction)
 
-      next[key] = send(store, key, state, transaction)
+      if (answer !== void 0) {
+        next[key] = answer
+      }
     }
 
     return next

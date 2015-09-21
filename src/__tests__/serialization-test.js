@@ -40,6 +40,18 @@ describe('Serialization', function() {
     assert.equal(false, 'fiz' in app.deserialize(undefined))
   })
 
+  it ('defaults to getInitialState when no deserialize method is provided', function() {
+    let app = new Microcosm()
+
+    app.addStore('fiz', {
+      getInitialState() {
+        return true
+      }
+    })
+
+    assert.equal(true, app.replace({}).state.fiz)
+  })
+
   it ('passes the raw data as the seconda argument of deserialize', function(done) {
     let app = new Microcosm()
 

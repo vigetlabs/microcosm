@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.8.0
+
+### Noticeable changes
+
+- If a store returns undefined, no state change will occur. This is
+  potentially a breaking change. If you have stores that return
+  `undefined`, consider changing your logic to support returning `null`
+
 ## 9.7.0
 
 - The third argument of store callbacks now contains all application
