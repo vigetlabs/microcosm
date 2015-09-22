@@ -5,7 +5,7 @@ let eventually = require('./eventually')
 let flatten = require('./flatten')
 let install = require('./install')
 let lifecycle = require('./lifecycle')
-let send = require('./send')
+let dispatch = require('./dispatch')
 let tag = require('./tag')
 
 let Microcosm = function() {
@@ -87,28 +87,8 @@ Microcosm.prototype = {
     return this
   },
 
-  /**
-   * Dispatch takes an existing state and performs the result of a transaction
-   * on top of it. This is different than other Flux implementations, there
-   * are no side-effects.
-   *
-   * Dispatch answers the question:
-   * "What will change when I account for a transaction?"
-   */
   dispatch(state, transaction) {
-    let next = Object.assign({}, state)
-
-    for (var i = 0; i < this.stores.length; i++) {
-      var key   = this.stores[i][0]
-      var store = this.stores[i][1]
-      var answer = send(store, key, next, transaction)
-
-      if (answer !== void 0) {
-        next[key] = answer
-      }
-    }
-
-    return next
+    return dispatch(this.stores, state, transaction)
   },
 
   /**

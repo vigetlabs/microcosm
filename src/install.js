@@ -7,6 +7,8 @@
  * of a Microcosm.
  */
 
+const NOOP = function(){}
+
 function checkPlugin (plugin) {
   if (process.env.NODE_ENV !== 'production' && ('register' in plugin) && typeof plugin.register !== 'function') {
     throw TypeError('Expected register property of plugin to be a function, instead got ' + plugin.register)
@@ -27,6 +29,6 @@ function installPlugin (next, plugin) {
   }
 }
 
-module.exports = function installPlugins (plugins, callback) {
+module.exports = function installPlugins (plugins, callback=NOOP) {
   return plugins.reduceRight(installPlugin, callback)(null)
 }
