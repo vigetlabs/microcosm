@@ -9,18 +9,22 @@
 
 let send = require('./send')
 
-module.exports = function dispatch(stores, state, transaction) {
-  let next = Object.assign({}, state)
+function fold(transaction) {
+  var { type, payload } = transaction
 
-  for (var i = 0; i < stores.length; i++) {
-    let key   = stores[i][0]
-    let store = stores[i][1]
-    let answer = send(store, key, next, transaction)
+  return function (state, config) {
+    var key    = config[0]
+    var store  = config[1]
+    var answer = send(store, type, state[key], payload, state)
 
     if (answer !== void 0) {
-      next[key] = answer
+      state[key] = answer
     }
-  }
 
-  return next
+    return state
+  }
+}
+
+module.exports = function dispatch(stores, state, transaction) {
+  return stores.reduce(fold(transaction), Object.assign({}, state))
 }
