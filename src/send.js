@@ -1,6 +1,7 @@
 /**
  * Send
- * Communicate an action to stores.
+ * Communicate an action to a store. This is how Microcosm determines
+ * how transaction parameters should update state.
  */
 
 let { MAPPING } = require('./lifecycle')
