@@ -8,7 +8,7 @@ describe('tag', function() {
   })
 
   it ('assigns a default name', function() {
-    assert.equal(tag({}).toString().search('microcosm_action'), 0)
+    assert.equal(tag(function(){}).toString().search('microcosm_action'), 0)
   })
 
 })
