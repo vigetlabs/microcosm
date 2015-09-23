@@ -10,12 +10,12 @@
 let send = require('./send')
 
 function fold(transaction) {
-  var { type, payload } = transaction
+  let { type, payload } = transaction
 
   return function (state, config) {
-    var key    = config[0]
-    var store  = config[1]
-    var answer = send(store, type, state[key], payload, state)
+    let key    = config[0]
+    let store  = config[1]
+    let answer = send(store, type, state[key], payload, state)
 
     if (answer !== void 0) {
       state[key] = answer
