@@ -35,7 +35,7 @@ class SolarSystem extends Microcosm {
     super()
     // Configuration goes here.
     // Isolated from the outside world
-	}
+  }
 }
 
 let app = new SolarSystem()
