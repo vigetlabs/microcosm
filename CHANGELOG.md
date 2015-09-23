@@ -1,6 +1,6 @@
 # Changelog
 
-## 9.9.0 (Not released)
+## 9.9.0
 
 ### Noticeable changes
 
@@ -8,6 +8,11 @@
   stores. This means that stores can respond to the result from prior
   operations. This should not affect any stores that do not access the
   third argument of store callbacks (all application state).
+
+### Internal changes
+
+- Rewrites and improvements to `dispatch` and `send` methods to
+  achieve higher v8 optimization.
 
 ## 9.8.0
 
