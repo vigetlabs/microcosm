@@ -1,7 +1,6 @@
 /**
  * Transaction
- * An account of what has happened. Follows the standard action specification here:
- * https://github.com/acdlite/flux-standard-action
+ * An account of what has happened.
  */
 
 module.exports = function Transaction (type, payload=null) {
