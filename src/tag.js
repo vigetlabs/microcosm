@@ -10,12 +10,26 @@ module.exports = function tag (fn) {
     throw TypeError('Attempted to tag an action, but the provided value is not a function. Instead got ' + typeof fn)
   }
 
-  let name = fn.name || 'microcosm_action'
-  let mark = uid++
-
-  if (!fn.hasOwnProperty('toString')) {
-    fn.toString = () => `${ name }_${ mark }`
+  /**
+   * Respect existing toString methods.
+   */
+  if (fn.hasOwnProperty('toString')) {
+    return fn
   }
+
+  /**
+   * Function.name lacks legacy support. For these browsers, fallback
+   * to a consistent name:
+   */
+  var name = fn.name || 'microcosm_action'
+
+  /**
+   * Auto-increment a stepper suffix to prevent two actions with the
+   * same name from colliding.
+   */
+  var suffix = uid++
+
+  fn.toString = () => `${ name }_${ suffix }`
 
   return fn
 }

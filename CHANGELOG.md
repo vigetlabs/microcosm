@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.10.0 (not released)
+
+### Internal Changes
+
+- Changed order of execution in `tag` to prevent unnecessary work
+
 ## 9.9.0
 
 ### Noticeable changes
