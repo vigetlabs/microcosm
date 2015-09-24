@@ -6,6 +6,12 @@
 
 - Changed order of execution in `tag` to prevent unnecessary work
 
+## 9.9.1
+
+### Noticeable changes
+
+- Improved the error messages for `addStore`
+
 ## 9.9.0
 
 ### Noticeable changes

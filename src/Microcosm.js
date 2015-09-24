@@ -155,8 +155,12 @@ Microcosm.prototype = {
    * it will be provided the current state for that particular key.
    */
   addStore(key, store) {
-    if (process.env.NODE_ENV !== 'production' && arguments.length <= 1) {
-      throw TypeError(`Microcosm::addStore expected string key but was given: ${ typeof key }. Did you forget to include the key?`)
+    if (process.env.NODE_ENV !== 'production' && typeof key !== 'string') {
+      throw TypeError(`Microcosm::addStore expects a string key to identify the store. Instead it got ${ typeof key }. Did you forget to include the key?`)
+    }
+
+    if (process.env.NODE_ENV !== 'production' && typeof store !== 'object') {
+      throw TypeError(`Microcosm::addStore expects a store object as its second argument. Instead it got ${ typeof store }.`)
     }
 
     this.stores.push([ key, store ])
