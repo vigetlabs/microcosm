@@ -1,5 +1,7 @@
 module.exports = function eventually (fn, scope, error, payload) {
-  if (fn == null) return null
+  if (typeof fn !== 'function') {
+    return undefined
+  }
 
   /**
    * This is a neat trick to get around the promise try/catch:

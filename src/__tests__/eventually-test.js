@@ -3,8 +3,10 @@ import eventually from '../eventually'
 
 describe('eventually', function() {
 
-  it ('returns null if not given a function', function() {
-    assert.equal(eventually(), null)
+  it ('returns undefined if not given a function', function() {
+    assert.equal(eventually(), undefined)
+    assert.equal(eventually(undefined), undefined)
+    assert.equal(eventually(3), undefined)
   })
 
 })
