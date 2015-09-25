@@ -5,7 +5,7 @@ module.exports = {
   context: __dirname,
   devtool: 'inline-source-map',
   entry: {
-    'advanced' : './advanced/src/index',
+    'react-router' : './react-router/index',
     'simple-svg' : './simple-svg/index',
     'chatbot' : './chatbot/index'
   },
@@ -16,11 +16,9 @@ module.exports = {
   },
 
   resolve: {
-    extensions: [ '', '.js', '.jsx', '.json', '.scss', '.svg' ],
-    modulesDirectories: [ 'web_modules', 'node_modules', 'src', 'examples/advanced', '..' ]
+    extensions: [ '', '.js', '.jsx', '.json' ],
+    modulesDirectories: [ 'web_modules', 'node_modules', 'src' ]
   },
-
-  postcss: [ require('autoprefixer') ],
 
   module: {
     loaders: [
@@ -31,14 +29,6 @@ module.exports = {
         query    : {
           optional : ['runtime']
         }
-      },
-      {
-        test    : /\.s*(c|a)ss$/,
-        loader  : 'style!css!postcss!sass'
-      },
-      {
-        test    : /\.(svg)$/,
-        loader  : 'raw'
       }
     ]
   }
