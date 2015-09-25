@@ -9,6 +9,10 @@ module.exports = function eventually (fn, scope, error, payload) {
    *
    * Note: Referencing setTimeout from global allows for higher
    * v8 optimization.
+   *
+   * Note: `fn.call` is intentionally used over `fn.bind`.
+   * This is to respect functions where `bind` has already been
+   * invoked (like `ReactComponent::setState`).
    */
-  return global.setTimeout(fn.bind(scope, error, payload))
+  return global.setTimeout(() => fn.call(scope, error, payload))
 }
