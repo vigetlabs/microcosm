@@ -1,16 +1,20 @@
 # Changelog
 
-## 9.10.0 (not released)
+## 9.9.2
 
-### Internal Changes
+### Internal changes
 
-- Changed order of execution in `tag` to prevent unnecessary work
+- Fixed bug where `eventually` would try to execute a non-function value
 
 ## 9.9.1
 
 ### Noticeable changes
 
 - Improved the error messages for `addStore`
+
+### Internal changes
+
+- Changed order of execution in `tag` to prevent unnecessary work
 
 ## 9.9.0
 
