@@ -12,7 +12,7 @@ const Layout = React.createClass({
   },
 
   componentDidMount() {
-    this.props.app.listen(state => this.setState(state))
+    this.props.app.listen(this.setState, this)
   },
 
   render() {
