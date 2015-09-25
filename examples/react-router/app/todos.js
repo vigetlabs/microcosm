@@ -1,5 +1,5 @@
-import Items     from './stores/Items'
-import Lists     from './stores/Lists'
+import Items     from './stores/items'
+import Lists     from './stores/lists'
 import Microcosm from '../../../src/Microcosm'
 
 class Todos extends Microcosm {
