@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.10.0
+
+- Upgrade Diode to 6.1.0. `listen` now supports a second argument that
+  defines the scope of the callback.
+- Respect scope of bound functions when executing callbacks via `app.push`
+
 ## 9.9.2
 
 ### Internal changes
