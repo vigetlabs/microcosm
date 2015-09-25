@@ -4,6 +4,25 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
+h1, h2, h3, h4 {
+  margin: 0;
+}
+
+p {
+  max-width: 40em;
+  margin: 8px 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:focus,
+a:hover {
+  color: #E61875;
+}
+
 .text-display {
   font-size: 34px;
   font-weight: 400;
@@ -14,21 +33,6 @@ body {
   font-size: 14px;
   font-weight: 400;
   line-height: 25px;
-}
-
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 48px 8%;
-}
-
-h1, h2, h3, h4 {
-  margin: 0;
-}
-
-p {
-  max-width: 40em;
-  margin: 8px 0;
 }
 
 .textfield {
@@ -65,9 +69,9 @@ input:not([type=submit]) {
 .aside {
   background: white;
   border-radius: 1px;
-  padding-bottom: 8px;
-  margin: 16px 0 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  margin: 16px 0 0;
+  padding-bottom: 8px;
 }
 
 @media all and (min-width: 768px) {
@@ -88,18 +92,9 @@ input:not([type=submit]) {
 }
 
 .container {
-  position: relative;
   margin: 0 auto;
-  padding: 0 16px;
   max-width: 800px;
-}
-
-.hide-visually {
-  clip: rect(0, 0, 0, 0);
-  position: absolute;
-  width: 0;
-  height: 0;
-  margin: -1px;
+  padding: 0 16px;
 }
 
 label {
@@ -107,16 +102,6 @@ label {
   display: block;
   margin-bottom: 8px;
   font-size: 13px;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-a:focus,
-a:hover {
-  color: #E61875;
 }
 
 .list {
