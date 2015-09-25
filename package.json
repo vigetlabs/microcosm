@@ -28,7 +28,7 @@
     ]
   },
   "dependencies": {
-    "diode": "6.0.0",
+    "diode": "6.1.0",
     "is-promise": "2.1.0"
   },
   "devDependencies": {
