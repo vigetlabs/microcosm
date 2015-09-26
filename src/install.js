@@ -7,14 +7,13 @@
  * of a Microcosm.
  */
 
-function checkPlugin (plugin) {
-  if (process.env.NODE_ENV !== 'production' && ('register' in plugin) && typeof plugin.register !== 'function') {
-    throw TypeError('Expected register property of plugin to be a function, instead got ' + plugin.register)
-  }
-}
+const NOOP = () => {}
 
 function installPlugin (next, plugin) {
-  checkPlugin(plugin)
+
+  if (process.env.NODE_ENV !== 'production' && ('register' in plugin) && typeof plugin.register !== 'function') {
+    throw TypeError('Expected register property of plugin to be a function, instead got ' + typeof plugin.register)
+  }
 
   return function (error) {
     // Halt execution of all future plugin installation if there is an error
@@ -27,6 +26,6 @@ function installPlugin (next, plugin) {
   }
 }
 
-module.exports = function installPlugins (plugins, callback) {
+module.exports = function installPlugins (plugins, callback=NOOP) {
   return plugins.reduceRight(installPlugin, callback)(null)
 }
