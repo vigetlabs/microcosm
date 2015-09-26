@@ -33,12 +33,12 @@ let nodeify = function (promise, callback) {
  * @param {Function} callback - An error-first callback
  */
 let waterfall = function (iterator, callback) {
-  return nodeify(iterator.next().value, function step (error, body) {
+  return coroutine(iterator.next().value, function step (error, body) {
     let { done, value } = iterator.next()
 
     callback(error, body, done)
 
-    return done ? body : nodeify(value, step)
+    return done ? body : coroutine(value, step)
   })
 }
 
@@ -49,6 +49,8 @@ let waterfall = function (iterator, callback) {
  * @param {any} value - The compared value
  * @param {Function} callback - An error-first callback
  */
-module.exports = function (value, callback) {
+let coroutine = function (value, callback) {
   return (isGenerator(value) ? waterfall : nodeify)(value, callback)
 }
+
+module.exports = coroutine
