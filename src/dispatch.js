@@ -9,7 +9,7 @@
 
 let send = require('./send')
 
-function fold(transaction) {
+function fold (transaction) {
   let { type, payload } = transaction
 
   return function (state, config) {
