@@ -158,7 +158,7 @@ describe('sending actions', function() {
       })
     })
 
-    it ('ignores methods defined by the store that are not lifecycle methods matching dispatched types', function() {
+    it ('ignores methods defined by the store that are not lifecycle methods matching dispatched types', function(done) {
       let app = new Microcosm()
 
       app.addStore('test', {
@@ -166,9 +166,15 @@ describe('sending actions', function() {
           return 'test'
         }
       })
-      let answer = app.dispatch(app.state, { type: 'foo' })
 
-      assert.equal(answer.test, undefined)
+      let action = function() {}
+      action.toString = () => 'foo'
+
+      app.push(action, [], function() {
+        assert.equal(app.state.test, undefined)
+        done()
+      })
+
     })
 
   })

@@ -28,10 +28,6 @@ describe('Microcosm', function() {
     let dummy = Transaction('test')
     let transactions = [ dummy ]
 
-    it ('can reset with specific transactions', function() {
-      assert.deepEqual(app.reset({}, transactions).transactions, [ dummy ])
-    })
-
     it ('copies the array when given transactions on reset', function() {
       assert.notEqual(app.reset({}, transactions).transactions, transactions)
     })
