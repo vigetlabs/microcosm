@@ -7,12 +7,15 @@
  * "What will change when I account for a transaction?"
  */
 
-let send = require('./send')
+let send   = require('./send')
+let assert = require('assert')
 
 function fold (transaction) {
   let { type, payload } = transaction
 
   return function (state, config) {
+    assert.ok(Array.isArray(config), 'Item passed to dispatch was not a [ key, store ] pair. Instead got: ' + config)
+
     let key    = config[0]
     let store  = config[1]
     let answer = send(store, type, state[key], payload, state)
@@ -26,5 +29,6 @@ function fold (transaction) {
 }
 
 module.exports = function dispatch(stores, state, transaction) {
-  return stores.reduce(fold(transaction), Object.assign({}, state))
+  return transaction.active ? stores.reduce(fold(transaction), Object.assign({}, state))
+                            : state
 }

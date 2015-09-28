@@ -22,7 +22,7 @@ docs: $(DIST)
 	cp -r $@ $^
 
 javascript: $(DIST)
-	@ @babel --plugins babel-plugin-unassert -d $^ $(JS)
+	@ babel --plugins babel-plugin-unassert -d $^ $(JS)
 
 javascript-min: javascript
 	@ NODE_ENV=production \

@@ -7,7 +7,8 @@ module.exports = {
   entry: {
     'chatbot'      : './chatbot/index',
     'react-router' : './react-router/index',
-    'simple-svg'   : './simple-svg/index'
+    'simple-svg'   : './simple-svg/index',
+    'undo-tree'    : './undo-tree/index'
   },
 
   output: {

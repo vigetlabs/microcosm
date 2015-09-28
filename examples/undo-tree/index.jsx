@@ -1,0 +1,51 @@
+import Microcosm from 'Microcosm'
+import React from 'react'
+import Drawing from './components/drawing'
+
+class UndoTree extends Microcosm {
+  clean() {
+    return false
+  }
+
+  undo() {
+    this.history.setFocus(this.history.before(this.history.focus))
+    this.rollforward()
+  }
+
+  goto(node) {
+    this.history.setFocus(node)
+    this.rollforward()
+  }
+}
+
+let app = new UndoTree()
+
+function report(x, y) {
+  return { x, y }
+}
+
+app.addStore('pixels', {
+
+  getInitialState() {
+    return Array(20).join().split(',').map(_ => Array(20).join().split(','))
+  },
+
+  register() {
+    return {
+      [report](pixels, { x, y }) {
+        pixels[y][x] = pixels[y][x] ? 0 : 1
+        return pixels
+      }
+    }
+  }
+
+})
+
+let el  = document.getElementById('app')
+
+function render () {
+  React.render(<Drawing app={ app } { ...app.state } onClick={ app.prepare(report) }/>, el)
+}
+
+app.listen(render)
+app.start(render)
