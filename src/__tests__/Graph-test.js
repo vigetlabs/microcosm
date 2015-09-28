@@ -148,18 +148,6 @@ describe('Graph', function() {
     assert.deepEqual(graph.pathway(), [ 'one', 'two', 'three' ])
   })
 
-  it('can get pathway regardless of forking', function() {
-    let graph = new Graph()
-
-    graph.append('one')
-    graph.append('two')
-    graph.append('three')
-    graph.setFocus('two')
-    graph.append('four')
-
-    assert.deepEqual(graph.pathway(), [ 'one', 'two', 'four' ])
-  })
-
   it ('properly handles forks', function() {
     let graph = new Graph()
 
