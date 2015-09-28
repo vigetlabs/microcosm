@@ -56,14 +56,14 @@ Graph.prototype = {
     for (var i = this.edges.length - 1; i >= 0; i--) {
       if (this.edges[i][1] === node) return this.edges[i][0]
     }
-    return false
+    return null
   },
 
   after(node) {
     for (var i = this.edges.length - 1; i >= 0; i--) {
       if (this.edges[i][0] === node) return this.edges[i][1]
     }
-    return false
+    return null
   },
 
   pathway() {
