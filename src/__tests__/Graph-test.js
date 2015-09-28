@@ -62,13 +62,13 @@ describe('Graph', function() {
     assert.equal(graph.focus, 'two')
   })
 
-  it ('removing a focused node sets focus to false if there is no next node', function() {
+  it ('removing a focused node sets focus to null if there is no next node', function() {
     let graph = new Graph()
 
     graph.add('one')
     graph.remove('one')
 
-    assert.equal(graph.focus, false)
+    assert.equal(graph.focus, null)
   })
 
   it ('can create a connection', function() {
