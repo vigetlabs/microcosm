@@ -3,59 +3,16 @@
  * An account of what has happened.
  */
 
-let dispatch = require('./dispatch')
+let assert = require('assert')
 
-function Transaction (type, payload) {
-  if (this instanceof Transaction === false) {
-    return new Transaction(type, payload)
+module.exports = function Transaction (type, payload, complete) {
+  assert.ok(type, 'Transaction was created with the invalid type: ' + type)
+
+  return {
+    type: `${ type }`,
+    error: false,
+    active: arguments.length > 1,
+    payload: payload,
+    complete: complete
   }
-
-  this.active   = !!payload
-  this.children = []
-  this.payload  = payload
-  this.type     = `${ type }`
 }
-
-Transaction.prototype = {
-  active   : false,
-  payload  : null,
-  complete : false,
-
-  update(error, payload, complete) {
-    this.active   = !error
-    this.error    = error
-    this.payload  = payload
-    this.complete = complete
-  },
-
-  flatten(stores, state) {
-    let child = this.next()
-    let next  = this.dispatch(stores, state)
-
-    return child ? child.flatten(stores, next) : next
-  },
-
-  dispatch(stores, state) {
-    return this.active ? dispatch(stores, state, this) : state
-  },
-
-  now() {
-    let next = this.next()
-    return next ? next.now() : this
-  },
-
-  add(child) {
-    this.children.unshift(child)
-  },
-
-  append(child) {
-    this.now().add(child)
-  },
-
-  next() {
-    return this.children[0]
-  }
-
-}
-
-module.exports = Transaction

@@ -1,10 +1,12 @@
 let Diode = require('diode')
+let Graph = require('./Graph')
 let Transaction = require('./Transaction')
 let coroutine = require('./coroutine')
 let eventually = require('./eventually')
 let flatten = require('./flatten')
 let install = require('./install')
 let lifecycle = require('./lifecycle')
+let dispatch = require('./dispatch')
 let tag = require('./tag')
 
 let Microcosm = function() {
@@ -30,16 +32,16 @@ let Microcosm = function() {
    */
   this.state = this.base
 
-  this.plugins = []
   this.stores  = []
-  this.history = Transaction(lifecycle.willStart, true)
+  this.plugins = []
+  this.history = new Graph([ Transaction(lifecycle.willStart, true, true) ])
 }
 
 Microcosm.prototype = {
   constructor: Microcosm,
 
   getInitialState() {
-    return Transaction(lifecycle.willStart, this.state).dispatch(this.stores, {})
+    return dispatch(this.stores, {}, Transaction(lifecycle.willStart, this.state), true)
   },
 
   /**
@@ -47,17 +49,34 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    this.state = this.history.flatten(this.stores, this.base)
-    this.emit()
+    this.state = this.history.pathway().reduce(dispatch.bind(this, this.stores), this.base)
+    this.emit(this.state)
 
     return this
   },
 
-  /**
-   * Partially applies `push`.
-   */
-  prepare(action, params=[]) {
-    return (more, callback) => this.push(action, flatten(params, more), callback)
+  clean(transaction, next) {
+    if (!transaction.complete) return
+
+    this.base = dispatch(this.stores, this.base, transaction)
+    this.history.remove(transaction)
+
+    next()
+  },
+
+  transactionWillOpen(transaction) {
+    this.history.append(transaction)
+  },
+
+  transactionWillUpdate(transaction, error, payload, complete) {
+    transaction.active   = !error
+    transaction.complete = complete
+    transaction.error    = error
+    transaction.payload  = payload
+  },
+
+  transactionWillClose(transaction) {
+    this.history.walk(this.clean, this)
   },
 
   /**
@@ -69,18 +88,14 @@ Microcosm.prototype = {
     let transaction = Transaction(tag(action))
     let body = action.apply(null, flatten(params))
 
-    this.history.append(transaction)
+    this.transactionWillOpen(transaction)
 
     return coroutine(body, (error, payload, complete) => {
-      transaction.update(error, payload, complete)
+      this.transactionWillUpdate(transaction, error, payload, complete)
 
       if (complete) {
+        this.transactionWillClose(transaction)
         eventually(callback, this, error, payload)
-
-        if (this.history.complete) {
-          this.base    = this.history.dispatch(this.stores, this.base)
-          this.history = this.history.next()
-        }
       }
 
       this.rollforward()
@@ -88,11 +103,18 @@ Microcosm.prototype = {
   },
 
   /**
+   * Partially applies `push`.
+   */
+  prepare(action, params=[]) {
+    return (more, callback) => this.push(action, flatten(params, more), callback)
+  },
+
+  /**
    * Clear all outstanding transactions and assign base state
    * to a given object (or getInitialState())
    */
   reset(state) {
-    this.history = Transaction(lifecycle.willReset, true)
+    this.history = new Graph([ Transaction(lifecycle.willReset, true, true) ])
     this.base = Object.assign(this.getInitialState(), state)
 
     return this.rollforward()
@@ -131,6 +153,7 @@ Microcosm.prototype = {
 
     this.stores.push([ key, store ])
 
+    // Re-evaluate the current state including the new store
     this.rollforward()
 
     return this
@@ -141,8 +164,7 @@ Microcosm.prototype = {
    * according to the `serialize` method described by each store.
    */
   serialize() {
-    let transaction = Transaction(lifecycle.willSerialize, this.state)
-    return transaction.dispatch(this.stores, this.state)
+    return dispatch(this.stores, this.state, Transaction(lifecycle.willSerialize, this.state))
   },
 
   /**
@@ -155,9 +177,7 @@ Microcosm.prototype = {
       return this.state
     }
 
-    let transaction = Transaction(lifecycle.willDeserialize, data)
-
-    return transaction.dispatch(this.stores, data)
+    return dispatch(this.stores, data, Transaction(lifecycle.willDeserialize, data))
   },
 
   /**
@@ -168,15 +188,12 @@ Microcosm.prototype = {
   },
 
   /**
-   * Starts an application. It does a couple of things:
-   *
-   * 1. Calls `this.reset()` to determine initial state
-   * 2. Runs through all plugins, it will terminate if any fail
-   * 3. Executes the provided callback, passing along any errors
-   *    generated if installing plugins fails.
+   * Starts an application:
+   * 1. Run through all plugins, it will terminate if any fail
+   * 2. Execute the provided callback, passing along any errors
+   *    genrateed if installing plugins fails.
    */
   start(...callbacks) {
-    // Queue plugins and then notify that installation has finished
     install(this.plugins, error => {
       callbacks.forEach(cb => cb.call(this, error, this))
     })

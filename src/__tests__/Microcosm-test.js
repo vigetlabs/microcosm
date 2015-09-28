@@ -94,4 +94,5 @@ describe('Microcosm', function() {
 
     app.start(() => {}, done)
   })
+
 })
