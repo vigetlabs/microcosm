@@ -1,4 +1,4 @@
-import Transaction from '../transaction'
+import Transaction from '../Transaction'
 import dispatch from '../dispatch'
 import assert from 'assert'
 
