@@ -27,7 +27,7 @@ function report(x, y) {
 app.addStore('pixels', {
 
   getInitialState() {
-    return Array(20).join().split(',').map(_ => Array(20).join().split(','))
+    return Array(15).join().split(',').map(_ => Array(15).join().split(','))
   },
 
   register() {
