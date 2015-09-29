@@ -95,4 +95,28 @@ describe('Microcosm', function() {
     app.start(() => {}, done)
   })
 
+  it ('can manipulate how many transactions are merged', function() {
+    class CustomApp extends Microcosm {
+      shouldTransactionMerge() {
+        return this.history.path().length > 5
+      }
+    }
+
+    let app = new CustomApp()
+    let identity = n => n
+
+    app.push(identity, 1)
+    app.push(identity, 2)
+    app.push(identity, 3)
+    app.push(identity, 4)
+    app.push(identity, 5)
+
+    assert.equal(app.history.path().length, 5)
+
+    app.push(identity, 6)
+
+    assert.equal(app.history.path().length, 5)
+    assert.deepEqual(app.history.path().map(t => t.payload), [ 2, 3, 4, 5, 6 ])
+  })
+
 })
