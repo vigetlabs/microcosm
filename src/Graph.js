@@ -4,8 +4,6 @@
  * over time.
  */
 
-let assert = require('assert')
-
 function Graph (anchor) {
   this.edges = []
   this.focus = null
