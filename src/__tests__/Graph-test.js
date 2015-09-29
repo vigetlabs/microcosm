@@ -6,47 +6,19 @@ describe('Graph', function() {
   it ('adjusts the focal point when adding a node', function() {
     let graph = new Graph()
 
-    graph.add('one')
-    assert.equal(graph.focus, 'one')
-
-    graph.add('two')
+    graph.append('one')
+    graph.append('two')
     assert.equal(graph.focus, 'two')
-  })
-
-  it ('does not add undefined values', function() {
-    let graph = new Graph()
-
-    assert.throws(() => graph.add(undefined), /Graph unable to add node/)
-  })
-
-  it ('does not add a node twice', function() {
-    let graph = new Graph()
-
-    graph.add('one')
-    graph.add('one')
-
-    assert.equal(graph.nodes.length, 1)
-  })
-
-  it ('adjusts the focal point back when adding an existing node', function() {
-    let graph = new Graph()
-
-    graph.add('one')
-    graph.add('two')
-    graph.add('one')
-
-    assert.equal(graph.focus, 'one')
   })
 
   it ('can remove all traces of a node', function() {
     let graph = new Graph()
 
-    graph.connect('one', 'two')
-    graph.connect('three', 'four')
-
+    graph.append('one')
+    graph.append('two')
+    graph.append('three')
+    graph.append('four')
     graph.remove('three')
-
-    assert(graph.nodes.indexOf('three') < 0)
 
     graph.edges.forEach(function(edge) {
       assert(edge.indexOf('three') < 0)
@@ -54,68 +26,50 @@ describe('Graph', function() {
   })
 
   it ('removing a focused node moves focus to the next position', function() {
-    let graph = new Graph()
+    let graph = new Graph('one')
 
-    graph.connect('one', 'two')
+    graph.append('two')
     graph.remove('one')
 
     assert.equal(graph.focus, 'two')
   })
 
   it ('removing a focused node sets focus to null if there is no next node', function() {
-    let graph = new Graph()
+    let graph = new Graph('one')
 
-    graph.add('one')
     graph.remove('one')
 
     assert.equal(graph.focus, null)
   })
 
   it ('can create a connection', function() {
-    let graph = new Graph()
+    let graph = new Graph('foo')
 
-    graph.connect('foo', 'bar')
+    graph.append('bar')
 
     assert.equal(graph.after('foo'), 'bar')
 
-    assert.deepEqual(graph.edges[0], [ 'foo', 'bar' ])
+    assert.deepEqual(graph.edges.pop(), [ 'foo', 'bar' ])
   })
 
-  it ('can walk through time', function() {
-    let graph = new Graph()
+  it ('step back through the tree', function() {
+    let graph = new Graph('first')
 
-    graph.connect('first', 'second')
-    graph.connect('second', 'third')
+    graph.append('second')
+    graph.append('third')
 
-    assert.deepEqual(graph.pathway(), [ 'first', 'second', 'third' ])
+    assert.deepEqual(graph.path(), [ 'first', 'second', 'third' ])
   })
 
   it ('only walks through the main timeline', function() {
     let graph = new Graph()
 
-    graph.connect('first', 'second')
-    graph.connect('first', 'third')
+    graph.append('first')
+    graph.append('second')
+    graph.setFocus('first')
+    graph.append('third')
 
-    assert.deepEqual(graph.pathway(), [ 'first', 'third' ])
-  })
-
-  it ('can append a connection to the last node', function() {
-    let graph = new Graph([ 'one' ])
-
-    graph.append('two')
-
-    assert.equal(graph.after('one'), 'two')
-  })
-
-  it ('can can recurse through time', function() {
-    let graph = new Graph()
-
-    graph.append('one')
-    graph.append('two')
-    graph.setFocus('one')
-    graph.append('three')
-
-    assert.deepEqual(graph.pathway(), [ 'one', 'three'])
+    assert.deepEqual(graph.path(), [ 'first', 'third' ])
   })
 
   it ('does not walk past the focal point', function() {
@@ -126,7 +80,7 @@ describe('Graph', function() {
     graph.append('three')
     graph.setFocus('one')
 
-    assert.deepEqual(graph.pathway(), [ 'one' ])
+    assert.deepEqual(graph.path(), [ 'one' ])
   })
 
   it ('does not focus on a node it does not own', function() {
@@ -138,14 +92,14 @@ describe('Graph', function() {
     assert.deepEqual(graph.focus, 'one')
   })
 
-  it ('can get pathway after a focus point', function() {
+  it ('can get the path after a focus point', function() {
     let graph = new Graph()
 
     graph.append('one')
     graph.append('two')
     graph.append('three')
 
-    assert.deepEqual(graph.pathway(), [ 'one', 'two', 'three' ])
+    assert.deepEqual(graph.path(), [ 'one', 'two', 'three' ])
   })
 
   it ('properly handles forks', function() {
@@ -158,14 +112,15 @@ describe('Graph', function() {
     graph.append('four')
     graph.append('five')
 
-    assert.deepEqual(graph.pathway(), [ 'one', 'two', 'four', 'five' ])
+    assert.deepEqual(graph.path(), [ 'one', 'two', 'four', 'five' ])
   })
 
   it ('can get the next node in the chain', function() {
     let graph = new Graph()
 
-    graph.connect('one', 'two')
-    graph.connect('two', 'three')
+    graph.append('one')
+    graph.append('two')
+    graph.append('three')
 
     assert.equal(graph.after('one'), 'two')
     assert.equal(graph.after('two'), 'three')
@@ -174,22 +129,46 @@ describe('Graph', function() {
   it ('can get the previous node in the chain', function() {
     let graph = new Graph()
 
-    graph.connect('one', 'two')
-    graph.connect('two', 'three')
+    graph.append('one')
+    graph.append('two')
+    graph.append('three')
 
     assert.equal(graph.before('two'), 'one')
     assert.equal(graph.before('three'), 'two')
   })
 
-  it ('uses the most recent edge to determine connection (ensure proper edge insertion order)', function() {
-    let graph = new Graph()
+  describe('tree()', function() {
 
-    graph.connect('one', 'two')
-    graph.connect('two', 'three')
-    graph.connect('one', 'three')
+    it ('can get a list of all nodes in order', function() {
+      let graph = new Graph()
 
-    assert.equal(graph.after('one'), 'three')
-    assert.equal(graph.before('three'), 'one')
+      graph.append('one')
+      graph.append('two')
+      graph.setFocus('one')
+      graph.append('three')
+      graph.append('four')
+
+      let tree = graph.tree('one')
+
+      assert.equal(tree.node, 'one')
+      assert.equal(tree.children[0].node, 'two')
+      assert.equal(tree.children[1].node, 'three')
+      assert.equal(tree.children[1].children[0].node, 'four')
+    })
+
+    it ('just returns the first child when there are no edges', function() {
+      let tree = new Graph('one').tree()
+
+      assert.equal(tree.node, 'one')
+    })
+
+    it ('handles empty graphs', function() {
+      let tree = new Graph().tree()
+
+      assert.equal(tree.node, null)
+      assert.deepEqual(tree.children, [])
+    })
+
   })
 
 })

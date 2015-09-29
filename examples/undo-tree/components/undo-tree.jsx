@@ -5,26 +5,19 @@ const UndoTree = React.createClass({
 
   getTree(history) {
     return Tree({
-      width: 760,
-      height: 360,
-      data: history.nodes.map(function loop (node, i) {
-        return {
-          name: node.type,
-          node: node,
-          children: history.edges.filter(e => e[0] === node).map(e => e[1]).map(loop)
-        }
-      })[0]
+      data   : history.tree(),
+      height : 360,
+      width  : 760
     })
   },
 
   getCurve(curve, i) {
-    return (
-      <path key={ i } d={ curve.connector.path.print() } />
-    )
+    return (<path key={ i } d={ curve.connector.path.print() } />)
   },
 
   getNode(node, i) {
     let { point, item } = node
+
     let isFocused = this.props.history.focus === item.node
 
     return (<circle key={ i }
