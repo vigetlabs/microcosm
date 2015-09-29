@@ -41,7 +41,7 @@ Microcosm.prototype = {
   constructor: Microcosm,
 
   getInitialState() {
-    return dispatch(this.stores, {}, Transaction(lifecycle.willStart, this.state), true)
+    return dispatch(this.stores, {}, Transaction(lifecycle.willStart, this.state))
   },
 
   /**
@@ -55,11 +55,17 @@ Microcosm.prototype = {
     return this
   },
 
+  shouldTransactionMerge() {
+    return true
+  },
+
   clean(transaction, next) {
     if (!transaction.complete) return
 
-    this.base = dispatch(this.stores, this.base, transaction)
-    this.history.remove(transaction)
+    if (this.shouldTransactionMerge(transaction)) {
+      this.base = dispatch(this.stores, this.base, transaction)
+      this.history.remove(transaction)
+    }
 
     next()
   },
