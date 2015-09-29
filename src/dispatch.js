@@ -13,11 +13,9 @@ let assert = require('assert')
 function fold (transaction) {
   let { type, payload } = transaction
 
-  return function (state, config) {
-    assert.ok(Array.isArray(config), 'Item passed to dispatch was not a [ key, store ] pair. Instead got: ' + config)
+  return function (state, [ key, store ]) {
+    assert.ok(Array.isArray(arguments[1]), 'Item passed to dispatch was not a [ key, store ] pair. Instead got: ' + arguments[1])
 
-    let key    = config[0]
-    let store  = config[1]
     let answer = send(store, type, state[key], payload, state)
 
     if (answer !== void 0) {

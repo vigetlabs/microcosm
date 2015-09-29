@@ -6,30 +6,23 @@
 
 let assert = require('assert')
 
-function Graph (nodes, edges) {
-  this.nodes = nodes || []
-  this.edges = edges || []
-  this.focus = this.nodes[0]
+function Graph (anchor) {
+  this.edges = []
+  this.focus = null
+
+  if (anchor != null) {
+    this.append(anchor)
+  }
 }
 
 Graph.prototype = {
 
   has(node) {
-    return this.nodes.indexOf(node) > -1
+    return this.edges.some(e => e.indexOf(node) >= 0)
   },
 
   setFocus(node) {
     this.focus = this.has(node) ? node : this.focus
-  },
-
-  add(node) {
-    assert(node != null, 'Graph unable to add node for ' + node)
-
-    if (this.has(node) === false) {
-      this.nodes.push(node)
-    }
-
-    this.focus = node
   },
 
   remove(node) {
@@ -37,19 +30,16 @@ Graph.prototype = {
       this.focus = this.after(node)
     }
 
-    this.nodes = this.nodes.filter(n => n !== node)
     this.edges = this.edges.filter(e => e.indexOf(node) < 0)
   },
 
-  connect(source, target) {
-    this.add(source)
-    this.add(target)
-
-    this.edges.push([ source, target ])
-  },
-
   append(node) {
-    this.focus ? this.connect(this.focus, node) : this.add(node)
+    if (this.focus) {
+      this.edges.push([ this.focus, node ])
+    }
+
+    // Do not execute setFocus. We know we have this edge
+    this.focus = node
   },
 
   before(node) {
@@ -66,20 +56,49 @@ Graph.prototype = {
     return null
   },
 
-  pathway() {
-    let next  = this.focus
-    let items = []
+  first() {
+    return this.edges.length ? this.edges[0][0] : this.focus
+  },
 
-    while (next) {
-      items.unshift(next)
-      next = this.before(next)
+  children(node) {
+    return this.edges.filter(edge => edge[0] === node)
+                     .map(edge => edge[1])
+  },
+
+  tree(node) {
+    node = node || this.first()
+
+    return {
+      node,
+      children : this.children(node).map(this.tree, this)
+    }
+  },
+
+  path() {
+    let index = this.edges.length
+    let focus = this.focus
+
+    // We do not create an edge if there is no focus point.
+    // We only assign focus. This way we do not have any nully nodes.
+    // It also means this ternary is necessary:
+    let items = focus ? [ focus ] : []
+
+    while (index > 0) {
+      var [ source, target ] = this.edges[--index]
+
+      if (target === focus) {
+        items.push(source)
+        focus = source
+      }
     }
 
-    return items
+    // reverse() is a few orders of magnitude faster than unshifting
+    // into the array.
+    return items.reverse()
   },
 
   walk(fn, scope) {
-    let items = this.pathway()
+    let items = this.path()
 
     fn.call(scope, items.shift(), function step () {
       if (items.length) fn.call(scope, items.shift(), step)
