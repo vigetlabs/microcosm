@@ -8,8 +8,9 @@ let el  = document.getElementById('app')
 
 app.addStore('messages', Messages)
 
-app.listen(function () {
+function render () {
   React.render(<Chat app={ app } { ...app.state } />, el)
-})
+}
 
-app.start()
+app.start(render)
+app.listen(render)
