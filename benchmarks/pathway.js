@@ -1,7 +1,7 @@
 var Graph  = require('../dist/src/Graph')
 var time   = require('microtime')
 
-var SIZE  = 1000000
+var SIZE  = 10000
 var graph = new Graph()
 
 console.log('Creating a single path at %s length', SIZE)
