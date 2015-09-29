@@ -3,7 +3,7 @@ import React from 'react'
 import Drawing from './components/drawing'
 
 class UndoTree extends Microcosm {
-  clean() {
+  shouldTransactionMerge() {
     return false
   }
 
