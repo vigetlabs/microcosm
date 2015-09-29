@@ -1,11 +1,12 @@
 let Diode = require('diode')
+let Graph = require('./Graph')
 let Transaction = require('./Transaction')
 let coroutine = require('./coroutine')
-let dispatch = require('./dispatch')
 let eventually = require('./eventually')
 let flatten = require('./flatten')
 let install = require('./install')
 let lifecycle = require('./lifecycle')
+let dispatch = require('./dispatch')
 let tag = require('./tag')
 
 let Microcosm = function() {
@@ -31,39 +32,16 @@ let Microcosm = function() {
    */
   this.state = this.base
 
+  this.stores  = []
   this.plugins = []
-  this.stores = []
-  this.transactions = []
+  this.history = new Graph(Transaction(lifecycle.willStart, true, true))
 }
 
 Microcosm.prototype = {
   constructor: Microcosm,
 
   getInitialState() {
-    return this.dispatch({}, Transaction(lifecycle.willStart, this.state))
-  },
-
-  merge(transaction) {
-    if (!transaction.error) {
-      this.base = this.dispatch(this.base, transaction)
-    }
-  },
-
-  transactionWillOpen(transaction) {
-    this.transactions.push(transaction)
-  },
-
-  transactionWillUpdate(transaction, error, payload, complete) {
-    transaction.active   = !error
-    transaction.error    = error
-    transaction.payload  = payload
-    transaction.complete = complete
-  },
-
-  transactionWillClose(transaction) {
-    while (this.transactions.length && this.transactions[0].complete) {
-      this.merge(this.transactions.shift())
-    }
+    return dispatch(this.stores, {}, Transaction(lifecycle.willStart, this.state), true)
   },
 
   /**
@@ -71,24 +49,57 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    let next = this.base
-
-    for (var i = 0; i < this.transactions.length; i++) {
-       if (this.transactions[i].active) {
-         next = this.dispatch(next, this.transactions[i])
-       }
-     }
-
-    if (next !== this.state) {
-      this.state = next;
-      this.emit(next)
-    }
+    this.state = this.history.path().reduce(dispatch.bind(this, this.stores), this.base)
+    this.emit(this.state)
 
     return this
   },
 
-  dispatch(state, transaction) {
-    return dispatch(this.stores, state, transaction)
+  clean(transaction, next) {
+    if (!transaction.complete) return
+
+    this.base = dispatch(this.stores, this.base, transaction)
+    this.history.remove(transaction)
+
+    next()
+  },
+
+  transactionWillOpen(transaction) {
+    this.history.append(transaction)
+  },
+
+  transactionWillUpdate(transaction, error, payload, complete) {
+    transaction.active   = !error
+    transaction.complete = complete
+    transaction.error    = error
+    transaction.payload  = payload
+  },
+
+  transactionWillClose(transaction) {
+    this.history.walk(this.clean, this)
+  },
+
+  /**
+   * Resolves an action. As that action signals changes, it will update
+   * a unique transaction. If an error occurs, it will mark it for clean up
+   * and the change will disappear from history.
+   */
+  push(action, params, callback) {
+    let transaction = Transaction(tag(action))
+    let body = action.apply(null, flatten(params))
+
+    this.transactionWillOpen(transaction)
+
+    return coroutine(body, (error, payload, complete) => {
+      this.transactionWillUpdate(transaction, error, payload, complete)
+
+      if (complete) {
+        this.transactionWillClose(transaction)
+        eventually(callback, this, error, payload)
+      }
+
+      this.rollforward()
+    })
   },
 
   /**
@@ -99,34 +110,11 @@ Microcosm.prototype = {
   },
 
   /**
-   * Resolves an action. As that action signals changes, it will update
-   * a unique transaction. If an error occurs, it will mark it for clean up
-   * and the change will disappear from history.
-   */
-  push(action, params, callback) {
-    let transaction = Transaction(tag(action), null)
-    let body = action.apply(null, flatten(params))
-
-    this.transactionWillOpen(transaction)
-
-    return coroutine(body, (error, payload, complete) => {
-      this.transactionWillUpdate(transaction, error, payload, complete)
-
-      if (complete) {
-        eventually(callback, this, error, payload)
-        this.transactionWillClose(transaction)
-      }
-
-      this.rollforward()
-    })
-  },
-
-  /**
    * Clear all outstanding transactions and assign base state
    * to a given object (or getInitialState())
    */
-  reset(state, transactions=[]) {
-    this.transactions = transactions.concat() // Prevent accidental mutation
+  reset(state) {
+    this.history = new Graph(Transaction(lifecycle.willReset, true, true))
     this.base = Object.assign(this.getInitialState(), state)
 
     return this.rollforward()
@@ -165,6 +153,9 @@ Microcosm.prototype = {
 
     this.stores.push([ key, store ])
 
+    // Re-evaluate the current state including the new store
+    this.rollforward()
+
     return this
   },
 
@@ -173,7 +164,7 @@ Microcosm.prototype = {
    * according to the `serialize` method described by each store.
    */
   serialize() {
-    return this.dispatch(this.state, Transaction(lifecycle.willSerialize, this.state))
+    return dispatch(this.stores, this.state, Transaction(lifecycle.willSerialize, this.state))
   },
 
   /**
@@ -186,7 +177,7 @@ Microcosm.prototype = {
       return this.state
     }
 
-    return this.dispatch(data, Transaction(lifecycle.willDeserialize, data))
+    return dispatch(this.stores, data, Transaction(lifecycle.willDeserialize, data))
   },
 
   /**
@@ -197,17 +188,12 @@ Microcosm.prototype = {
   },
 
   /**
-   * Starts an application. It does a couple of things:
-   *
-   * 1. Calls `this.reset()` to determine initial state
-   * 2. Runs through all plugins, it will terminate if any fail
-   * 3. Executes the provided callback, passing along any errors
-   *    generated if installing plugins fails.
+   * Starts an application:
+   * 1. Run through all plugins, it will terminate if any fail
+   * 2. Execute the provided callback, passing along any errors
+   *    genrateed if installing plugins fails.
    */
   start(...callbacks) {
-    this.reset()
-
-    // Queue plugins and then notify that installation has finished
     install(this.plugins, error => {
       callbacks.forEach(cb => cb.call(this, error, this))
     })

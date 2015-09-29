@@ -5,13 +5,14 @@ module.exports = {
   context: __dirname,
   devtool: 'inline-source-map',
   entry: {
+    'chatbot'      : './chatbot/index',
+    'undo-tree'    : './undo-tree/index',
     'react-router' : './react-router/index',
-    'simple-svg' : './simple-svg/index',
-    'chatbot' : './chatbot/index'
+    'simple-svg'   : './simple-svg/index'
   },
 
   output: {
-    filename: '[name].js',
+    filename: '[name]/main.js',
     path: path.join(__dirname, 'assets', 'js')
   },
 

@@ -7,7 +7,8 @@
 const MAPPING = {
   'willStart'       : 'getInitialState',
   'willSerialize'   : 'serialize',
-  'willDeserialize' : 'deserialize'
+  'willDeserialize' : 'deserialize',
+  'willReset'       : 'willReset'
 }
 
 for (let type in MAPPING) {

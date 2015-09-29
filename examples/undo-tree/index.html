@@ -3,22 +3,27 @@
 
 <head>
   <meta charset="utf8">
-  <title>Simple SVG</title>
+  <title>Undo Tree</title>
   <style>
     body {
       color: #555;
       font-family: sans-serif;
-      margin: 0;
+      margin: 2em;
       width: 100%;
     }
 
-    svg {
-      display: block;
-      margin: 0 auto;
+    rect,
+    circle {
+      transition: 0.3s fill, 0.3s r;
+      cursor: pointer;
     }
 
-    text {
-      fill: currentColor;
+    svg {
+      border: 1px solid #ccc;
+    }
+
+    svg + svg {
+      border-left: 0;
     }
   </style>
 </head>
