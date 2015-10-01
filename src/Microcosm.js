@@ -1,5 +1,5 @@
 let Diode = require('diode')
-let Graph = require('./Graph')
+let Tree = require('./Tree')
 let Transaction = require('./Transaction')
 let coroutine = require('./coroutine')
 let eventually = require('./eventually')
@@ -34,7 +34,7 @@ let Microcosm = function() {
 
   this.stores  = []
   this.plugins = []
-  this.history = new Graph(Transaction(lifecycle.willStart, true, true))
+  this.history = new Tree(Transaction(lifecycle.willStart, true, true))
 }
 
 Microcosm.prototype = {
@@ -49,7 +49,7 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    this.state = this.history.values().reduce(dispatch.bind(this, this.stores), this.base)
+    this.state = this.history.branch().reduce(dispatch.bind(this, this.stores), this.base)
     this.emit(this.state)
 
     return this
@@ -121,7 +121,7 @@ Microcosm.prototype = {
    * to a given object (or getInitialState())
    */
   reset(state) {
-    this.history = new Graph(Transaction(lifecycle.willReset, true, true))
+    this.history = new Tree(Transaction(lifecycle.willReset, true, true))
     this.base = Object.assign(this.getInitialState(), state)
 
     return this.rollforward()
