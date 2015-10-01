@@ -1,6 +1,4 @@
-require('babel/register')
-
-var Tree   = require(__dirname + '/../../src/Tree')
+var Tree   = require(__dirname + '/../../dist/src/Tree')
 var time   = require('microtime')
 var SIZE   = process.argv[2]
 var FACTOR = process.argv[3]

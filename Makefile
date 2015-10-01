@@ -71,4 +71,5 @@ test-watch:
 	NODE_ENV=test karma start
 
 bench: $(wildcard benchmarks/*.js)
+	@ make javascript
 	@ node --expose-gc $^
