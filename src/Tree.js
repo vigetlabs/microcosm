@@ -4,6 +4,8 @@
  * over time.
  */
 
+import assert from 'assert'
+
 function Tree (anchor) {
   this.focus = null
 
@@ -16,7 +18,7 @@ Tree.prototype = {
 
   setFocus(node) {
     if (process.env.NODE_ENV !== 'production' && typeof node === undefined) {
-      throw new TypeError('Tree was asked to focus on invalid Node:' + node)
+      throw new TypeError('Tree was asked to focus on a Node, but instead got ' + node)
     }
 
     this.focus = node != null ? node : this.focus
@@ -41,12 +43,9 @@ Tree.prototype = {
   },
 
   append(item) {
-    let node = new Node(item, this.focus)
+    this.focus = new Node(item, this.focus)
 
-    // Do not execute setFocus. We know we have this edge
-    this.focus = node
-
-    return node
+    return this.focus
   },
 
   prune(fn, scope) {
@@ -104,13 +103,17 @@ function Node (value, parent) {
 Node.prototype = {
 
   add(node) {
+    assert(node instanceof Node, 'Node::add only accepts other Node instances')
+
     let size = this.children.push(node)
-    this.next = this.children[size - 1]
+    this.next = this.children[size - 1] || null
   },
 
   remove(node) {
+    assert(node instanceof Node, 'Node::remove only accepts other Node instances')
+
     let size = this.children.filter(child => child !== node)
-    this.next = this.children[this.children.length - 1]
+    this.next = this.children[this.children.length - 1] || null
   },
 
   dispose() {
