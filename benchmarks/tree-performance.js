@@ -29,7 +29,7 @@ function report() {
   var Table = require('cli-table')
 
   var table = new Table({
-    head: [ 'Branches', 'Nodes', 'Append', 'Root', 'Reduce', 'Prune*', 'Memory Growth' ]
+    head: [ 'Branches', 'Nodes', 'Root', 'Reduce - Merge', 'Reduce - Sum', 'Prune (All Nodes)', 'Memory Growth' ]
   })
 
   // Remember time using `microtime` is in microseconds
@@ -39,12 +39,12 @@ function report() {
       i + 1,
       // How many nodes per branch?
       (MAX / (i + 1)).toLocaleString().split('.')[0],
-      // Append Time
-      row.branches.toFixed(4) + 'ms',
       // Time to get root node
       row.root.toFixed(2) + 'ms',
-      // Time to reduce through entire branch
-      row.reduce.toFixed(2) + 'ms',
+      // Time to merge an entire branch of objects,
+      row.merge.toFixed(2) + 'ms',
+      // Time to add an entire branch of objects
+      row.sum.toFixed(2) + 'ms',
       // Time to remove up all nodes
       row.prune.toFixed(2) + 'ms',
       // Memory growth
@@ -53,5 +53,4 @@ function report() {
   })
 
   console.log('\n' + table.toString())
-  console.log(" * for entire tree")
 }
