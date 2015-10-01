@@ -130,4 +130,39 @@ describe('When dispatching generators', function() {
       done()
     })
   })
+
+  it ('sequentially processes generators that return promises', function(done) {
+    let app = new Microcosm()
+
+    function* asyncRange(start, end) {
+      while (start < end) {
+        let n = start++
+
+        yield new Promise(function(resolve, reject) {
+          setTimeout(() => resolve(n), 10)
+        })
+      }
+    }
+
+    function* generatorOfGeneratorsofPromises(a, b) {
+      yield asyncRange(a, b)
+    }
+
+    app.addStore('test', {
+      register() {
+        return {
+          // Test concatenation to ensure the state is the same every
+          // single time
+          [generatorOfGeneratorsofPromises]: (a=[], b) => a.concat(b)
+        }
+      }
+    })
+
+    app.start()
+
+    app.push(generatorOfGeneratorsofPromises, [1, 4], function() {
+      assert.deepEqual(app.state.test, [3])
+      done()
+    })
+  })
 })
