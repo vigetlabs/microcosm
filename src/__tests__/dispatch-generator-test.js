@@ -99,4 +99,35 @@ describe('When dispatching generators', function() {
 
     app.push(single, 4)
   })
+
+  it ('runs results through coroutine', function(done) {
+    let app = new Microcosm()
+
+    function* range(start, end) {
+      while (start < end) {
+        yield start++
+      }
+    }
+
+    function* generatorOfGenerators(a, b) {
+      yield range(a, b)
+    }
+
+    app.addStore('test', {
+      register() {
+        return {
+          // Test concatenation to ensure the state is the same every
+          // single time
+          [generatorOfGenerators]: (a=[], b) => a.concat(b)
+        }
+      }
+    })
+
+    app.start()
+
+    app.push(generatorOfGenerators, [1, 4], function() {
+      assert.deepEqual(app.state.test, [3])
+      done()
+    })
+  })
 })

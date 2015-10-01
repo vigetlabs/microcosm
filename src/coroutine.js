@@ -36,9 +36,11 @@ let waterfall = function (iterator, callback) {
   return coroutine(iterator.next().value, function step (error, body) {
     let { done, value } = iterator.next()
 
-    callback(error, body, done)
+    if (error) {
+      return callback(error, body, true)
+    }
 
-    return done ? body : coroutine(value, step)
+    return done ? coroutine(body, callback) : coroutine(value, step)
   })
 }
 
