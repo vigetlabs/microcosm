@@ -16,7 +16,7 @@ export default function* sendChat (message) {
     message,
     id   : uid(),
     time : new Date(),
-    user : 'You',
+    user : 'You'
   }
 
   // First, optimistically update the UI with the requested chat message.
