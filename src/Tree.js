@@ -58,16 +58,24 @@ Tree.prototype = {
     }
   },
 
-  branch() {
-    let next  = this.focus
-    let items = []
+  size() {
+    return this.reduce(n => n + 1, 0)
+  },
 
-    while (next) {
-      items.push(next.value)
-      next = next.parent
+  reduce(fn, value) {
+    let node = this.root()
+
+    while (node) {
+      value = fn(value, node.value)
+
+      if (this.focus === node) {
+        break;
+      }
+
+      node = node.next
     }
 
-    return items.reverse()
+    return value
   },
 
   root() {

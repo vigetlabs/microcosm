@@ -3,6 +3,8 @@ import assert from 'assert'
 
 describe('Tree', function() {
 
+  let concat = (a, b) => a.concat(b)
+
   it ('adjusts the focal point when adding a node', function() {
     let tree = new Tree()
 
@@ -75,7 +77,7 @@ describe('Tree', function() {
     tree.append('second')
     tree.append('third')
 
-    assert.deepEqual(tree.branch(), [ 'first', 'second', 'third' ])
+    assert.deepEqual(tree.reduce(concat, []), [ 'first', 'second', 'third' ])
   })
 
   it ('only walks through the main timeline', function() {
@@ -86,7 +88,7 @@ describe('Tree', function() {
     tree.setFocus(first)
     let third = tree.append('third')
 
-    assert.deepEqual(tree.branch(), [ 'first', 'third' ])
+    assert.deepEqual(tree.reduce(concat, []), [ 'first', 'third' ])
   })
 
   it ('does not walk past the focal point', function() {
@@ -97,7 +99,7 @@ describe('Tree', function() {
     tree.append('three')
     tree.setFocus(one)
 
-    assert.deepEqual(tree.branch(), [ 'one' ])
+    assert.deepEqual(tree.reduce(concat, []), [ 'one' ])
   })
 
   it ('can get the path after a focus point', function() {
@@ -107,7 +109,7 @@ describe('Tree', function() {
     tree.append('two')
     tree.append('three')
 
-    assert.deepEqual(tree.branch(), [ 'one', 'two', 'three' ])
+    assert.deepEqual(tree.reduce(concat, []), [ 'one', 'two', 'three' ])
   })
 
   it ('properly handles forks', function() {
@@ -120,7 +122,7 @@ describe('Tree', function() {
     tree.append('four')
     tree.append('five')
 
-    assert.deepEqual(tree.branch(), [ 'one', 'two', 'four', 'five' ])
+    assert.deepEqual(tree.reduce(concat, []), [ 'one', 'two', 'four', 'five' ])
   })
 
   it ('can get the next node in the chain', function() {
