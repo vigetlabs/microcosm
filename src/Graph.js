@@ -4,8 +4,33 @@
  * over time.
  */
 
+import assert from 'assert'
+
+function Node(value, parent) {
+  this.value    = value
+  this.parent   = parent
+  this.children = []
+}
+
+Node.prototype = {
+  add(node) {
+    this.children.push(node)
+  },
+  remove(node) {
+    this.children.filter(child => child !== node)
+  },
+  dispose() {
+    if (this.parent) {
+      this.parent.remove(this)
+    }
+    this.children.forEach(child => child.parent = this.parent)
+  },
+  valueOf() {
+    return this.value
+  }
+}
+
 function Graph (anchor) {
-  this.edges = []
   this.focus = null
 
   if (anchor != null) {
@@ -15,92 +40,98 @@ function Graph (anchor) {
 
 Graph.prototype = {
 
-  has(node) {
-    return this.edges.some(e => e.indexOf(node) >= 0)
+  setFocus(node) {
+    if (process.env.NODE_ENV !== 'production' && node === undefined) {
+      throw new TypeError('Graph was asked to focus on invalid Node:' + node)
+    }
+
+    this.focus = node != null ? node : null
   },
 
-  setFocus(node) {
-    this.focus = this.has(node) ? node : this.focus
+  back() {
+    this.setFocus(this.before(this.focus) || this.focus)
+  },
+
+  forward() {
+    this.setFocus(this.after(this.focus) || this.focus)
   },
 
   remove(node) {
+    assert(node instanceof Node, 'Graph::remove expects a Node')
+
     if (this.focus === node) {
-      this.focus = this.after(node)
+      this.focus = this.after(node) || this.before(node)
     }
 
-    this.edges = this.edges.filter(e => e.indexOf(node) < 0)
+    node.dispose()
+
+    return true
   },
 
-  append(node) {
+  append(item) {
+    let node = new Node(item, this.focus)
+
     if (this.focus) {
-      this.edges.push([ this.focus, node ])
+      this.focus.add(node)
     }
 
     // Do not execute setFocus. We know we have this edge
     this.focus = node
+
+    return node
   },
 
   before(node) {
-    for (var i = this.edges.length - 1; i >= 0; i--) {
-      if (this.edges[i][1] === node) return this.edges[i][0]
-    }
-    return null
+    assert(node instanceof Node, 'Graph::remove expects a Node')
+    return node.parent
   },
 
   after(node) {
-    for (var i = this.edges.length - 1; i >= 0; i--) {
-      if (this.edges[i][0] === node) return this.edges[i][1]
-    }
-    return null
+    assert(node instanceof Node, 'Graph::remove expects a Node')
+    return node.children[node.children.length - 1]
   },
 
-  first() {
-    return this.edges.length ? this.edges[0][0] : this.focus
-  },
+  prune(fn, scope) {
+    let root = this.root()
 
-  children(node) {
-    return this.edges.filter(edge => edge[0] === node)
-                     .map(edge => edge[1])
-  },
-
-  tree(node) {
-    node = node || this.first()
-
-    return {
-      node,
-      children : this.children(node).map(this.tree, this)
+    while (root && fn.call(scope, root.value, root)) {
+      this.remove(root)
+      root = this.after(root)
     }
   },
 
-  path() {
-    let index = this.edges.length
-    let focus = this.focus
+  path(values) {
+    let next  = this.focus
+    let items = []
 
-    // We do not create an edge if there is no focus point.
-    // We only assign focus. This way we do not have any nully nodes.
-    // It also means this ternary is necessary:
-    let items = focus ? [ focus ] : []
-
-    while (index > 0) {
-      var [ source, target ] = this.edges[--index]
-
-      if (target === focus) {
-        items.push(source)
-        focus = source
-      }
+    while (next) {
+      items.push(next)
+      next = this.before(next)
     }
 
-    // reverse() is a few orders of magnitude faster than unshifting
-    // into the array.
     return items.reverse()
   },
 
-  walk(fn, scope) {
-    let items = this.path()
+  values() {
+    let next  = this.focus
+    let items = []
 
-    fn.call(scope, items.shift(), function step () {
-      if (items.length) fn.call(scope, items.shift(), step)
-    })
+    while (next) {
+      items.push(next.value)
+      next = this.before(next)
+    }
+
+    return items.reverse()
+  },
+
+  root() {
+    let next = this.focus
+
+    while (next && next.parent) {
+      next = next.parent
+    }
+
+    return next
   }
 
 }

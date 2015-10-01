@@ -5,7 +5,7 @@ const UndoTree = React.createClass({
 
   getTree(history) {
     return Tree({
-      data   : history.tree(),
+      data   : history.root(),
       height : 360,
       width  : 760
     })
@@ -18,14 +18,14 @@ const UndoTree = React.createClass({
   getNode(node, i) {
     let { point, item } = node
 
-    let isFocused = this.props.history.focus === item.node
+    let isFocused = this.props.history.focus === item
 
     return (<circle key={ i }
                     r={ isFocused? 7 : 5 }
                     fill={ isFocused? '#e39' : 'black' }
                     cx={ point[0] }
                     cy={ point[1] }
-                    onClick={ () => this.props.onNodeClick(item.node) } />)
+                    onClick={ () => this.props.onNodeClick(item) } />)
   },
 
   render() {

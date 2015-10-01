@@ -69,3 +69,6 @@ test-fast-watch: $(shell find {src,examples} -name '*-test.js')
 
 test-watch:
 	NODE_ENV=test karma start
+
+bench: $(wildcard benchmarks/*.js)
+	@ node --expose-gc $^

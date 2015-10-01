@@ -112,11 +112,10 @@ describe('Microcosm', function() {
     app.push(identity, 5)
 
     assert.equal(app.history.path().length, 5)
-
     app.push(identity, 6)
 
-    assert.equal(app.history.path().length, 5)
-    assert.deepEqual(app.history.path().map(t => t.payload), [ 2, 3, 4, 5, 6 ])
+    assert.equal(app.history.values().length, 5)
+    assert.deepEqual(app.history.values().map(t => t.payload), [ 2, 3, 4, 5, 6 ])
   })
 
 })

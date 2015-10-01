@@ -8,7 +8,7 @@ class UndoTree extends Microcosm {
   }
 
   undo() {
-    this.history.setFocus(this.history.before(this.history.focus))
+    this.history.back()
     this.rollforward()
   }
 

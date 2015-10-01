@@ -49,25 +49,10 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    this.state = this.history.path().reduce(dispatch.bind(this, this.stores), this.base)
+    this.state = this.history.values().reduce(dispatch.bind(this, this.stores), this.base)
     this.emit(this.state)
 
     return this
-  },
-
-  shouldTransactionMerge() {
-    return true
-  },
-
-  clean(transaction, next) {
-    if (!transaction.complete) return
-
-    if (this.shouldTransactionMerge(transaction)) {
-      this.base = dispatch(this.stores, this.base, transaction)
-      this.history.remove(transaction)
-    }
-
-    next()
   },
 
   transactionWillOpen(transaction) {
@@ -82,7 +67,23 @@ Microcosm.prototype = {
   },
 
   transactionWillClose(transaction) {
-    this.history.walk(this.clean, this)
+    this.history.prune(this.clean, this)
+  },
+
+  shouldTransactionMerge() {
+    return true
+  },
+
+  clean(transaction) {
+    if (!transaction.complete) return false
+
+    let shouldMerge = this.shouldTransactionMerge(transaction)
+
+    if (shouldMerge) {
+      this.base = dispatch(this.stores, this.base, transaction)
+    }
+
+    return shouldMerge
   },
 
   /**
