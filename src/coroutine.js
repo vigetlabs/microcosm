@@ -12,15 +12,15 @@ const DEFAULT_ERROR = new Error('Rejected Promise')
  * If a given value is a promise, wait for it and
  * execute a callback using the error-first convention.
  *
- * @param {any} promise - The target value
+ * @param {any} value - The target value
  * @param {Function} callback - An error-first callback
  */
-let nodeify = function (promise, callback) {
-  if (!isPromise(promise)) {
-    return callback(null, promise, true)
+let nodeify = function (value, callback) {
+  if (!isPromise(value)) {
+    return callback(null, value, true)
   }
 
-  return promise.then(body => callback(null, body, true), function(error) {
+  return value.then(body => callback(null, body, true), function(error) {
     callback(error || DEFAULT_ERROR, null, true)
     throw error
   })
@@ -32,15 +32,23 @@ let nodeify = function (promise, callback) {
  * @param {Iterator} iterator - An iterable collection
  * @param {Function} callback - An error-first callback
  */
-let waterfall = function (iterator, callback) {
-  return coroutine(iterator.next().value, function step (error, body) {
-    let { done, value } = iterator.next()
 
-    if (error) {
-      return callback(error, body, true)
+let waterfall = function (iterator, callback) {
+  let start = iterator.next()
+
+  return coroutine(start.value, function step (error, body, complete) {
+    // If next.value is a generator, it's possible that it is not complete.
+    // When this is the case, do not progress the parent iterator forward
+    // until the child completes.
+    if (!complete) {
+      return callback(error, body, false)
     }
 
-    return done ? coroutine(body, callback) : coroutine(value, step)
+    let next = iterator.next()
+
+    callback(error, body, next.done)
+
+    return next.done ? body : coroutine(next.value, step)
   })
 }
 

@@ -100,68 +100,34 @@ describe('When dispatching generators', function() {
     app.push(single, 4)
   })
 
-  it ('runs results through coroutine', function(done) {
-    let app = new Microcosm()
-
-    function* range(start, end) {
-      while (start < end) {
-        yield start++
-      }
-    }
-
-    function* generatorOfGenerators(a, b) {
-      yield range(a, b)
-    }
-
-    app.addStore('test', {
-      register() {
-        return {
-          // Test concatenation to ensure the state is the same every
-          // single time
-          [generatorOfGenerators]: (a=[], b) => a.concat(b)
-        }
-      }
-    })
-
-    app.start()
-
-    app.push(generatorOfGenerators, [1, 4], function() {
-      assert.deepEqual(app.state.test, [3])
-      done()
-    })
-  })
-
-  it ('sequentially processes generators that return promises', function(done) {
+  it ('sequentially processes multiple yielded generators', function(done) {
     let app = new Microcosm()
 
     function* asyncRange(start, end) {
-      while (start < end) {
-        let n = start++
-
-        yield new Promise(function(resolve, reject) {
-          setTimeout(() => resolve(n), 10)
-        })
-      }
+      while (start < end) yield new Promise.resolve(start++)
     }
 
-    function* generatorOfGeneratorsofPromises(a, b) {
+    function* generatorOfGeneratorsofPromises(a, b, c) {
       yield asyncRange(a, b)
+      yield asyncRange(b, c)
     }
+
+    let answers = []
 
     app.addStore('test', {
       register() {
         return {
-          // Test concatenation to ensure the state is the same every
-          // single time
-          [generatorOfGeneratorsofPromises]: (a=[], b) => a.concat(b)
+          [generatorOfGeneratorsofPromises](a=[], b) {
+            answers.push(b)
+            return b
+          }
         }
       }
     })
 
-    app.start()
-
-    app.push(generatorOfGeneratorsofPromises, [1, 4], function() {
-      assert.deepEqual(app.state.test, [3])
+    app.push(generatorOfGeneratorsofPromises, [1, 4, 7], function() {
+      assert.deepEqual([1,2,3,4,5,6], answers)
+      assert.equal(app.state.test, 6)
       done()
     })
   })
