@@ -25,7 +25,7 @@ describe('sending actions', function() {
     app.addStore('test', store).push(action)
   })
 
-  it ('returns the same state if a handler is not provided', function() {
+  it ('returns the same state if a handler is not provided', function(done) {
     let app = new Microcosm()
 
     app.addStore('test', {
@@ -38,10 +38,11 @@ describe('sending actions', function() {
 
     app.push(action, [], function() {
       assert.equal(app.state.test, 'test')
+      done()
     })
   })
 
-  it ('allows handlers to not be functions', function() {
+  it ('allows handlers to not be functions', function(done) {
     let app = new Microcosm()
 
     app.addStore('test', {
@@ -54,6 +55,7 @@ describe('sending actions', function() {
 
     app.push(action, [], function() {
       assert.equal(app.state.test, 5)
+      done()
     })
   })
 
