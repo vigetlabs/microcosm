@@ -7,25 +7,25 @@ JS    := $(shell find src -name '*.js*' ! -path '*/__tests__/*') $(shell find ad
 .FORCE: javascript-min
 
 build: package.json README.md LICENSE.md docs javascript javascript-min
-	@make audit
+	@ make audit
 
 $(DIST):
-	@mkdir -p $(DIST)
+	@ mkdir -p $(DIST)
 
 %.md: $(DIST)
 	cp $@ $^
 
 package.json: $(DIST)
-	@node -p 'p=require("./package");p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $(DIST)/package.json
+	@ node -p 'p=require("./package");p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $(DIST)/package.json
 
 docs: $(DIST)
 	cp -r $@ $^
 
 javascript: $(DIST)
-	@babel -d $^ $(JS)
+	@ @babel --plugins babel-plugin-unassert -d $^ $(JS)
 
 javascript-min: javascript
-	@NODE_ENV=production \
+	@ NODE_ENV=production \
 	webpack -p dist/src/Microcosm.js $(DIST)/microcosm.build.js \
 	--devtool sourcemap --output-library-target commonjs2 \
 	--optimize-minimize --optimize-occurence-order --optimize-dedupe
@@ -37,23 +37,23 @@ prerelease: clean build
 	npm publish $(DIST) --tag beta
 
 example:
-	@webpack-dev-server \
-	--config examples/webpack.config.js \
-	--content-base examples \
-	--publicPath assets \
-	--historyApiFallback true
+	@ webpack-dev-server \
+		--config examples/webpack.config.js \
+		--content-base examples \
+		--publicPath assets \
+		--historyApiFallback true
 
 site:
 	make -C site
 
 clean:
-	@rm -rf $(DIST)
+	@ rm -rf $(DIST)
 
 audit:
-	@echo "Compressed Size:"
-	@cat $(DIST)/microcosm.build.js | wc -c
-	@echo "Gzipped Size:"
-	@gzip -c $(DIST)/microcosm.build.js | wc -c
+	@ echo "Compressed Size:"
+	@ cat $(DIST)/microcosm.build.js | wc -c
+	@ echo "Gzipped Size:"
+	@ gzip -c $(DIST)/microcosm.build.js | wc -c
 
 test:
 	@ echo "Testing browsers..."
