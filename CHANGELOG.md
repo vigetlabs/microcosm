@@ -1,6 +1,16 @@
 # Changelog
 
+## 9.11.0
+
+### Noticeable Changes
+
+- Generators used for Microcosm actions can now yield other
+  generators. In these instances, child generators operate to
+  completion before the next iteration of the parent generator.
+
 ## 9.10.0
+
+### Noticeable Changes
 
 - Upgrade Diode to 6.1.0. `listen` now supports a second argument that
   defines the scope of the callback.
