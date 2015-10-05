@@ -2,3 +2,5 @@ coverage
 stats.json
 dist
 node_modules
+*.asm
+*.cfg
