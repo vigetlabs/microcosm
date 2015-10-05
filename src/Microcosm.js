@@ -49,14 +49,11 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    let next = Object.assign({}, this.base)
+    this.state = this.history.reduce((state, transaction) => {
+      return dispatch(this.stores, state, transaction)
+    }, Object.assign({}, this.base))
 
-    this.history.reduce(dispatch.bind(undefined, this.stores), next)
-
-    if (next != this.state){
-      this.state = next
-      this.emit(next)
-    }
+    this.emit(this.state)
 
     return this
   },

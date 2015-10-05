@@ -7,7 +7,7 @@
 module.exports = function send (store, type, subset, payload, state) {
   let handler = store[type]
 
-  if (handler === undefined && typeof store.register === 'function') {
+  if (typeof handler === 'undefined' && typeof store.register === 'function') {
     handler = store.register()[type]
   }
 

@@ -48,7 +48,7 @@ Tree.prototype = {
   reduce(fn, value) {
     let node = this.root()
 
-    while (node) {
+    while (node !== null) {
       value = fn(value, node.value)
 
       if (this.focus === node) {
@@ -64,7 +64,7 @@ Tree.prototype = {
   root() {
     let node = this.focus
 
-    while (node && node.parent) {
+    while (node !== null && node.parent !== null) {
       node = node.parent
     }
 
@@ -75,7 +75,7 @@ Tree.prototype = {
     let count = 0
     let next  = this.focus
 
-    while (next) {
+    while (next !== null) {
       next = next.parent
       count = count + 1
     }

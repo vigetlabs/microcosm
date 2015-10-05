@@ -42,5 +42,5 @@ for (var i = 0; i < SIZE; i++) {
 
 var label = 'Dispatched ' + SIZE + ' actions:'
 console.time(label)
-app.rollforward()
+app.push(action, true)
 console.timeEnd(label)
