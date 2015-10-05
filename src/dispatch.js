@@ -12,7 +12,7 @@ module.exports = function dispatch(stores, state, { active, payload, type }) {
   for (var i = 0, len = stores.length; active && i < len; i++) {
     var [ key, store ] = stores[i]
 
-    let answer = send(store, type, state[key], payload, state)
+    var answer = send(store, type, state[key], payload, state)
 
     if (answer !== void 0) {
       state[key] = answer
