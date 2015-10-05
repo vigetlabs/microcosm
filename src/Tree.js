@@ -4,12 +4,10 @@
  * over time.
  */
 
-import assert from 'assert'
-
 function Tree (anchor) {
   this.focus = null
 
-  if (anchor != null) {
+  if (anchor) {
     this.append(anchor)
   }
 }
@@ -29,17 +27,7 @@ Tree.prototype = {
   },
 
   forward() {
-    this.setFocus(this.focus.next)
-  },
-
-  remove(node) {
-    if (this.focus === node) {
-      this.focus = node.next || node.parent
-    }
-
-    node.dispose()
-
-    return true
+    this.setFocus(this.focus.next())
   },
 
   append(item) {
@@ -49,16 +37,12 @@ Tree.prototype = {
   },
 
   prune(fn, scope) {
-    let root = this.root()
+    let node = this.root()
 
-    while (root && fn.call(scope, root.value, root)) {
-      this.remove(root)
-      root = root.next
+    while (node != this.focus && fn.call(scope, node.value)) {
+      node.dispose()
+      node = node.next()
     }
-  },
-
-  size() {
-    return this.reduce(n => n + 1, 0)
   },
 
   reduce(fn, value) {
@@ -71,58 +55,58 @@ Tree.prototype = {
         break;
       }
 
-      node = node.next
+      node = node.next()
     }
 
     return value
   },
 
   root() {
-    let next = this.focus
+    let node = this.focus
 
-    while (next && next.parent) {
-      next = next.parent
+    while (node && node.parent) {
+      node = node.parent
     }
 
-    return next
+    return node
+  },
+
+  size() {
+    let count = 0
+    let next  = this.focus
+
+    while (next) {
+      next = next.parent
+      count = count + 1
+    }
+
+    return count
   }
 
 }
 
 function Node (value, parent) {
   this.children = []
-  this.next     = null
-  this.parent   = parent
+  this.parent   = parent || null
   this.value    = value
 
   if (parent) {
-    parent.add(this)
+    parent.children.unshift(this)
   }
 }
 
 Node.prototype = {
 
-  add(node) {
-    assert(node instanceof Node, 'Node::add only accepts other Node instances')
-
-    let size = this.children.push(node)
-    this.next = this.children[size - 1] || null
-  },
-
-  remove(node) {
-    assert(node instanceof Node, 'Node::remove only accepts other Node instances')
-
-    let size = this.children.filter(child => child !== node)
-    this.next = this.children[this.children.length - 1] || null
+  next() {
+    return this.children[0] || null
   },
 
   dispose() {
-    if (this.parent) {
-      this.parent.remove(this)
+    for (var i = 0, size = this.children.length; i < size; i++) {
+      this.children[i].parent = null
     }
-
-    this.children.forEach(child => child.parent = this.parent)
   }
+
 }
 
 module.exports = Tree

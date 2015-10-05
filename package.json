@@ -40,7 +40,7 @@
     "babel-plugin-object-assign": "1.2.1",
     "babel-plugin-unassert": "1.1.0",
     "babel-runtime": "5.8.25",
-    "cli-table": "0.3.1",
+    "console.table": "0.4.0",
     "elizabot": "0.0.2",
     "istanbul": "0.3.21",
     "istanbul-instrumenter-loader": "0.1.3",

@@ -13,22 +13,7 @@ describe('Tree', function() {
     assert.equal(tree.focus.value, 'two')
   })
 
-  it ('can remove all traces of a node', function() {
-    let tree = new Tree()
-
-    let one   = tree.append('one')
-    let two   = tree.append('two')
-    let three = tree.append('three')
-    let four  = tree.append('four')
-
-    tree.remove(three)
-
-    three.children.forEach(function(child) {
-      assert.equal(child.parent, two)
-    })
-  })
-
-  it ('removing a focused node moves focus to the next position', function() {
+  it ('prunes all the way up to the focal point', function() {
     let tree = new Tree()
 
     let one = tree.append('one')
@@ -36,39 +21,24 @@ describe('Tree', function() {
     let three = tree.append('three')
 
     tree.setFocus(two)
-    tree.remove(two)
+    tree.prune(node => true)
 
-    assert.equal(tree.focus, three)
+    assert.equal(tree.focus, two)
+    assert.equal(tree.focus.parent, null)
   })
 
-  it ('removing a focused node moves focus to the parent if there is no next kin', function() {
+  it ('prunes until it returns false', function() {
     let tree = new Tree()
 
     let one = tree.append('one')
     let two = tree.append('two')
+    let three = tree.append('three')
 
     tree.setFocus(two)
-    tree.remove(two)
+    tree.prune(node => false)
 
-    assert.equal(tree.focus, one)
-  })
-
-  it ('removing a focused node sets focus to null if there is no previous node', function() {
-    let tree = new Tree('one')
-
-    tree.remove(tree.focus)
-
-    assert.equal(tree.focus, null)
-  })
-
-  it ('can create a connection', function() {
-    let tree = new Tree('foo')
-
-    let foo = tree.focus
-    let bar = tree.append('bar')
-
-    assert.equal(foo.next, bar)
-    assert.equal(bar.parent, foo)
+    assert.equal(tree.focus, two)
+    assert.equal(tree.focus.parent, one)
   })
 
   it ('step back through the tree', function() {
@@ -123,17 +93,6 @@ describe('Tree', function() {
     tree.append('five')
 
     assert.deepEqual(tree.reduce(concat, []), [ 'one', 'two', 'four', 'five' ])
-  })
-
-  it ('can get the next node in the chain', function() {
-    let tree = new Tree()
-
-    let one = tree.append('one')
-    let two = tree.append('two')
-    let three = tree.append('three')
-
-    assert.equal(one.next, two)
-    assert.equal(two.next, three)
   })
 
   it ('can get the previous node in the chain', function() {

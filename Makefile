@@ -22,7 +22,7 @@ docs: $(DIST)
 	cp -r $@ $^
 
 javascript: $(DIST)
-	@ babel --plugins babel-plugin-unassert -d $^ $(JS)
+	@ babel --plugins babel-plugin-unassert -q -d $^ $(JS)
 
 javascript-min: javascript
 	@ NODE_ENV=production \
@@ -70,6 +70,6 @@ test-fast-watch: $(shell find {src,examples} -name '*-test.js')
 test-watch:
 	NODE_ENV=test karma start
 
-bench: $(wildcard benchmarks/*.js)
+bench:
 	@ make javascript
-	@ node --expose-gc $^
+	@ node --expose-gc benchmarks/tree-performance

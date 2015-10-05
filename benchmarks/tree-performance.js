@@ -1,56 +1,55 @@
-var fork = require('child_process').fork
+require('console.table')
 
-var FACTOR = 10
-var MAX    = 100000
-var stats  = []
+var Tree   = require(__dirname + '/../dist/src/Tree')
+var time   = require('microtime')
+var SIZE   = 10000
+var stats  = { build: 0, root: 0, merge: 0, size: 0, prune: 0, memory: 0 }
 
-if ('gc' in global === false) {
-  console.error('\nPlease call this script with --expose-gc')
-  process.exit()
+var tree = new Tree()
+
+// Do not allow GC to get in the way of tests
+global.gc()
+var memoryBefore = process.memoryUsage().heapUsed
+
+var now = time.now()
+for (var k = SIZE; k >= 0; k--) {
+  tree.append({ one: 'one', two: 'two', three: 'three' })
 }
+stats.build = (time.now() - now) / 1000
 
-function queue(size) {
-  var test = fork(__dirname + '/tests/build-tree', [ MAX / size, size ])
+now = time.now()
+tree.root()
+stats.root = (time.now() - now) / 1000
 
-  test.on('message', function(data) {
-    stats.push(data)
+now = time.now()
+tree.size()
+stats.size = (time.now() - now) / 1000
 
-    if (size < FACTOR) {
-      queue(size + 1)
-    } else {
-      report()
-    }
-  })
-}
+now = time.now()
+tree.reduce(function(a, b) {
+  for (var key in b) {
+    a[key] = b[key]
+  }
+  return a
+}, {})
+stats.merge = (time.now() - now) / 1000
 
-queue(1)
+now = time.now()
+tree.prune(function() {
+  return true
+})
+stats.prune = (time.now() - now) / 1000
 
-function report() {
-  var Table = require('cli-table')
+global.gc()
+var memoryAfter = process.memoryUsage().heapUsed
+stats.memory = (memoryAfter - memoryBefore) / memoryBefore * 100
 
-  var table = new Table({
-    head: [ 'Branches', 'Nodes', 'Root', 'Reduce - Merge', 'Reduce - Sum', 'Prune (All Nodes)', 'Memory Growth' ]
-  })
-
-  // Remember time using `microtime` is in microseconds
-  stats.forEach(function(row, i) {
-    table.push([
-      // How many branches in the tree?
-      i + 1,
-      // How many nodes per branch?
-      (MAX / (i + 1)).toLocaleString().split('.')[0],
-      // Time to get root node
-      row.root.toFixed(2) + 'ms',
-      // Time to merge an entire branch of objects,
-      row.merge.toFixed(2) + 'ms',
-      // Time to add an entire branch of objects
-      row.sum.toFixed(2) + 'ms',
-      // Time to remove up all nodes
-      row.prune.toFixed(2) + 'ms',
-      // Memory growth
-      row.memory.toFixed(3) + '%'
-    ])
-  })
-
-  console.log('\n' + table.toString())
-}
+console.table([{
+  'Nodes': SIZE,
+  'Construction': stats.build.toFixed(2) + 'ms',
+  '::root()': stats.root.toFixed(2) + 'ms',
+  '::reduce(merge)': stats.merge.toFixed(2) + 'ms',
+  '::size()': stats.size.toFixed(2) + 'ms',
+  '::prune()': stats.prune.toFixed(2) + 'ms',
+  'Memory Growth': stats.memory.toFixed(3) + '%'
+}])
