@@ -4,15 +4,10 @@
  * how transaction parameters should update state.
  */
 
-let { MAPPING } = require('./lifecycle')
-
 module.exports = function send (store, type, subset, payload, state) {
-  let handler   = undefined
-  let lifecycle = MAPPING[type]
+  let handler = store[type]
 
-  if (lifecycle && lifecycle in store) {
-    handler = store[lifecycle]
-  } else if (typeof store.register === 'function') {
+  if (handler === undefined && typeof store.register === 'function') {
     handler = store.register()[type]
   }
 

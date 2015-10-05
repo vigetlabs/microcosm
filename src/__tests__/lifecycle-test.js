@@ -9,9 +9,9 @@ describe('Lifecycle', function() {
     }
   })
 
-  it ('all lifecycle methods stringify to their key', function() {
+  it ('all lifecycle methods stringify to their method name', function() {
     for (var key in lifecycle.MAPPING) {
-      assert.equal(`${ lifecycle[key] }`, key)
+      assert.equal(`${ lifecycle[key] }`, lifecycle[key])
     }
   })
 

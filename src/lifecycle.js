@@ -13,7 +13,7 @@ const MAPPING = {
 
 for (let type in MAPPING) {
   exports[type] = n => n
-  exports[type].toString = () => type
+  exports[type].toString = () => MAPPING[type]
 }
 
 exports.MAPPING = MAPPING
