@@ -84,7 +84,7 @@ require('console.table')
 
 console.table([{
   'Nodes': SIZE,
-  'Construction': stats.build.toFixed(2) + 'ms',
+  '::append()': stats.build.toFixed(4) + 'ms',
   '::root()': stats.root.toFixed(2) + 'ms',
   '::reduce(merge)': stats.merge.toFixed(2) + 'ms',
   '::size()': stats.size.toFixed(2) + 'ms',
