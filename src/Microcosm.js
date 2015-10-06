@@ -7,8 +7,8 @@ let eventually = require('./eventually')
 let flatten = require('./flatten')
 let install = require('./install')
 let lifecycle = require('./lifecycle')
-let tag = require('./tag')
 let merge = require('./merge')
+let tag = require('./tag')
 
 let Microcosm = function() {
   /**

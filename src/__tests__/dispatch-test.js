@@ -1,6 +1,6 @@
 import Transaction from '../Transaction'
-import assert from 'assert'
 import dispatch from '../dispatch'
+import assert from 'assert'
 
 describe('dispatch', function() {
 
@@ -13,7 +13,7 @@ describe('dispatch', function() {
     }
 
     let state = {}
-    let next  = dispatch([ store ], state, Transaction('test'))
+    let next  = dispatch([ [ 'test', store ] ], state, Transaction('test'))
 
     assert.equal(next, state)
   })
