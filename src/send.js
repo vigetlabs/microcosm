@@ -4,8 +4,6 @@
  * how transaction parameters should update state.
  */
 
-var lifecycle = require('./lifecycle')
-
 module.exports = function send (store, type, subset, payload, state) {
   let handler = store[type]
 
