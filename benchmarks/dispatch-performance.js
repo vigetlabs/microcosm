@@ -9,6 +9,7 @@
 
 var Microcosm = require('../dist/src/Microcosm')
 var Transaction = require('../dist/src/Transaction')
+var time  = require('microtime')
 var SIZE = 10000
 
 process.stdout.write('\Dispatching ' + SIZE + ' actions')
@@ -76,6 +77,6 @@ for (var q = 0; q < 10; q++) {
  * Console.time records the span of time between its invocation and
  * sibling function `console.timeEnd()`
  */
-console.time('')
+var then = time.now()
 app.push(action, true)
-console.timeEnd('')
+console.log(': %s', (time.now() - then) / 1000)
