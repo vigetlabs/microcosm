@@ -5,7 +5,7 @@ import Drawing from './components/drawing'
 class UndoTree extends Microcosm {
 
   shouldHistoryKeep(transaction) {
-    return false
+    return true
   }
 
   undo() {
