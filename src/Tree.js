@@ -45,20 +45,16 @@ Tree.prototype = {
     }
   },
 
-  reduce(fn, value) {
-    let node = this.root()
+  reduce(fn, initial) {
+    let node  = this.focus
+    let items = []
 
     while (node !== null) {
-      value = fn(value, node.value)
-
-      if (this.focus === node) {
-        break;
-      }
-
-      node = node.next()
+      items.push(node.value)
+      node = node.parent
     }
 
-    return value
+    return items.reverse().reduce(fn, initial)
   },
 
   root() {

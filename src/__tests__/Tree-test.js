@@ -83,16 +83,21 @@ describe('Tree', function() {
   })
 
   it ('properly handles forks', function() {
-    let tree = new Tree()
+    let tree = new Tree('one')
 
-    tree.append('one')
-    let two = tree.append('two')
-    tree.append('three')
+    let two   = tree.append('two')
+    let three = tree.append('three')
+
     tree.setFocus(two)
-    tree.append('four')
-    tree.append('five')
+
+    let four = tree.append('four')
+    let five = tree.append('five')
 
     assert.deepEqual(tree.reduce(concat, []), [ 'one', 'two', 'four', 'five' ])
+
+    tree.setFocus(three)
+
+    assert.deepEqual(tree.reduce(concat, []), [ 'one', 'two', 'three' ])
   })
 
   it ('can get the previous node in the chain', function() {
