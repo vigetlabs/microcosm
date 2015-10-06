@@ -1,9 +1,9 @@
 require('console.table')
 
-var Tree   = require(__dirname + '/../dist/src/Tree')
-var time   = require('microtime')
-var SIZE   = 10000
-var stats  = { build: 0, root: 0, merge: 0, size: 0, prune: 0, memory: 0 }
+var Tree  = require(__dirname + '/../dist/src/Tree')
+var time  = require('microtime')
+var SIZE  = 10000
+var stats = { build: 0, root: 0, merge: 0, size: 0, prune: 0, memory: 0 }
 
 var tree = new Tree()
 
@@ -42,7 +42,7 @@ stats.prune = (time.now() - now) / 1000
 
 global.gc()
 var memoryAfter = process.memoryUsage().heapUsed
-stats.memory = (memoryAfter - memoryBefore) / memoryBefore * 100
+stats.memory = ((memoryAfter - memoryBefore) / memoryBefore) * 100
 
 console.table([{
   'Nodes': SIZE,
@@ -53,3 +53,12 @@ console.table([{
   '::prune()': stats.prune.toFixed(2) + 'ms',
   'Memory Growth': stats.memory.toFixed(3) + '%'
 }])
+
+
+/**
+ * Test a few things
+ */
+
+var assert = require('assert')
+
+assert(stats.memory < 2, 'Memory should not exceed 2% increase')

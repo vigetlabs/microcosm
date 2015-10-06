@@ -1,13 +1,14 @@
 let Diode = require('diode')
-let Tree = require('./Tree')
 let Transaction = require('./Transaction')
+let Tree = require('./Tree')
 let coroutine = require('./coroutine')
+let dispatch = require('./dispatch')
 let eventually = require('./eventually')
 let flatten = require('./flatten')
 let install = require('./install')
 let lifecycle = require('./lifecycle')
-let dispatch = require('./dispatch')
 let tag = require('./tag')
+let merge = require('./merge')
 
 let Microcosm = function() {
   /**
@@ -51,7 +52,7 @@ Microcosm.prototype = {
   rollforward() {
     this.state = this.history.reduce((state, transaction) => {
       return dispatch(this.stores, state, transaction)
-    }, Object.assign({}, this.base))
+    }, merge({}, this.base))
 
     this.emit(this.state)
 
@@ -78,15 +79,12 @@ Microcosm.prototype = {
   },
 
   clean(transaction) {
-    if (!transaction.complete) return false
-
-    let shouldMerge = this.shouldTransactionMerge(transaction)
-
-    if (shouldMerge) {
+    if (transaction.complete && this.shouldTransactionMerge(transaction)) {
       this.base = dispatch(this.stores, this.base, transaction)
+      return true
     }
 
-    return shouldMerge
+    return false
   },
 
   /**
@@ -125,7 +123,7 @@ Microcosm.prototype = {
    */
   reset(state) {
     this.history = new Tree(Transaction(lifecycle.willReset, true, true))
-    this.base = Object.assign(this.getInitialState(), state)
+    this.base = merge(this.getInitialState(), state)
 
     return this.rollforward()
   },
@@ -143,7 +141,10 @@ Microcosm.prototype = {
    * the order in which they have been added using this function.
    */
   addPlugin(config, options) {
-    this.plugins.push({ app: this, options, ...config })
+    let plugin = merge({ app: this, options }, config)
+
+    this.plugins.push(plugin)
+
     return this
   },
 

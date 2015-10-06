@@ -3,7 +3,7 @@ PATH  := node_modules/.bin:$(PATH)
 DIST  := dist
 JS    := $(shell find src -name '*.js*' ! -path '*/__tests__/*') $(shell find addons -name '*.js*' ! -path '*/__tests__/*')
 
-.PHONY: clean test test-watch release example website
+.PHONY: clean test test-watch release example website bench
 .FORCE: javascript-min
 
 build: package.json README.md LICENSE.md docs javascript javascript-min
@@ -73,3 +73,4 @@ test-watch:
 bench:
 	@ make javascript
 	@ node --expose-gc benchmarks/tree-performance
+	@ node --expose-gc benchmarks/dispatch-performance

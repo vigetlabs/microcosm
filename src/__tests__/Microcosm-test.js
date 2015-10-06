@@ -24,15 +24,6 @@ describe('Microcosm', function() {
     assert.ok(new Map(new MyApp().stores).has('foo'))
   })
 
-  describe('reset', function() {
-    let dummy = Transaction('test')
-    let transactions = [ dummy ]
-
-    it ('copies the array when given transactions on reset', function() {
-      assert.notEqual(app.reset({}, transactions).transactions, transactions)
-    })
-  })
-
   it ('getInitialState collects starting state for all registered stores', function() {
     let state = app.getInitialState()
 

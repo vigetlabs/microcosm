@@ -2,6 +2,8 @@ var Microcosm = require('../dist/src/Microcosm')
 var Transaction = require('../dist/src/Transaction')
 var SIZE = 10000
 
+process.stdout.write('\Dispatching ' + SIZE + ' actions')
+
 var app = new Microcosm()
 
 var action = function test () {}
@@ -30,17 +32,18 @@ app.addStore('three', Store)
 app.addStore('four',  Store)
 app.addStore('five',  Store)
 
-
-// "Warm up" dispatch
-for (var j = 0; j < 1000; j++) {
-  app.rollforward()
-}
-
 for (var i = 0; i < SIZE; i++) {
   app.history.append(Transaction(action, true, true))
 }
 
-var label = 'Dispatched ' + SIZE + ' actions:'
-console.time(label)
+// Warm up first.
+// This gives V8 time to analyze the types for the code.
+// Otherwise confusing "insufficient type data" deoptimizations
+// are thrown.
+for (var q = 0; q < 10; q++) {
+  app.push(action, true)
+}
+
+console.time('')
 app.push(action, true)
-console.timeEnd(label)
+console.timeEnd('')
