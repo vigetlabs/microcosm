@@ -3,7 +3,8 @@ import React from 'react'
 import Drawing from './components/drawing'
 
 class UndoTree extends Microcosm {
-  shouldTransactionMerge() {
+
+  shouldHistoryKeep(transaction) {
     return false
   }
 
@@ -16,6 +17,7 @@ class UndoTree extends Microcosm {
     this.history.setFocus(node)
     this.rollforward()
   }
+
 }
 
 let app = new UndoTree()

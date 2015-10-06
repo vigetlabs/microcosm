@@ -20,8 +20,8 @@ var app = new Microcosm()
  * transactions from cleaning up, which will cause more
  * than one complete transaction to merge at a time.
  */
-app.shouldTransactionMerge = function () {
-  return false
+app.shouldHistoryKeep = function () {
+  return true
 }
 
 var action = function test () {}

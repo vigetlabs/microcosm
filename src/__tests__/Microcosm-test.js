@@ -97,9 +97,11 @@ describe('Microcosm', function() {
 
   it ('can manipulate how many transactions are merged', function() {
     class CustomApp extends Microcosm {
-      shouldTransactionMerge(node) {
-        return this.history.size() > 5
+
+      shouldHistoryKeep (transaction) {
+        return this.history.size() < 6
       }
+
     }
 
     let app = new CustomApp()

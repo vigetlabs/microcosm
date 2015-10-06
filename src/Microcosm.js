@@ -71,16 +71,16 @@ Microcosm.prototype = {
   },
 
   transactionWillClose(transaction) {
-    this.history.prune(this.clean, this)
+    this.history.prune(transaction => this.clean(transaction))
   },
 
-  shouldTransactionMerge() {
-    return true
+  shouldHistoryKeep(transaction) {
+    return false
   },
 
   clean(transaction) {
-    if (transaction.complete && this.shouldTransactionMerge(transaction)) {
-      this.base = dispatch(this.stores, this.base, transaction)
+    if (transaction.complete && !this.shouldHistoryKeep(transaction)) {
+      dispatch(this.stores, this.base, transaction)
       return true
     }
 

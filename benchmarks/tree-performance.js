@@ -3,7 +3,7 @@
  */
 
 var Tree  = require(__dirname + '/../dist/src/Tree')
-var merge = require(__dirname + '../dist/src/merge')
+var merge = require(__dirname + '/../dist/src/merge')
 var time  = require('microtime')
 var SIZE  = 10000
 var stats = { build: 0, root: 0, merge: 0, size: 0, prune: 0, memory: 0 }

@@ -36,10 +36,10 @@ Tree.prototype = {
     return this.focus
   },
 
-  prune(fn, scope) {
+  prune(fn) {
     let node = this.root()
 
-    while (node != this.focus && fn.call(scope, node.value)) {
+    while (node != this.focus && fn(node.value)) {
       node.dispose()
       node = node.next()
     }
