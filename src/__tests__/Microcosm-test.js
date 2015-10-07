@@ -55,11 +55,28 @@ describe('Microcosm', function() {
     }, [ 1, 2 ])(3)
   })
 
-  it ('prepare handles cases with no arguments', function() {
+  it ('prepare handles cases with no arguments', function(done) {
     let expected = 3
-    let test = a => assert.equal(a, expected)
+
+    function test(a) {
+      assert.equal(arguments.length, 1)
+      assert.equal(a, expected)
+      done()
+    }
 
     app.prepare(test)(expected)
+  })
+
+  it ('prepare does not inject nully', function(done) {
+    let expected = 3
+
+    function test(a) {
+      assert.equal(arguments.length, 1)
+      assert.equal(a, expected)
+      done()
+    }
+
+    app.prepare(test, expected)()
   })
 
   it ('throws an error if asked to push a non-function value', function(done) {

@@ -114,7 +114,7 @@ Microcosm.prototype = {
    * Partially applies `push`.
    */
   prepare(action, params=[]) {
-    return (more, callback) => this.push(action, flatten(params, more), callback)
+    return (more=[], callback) => this.push(action, flatten(params, more), callback)
   },
 
   /**
