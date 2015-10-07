@@ -50,9 +50,11 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    this.state = this.history.reduce((state, transaction) => {
+    let next = merge({}, this.base)
+
+    this.state = this.history.branch().reduce((state, transaction) => {
       return dispatch(this.stores, state, transaction)
-    }, merge({}, this.base))
+    }, next)
 
     this.emit(this.state)
 
@@ -141,6 +143,10 @@ Microcosm.prototype = {
    * the order in which they have been added using this function.
    */
   addPlugin(config, options) {
+    if (process.env.NODE_ENV !== 'production' && typeof config.register !== 'function') {
+      throw TypeError('Expected register property of plugin to be a function, instead got ' + typeof config.register)
+    }
+
     let plugin = merge({ app: this, options }, config)
 
     this.plugins.push(plugin)
@@ -184,7 +190,7 @@ Microcosm.prototype = {
    * Then fold the deserialized data over the current application state.
    */
   deserialize(data) {
-    if (data == void 0) {
+    if (data == undefined) {
       return this.state
     }
 
@@ -204,11 +210,8 @@ Microcosm.prototype = {
    * 2. Execute the provided callback, passing along any errors
    *    genrateed if installing plugins fails.
    */
-  start(...callbacks) {
-    install(this.plugins, error => {
-      callbacks.forEach(cb => cb.call(this, error, this))
-    })
-
+  start(callback) {
+    install(this.plugins, callback)
     return this
   }
 

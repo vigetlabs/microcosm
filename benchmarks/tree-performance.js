@@ -53,7 +53,7 @@ stats.size = (time.now() - now) / 1000
  * within Microcosm's dispatch process.
  */
 now = time.now()
-tree.reduce(merge, {})
+tree.branch().reduce(merge, {})
 stats.merge = (time.now() - now) / 1000
 
 

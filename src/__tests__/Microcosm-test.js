@@ -88,30 +88,6 @@ describe('Microcosm', function() {
     }
   })
 
-  it ('throws an error if a non-string key is given in addStore', function(done) {
-    try {
-      new Microcosm().addStore({})
-    } catch(x) {
-      assert(x instanceof TypeError)
-      done()
-    }
-  })
-
-  it ('throws an error if missing a store', function(done) {
-    try {
-      new Microcosm().addStore('foo')
-    } catch(x) {
-      assert(x instanceof TypeError)
-      done()
-    }
-  })
-
-  it ('can run multiple callbacks', function(done) {
-    let app = new Microcosm()
-
-    app.start(() => {}, done)
-  })
-
   it ('can manipulate how many transactions are merged', function() {
     class CustomApp extends Microcosm {
 
@@ -135,7 +111,7 @@ describe('Microcosm', function() {
     app.push(identity, 6)
 
     assert.equal(app.history.size(), 5)
-    assert.deepEqual(app.history.reduce((a, b) => a.concat(b.payload), []), [ 2, 3, 4, 5, 6 ])
+    assert.deepEqual(app.history.branch().reduce((a, b) => a.concat(b.payload), []), [ 2, 3, 4, 5, 6 ])
   })
 
 })

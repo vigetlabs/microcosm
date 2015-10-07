@@ -47,7 +47,7 @@ describe('Tree', function() {
     tree.append('second')
     tree.append('third')
 
-    assert.deepEqual(tree.reduce(concat, []), [ 'first', 'second', 'third' ])
+    assert.deepEqual(tree.branch().reduce(concat, []), [ 'first', 'second', 'third' ])
   })
 
   it ('only walks through the main timeline', function() {
@@ -58,7 +58,7 @@ describe('Tree', function() {
     tree.setFocus(first)
     let third = tree.append('third')
 
-    assert.deepEqual(tree.reduce(concat, []), [ 'first', 'third' ])
+    assert.deepEqual(tree.branch().reduce(concat, []), [ 'first', 'third' ])
   })
 
   it ('does not walk past the focal point', function() {
@@ -69,7 +69,7 @@ describe('Tree', function() {
     tree.append('three')
     tree.setFocus(one)
 
-    assert.deepEqual(tree.reduce(concat, []), [ 'one' ])
+    assert.deepEqual(tree.branch().reduce(concat, []), [ 'one' ])
   })
 
   it ('can get the path after a focus point', function() {
@@ -79,7 +79,7 @@ describe('Tree', function() {
     tree.append('two')
     tree.append('three')
 
-    assert.deepEqual(tree.reduce(concat, []), [ 'one', 'two', 'three' ])
+    assert.deepEqual(tree.branch().reduce(concat, []), [ 'one', 'two', 'three' ])
   })
 
   it ('properly handles forks', function() {
@@ -93,11 +93,11 @@ describe('Tree', function() {
     let four = tree.append('four')
     let five = tree.append('five')
 
-    assert.deepEqual(tree.reduce(concat, []), [ 'one', 'two', 'four', 'five' ])
+    assert.deepEqual(tree.branch().reduce(concat, []), [ 'one', 'two', 'four', 'five' ])
 
     tree.setFocus(three)
 
-    assert.deepEqual(tree.reduce(concat, []), [ 'one', 'two', 'three' ])
+    assert.deepEqual(tree.branch().reduce(concat, []), [ 'one', 'two', 'three' ])
   })
 
   it ('can get the previous node in the chain', function() {

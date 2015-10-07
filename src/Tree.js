@@ -45,7 +45,7 @@ Tree.prototype = {
     }
   },
 
-  reduce(fn, initial) {
+  branch() {
     let node  = this.focus
     let items = []
 
@@ -54,7 +54,7 @@ Tree.prototype = {
       node = node.parent
     }
 
-    return items.reverse().reduce(fn, initial)
+    return items.reverse()
   },
 
   root() {
