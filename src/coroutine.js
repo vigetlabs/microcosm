@@ -44,7 +44,7 @@ let waterfall = function (iterator, callback) {
       return callback(error, body, false)
     }
 
-    let next = iterator.next()
+    let next = iterator.next(body)
 
     callback(error, body, next.done)
 
