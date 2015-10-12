@@ -20,6 +20,8 @@ This is a big update, however there should be no breaking changes
   daisy chained, calls.
 - Adjusted build tooling to expose Microcosm modules at `microcosm/*`
   instead of `microcosm/src/*`
+- Stores and Plugins can now be functions. When this is the case, they
+  will act as the `register` function in each instance.
 
 ### Internal Changes
 

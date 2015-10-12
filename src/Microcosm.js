@@ -144,8 +144,14 @@ Microcosm.prototype = {
    * the order in which they have been added using this function.
    */
   addPlugin(config, options) {
-    if (process.env.NODE_ENV !== 'production' && typeof config.register !== 'function') {
-      throw TypeError('Expected register property of plugin to be a function, instead got ' + typeof config.register)
+    if (process.env.NODE_ENV !== 'production') {
+      if (!config) {
+        throw TypeError('Expected a plugin, instead got ' + typeof config)
+      }
+
+      if (typeof config == 'object' && typeof config.register !== 'function') {
+        throw TypeError('Expected plugin to have a register function, instead got ' + typeof config.register)
+      }
     }
 
     let plugin = merge({ app: this, options }, defaults(config))
