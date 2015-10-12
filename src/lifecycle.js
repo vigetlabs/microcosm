@@ -11,9 +11,11 @@ const MAPPING = {
   'willReset'       : 'willReset'
 }
 
+const LIFECYCLE = {}
+
 for (let type in MAPPING) {
-  exports[type] = n => n
-  exports[type].toString = () => MAPPING[type]
+  LIFECYCLE[type] = n => n
+  LIFECYCLE[type].toString = () => MAPPING[type]
 }
 
-exports.MAPPING = MAPPING
+export default LIFECYCLE

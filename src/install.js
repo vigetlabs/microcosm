@@ -15,6 +15,6 @@ function installPlugin (next, plugin) {
   }
 }
 
-module.exports = function installPlugins (plugins, callback=NOOP) {
+export default function (plugins, callback=NOOP) {
   return plugins.reduceRight(installPlugin, callback)()
 }

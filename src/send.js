@@ -4,7 +4,7 @@
  * how transaction parameters should update state.
  */
 
-module.exports = function send (store, type, subset, payload, state) {
+export default function (store, type, subset, payload, state) {
   let handler = store[type]
 
   if (handler === undefined && store.register) {

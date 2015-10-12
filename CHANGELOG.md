@@ -1,5 +1,49 @@
 # Changelog
 
+## 9.12.0 (not released)
+
+This is a big update, however there should be no breaking changes
+(assuming you are not referencing Microcosm internals).
+
+### Noticeable Changes
+
+- Microcosm now stores transactions created by actions as a tree. The
+  long term plan for this change is to support undo trees.
+- Stores determine initial state when they are added to a
+  Microcosm. This allows for Microcosms to be created without needing
+  to `start()`.
+- Added history API. This is an unstable API. However, for those
+  curious, check out the undo-tree example.
+- Added some additional validations to ensure proper use of Microcosm.
+- Actions that are generators now receive the last payload as the
+  returned value from `yield`. This should help to improve sequential,
+  daisy chained, calls.
+- Adjusted build tooling to expose Microcosm modules at `microcosm/*`
+  instead of `microcosm/src/*`
+
+### Internal Changes
+
+- Adjustments to improve v8 performance. All Microcosm operations
+  should occur without deoptimization penalties.
+
+### Upgrading
+
+For those referencing Microcosm internals, we have moved their hosted
+directory from `src` to the folder root. This means the following
+changes are necessary:
+
+Instead of:
+
+```
+require('microcosm/src/lifecycle')
+```
+
+Change this to:
+
+```
+require('microcosm/lifecycle')
+```
+
 ## 9.11.0
 
 ### Noticeable Changes

@@ -6,7 +6,7 @@
 
 import assert from 'assert'
 
-module.exports = function (a, b) {
+export default function (a, b) {
   assert(a && a.constructor === Object, 'merge expected simple object as the first argument. Instead got ' + (a ? a.constructor.name : a))
 
   if (b) {

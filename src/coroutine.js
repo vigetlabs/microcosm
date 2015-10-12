@@ -3,8 +3,8 @@
  * into chunks processable by transactions.
  */
 
-let isGenerator = require('./is-generator')
-let isPromise = require('is-promise')
+import isGenerator from './is-generator'
+import isPromise   from 'is-promise'
 
 const DEFAULT_ERROR = new Error('Rejected Promise')
 
@@ -63,4 +63,4 @@ let coroutine = function (value, callback) {
   return (isGenerator(value) ? waterfall : nodeify)(value, callback)
 }
 
-module.exports = coroutine
+export default coroutine

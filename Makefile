@@ -1,7 +1,8 @@
 SHELL := /bin/bash
 PATH  := node_modules/.bin:$(PATH)
-DIST  := dist
-JS    := $(shell find src -name '*.js*' ! -path '*/__tests__/*') $(shell find addons -name '*.js*' ! -path '*/__tests__/*')
+IN    := src
+OUT   := dist
+JS    := $(subst $(IN),$(OUT),$(shell find $(IN) -name '*.js*' ! -path '*/__tests__/*'))
 
 .PHONY: clean test test-watch release example website bench
 .FORCE: javascript-min
@@ -9,32 +10,41 @@ JS    := $(shell find src -name '*.js*' ! -path '*/__tests__/*') $(shell find ad
 build: package.json README.md LICENSE.md docs javascript javascript-min
 	@ make audit
 
-$(DIST):
-	@ mkdir -p $(DIST)
+javascript: $(JS)
 
-%.md: $(DIST)
+$(OUT):
+	@ mkdir -p $(OUT)
+
+%.md: $(OUT)
 	cp $@ $^
 
-package.json: $(DIST)
-	@ node -p 'p=require("./package");p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $(DIST)/package.json
+package.json: $(OUT)
+	@ node -p 'p=require("./package");p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $(OUT)/package.json
 
-docs: $(DIST)
+docs: $(OUT)
 	cp -r $@ $^
 
-javascript: $(DIST)
-	@ babel --plugins babel-plugin-unassert -q -d $^ $(JS)
+%.js: $(IN)/%.js
+	@ mkdir -p $(@D)
+	@ babel --plugins babel-plugin-unassert $< > $@
+	@ echo "compiled $@"
+
+%.jsx: $(IN)/%.jsx
+	@ mkdir -p $(@D)
+	@ babel --plugins babel-plugin-unassert $< > $*.js
+	@ echo "compiled $@"
 
 javascript-min: javascript
 	@ NODE_ENV=production \
-	webpack -p dist/src/Microcosm.js $(DIST)/microcosm.build.js \
+	webpack -p $(OUT)/Microcosm.js $(OUT)/microcosm.build.js \
 	--devtool sourcemap --output-library-target commonjs2 \
 	--optimize-minimize --optimize-occurence-order --optimize-dedupe
 
 release: clean build
-	npm publish $(DIST)
+	npm publish $(OUT)
 
 prerelease: clean build
-	npm publish $(DIST) --tag beta
+	npm publish $(OUT) --tag beta
 
 example:
 	@ webpack-dev-server \
@@ -47,13 +57,13 @@ site:
 	make -C site
 
 clean:
-	@ rm -rf $(DIST)
+	@ rm -rf $(OUT)
 
 audit:
 	@ echo "Compressed Size:"
-	@ cat $(DIST)/microcosm.build.js | wc -c
+	@ cat $(OUT)/microcosm.build.js | wc -c
 	@ echo "Gzipped Size:"
-	@ gzip -c $(DIST)/microcosm.build.js | wc -c
+	@ gzip -c $(OUT)/microcosm.build.js | wc -c
 
 test:
 	@ echo "Testing browsers..."
@@ -70,7 +80,6 @@ test-fast-watch: $(shell find {src,examples} -name '*-test.js')
 test-watch:
 	NODE_ENV=test karma start
 
-bench:
-	@ make javascript
-	@ node --expose-gc benchmarks/tree-performance
-	@ node --expose-gc benchmarks/dispatch-performance
+bench: javascript
+	@ node --expose-gc --trace-deopt benchmarks/tree-performance
+	@ node --expose-gc --trace-deopt benchmarks/dispatch-performance

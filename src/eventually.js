@@ -1,4 +1,4 @@
-module.exports = function eventually (fn, scope, error, payload) {
+let eventually = function (fn, scope, error, payload) {
   if (typeof fn !== 'function') {
     return undefined
   }
@@ -16,3 +16,5 @@ module.exports = function eventually (fn, scope, error, payload) {
    */
   return global.setTimeout(() => fn.call(scope, error, payload))
 }
+
+export default eventually

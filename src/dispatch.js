@@ -6,9 +6,9 @@
  * "What will change when I account for a transaction?"
  */
 
-let send = require('./send')
+import send from './send'
 
-module.exports = function dispatch(stores, state, { active, payload, type }) {
+let dispatch = function (stores, state, { active, payload, type }) {
   for (var i = 0, len = stores.length; active && i < len; i++) {
     var [ key, store ] = stores[i]
 
@@ -21,3 +21,5 @@ module.exports = function dispatch(stores, state, { active, payload, type }) {
 
   return state
 }
+
+export default dispatch

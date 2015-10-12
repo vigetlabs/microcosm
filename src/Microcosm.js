@@ -1,14 +1,14 @@
-let Diode = require('diode')
-let Transaction = require('./Transaction')
-let Tree = require('./Tree')
-let coroutine = require('./coroutine')
-let dispatch = require('./dispatch')
-let eventually = require('./eventually')
-let flatten = require('./flatten')
-let install = require('./install')
-let lifecycle = require('./lifecycle')
-let merge = require('./merge')
-let tag = require('./tag')
+import Diode       from 'diode'
+import Transaction from './Transaction'
+import Tree        from './Tree'
+import coroutine   from './coroutine'
+import dispatch    from './dispatch'
+import eventually  from './eventually'
+import flatten     from './flatten'
+import install     from './install'
+import lifecycle   from './lifecycle'
+import merge       from './merge'
+import tag         from './tag'
 
 let Microcosm = function() {
   /**

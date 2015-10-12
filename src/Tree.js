@@ -105,4 +105,4 @@ Node.prototype = {
 
 }
 
-module.exports = Tree
+export default Tree

@@ -5,7 +5,7 @@
 
 let uid = 0
 
-module.exports = function tag (fn) {
+export default function (fn) {
   if (process.env.NODE_ENV !== 'production' && (typeof fn !== 'function')) {
     throw TypeError('Attempted to tag an action, but the provided value is not a function. Instead got ' + typeof fn)
   }

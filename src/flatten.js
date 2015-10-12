@@ -1,5 +1,5 @@
 const BASE = []
 
-module.exports = function() {
+export default function() {
   return BASE.concat(...arguments)
 }
