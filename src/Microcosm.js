@@ -211,6 +211,7 @@ Microcosm.prototype = {
    *    genrateed if installing plugins fails.
    */
   start(callback) {
+    this.reset()
     install(this.plugins, callback)
     return this
   }

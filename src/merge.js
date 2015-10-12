@@ -7,11 +7,14 @@
 import assert from 'assert'
 
 module.exports = function (a, b) {
-  assert(a.constructor === Object, 'expected simple object. Instead got ' + a.constructor.name)
-  assert(b.constructor === Object, 'expected simple object. Instead got ' + b.constructor.name)
+  assert(a && a.constructor === Object, 'merge expected simple object as the first argument. Instead got ' + (a ? a.constructor.name : a))
 
-  for (var key in b) {
-    a[key] = b[key]
+  if (b) {
+    assert(b.constructor === Object, 'merge expected simple object as the second argument. Instead got ' + (b ? b.constructor.name : b))
+
+    for (var key in b) {
+      a[key] = b[key]
+    }
   }
 
   return a
