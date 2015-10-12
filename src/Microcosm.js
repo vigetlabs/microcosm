@@ -218,4 +218,4 @@ Microcosm.prototype = {
 
 }
 
-module.exports = Microcosm
+export default Microcosm

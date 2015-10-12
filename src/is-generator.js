@@ -6,7 +6,7 @@
  * @return {Boolean}
  */
 
-export default function (obj) {
+export default function isGenerator (obj) {
   return obj && typeof obj.next === 'function'
              && typeof obj.throw === 'function'
 }

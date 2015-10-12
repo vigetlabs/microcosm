@@ -19,7 +19,7 @@ $(OUT):
 	cp $@ $^
 
 package.json: $(OUT)
-	@ node -p 'p=require("./package");p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $(OUT)/package.json
+	@ node -p 'p=require("./package");p.main="Microcosm.js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $(OUT)/package.json
 
 docs: $(OUT)
 	cp -r $@ $^
