@@ -7,7 +7,7 @@ JS    := $(subst $(IN),$(OUT),$(shell find $(IN) -name '*.js*' ! -path '*/__test
 .PHONY: clean test test-watch release example website bench
 .FORCE: javascript-min
 
-build: package.json README.md LICENSE.md docs javascript javascript-min
+build: package.json README.md LICENSE.md docs javascript-min
 	@ make audit
 
 javascript: $(JS)
@@ -24,18 +24,18 @@ package.json: $(OUT)
 docs: $(OUT)
 	cp -r $@ $^
 
-%.js: $(IN)/%.js
+$(OUT)/%.js: $(IN)/%.js
 	@ mkdir -p $(@D)
-	@ babel --plugins babel-plugin-unassert $< > $@
-	@ echo "compiled $@"
+	@ babel --plugins babel-plugin-unassert $< > $(OUT)/$*.js
+	@ echo "compiled $*.js"
 
-%.jsx: $(IN)/%.jsx
+$(OUT)/%.jsx: $(IN)/%.jsx
 	@ mkdir -p $(@D)
-	@ babel --plugins babel-plugin-unassert $< > $*.js
-	@ echo "compiled $@"
+	@ babel --plugins babel-plugin-unassert $< > $(OUT)/$*.js
+	@ echo "compiled $*.js"
 
 javascript-min: javascript
-	@ NODE_ENV=production \
+	NODE_ENV=production \
 	webpack -p $(OUT)/Microcosm.js $(OUT)/microcosm.build.js \
 	--devtool sourcemap --output-library-target commonjs2 \
 	--optimize-minimize --optimize-occurence-order --optimize-dedupe
