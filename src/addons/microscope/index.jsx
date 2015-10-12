@@ -1,7 +1,6 @@
 let React = require('react')
 
-module.exports = React.createClass({
-  displayName: 'Microscope',
+let Microscope = React.createClass({
 
   getInitialState() {
     return this.getState()
@@ -39,4 +38,7 @@ module.exports = React.createClass({
     let count = React.Children.count(this.props.children)
     return count > 1 ? this.getChildren() : this.getChild()
   }
+
 })
+
+module.exports = Microscope

@@ -31,7 +31,7 @@ $(OUT)/%.js: $(IN)/%.js
 
 $(OUT)/%.jsx: $(IN)/%.jsx
 	@ mkdir -p $(@D)
-	@ babel --plugins babel-plugin-unassert $< > $(OUT)/$*.js
+	@babel $< > $(OUT)/$*.js
 	@ echo "compiled $*.js"
 
 javascript-min: javascript

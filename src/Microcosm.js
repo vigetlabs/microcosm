@@ -4,6 +4,7 @@ import Tree        from './Tree'
 import coroutine   from './coroutine'
 import dispatch    from './dispatch'
 import eventually  from './eventually'
+import defaults    from './defaults'
 import flatten     from './flatten'
 import install     from './install'
 import lifecycle   from './lifecycle'
@@ -147,7 +148,7 @@ Microcosm.prototype = {
       throw TypeError('Expected register property of plugin to be a function, instead got ' + typeof config.register)
     }
 
-    let plugin = merge({ app: this, options }, config)
+    let plugin = merge({ app: this, options }, defaults(config))
 
     this.plugins.push(plugin)
 
@@ -164,11 +165,7 @@ Microcosm.prototype = {
       throw TypeError(`Microcosm::addStore expects a string key to identify the store. Instead it got ${ typeof key }. Did you forget to include the key?`)
     }
 
-    if (process.env.NODE_ENV !== 'production' && typeof store !== 'object') {
-      throw TypeError(`Microcosm::addStore expects a store object as its second argument. Instead it got ${ typeof store }.`)
-    }
-
-    this.stores.push([ key, store ])
+    this.stores.push([ key, defaults(store) ])
 
     // Re-evaluate the current state including the new store
     this.rollforward()

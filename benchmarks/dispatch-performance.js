@@ -7,8 +7,8 @@
  * gut check of "are we fast yet?"
  */
 
-var Microcosm = require('../dist/src/Microcosm')
-var Transaction = require('../dist/src/Transaction')
+var Microcosm = require('../dist/Microcosm')
+var Transaction = require('../dist/Transaction')
 var time  = require('microtime')
 var SIZE = 10000
 
