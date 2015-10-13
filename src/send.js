@@ -4,6 +4,8 @@
  * how transaction parameters should update state.
  */
 
+import { isFunction } from './type-checks'
+
 export default function (store, type, subset, payload, state) {
   let handler = store[type]
 
@@ -11,5 +13,5 @@ export default function (store, type, subset, payload, state) {
     handler = store.register()[type]
   }
 
-  return typeof handler === 'function' ? handler.call(store, subset, payload, state) : handler
+  return isFunction(handler) ? handler.call(store, subset, payload, state) : handler
 }

@@ -3,10 +3,10 @@
  * An account of what has happened.
  */
 
-let assert = require('assert')
-
 export default function Transaction (type, payload, complete) {
-  assert.ok(type, 'Transaction was created with the invalid type: ' + type)
+  if (process.env.NODE_ENV !== 'production' && !type) {
+    throw new TypeError('Transaction was created with the invalid type: ' + type)
+  }
 
   return {
     type     : `${ type }`,

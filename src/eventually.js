@@ -1,5 +1,7 @@
+import { isFunction } from './type-checks'
+
 let eventually = function (fn, scope, error, payload) {
-  if (typeof fn !== 'function') {
+  if (!isFunction(fn)) {
     return undefined
   }
 

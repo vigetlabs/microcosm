@@ -3,8 +3,7 @@
  * into chunks processable by transactions.
  */
 
-let isGenerator = require('./is-generator')
-let isPromise   = require('is-promise')
+import { isGenerator, isPromise } from './type-checks'
 
 const DEFAULT_ERROR = new Error('Rejected Promise')
 

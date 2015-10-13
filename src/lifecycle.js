@@ -1,21 +1,14 @@
 /**
- * Life cycle methods are implementated as actions. This module
+ * Lifecycle methods are implementated as actions. This module
  * enumerates through a preset list of types and creates associated
  * actions.
  */
 
-const MAPPING = {
-  'willStart'       : 'getInitialState',
-  'willSerialize'   : 'serialize',
-  'willDeserialize' : 'deserialize',
-  'willReset'       : 'willReset'
+import tag from './tag'
+
+export default {
+  willStart       : tag(n => n, 'getInitialState'),
+  willSerialize   : tag(n => n, 'serialize'),
+  willDeserialize : tag(n => n, 'deserialize'),
+  willReset       : tag(n => n, 'willReset')
 }
-
-const LIFECYCLE = {}
-
-for (let type in MAPPING) {
-  LIFECYCLE[type] = n => n
-  LIFECYCLE[type].toString = () => MAPPING[type]
-}
-
-export default LIFECYCLE

@@ -2,8 +2,7 @@
  * Tree Performance Benchmark
  */
 
-var Tree  = require(__dirname + '/../dist/Tree')
-var merge = require(__dirname + '/../dist/merge')
+var Tree  = require(__dirname + '/../dist/microcosm').Tree
 var time  = require('microtime')
 var SIZE  = 10000
 var stats = { build: 0, root: 0, merge: 0, size: 0, prune: 0, memory: 0 }
@@ -53,7 +52,12 @@ stats.size = (time.now() - now) / 1000
  * within Microcosm's dispatch process.
  */
 now = time.now()
-tree.branch().reduce(merge, {})
+tree.branch().reduce(function(a,b) {
+  for (var key in b) {
+    a[key] = b[key]
+  }
+  return a
+}, {})
 stats.merge = (time.now() - now) / 1000
 
 
