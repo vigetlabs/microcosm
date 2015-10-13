@@ -6,14 +6,12 @@ module.exports = function (config) {
 
     files: [
       'src/**/__tests__/*.js*',
-      'examples/**/__tests__/*.js*',
-      'addons/**/__tests__/*.js*'
+      'examples/**/__tests__/*.js*'
     ],
 
     preprocessors: {
       'src/**/__tests__/*.js*': [ 'webpack', 'sourcemap' ],
-      'examples/**/__tests__/*.js*': [ 'webpack', 'sourcemap' ],
-      'addons/**/__tests__/*.js*': [ 'webpack', 'sourcemap' ]
+      'examples/**/__tests__/*.js*': [ 'webpack', 'sourcemap' ]
     },
 
     reporters: [ 'mocha', 'coverage' ],

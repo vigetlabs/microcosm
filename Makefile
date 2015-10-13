@@ -3,7 +3,6 @@ PATH  := node_modules/.bin:$(PATH)
 NAME  := $(shell node -e 'console.log(require("./package.json").name)')
 IN    := src
 OUT   := dist
-JS    := $(subst $(IN),$(OUT),$(shell find $(IN) -name '*.js*' ! -path '*/__tests__/*'))
 
 .PHONY: clean deliverables test test-watch example bench javascript
 
@@ -12,11 +11,20 @@ build: package.json $(wildcard *.md) docs deliverables javascript
 docs:
 	@ cp -rp $@ $^
 
+$(OUT)/%.js: $(IN)/%.js
+	@ mkdir -p $(@D)
+	@ babel --plugins unassert $< > $@
+	@ echo "Compiled $@"
+
+$(OUT)/%.jsx: $(IN)/%.jsx
+	@ mkdir -p $(@D)
+	@ babel $< > $@
+	@ echo "Compiled $@"
+
 deliverables: $(OUT)
 	@ cp -rf $(IN) $(OUT)/$(IN)
 
-javascript: $(OUT)
-	@ babel -q -d $(OUT) $(IN)
+javascript: $(subst $(IN),$(OUT),$(wildcard $(IN)/*.js*) $(wildcard $(IN)/addons/**/*.js*))
 
 $(OUT):
 	@ mkdir -p $(OUT)

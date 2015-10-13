@@ -1,4 +1,4 @@
-let React = require('react')
+import React from 'react'
 
 let Microscope = React.createClass({
 
@@ -41,4 +41,4 @@ let Microscope = React.createClass({
 
 })
 
-module.exports = Microscope
+export default Microscope
