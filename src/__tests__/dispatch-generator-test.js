@@ -131,4 +131,70 @@ describe('When dispatching generators', function() {
       done()
     })
   })
+
+  it ('halts futher execution on an error', function(done) {
+    let app = new Microcosm()
+
+    function* asyncRange(start, end) {
+      while (start < end) {
+        yield new Promise.resolve(start++)
+      }
+      yield new Promise.reject(new Error('This is an expected rejection'))
+    }
+
+    function* generatorOfGeneratorsofPromises(a, b, c) {
+      yield asyncRange(a, b)
+      yield asyncRange(b, c)
+    }
+
+    let answers = []
+
+    app.addStore('test', function() {
+      return {
+        [generatorOfGeneratorsofPromises](a=[], b) {
+          answers.push(b)
+          return b
+        }
+      }
+    })
+
+    app.push(generatorOfGeneratorsofPromises, [1, 4, 7], function (error) {
+      assert(error instanceof Error)
+      assert.equal(app.state.test, undefined)
+      done()
+    })
+  })
+
+  it ('does not burry errors in nested generators', function (done) {
+    let app = new Microcosm()
+
+    function* badApple (start, end) {
+      yield new Promise (function(resolve, reject) {
+        throw new Error("This is an expected error")
+      })
+    }
+
+    function* generatorOfGeneratorsofPromises(a, b, c) {
+      yield true
+      yield badApple(a, b)
+      yield false
+    }
+
+    let answers = []
+
+    app.addStore('test', function() {
+      return {
+        [generatorOfGeneratorsofPromises](a=[], b) {
+          answers.push(b)
+          return b
+        }
+      }
+    })
+
+    app.push(generatorOfGeneratorsofPromises, [1, 4, 7], function(error) {
+      assert(error instanceof Error)
+      assert.equal(app.state.test, undefined)
+      done()
+    })
+  })
 })

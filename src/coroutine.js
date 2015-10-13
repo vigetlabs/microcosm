@@ -39,9 +39,9 @@ let waterfall = function (iterator, callback) {
   return coroutine(start.value, function step (error, body, complete) {
     // If next.value is a generator, it's possible that it is not complete.
     // When this is the case, do not progress the parent iterator forward
-    // until the child completes.
-    if (!complete) {
-      return callback(error, body, false)
+    // until the child completes successfully.
+    if (error || !complete) {
+      return callback(error, body, complete)
     }
 
     let next = iterator.next(body)
