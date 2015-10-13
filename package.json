@@ -4,6 +4,7 @@
   "private": true,
   "description": "A variant of Facebook's Flux with centralized, isolated state",
   "main": "src/Microcosm.js",
+  "jsnext:main" : "src/Microcosm.js",
   "scripts": {
     "prepublish": "make build",
     "start": "make example",
@@ -23,7 +24,7 @@
   "babel": {
     "stage": 2,
     "loose": "all",
-    "sourceMaps": true,
+    "sourceMaps": "inline",
     "plugins": [
       "object-assign"
     ],
@@ -64,10 +65,8 @@
     "promise": "7.0.4",
     "react": "0.13.3",
     "react-router": "0.13.3",
-    "rollup": "0.19.1",
     "svgo": "0.5.6",
     "swig": "1.4.2",
-    "uglifyjs": "2.4.10",
     "uid": "0.0.2",
     "webpack-dev-server": "1.12.0"
   }

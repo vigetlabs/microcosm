@@ -2,7 +2,7 @@
  * Tree Performance Benchmark
  */
 
-var Tree  = require(__dirname + '/../dist/microcosm').Tree
+var Tree  = require(__dirname + '/../dist/Tree')
 var time  = require('microtime')
 var SIZE  = 10000
 var stats = { build: 0, root: 0, merge: 0, size: 0, prune: 0, memory: 0 }

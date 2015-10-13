@@ -8,7 +8,7 @@
  */
 
 var Microcosm   = require('../dist/Microcosm')
-var Transaction = Microcosm.Transaction
+var Transaction = require('../dist/Transaction')
 var time  = require('microtime')
 var SIZE = 10000
 

@@ -1,5 +1,5 @@
 /**
- * Lifecycle methods are implementated as actions. This module
+ * Life cycle methods are implementated as actions. This module
  * enumerates through a preset list of types and creates associated
  * actions.
  */

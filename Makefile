@@ -5,33 +5,27 @@ IN    := src
 OUT   := dist
 JS    := $(subst $(IN),$(OUT),$(shell find $(IN) -name '*.js*' ! -path '*/__tests__/*'))
 
-.PHONY: clean deliverables test test-watch example bench
+.PHONY: clean deliverables test test-watch example bench javascript
 
-build: package.json README.md LICENSE.md docs deliverables es5
-	@ make audit
+build: package.json $(wildcard *.md) docs deliverables javascript
 
 docs:
 	@ cp -rp $@ $^
 
-deliverables:
+deliverables: $(OUT)
 	@ cp -rf $(IN) $(OUT)/$(IN)
-	@ mkdir -p $(OUT)/addons
-	@ babel -q -d $(OUT)/addons $(IN)/addons
 
-es6:
-	@ rollup -f cjs --sourcemap -e diode -i $(IN)/Microcosm.js -o $(OUT)/$(NAME).es6.js
-
-es5: es6
-	@ babel --input-source-map $(OUT)/$(NAME).es6.js.map $(OUT)/$(NAME).es6.js > $(OUT)/$(NAME).js
+javascript: $(OUT)
+	@ babel -q -d $(OUT) $(IN)
 
 $(OUT):
 	@ mkdir -p $(OUT)
 
-%.md:
+%.md: $(OUT)
 	cp -p $@ $^
 
 package.json: $(OUT)
-	@ node -p 'p=require("./package");p.main="$(NAME).js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $(OUT)/package.json
+	@ node -p 'p=require("./package");p.main="Microcosm.js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $(OUT)/package.json
 
 release: clean build
 	npm publish $(OUT)
@@ -44,13 +38,6 @@ example:
 
 clean:
 	@ rm -rf $(OUT)
-
-audit:
-	@ echo "Gzipped Size:"
-	@ NODE_ENV=production babel $(OUT)/$(NAME).js \
-	| uglifyjs --mangle toplevel -c \
-	| gzip -c \
-	| wc -c
 
 test:
 	@ NODE_ENV=test karma start --single-run
@@ -65,6 +52,6 @@ test-fast-watch: $(shell find {src,examples} -name '*-test.js')
 test-watch:
 	NODE_ENV=test karma start
 
-bench: es5
+bench: javascript
 	@ node --expose-gc --trace-deopt benchmarks/tree-performance
 	@ node --expose-gc --trace-deopt benchmarks/dispatch-performance

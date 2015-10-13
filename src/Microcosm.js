@@ -221,8 +221,4 @@ Microcosm.prototype = {
 
 }
 
-Microcosm.Tree = Tree
-Microcosm.Transaction = Transaction
-Microcosm.lifecycle = lifecycle
-
 export default Microcosm
