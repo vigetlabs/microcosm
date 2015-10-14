@@ -36,7 +36,6 @@ module.exports = {
 
   devServer: {
     contentBase : __dirname,
-    publicPath  : 'assets',
     historyApiFallback: true
   }
 }
