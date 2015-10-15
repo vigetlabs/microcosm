@@ -30,7 +30,7 @@
     ]
   },
   "dependencies": {
-    "diode": "6.1.0"
+    "diode": "6.2.2"
   },
   "devDependencies": {
     "autoprefixer": "6.0.3",
