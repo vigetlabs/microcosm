@@ -1,7 +1,7 @@
 import merge from './merge'
 
 export function get (target, keys) {
-  for (var i = 0; target && i < keys.length; i++) {
+  for (var i = 0; target !== undefined && i < keys.length; i++) {
     target = target[keys[i]]
   }
 
