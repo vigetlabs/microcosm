@@ -21,7 +21,8 @@ describe('Microcosm', function() {
       }
     }
 
-    assert.ok(new Map(new MyApp().stores).has('foo'))
+    assert.ok(new MyApp() instanceof MyApp)
+    assert.equal(new MyApp().stores.length, 1)
   })
 
   describe('reset', function() {

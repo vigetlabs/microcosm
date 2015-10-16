@@ -51,11 +51,9 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    let next = merge({}, this.base)
-
-    this.state = this.history.branch().reduce((state, transaction) => {
+    this.state = this.history.branch().reduce((state, transaction, i) => {
       return dispatch(this.stores, state, transaction)
-    }, next)
+    }, this.base)
 
     this.emit(this.state)
 
@@ -83,7 +81,7 @@ Microcosm.prototype = {
 
   clean(transaction) {
     if (transaction.complete && !this.shouldHistoryKeep(transaction)) {
-      dispatch(this.stores, this.base, transaction)
+      this.base = dispatch(this.stores, this.base, transaction)
       return true
     }
 
@@ -166,12 +164,13 @@ Microcosm.prototype = {
    * manage the provided `key`. Whenever this store responds to an action,
    * it will be provided the current state for that particular key.
    */
-  addStore(key, store) {
-    if (process.env.NODE_ENV !== 'production' && typeof key !== 'string') {
-      throw TypeError(`Microcosm::addStore expects a string key to identify the store. Instead it got ${ typeof key }. Did you forget to include the key?`)
+  addStore(keyPath, store) {
+    if (arguments.length < 2) {
+      keyPath = []
+      store = arguments[0]
     }
 
-    this.stores.push([ key, defaults(store) ])
+    this.stores.push([ flatten(keyPath), defaults(store) ])
 
     // Re-evaluate the current state including the new store
     this.rollforward()

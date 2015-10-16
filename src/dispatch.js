@@ -7,15 +7,16 @@
  */
 
 import send from './send'
+import { get, set } from './update'
 
 let dispatch = function (stores, state, { active, payload, type }) {
   for (var i = 0, len = stores.length; active && i < len; i++) {
     var [ key, store ] = stores[i]
 
-    var answer = send(store, type, state[key], payload, state)
+    var answer = send(store, type, get(state, key), payload, state)
 
-    if (answer !== void 0) {
-      state[key] = answer
+    if (answer !== undefined) {
+      state = set(state, key, answer)
     }
   }
 
