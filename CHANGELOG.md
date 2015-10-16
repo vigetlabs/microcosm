@@ -1,6 +1,6 @@
 # Changelog
 
-## 9.12.0 (not released)
+## 9.12.0
 
 This is a big update, however there should be no breaking changes
 (assuming you are not referencing Microcosm internals).
