@@ -1,6 +1,7 @@
 import Microcosm from 'Microcosm'
 import React from 'react'
 import Drawing from './components/drawing'
+import { update } from 'sprout-data'
 
 class UndoTree extends Microcosm {
 
@@ -35,8 +36,7 @@ app.addStore('pixels', {
   register() {
     return {
       [report](pixels, { x, y }) {
-        pixels[y][x] = pixels[y][x] ? 0 : 1
-        return pixels
+        return update(pixels, [y, x], val => val ? 0 :  1)
       }
     }
   }
