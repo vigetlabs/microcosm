@@ -16,6 +16,19 @@ var Planets = {
 }
 ```
 
+### `willReset()`
+
+Called whenever an application will reset to a new state. Internally, this is used
+to non-destructively reset application within transaction history.
+
+```javascript
+var Planets = {
+  willReset(state, next) {
+    return next
+  }
+}
+```
+
 ### `serialize(state)`
 
 Allows a store to transform data before it leaves the system. It gives
