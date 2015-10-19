@@ -1,4 +1,5 @@
 import Diode       from 'diode'
+import MetaStore   from './stores/meta'
 import Transaction from './Transaction'
 import Tree        from './Tree'
 import coroutine   from './coroutine'
@@ -37,6 +38,8 @@ let Microcosm = function() {
   this.stores  = []
   this.plugins = []
   this.history = new Tree(Transaction(lifecycle.willStart, true, true))
+
+  this.addStore(MetaStore)
 }
 
 Microcosm.prototype = {
@@ -51,13 +54,25 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    this.state = this.history.branch().reduce((state, transaction, i) => {
+    this.state = this.history.branch().reduce((state, transaction) => {
       return dispatch(this.stores, state, transaction)
     }, this.base)
 
     this.emit(this.state)
 
     return this
+  },
+
+  shouldHistoryKeep(transaction) {
+    return false
+  },
+
+  clean(transaction) {
+    if (transaction.complete && !this.shouldHistoryKeep(transaction)) {
+      this.base = dispatch(this.stores, this.base, transaction)
+      return true
+    }
+    return false
   },
 
   transactionWillOpen(transaction) {
@@ -73,19 +88,6 @@ Microcosm.prototype = {
 
   transactionWillClose(transaction) {
     this.history.prune(transaction => this.clean(transaction))
-  },
-
-  shouldHistoryKeep(transaction) {
-    return false
-  },
-
-  clean(transaction) {
-    if (transaction.complete && !this.shouldHistoryKeep(transaction)) {
-      this.base = dispatch(this.stores, this.base, transaction)
-      return true
-    }
-
-    return false
   },
 
   /**
@@ -119,21 +121,18 @@ Microcosm.prototype = {
   },
 
   /**
-   * Clear all outstanding transactions and assign base state
-   * to a given object (or getInitialState())
+   * Reset by pushing an action that will always return
+   * a given state.
    */
-  reset(state) {
-    this.history = new Tree(Transaction(lifecycle.willReset, true, true))
-    this.base = merge(this.getInitialState(), state)
-
-    return this.rollforward()
+  reset(state, callback) {
+    return this.push(lifecycle.willReset, merge(this.getInitialState(), state), callback)
   },
 
   /**
    * Resets to a given state, passing it through deserialize first
    */
-  replace(data) {
-    return this.reset(this.deserialize(data))
+  replace(data, callback) {
+    return this.reset(this.deserialize(data), callback)
   },
 
   /**
@@ -192,11 +191,8 @@ Microcosm.prototype = {
    * Then fold the deserialized data over the current application state.
    */
   deserialize(data) {
-    if (data == undefined) {
-      return this.state
-    }
-
-    return dispatch(this.stores, data, Transaction(lifecycle.willDeserialize, data))
+    return data == undefined ? this.state
+                             : dispatch(this.stores, data, Transaction(lifecycle.willDeserialize, data))
   },
 
   /**

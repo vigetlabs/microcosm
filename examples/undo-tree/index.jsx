@@ -15,7 +15,7 @@ class UndoTree extends Microcosm {
   }
 
   goto(node) {
-    this.history.setFocus(node)
+    this.history.checkout(node)
     this.rollforward()
   }
 

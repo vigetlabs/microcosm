@@ -1,5 +1,5 @@
 import assert from 'assert'
-import merge  from '../merge'
+import merge  from '../src/merge'
 
 describe('merge', function() {
 

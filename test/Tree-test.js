@@ -1,4 +1,4 @@
-import Tree from '../Tree'
+import Tree from '../src/Tree'
 import assert from 'assert'
 
 describe('Tree', function() {
@@ -20,7 +20,7 @@ describe('Tree', function() {
     let two = tree.append('two')
     let three = tree.append('three')
 
-    tree.setFocus(two)
+    tree.checkout(two)
     tree.prune(node => true)
 
     assert.equal(tree.focus, two)
@@ -34,7 +34,7 @@ describe('Tree', function() {
     let two = tree.append('two')
     let three = tree.append('three')
 
-    tree.setFocus(two)
+    tree.checkout(two)
     tree.prune(node => false)
 
     assert.equal(tree.focus, two)
@@ -55,7 +55,7 @@ describe('Tree', function() {
 
     let first = tree.append('first')
     let second = tree.append('second')
-    tree.setFocus(first)
+    tree.checkout(first)
     let third = tree.append('third')
 
     assert.deepEqual(tree.branch().reduce(concat, []), [ 'first', 'third' ])
@@ -67,7 +67,7 @@ describe('Tree', function() {
     let one = tree.append('one')
     tree.append('two')
     tree.append('three')
-    tree.setFocus(one)
+    tree.checkout(one)
 
     assert.deepEqual(tree.branch().reduce(concat, []), [ 'one' ])
   })
@@ -88,14 +88,14 @@ describe('Tree', function() {
     let two   = tree.append('two')
     let three = tree.append('three')
 
-    tree.setFocus(two)
+    tree.checkout(two)
 
     let four = tree.append('four')
     let five = tree.append('five')
 
     assert.deepEqual(tree.branch().reduce(concat, []), [ 'one', 'two', 'four', 'five' ])
 
-    tree.setFocus(three)
+    tree.checkout(three)
 
     assert.deepEqual(tree.branch().reduce(concat, []), [ 'one', 'two', 'three' ])
   })
@@ -139,7 +139,7 @@ describe('Tree', function() {
     let one = tree.append('one')
     let two = tree.append('two')
 
-    tree.setFocus(one)
+    tree.checkout(one)
     assert.equal(tree.focus, one)
 
     tree.forward()

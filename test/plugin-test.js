@@ -1,4 +1,4 @@
-let Microcosm = require('../Microcosm')
+let Microcosm = require('../src/Microcosm')
 let assert = require('assert')
 
 describe('Plugins', function() {

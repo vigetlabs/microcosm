@@ -14,7 +14,7 @@ function Tree (anchor) {
 
 Tree.prototype = {
 
-  setFocus(node) {
+  checkout(node) {
     if (process.env.NODE_ENV !== 'production' && typeof node === undefined) {
       throw new TypeError('Tree was asked to focus on a Node, but instead got ' + node)
     }
@@ -23,11 +23,11 @@ Tree.prototype = {
   },
 
   back() {
-    this.setFocus(this.focus.parent)
+    this.checkout(this.focus.parent)
   },
 
   forward() {
-    this.setFocus(this.focus.next())
+    this.checkout(this.focus.next())
   },
 
   append(item) {

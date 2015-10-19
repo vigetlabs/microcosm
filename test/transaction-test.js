@@ -1,7 +1,8 @@
-let Transaction = require('../Transaction')
+let Transaction = require('../src/Transaction')
 let assert = require('assert')
 
 describe('Transactions', function() {
+
   it ('can set a payload when created', function() {
     assert.equal(Transaction('test', 'body').payload, 'body')
   })

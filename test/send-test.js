@@ -1,8 +1,8 @@
-let Microcosm = require('../Microcosm')
-let Transaction = require('../Transaction')
+let Microcosm = require('../src/Microcosm')
+let Transaction = require('../src/Transaction')
 let assert = require('assert')
-let send = require('../send')
-let lifecycle = require('../lifecycle')
+let send = require('../src/send')
+let lifecycle = require('../src/lifecycle')
 
 describe('sending actions', function() {
 

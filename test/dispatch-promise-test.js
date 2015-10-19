@@ -1,4 +1,4 @@
-let Microcosm = require('../Microcosm')
+let Microcosm = require('../src/Microcosm')
 let Promise   = require('promise')
 let assert    = require('assert')
 

@@ -1,4 +1,4 @@
-import coroutine from '../coroutine'
+import coroutine from '../src/coroutine'
 import assert from 'assert'
 import Promise from 'promise'
 

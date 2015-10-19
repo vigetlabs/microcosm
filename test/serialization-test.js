@@ -1,4 +1,4 @@
-let Microcosm = require('../Microcosm')
+let Microcosm = require('../src/Microcosm')
 let assert = require('assert')
 
 describe('Serialization', function() {
@@ -40,7 +40,7 @@ describe('Serialization', function() {
     assert.equal(false, 'fiz' in app.deserialize(undefined))
   })
 
-  it ('defaults to getInitialState when no deserialize method is provided', function() {
+  it ('defaults to getInitialState when no deserialize method is provided', function(done) {
     let app = new Microcosm()
 
     app.addStore('fiz', {
@@ -49,7 +49,10 @@ describe('Serialization', function() {
       }
     })
 
-    assert.equal(true, app.replace({}).state.fiz)
+    app.replace({}, function() {
+      assert.deepEqual(app.state, { fiz: true })
+      done()
+    })
   })
 
   it ('passes the raw data as the seconda argument of deserialize', function(done) {

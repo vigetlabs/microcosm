@@ -1,4 +1,4 @@
-let tag = require('../tag')
+let tag = require('../src/tag')
 let assert = require('assert')
 
 describe('tag', function() {

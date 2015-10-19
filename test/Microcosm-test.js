@@ -1,7 +1,7 @@
 let Action      = require('./fixtures/Action')
 let DummyStore  = require('./fixtures/DummyStore')
-let Microcosm   = require('../Microcosm')
-let Transaction = require('../Transaction')
+let Microcosm   = require('../src/Microcosm')
+let Transaction = require('../src/Transaction')
 let assert      = require('assert')
 
 describe('Microcosm', function() {
@@ -14,32 +14,23 @@ describe('Microcosm', function() {
   })
 
   it ('can be extended - Address loose mode Babel bug', function() {
-    class MyApp extends Microcosm {
-      constructor() {
-        super()
-        this.addStore('foo', {})
-      }
-    }
+    class First  extends Microcosm {}
+    class Second extends First {}
 
-    assert.ok(new MyApp() instanceof MyApp)
-    assert.equal(new MyApp().stores.length, 1)
-  })
-
-  describe('reset', function() {
-    let dummy = Transaction('test')
-    let transactions = [ dummy ]
-
-    it ('copies the array when given transactions on reset', function() {
-      assert.notEqual(app.reset({}, transactions).transactions, transactions)
-    })
+    assert.ok(new First() instanceof Microcosm)
+    assert.ok(new Second() instanceof First)
   })
 
   it ('getInitialState collects starting state for all registered stores', function() {
-    let state = app.getInitialState()
+    let app = new Microcosm()
 
-    new Map(app.stores).forEach(function(store, key) {
-      assert.equal(state[key], store.getInitialState())
+    app.addStore('test', {
+      getInitialState() {
+        return true
+      }
     })
+
+    assert.deepEqual(app.getInitialState(), { test: true })
   })
 
   it ('deserializes when replace is invoked', function() {

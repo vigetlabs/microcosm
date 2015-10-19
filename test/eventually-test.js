@@ -1,6 +1,6 @@
 import Promise from 'promise'
 import assert from 'assert'
-import eventually from '../eventually'
+import eventually from '../src/eventually'
 
 describe('eventually', function() {
 

@@ -24,7 +24,7 @@ $(OUT)/%.jsx: $(IN)/%.jsx
 deliverables: $(OUT)
 	@ cp -rf $(IN) $(OUT)/$(IN)
 
-javascript: $(subst $(IN),$(OUT),$(wildcard $(IN)/*.js*) $(wildcard $(IN)/addons/**/*.js*))
+javascript: $(subst $(IN),$(OUT),$(shell find ./src -name "*.js*"))
 
 $(OUT):
 	@ mkdir -p $(OUT)
@@ -51,10 +51,10 @@ test:
 	@ NODE_ENV=test karma start --single-run
 	@ NODE_ENV=test make test-fast
 
-test-fast: $(shell find {src,examples} -name '*-test.js')
+test-fast: $(shell find {test,examples} -name '*-test.js')
 	@ mocha -R dot --compilers js:babel/register $^
 
-test-fast-watch: $(shell find {src,examples} -name '*-test.js')
+test-fast-watch: $(shell find {test,examples} -name '*-test.js')
 	@ mocha -R dot --compilers js:babel/register $^ -w
 
 test-watch:

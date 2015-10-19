@@ -1,4 +1,4 @@
-let lifecycle = require('../lifecycle')
+let lifecycle = require('../src/lifecycle')
 let assert = require('assert')
 
 describe('Lifecycle', function() {

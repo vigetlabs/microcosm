@@ -1,5 +1,5 @@
-import Transaction from '../Transaction'
-import dispatch from '../dispatch'
+import Transaction from '../src/Transaction'
+import dispatch from '../src/dispatch'
 import assert from 'assert'
 
 describe('dispatch', function() {
