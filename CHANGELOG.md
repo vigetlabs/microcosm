@@ -1,5 +1,26 @@
 # Changelog
 
+## 9.13.0 (not released)
+
+### Noticeable Changes
+
+- `Microcosm::addStore` mounts stores to a given key path, like:
+  `app.addStore([ 'path', 'to', 'key' ], Store)`. Additionally, adding
+  a store without a keypath will mount it to the entire application
+  state. This is to improve the useability of Stores that must operate
+  all state (such as make decisions about game state).
+- Renamed `setFocus` to `checkout` in internal Tree structure. **This
+  is a breaking change.** The goal is to move towards a more intuitive
+  API.
+
+### Upgrading
+
+The enhancement `Microcosm::addStore` is not a breaking change, all
+old use cases will continue to work.
+
+Those experimenting with `app.history` will need to rename calls to
+`setFocus` to `checkout`.
+
 ## 9.12.0
 
 This is a big update, however there should be no breaking changes
