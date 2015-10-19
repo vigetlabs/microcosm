@@ -1,6 +1,6 @@
 import Chat from './components/chat'
 import Messages from './stores/messages'
-import Microcosm from 'Microcosm'
+import Microcosm from '../../src/Microcosm'
 import React from 'react'
 
 let app = new Microcosm()

@@ -1,5 +1,5 @@
 import Circle from './stores/Circle'
-import Microcosm from 'Microcosm'
+import Microcosm from '../../src/Microcosm'
 import React from 'react'
 import Viget from './components/Viget'
 import { update } from './actions/circle'

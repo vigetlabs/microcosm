@@ -1,4 +1,4 @@
-import Microcosm from 'Microcosm'
+import Microcosm from '../../src/Microcosm'
 import React from 'react'
 import Drawing from './components/drawing'
 import { update } from 'sprout-data'
