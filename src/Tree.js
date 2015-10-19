@@ -15,7 +15,7 @@ function Tree (anchor) {
 Tree.prototype = {
 
   checkout(node) {
-    if (process.env.NODE_ENV !== 'production' && typeof node === undefined) {
+    if (process.env.NODE_ENV !== 'production' && typeof node === 'undefined') {
       throw new TypeError('Tree was asked to focus on a Node, but instead got ' + node)
     }
 

@@ -156,4 +156,11 @@ describe('Tree', function() {
     assert.equal(tree.focus, one)
   })
 
+  it ('will not check out an undefined node', function() {
+    let tree = new Tree()
+
+    assert.throws(function() {
+      tree.checkout()
+    })
+  })
 })

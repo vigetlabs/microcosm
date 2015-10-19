@@ -91,15 +91,16 @@ describe('Plugins', function() {
     }
   })
 
-  it ('throws an error if a register is missing', function(done) {
-    let app = new Microcosm()
+  it ('throws an error if a register is missing', function() {
+    assert.throws(function() {
+      new Microcosm().addPlugin({})
+    })
+  })
 
-    try {
-      app.addPlugin({})
-    } catch(error) {
-      assert(error instanceof TypeError)
-      done()
-    }
+  it ('throws an error when passed no configuration data', function() {
+    assert.throws(function() {
+      new Microcosm().addPlugin()
+    })
   })
 
   it ('a plugin can be a function', function (done) {
