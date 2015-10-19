@@ -3,7 +3,9 @@ var path    = require('path')
 
 module.exports = {
   context: __dirname,
+
   devtool: 'inline-source-map',
+
   entry: {
     'chatbot'      : './chatbot/index',
     'react-router' : './react-router/index',
@@ -17,8 +19,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: [ '', '.js', '.jsx', '.json' ],
-    modulesDirectories: [ 'web_modules', 'node_modules' ]
+    extensions: [ '', '.js', '.jsx', '.json' ]
   },
 
   module: {
