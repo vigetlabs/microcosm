@@ -43,6 +43,7 @@ addStore  - Add an entry to the map of known stores
 Life Cycle
 +--------------+
 getInitialState - Determines the initial state required to operate. Called on `Microcosm::start`
+willReset - Called whenever `Microcosm::reset` or `Microcosm::replace` is executed.
 
 Serialization
 +--------------+
