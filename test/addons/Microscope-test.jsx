@@ -1,5 +1,5 @@
 let React = require('react/addons')
-let Microscope = require('../index')
+let Microscope = require('../../src/addons/microscope')
 let Microcosm = require('../../../Microcosm')
 let render = React.addons.TestUtils.renderIntoDocument
 let assert = require('assert')
