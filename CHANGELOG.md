@@ -12,6 +12,8 @@
 - Renamed `setFocus` to `checkout` in internal Tree structure. **This
   is a breaking change.** The goal is to move towards a more intuitive
   API.
+- Tweaked build process to prevent babel compilation errors when
+  developing for React Native development.
 
 ### Upgrading
 
