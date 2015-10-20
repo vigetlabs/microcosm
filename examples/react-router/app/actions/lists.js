@@ -4,7 +4,7 @@ function add (params) {
   return { id: uid(), ...params }
 }
 
-function remove(id) {
+function remove (id) {
   return id
 }
 
