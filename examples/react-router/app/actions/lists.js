@@ -1,10 +1,10 @@
 import uid from 'uid'
 
-function add (list, params) {
-  return { id: uid, list, ...params}
+function add (params) {
+  return { id: uid(), ...params }
 }
 
-function remove (id) {
+function remove(id) {
   return id
 }
 
