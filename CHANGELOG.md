@@ -1,5 +1,10 @@
 # Changelog
 
+## 9.13.1
+
+- Addressed an IE9 bug where stores passed without key paths did not
+  install properly.
+
 ## 9.13.0
 
 ### Noticeable Changes
