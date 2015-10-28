@@ -165,8 +165,11 @@ Microcosm.prototype = {
    */
   addStore(keyPath, store) {
     if (arguments.length < 2) {
-      keyPath = []
-      store = arguments[0]
+      // Important! Assignment this way is important
+      // to support IE9, which has an odd way of referencing
+      // arguments
+      store   = keyPath
+      keyPath = [];
     }
 
     this.stores.push([ flatten(keyPath), defaults(store) ])
