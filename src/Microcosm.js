@@ -172,6 +172,12 @@ Microcosm.prototype = {
       keyPath = [];
     }
 
+    if (process.env.NODE_ENV !== 'production') {
+      if (typeof store !== 'function' && typeof store !== 'object') {
+        throw TypeError('Expected a store object or function. Instead got: ' + typeof store)
+      }
+    }
+
     this.stores.push([ flatten(keyPath), defaults(store) ])
 
     // Re-evaluate the current state including the new store

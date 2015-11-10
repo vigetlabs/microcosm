@@ -19,6 +19,15 @@ describe('Stores', function() {
     })
   })
 
+  it ('throws if not given a store', function() {
+    let app = new Microcosm()
+
+    assert.throws(() => app.addStore('test'))
+    assert.throws(() => app.addStore('test', 'fiz'))
+    assert.throws(() => app.addStore('test', null))
+    assert.throws(() => app.addStore(null))
+  })
+
   it ('can mount a store at a nested key path', function() {
     let app = new Microcosm()
 
