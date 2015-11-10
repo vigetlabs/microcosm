@@ -5,13 +5,14 @@
  */
 
 import { isFunction } from './type-checks'
+import { get } from './update'
 
-export default function (store, type, subset, payload, state) {
+export default function (key, store, state, type, payload) {
   let handler = store[type]
 
   if (handler === undefined && store.register) {
     handler = store.register()[type]
   }
 
-  return isFunction(handler) ? handler.call(store, subset, payload, state) : handler
+  return isFunction(handler) ? handler.call(store, get(state, key), payload, state) : handler
 }
