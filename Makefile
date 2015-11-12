@@ -4,6 +4,8 @@ NAME  := $(shell node -e 'console.log(require("./package.json").name)')
 IN    := src
 OUT   := dist
 
+VPATH := $(OUT)
+
 .PHONY: clean deliverables test test-watch example bench javascript
 
 build: package.json $(wildcard *.md) docs deliverables javascript
@@ -11,12 +13,12 @@ build: package.json $(wildcard *.md) docs deliverables javascript
 docs:
 	@ cp -rp $@ $^
 
-$(OUT)/%.js: $(IN)/%.js
+%.js: $(IN)/%.js
 	@ mkdir -p $(@D)
 	@ babel --plugins unassert $< > $@
 	@ echo "Compiled $@"
 
-$(OUT)/%.jsx: $(IN)/%.jsx
+%.jsx: $(IN)/%.jsx
 	@ mkdir -p $(@D)
 	@ babel $< > $@
 	@ echo "Compiled $@"
