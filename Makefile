@@ -13,15 +13,15 @@ build: package.json $(wildcard *.md) docs deliverables javascript
 docs:
 	@ cp -rp $@ $^
 
-%.js: $(IN)/%.js
+$(OUT)/%.js: $(IN)/%.js
 	@ mkdir -p $(@D)
 	@ babel --plugins unassert $< > $@
 	@ echo "Compiled $@"
 
-%.jsx: $(IN)/%.jsx
+$(OUT)/%.jsx: $(IN)/%.jsx
 	@ mkdir -p $(@D)
 	@ babel $< > $@
-	@ echo "Compiled $@"
+	@ echo "Compiled $*.js"
 
 deliverables: $(OUT)
 	@ cp -rf $(IN) $(OUT)/$(IN)
