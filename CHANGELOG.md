@@ -1,5 +1,18 @@
 # Changelog
 
+## 9.14.0
+
+### Noticeable Changes
+
+We improved the validation of stores to help improve debugging of
+bad inputs to `Microcosm::addStore`.
+
+### Internal Changes
+
+- Small change to dispatch process so that accessing state only
+  happens when necessary. This should provide a small performance
+  boost.
+
 ## 9.13.1
 
 - Addressed an IE9 bug where stores passed without key paths did not
