@@ -12,7 +12,7 @@ export default function Render(app, { el }, next) {
   // Developer courtesy here. If the plugin isn't given renderable target, let
   // the developer know.
   if (!el) {
-    throw TypeError('Render plugin was unable to render to the target ' + el);
+    return next(TypeError('Render plugin was unable to render to the target ' + el))
   }
 
   function createElement(Handler, state) {
