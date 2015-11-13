@@ -47,7 +47,9 @@ export default function register (server, _options, next) {
     {
       method  : 'POST',
       path    : '/chatbot/message',
-      handler : answer
+      handler(request, reply) {
+        setTimeout(answer, Math.random() * 2500, request, reply)
+      }
     }
   ])
 
