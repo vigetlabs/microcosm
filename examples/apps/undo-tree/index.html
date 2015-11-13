@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf8">
+  <title>Undo Tree</title>
+  <style>
+    body {
+      color: #555;
+      font-family: sans-serif;
+      margin: 2em;
+      width: 100%;
+    }
+
+    rect,
+    circle {
+      transition: 0.3s fill, 0.3s r;
+      cursor: pointer;
+    }
+
+    svg {
+      border: 1px solid #ccc;
+    }
+
+    svg + svg {
+      border-left: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">Loading...</div>
+  <script async src="/assets/undo-tree/main.js"></script>
+</body>
+
+</html>

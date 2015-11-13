@@ -44,7 +44,7 @@ prerelease: clean build
 	npm publish $(OUT) --tag beta
 
 example:
-	@ webpack-dev-server --config examples/webpack.config.js
+	@ node examples/server
 
 clean:
 	@ rm -rf $(OUT)
