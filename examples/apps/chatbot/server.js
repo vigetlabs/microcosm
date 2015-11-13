@@ -10,7 +10,8 @@ import Elizabot from 'elizabot'
 import React    from 'react'
 import uid      from 'uid'
 
-const bot = new Elizabot()
+const bot  = new Elizabot()
+const path = '/chatbot'
 
 export function answer (request, reply) {
   return reply({
@@ -41,12 +42,12 @@ export default function register (server, _options, next) {
   server.route([
     {
       method  : 'GET',
-      path    : '/chatbot',
+      path    : path,
       handler : render
     },
     {
       method  : 'POST',
-      path    : '/chatbot/message',
+      path    : path + '/message',
       handler(request, reply) {
         setTimeout(answer, Math.random() * 2500, request, reply)
       }
@@ -61,5 +62,5 @@ register.attributes = {
   name        : 'Chatbot',
   description : 'A chatbot app that demonstrates optimistic updates.',
   example     : true,
-  path        : '/chatbot'
+  path        : path
 }

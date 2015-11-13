@@ -3,11 +3,13 @@
  * simple-svg example.
  */
 
+const path = '/simple-svg'
+
 export default function register (server, _options, next) {
 
   server.route({
     method  : 'GET',
-    path    : '/simple-svg',
+    path    : path,
     handler : {
       view: 'apps/simple-svg/index'
     }
@@ -21,5 +23,5 @@ register.attributes = {
   name        : 'Simple SVG',
   description : 'A simple animation of the Viget logo.',
   example     : true,
-  path        : '/simple-svg'
+  path        : path
 }

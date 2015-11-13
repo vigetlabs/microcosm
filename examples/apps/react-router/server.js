@@ -3,11 +3,13 @@
  * react-router example.
  */
 
+const path = '/react-router'
+
 export default function register (server, _options, next) {
 
   server.route({
     method  : 'GET',
-    path    : '/react-router',
+    path    : path,
     handler : {
       view: 'apps/react-router/index'
     }
@@ -21,5 +23,5 @@ register.attributes = {
   name        : 'ReactRouter',
   description : 'Using Microcosm with ReactRouter.',
   example     : true,
-  path        : '/react-router'
+  path        : path
 }
