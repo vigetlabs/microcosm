@@ -1,3 +1,8 @@
+/**
+ * Example Assets
+ * This server plugin creates a proxy to a webpack dev server.
+ */
+
 import H2O2             from 'h2o2'
 import Webpack          from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'

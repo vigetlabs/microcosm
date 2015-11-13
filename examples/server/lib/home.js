@@ -1,3 +1,10 @@
+/**
+ * Example Home
+ * This server plugin creates an entry point to the "home page" of the examples
+ * app. On render, it will check all registered plugins for examples and showcase
+ * them in the HTML response.
+ */
+
 export function getExamples(server) {
   let plugins = Object.keys(server.registrations).map(function(key) {
     return server.registrations[key].attributes
