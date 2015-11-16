@@ -1,5 +1,5 @@
 import Todos   from './app/todos'
-import Storage from './app/plugins/storage'
+import Hydrate from './app/plugins/hydrate'
 import Render  from './app/plugins/render'
 
 // Each app is a unique instance.
@@ -10,13 +10,11 @@ let app = new Todos()
 // Plugins run before an app starts. You can use them to bootstrap
 // behavior.
 
-// Save to local storage
-app.addPlugin(Storage)
+// Pick up state where the server left off
+app.addPlugin(Hydrate, 'REACT_ROUTER_SEED')
 
 // Render changes to the screen
-app.addPlugin(Render, {
-  el: document.getElementById('app')
-})
+app.addPlugin(Render, document.getElementById('app'))
 
 // Starting the application will run through all plugins
 app.start(function(error) {

@@ -3,15 +3,28 @@
  * undo-tree example.
  */
 
-const path = '/undo-tree'
+import DOM      from 'react-dom/server'
+import Drawing  from './app/components/drawing'
+import React    from 'react'
+import UndoTree from './app/undo-tree'
 
 export default function register (server, _options, next) {
 
   server.route({
     method  : 'GET',
-    path    : path,
-    handler : {
-      view: 'apps/undo-tree/index'
+    path    : '/',
+    handler(request, reply) {
+      var app = new UndoTree()
+
+      app.start(function(error) {
+        if (error) {
+          throw error
+        }
+
+        return reply.view('apps/undo-tree/index', {
+          markup : DOM.renderToString(React.createElement(Drawing, { app }))
+        })
+      })
     }
   })
 
@@ -23,5 +36,5 @@ register.attributes = {
   name        : 'Undo Tree',
   description : 'A simple drawing app visualizing the Microcosm transaction tree.',
   example     : true,
-  path        : path
+  path        : '/undo-tree'
 }

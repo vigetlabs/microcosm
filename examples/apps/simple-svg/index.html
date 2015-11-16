@@ -24,7 +24,12 @@
 </head>
 
 <body>
-  <div id="app">Loading...</div>
+  <div id="app">{{{markup}}}</div>
+
+  <script>
+    window.SIMPLE_SVG_SEED = {{{ payload }}}
+  </script>
+
   <script async src="/assets/simple-svg/main.js"></script>
 </body>
 

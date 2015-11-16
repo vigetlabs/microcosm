@@ -1,8 +1,9 @@
 import { update } from '../actions/circle'
 
-const Circle = {
+let Circle = {
+
   getInitialState() {
-    return this.set(null, Date.now())
+    return Circle.set(null, Date.now())
   },
 
   register() {
@@ -21,6 +22,7 @@ const Circle = {
       r  : 12 + (8 * cos)
     }
   }
+
 }
 
 export default Circle

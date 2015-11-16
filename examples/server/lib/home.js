@@ -5,13 +5,7 @@
  * them in the HTML response.
  */
 
-export function getExamples(server) {
-  let plugins = Object.keys(server.registrations).map(function(key) {
-    return server.registrations[key].attributes
-  })
-
-  return plugins.filter(plugin => plugin.example)
-}
+import getExamples from './getExamples'
 
 export default function register (server, _options, next) {
 

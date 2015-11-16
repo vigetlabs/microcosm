@@ -28,16 +28,10 @@ app.shouldHistoryKeep = function () {
 var action = function test () {}
 action.toString = function () { return 'test' }
 
-var Store = {
-  getInitialState: function () {
-    return 0
-  },
-  register: function () {
-    return {
-      test: function(n) {
-        return n + 1
-      }
-    }
+var Store = function() {
+  return {
+    getInitialState: 0,
+    test: function(n) { return n + 1}
   }
 }
 
@@ -81,4 +75,4 @@ for (var q = 0; q < 10; q++) {
  */
 var then = time.now()
 app.push(action, true)
-console.log(': %s', (time.now() - then) / 1000)
+console.log(': %sms', (time.now() - then) / 1000)

@@ -1,5 +1,5 @@
-var webpack = require('webpack')
 var path    = require('path')
+var webpack = require('webpack')
 
 module.exports = {
   context: path.resolve(__dirname, '../..'),
@@ -19,9 +19,10 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.ProvidePlugin({
-      'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
-    })
+    // Enables Hot Module Replacement
+    new webpack.HotModuleReplacementPlugin(),
+    // Handle errors more cleanly
+    new webpack.NoErrorsPlugin()
   ],
 
   resolve: {

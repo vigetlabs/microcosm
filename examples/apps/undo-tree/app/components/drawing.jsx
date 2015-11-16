@@ -1,15 +1,16 @@
-import React from 'react'
-import Canvas from './canvas'
-import UndoTree from './undo-tree'
+import React      from 'react'
+import Canvas     from './canvas'
+import UndoTree   from './undo-tree'
+import { report } from '../actions/pixels'
 
 const Drawing = React.createClass({
 
   render() {
-    let { app, pixels } = this.props
+    let { app } = this.props
 
     return (
       <main>
-        <Canvas pixels={ pixels } onClick={ this.props.onClick }/>
+        <Canvas pixels={ app.state.pixels } onClick={ app.prepare(report) }/>
 
         <UndoTree history={ app.history } onNodeClick={ node => app.goto(node) }/>
 

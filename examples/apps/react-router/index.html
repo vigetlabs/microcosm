@@ -6,7 +6,10 @@
     <link rel="stylesheet" href="assets/react-router/app/assets/style.css" />
   </head>
   <body className="text-body">
-    <div id="app">Loading...</div>
+    <div id="app">{{{ markup }}}</div>
+    <script>
+      window.REACT_ROUTER_SEED = {{{ payload }}}
+    </script>
     <script async src="/assets/react-router/main.js"></script>
   </body>
 </html>

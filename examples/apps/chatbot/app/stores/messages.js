@@ -1,16 +1,13 @@
 import Eliza    from 'elizabot'
+import Message  from '../records/message'
 import sendChat from '../actions/sendChat'
-import uid      from 'uid'
 
-const Messages = {
+const bot = new Eliza()
+
+let Messages = {
 
   getInitialState() {
-    return [{
-      id      : uid(),
-      message : new Eliza().getInitial(),
-      user    : 'Eliza',
-      time    : new Date()
-    }]
+    return [ Message({ message: bot.getInitial(), user: 'Eliza' }) ]
   },
 
   add(state, message) {

@@ -7,49 +7,44 @@ import Chat     from './app/components/chat'
 import ChatBot  from './app/chatbot'
 import DOM      from 'react-dom/server'
 import Elizabot from 'elizabot'
+import Message  from './app/records/message'
 import React    from 'react'
-import uid      from 'uid'
 
 const bot  = new Elizabot()
-const path = '/chatbot'
-
-export function answer (request, reply) {
-  return reply({
-    id      : uid(),
-    message : bot.transform(request.payload),
-    time    : new Date(),
-    user    : 'Eliza'
-  })
-}
-
-export function render (request, reply) {
-  var app = new ChatBot()
-
-  app.start(function(error) {
-    if (error) {
-      return reply(error).code(500)
-    }
-
-    return reply.view('apps/chatbot/index', {
-      markup  : DOM.renderToString(React.createElement(Chat, { app })),
-      payload : JSON.stringify(app)
-    })
-  })
-}
 
 export default function register (server, _options, next) {
 
   server.route([
     {
-      method  : 'GET',
-      path    : path,
-      handler : render
+      method : 'GET',
+      path   : '/',
+      handler(request, reply) {
+        var app = new ChatBot()
+
+        app.start(function(error) {
+          if (error) {
+            throw error
+          }
+
+          return reply.view('apps/chatbot/index', {
+            markup  : DOM.renderToString(React.createElement(Chat, { app })),
+            payload : JSON.stringify(app)
+          })
+        })
+      }
     },
     {
-      method  : 'POST',
-      path    : path + '/message',
+      method : 'POST',
+      path   : '/message',
       handler(request, reply) {
-        setTimeout(answer, Math.random() * 2500, request, reply)
+        let answer = Message({
+          message : bot.transform(request.payload),
+          user    : 'Eliza'
+        })
+
+        // Delay the response so that optimistic updates
+        // are easier to notice.
+        setTimeout(reply, 1500, answer)
       }
     }
   ])
@@ -62,5 +57,5 @@ register.attributes = {
   name        : 'Chatbot',
   description : 'A chatbot app that demonstrates optimistic updates.',
   example     : true,
-  path        : path
+  path        : '/chat-bot'
 }
