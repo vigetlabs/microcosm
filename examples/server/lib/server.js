@@ -1,16 +1,18 @@
 import Assets      from './assets'
-import Home        from './home'
 import ChatBot     from '../../apps/chatbot/server'
+import H2O2        from 'h2o2'
+import Hapi        from 'hapi'
+import Home        from './home'
+import Mustache    from 'mustache'
 import ReactRouter from '../../apps/react-router/server'
 import SimpleSVG   from '../../apps/simple-svg/server'
 import UndoTree    from '../../apps/undo-tree/server'
-import Mustache    from 'mustache'
-import Hapi        from 'hapi'
 import Vision      from 'vision'
 import { resolve } from 'path'
 
 const PLUGINS = [
   Vision,
+  H2O2,
   Assets,
   Home,
   { register: ChatBot,     routes: { prefix: '/chat-bot' } },
@@ -26,11 +28,12 @@ export function start (port, next) {
 
   // Dead simple logging
   server.on('response', function (request) {
-    if (!request.url.path.match('/assets')) {
-      console.log('[info]', request.method.toUpperCase(), request.url.path);
-      console.log('[info]', 'sent', request.response.statusCode, 'in', request.info.responded - request.info.received + 'ms')
-    }
-  });
+    console.log('[info]',
+                request.method.toUpperCase(),
+                request.response.statusCode,
+                request.url.path,
+                '(' + (request.info.responded - request.info.received) + 'ms' + ')')
+  })
 
   server.register(PLUGINS, function (error) {
     if (error) {

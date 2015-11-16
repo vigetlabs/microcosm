@@ -6,7 +6,6 @@
 require('babel/register')
 
 var Server = require('./lib/server')
-var getExamples = require('./lib/getExamples')
 
 Server.start(process.env.PORT || 4000, function (error, server) {
   if (error) {
