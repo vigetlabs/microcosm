@@ -86,7 +86,7 @@ Microcosm.prototype = {
     transaction.payload  = payload
   },
 
-  transactionWillClose(transaction) {
+  transactionWillClose() {
     this.history.prune(transaction => this.clean(transaction))
   },
 

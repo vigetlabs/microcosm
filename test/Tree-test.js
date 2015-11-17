@@ -23,8 +23,7 @@ describe('Tree', function() {
     tree.checkout(two)
     tree.prune(node => true)
 
-    assert.equal(tree.focus, two)
-    assert.equal(tree.focus.parent, null)
+    assert.equal(tree.focus, null)
   })
 
   it ('prunes until it returns false', function() {

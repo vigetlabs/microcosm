@@ -39,8 +39,15 @@ Tree.prototype = {
   prune(fn) {
     let node = this.root()
 
-    while (node != this.focus && fn(node.value)) {
+    while (node && fn(node.value)) {
       node.dispose()
+
+      // If we dispose the focal point, release it
+      // from the tree
+      if (node === this.focus) {
+        this.focus = null
+      }
+
       node = node.next()
     }
   },
