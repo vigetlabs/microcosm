@@ -41,8 +41,9 @@ describe('Tree', function() {
   })
 
   it ('step back through the tree', function() {
-    let tree = new Tree('first')
+    let tree = new Tree()
 
+    tree.append('first')
     tree.append('second')
     tree.append('third')
 
@@ -82,8 +83,9 @@ describe('Tree', function() {
   })
 
   it ('properly handles forks', function() {
-    let tree = new Tree('one')
+    let tree = new Tree()
 
+    let one   = tree.append('one')
     let two   = tree.append('two')
     let three = tree.append('three')
 
@@ -121,6 +123,14 @@ describe('Tree', function() {
     assert.equal(tree.focus, one)
   })
 
+  it ('will not move back if there is no focus', function() {
+    let tree = new Tree()
+
+    tree.back()
+
+    assert.equal(tree.focus, null)
+  })
+
   it ('will not move backwards out of the tree', function() {
     let tree = new Tree()
 
@@ -143,6 +153,14 @@ describe('Tree', function() {
 
     tree.forward()
     assert.equal(tree.focus, two)
+  })
+
+  it ('will not move forward if there is no focus', function() {
+    let tree = new Tree()
+
+    tree.forward()
+
+    assert.equal(tree.focus, null)
   })
 
   it ('will not move forward out of the tree', function() {

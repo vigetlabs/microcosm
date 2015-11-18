@@ -4,12 +4,8 @@
  * over time.
  */
 
-function Tree (anchor) {
+function Tree () {
   this.focus = null
-
-  if (anchor) {
-    this.append(anchor)
-  }
 }
 
 Tree.prototype = {
@@ -23,11 +19,15 @@ Tree.prototype = {
   },
 
   back() {
-    this.checkout(this.focus.parent)
+    if (this.focus) {
+      this.checkout(this.focus.parent)
+    }
   },
 
   forward() {
-    this.checkout(this.focus.next())
+    if (this.focus) {
+      this.checkout(this.focus.next())
+    }
   },
 
   append(item) {
@@ -36,19 +36,19 @@ Tree.prototype = {
     return this.focus
   },
 
-  prune(fn) {
+  prune(shouldRemove) {
     let node = this.root()
 
-    while (node && fn(node.value)) {
+    while (node && shouldRemove(node.value)) {
       node.dispose()
-
-      // If we dispose the focal point, release it
-      // from the tree
-      if (node === this.focus) {
-        this.focus = null
-      }
-
       node = node.next()
+    }
+
+    // If we reach the end (there is no next node), it means
+    // we've completely wiped away the tree, so nullify focus
+    // to mark a completely empty tree.
+    if (!node) {
+      this.focus = null
     }
   },
 
@@ -56,7 +56,7 @@ Tree.prototype = {
     let node  = this.focus
     let items = []
 
-    while (node !== null) {
+    while (node) {
       items.push(node.value)
       node = node.parent
     }
@@ -67,7 +67,7 @@ Tree.prototype = {
   root() {
     let node = this.focus
 
-    while (node !== null && node.parent !== null) {
+    while (node && node.parent) {
       node = node.parent
     }
 
@@ -78,8 +78,8 @@ Tree.prototype = {
     let count = 0
     let next  = this.focus
 
-    while (next !== null) {
-      next = next.parent
+    while (next) {
+      next  = next.parent
       count = count + 1
     }
 
@@ -90,18 +90,18 @@ Tree.prototype = {
 
 function Node (value, parent) {
   this.children = []
-  this.parent   = parent || null
+  this.parent   = parent
   this.value    = value
 
   if (parent) {
-    parent.children.unshift(this)
+    parent.children.push(this)
   }
 }
 
 Node.prototype = {
 
   next() {
-    return this.children[0] || null
+    return this.children.length ? this.children[0] : null
   },
 
   dispose() {

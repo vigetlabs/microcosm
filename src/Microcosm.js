@@ -37,7 +37,7 @@ let Microcosm = function() {
 
   this.stores  = []
   this.plugins = []
-  this.history = new Tree(Transaction(lifecycle.willStart, true, true))
+  this.history = new Tree()
 
   this.addStore(MetaStore)
 }
@@ -173,15 +173,12 @@ Microcosm.prototype = {
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      if (typeof store !== 'function' && typeof store !== 'object') {
-        throw TypeError('Expected a store object or function. Instead got: ' + typeof store)
+      if (!store || typeof store !== 'function' && typeof store !== 'object') {
+        throw TypeError('Expected a store object or function. Instead got: ' + store)
       }
     }
 
     this.stores.push([ flatten(keyPath), defaults(store) ])
-
-    // Re-evaluate the current state including the new store
-    this.rollforward()
 
     return this
   },
@@ -218,8 +215,10 @@ Microcosm.prototype = {
    *    genrateed if installing plugins fails.
    */
   start(callback) {
-    this.reset()
+    this.push(lifecycle.willStart)
+
     install(this.plugins, callback)
+
     return this
   }
 

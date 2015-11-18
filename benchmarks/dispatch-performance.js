@@ -52,6 +52,8 @@ app.addStore('three', Store)
 app.addStore('four',  Store)
 app.addStore('five',  Store)
 
+app.start()
+
 /**
  * Append a given number of transactions into history. We use this method
  * instead of `::push()` for benchmark setup performance. At the time of writing,

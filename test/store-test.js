@@ -20,12 +20,13 @@ describe('Stores', function() {
   })
 
   it ('throws if not given a store', function() {
-    let app = new Microcosm()
+    let app   = new Microcosm()
+    let error = new RegExp('Expected a store object or function')
 
-    assert.throws(() => app.addStore('test'))
-    assert.throws(() => app.addStore('test', 'fiz'))
-    assert.throws(() => app.addStore('test', null))
-    assert.throws(() => app.addStore(null))
+    assert.throws(() => app.addStore('test'), error)
+    assert.throws(() => app.addStore('test', 'fiz'), error)
+    assert.throws(() => app.addStore('test', null), error)
+    assert.throws(() => app.addStore(null), error)
   })
 
   it ('can mount a store at a nested key path', function() {
@@ -36,6 +37,8 @@ describe('Stores', function() {
         return true
       }
     })
+
+    app.start()
 
     assert(app.state.foo.bar)
   })
@@ -48,6 +51,8 @@ describe('Stores', function() {
         return { test: true }
       }
     })
+
+    app.start()
 
     assert(app.state.test)
   })
