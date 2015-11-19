@@ -22,8 +22,6 @@ export default function register (server, _options, next) {
     handler(request, reply) {
       let app = new Todos()
 
-      let params = { basename, routes, location: request.raw.req.url }
-
       function createElement (Handler, state) {
         return (<Handler app={ app } { ...state } />)
       }
@@ -31,7 +29,7 @@ export default function register (server, _options, next) {
       app.start(function (error) {
         if (error) throw error
 
-        match(params, function (error, redirect, props) {
+        match({ basename, routes, location: request.raw.req.url }, function (error, redirect, props) {
           if (error) {
             return reply.view('server/error', error).code(500)
           }
@@ -41,7 +39,7 @@ export default function register (server, _options, next) {
           }
 
           if (props) {
-            return reply.view('apps/react-router/index', {
+            return reply.view('react-router/index', {
               markup  : DOM.renderToString(<RoutingContext createElement={ createElement } { ...props } />),
               payload : JSON.stringify(app)
             })

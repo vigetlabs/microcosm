@@ -37,10 +37,10 @@ module.exports = function (server) {
     devtool: 'inline-source-map',
 
     entry: {
-      'chatbot'      : './apps/chatbot/browser',
-      'react-router' : './apps/react-router/browser',
-      'simple-svg'   : './apps/simple-svg/browser',
-      'undo-tree'    : './apps/undo-tree/browser'
+      'chatbot'      : './chatbot/browser',
+      'react-router' : './react-router/browser',
+      'simple-svg'   : './simple-svg/browser',
+      'undo-tree'    : './undo-tree/browser'
     },
 
     output: {

@@ -1,6 +1,6 @@
 import Items     from './stores/items'
 import Lists     from './stores/lists'
-import Microcosm from '../../../../src/Microcosm'
+import Microcosm from '../../../src/Microcosm'
 
 class Todos extends Microcosm {
 

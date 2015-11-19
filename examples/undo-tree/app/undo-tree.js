@@ -1,4 +1,4 @@
-import Microcosm from '../../../../src/Microcosm'
+import Microcosm from '../../../src/Microcosm'
 import Pixels    from './stores/pixels'
 
 export default class UndoTree extends Microcosm {

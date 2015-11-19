@@ -20,7 +20,7 @@ export default function register (server, _options, next) {
       app.start(function(error) {
         if (error) throw error
 
-        return reply.view('apps/simple-svg/index', {
+        return reply.view('simple-svg/index', {
           markup  : DOM.renderToString(React.createElement(Viget, app.state)),
           payload : JSON.stringify(app)
         })

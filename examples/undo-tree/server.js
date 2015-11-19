@@ -21,7 +21,7 @@ export default function register (server, _options, next) {
           throw error
         }
 
-        return reply.view('apps/undo-tree/index', {
+        return reply.view('undo-tree/index', {
           markup : DOM.renderToString(React.createElement(Drawing, { app }))
         })
       })

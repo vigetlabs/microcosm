@@ -1,5 +1,5 @@
 import Messages  from './stores/messages'
-import Microcosm from '../../../../src/Microcosm'
+import Microcosm from '../../../src/Microcosm'
 
 class ChatBot extends Microcosm {
 

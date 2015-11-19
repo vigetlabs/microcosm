@@ -26,7 +26,7 @@ export default function register (server, _options, next) {
             throw error
           }
 
-          return reply.view('apps/chatbot/index', {
+          return reply.view('chatbot/index', {
             markup  : DOM.renderToString(React.createElement(Chat, { app })),
             payload : JSON.stringify(app)
           })
