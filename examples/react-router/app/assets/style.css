@@ -15,12 +15,12 @@ p {
 
 a {
   text-decoration: none;
-  color: inherit;
+  color: #E61875;
 }
 
 a:focus,
 a:hover {
-  color: #E61875;
+  border-bottom: 1px dotted;
 }
 
 .text-display {
@@ -95,6 +95,10 @@ input:not([type=submit]) {
   margin: 0 auto;
   max-width: 800px;
   padding: 0 16px;
+}
+
+.spacious {
+  padding: 16px 0;
 }
 
 label {

@@ -1,22 +1,23 @@
 import ListActions from '../actions/lists'
-import ListForm    from './parts/list-form'
-import React       from 'react'
-import { Link }    from 'react-router'
+import ListForm from './parts/list-form'
+import React    from 'react'
+import {Link}   from 'react-router'
 
-const ListIndex = React.createClass({
+export default React.createClass({
 
   propTypes: {
     app : React.PropTypes.object.isRequired
   },
 
-  getList({ id, name }) {
+  renderList({ id, name }) {
     let { app, items } = this.props
 
     let count = items.filter(item => item.list === id).length
+    let href  = `/lists/${ id }`
 
     return (
       <li key={ id }>
-        <Link to="list" params={{ id }}>{ name } ({ count })</Link>
+        <Link to={ href }>{ name } ({ count })</Link>
         <button className="btn" onClick={ app.prepare(ListActions.remove, id) }>
           Delete
         </button>
@@ -42,7 +43,7 @@ const ListIndex = React.createClass({
           </aside>
 
           <ul className="list">
-            { lists.map(this.getList) }
+            { lists.map(this.renderList) }
           </ul>
         </main>
       </div>
@@ -50,5 +51,3 @@ const ListIndex = React.createClass({
   }
 
 })
-
-export default ListIndex
