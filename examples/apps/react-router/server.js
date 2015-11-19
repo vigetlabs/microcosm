@@ -33,7 +33,7 @@ export default function register (server, _options, next) {
 
         match(params, function (error, redirect, props) {
           if (error) {
-            return reply.view('server/error', new Error('wut')).code(500)
+            return reply.view('server/error', error).code(500)
           }
 
           if (redirect) {
