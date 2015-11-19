@@ -24,7 +24,7 @@ export default function register (server, _options, next) {
 
       let params = { basename, routes, location: request.raw.req.url }
 
-      function createElement(Handler, state) {
+      function createElement (Handler, state) {
         return (<Handler app={ app } { ...state } />)
       }
 
@@ -33,7 +33,7 @@ export default function register (server, _options, next) {
 
         match(params, function (error, redirect, props) {
           if (error) {
-            return reply(error.message).code(500)
+            return reply.view('server/error', new Error('wut')).code(500)
           }
 
           if (redirect) {
@@ -57,7 +57,7 @@ export default function register (server, _options, next) {
 
 }
 
-
+register.attributes = {
   name        : 'ReactRouter',
   description : 'Using Microcosm with ReactRouter.',
   example     : true,
