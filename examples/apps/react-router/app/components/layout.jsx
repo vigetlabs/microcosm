@@ -1,7 +1,6 @@
 import React from 'react'
-import Router from 'react-router'
 
-const Layout = React.createClass({
+export default React.createClass({
 
   propTypes: {
     app: React.PropTypes.object.isRequired
@@ -16,13 +15,7 @@ const Layout = React.createClass({
   },
 
   render() {
-    let { app, params } = this.props
-
-    return (
-      <Router.RouteHandler app={ app } params={ params } { ...this.state } />
-    )
+    return React.cloneElement(this.props.children, this.state)
   }
 
 })
-
-export default Layout

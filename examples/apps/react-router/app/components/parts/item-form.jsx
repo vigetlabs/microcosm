@@ -17,7 +17,7 @@ const ItemForm = React.createClass({
   _onSubmit(e) {
     e.preventDefault()
 
-    let form = React.findDOMNode(this)
+    let form = e.target
 
     this.props.onSubmit({
       name : form.elements['item-name'].value

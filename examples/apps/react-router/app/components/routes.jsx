@@ -1,9 +1,15 @@
 import React from 'react'
-import Router, { Route, DefaultRoute } from 'react-router'
+import { Route, IndexRoute } from 'react-router'
+
+import Index    from './index'
+import Layout   from './layout'
+import NotFound from './notfound'
+import Show     from './show'
 
 export default (
-  <Route name="home" path="/react-router" handler={ require('./layout') }>
-    <DefaultRoute handler={ require('./index') } />
-    <Route name="list" path=":id" handler={ require('./show') } />
+  <Route name="home" path="/" component={ Layout }>
+    <IndexRoute component={ Index } />
+    <Route path="/lists/:id" component={ Show } />
+    <Route path="*" component={ NotFound } />
   </Route>
 )

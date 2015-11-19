@@ -1,13 +1,18 @@
 /**
  * This is the main server entry point into the
  * react-router example.
+ *
+ * Inspired heavily from:
+ * https://github.com/rackt/react-router/blob/master/docs/guides/advanced/ServerRendering.md
  */
 
-import DOM   from 'react-dom/server'
+import DOM from 'react-dom/server'
 import React from 'react'
 import Todos from './app/todos'
-import Router from 'react-router'
-import Routes from './app/components/routes'
+import routes from './app/components/routes'
+import { match, RoutingContext } from 'react-router'
+
+const basename = '/react-router'
 
 export default function register (server, _options, next) {
 
@@ -17,14 +22,32 @@ export default function register (server, _options, next) {
     handler(request, reply) {
       let app = new Todos()
 
-      app.start(function(error) {
+      let params = { basename, routes, location: request.raw.req.url }
+
+      function createElement(Handler, state) {
+        return (<Handler app={ app } { ...state } />)
+      }
+
+      app.start(function (error) {
         if (error) throw error
 
-        Router.run(Routes, request.url.href, function (Handler, state) {
-          reply.view('apps/react-router/index', {
-            markup: DOM.renderToString(React.createElement(Handler, { app, ...state })),
-            payload: JSON.stringify(app)
-          })
+        match(params, function (error, redirect, props) {
+          if (error) {
+            return reply(error.message).code(500)
+          }
+
+          if (redirect) {
+            return reply.redirect(redirect.pathname + redirect.search)
+          }
+
+          if (props) {
+            return reply.view('apps/react-router/index', {
+              markup  : DOM.renderToString(<RoutingContext createElement={ createElement } { ...props } />),
+              payload : JSON.stringify(app)
+            })
+          }
+
+          return reply('Page not found').code(404)
         })
       })
     }
@@ -34,9 +57,9 @@ export default function register (server, _options, next) {
 
 }
 
-register.attributes = {
+
   name        : 'ReactRouter',
   description : 'Using Microcosm with ReactRouter.',
   example     : true,
-  path        : '/react-router'
+  path        : basename
 }

@@ -1,11 +1,12 @@
 import ItemActions from '../actions/items'
 import ItemForm    from './parts/item-form'
+import NotFound    from './notfound'
 import React       from 'react'
-import { Link }    from 'react-router'
+import {Link}      from 'react-router'
 
-const ListShow = React.createClass({
+export default React.createClass({
 
-  getItem({ id, name }) {
+  renderItem({ id, name }) {
     let { app } = this.props
 
     return (
@@ -21,15 +22,20 @@ const ListShow = React.createClass({
   render() {
     let { app, lists, items, params } = this.props
 
-    let list     = lists.filter(i => i.id === params.id)[0]
-    let children = items.filter(i => i.list === list.id)
+    let list = lists.filter(l => l.id == params.id)[0]
+
+    if (!list) {
+      return (<NotFound resource="List" />)
+    }
+
+    let children = items.filter(i => i.list == list.id)
 
     return (
       <div>
         <header className="header">
           <div className="container">
             <h1 className="text-display">
-              <Link to="home">Lists</Link> › { list.name }
+              <Link to="/">Lists</Link> › { list.name }
             </h1>
           </div>
         </header>
@@ -41,12 +47,10 @@ const ListShow = React.createClass({
           </aside>
 
           <ul className="list">
-            { children.map(this.getItem) }
+            { children.map(this.renderItem) }
           </ul>
         </main>
       </div>
     )
   }
 })
-
-export default ListShow
