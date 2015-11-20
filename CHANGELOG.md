@@ -1,5 +1,8 @@
 # Changelog
 
+## 9.15.1
+
+- Removes extraneous dependency
 
 ## 9.15.0
 
