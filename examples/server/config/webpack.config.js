@@ -1,6 +1,7 @@
 var path    = require('path')
 var webpack = require('webpack')
 var url     = require('url')
+var isDev   = process.env.NODE_ENV !== 'production'
 
 /**
  * A custom logger. When Webpack compiles, it will output
@@ -34,7 +35,7 @@ module.exports = function (server) {
   var config = {
     context: root,
 
-    devtool: 'inline-source-map',
+    devtool: isDev ? 'inline-source-map' : 'source-map',
 
     entry: {
       'chatbot'      : './chatbot/browser',
@@ -50,8 +51,9 @@ module.exports = function (server) {
 
     plugins: [
       Logger,
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoErrorsPlugin()
+      new webpack.DefinePlugin({
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
+      })
     ],
 
     resolve: {
@@ -61,12 +63,17 @@ module.exports = function (server) {
     module: {
       loaders: [{
         test     : /\.jsx*$/,
-        exclude  : /node_modules/,
         loader   : 'babel',
         query    : {
-          optional : ['runtime']
+//          optional : ['runtime']
+          plugins: isDev ? [ 'babel-plugin-unassert' ] : []
         }
       }]
+    },
+
+    node: {
+      Buffer  : false,
+      process : false
     },
 
     devServer: {
@@ -78,19 +85,15 @@ module.exports = function (server) {
   }
 
 
-  /**
-   * Inject the dev server hot module replacement into
-   * each entry point
-   */
-  config.entry = Object.keys(config.entry).reduce(function (entries, next) {
-    entries[next] = [
-      'webpack-dev-server/client?' + location,
-      'webpack/hot/only-dev-server',
-      config.entry[next]
-    ]
-
-    return entries
-  }, {})
+  // Inject the dev server hot module replacement into
+  // each entry point on development
+  if (!isDev) {
+    // Otherwise enable production settings
+    config.plugins.push(
+      new webpack.optimize.UglifyJsPlugin(),
+      new webpack.optimize.OccurenceOrderPlugin()
+    )
+  }
 
 
   return config

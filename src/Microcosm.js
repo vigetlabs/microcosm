@@ -212,7 +212,7 @@ Microcosm.prototype = {
    * Starts an application:
    * 1. Run through all plugins, it will terminate if any fail
    * 2. Execute the provided callback, passing along any errors
-   *    genrateed if installing plugins fails.
+   *    generated if installing plugins fails.
    */
   start(callback) {
     this.push(lifecycle.willStart)

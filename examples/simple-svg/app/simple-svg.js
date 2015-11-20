@@ -1,5 +1,5 @@
 import Circle    from './stores/Circle'
-import Microcosm from '../../../src/Microcosm'
+import Microcosm from '../../../dist/Microcosm'
 
 export default class SimpleSVG extends Microcosm {
 

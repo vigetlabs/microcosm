@@ -1,5 +1,21 @@
 # Changelog
 
+
+## 9.15.0
+
+- Fix bug where history would not completely flush all transactions,
+  causing store handlers to fire twice.
+- `start()` must be invoked
+
+### Potentially breaking changes
+
+In a previous update, we made a change that allowed instances of
+microcosm to work without invoking `start()`. This update reverts that
+decision. Without intentionaly invoking start, transactional state
+becomes hard to predict. This is potentially a breaking change; for
+those upgrading, verify that you are calling `start` before using a
+microcosm.
+
 ## 9.14.0
 
 ### Noticeable Changes
