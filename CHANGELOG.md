@@ -19,6 +19,10 @@ becomes hard to predict. This is potentially a breaking change; for
 those upgrading, verify that you are calling `start` before using a
 microcosm.
 
+## 9.14.1
+
+- Properly clear history so that store handlers do not fire twice
+
 ## 9.14.0
 
 ### Noticeable Changes
