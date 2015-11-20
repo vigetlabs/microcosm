@@ -1,5 +1,9 @@
 # Changelog
 
+## 9.15.2
+
+- Republish to set to latest
+
 ## 9.15.1
 
 - Removes extraneous dependency
