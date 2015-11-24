@@ -65,9 +65,9 @@ module.exports = function (server) {
         test     : /\.jsx*$/,
         loader   : 'babel',
         query    : {
-//          optional : ['runtime']
-          plugins: isDev ? [ 'babel-plugin-unassert' ] : []
-        }
+          optional : [ 'runtime' ]
+        },
+        exclude: /node_modules/
       }]
     },
 
