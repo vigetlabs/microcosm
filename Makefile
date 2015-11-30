@@ -15,7 +15,7 @@ docs:
 
 $(OUT)/%.js: $(IN)/%.js
 	@ mkdir -p $(@D)
-	@ babel --plugins unassert $< > $@
+	@ babel $< > $@
 	@ echo "Compiled $@"
 
 $(OUT)/%.jsx: $(IN)/%.jsx
