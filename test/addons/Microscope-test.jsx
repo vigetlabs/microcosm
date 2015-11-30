@@ -1,9 +1,9 @@
-import React      from 'react/addons'
-import Microscope from '../../src/addons/microscope'
+import DOM        from 'react-dom'
 import Microcosm  from '../../src/Microcosm'
-
-let render = React.addons.TestUtils.renderIntoDocument
-let assert = require('assert')
+import Microscope from '../../src/addons/microscope'
+import React      from 'react'
+import assert     from 'assert'
+import TestUtils  from 'react-addons-test-utils'
 
 describe('<Microscope />', function() {
   let test = function test() {}
@@ -22,7 +22,7 @@ describe('<Microscope />', function() {
   })
 
   it ('keeps up to date with an instance', function(done) {
-    let el = render(<Microscope instance={ app }><p /></Microscope>)
+    let el = TestUtils.renderIntoDocument(<Microscope instance={ app }><p /></Microscope>)
 
     app.push(test)
 
@@ -33,21 +33,22 @@ describe('<Microscope />', function() {
   })
 
   it ('does not wrap single children', function() {
-    let el = render(<Microscope instance={ app }><p/></Microscope>)
+    let el = TestUtils.renderIntoDocument(<Microscope instance={ app }><p/></Microscope>)
 
-    assert.equal(el.getDOMNode().tagName, 'P')
+    assert.equal(DOM.findDOMNode(el).tagName, 'P')
   })
 
   it ('wraps multiple children in a span', function() {
-    let el = render(<Microscope instance={ app }><p/><p/></Microscope>)
+    let el = TestUtils.renderIntoDocument(<Microscope instance={ app }><p/><p/></Microscope>)
 
-    assert.equal(el.getDOMNode().tagName, 'SPAN')
+    assert.equal(DOM.findDOMNode(el).tagName, 'SPAN')
   })
 
   it ('unsubscribes when unmounting', function() {
+    var body = document.createElement("div")
 
-    React.render(<Microscope instance={ app }><p/><p/></Microscope>, document.body)
-    React.render(<div />, document.body)
+    DOM.render(<Microscope instance={ app }><p/><p/></Microscope>, body)
+    DOM.render(<div />, body)
 
     app.emit()
   })
