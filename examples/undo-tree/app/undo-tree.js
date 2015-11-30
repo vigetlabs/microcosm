@@ -17,6 +17,11 @@ export default class UndoTree extends Microcosm {
     this.rollforward()
   }
 
+  redo() {
+    this.history.forward()
+    this.rollforward()
+  }
+
   goto(node) {
     this.history.checkout(node)
     this.rollforward()

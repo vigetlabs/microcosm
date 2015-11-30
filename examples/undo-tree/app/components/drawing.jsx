@@ -16,6 +16,7 @@ const Drawing = React.createClass({
 
         <footer>
           <button onClick={ () => app.undo() }>Undo</button>
+          <button onClick={ () => app.redo() }>Redo</button>
         </footer>
       </main>
     )

@@ -4,18 +4,18 @@
  * over time.
  */
 
-function Tree () {
-  this.focus = null
-}
+function Tree () {}
 
 Tree.prototype = {
+
+  focus: null,
 
   checkout(node) {
     if (process.env.NODE_ENV !== 'production' && typeof node === 'undefined') {
       throw new TypeError('Tree was asked to focus on a Node, but instead got ' + node)
     }
 
-    this.focus = node != null ? node : this.focus
+    this.focus = node || this.focus
   },
 
   back() {
@@ -32,14 +32,13 @@ Tree.prototype = {
 
   append(item) {
     this.focus = new Node(item, this.focus)
-
     return this.focus
   },
 
-  prune(shouldRemove) {
+  prune(shouldRemove, scope) {
     let node = this.root()
 
-    while (node && shouldRemove(node.value)) {
+    while (node && shouldRemove.call(scope, node.value)) {
       node.dispose()
       node = node.next()
     }
@@ -76,10 +75,10 @@ Tree.prototype = {
 
   size() {
     let count = 0
-    let next  = this.focus
+    let node  = this.focus
 
-    while (next) {
-      next  = next.parent
+    while (node) {
+      node  = node.parent
       count = count + 1
     }
 
@@ -94,7 +93,7 @@ function Node (value, parent) {
   this.value    = value
 
   if (parent) {
-    parent.children.push(this)
+    parent.children.unshift(this)
   }
 }
 
