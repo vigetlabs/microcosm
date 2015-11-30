@@ -65,3 +65,4 @@ test-watch:
 bench: javascript
 	@ node --expose-gc --trace-deopt benchmarks/tree-performance
 	@ node --expose-gc --trace-deopt benchmarks/dispatch-performance
+	@ node --expose-gc --trace-deopt benchmarks/push-performance
