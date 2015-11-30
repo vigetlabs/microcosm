@@ -4,17 +4,17 @@ import React from 'react'
 import { update } from '../actions/circle'
 
 export default function Render (app, el, next) {
-  function render () {
-    DOM.render(<Viget { ...app.state } />, el)
+  function render (state) {
+    DOM.render(<Viget { ...state } />, el)
   }
 
-  render()
+  render(app.state)
 
   app.listen(render)
 
   requestAnimationFrame(function loop() {
-    app.push(update)
     requestAnimationFrame(loop)
+    app.push(update)
   })
 
   next()
