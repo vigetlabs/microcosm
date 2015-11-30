@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.16.0 (not released)
+
+- The history tree now properly implements "redo". Before this
+  release, moving forward in the tree would walk the oldest
+  branch. From this point forward, it will take the newest path.
+
 ## 9.15.2
 
 - Republish to set to latest
