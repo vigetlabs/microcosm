@@ -16,7 +16,7 @@ action.toString = function () { return 'test' }
 var Store = function() {
   return {
     getInitialState: 0,
-    test: function(n) { return n + 1}
+    test: function(n) { return n + 1 }
   }
 }
 
