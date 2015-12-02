@@ -7,7 +7,7 @@ export function isGenerator (obj) {
 }
 
 export function isObject (obj) {
-  return typeof obj === 'object'
+  return !!obj && typeof obj === 'object'
 }
 
 export function isPromise (obj) {

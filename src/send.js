@@ -7,7 +7,7 @@
 import { isFunction } from './type-checks'
 import { get } from './update'
 
-export default function (key, store, state, type, payload) {
+export default function send (key, store, state, type, payload) {
   let handler = store[type]
 
   if (handler === undefined && store.register) {
