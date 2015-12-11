@@ -1,10 +1,11 @@
 # Changelog
 
-## 9.16.0 (not released)
+## 9.16.0
 
 - The history tree now properly implements "redo". Before this
   release, moving forward in the tree would walk the oldest
-  branch. From this point forward, it will take the newest path.
+  branch. From this point forward, it will take the newest path. This
+  should not impact projects not utilizing undo history.
 
 ## 9.15.2
 
