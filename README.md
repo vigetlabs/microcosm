@@ -119,3 +119,11 @@ the individual components of Microcosm.
 - [But the world is mutable](http://www.lispcast.com/the-world-is-mutable)
 - [Event Sourcing Pattern](http://martinfowler.com/eaaDev/EventSourcing.html)
 - [Apache Kafka](http://kafka.apache.org/)
+
+***
+
+<a href="http://code.viget.com">
+  <img src="http://code.viget.com/github-banner.png" alt="Code At Viget">
+</a>
+
+Visit [code.viget.com](http://code.viget.com) to see more projects from [Viget.](https://viget.com)
