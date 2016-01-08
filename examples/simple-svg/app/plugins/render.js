@@ -1,4 +1,4 @@
-import Viget from '../components/viget'
+import Viget from '../components/Viget'
 import DOM   from 'react-dom'
 import React from 'react'
 import { update } from '../actions/circle'
