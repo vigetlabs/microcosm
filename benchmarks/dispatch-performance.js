@@ -53,7 +53,7 @@ app.start()
  * This adds up to a very slow boot time!
  */
 for (var i = 0; i < SIZE; i++) {
-  app.history.append(Transaction(action, true, true))
+  app.history.transactionWillOpen(Transaction(action, true, true))
 }
 
 /**

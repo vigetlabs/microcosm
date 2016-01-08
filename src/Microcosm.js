@@ -1,7 +1,7 @@
 import Diode       from 'diode'
+import Branches    from './histories/branches'
 import MetaStore   from './stores/meta'
 import Transaction from './Transaction'
-import Tree        from './Tree'
 import coroutine   from './coroutine'
 import defaults    from './defaults'
 import dispatch    from './dispatch'
@@ -12,7 +12,7 @@ import lifecycle   from './lifecycle'
 import merge       from './merge'
 import tag         from './tag'
 
-let Microcosm = function() {
+let Microcosm = function (options) {
   /**
    * Microcosm uses Diode for event emission. Diode is an event emitter
    * with a single event.
@@ -20,24 +20,10 @@ let Microcosm = function() {
    */
   Diode(this)
 
-  /**
-   * Represents all "merged" transactions. Whenever a transaction completes,
-   * the result is folded into base state and the transaction object is
-   * "released". This lets transactions execute in a predicable order while
-   * not soaking up memory keeping them forever.
-   */
-  this.base = {}
-
-  /**
-   * Holds publically available state. The result of folding all incomplete
-   * transactions over base state. This property can safely be referenced when
-   * retrieving application state.
-   */
-  this.state = this.base
-
+  this.state   = {}
   this.stores  = []
   this.plugins = []
-  this.history = new Tree()
+  this.history = new Branches(options)
 
   this.addStore(MetaStore)
 }
@@ -54,40 +40,10 @@ Microcosm.prototype = {
    * a new state. This is the state exposed to the outside world.
    */
   rollforward() {
-    this.state = this.history.branch().reduce((state, transaction) => {
-      return dispatch(this.stores, state, transaction)
-    }, this.base)
-
+    this.state = this.history.rollforward(dispatch.bind(this, this.stores))
     this.emit(this.state)
 
     return this
-  },
-
-  shouldHistoryKeep(transaction) {
-    return false
-  },
-
-  clean(transaction) {
-    if (transaction.complete && !this.shouldHistoryKeep(transaction)) {
-      this.base = dispatch(this.stores, this.base, transaction)
-      return true
-    }
-    return false
-  },
-
-  transactionWillOpen(transaction) {
-    this.history.append(transaction)
-  },
-
-  transactionWillUpdate(transaction, error, payload, complete) {
-    transaction.active   = !error
-    transaction.complete = complete
-    transaction.error    = error
-    transaction.payload  = payload
-  },
-
-  transactionWillClose() {
-    this.history.prune(this.clean, this)
   },
 
   /**
@@ -99,13 +55,17 @@ Microcosm.prototype = {
     let transaction = Transaction(tag(action))
     let body = action.apply(null, flatten(params))
 
-    this.transactionWillOpen(transaction)
+    this.history.transactionDidOpen(transaction)
 
     return coroutine(body, (error, payload, complete) => {
-      this.transactionWillUpdate(transaction, error, payload, complete)
+      if (error) {
+        this.history.transactionDidFail(transaction, error)
+      } else {
+        this.history.transactionDidUpdate(transaction, payload)
+      }
 
       if (complete) {
-        this.transactionWillClose(transaction)
+        this.history.transactionDidComplete(transaction)
         eventually(callback, this, error, payload)
       }
 

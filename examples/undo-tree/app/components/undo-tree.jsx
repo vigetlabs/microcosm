@@ -18,7 +18,7 @@ const UndoTree = React.createClass({
   getNode(node, i) {
     let { point, item } = node
 
-    let isFocused = this.props.history.focus === item
+    let isFocused = this.props.history.tree.focus === item
 
     return (<circle key={ i }
                     r={ isFocused? 7 : 5 }
