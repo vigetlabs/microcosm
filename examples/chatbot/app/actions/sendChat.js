@@ -1,4 +1,5 @@
 import Message from '../records/message'
+import fetch from 'isomorphic-fetch'
 
 /**
  * `sendChat` is an ES6 generator. Generators use the `yield` keyword to create
