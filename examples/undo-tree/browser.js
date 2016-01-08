@@ -1,4 +1,4 @@
-import Render   from './app/plugins/Render'
+import Render   from './app/plugins/render'
 import UndoTree from './app/undo-tree'
 
 let app = new UndoTree()
