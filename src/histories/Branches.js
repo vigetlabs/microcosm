@@ -6,7 +6,7 @@
 import Tree from '../Tree'
 
 let Branches = function (options={}) {
-  this.base = {}
+  this.cache = {}
   this.tree = new Tree()
   this.maxHistory = options.maxHistory || -Infinity
 }
@@ -14,12 +14,12 @@ let Branches = function (options={}) {
 Branches.prototype = {
 
   shouldHistoryKeep(transaction) {
-    return this.size() <= this.maxHistory
+    return this.maxHistory > 0 && this.size() <= this.maxHistory
   },
 
   clean(send, transaction) {
-    if (transaction.complete && !this.shouldHistoryKeep(transaction)) {
-      this.base = send(this.base, transaction)
+    if (transaction.complete && this.shouldHistoryKeep(transaction) == false) {
+      this.cache = send(this.cache, transaction)
       return true
     }
 
@@ -29,7 +29,7 @@ Branches.prototype = {
   rollforward(send) {
     this.tree.prune(transaction => this.clean(send, transaction))
 
-    return this.tree.branch().reduce(send, this.base)
+    return this.tree.branch().reduce(send, this.cache)
   },
 
   transactionDidOpen(transaction) {
@@ -42,8 +42,9 @@ Branches.prototype = {
   },
 
   transactionDidFail(transaction, error) {
-    transaction.active = false
-    transaction.error  = error
+    transaction.active  = false
+    transaction.error   = true
+    transaction.payload = error
   },
 
   transactionDidComplete(transaction) {
