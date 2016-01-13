@@ -117,9 +117,12 @@ describe('Plugins', function() {
     let app = new Microcosm()
 
     app.addPlugin(function(app, _) {
-      // intentionally nothing
+      app.didAddPlugin = true
     })
 
-    app.start(done)
+    app.start(function(errors) {
+      assert.equal(app.didAddPlugin, true)
+      done(errors)
+    })
   })
 })
