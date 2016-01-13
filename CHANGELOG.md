@@ -1,5 +1,33 @@
 # Changelog
 
+## 9.17.0
+
+Plugins no longer require a `next` argument. For example, consider:
+
+```javascript
+function Plugin (app, options, next) {
+  app.listen(function() {
+    console.log("I changed!")
+  })
+
+  next()
+}
+```
+
+This plugin is entirely synchronous, yet relies on `next()` to advance
+plugin installation forward. As of this release, omitting the `next`
+argument causes a plugin to be synchronously processed:
+
+```javascript
+function Plugin (app, options) {
+  app.listen(function() {
+    console.log("I changed!")
+  })
+}
+```
+
+**This is not mandatory**, and designed to streamline simple plugins.
+
 ## 9.16.0
 
 - The history tree now properly implements "redo". Before this
