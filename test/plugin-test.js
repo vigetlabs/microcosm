@@ -112,4 +112,14 @@ describe('Plugins', function() {
 
     app.start()
   })
+
+  it ('just calls through plugins that have no next callback', function(done) {
+    let app = new Microcosm()
+
+    app.addPlugin(function(app, _) {
+      // intentionally nothing
+    })
+
+    app.start(done)
+  })
 })

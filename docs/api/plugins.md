@@ -28,16 +28,17 @@ Plugins implement a `register` method that is called whenever an application is
 started:
 
 ```javascript
-let LazyPlugin = {
-  register(app, options, next) {
-    setTimeout(next, 2000);
+let Plugin = {
+  register(app, options) {
+    app.listen(function(data) {
+      console.log('I changed!', data)
+    })
   }
 }
 ```
 
-This plugin will delay execution of the app for 2 seconds. This
-expresses the nature of plugins. They can be asynchronous, to support
-non-immediate (but vital) tasks:
+However Plugins can also be asynchronous. This is useful for plugins
+that might fail, or for non-immediate (but vital) tasks.
 
 For example: What if you want to fetch data before an application begins?
 
@@ -50,7 +51,7 @@ let Prefetcher = {
 
     route.fetchData()
          .then(app.seed)
-         .then(i => next)
+         .then(i => next())
   }
 }
 ```
@@ -69,7 +70,7 @@ let Prefetcher = {
 
     route.fetchData()
          .then(app.seed)
-         .then(i => next)
+         .then(i => next())
          .catch(error => next(error))
   }
 }

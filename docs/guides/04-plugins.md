@@ -16,10 +16,8 @@ let Logger = {
     console.log('Change: ', data)
   },
 
-  register(app, options, next) {
+  register(app, options) {
     app.listen(i => log(app.toJSON()))
-
-    next()
   }
 
 }
@@ -32,29 +30,41 @@ app.addPlugin(logger, {})
 app.start()
 ```
 
-## Order of operations
+### Asynchronous plugins and Error Handling
 
-When `app.start()` is called, it will execute the `register` method of
-`Logger`. This provides `Logger` the ability to configure itself in a
-blocking way. When `Logger` is finished configuring, it calls the
-`next()` parameter provided to `register` to give preceding plugins
-the opportunity to run.
+Plugins can also be asynchronous. Providing a `next` parameter as the
+third argument of the `register` function will trigger this
+behavior. For example:
 
-## Plugins can fail
+```javascript
+let Wait = {
+  register(app, options, next) {
+    setTimeout(function() {
+      next()
+    }, 1000)
+  }
+}
+```
 
-There may be cases where a runtime critical plugin will need to throw an error:
+When registered, this plugin will wait 1 second before advancing to
+the next plugin.
+
+This is also particularly useful for handling errors:
 
 ```javascript
 let Logger = {
   register(app, options, next) {
-    if ('console' in window) next(new Error('console is not defined!'))
+    if ('console' in window) {
+      next(new Error('console is not defined!'))
+    }
     //...
   }
 }
 ```
 
 In the case above, `Logger` will disallow the system from starting
-because it can not operate correctly. The error will be forwarded to the callback argument of `app.start` for additional processing:
+because it can not operate correctly. The error will be forwarded to
+the callback argument of `app.start` for additional processing:
 
 ```javascript
 app.addPlugin(Logger)

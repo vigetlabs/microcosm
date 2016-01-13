@@ -3,7 +3,7 @@ import DOM   from 'react-dom'
 import React from 'react'
 import { update } from '../actions/circle'
 
-export default function Render (app, el, next) {
+export default function Render (app, el) {
   function render (state) {
     DOM.render(<Viget { ...state } />, el)
   }
@@ -16,6 +16,4 @@ export default function Render (app, el, next) {
     requestAnimationFrame(loop)
     app.push(update)
   })
-
-  next()
 }

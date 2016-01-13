@@ -9,9 +9,26 @@
 
 const NOOP = () => {}
 
+function ensureCallback (plugin) {
+  // Plugins that follow register(app, options, next) are asynchronous
+  if (plugin.register.length >= 3) {
+    return plugin.register
+  }
+
+  // Otherwise wrap synchronous plugins to match the async flow
+  return function (app, options, next) {
+    plugin.register(app, options)
+    next(null)
+  }
+}
+
 function installPlugin (next, plugin) {
   return function (error) {
-    return error != null ? next(error) : plugin.register(plugin.app, plugin.options, next)
+    if (error != null) {
+      return next(error)
+    }
+
+    return ensureCallback(plugin).call(plugin, plugin.app, plugin.options, next)
   }
 }
 
