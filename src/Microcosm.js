@@ -96,6 +96,13 @@ Microcosm.prototype = {
    * and the change will disappear from history.
    */
   push(action, params, callback) {
+    if (process.env.NODE_ENV !== 'production' && action == null) {
+      throw new TypeError(`Unable to perform: app.push(${ action })\n\n`
+                          + 'This typically happens when an action is accessed from the wrong key of an object, such as:\n\n'
+                          + '• Actions.mispelledAction\n'
+                          + '• import { mispelledAction } from "actions"')
+    }
+
     let transaction = Transaction(tag(action))
     let body = action.apply(null, flatten(params))
 

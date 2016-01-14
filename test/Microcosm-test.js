@@ -106,4 +106,10 @@ describe('Microcosm', function() {
     assert.deepEqual(app.history.branch().reduce((a, b) => a.concat(b.payload), []), [ 2, 3, 4, 5, 6 ])
   })
 
+  it ('throws an error if asked to push an undefined action', function() {
+    assert.throws(function() {
+      app.push(undefined)
+    })
+  })
+
 })

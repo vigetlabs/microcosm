@@ -16,10 +16,4 @@ describe('Transactions', function() {
     assert.equal(Transaction(2, 2).active, true)
   })
 
-  it ('throws if not given a type', function() {
-    assert.throws(function() {
-      Transaction()
-    })
-  })
-
 })
