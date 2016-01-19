@@ -1,15 +1,10 @@
-/**
- * We'll use ES6 in our server-side code for consistency.
- * This pulls in Babel as a preprocessor for future code
- * required by Node.
- */
 require('babel/register')
 
-var Server = require('./lib/server')
-var assert = require('assert')
+var Server   = require('./lib/server')
+var assert   = require('assert')
+var manifest = require('./config/manifest')
 
-Server.start(process.env.PORT || 4000, function (error, server) {
+Server.init(manifest.server, manifest.options, function (error, server) {
   assert.ifError(error)
-
-  console.log('[info] Examples listening on %s', server.info.uri)
+  server.log(['info'], 'Server is running at ' + server.info.uri)
 })

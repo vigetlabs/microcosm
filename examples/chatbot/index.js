@@ -13,7 +13,6 @@ import React    from 'react'
 const bot  = new Elizabot()
 
 export default function register (server, _options, next) {
-
   server.route([
     {
       method : 'GET',

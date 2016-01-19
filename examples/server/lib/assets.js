@@ -13,7 +13,7 @@ export default function register (server, _, next) {
 
   server.route({
     method : 'GET',
-    path   : '/assets/{path*}',
+    path   : '/{path*}',
     handler: {
       proxy: {
         passThrough: true,

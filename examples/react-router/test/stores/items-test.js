@@ -1,4 +1,4 @@
-import Items from '../items'
+import Items from '../../app/stores/items'
 import assert from 'assert'
 
 describe('Items Store', function() {

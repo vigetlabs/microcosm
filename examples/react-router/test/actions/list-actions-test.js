@@ -1,6 +1,6 @@
-import App         from '../../todos'
-import ListActions from '../lists'
-import ItemActions from '../items'
+import App         from '../../app/todos'
+import ItemActions from '../../app/actions/items'
+import ListActions from '../../app/actions/lists'
 import assert from 'assert'
 
 describe('List Actions', function() {

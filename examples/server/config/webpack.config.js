@@ -3,24 +3,6 @@ var webpack = require('webpack')
 var url     = require('url')
 var isDev   = process.env.NODE_ENV !== 'production'
 
-/**
- * A custom logger. When Webpack compiles, it will output
- * this reduced messaging
- */
-var Logger = {
-  apply: function (compiler) {
-    compiler.plugin("compile", function(params) {
-      console.log("[info] Webpack is starting to compile...")
-    })
-
-    compiler.plugin("done", function (stats) {
-      var rebuilt = stats.compilation.modules.filter(module => module.built)
-
-      console.log('[info] Webpack built %s modules in %sms', rebuilt.length, stats.endTime - stats.startTime)
-    })
-  }
-}
-
 module.exports = function (server) {
   var port = server.info.port + 1
 
@@ -32,21 +14,38 @@ module.exports = function (server) {
 
   var root = path.resolve(__dirname, '../..')
 
+  /**
+   * A custom logger. When Webpack compiles, it will output
+   * this reduced messaging
+   */
+  var Logger = {
+    apply: function (compiler) {
+      compiler.plugin("compile", function(params) {
+        server.log(["webpack"], "Starting to compile...")
+      })
+
+      compiler.plugin("done", function (stats) {
+        var rebuilt = stats.compilation.modules.filter(module => module.built)
+        server.log(["webpack"], "built " + rebuilt.length + " modules in " + (stats.endTime - stats.startTime))
+      })
+    }
+  }
+
   var config = {
     context: root,
 
     devtool: isDev ? 'inline-source-map' : 'source-map',
 
     entry: {
-      'chatbot'      : './chatbot/browser',
-      'react-router' : './react-router/browser',
-      'simple-svg'   : './simple-svg/browser',
-      'undo-tree'    : './undo-tree/browser'
+      'chatbot'      : './chatbot/client',
+      'react-router' : './react-router/client',
+      'simple-svg'   : './simple-svg/client',
+      'undo-tree'    : './undo-tree/client'
     },
 
     output: {
       filename: '[name]/main.js',
-      path: path.join(__dirname, 'assets', 'js')
+      path: root
     },
 
     plugins: [
@@ -80,10 +79,9 @@ module.exports = function (server) {
       contentBase: root,
       port: port,
       noInfo: true,
-      publicPath: url.resolve(location, 'assets')
+      publicPath: location + '/'
     }
   }
-
 
   // Inject the dev server hot module replacement into
   // each entry point on development

@@ -1,15 +1,12 @@
 /**
  * This is the main server entry point into the
  * react-router example.
- *
- * Inspired heavily from:
- * https://github.com/rackt/react-router/blob/master/docs/guides/advanced/ServerRendering.md
  */
 
 import DOM from 'react-dom/server'
 import React from 'react'
 import Todos from './app/todos'
-import routes from './app/components/routes'
+import routes from './app/routes'
 import { match, RoutingContext } from 'react-router'
 
 const basename = '/react-router'
@@ -40,8 +37,9 @@ export default function register (server, _options, next) {
 
           if (props) {
             return reply.view('react-router/index', {
-              markup  : DOM.renderToString(<RoutingContext createElement={ createElement } { ...props } />),
-              payload : JSON.stringify(app)
+              markup   : DOM.renderToString(<RoutingContext createElement={ createElement } { ...props } />),
+              payload  : JSON.stringify(app),
+              basename : basename
             })
           }
 

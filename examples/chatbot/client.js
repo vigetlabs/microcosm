@@ -8,10 +8,9 @@ import Render  from './app/plugins/render'
 
 let chat = new ChatBot()
 
-
 /**
  * When the application starts, reset state to the serialized
- * data from the server. See server.js to learn how this state
+ * data from the server. See index.js to learn how this state
  * is generated.
  */
 chat.addPlugin(Hydrate, 'CHAT_BOT_SEED')

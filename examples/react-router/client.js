@@ -1,6 +1,6 @@
-import Todos   from './app/todos'
-import Hydrate from './app/plugins/hydrate'
-import Render  from './app/plugins/render'
+import Hydrate  from './app/plugins/hydrate'
+import Render   from './app/plugins/render'
+import Todos    from './app/todos'
 
 // Each app is a unique instance.
 // It will get its own state, useful for having multiple apps on

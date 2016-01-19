@@ -6,12 +6,12 @@ module.exports = function (config) {
 
     files: [
       'test/**/*-test.js*',
-      'examples/**/__tests__/*.js*'
+      'examples/*/test/**/*-test.js*'
     ],
 
     preprocessors: {
       'test/**/*.js*': [ 'webpack', 'sourcemap' ],
-      'examples/**/__tests__/*.js*': [ 'webpack', 'sourcemap' ]
+      'examples/*/test/**/*-test.js*': [ 'webpack', 'sourcemap' ]
     },
 
     reporters: [ 'mocha', 'coverage' ],
@@ -44,13 +44,11 @@ module.exports = function (config) {
           }
         }],
 
-        postLoaders: [
-          {
-            test: /\.jsx*$/,
-            exclude: /(test|__tests__|node_modules)\//,
-            loader: 'istanbul-instrumenter'
-          }
-        ]
+        postLoaders: [{
+          test: /\.jsx*$/,
+          exclude: /(test|__tests__|node_modules)\//,
+          loader: 'istanbul-instrumenter'
+        }]
       }
     },
 

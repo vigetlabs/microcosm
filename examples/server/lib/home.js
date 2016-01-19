@@ -14,7 +14,6 @@ function getExamples (server) {
 }
 
 export default function register (server, _options, next) {
-
   server.route({
     method  : 'GET',
     path    : '/',
@@ -26,7 +25,6 @@ export default function register (server, _options, next) {
   })
 
   next()
-
 }
 
 register.attributes = {

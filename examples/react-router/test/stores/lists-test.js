@@ -1,4 +1,4 @@
-import Lists from '../lists'
+import Lists from '../../app/stores/lists'
 import assert from 'assert'
 
 describe('Lists Store', function() {
