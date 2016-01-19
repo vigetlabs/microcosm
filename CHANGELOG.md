@@ -1,5 +1,10 @@
 # Changelog
 
+## 9.18.0 (Not released)
+
+- When registered, the `options` argument of plugins default to an
+  empty object.
+
 ## 9.17.0
 
 Plugins no longer require a `next` argument. For example, consider:
