@@ -147,7 +147,7 @@ Microcosm.prototype = {
    * When `app.start()` is called, it will execute plugins in
    * the order in which they have been added using this function.
    */
-  addPlugin(config, options) {
+  addPlugin(config, options={}) {
     if (process.env.NODE_ENV !== 'production') {
       if (!config) {
         throw TypeError('Expected a plugin, instead got ' + typeof config)
