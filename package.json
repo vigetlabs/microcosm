@@ -22,7 +22,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "diode": "6.2.2"
+    "diode": "6.2.3"
   },
   "babel": {
     "stage": 2,

@@ -163,7 +163,7 @@ describe('sending actions', function() {
       let warn = console.warn
 
       console.warn = function (message) {
-        assert.equal(message, 'Store for test is registered to the action getInitialState, but the handler is undefined!')
+        assert.equal(message, "Store for test is registered to the action getInitialState, but the handler is undefined! Check the store's register function.")
         console.warn = warn
         done()
       }
