@@ -5,6 +5,10 @@
 
 let uid = 0
 
+export function formatTag (value) {
+  return `${ value }`.replace(/_\d+$/, '')
+}
+
 export default function tag (fn, name) {
   if (process.env.NODE_ENV !== 'production' && (typeof fn !== 'function')) {
     throw TypeError('Attempted to tag an action, but the provided value is not a function. Instead got ' + typeof fn)

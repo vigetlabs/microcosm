@@ -158,6 +158,27 @@ describe('sending actions', function() {
       })
     })
 
+    it ('warns if a store registers to an action, but it is undefined', function (done) {
+      let app  = new Microcosm()
+      let warn = console.warn
+
+      console.warn = function (message) {
+        assert.equal(message, 'Store for test is registered to the action getInitialState, but the handler is undefined!')
+        console.warn = warn
+        done()
+      }
+
+      app.addStore('test', {
+        register() {
+          return {
+            [lifecycle.willStart]: this.undefinedMember
+          }
+        }
+      })
+
+      app.start()
+    })
+
   })
 
 })

@@ -1,5 +1,5 @@
-let tag = require('../src/tag')
-let assert = require('assert')
+import tag from '../src/tag'
+import assert from 'assert'
 
 describe('tag', function() {
 

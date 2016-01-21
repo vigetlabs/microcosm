@@ -4,6 +4,10 @@
 
 - When registered, the `options` argument of plugins default to an
   empty object.
+- Added warning when a Store's registration method is configured to
+  listen to a particular action, however it is undefined. The message
+  should read "Store for [key] is registered to [action], but the
+  handler is undefined!"
 
 ## 9.17.0
 
