@@ -54,10 +54,10 @@ test:
 	@ NODE_ENV=test make test-fast
 
 test-fast: $(shell find {test,examples} -name '*-test.js')
-	@ BABEL_DISABLE_CACHE=1 mocha -R dot --compilers js:babel/register $^
+	@ NODE_ENV=test mocha -R dot --compilers js:babel/register $^
 
 test-fast-watch: $(shell find {test,examples} -name '*-test.js')
-	@ BABEL_DISABLE_CACHE=1 mocha -R dot --compilers js:babel/register $^ -w
+	@ NODE_ENV=test mocha -R dot --compilers js:babel/register $^ -w
 
 test-watch:
 	NODE_ENV=test karma start
