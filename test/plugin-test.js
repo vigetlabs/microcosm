@@ -126,6 +126,17 @@ describe('Plugins', function() {
     })
   })
 
+  it ('plugins can have options', function(done) {
+    let app = new Microcosm()
+
+    app.addPlugin(function testDefaultOptions (app, options) {
+      assert.equal(options.test, true)
+      done()
+    }, { test: true })
+
+    app.start()
+  })
+
   it ('plugins always have a default options object', function(done) {
     let app = new Microcosm()
 

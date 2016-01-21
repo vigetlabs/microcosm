@@ -1,6 +1,6 @@
 # Changelog
 
-## 9.18.0 (Not released)
+## 9.18.0
 
 - When registered, the `options` argument of plugins default to an
   empty object.
@@ -8,6 +8,8 @@
   listen to a particular action, however it is undefined. The message
   should read "Store for [key] is registered to [action], but the
   handler is undefined!"
+- Upgraded patch release of Diode that fixed strange compilation
+  issues with Babel 5.x in a Node environment.
 
 ## 9.17.0
 
