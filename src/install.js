@@ -18,11 +18,14 @@ function ensureCallback (plugin) {
   // Otherwise wrap synchronous plugins to match the async flow
   return function (app, options, next) {
     plugin.register(app, options)
+
     next(null)
   }
 }
 
 function installPlugin (next, plugin) {
+  if (!plugin.register) return next
+
   return function (error) {
     if (error != null) {
       return next(error)

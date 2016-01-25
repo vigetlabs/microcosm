@@ -47,18 +47,6 @@ describe('Plugins', function() {
     app.start(done)
   })
 
-  it ('throws an error if adding a plugin without a register method', function(done) {
-    let app  = new Microcosm()
-
-    try {
-      app.addPlugin({})
-    } catch(error) {
-      assert(error instanceof TypeError)
-    }
-
-    app.start(done)
-  })
-
   it ('each instance is unique', function(done) {
     let app  = new Microcosm()
     let instances = []
@@ -77,29 +65,6 @@ describe('Plugins', function() {
       instances[0].dirty = true
       assert.equal('dirty' in instances[1], false)
       done(error)
-    })
-  })
-
-  it ('throws an error if a register property is not a function', function(done) {
-    let app = new Microcosm()
-
-    try {
-      app.addPlugin({ register: 'booyah' })
-    } catch(error) {
-      assert(error instanceof TypeError)
-      done()
-    }
-  })
-
-  it ('throws an error if a register is missing', function() {
-    assert.throws(function() {
-      new Microcosm().addPlugin({})
-    })
-  })
-
-  it ('throws an error when passed no configuration data', function() {
-    assert.throws(function() {
-      new Microcosm().addPlugin()
     })
   })
 

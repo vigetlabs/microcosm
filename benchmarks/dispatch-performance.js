@@ -12,16 +12,7 @@ var Transaction = require('../dist/Transaction')
 var time  = require('microtime')
 var SIZE = 10000
 
-var app = new Microcosm()
-
-/**
- * Disable the default merger strategy. This prevents
- * transactions from cleaning up, which will cause more
- * than one complete transaction to merge at a time.
- */
-app.shouldHistoryKeep = function () {
-  return true
-}
+var app = new Microcosm({ maxHistory: Infinity})
 
 var action = function test () {}
 action.toString = function () { return 'test' }
@@ -53,7 +44,7 @@ app.start()
  * This adds up to a very slow boot time!
  */
 for (var i = 0; i < SIZE; i++) {
-  app.history.append(Transaction(action, true, true))
+  app.history.append(new Transaction(action, true))
 }
 
 /**

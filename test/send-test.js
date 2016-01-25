@@ -22,7 +22,7 @@ describe('sending actions', function() {
       }
     }
 
-    app.addStore('test', store).push(action)
+    app.addStore('test', store).start().push(action)
   })
 
   it ('returns the same state if a handler is not provided', function(done) {
@@ -53,7 +53,7 @@ describe('sending actions', function() {
       }
     })
 
-    app.push(action, [], function() {
+    app.start().push(action, [], function() {
       assert.equal(app.state.test, 5)
       done()
     })
@@ -73,7 +73,7 @@ describe('sending actions', function() {
       }
     })
 
-    app.push(action)
+    app.start().push(action)
   })
 
   it ('sends passes state from previous store operations', function() {
@@ -136,6 +136,8 @@ describe('sending actions', function() {
           return 'test'
         }
       })
+
+      app.start()
 
       app.push(lifecycle.willStart, [], function() {
         assert.equal(app.state.test, 'test')

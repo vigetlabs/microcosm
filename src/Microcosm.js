@@ -1,18 +1,17 @@
+import Debug       from './plugins/debug'
 import Diode       from 'diode'
+import History     from './plugins/history'
 import MetaStore   from './stores/meta'
+import State       from './plugins/state'
 import Transaction from './Transaction'
-import Tree        from './Tree'
-import coroutine   from './coroutine'
 import defaults    from './defaults'
-import dispatch    from './dispatch'
-import eventually  from './eventually'
 import flatten     from './flatten'
 import install     from './install'
 import lifecycle   from './lifecycle'
 import merge       from './merge'
 import tag         from './tag'
 
-let Microcosm = function() {
+function Microcosm (options) {
   /**
    * Microcosm uses Diode for event emission. Diode is an event emitter
    * with a single event.
@@ -20,104 +19,56 @@ let Microcosm = function() {
    */
   Diode(this)
 
-  /**
-   * Represents all "merged" transactions. Whenever a transaction completes,
-   * the result is folded into base state and the transaction object is
-   * "released". This lets transactions execute in a predicable order while
-   * not soaking up memory keeping them forever.
-   */
-  this.base = {}
-
-  /**
-   * Holds publically available state. The result of folding all incomplete
-   * transactions over base state. This property can safely be referenced when
-   * retrieving application state.
-   */
-  this.state = this.base
-
+  this.state   = {}
   this.stores  = []
   this.plugins = []
-  this.history = new Tree()
 
+  // Standard store reduction behaviors
   this.addStore(MetaStore)
+
+  // A place to keep all developer warnings
+  this.addPlugin(Debug)
+
+  // Manage key lifecycle hooks for state
+  this.addPlugin(State)
+
+  // Keep track of history as a tree
+  this.addPlugin(History, options)
 }
 
 Microcosm.prototype = {
   constructor: Microcosm,
 
   getInitialState() {
-    return dispatch(this.stores, {}, Transaction(lifecycle.willStart, this.state))
+    return this.lifecycleReduce(lifecycle.willStart)
   },
 
-  /**
-   * Dispatch all open transactions upon base state to determine
-   * a new state. This is the state exposed to the outside world.
-   */
   rollforward() {
-    this.state = this.history.branch().reduce((state, transaction) => {
-      return dispatch(this.stores, state, transaction)
-    }, this.base)
+    this.state = this.lifecycleReduce(lifecycle.willRollforward)
 
     this.emit(this.state)
 
     return this
   },
 
-  shouldHistoryKeep(transaction) {
-    return false
-  },
-
-  clean(transaction) {
-    if (transaction.complete && !this.shouldHistoryKeep(transaction)) {
-      this.base = dispatch(this.stores, this.base, transaction)
-      return true
-    }
-    return false
-  },
-
-  transactionWillOpen(transaction) {
-    this.history.append(transaction)
-  },
-
-  transactionWillUpdate(transaction, error, payload, complete) {
-    transaction.active   = !error
-    transaction.complete = complete
-    transaction.error    = error
-    transaction.payload  = payload
-  },
-
-  transactionWillClose() {
-    this.history.prune(this.clean, this)
-  },
-
-  /**
-   * Resolves an action. As that action signals changes, it will update
-   * a unique transaction. If an error occurs, it will mark it for clean up
-   * and the change will disappear from history.
-   */
-  push(action, params, callback) {
-    if (process.env.NODE_ENV !== 'production' && action == null) {
-      throw new TypeError(`Unable to perform: app.push(${ action })\n\n`
-                          + 'This typically happens when an action is accessed from the wrong key of an object, such as:\n\n'
-                          + '• Actions.mispelledAction\n'
-                          + '• import { mispelledAction } from "actions"')
-    }
-
-    let transaction = Transaction(tag(action))
-    let body = action.apply(null, flatten(params))
-
-    this.transactionWillOpen(transaction)
-
-    return coroutine(body, (error, payload, complete) => {
-      this.transactionWillUpdate(transaction, error, payload, complete)
-
-      if (complete) {
-        this.transactionWillClose(transaction)
-        eventually(callback, this, error, payload)
-      }
-
-      this.rollforward()
+  lifecycle(type, payload) {
+    return this.plugins.forEach(plugin => {
+      if (plugin[type]) plugin[type](this, payload)
     })
+  },
+
+  lifecycleReduce(type, initial={}) {
+    return this.plugins.reduce((state, plugin) => {
+      return plugin[type] ? plugin[type](this, state) : state
+    }, initial)
+  },
+
+  push(action, params, callback) {
+    let transaction = new Transaction(tag(action))
+
+    this.lifecycle(lifecycle.willOpenTransaction, transaction)
+
+    return transaction.execute(params, this.rollforward, callback, this)
   },
 
   /**
@@ -128,37 +79,14 @@ Microcosm.prototype = {
   },
 
   /**
-   * Reset by pushing an action that will always return
-   * a given state.
-   */
-  reset(state, callback) {
-    return this.push(lifecycle.willReset, merge(this.getInitialState(), state), callback)
-  },
-
-  /**
-   * Resets to a given state, passing it through deserialize first
-   */
-  replace(data, callback) {
-    return this.reset(this.deserialize(data), callback)
-  },
-
-  /**
    * Pushes a plugin in to the registry for a given microcosm.
    * When `app.start()` is called, it will execute plugins in
    * the order in which they have been added using this function.
    */
   addPlugin(config, options={}) {
-    if (process.env.NODE_ENV !== 'production') {
-      if (!config) {
-        throw TypeError('Expected a plugin, instead got ' + typeof config)
-      }
-
-      if (typeof config == 'object' && typeof config.register !== 'function') {
-        throw TypeError('Expected plugin to have a register function, instead got ' + typeof config.register)
-      }
-    }
-
     let plugin = merge({ app: this, options }, defaults(config))
+
+    this.lifecycle(lifecycle.willAddPlugin, plugin)
 
     this.plugins.push(plugin)
 
@@ -179,11 +107,7 @@ Microcosm.prototype = {
       keyPath = [];
     }
 
-    if (process.env.NODE_ENV !== 'production') {
-      if (!store || typeof store !== 'function' && typeof store !== 'object') {
-        throw TypeError('Expected a store object or function. Instead got: ' + store)
-      }
-    }
+    this.lifecycle(lifecycle.willAddStore, store)
 
     this.stores.push([ flatten(keyPath), defaults(store) ])
 
@@ -191,11 +115,28 @@ Microcosm.prototype = {
   },
 
   /**
+   * Reset by pushing an action that will always return
+   * a given state.
+   */
+  reset(state, callback) {
+    return this.push(lifecycle.willReset,
+                     this.lifecycleReduce(lifecycle.willReset, state),
+                     callback)
+  },
+
+  /**
+   * Resets to a given state, passing it through deserialize first
+   */
+  replace(data, callback) {
+    return this.reset(this.deserialize(data), callback)
+  },
+
+  /**
    * Returns an object that is the result of transforming application state
    * according to the `serialize` method described by each store.
    */
   serialize() {
-    return dispatch(this.stores, this.state, Transaction(lifecycle.willSerialize, this.state))
+    return this.lifecycleReduce(lifecycle.willSerialize, this.state)
   },
 
   /**
@@ -204,8 +145,7 @@ Microcosm.prototype = {
    * Then fold the deserialized data over the current application state.
    */
   deserialize(data) {
-    return data == undefined ? this.state
-                             : dispatch(this.stores, data, Transaction(lifecycle.willDeserialize, data))
+    return this.lifecycleReduce(lifecycle.willDeserialize, data)
   },
 
   /**
@@ -222,10 +162,7 @@ Microcosm.prototype = {
    *    generated if installing plugins fails.
    */
   start(callback) {
-    this.push(lifecycle.willStart)
-
     install(this.plugins, callback)
-
     return this
   }
 

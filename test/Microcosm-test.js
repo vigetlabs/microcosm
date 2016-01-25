@@ -81,15 +81,9 @@ describe('Microcosm', function() {
   })
 
   it ('can manipulate how many transactions are merged', function() {
-    class CustomApp extends Microcosm {
+    let app = new Microcosm({ maxHistory: 5 })
 
-      shouldHistoryKeep (transaction) {
-        return this.history.size() < 6
-      }
-
-    }
-
-    let app = new CustomApp()
+    app.start()
 
     let identity = n => n
 
@@ -103,7 +97,7 @@ describe('Microcosm', function() {
     app.push(identity, 6)
 
     assert.equal(app.history.size(), 5)
-    assert.deepEqual(app.history.branch().reduce((a, b) => a.concat(b.payload), []), [ 2, 3, 4, 5, 6 ])
+    assert.deepEqual(app.history.reduce((a, b) => a.concat(b.payload), []), [ 2, 3, 4, 5, 6 ])
   })
 
   it ('throws an error if asked to push an undefined action', function() {

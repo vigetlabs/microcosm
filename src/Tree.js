@@ -49,9 +49,11 @@ Tree.prototype = {
     if (!node) {
       this.focus = null
     }
+
+    return this
   },
 
-  branch() {
+  reduce(fn, state) {
     let node  = this.focus
     let items = []
 
@@ -60,7 +62,7 @@ Tree.prototype = {
       node = node.parent
     }
 
-    return items.reverse()
+    return items.reduceRight(fn, state)
   },
 
   root() {

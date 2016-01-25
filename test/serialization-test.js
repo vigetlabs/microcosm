@@ -15,6 +15,8 @@ describe('Serialization', function() {
       }
     })
 
+    app.start()
+
     assert.equal(app.toJSON()['serialize-test'], 'this is a test')
   })
 
@@ -36,6 +38,8 @@ describe('Serialization', function() {
 
     app.addStore('fiz', {})
 
+    app.start()
+
     assert.equal(false, 'fiz' in app.deserialize(null))
     assert.equal(false, 'fiz' in app.deserialize(undefined))
   })
@@ -48,6 +52,8 @@ describe('Serialization', function() {
         return true
       }
     })
+
+    app.start()
 
     app.replace({}, function() {
       assert.deepEqual(app.state, { fiz: true })

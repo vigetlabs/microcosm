@@ -52,7 +52,7 @@ stats.size = (time.now() - now) / 1000
  * within Microcosm's dispatch process.
  */
 now = time.now()
-tree.branch().reduce(function(a,b) {
+tree.reduce(function(a,b) {
   for (var key in b) {
     a[key] = b[key]
   }

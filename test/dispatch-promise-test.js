@@ -97,7 +97,7 @@ describe('When dispatching promises', function() {
   })
 
   it ('handles errors thrown by promises', function(done) {
-    app.push(throws, 1, function(error) {
+    app.push(throws, 1, function (error) {
       assert(error instanceof ReferenceError)
       done()
     })

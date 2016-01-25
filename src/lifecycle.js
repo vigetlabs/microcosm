@@ -7,8 +7,14 @@
 import tag from './tag'
 
 export default {
-  willStart       : tag(n => n, 'getInitialState'),
-  willSerialize   : tag(n => n, 'serialize'),
-  willDeserialize : tag(n => n, 'deserialize'),
-  willReset       : tag(n => n, 'willReset')
+  willStart           : tag(n => n, 'getInitialState'),
+  willSerialize       : tag(n => n, 'serialize'),
+  willDeserialize     : tag(n => n, 'deserialize'),
+  willReset           : tag(n => n, 'willReset'),
+  willRollforward     : tag(n => n, 'willRollforward'),
+
+  willAddStore        : tag(n => n, 'willAddStore'),
+  willAddPlugin       : tag(n => n, 'willAddPlugin'),
+  willOpenTransaction : tag(n => n, 'willOpenTransaction'),
+  didOpenTransaction  : tag(n => n, 'didOpenTransaction')
 }

@@ -1,6 +1,6 @@
 /**
  * This is the main server entry point into the
- * undo-tree example.
+ * drawing example.
  */
 
 import DOM      from 'react-dom/server'

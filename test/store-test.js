@@ -13,6 +13,8 @@ describe('Stores', function() {
       }
     })
 
+    app.start()
+
     app.push(action, [], function() {
       assert(app.state.test)
       done()

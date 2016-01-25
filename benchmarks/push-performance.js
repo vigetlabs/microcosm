@@ -3,10 +3,9 @@
  * Measures the performance of pushing a single action.
  */
 
-var Microcosm   = require('../dist/Microcosm')
-var Transaction = require('../dist/Transaction')
-var time        = require('microtime')
-var SIZE        = 10000
+var Microcosm = require('../dist/Microcosm')
+var time      = require('microtime')
+var SIZE      = 10000
 
 var app = new Microcosm()
 

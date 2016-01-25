@@ -125,6 +125,8 @@ describe('When dispatching generators', function() {
       }
     })
 
+    app.start()
+
     app.push(generatorOfGeneratorsofPromises, [1, 4, 7], function() {
       assert.deepEqual([1,2,3,4,5,6], answers)
       assert.equal(app.state.test, 6)
@@ -158,6 +160,8 @@ describe('When dispatching generators', function() {
       }
     })
 
+    app.start()
+
     app.push(generatorOfGeneratorsofPromises, [1, 4, 7], function (error) {
       assert(error instanceof Error)
       assert.equal(app.state.test, undefined)
@@ -165,7 +169,7 @@ describe('When dispatching generators', function() {
     })
   })
 
-  it ('does not burry errors in nested generators', function (done) {
+  it ('does not bury errors in nested generators', function (done) {
     let app = new Microcosm()
 
     function* badApple (start, end) {
@@ -190,6 +194,8 @@ describe('When dispatching generators', function() {
         }
       }
     })
+
+    app.start()
 
     app.push(generatorOfGeneratorsofPromises, [1, 4, 7], function(error) {
       assert(error instanceof Error)

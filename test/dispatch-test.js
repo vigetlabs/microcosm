@@ -6,7 +6,7 @@ import assert from 'assert'
 describe('dispatch', function() {
 
   it ('returns state if not active', function() {
-    let transaction = Transaction('foo')
+    let transaction = new Transaction('foo')
     let store = {
       register() {
         return { foo: true }
@@ -14,7 +14,7 @@ describe('dispatch', function() {
     }
 
     let state = {}
-    let next  = dispatch([ [ 'test', store ] ], state, Transaction('test'))
+    let next  = dispatch([ [ 'test', store ] ], state, new Transaction('test'))
 
     assert.equal(next, state)
   })
