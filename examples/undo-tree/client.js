@@ -7,11 +7,4 @@ let app = new UndoTree()
 app.addPlugin(Debugger)
 app.addPlugin(Render, document.getElementById('app'))
 
-app.addPlugin({
-  transactionDidComplete() {
-    console.log(app.history.size())
-  },
-  register() {}
-})
-
 app.start()
