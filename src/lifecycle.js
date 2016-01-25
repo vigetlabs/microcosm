@@ -15,6 +15,5 @@ export default {
 
   willAddStore        : tag(n => n, 'willAddStore'),
   willAddPlugin       : tag(n => n, 'willAddPlugin'),
-  willOpenTransaction : tag(n => n, 'willOpenTransaction'),
-  didOpenTransaction  : tag(n => n, 'didOpenTransaction')
+  willOpenTransaction : tag(n => n, 'willOpenTransaction')
 }
