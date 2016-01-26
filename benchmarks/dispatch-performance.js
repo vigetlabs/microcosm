@@ -12,7 +12,7 @@ var Transaction = require('../dist/Transaction')
 var time  = require('microtime')
 var SIZE = 10000
 
-var app = new Microcosm({ maxHistory: Infinity})
+var app = new Microcosm({ maxHistory: Infinity })
 
 var action = function test () {}
 action.toString = function () { return 'test' }
