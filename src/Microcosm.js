@@ -80,9 +80,9 @@ Microcosm.prototype = {
   addPlugin(config, options={}) {
     let plugin = merge({ app: this, options }, defaults(config))
 
-    this.lifecycle(lifecycle.willAddPlugin, plugin)
-
-    this.plugins.push(plugin)
+    this.plugins.push(
+      this.lifecycle(lifecycle.willAddPlugin, plugin)
+    )
 
     return this
   },
@@ -101,9 +101,10 @@ Microcosm.prototype = {
       keyPath = [];
     }
 
-    this.lifecycle(lifecycle.willAddStore, store)
-
-    this.stores.push([ flatten(keyPath), defaults(store) ])
+    this.stores.push([
+      flatten(keyPath),
+      this.lifecycle(lifecycle.willAddStore, defaults(store))
+    ])
 
     return this
   },
