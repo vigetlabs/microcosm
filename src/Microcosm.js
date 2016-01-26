@@ -51,9 +51,9 @@ Microcosm.prototype = {
     return this
   },
 
-  lifecycle(type, initial={}) {
+  lifecycle(hook, initial={}) {
     return this.plugins.reduce((state, plugin) => {
-      return plugin[type] ? plugin[type](this, state) : state
+      return plugin[hook] ? plugin[hook](this, state) : state
     }, initial)
   },
 
