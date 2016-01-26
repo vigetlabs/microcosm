@@ -40,24 +40,18 @@ Microcosm.prototype = {
   constructor: Microcosm,
 
   getInitialState() {
-    return this.lifecycleReduce(lifecycle.willStart)
+    return this.lifecycle(lifecycle.willStart)
   },
 
   rollforward() {
-    this.state = this.lifecycleReduce(lifecycle.willRollforward)
+    this.state = this.lifecycle(lifecycle.willRollforward)
 
     this.emit(this.state)
 
     return this
   },
 
-  lifecycle(type, payload) {
-    return this.plugins.forEach(plugin => {
-      if (plugin[type]) plugin[type](this, payload)
-    })
-  },
-
-  lifecycleReduce(type, initial={}) {
+  lifecycle(type, initial={}) {
     return this.plugins.reduce((state, plugin) => {
       return plugin[type] ? plugin[type](this, state) : state
     }, initial)
@@ -120,7 +114,7 @@ Microcosm.prototype = {
    */
   reset(state, callback) {
     return this.push(lifecycle.willReset,
-                     this.lifecycleReduce(lifecycle.willReset, state),
+                     this.lifecycle(lifecycle.willReset, state),
                      callback)
   },
 
@@ -136,7 +130,7 @@ Microcosm.prototype = {
    * according to the `serialize` method described by each store.
    */
   serialize() {
-    return this.lifecycleReduce(lifecycle.willSerialize, this.state)
+    return this.lifecycle(lifecycle.willSerialize, this.state)
   },
 
   /**
@@ -145,7 +139,7 @@ Microcosm.prototype = {
    * Then fold the deserialized data over the current application state.
    */
   deserialize(data) {
-    return this.lifecycleReduce(lifecycle.willDeserialize, data)
+    return this.lifecycle(lifecycle.willDeserialize, data)
   },
 
   /**

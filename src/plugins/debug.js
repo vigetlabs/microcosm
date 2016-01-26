@@ -1,11 +1,12 @@
 const Debug = {}
 
 if (process.env.NODE_ENV !== 'production') {
-
   Debug.willAddStore = function (app, store) {
     if (!store || typeof store !== 'function' && typeof store !== 'object') {
       throw TypeError('Expected a store object or function. Instead got: ' + store)
     }
+
+    return store
   },
 
   Debug.willOpenTransaction = function (app, transaction) {
@@ -17,6 +18,8 @@ if (process.env.NODE_ENV !== 'production') {
         '• import { mispelledAction } from "actions"'
       ].join('\n'))
     }
+
+    return transaction
   }
 
 }
