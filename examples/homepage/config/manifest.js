@@ -45,8 +45,8 @@ exports.server = {
       routes: { prefix: '/react-router' }
     }],
 
-    '../undo-tree': [{
-      routes: { prefix: '/undo-tree' }
+    '../painter': [{
+      routes: { prefix: '/painter' }
     }]
   }
 }

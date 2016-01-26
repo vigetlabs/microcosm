@@ -40,7 +40,7 @@ module.exports = function (server) {
       'chatbot'      : './chatbot/client',
       'react-router' : './react-router/client',
       'simple-svg'   : './simple-svg/client',
-      'undo-tree'    : './undo-tree/client'
+      'painter'      : './painter/client'
     },
 
     output: {

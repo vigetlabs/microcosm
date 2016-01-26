@@ -1,8 +1,8 @@
 import Render   from './app/plugins/render'
-import UndoTree from './app/undo-tree'
+import Painter  from './app/painter'
 import Debugger from 'microcosm-debugger'
 
-let app = new UndoTree()
+let app = new Painter({ maxHistory: Infinity })
 
 app.addPlugin(Debugger)
 app.addPlugin(Render, document.getElementById('app'))

@@ -1,12 +1,12 @@
 /**
  * This is the main server entry point into the
- * drawing example.
+ * undo-tree example.
  */
 
-import DOM      from 'react-dom/server'
-import Drawing  from './app/components/drawing'
-import React    from 'react'
-import UndoTree from './app/undo-tree'
+import DOM     from 'react-dom/server'
+import Drawing from './app/components/drawing'
+import React   from 'react'
+import Painter from './app/painter'
 
 export default function register (server, _options, next) {
 
@@ -14,14 +14,14 @@ export default function register (server, _options, next) {
     method  : 'GET',
     path    : '/',
     handler(request, reply) {
-      var app = new UndoTree()
+      var app = new Painter()
 
       app.start(function(error) {
         if (error) {
           throw error
         }
 
-        return reply.view('undo-tree/index', {
+        return reply.view('painter/index', {
           markup : DOM.renderToString(React.createElement(Drawing, { app }))
         })
       })
@@ -33,8 +33,8 @@ export default function register (server, _options, next) {
 }
 
 register.attributes = {
-  name        : 'Undo Tree',
-  description : 'A simple drawing app visualizing the Microcosm transaction tree.',
+  name        : 'Painter',
+  description : 'A simple drawing app.',
   example     : true,
-  path        : '/undo-tree'
+  path        : '/painter'
 }
