@@ -120,7 +120,7 @@ Microcosm.prototype = {
   },
 
   /**
-   * Resets to a given state, passing it through deserialize first
+   * Deserialize a given state and pass it into reset to determine a new state.
    */
   replace(data, callback) {
     return this.reset(this.deserialize(data), callback)
