@@ -1,5 +1,11 @@
 # Provider Component
 
+1. [Overview](#overview)
+2. [Props](#props)
+3. [Examples](#examples)
+
+## Overview
+
 Microcosm keeps all state in a single, isolated instance. Passing this
 instance around within the component hierarchy can often be tedious.
 
@@ -16,7 +22,7 @@ components, see the API documentation for `connect`.
 - `app`: An instance of Microcosm (or a class that extends from it).
 - `children`: A single child component. The root of your component tree.
 
-## Example
+## Examples
 
 ### Standard React Rendering
 
