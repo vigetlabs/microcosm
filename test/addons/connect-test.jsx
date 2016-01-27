@@ -12,20 +12,22 @@ function assertText(component, text) {
 
 describe('Connect Add-on', function() {
 
-  it ('given context, it injects an application instance into a component as a prop', function() {
+  it ('given context, it injects an application instance into a component as a prop', function(done) {
     let app = new Microcosm()
 
-    app.start().replace({ name: 'Billy' })
+    app.start()
 
-    let Namer = Connect(function(props) {
-      return { name: state => props.prefix + ' ' + state.name}
-    })(function({ name }) {
-      return (<p>{ name }</p>)
-    })
+    let Namer = Connect()(React.createClass({
+      componentDidMount() {
+        assert.equal(this.props.app, app)
+        done()
+      },
+      render() {
+        return (<p>Test</p>)
+      }
+    }))
 
-    let component = Test.renderIntoDocument(<Provider app={ app }>{ <Namer prefix="Sir" /> }</Provider>)
-
-    assertText(component, 'Sir Billy')
+    Test.renderIntoDocument(<Provider app={ app }><Namer /></Provider>)
   })
 
   it ('listens to an application when it mounts', function(done) {

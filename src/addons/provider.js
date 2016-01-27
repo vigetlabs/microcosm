@@ -19,6 +19,7 @@ const Provider = React.createClass({
   render() {
     return Children.only(this.props.children)
   }
+
 })
 
 export default Provider
