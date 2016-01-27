@@ -1,5 +1,10 @@
 # Changelog
 
+## 9.19.0
+
+- Added Provider and Connect addons. See the API docs for more
+  information and checkout the newly updated ReactRouter example.
+
 ## 9.18.0
 
 - When registered, the `options` argument of plugins default to an
