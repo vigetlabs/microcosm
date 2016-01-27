@@ -4,7 +4,7 @@ import NotFound from '../notfound'
 import React from 'react'
 import Items from '../../resources/items/getters'
 import Lists from '../../resources/lists/getters'
-import {addItem, removeItem} from '../../resources/items'
+import {addItem, removeItem} from '../../resources/items/actions'
 import {Link} from 'react-router'
 
 const Presenter = Connect(function (props) {
