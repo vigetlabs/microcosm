@@ -22,10 +22,11 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "diode": "6.2.3"
+    "diode": "6.2.3",
+    "hoist-non-react-statics": "1.0.3"
   },
   "babel": {
-    "stage": 2,
+    "stage": 1,
     "loose": "all",
     "sourceMaps": "inline"
   },

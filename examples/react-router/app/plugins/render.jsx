@@ -4,21 +4,20 @@
  */
 
 import DOM from 'react-dom'
+import Provider from '../../../../src/addons/provider'
 import React from 'react'
 import Routes from '../routes'
 import {Router} from 'react-router'
 import {useBasename, createHistory} from 'history'
 
 export default function Render (app, el) {
-  function createElement (Handler, state) {
-    return (<Handler app={ app } { ...state } />)
-  }
-
-  let router = (
-    <Router history={ useBasename(createHistory)() } createElement={ createElement }>
-      { Routes }
-    </Router>
+  let Root = (
+    <Provider app={ app }>
+      <Router history={ useBasename(createHistory)() }>
+        { Routes }
+      </Router>
+    </Provider>
   )
 
-  return DOM.render(router, el)
+  DOM.render(Root, el)
 }

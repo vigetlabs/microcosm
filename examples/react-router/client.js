@@ -24,3 +24,5 @@ app.start(function(error) {
 
   console.log('ReactRouter example is ready!')
 })
+
+window.app = app

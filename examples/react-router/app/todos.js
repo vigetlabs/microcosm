@@ -1,6 +1,6 @@
-import Items     from './stores/items'
-import Lists     from './stores/lists'
-import Microcosm from '../../../src/Microcosm'
+import Microcosm   from '../../../src/Microcosm'
+import {ItemStore} from './resources/items'
+import {ListStore} from './resources/lists'
 
 class Todos extends Microcosm {
 
@@ -12,10 +12,10 @@ class Todos extends Microcosm {
     // here:
 
     // 1. Lists
-    this.addStore('lists', Lists)
+    this.addStore('lists', ListStore)
 
     // 2. List Items
-    this.addStore('items', Items)
+    this.addStore('items', ItemStore)
   }
 
 }

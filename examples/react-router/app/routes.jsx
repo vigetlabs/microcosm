@@ -1,15 +1,14 @@
 import React from 'react'
-import { Route, IndexRoute } from 'react-router'
+import {Route, IndexRoute} from 'react-router'
 
-import Index    from './components/index'
-import Layout   from './components/layout'
-import NotFound from './components/notfound'
-import Show     from './components/show'
+import ListIndex from './components/lists/index'
+import NotFound  from './components/notfound'
+import ListShow  from './components/lists/show'
 
 export default (
-  <Route name="home" path="/" component={ Layout }>
-    <IndexRoute component={ Index } />
-    <Route path="/lists/:id" component={ Show } />
+  <Route name="home" path="/" ref="routes">
+    <IndexRoute component={ ListIndex } />
+    <Route path="/lists/:id" component={ ListShow } />
     <Route path="*" component={ NotFound } />
   </Route>
 )

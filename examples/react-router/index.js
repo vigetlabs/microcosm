@@ -4,6 +4,7 @@
  */
 
 import DOM from 'react-dom/server'
+import Provider from '../../src/addons/provider'
 import React from 'react'
 import Todos from './app/todos'
 import routes from './app/routes'
@@ -37,7 +38,7 @@ export default function register (server, _options, next) {
 
           if (props) {
             return reply.view('react-router/index', {
-              markup   : DOM.renderToString(<RoutingContext createElement={ createElement } { ...props } />),
+              markup   : DOM.renderToString(<Provider app={ app }><RoutingContext createElement={ createElement } { ...props } /></Provider>),
               payload  : JSON.stringify(app),
               basename : basename
             })

@@ -1,24 +1,25 @@
-import ListActions from '../actions/lists'
+import Connect  from '../../../../../src/addons/connect'
 import ListForm from './parts/list-form'
-import React    from 'react'
-import {Link}   from 'react-router'
+import Lists, {addList, removeList} from '../../resources/lists'
+import React from 'react'
+import {Link} from 'react-router'
 
-export default React.createClass({
+const Presenter = Connect(function (props) {
+  return {
+    lists  : Lists.all,
+    counts : Lists.count
+  }
+})
 
-  propTypes: {
-    app : React.PropTypes.object.isRequired
-  },
+export default Presenter(React.createClass({
 
   renderList({ id, name }) {
-    let { app, items } = this.props
-
-    let count = items.filter(item => item.list === id).length
-    let href  = `/lists/${ id }`
+    let { app, counts } = this.props
 
     return (
       <li key={ id }>
-        <Link to={ href }>{ name } ({ count })</Link>
-        <button className="btn" onClick={ app.prepare(ListActions.remove, id) }>
+        <Link to={ `/lists/${ id }` }>{ name } ({ counts[id] })</Link>
+        <button className="btn" onClick={ app.prepare(removeList, id) }>
           Delete
         </button>
       </li>
@@ -26,7 +27,7 @@ export default React.createClass({
   },
 
   render() {
-    let { app, lists, items } = this.props
+    let { app, lists } = this.props
 
     return (
       <div>
@@ -39,7 +40,7 @@ export default React.createClass({
         <main role="main" className="container">
           <aside className="aside">
             <h2 className="subhead">New List</h2>
-            <ListForm onSubmit={ app.prepare(ListActions.add) }/>
+            <ListForm onSubmit={ app.prepare(addList) }/>
           </aside>
 
           <ul className="list">
@@ -49,5 +50,4 @@ export default React.createClass({
       </div>
     )
   }
-
-})
+}))

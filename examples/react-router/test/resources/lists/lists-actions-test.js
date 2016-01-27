@@ -1,7 +1,7 @@
-import App         from '../../app/todos'
-import ItemActions from '../../app/actions/items'
-import ListActions from '../../app/actions/lists'
+import App from '../../../app/todos'
 import assert from 'assert'
+import {addItem, removeItem} from '../../../app/resources/items'
+import {addList, removeList} from '../../../app/resources/lists'
 
 describe('List Actions', function() {
   var app;
@@ -15,7 +15,7 @@ describe('List Actions', function() {
     var name = 'My todo list'
 
     beforeEach(function() {
-      app.push(ListActions.add, { name })
+      app.push(addList, { name })
     })
 
     it ('should create a new list with the proper name', function() {
@@ -24,12 +24,12 @@ describe('List Actions', function() {
 
   })
 
-  describe('when sent a ListActions.remove message', function() {
+  describe('when sent a removeList message', function() {
     var name = 'My todo list'
 
     beforeEach(function() {
-      app.push(ListActions.add, { name })
-      app.push(ListActions.remove, app.state.lists[0].id)
+      app.push(addList, { name })
+      app.push(removeList, app.state.lists[0].id)
     })
 
     it ('should remove the list by id', function() {
@@ -38,13 +38,13 @@ describe('List Actions', function() {
 
   })
 
-  describe('when sent a ListActions.remove message with items', function() {
+  describe('when sent a removeList message with items', function() {
     var name = 'My task'
 
     beforeEach(function() {
-      app.push(ListActions.add, { name: 'parent' })
-      app.push(ItemActions.add, [ app.state.lists[0].id, { name } ])
-      app.push(ListActions.remove, app.state.lists[0].id)
+      app.push(addList, { name: 'parent' })
+      app.push(addItem, [ app.state.lists[0].id, { name } ])
+      app.push(removeList, app.state.lists[0].id)
     })
 
     it ('removes all child items', function() {

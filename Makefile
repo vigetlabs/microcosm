@@ -6,7 +6,7 @@ OUT   := dist
 
 VPATH := $(OUT)
 
-.PHONY: clean deliverables test test-watch example bench javascript
+.PHONY: clean deliverables test test-fast test-browser test-watch example bench javascript
 
 build: package.json $(wildcard *.md) docs deliverables javascript
 
@@ -49,9 +49,10 @@ example:
 clean:
 	@ rm -rf $(OUT)
 
-test:
+test: test-browser test-fast
+
+test-browser:
 	@ NODE_ENV=test karma start --single-run
-	@ NODE_ENV=test make test-fast
 
 test-fast: $(shell find {test,examples} -name '*-test.js')
 	@ NODE_ENV=test mocha -R dot --compilers js:babel/register $^
