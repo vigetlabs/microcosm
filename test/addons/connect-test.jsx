@@ -131,7 +131,9 @@ describe('Connect Add-on', function() {
       })
 
       Test.renderIntoDocument(<Namer app={ app } />)
-      app.publish()
+
+      app.replace({ name: 'Kurtz' })
+
       assert.equal(renders, 1)
     })
 
