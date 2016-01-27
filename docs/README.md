@@ -12,3 +12,8 @@
 1. [Microcosm](api/microcosm.md)
 3. [Stores](api/stores.md)
 4. [Plugins](api/plugins.md)
+
+### Addons
+
+1. [Provider](api/provider.md)
+2. [Connect](api/connect.md)
