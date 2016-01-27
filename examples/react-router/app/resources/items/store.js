@@ -1,6 +1,6 @@
 import Collection from '../../../lib/collection'
-import {removeList} from '../lists'
-import {addItem, removeItem} from '../items'
+import {removeList} from '../lists/actions'
+import {addItem, removeItem} from '../items/actions'
 
 const Items = Collection({
   name : 'Unspecified',
