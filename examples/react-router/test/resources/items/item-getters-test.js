@@ -1,5 +1,5 @@
-import assert from 'assert'
-import Items from '../../../app/resources/items'
+import assert  from 'assert'
+import getters from '../../../app/resources/items/getters'
 
 describe('Item Getters', function() {
   const state = {
@@ -8,11 +8,11 @@ describe('Item Getters', function() {
   }
 
   it ('can get all lists out of a state object', function() {
-    assert.equal(Items.all(state), state.items)
+    assert.equal(getters.all(state), state.items)
   })
 
   it ('can children of a specific list', function() {
-    assert.deepEqual(Items.childrenOf(1)(state).map(i => i.id), [ 3, 4 ])
+    assert.deepEqual(getters.childrenOf(1)(state).map(i => i.id), [ 3, 4 ])
   })
 
 })

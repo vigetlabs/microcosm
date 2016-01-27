@@ -1,6 +1,6 @@
-import Microcosm   from '../../../src/Microcosm'
-import {ItemStore} from './resources/items'
-import {ListStore} from './resources/lists'
+import Microcosm from '../../../src/Microcosm'
+import ItemStore from './resources/items/store'
+import ListStore from './resources/lists/store'
 
 class Todos extends Microcosm {
 

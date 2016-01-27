@@ -1,9 +1,10 @@
 import Connect from '../../../../../src/addons/connect'
 import ItemForm from './parts/item-form'
-import Items, { addItem, removeItem } from '../../resources/items'
-import Lists from '../../resources/lists'
 import NotFound from '../notfound'
 import React from 'react'
+import Items from '../../resources/items/getters'
+import Lists from '../../resources/lists/getters'
+import { addItem, removeItem } from '../../resources/items'
 import {Link} from 'react-router'
 
 const Presenter = Connect(function (props) {

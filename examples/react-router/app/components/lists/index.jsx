@@ -1,6 +1,7 @@
 import Connect  from '../../../../../src/addons/connect'
 import ListForm from './parts/list-form'
-import Lists, {addList, removeList} from '../../resources/lists'
+import Lists from '../../resources/lists/getters'
+import {addList, removeList} from '../../resources/lists/actions'
 import React from 'react'
 import {Link} from 'react-router'
 

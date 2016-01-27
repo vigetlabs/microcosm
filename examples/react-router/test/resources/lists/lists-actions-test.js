@@ -1,7 +1,7 @@
 import App from '../../../app/todos'
 import assert from 'assert'
-import {addItem, removeItem} from '../../../app/resources/items'
-import {addList, removeList} from '../../../app/resources/lists'
+import {addItem, removeItem} from '../../../app/resources/items/actions'
+import {addList, removeList} from '../../../app/resources/lists/actions'
 
 describe('List Actions', function() {
   var app;

@@ -1,5 +1,5 @@
-import assert from 'assert'
-import Lists from '../../../app/resources/lists'
+import assert  from 'assert'
+import getters from '../../../app/resources/lists/getters'
 
 describe('List Getters', function() {
   const state = {
@@ -8,15 +8,15 @@ describe('List Getters', function() {
   }
 
   it ('can get all lists out of a state object', function() {
-    assert.equal(Lists.all(state), state.lists)
+    assert.equal(getters.all(state), state.lists)
   })
 
   it ('can get a specific lists out of a state object', function() {
-    assert.equal(Lists.get(1)(state), state.lists[0])
+    assert.equal(getters.get(1)(state), state.lists[0])
   })
 
   it ('can counts of the children for all lists', function() {
-    assert.deepEqual(Lists.count(state), { 1: 2, 2: 0 })
+    assert.deepEqual(getters.count(state), { 1: 2, 2: 0 })
   })
 
 })
