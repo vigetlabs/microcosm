@@ -5,8 +5,8 @@ import merge       from '../merge'
 
 const State = {
 
-  getInitialState(app, data) {
-    return dispatch(app.stores, data, new Transaction(lifecycle.willStart, app.state))
+  getInitialState(app) {
+    return dispatch(app.stores, {}, new Transaction(lifecycle.willStart, app.state))
   },
 
   willReset(app, data) {
