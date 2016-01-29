@@ -5,7 +5,9 @@ A variant of [Flux](https://facebook.github.io/flux/) with
 central, isolated state.
 
 Microcosm makes it easier to control and modify state in a pure,
-centralized way. It thinks of stores and actions as stateless, collections of pure functions, keeping all data encapsulated in one place.
+centralized way. It thinks of stores and actions as stateless,
+collections of pure functions, keeping all data encapsulated in one
+place.
 
 This design seeks to achieve a
 reasonable trade off between the simplicity of singletons and the
