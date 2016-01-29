@@ -44,7 +44,7 @@ prerelease: clean build
 	npm publish $(OUT) --tag beta
 
 example:
-	@ node examples/server
+	@ node examples/homepage
 
 clean:
 	@ rm -rf $(OUT)

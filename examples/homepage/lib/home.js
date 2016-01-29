@@ -18,7 +18,7 @@ export default function register (server, _options, next) {
     method  : 'GET',
     path    : '/',
     handler(request, reply) {
-      reply.view('server/index', {
+      reply.view('homepage/index', {
         examples: getExamples(request.server)
       })
     }
@@ -28,5 +28,5 @@ export default function register (server, _options, next) {
 }
 
 register.attributes = {
-  name: 'Examples'
+  name: 'Homepage'
 }
