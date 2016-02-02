@@ -25,10 +25,16 @@ this project.
 
 ### Simple (no computed properties)
 
+When no arguments are passed to `connect`, it will simply make the
+instance of Microcosm provided to `<Provider />` available as an `app`
+prop.
+
 ```javascript
 var app = new Microcosm()
 
-var AppToJSON = connect(React.createClass({
+var connection = connect()
+
+var AppToJSON = connection(React.createClass({
   render() {
     // this component will have access to the application
     // via this.props.app
@@ -44,6 +50,12 @@ ReactDOM.render((
 ```
 
 ### Computed Properties
+
+When a function is provided to `connect`, in addition to providing an
+`app` property to a wrapped component, it will take a returned set of
+key/value pairs and compute them based upon app state. If these
+properties do not change, they will not be sent to the wrapped
+component.
 
 ```javascript
 var app = new Microcosm()
