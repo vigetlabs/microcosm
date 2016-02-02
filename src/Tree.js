@@ -7,8 +7,8 @@
 function Tree () {}
 
 Tree.prototype = {
-
-  focus: null,
+  anchor : null,
+  focus  : null,
 
   checkout(node) {
     if (process.env.NODE_ENV !== 'production' && typeof node === 'undefined') {
@@ -26,28 +26,29 @@ Tree.prototype = {
 
   forward() {
     if (this.focus) {
-      this.checkout(this.focus.next())
+      this.checkout(this.focus.next)
     }
   },
 
   append(item) {
     this.focus = new Node(item, this.focus)
+    this.anchor  = this.anchor || this.focus
+
     return this.focus
   },
 
   prune(shouldRemove, scope) {
-    let node = this.root()
-
-    while (node && shouldRemove.call(scope, node.value)) {
-      node.dispose()
-      node = node.next()
+    while (this.anchor && shouldRemove.call(scope, this.anchor.value)) {
+      this.anchor = this.anchor.next
     }
 
     // If we reach the end (there is no next node), it means
     // we've completely wiped away the tree, so nullify focus
     // to mark a completely empty tree.
-    if (!node) {
+    if (!this.anchor) {
       this.focus = null
+    } else {
+      this.anchor.orphan()
     }
 
     return this
@@ -66,21 +67,15 @@ Tree.prototype = {
   },
 
   root() {
-    let node = this.focus
-
-    while (node && node.parent) {
-      node = node.parent
-    }
-
-    return node
+    return this.anchor
   },
 
   size() {
     let count = 0
-    let node  = this.focus
+    let node  = this.anchor
 
     while (node) {
-      node  = node.parent
+      node  = node.next
       count = count + 1
     }
 
@@ -90,24 +85,30 @@ Tree.prototype = {
 }
 
 function Node (value, parent) {
-  this.children = []
-  this.parent   = parent
-  this.value    = value
+  this.value  = value
+  this.parent = parent
 
   if (parent) {
-    parent.children.unshift(this)
+    parent.addChild(this)
   }
 }
 
 Node.prototype = {
+  next     : null,
+  children : null,
+  parent   : null,
 
-  next() {
-    return this.children.length ? this.children[0] : null
+  orphan() {
+    this.parent = null
   },
 
-  dispose() {
-    for (var i = 0, size = this.children.length; i < size; i++) {
-      this.children[i].parent = null
+  addChild(node) {
+    this.next = node
+
+    if (this.children) {
+      this.children.push(node)
+    } else {
+      this.children = [ node ]
     }
   }
 
