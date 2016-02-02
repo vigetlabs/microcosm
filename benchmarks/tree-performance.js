@@ -32,7 +32,7 @@ stats.build = ((time.now() - now) / 1000) / SIZE
  * of the tree from the current focal point.
  */
 now = time.now()
-tree.root
+tree.root()
 stats.root = (time.now() - now) / 1000
 
 

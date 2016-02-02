@@ -7,8 +7,8 @@
 function Tree () {}
 
 Tree.prototype = {
-  root  : null,
-  focus : null,
+  anchor : null,
+  focus  : null,
 
   checkout(node) {
     if (process.env.NODE_ENV !== 'production' && typeof node === 'undefined') {
@@ -32,23 +32,23 @@ Tree.prototype = {
 
   append(item) {
     this.focus = new Node(item, this.focus)
-    this.root  = this.root || this.focus
+    this.anchor  = this.anchor || this.focus
 
     return this.focus
   },
 
   prune(shouldRemove, scope) {
-    while (this.root && shouldRemove.call(scope, this.root.value)) {
-      this.root = this.root.next
+    while (this.anchor && shouldRemove.call(scope, this.anchor.value)) {
+      this.anchor = this.anchor.next
     }
 
     // If we reach the end (there is no next node), it means
     // we've completely wiped away the tree, so nullify focus
     // to mark a completely empty tree.
-    if (!this.root) {
+    if (!this.anchor) {
       this.focus = null
     } else {
-      this.root.orphan()
+      this.anchor.orphan()
     }
 
     return this
@@ -66,9 +66,13 @@ Tree.prototype = {
     return items.reduceRight(fn, state)
   },
 
+  root() {
+    return this.anchor
+  },
+
   size() {
     let count = 0
-    let node  = this.root
+    let node  = this.anchor
 
     while (node) {
       node  = node.next
