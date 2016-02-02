@@ -54,12 +54,16 @@ let app = new Microcosm()
 
 // All state is contained in `app`, but transformed with `Planets`
 app.addStore(Planets, 'planets')
+
+// Start tells a Microcosm to begin tracking state and register any
+// installed plugins
+app.start()
 ```
 
 From there, an app's state can be sent down your React component tree:
 
 ``` javascript
-React.render(<SolarSystem app={ app } planets={ app.get('planets') } />, document.body)
+React.render(<SolarSystem app={ app } planets={ app.state.planets } />, document.body)
 ```
 
 ## Opinions
