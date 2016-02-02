@@ -9,7 +9,6 @@
 
 var Microcosm   = require('../dist/Microcosm')
 var Transaction = require('../dist/Transaction')
-var time  = require('microtime')
 var SIZE = 10000
 
 var app = new Microcosm({ maxHistory: Infinity })
@@ -58,6 +57,8 @@ for (var q = 0; q < 10; q++) {
   app.push(action, true)
 }
 
-var then = time.now()
+var label = "Time to dispatch " + SIZE + " actions"
+
+console.time(label)
 app.push(action, true)
-console.log('Dispatched %s actions in %sms\n', SIZE, (time.now() - then) / 1000)
+console.timeEnd(label)

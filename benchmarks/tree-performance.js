@@ -32,7 +32,7 @@ stats.build = ((time.now() - now) / 1000) / SIZE
  * of the tree from the current focal point.
  */
 now = time.now()
-tree.root()
+tree.root
 stats.root = (time.now() - now) / 1000
 
 
@@ -86,10 +86,12 @@ stats.memory = ((memoryAfter - memoryBefore) / memoryBefore) * 100
  */
 require('console.table')
 
+console.log('')
+
 console.table([{
   'Nodes': SIZE,
   '::append()': stats.build.toFixed(4) + 'ms',
-  '::root()': stats.root.toFixed(2) + 'ms',
+  '::root()': stats.root.toFixed(4) + 'ms',
   '::reduce(merge)': stats.merge.toFixed(2) + 'ms',
   '::size()': stats.size.toFixed(2) + 'ms',
   '::prune()': stats.prune.toFixed(2) + 'ms',

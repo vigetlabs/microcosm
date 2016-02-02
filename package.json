@@ -28,7 +28,14 @@
   "babel": {
     "stage": 1,
     "loose": "all",
-    "sourceMaps": "inline"
+    "sourceMaps": "inline",
+    "env": {
+      "production": {
+        "optional": [
+          "utility.inlineEnvironmentVariables"
+        ]
+      }
+    }
   },
   "devDependencies": {
     "babel": "5.8.23",
