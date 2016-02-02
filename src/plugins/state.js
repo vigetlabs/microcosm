@@ -5,15 +5,15 @@ import merge       from '../merge'
 
 const State = {
 
-  getInitialState(app) {
+  [lifecycle.willStart](app) {
     return dispatch(app.stores, {}, new Transaction(lifecycle.willStart, app.state))
   },
 
-  willReset(app, data) {
+  [lifecycle.willReset](app, data) {
     return merge(State.getInitialState(app), data)
   },
 
-  deserialize(app, data) {
+  [lifecycle.willDeserialize](app, data) {
     if (data == undefined) {
       return app.state
     }
@@ -21,7 +21,7 @@ const State = {
     return dispatch(app.stores, data, new Transaction(lifecycle.willDeserialize, data))
   },
 
-  serialize(app, state) {
+  [lifecycle.willSerialize](app, state) {
     return dispatch(app.stores, state, new Transaction(lifecycle.willSerialize, state))
   }
 

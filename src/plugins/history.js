@@ -34,14 +34,14 @@ const History = {
   /**
    * Rolls state forward, cleaning up any erroneous or completed actions.
    */
-  willRollforward(app, state) {
+  [lifecycle.willUpdate](app, state) {
     let reducer = dispatch.bind(null, app.stores)
 
     return app.history.prune(this.clean, this)
                       .reduce(reducer, this.cache)
   },
 
-  willOpenTransaction(app, transaction) {
+  [lifecycle.willOpenTransaction](app, transaction) {
     app.history.append(transaction)
   }
 

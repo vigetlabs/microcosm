@@ -44,7 +44,7 @@ Microcosm.prototype = {
   },
 
   rollforward() {
-    this.state = this.lifecycle(lifecycle.willRollforward)
+    this.state = this.lifecycle(lifecycle.willUpdate)
 
     this.emit(this.state)
 

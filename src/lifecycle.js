@@ -11,7 +11,7 @@ export default {
   willSerialize       : tag(n => n, 'serialize'),
   willDeserialize     : tag(n => n, 'deserialize'),
   willReset           : tag(n => n, 'willReset'),
-  willRollforward     : tag(n => n, 'willRollforward'),
+  willUpdate          : tag(n => n, 'willUpdate'),
 
   willAddStore        : tag(n => n, 'willAddStore'),
   willAddPlugin       : tag(n => n, 'willAddPlugin'),
