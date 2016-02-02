@@ -32,10 +32,7 @@ Tree.prototype = {
 
   append(item) {
     this.focus = new Node(item, this.focus)
-
-    if (!this.root) {
-      this.root = this.focus
-    }
+    this.root  = this.root || this.focus
 
     return this.focus
   },
@@ -51,7 +48,7 @@ Tree.prototype = {
     if (!this.root) {
       this.focus = null
     } else {
-      this.root.parent = null
+      this.root.orphan()
     }
 
     return this
@@ -96,6 +93,10 @@ Node.prototype = {
   next     : null,
   children : null,
   parent   : null,
+
+  orphan() {
+    this.parent = null
+  },
 
   addChild(node) {
     this.next = node
