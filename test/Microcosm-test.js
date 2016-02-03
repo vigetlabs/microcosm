@@ -106,4 +106,16 @@ describe('Microcosm', function() {
     })
   })
 
+  it ('throws errors by default if a callback is not provided to start', function() {
+    let app = new Microcosm()
+    let error = 'This error should exist!'
+
+    app.addPlugin(function willPassError (app, options, next) {
+      next(error)
+    })
+
+    assert.throws(function() {
+      app.start()
+    }, error)
+  })
 })

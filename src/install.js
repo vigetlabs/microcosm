@@ -7,7 +7,11 @@
  * of a Microcosm.
  */
 
-const NOOP = () => {}
+function defaultCallback (error) {
+  if (error) {
+    throw error
+  }
+}
 
 function ensureCallback (plugin) {
   // Plugins that follow register(app, options, next) are asynchronous
@@ -35,6 +39,6 @@ function installPlugin (next, plugin) {
   }
 }
 
-export default function (plugins, callback=NOOP) {
+export default function (plugins, callback=defaultCallback) {
   return plugins.reduceRight(installPlugin, callback)()
 }
