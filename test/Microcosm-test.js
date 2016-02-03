@@ -106,16 +106,16 @@ describe('Microcosm', function() {
     })
   })
 
-  it ('throws errors by default if a callback is not provided to start', function() {
-    let app = new Microcosm()
+  context('when a microcosm plugin passes an error', function() {
+    let app   = new Microcosm()
     let error = 'This error should exist!'
 
-    app.addPlugin(function willPassError (app, options, next) {
+    app.addPlugin(function willFail (app, options, next) {
       next(error)
     })
 
-    assert.throws(function() {
-      app.start()
-    }, error)
+    it ('start() throws the error if a callback is not provided', function() {
+      assert.throws(app.start, error)
+    })
   })
 })
