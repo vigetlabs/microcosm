@@ -3,19 +3,12 @@
  * into chunks processable by transactions.
  */
 
-import { eventuallyThrow } from './eventually'
 import { isGenerator, isPromise } from './type-checks'
-
-const DEFAULT_ERROR = new Error('Rejected Promise')
+import unpromise from './unpromise'
 
 /**
  * If a given value is a promise, wait for it and
  * execute a callback using the error-first convention.
- *
- * Important: invocations of `callback` in promises are
- * wrapped in a try catch. This is so that internal
- * Microcosm operations can occur without being "soaked up"
- * by promises.
  *
  * @param {any} value - The target value
  * @param {Function} callback - An error-first callback
@@ -25,23 +18,9 @@ let nodeify = function (value, callback) {
     return callback(null, value, true)
   }
 
-  let didSucceed = function (body) {
-    try {
-      callback(null, body, true)
-    } catch (error) {
-      eventuallyThrow(error)
-    }
-  }
-
-  let didFail = function (error) {
-    try {
-      callback(error || DEFAULT_ERROR, null, true)
-    } catch (error) {
-      eventuallyThrow(error)
-    }
-  }
-
-  value.then(didSucceed, didFail)
+  unpromise(value, function (error, body) {
+    callback(error, body, true)
+  })
 
   return value
 }
