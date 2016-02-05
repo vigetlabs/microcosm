@@ -1,6 +1,6 @@
 import { isFunction } from './type-checks'
 
-export default function eventually (fn, scope, error, payload) {
+function eventually (fn, scope, error, payload) {
   if (!isFunction(fn)) {
     return undefined
   }
@@ -24,6 +24,5 @@ eventually.throws = function (error) {
     throw error
   })
 }
-
 
 export default eventually
