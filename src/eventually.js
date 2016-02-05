@@ -1,11 +1,5 @@
 import { isFunction } from './type-checks'
 
-export function eventuallyThrow(error) {
-  return eventually(function() {
-    throw error
-  })
-}
-
 export default function eventually (fn, scope, error, payload) {
   if (!isFunction(fn)) {
     return undefined
@@ -24,5 +18,12 @@ export default function eventually (fn, scope, error, payload) {
    */
   return global.setTimeout(() => fn.call(scope, error, payload), 0)
 }
+
+eventually.throws = function (error) {
+  return eventually(function() {
+    throw error
+  })
+}
+
 
 export default eventually

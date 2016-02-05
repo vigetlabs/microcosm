@@ -33,22 +33,17 @@
  * @returns undefined
  */
 
-import { eventuallyThrow } from './eventually'
-
-const DEFAULT_ERROR = new Error('Rejected Promise')
+import eventually from './eventually'
 
 export default function liftCallback (promise, callback) {
-  promise.then(function didSucceed (body) {
-    try {
-      callback(null, body)
-    } catch (error) {
-      eventuallyThrow(error)
-    }
-  }, function didFail (error) {
-    try {
-      callback(error || DEFAULT_ERROR, null)
-    } catch (error) {
-      eventuallyThrow(error)
-    }
-  })
+
+  function success (body) {
+    callback(null, body)
+  }
+
+  function failure (error) {
+    callback(error || new Error('Rejected Promise'), null)
+  }
+
+  promise.then(success, failure).catch(eventually.throws)
 }

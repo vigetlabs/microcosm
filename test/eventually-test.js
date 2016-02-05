@@ -4,6 +4,14 @@ import eventually from '../src/eventually'
 
 describe('eventually', function() {
 
+  beforeEach(function() {
+    this.originalTimeout = global.setTimeout
+  })
+
+  afterEach(function() {
+    global.setTimeout = this.originalTimeout
+  })
+
 
   it ('returns undefined if not given a function', function() {
     assert.equal(eventually(), undefined)
@@ -19,11 +27,8 @@ describe('eventually', function() {
   })
 
   it ('does not allow promises callbacks to absorb errors', function(done) {
-    let originalTimeout = global.setTimeout
-
     global.setTimeout = function(callback) {
       assert.throws(callback, /It worked/)
-      global.setTimeout = originalTimeout
       done()
     }
 
@@ -34,6 +39,15 @@ describe('eventually', function() {
     }).catch(function(error) {
       done(new Error('The promise caught the error in `eventually`.'))
     })
+  })
+
+  it ('can eventually throw an error', function(done) {
+    global.setTimeout = function(callback) {
+      assert.throws(callback, /It worked/)
+      done()
+    }
+
+    eventually.throws('It worked')
   })
 
 })
