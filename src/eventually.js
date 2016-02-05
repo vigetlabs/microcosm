@@ -1,6 +1,12 @@
 import { isFunction } from './type-checks'
 
-let eventually = function (fn, scope, error, payload) {
+export function eventuallyThrow(error) {
+  return eventually(function() {
+    throw error
+  })
+}
+
+export default function eventually (fn, scope, error, payload) {
   if (!isFunction(fn)) {
     return undefined
   }
@@ -16,7 +22,7 @@ let eventually = function (fn, scope, error, payload) {
    * This is to respect functions where `bind` has already been
    * invoked (like `ReactComponent::setState`).
    */
-  return global.setTimeout(() => fn.call(scope, error, payload))
+  return global.setTimeout(() => fn.call(scope, error, payload), 0)
 }
 
 export default eventually

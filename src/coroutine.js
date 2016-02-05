@@ -3,6 +3,7 @@
  * into chunks processable by transactions.
  */
 
+import { eventuallyThrow } from './eventually'
 import { isGenerator, isPromise } from './type-checks'
 
 const DEFAULT_ERROR = new Error('Rejected Promise')
@@ -10,6 +11,11 @@ const DEFAULT_ERROR = new Error('Rejected Promise')
 /**
  * If a given value is a promise, wait for it and
  * execute a callback using the error-first convention.
+ *
+ * Important: invocations of `callback` in promises are
+ * wrapped in a try catch. This is so that internal
+ * Microcosm operations can occur without being "soaked up"
+ * by promises.
  *
  * @param {any} value - The target value
  * @param {Function} callback - An error-first callback
@@ -19,14 +25,29 @@ let nodeify = function (value, callback) {
     return callback(null, value, true)
   }
 
-  return value.then(body => callback(null, body, true), function(error) {
-    callback(error || DEFAULT_ERROR, null, true)
-    throw error
-  })
+  let didSucceed = function (body) {
+    try {
+      callback(null, body, true)
+    } catch (error) {
+      eventuallyThrow(error)
+    }
+  }
+
+  let didFail = function (error) {
+    try {
+      callback(error || DEFAULT_ERROR, null, true)
+    } catch (error) {
+      eventuallyThrow(error)
+    }
+  }
+
+  value.then(didSucceed, didFail)
+
+  return value
 }
 
 /**
- * Given an iterator, call nodeify sequentially on each iteration
+ * Given an iterator, call nodeify sequentially on each iteration.
  *
  * @param {Iterator} iterator - An iterable collection
  * @param {Function} callback - An error-first callback
