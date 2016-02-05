@@ -35,7 +35,7 @@
 
 import eventually from './eventually'
 
-export default function liftCallback (promise, callback) {
+export default function unpromise (promise, callback) {
 
   function success (body) {
     callback(null, body)
