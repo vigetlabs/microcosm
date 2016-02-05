@@ -19,11 +19,9 @@ describe('When working with promises', function() {
     let error  = new Error('Promise trapped error during dispatch!')
 
     beforeEach(function() {
-      this.app.addStore({
-        register() {
-          return {
-            [action] : () => { throw error }
-          }
+      this.app.addStore(function() {
+        return {
+          [action]: () => { throw error }
         }
       })
     })
