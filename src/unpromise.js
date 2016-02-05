@@ -6,9 +6,9 @@
  * exception in these circumstances.
  *
  * However there comes a time when you are *done* with a
- * Promise, always yet this try/catch leaks out into other
- * branches of code. This is bad; JavaScript's permissive
- * try/catch which also traps runtime errors like bad syntax.
+ * Promise, yet this try/catch leaks out into other branches
+ * of code. This is bad: JavaScript's permissive try/catch
+ * which also traps runtime errors like bad syntax.
  *
  * We want to avoid this for operations internal to Microcosm,
  * like dispatching an action when it finishes resolving. The
