@@ -35,6 +35,8 @@ Transaction.prototype = {
       if (done) {
         eventually(onComplete, scope, error, payload)
       }
+
+      return payload
     })
   }
 }

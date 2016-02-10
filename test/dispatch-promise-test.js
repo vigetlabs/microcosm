@@ -102,4 +102,15 @@ describe('When dispatching promises', function() {
       done()
     })
   })
+
+  it ('returns the original payload when dispatching a promise', function (done) {
+    function testAction (number) {
+      return Promise.resolve(number)
+    }
+
+    app.push(testAction, 2).done(function(params) {
+      assert.equal(params, 2)
+      done()
+    })
+  })
 })
