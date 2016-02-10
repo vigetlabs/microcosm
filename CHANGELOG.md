@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.19.1
+
+- Fixes a regression introduced in 9.6.0 where the promise payload was
+  not being returned from push, this prevented promise chains from
+  receiving the transaction payload.
+
 ## 9.19.0
 
 - Added Provider and Connect addons. See the API docs for more
