@@ -117,6 +117,8 @@ Microcosm.prototype = {
       }
 
       this.rollforward()
+
+      return payload
     })
   },
 
