@@ -1,12 +1,12 @@
 ![Microcososm](http://f.cl.ly/items/36051G3A2M443z3v3U3b/microcososm.svg)
 ---
 
+A variant of [Flux](https://facebook.github.io/flux/) with
+central, isolated state.
+
 [![Circle CI](https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg)](https://circleci.com/gh/vigetlabs/microcosm)
 
 ---
-
-A variant of [Flux](https://facebook.github.io/flux/) with
-central, isolated state.
 
 ## Table of Contents
 
