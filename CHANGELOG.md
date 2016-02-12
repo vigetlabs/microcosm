@@ -1,5 +1,74 @@
 # Changelog
 
+## 9.20.0 (Not released)
+
+This update contains internal updates that were substantial enough to
+warrant a minor release. There should be no breaking changes, but
+actions and plugins have been improved in ways that may affect your
+app.
+
+### Noticeable changes
+
+#### Promises
+
+Before this release, the try/catch block that Promises use to identify
+rejections would also extend to internal Microcosm operations... and
+eventually React components subscribing to updates. This meant that it
+was possible for errors thrown by Stores and React components to be
+caught by Promises.
+
+This is typically what you sign up for with Promises, however there is
+a very clear stopping point within Microcosm where it simply needs the
+value returned from a Promise. There is no additional value in
+continuing on with the Promise behavior, only hindrance. In this
+release we've added an escape hatch at that specific part of the
+lifecycle to untrap errors after that point.
+
+This should only make working with Promises much more pleasant, and we
+do not anticipate it effecting the way you use Microcosm. Still, it is
+possible that your app does not properly handle errors from
+Promises. **When upgrading, you should confirm this for all actions
+that rely on Promises.**
+
+#### Plugins
+
+State management, history, and debug utilities are now managed via
+plugins. This is purely an internal change, it should not effect
+public usage of Microcosm whatsoever.
+
+This makes it easier to configure Microcosm with new behavior using
+plugins. In the process of doing this, we added lifecycle hooks to
+plugins. These allow plugins to manipulate state during key points
+in the Microcosm lifecycle.
+
+These hooks are:
+
+- **serialize**: Manipulates the value returned from  `app.toJSON()` or `app.serialize`.
+- **deserialize**: Manipulates the data sent to `app.replace`
+- **getInitialState**: Manipulates the data returned from `app.getInitialState`
+
+Additionally, there are several new "private" lifecycle methods. The
+plan is to eventually allow these for use outside of Microcosm, but
+they should be considered in an "unstable" state. Their names may
+change, we may split them into more discrete lifecycle
+hooks. Basically, don't use them yet, but for those curious:
+
+- **willUpdate:** Manipulates application state.
+- **willAddStore**: Manipulates a store right before it is added.
+- **willAddPlugin**: Manipulates a plugin right before it is added.
+- **willOpenTransaction**: Manipulates a transaction right before it is opened.
+
+#### Performance
+
+Microcosm dispatches are roughly 180% faster (depending on the number
+of stores, and event subscriptions). Memory pressure is also
+even lower (about 30%). Finally, changes were made to `Tree.js`, the
+underlying data structure for state management, that allow certain
+operations to operate orders of magnitude faster.
+
+Microcosm was already really fast. When working with transaction
+history (coming soon), almost all operations are near-instant.
+
 ## 9.19.1
 
 - Fixes a regression introduced in 9.6.0 where the promise payload was
