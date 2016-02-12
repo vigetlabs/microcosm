@@ -29,10 +29,8 @@ simplicity of singletons and the privacy of class instances.
 ### Actions
 
 Microcosm treats actions and stores as singletons, however they do not
-contain any state.
-
-Actions are called within the context of a particular instance of
-Microcosm:
+contain any state. Actions are called within the context of a
+particular instance of Microcosm:
 
 ```javascript
 let addPlanet = function (params) {
@@ -44,8 +42,12 @@ app.push(addPlanet, params)
 
 ### Stores
 
-Stores hold no state. Stores are collections of functions that transform
-old data into new data, with a hook that `register`s them with the Microcosm.
+Stores hold no state; instead they are responsible for writing state
+to the repository owned by a Microcosm instance.
+
+This allows stores to be simple collections of pure functions that
+transform old data into new data. The `register` hook tells Microcosm
+what actions a store should respond to:
 
 ```javascript
 let Planets = {
