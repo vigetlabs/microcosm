@@ -69,7 +69,7 @@ let Planets = {
 
 Once stores have been added to a Microcosm, it is ready to begin work.
 
-```
+```javascript
 let app = new Microcosm()
 
 // All state is contained in `app`, but transformed with `Planets`
