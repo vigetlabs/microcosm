@@ -1,9 +1,9 @@
 # Microcosm Documentation
 
-[The Overview](docs/guides/01-overview.md) is a great place to
-start. With that background, [Design](docs/design.md) may help to
+[The Overview](guides/01-overview.md) is a great place to
+start. With that background, [Design](design.md) may help to
 provide an additional high level overview of how things work. Beyond
-that, check out [the example apps](examples).
+that, check out [the example apps](../examples).
 
 ## Guides
 
