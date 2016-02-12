@@ -65,7 +65,7 @@ according to the `serialize` method described by each store.
 app.serialize() // => { planets: [...] }
 ```
 
-### deserialize(data)
+### `deserialize(data)`
 
 For each key in the provided `data` parameter, transform it using the
 `deserialize` method provided by the store managing that key. Then
@@ -105,9 +105,6 @@ app.listen(callback)
 
 // Remove a callback
 app.ignore(callback)
-
-// Force an emission
-app.emit()
 ```
 
 ## Running an instance

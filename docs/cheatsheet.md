@@ -29,7 +29,6 @@ Events
 +--------------+
 listen - Add a callback listener. Aliases: subscribe
 ignore - Remove a callback listener. Aliases: unsubscribe
-emit   - Trigger an event. Aliases: publish
 
 Configure
 +--------------+
@@ -44,6 +43,7 @@ Life Cycle
 +--------------+
 getInitialState - Determines the initial state required to operate. Called on `Microcosm::start`
 willReset - Called whenever `Microcosm::reset` or `Microcosm::replace` is executed.
+register - Indicate what actions a Store should respond to
 
 Serialization
 +--------------+
