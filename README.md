@@ -28,9 +28,9 @@ simplicity of singletons and the privacy of class instances.
 
 ### Actions
 
-Microcosm treats actions and stores as singletons, however they do not
-contain any state. Actions are called within the context of a
-particular instance of Microcosm:
+Actions are simple functions. They are called within the context of
+Microcosm, taking the value they return and using it as the parameters
+for processing within Stores.
 
 ```javascript
 let addPlanet = function (params) {
@@ -39,6 +39,9 @@ let addPlanet = function (params) {
 
 app.push(addPlanet, params)
 ```
+
+When an action is pushed, it is placed into a historical record of all
+actions that have occurred.
 
 ### Stores
 
