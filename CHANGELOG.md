@@ -25,7 +25,7 @@ release we've added an escape hatch at that specific part of the
 lifecycle to untrap errors after that point.
 
 This should only make working with Promises much more pleasant, and we
-do not anticipate it effecting the way you use Microcosm. Still, it is
+do not anticipate it affecting the way you use Microcosm. Still, it is
 possible that your app does not properly handle errors from
 Promises. **When upgrading, you should confirm this for all actions
 that rely on Promises.**
@@ -33,13 +33,12 @@ that rely on Promises.**
 #### Plugins
 
 State management, history, and debug utilities are now managed via
-plugins. This is purely an internal change, it should not effect
-public usage of Microcosm whatsoever.
+plugins.
 
 This makes it easier to configure Microcosm with new behavior using
 plugins. In the process of doing this, we added lifecycle hooks to
-plugins. These allow plugins to manipulate state during key points
-in the Microcosm lifecycle.
+plugins. These allow hooks allow plugins to manipulate decisions for
+key points in the Microcosm life cycle.
 
 These hooks are:
 
@@ -62,9 +61,14 @@ Basically, don't use them yet, but for those curious:
 
 #### Performance
 
-Microcosm dispatches are roughly 180% faster (depending on the number
-of stores, and event subscriptions). Memory pressure is also
-even lower (about 30%).
+Microcosm **dispatches are roughly 180% faster** (depending on the number
+of stores, and event subscriptions). Much of this is attributed to
+changes in the Tree data structure used to keep track of
+state. Specific actions, such as retrieving the root of the tree occur
+in constant time.
+
+These changes have also resulted in about a 30% reduction in memory
+pressure.
 
 ## 9.19.1
 
@@ -411,7 +415,7 @@ counting? :)
 ### Internal changes
 
 - Updates to the way transactions are created and rolled forward to improve
-  efficiency and support dev tool development
+  efifciency and support dev tool development
 
 ## 9.0.0
 
