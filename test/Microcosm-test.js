@@ -115,7 +115,7 @@ describe('Microcosm', function() {
     })
 
     it ('start() throws the error if a callback is not provided', function() {
-      assert.throws(app.start, error)
+      assert.throws(() => app.start(), error)
     })
   })
 
