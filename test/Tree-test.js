@@ -176,8 +176,30 @@ describe('Tree', function() {
   it ('will not check out an undefined node', function() {
     let tree = new Tree()
 
-    assert.throws(function() {
-      tree.checkout()
-    })
+    tree.append('a')
+
+    tree.checkout()
+
+    assert.equal(tree.focus.value, 'a')
+  })
+
+  it ('will not check out a null node', function() {
+    let tree = new Tree()
+
+    tree.append('a')
+
+    tree.checkout(null)
+
+    assert.equal(tree.focus.value, 'a')
+  })
+
+  it ('can determine the root node', function() {
+    let tree = new Tree()
+
+    let a = tree.append('a')
+    let b = tree.append('b')
+    let c = tree.append('c')
+
+    assert.equal(tree.root(), a)
   })
 })

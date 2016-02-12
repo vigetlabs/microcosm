@@ -11,10 +11,6 @@ Tree.prototype = {
   focus  : null,
 
   checkout(node) {
-    if (process.env.NODE_ENV !== 'production' && typeof node === 'undefined') {
-      throw new TypeError('Tree was asked to focus on a Node, but instead got ' + node)
-    }
-
     this.focus = node || this.focus
   },
 
@@ -31,7 +27,7 @@ Tree.prototype = {
   },
 
   append(item) {
-    this.focus = new Node(item, this.focus)
+    this.focus = Node(item, this.focus)
     this.anchor  = this.anchor || this.focus
 
     return this.focus
@@ -47,8 +43,6 @@ Tree.prototype = {
     // to mark a completely empty tree.
     if (!this.anchor) {
       this.focus = null
-    } else {
-      this.anchor.orphan()
     }
 
     return this
@@ -60,6 +54,7 @@ Tree.prototype = {
 
     while (node) {
       items.push(node.value)
+      if (node === this.anchor) break
       node = node.parent
     }
 
@@ -85,33 +80,14 @@ Tree.prototype = {
 }
 
 function Node (value, parent) {
-  this.value  = value
-  this.parent = parent
+  let node = { parent, value, children: [] }
 
   if (parent) {
-    parent.addChild(this)
-  }
-}
-
-Node.prototype = {
-  next     : null,
-  children : null,
-  parent   : null,
-
-  orphan() {
-    this.parent = null
-  },
-
-  addChild(node) {
-    this.next = node
-
-    if (this.children) {
-      this.children.push(node)
-    } else {
-      this.children = [ node ]
-    }
+    parent.children.push(node)
+    parent.next = node
   }
 
+  return node
 }
 
 export default Tree
