@@ -11,9 +11,10 @@ export default {
   willSerialize       : tag(n => n, 'serialize'),
   willDeserialize     : tag(n => n, 'deserialize'),
   willReset           : tag(n => n, 'willReset'),
-  willUpdate          : tag(n => n, 'willUpdate'),
 
-  willAddStore        : tag(n => n, 'willAddStore'),
-  willAddPlugin       : tag(n => n, 'willAddPlugin'),
-  willOpenTransaction : tag(n => n, 'willOpenTransaction')
+  // The following lifecycle methods are private for the time being:
+  willUpdate          : tag(n => n, '__willUpdate'),
+  willAddStore        : tag(n => n, '__willAddStore'),
+  willAddPlugin       : tag(n => n, '__willAddPlugin'),
+  willOpenTransaction : tag(n => n, '__willOpenTransaction')
 }
