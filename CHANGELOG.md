@@ -51,9 +51,11 @@ Additionally, there are several new "private" lifecycle methods. The
 plan is to eventually allow these for use outside of Microcosm, but
 they should be considered in an "unstable" state. Their names may
 change, we may split them into more discrete lifecycle
-hooks. Basically, don't use them yet, but for those curious:
+hooks.
 
-- **willUpdate:** Manipulates application state.
+Basically, don't use them yet, but for those curious:
+
+- **willUpdate:** Manipulates application state right before updating.
 - **willAddStore**: Manipulates a store right before it is added.
 - **willAddPlugin**: Manipulates a plugin right before it is added.
 - **willOpenTransaction**: Manipulates a transaction right before it is opened.
