@@ -93,14 +93,17 @@ React.render(<SolarSystem app={ app } planets={ app.state.planets } />, document
 
 ## Documentation
 
+**Check out the [docs folder](docs).** This includes high level
+overviews of framework architecture, guides, and API documentation for
+the individual components of Microcosm.
+
+### Guides
+
 [The Overview](docs/guides/01-overview.md) is a great place to
 start. With that background, [Design](docs/design.md) may help to
 provide an additional high level overview of how things work. Beyond
 that, check out [the example apps](examples).
 
-There is documentation [here](docs). This includes high level
-overviews of framework architecture, guides, and API documentation for
-the individual components of Microcosm.
 
 ## Inspiration
 
