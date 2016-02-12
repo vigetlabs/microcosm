@@ -8,27 +8,31 @@
 A variant of [Flux](https://facebook.github.io/flux/) with
 central, isolated state.
 
-Microcosm makes it easier to control and modify state in a pure,
+## Table of Contents
+
+1. [Documentation](docs)
+2. [Overview](#overview)
+3. [Opinions](#opinions)
+4. [What is it trying to solve?](#what-is-it-trying-to-solve)
+
+## Overview
+
+Microcosm is a variant of [Flux](https://facebook.github.io/flux/)
+that makes it easier to control and modify state in a pure,
 centralized way. It thinks of stores and actions as stateless,
 collections of pure functions, keeping all data encapsulated in one
 place.
 
-This design seeks to achieve a
-reasonable trade off between the simplicity of singletons and the
-privacy of class instances.
+This design seeks to achieve a reasonable trade off between the
+simplicity of singletons and the privacy of class instances.
 
-## Table of Contents
+### Actions
 
-1. [Overview](#overview)
-2. [Opinions](#opinions)
-3. [What is it trying to solve?](#what-is-it-trying-to-solve)
-4. [Documentation](#documentation)
+Microcosm treats actions and stores as singletons, however they do not
+contain any state.
 
-## Overview
-
-Microcosm treats actions and stores as singletons, however they do not contain any state.
-
-Actions are called within the context of a particular instance of Microcosm:
+Actions are called within the context of a particular instance of
+Microcosm:
 
 ```javascript
 let addPlanet = function (params) {
@@ -37,6 +41,8 @@ let addPlanet = function (params) {
 
 app.push(addPlanet, params)
 ```
+
+### Stores
 
 Stores hold no state. Stores are collections of functions that transform
 old data into new data, with a hook that `register`s them with the Microcosm.
@@ -52,7 +58,13 @@ let Planets = {
     return planets.concat(props)
   }
 }
+```
 
+### Launching an app
+
+Once stores have been added to a Microcosm, it is ready to begin work.
+
+```
 let app = new Microcosm()
 
 // All state is contained in `app`, but transformed with `Planets`
@@ -90,20 +102,6 @@ React.render(<SolarSystem app={ app } planets={ app.state.planets } />, document
    statelessly in other entities.
 3. Easy extension of core API and layering of features out of the
    framework's scope.
-
-## Documentation
-
-**Check out the [docs folder](docs).** This includes high level
-overviews of framework architecture, guides, and API documentation for
-the individual components of Microcosm.
-
-### Guides
-
-[The Overview](docs/guides/01-overview.md) is a great place to
-start. With that background, [Design](docs/design.md) may help to
-provide an additional high level overview of how things work. Beyond
-that, check out [the example apps](examples).
-
 
 ## Inspiration
 

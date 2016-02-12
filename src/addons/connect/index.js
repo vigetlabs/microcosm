@@ -66,11 +66,15 @@ export default function connect (mapStateToProps, options) {
         this.setState(nextState)
       }
 
-
       render() {
         let { app, props, state } = this
 
-        return React.createElement(WrappedComponent, { app, ...props, ...state })
+        return React.createElement(WrappedComponent, {
+          app,
+          ref: props.via,
+          ...props,
+          ...state
+        })
       }
     }
 
