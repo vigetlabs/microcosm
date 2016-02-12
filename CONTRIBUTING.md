@@ -29,7 +29,7 @@ to reference the example app:
 npm start
 ```
 
-This will host the demo at `http://localhost:8080`.
+This will host a web server with all examples at `http://localhost:8080`.
 
 ## Testing
 

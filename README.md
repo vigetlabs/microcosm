@@ -1,6 +1,10 @@
 ![Microcososm](http://f.cl.ly/items/36051G3A2M443z3v3U3b/microcososm.svg)
 ---
 
+[![Circle CI](https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg)](https://circleci.com/gh/vigetlabs/microcosm)
+
+---
+
 A variant of [Flux](https://facebook.github.io/flux/) with
 central, isolated state.
 
@@ -13,13 +17,12 @@ This design seeks to achieve a
 reasonable trade off between the simplicity of singletons and the
 privacy of class instances.
 
-For a deeper dive, check out the [docs](./docs) or continue below.
+## Table of Contents
 
----
-
-[![Circle CI](https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg)](https://circleci.com/gh/vigetlabs/microcosm)
-
----
+1. [Overview](#overview)
+2. [Opinions](#opinions)
+3. [What is it trying to solve?](#what-is-it-trying-to-solve)
+4. [Documentation](#documentation)
 
 ## Overview
 
@@ -88,29 +91,12 @@ React.render(<SolarSystem app={ app } planets={ app.state.planets } />, document
 3. Easy extension of core API and layering of features out of the
    framework's scope.
 
-## What is it probably not good for?
-
-Large applications. There's nothing stopping you from doing it, but Microcosm is tested against small to medium sized apps. If the ideas in Microcosm are attractive for your large application, check out [NuclearJS](https://github.com/optimizely/nuclear-js/).
-
-## Tutorials
+## Documentation
 
 [The Overview](docs/guides/01-overview.md) is a great place to
 start. With that background, [Design](docs/design.md) may help to
 provide an additional high level overview of how things work. Beyond
 that, check out [the example apps](examples).
-
-## Examples
-
-Examples can be found in the [`./examples`](./examples) directory. To run these examples:
-
-```bash
-npm install
-npm start
-```
-
-This will run [`webpack-dev-server`](https://github.com/webpack/webpack-dev-server) at [http://localhost:8080](http://localhost:8080). From there, examples can be viewed by navigating to their associated path, such as [http://localhost:8080/simple-svg](http://localhost:8080/simple-svg).
-
-## Documentation
 
 There is documentation [here](docs). This includes high level
 overviews of framework architecture, guides, and API documentation for
