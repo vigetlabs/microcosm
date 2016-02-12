@@ -62,12 +62,7 @@ hooks. Basically, don't use them yet, but for those curious:
 
 Microcosm dispatches are roughly 180% faster (depending on the number
 of stores, and event subscriptions). Memory pressure is also
-even lower (about 30%). Finally, changes were made to `Tree.js`, the
-underlying data structure for state management, that allow certain
-operations to operate orders of magnitude faster.
-
-Microcosm was already really fast. When working with transaction
-history (coming soon), almost all operations are near-instant.
+even lower (about 30%).
 
 ## 9.19.1
 
