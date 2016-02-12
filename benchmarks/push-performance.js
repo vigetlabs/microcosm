@@ -48,4 +48,4 @@ for (var i = 0; i < SIZE; i++) {
 var total   = (time.now() - then) / 1000
 var average = total / SIZE
 
-console.log('Pushed %s actions in %sms (average of %sms)\n', SIZE, total, average)
+console.log('Pushed %s actions in %sms (average of %sms)\n', SIZE, total, average.toFixed(4))

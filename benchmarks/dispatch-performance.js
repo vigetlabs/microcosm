@@ -9,7 +9,7 @@
 
 var Microcosm   = require('../dist/Microcosm')
 var Transaction = require('../dist/Transaction')
-var SIZE = 10000
+var SIZE = 5000
 
 var app = new Microcosm({ maxHistory: Infinity })
 
@@ -57,8 +57,13 @@ for (var q = 0; q < 10; q++) {
   app.push(action, true)
 }
 
+var seconds = 1000 * 60
+var frames = (1000 / 60)
+var duration = (SIZE * frames) / (1000 * 60)
 var label = "Time to dispatch " + SIZE + " actions"
 
 console.time(label)
 app.push(action, true)
 console.timeEnd(label)
+
+console.log("(%s minutes of recorded history)\n", duration.toFixed(2))

@@ -86,8 +86,6 @@ stats.memory = ((memoryAfter - memoryBefore) / memoryBefore) * 100
  */
 require('console.table')
 
-console.log('')
-
 console.table([{
   'Nodes': SIZE,
   '::append()': stats.build.toFixed(4) + 'ms',
