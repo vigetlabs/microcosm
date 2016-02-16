@@ -251,16 +251,4 @@ describe('Connect Add-on', function() {
 
   })
 
-  it ('exposes a ref through the via prop', function () {
-    let app = new Microcosm().start()
-
-    let Component = Connect()(React.createClass({
-      sampleProp: true,
-      render: () => <p>Test</p>
-    }))
-
-    let component = Test.renderIntoDocument(<Component app={ app } via="child" />)
-
-    assert.equal(component.refs.child.sampleProp, true)
-  })
 })
