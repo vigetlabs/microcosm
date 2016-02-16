@@ -38,4 +38,11 @@ describe('update.set', function() {
     assert.deepEqual(next.a.b, { c: true })
   })
 
+  it ('does not rewrite paths when the leaf values values are the same', function() {
+    let subject = { a: { b: { c: true } } }
+    let next = update.set(subject, [ 'a', 'b', 'c' ], true)
+
+    assert.deepEqual(subject, next)
+  })
+
 })

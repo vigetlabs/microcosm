@@ -9,6 +9,10 @@ export function get (target, keys) {
 }
 
 export function set (target, keys, value) {
+  if (get(target, keys) === value) {
+    return target
+  }
+
   if (keys.length) {
     let head  = keys[0]
     let clone = merge({}, target)
