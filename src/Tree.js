@@ -27,8 +27,8 @@ Tree.prototype = {
   },
 
   append(item) {
-    this.focus = Node(item, this.focus)
-    this.anchor  = this.anchor || this.focus
+    this.focus  = Node(item, this.focus)
+    this.anchor = this.anchor || this.focus
 
     return this.focus
   },
