@@ -4,12 +4,14 @@
  * more than one object.
  */
 
-export default function merge (a, b) {
-  if (b != null) {
-    for (var key in b) {
-      a[key] = b[key]
+import { isObject } from './type-checks'
+
+export default function merge (subject, props) {
+  if (isObject(props)) {
+    for (var key in props) {
+      subject[key] = props[key]
     }
   }
 
-  return a
+  return subject
 }
