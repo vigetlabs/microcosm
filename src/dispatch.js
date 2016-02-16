@@ -10,9 +10,9 @@ import send from './send'
 import { set } from './update'
 
 let dispatch = function (stores, state, { active, payload, type }) {
-  for (var i = 0, len = stores.length; active && i < len; i++) {
-    var [ key, store ] = stores[i]
+  if (!active) return state
 
+  for (var [ key, store ] of stores) {
     var answer = send(key, store, state, type, payload)
 
     if (answer !== undefined) {
