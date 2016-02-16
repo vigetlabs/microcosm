@@ -47,4 +47,4 @@ const History = {
 
 }
 
-module.exports = History
+export default History
