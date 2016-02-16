@@ -1,6 +1,6 @@
 # Changelog
 
-## 9.20.0 (Not released)
+## 9.20.0 (Release candidate)
 
 This update contains internal updates that were substantial enough to
 warrant a minor release. There should be no breaking changes, but
