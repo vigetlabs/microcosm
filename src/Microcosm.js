@@ -98,7 +98,7 @@ Microcosm.prototype = {
       // to support IE9, which has an odd way of referencing
       // arguments
       store   = keyPath
-      keyPath = [];
+      keyPath = []
     }
 
     this.stores.push([
