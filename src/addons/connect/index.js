@@ -71,7 +71,6 @@ export default function connect (mapStateToProps, options) {
 
         return React.createElement(WrappedComponent, {
           app,
-          ref: props.via,
           ...props,
           ...state
         })
