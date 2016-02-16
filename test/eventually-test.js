@@ -12,13 +12,6 @@ describe('eventually', function() {
     global.setTimeout = this.originalTimeout
   })
 
-
-  it ('returns undefined if not given a function', function() {
-    assert.equal(eventually(), undefined)
-    assert.equal(eventually(undefined), undefined)
-    assert.equal(eventually(3), undefined)
-  })
-
   it ('respects the scope of bound functions', function(done) {
     eventually(function() {
       assert.equal(this, 'test')

@@ -3,9 +3,8 @@
  * An account of what has happened.
  */
 
-import coroutine  from './coroutine'
-import flatten    from './flatten'
-import eventually from './eventually'
+import coroutine from './coroutine'
+import flatten   from './flatten'
 
 export default function Transaction (action, payload) {
   this.action  = action
@@ -32,8 +31,8 @@ Transaction.prototype = {
 
       onNext.call(scope, this)
 
-      if (done) {
-        eventually(onComplete, scope, error, payload)
+      if (done && onComplete) {
+        onComplete.call(scope, error, payload)
       }
 
       return payload

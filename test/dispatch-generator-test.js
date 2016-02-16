@@ -76,7 +76,7 @@ describe('When dispatching generators', function() {
       yield n
       yield new Promise((resolve, reject) => setTimeout(function() {
         reject(new Error('Rejected Promise'))
-      }, 50))
+      }))
     }
 
     app.addStore('test', {

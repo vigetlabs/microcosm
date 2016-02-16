@@ -1,10 +1,4 @@
-import { isFunction } from './type-checks'
-
 function eventually (fn, scope, error, payload) {
-  if (!isFunction(fn)) {
-    return undefined
-  }
-
   /**
    * This is a neat trick to get around the promise try/catch:
    * https://github.com/then/promise/blob/master/src/done.js

@@ -12,12 +12,12 @@ describe('When dispatching promises', function() {
   let chain  = n => Promise.resolve(n).then(n => Promise.resolve(n))
   let error  = function(n) {
     return new Promise(function (resolve, reject) {
-      setTimeout(reject, 100)
+      setTimeout(reject)
     })
   }
   let late = function(n) {
     return new Promise(function (resolve, reject) {
-      setTimeout(_ => resolve(n), 50)
+      setTimeout(_ => resolve(n))
     })
   }
 
