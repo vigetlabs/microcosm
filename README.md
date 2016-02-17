@@ -117,6 +117,7 @@ React.render(<SolarSystem app={ app } planets={ app.state.planets } />, document
 - [But the world is mutable](http://www.lispcast.com/the-world-is-mutable)
 - [Event Sourcing Pattern](http://martinfowler.com/eaaDev/EventSourcing.html)
 - [Apache Kafka](http://kafka.apache.org/)
+- [LMAX Architecture](http://martinfowler.com/articles/lmax.html)
 
 ***
 
