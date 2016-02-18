@@ -1,5 +1,4 @@
 /**
- * Tree
  * Each node represents a transaction. Branches are changes
  * over time.
  */

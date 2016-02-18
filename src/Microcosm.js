@@ -11,6 +11,10 @@ import lifecycle   from './lifecycle'
 import merge       from './merge'
 import tag         from './tag'
 
+/**
+ * Microcosm
+ * @class
+ */
 function Microcosm (options) {
   /**
    * Microcosm uses Diode for event emission. Diode is an event emitter
@@ -39,10 +43,23 @@ function Microcosm (options) {
 Microcosm.prototype = {
   constructor: Microcosm,
 
+  /**
+   * Calculates initial state. This is no longer used internally,
+   * however is useful when testing and for backwards compatibility.
+   *
+   * @return {object} The initial state of the Microcosm instance.
+   */
   getInitialState() {
     return this.lifecycle(lifecycle.willStart)
   },
 
+  /**
+   * Determines the next application state by reducing the result of
+   * the `willUpdate` lifecycle hook.
+   *
+   * @private
+   * @return {Microcosm}
+   */
   rollforward() {
     this.state = this.lifecycle(lifecycle.willUpdate)
 
@@ -51,12 +68,32 @@ Microcosm.prototype = {
     return this
   },
 
+  /**
+   * For each plugin that implements a specific lifecycle method,
+   * reduce a given state over those methods sequentially and return
+   * the result.
+   *
+   * @param hook {function} The lifecycle method to reduce
+   * @param {any} [initial={}] The initial state before reducing
+   *
+   * @private
+   */
   lifecycle(hook, initial={}) {
     return this.plugins.reduce((state, plugin) => {
       return plugin[hook] ? plugin[hook](this, state) : state
     }, initial)
   },
 
+  /**
+   * Resolves an action. Sends the result and any errors to a given
+   * error-first callback.
+   *
+   * @param {function} action - The action that will be resolved.
+   * @param {any|Array} [params] - A list or single value to call the action with.
+   * @param {function} [callback] - An error-first callback to execute when the action resolves
+   *
+   * @return {any} The result of the action
+   */
   push(action, params, callback) {
     let transaction = new Transaction(tag(action))
 
@@ -67,6 +104,11 @@ Microcosm.prototype = {
 
   /**
    * Partially applies `push`.
+   *
+   * @param {function} action - The action to eventually push
+   * @param {any|Array} [params] - A list or single value to prepopulate the params argument of push()
+   *
+   * @return {Function}
    */
   prepare(action, params=[]) {
     return (more=[], callback) => this.push(action, flatten(params, more), callback)
@@ -76,12 +118,17 @@ Microcosm.prototype = {
    * Pushes a plugin in to the registry for a given microcosm.
    * When `app.start()` is called, it will execute plugins in
    * the order in which they have been added using this function.
+   *
+   * @param {object|Function} plugin - A plugin object or register function
+   * @param {object} [options] - Passed into the register function when the app starts.
+   *
+   * @return {Microcosm} The invoking instance of Microcosm
    */
-  addPlugin(config, options={}) {
-    let plugin = merge({ app: this, options }, defaults(config))
+  addPlugin(plugin, options={}) {
+    let prepared = merge({ app: this, options }, defaults(plugin))
 
     this.plugins.push(
-      this.lifecycle(lifecycle.willAddPlugin, plugin)
+      this.lifecycle(lifecycle.willAddPlugin, prepared)
     )
 
     return this
@@ -91,6 +138,11 @@ Microcosm.prototype = {
    * Generates a store based on the provided `config` and assigns it to
    * manage the provided `key`. Whenever this store responds to an action,
    * it will be provided the current state for that particular key.
+   *
+   * @param {string} [key] - The key in which the store will write to application state
+   * @param {object} store - A Microcosm store object
+   *
+   * @return {Microcosm} The invoking instance of Microcosm
    */
   addStore(keyPath, store) {
     if (arguments.length < 2) {
@@ -112,6 +164,11 @@ Microcosm.prototype = {
   /**
    * Reset by pushing an action that will always return
    * a given state.
+   *
+   * @param {object} state - The new state to reset the application with
+   * @param {function} [callback] - A callback to execute after the application resets
+   *
+   * @return {object} The new state object
    */
   reset(state, callback) {
     return this.push(lifecycle.willReset,
@@ -121,6 +178,11 @@ Microcosm.prototype = {
 
   /**
    * Deserialize a given state and pass it into reset to determine a new state.
+   *
+   * @param {object} data - State to deserialize and reset the application with
+   * @param {function} [callback] - A callback to execute after the application resets
+   *
+   * @return {object} The new state object
    */
   replace(data, callback) {
     return this.reset(this.deserialize(data), callback)
@@ -129,6 +191,8 @@ Microcosm.prototype = {
   /**
    * Returns an object that is the result of transforming application state
    * according to the `serialize` method described by each store.
+   *
+   * @return {object} Serialized state
    */
   serialize() {
     return this.lifecycle(lifecycle.willSerialize, this.state)
@@ -138,6 +202,9 @@ Microcosm.prototype = {
    * For each key in the provided `data` parameter, transform it using
    * the `deserialize` method provided by the store managing that key.
    * Then fold the deserialized data over the current application state.
+   *
+   * @param {object} data - Data to deserialize
+   * @return {object} Deserialized state
    */
   deserialize(data) {
     return this.lifecycle(lifecycle.willDeserialize, data)
@@ -155,6 +222,9 @@ Microcosm.prototype = {
    * 1. Run through all plugins, it will terminate if any fail
    * 2. Execute the provided callback, passing along any errors
    *    generated if installing plugins fails.
+   *
+   * @param {function} [callback] - A callback to execute after the application starts
+   * @return {Microcosm} The invoking instance of Microcosm
    */
   start(callback) {
     install(this.plugins, callback)
