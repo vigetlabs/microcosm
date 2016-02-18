@@ -36,7 +36,7 @@ This will host a web server with all examples at `http://localhost:4000`.
 The fastest way to get immediate feedback is to test against node:
 
 ```bash
-npm run test-fast
+npm run test:fast
 ```
 
 This will test the core Microcosm modules, however it won't cover
