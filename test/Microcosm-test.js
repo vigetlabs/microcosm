@@ -106,6 +106,14 @@ describe('Microcosm', function() {
     })
   })
 
+  it ('throws an error if asked to push before start() has been called', function() {
+    let app = new Microcosm()
+
+    assert.throws(function() {
+      app.push(() => {})
+    }, /Cannot push: Did you forget to call app.start()?/)
+  })
+
   context('when a microcosm plugin passes an error', function() {
     let app   = new Microcosm()
     let error = 'This error should exist!'
@@ -118,5 +126,4 @@ describe('Microcosm', function() {
       assert.throws(() => app.start(), error)
     })
   })
-
 })

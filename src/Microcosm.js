@@ -11,6 +11,12 @@ import lifecycle   from './lifecycle'
 import merge       from './merge'
 import tag         from './tag'
 
+function throwIfError (error) {
+  if (error) {
+    throw error
+  }
+}
+
 /**
  * Microcosm
  * @class
@@ -42,6 +48,7 @@ function Microcosm (options) {
 
 Microcosm.prototype = {
   constructor: Microcosm,
+  started: false,
 
   /**
    * Calculates initial state. This is no longer used internally,
@@ -95,6 +102,8 @@ Microcosm.prototype = {
    * @return {any} The result of the action
    */
   push(action, params, callback) {
+    if (!this.started) throw new Error('Cannot push: Did you forget to call app.start()?')
+
     let transaction = new Transaction(tag(action))
 
     this.lifecycle(lifecycle.willOpenTransaction, transaction)
@@ -226,7 +235,8 @@ Microcosm.prototype = {
    * @param {function} [callback] - A callback to execute after the application starts
    * @return {Microcosm} The invoking instance of Microcosm
    */
-  start(callback) {
+  start(callback=throwIfError) {
+    this.started = true
     install(this.plugins, callback)
     return this
   }
