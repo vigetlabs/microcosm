@@ -29,12 +29,19 @@ to reference the example app:
 npm start
 ```
 
-This will host a web server with all examples at `http://localhost:8080`.
+This will host a web server with all examples at `http://localhost:4000`.
 
 ## Testing
 
-Microcosm uses [Karma](https://karma-runner.github.io). You can run tests
-with:
+The fastest way to get immediate feedback is to test against node:
+
+```bash
+npm run test-fast
+```
+
+This will test the core Microcosm modules, however it won't cover
+addons such as Connect and Provider. These modules require a
+browser. To perform a complete run of all tests, run:
 
 ```bash
 npm test
@@ -42,6 +49,22 @@ npm test
 
 Be sure to check the `./coverage` folder to verify all code paths are
 touched.
+
+## Deployment
+
+Microcosm must first be compiled down to ES5 using Babel. The
+following command will perform that task and deploy to NPM:
+
+```bash
+make release
+```
+
+For release candidates, consider deploying to NPM using the `beta` tag
+with:
+
+```bash
+make prerelease
+```
 
 ## Conventions
 
