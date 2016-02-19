@@ -33,8 +33,6 @@
  * @returns undefined
  */
 
-import eventually from './eventually'
-
 export default function unpromise (promise, callback) {
 
   function success (body) {
@@ -45,5 +43,10 @@ export default function unpromise (promise, callback) {
     callback(error || new Error('Rejected Promise'), null)
   }
 
-  promise.then(success, failure).catch(eventually.throws)
+  promise.then(success, failure).catch(unpromise.throws)
+}
+
+unpromise.throws = function (error) {
+  // Referencing setTimeout from global allows for higher v8 optimization.
+  global.setTimeout(() => { throw error })
 }
