@@ -126,4 +126,5 @@ describe('Microcosm', function() {
       assert.throws(() => app.start(), error)
     })
   })
+
 })

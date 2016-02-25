@@ -4,7 +4,9 @@ import History     from './plugins/history'
 import MetaStore   from './stores/meta'
 import State       from './plugins/state'
 import Transaction from './Transaction'
+import compile     from './compile'
 import defaults    from './defaults'
+import dispatch    from './dispatch'
 import flatten     from './flatten'
 import install     from './install'
 import lifecycle   from './lifecycle'
@@ -29,9 +31,10 @@ function Microcosm (options) {
    */
   Diode(this)
 
-  this.state   = {}
-  this.stores  = []
-  this.plugins = []
+  this.state    = {}
+  this.stores   = []
+  this.plugins  = []
+  this.registry = {}
 
   // Standard store reduction behaviors
   this.addStore(MetaStore)
@@ -39,11 +42,11 @@ function Microcosm (options) {
   // A place to keep all developer warnings
   this.addPlugin(Debug)
 
-  // Manage key lifecycle hooks for state
-  this.addPlugin(State)
-
   // Keep track of history as a tree
   this.addPlugin(History, options)
+
+  // Manage key lifecycle hooks for state
+  this.addPlugin(State)
 }
 
 Microcosm.prototype = {
@@ -89,6 +92,25 @@ Microcosm.prototype = {
     return this.plugins.reduce((state, plugin) => {
       return plugin[hook] ? plugin[hook](this, state) : state
     }, initial)
+  },
+
+  /**
+   * Given an old state, an action type, and a payload, reduce through
+   * the registry (or compile it) for the given action type to determine
+   * new state.
+   *
+   * @param state {object} The starting application state
+   * @param type {string} The action type to reduce
+   * @param payload {any} The data to send to stores
+   *
+   * @private
+   */
+  dispatch(state, type, payload) {
+    if (!this.registry[type]) {
+      this.registry[type] = compile(this.stores, type)
+    }
+
+    return dispatch(state, this.registry[type], payload)
   },
 
   /**
@@ -161,6 +183,9 @@ Microcosm.prototype = {
       store   = keyPath
       keyPath = []
     }
+
+    // Reset the registry to account for the new store
+    this.registry = {}
 
     this.stores.push([
       flatten(keyPath),

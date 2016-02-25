@@ -1,12 +1,14 @@
-import Transaction from '../Transaction'
-import dispatch    from '../dispatch'
-import lifecycle   from '../lifecycle'
-import merge       from '../merge'
+import lifecycle from '../lifecycle'
+import merge     from '../merge'
 
 const State = {
 
+  register(app) {
+    return app.push(lifecycle.willStart)
+  },
+
   [lifecycle.willStart](app) {
-    return dispatch(app.stores, {}, new Transaction(lifecycle.willStart, app.state))
+    return app.dispatch({}, lifecycle.willStart, app.state)
   },
 
   [lifecycle.willReset](app, data) {
@@ -18,11 +20,11 @@ const State = {
       return app.state
     }
 
-    return dispatch(app.stores, data, new Transaction(lifecycle.willDeserialize, data))
+    return app.dispatch(data, lifecycle.willDeserialize, data)
   },
 
   [lifecycle.willSerialize](app, state) {
-    return dispatch(app.stores, state, new Transaction(lifecycle.willSerialize, state))
+    return app.dispatch(state, lifecycle.willSerialize, state)
   }
 
 }

@@ -1,22 +1,24 @@
 import Microcosm from '../src/Microcosm'
 import Transaction from '../src/Transaction'
-import dispatch from '../src/dispatch'
 import assert from 'assert'
 
 describe('dispatch', function() {
 
   it ('returns state if not active', function() {
-    let transaction = new Transaction('foo')
-    let store = {
+    var app = new Microcosm()
+
+    app.addStore({
       register() {
         return { foo: true }
       }
-    }
+    })
 
-    let state = {}
-    let next  = dispatch([ [ 'test', store ] ], state, new Transaction('test'))
+    app.start()
 
-    assert.equal(next, state)
+    let old  = app.state
+    let next = app.dispatch(app.state, new Transaction('test'))
+
+    assert.equal(next, old)
   })
 
   it ('does not mutate base state on prior dispatches', function() {
