@@ -52,7 +52,7 @@ they should be considered in an "unstable" state. Their names may
 change, we may split them into more discrete lifecycle
 hooks.
 
-Basically, don't use them yet, but for those curious:
+Basically, you can't use these yet, but for those curious:
 
 - **willUpdate:** Manipulates application state right before updating.
 - **willAddStore**: Manipulates a store right before it is added.
@@ -61,14 +61,16 @@ Basically, don't use them yet, but for those curious:
 
 #### Performance
 
-Microcosm **dispatches are roughly 180% faster** (depending on the number
-of stores, and event subscriptions). Much of this is attributed to
-changes in the Tree data structure used to keep track of
-state. Specific actions, such as retrieving the root of the tree occur
-in constant time.
+Microcosm **dispatches are roughly 600% faster** (depending on the number
+of stores, and event subscriptions).
 
-These changes have also resulted in about a 30% reduction in memory
-pressure.
+Much of this is attributed to changes in the Tree data structure used
+to keep track of state. Specific actions, such as retrieving the root
+and size of the tree occur in constant time. Additionally action
+handlers are now memoized to prevent wasteful calls to Store
+`register` methods.
+
+These changes have also resulted in tremendously lower memory usage.
 
 ## 9.19.1
 

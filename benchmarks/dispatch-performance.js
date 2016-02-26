@@ -9,7 +9,7 @@
 
 var Microcosm   = require('../dist/Microcosm')
 var Transaction = require('../dist/Transaction')
-var SIZE = 5000
+var SIZE = 10000
 
 var app = new Microcosm({ maxHistory: Infinity })
 
