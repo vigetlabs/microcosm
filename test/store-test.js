@@ -58,4 +58,35 @@ describe('Stores', function() {
 
     assert(app.state.test)
   })
+
+  context('when a microcosm is pushes an action', function() {
+    let action = n => n
+
+    beforeEach(function(done) {
+      this.app = new Microcosm()
+      this.app.start()
+      this.app.push(action, null, done)
+    })
+
+    context ('and a new store is added', function() {
+
+      beforeEach(function() {
+        this.app.addStore('test', function() {
+          return {
+            [action]: () => true
+          }
+        })
+      })
+
+      context('and that action is pushed again', function () {
+        beforeEach(function(done) {
+          this.app.push(action, null, done)
+        })
+
+        it ('accounts for the new handler', function () {
+          assert.equal(this.app.state.test, true)
+        })
+      })
+    })
+  })
 })
