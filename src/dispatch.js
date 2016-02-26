@@ -6,14 +6,13 @@
  * "What will change when I account for a transaction?"
  */
 
-import send from './send'
-import { set } from './update'
+import { get, set } from './update'
 
-let dispatch = function (stores, state, { active, payload, type }) {
-  if (!active) return state
+export default function dispatch (state, handlers, payload) {
+  for (var i = 0, size = handlers.length; i < size; i++) {
+    let { key, store, handler } = handlers[i]
 
-  for (var [ key, store ] of stores) {
-    var answer = send(key, store, state, type, payload)
+    let answer = typeof handler === 'function' ? handler.call(store, get(state, key), payload, state) : handler
 
     if (answer !== undefined) {
       state = set(state, key, answer)
@@ -22,5 +21,3 @@ let dispatch = function (stores, state, { active, payload, type }) {
 
   return state
 }
-
-export default dispatch

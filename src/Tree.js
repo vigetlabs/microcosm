@@ -47,17 +47,21 @@ Tree.prototype = {
     return this
   },
 
-  reduce(fn, state) {
+  reduce(fn, state, scope) {
     let node  = this.focus
-    let items = []
+    let size  = this.size()
+    let items = Array(size)
 
-    while (node) {
-      items.push(node.value)
-      if (node === this.anchor) break
+    while (--size >= 0) {
+      items[size] = node.value
       node = node.parent
     }
 
-    return items.reduceRight(fn, state)
+    for (var i = 0, len = items.length; i < len; i++) {
+      state = fn.call(scope, state, items[i])
+    }
+
+    return state
   },
 
   root() {
@@ -65,25 +69,19 @@ Tree.prototype = {
   },
 
   size() {
-    let count = 0
-    let node  = this.anchor
-
-    while (node) {
-      node  = node.next
-      count = count + 1
-    }
-
-    return count
+    return this.anchor ? 1 + (this.focus.depth - this.anchor.depth) : 0
   }
 
 }
 
 function Node (value, parent) {
-  let node = { parent, value, children: [] }
+  let node = { depth: 0, parent, value, children: [] }
 
   if (parent) {
     parent.children.push(node)
     parent.next = node
+
+    node.depth = parent.depth + 1
   }
 
   return node
