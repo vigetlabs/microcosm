@@ -1,6 +1,6 @@
 import { formatTag } from './tag'
 
-function generate (key, store, type) {
+function getHandler (key, store, type) {
   let handler = store[type]
 
   if (handler === undefined && store.register) {
@@ -16,8 +16,8 @@ function generate (key, store, type) {
   return handler
 }
 
-export default function compile (entries, type) {
+export default function memorize (entries, type) {
   return entries.map(function ([ key, store ]) {
-    return { key, store, handler: generate(key, store, type) }
+    return { key, store, handler: getHandler (key, store, type) }
   })
 }

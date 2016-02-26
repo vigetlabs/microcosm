@@ -4,7 +4,7 @@ import History     from './plugins/history'
 import MetaStore   from './stores/meta'
 import State       from './plugins/state'
 import Transaction from './Transaction'
-import compile     from './compile'
+import memorize    from './memorize'
 import defaults    from './defaults'
 import dispatch    from './dispatch'
 import flatten     from './flatten'
@@ -96,7 +96,7 @@ Microcosm.prototype = {
 
   /**
    * Given an old state, an action type, and a payload, reduce through
-   * the registry (or compile it) for the given action type to determine
+   * the registry (or memorize it) for the given action type to determine
    * new state.
    *
    * @param state {object} The starting application state
@@ -107,7 +107,7 @@ Microcosm.prototype = {
    */
   dispatch(state, type, payload) {
     if (!this.registry[type]) {
-      this.registry[type] = compile(this.stores, type)
+      this.registry[type] = memorize(this.stores, type)
     }
 
     return dispatch(state, this.registry[type], payload)
