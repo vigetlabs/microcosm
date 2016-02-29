@@ -19,7 +19,7 @@ app.
 A Microcosm must be started via `app.start()` before pushing
 actions. With this release, it will now throw an error when this is
 not the case. **When upgrading, ensure that `app.start()` is being
-called before booting your application.
+called before booting your application.**
 
 #### Promises
 
