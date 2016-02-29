@@ -8,11 +8,13 @@ import lifecycle from '../lifecycle'
 
 const History = {
 
-  register(app, { maxHistory=-Infinity }) {
+  register(app, { maxHistory=-Infinity }, next) {
+    app.history = new Tree()
+
     this.cache = {}
     this.maxHistory = maxHistory
 
-    app.history = new Tree()
+    app.push(lifecycle.willStart, null, next)
   },
 
   shouldHistoryKeep() {
@@ -42,6 +44,7 @@ const History = {
 
   [lifecycle.willOpenTransaction](app, transaction) {
     app.history.append(transaction)
+    return transaction
   }
 
 }

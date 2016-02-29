@@ -9,6 +9,11 @@ app.
 
 ### Noticeable changes
 
+- Microcosm will now bail-out early if pushing an action before it is
+  started.
+- Eliminated possible cases where promises trapped errors
+- Drastic performance increase
+
 #### Promises
 
 Before this release, the try/catch block that Promises use to identify
@@ -29,35 +34,6 @@ do not anticipate it affecting the way you use Microcosm. Still, it is
 possible that your app does not properly handle errors from
 Promises. **When upgrading, you should confirm this for all actions
 that rely on Promises.**
-
-#### Plugins
-
-State management, history, and debug utilities are now managed via
-plugins.
-
-This makes it easier to configure Microcosm with new behavior using
-plugins. In the process of doing this, we added lifecycle hooks to
-plugins. These allow hooks allow plugins to manipulate decisions for
-key points in the Microcosm life cycle.
-
-These hooks are:
-
-- **serialize**: Manipulates the value returned from  `app.toJSON()` or `app.serialize`.
-- **deserialize**: Manipulates the data sent to `app.replace`
-- **getInitialState**: Manipulates the data returned from `app.getInitialState`
-
-Additionally, there are several new "private" lifecycle methods. The
-plan is to eventually allow these for use outside of Microcosm, but
-they should be considered in an "unstable" state. Their names may
-change, we may split them into more discrete lifecycle
-hooks.
-
-Basically, you can't use these yet, but for those curious:
-
-- **willUpdate:** Manipulates application state right before updating.
-- **willAddStore**: Manipulates a store right before it is added.
-- **willAddPlugin**: Manipulates a plugin right before it is added.
-- **willOpenTransaction**: Manipulates a transaction right before it is opened.
 
 #### Performance
 

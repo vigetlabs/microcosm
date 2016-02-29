@@ -2,22 +2,15 @@ import Debug       from './plugins/debug'
 import Diode       from 'diode'
 import History     from './plugins/history'
 import MetaStore   from './stores/meta'
-import State       from './plugins/state'
 import Transaction from './Transaction'
-import memorize    from './memorize'
 import defaults    from './defaults'
 import dispatch    from './dispatch'
 import flatten     from './flatten'
 import install     from './install'
 import lifecycle   from './lifecycle'
+import memorize    from './memorize'
 import merge       from './merge'
 import tag         from './tag'
-
-function throwIfError (error) {
-  if (error) {
-    throw error
-  }
-}
 
 /**
  * Microcosm
@@ -44,9 +37,6 @@ function Microcosm (options) {
 
   // Keep track of history as a tree
   this.addPlugin(History, options)
-
-  // Manage key lifecycle hooks for state
-  this.addPlugin(State)
 }
 
 Microcosm.prototype = {
@@ -54,13 +44,13 @@ Microcosm.prototype = {
   started: false,
 
   /**
-   * Calculates initial state. This is no longer used internally,
-   * however is useful when testing and for backwards compatibility.
+   * Dispatch the `getInitialState` action type to stores to determine
+   * new state. Stores receive the old state as the payload.
    *
    * @return {object} The initial state of the Microcosm instance.
    */
   getInitialState() {
-    return this.lifecycle(lifecycle.willStart)
+    return this.dispatch({}, lifecycle.willStart, this.state)
   },
 
   /**
@@ -124,8 +114,6 @@ Microcosm.prototype = {
    * @return {any} The result of the action
    */
   push(action, params, callback) {
-    if (!this.started) throw new Error('Cannot push: Did you forget to call app.start()?')
-
     let transaction = new Transaction(tag(action))
 
     this.lifecycle(lifecycle.willOpenTransaction, transaction)
@@ -205,9 +193,7 @@ Microcosm.prototype = {
    * @return {object} The new state object
    */
   reset(state, callback) {
-    return this.push(lifecycle.willReset,
-                     this.lifecycle(lifecycle.willReset, state),
-                     callback)
+    return this.push(lifecycle.willReset, merge(this.getInitialState(), state), callback)
   },
 
   /**
@@ -229,7 +215,7 @@ Microcosm.prototype = {
    * @return {object} Serialized state
    */
   serialize() {
-    return this.lifecycle(lifecycle.willSerialize, this.state)
+    return this.dispatch(this.state, lifecycle.willSerialize, this.state)
   },
 
   /**
@@ -241,7 +227,7 @@ Microcosm.prototype = {
    * @return {object} Deserialized state
    */
   deserialize(data) {
-    return this.lifecycle(lifecycle.willDeserialize, data)
+    return data == undefined ? this.state : this.dispatch(data, lifecycle.willDeserialize, data)
   },
 
   /**
@@ -260,7 +246,7 @@ Microcosm.prototype = {
    * @param {function} [callback] - A callback to execute after the application starts
    * @return {Microcosm} The invoking instance of Microcosm
    */
-  start(callback=throwIfError) {
+  start(callback) {
     this.started = true
     install(this.plugins, callback)
     return this

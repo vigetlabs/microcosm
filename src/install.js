@@ -7,6 +7,12 @@
  * of a Microcosm.
  */
 
+function throwIfError (error) {
+  if (error) {
+    throw error
+  }
+}
+
 function ensureCallback (plugin) {
   // Plugins that follow register(app, options, next) are asynchronous
   if (plugin.register.length >= 3) {
@@ -33,6 +39,6 @@ function installPlugin (next, plugin) {
   }
 }
 
-export default function (plugins, callback) {
+export default function (plugins, callback=throwIfError) {
   return plugins.reduceRight(installPlugin, callback)()
 }

@@ -12,6 +12,10 @@ if (process.env.NODE_ENV !== 'production') {
   },
 
   Debug[lifecycle.willOpenTransaction] = function (app, transaction) {
+    if (!app.started) {
+      throw new Error('Cannot push: Did you forget to call app.start()?')
+    }
+
     if (transaction.action == null) {
       throw new TypeError([
         `Unable to perform: app.push(${ transaction.action })\n`,

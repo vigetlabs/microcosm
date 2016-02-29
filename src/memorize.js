@@ -17,7 +17,10 @@ function getHandler (key, store, type) {
 }
 
 export default function memorize (entries, type) {
-  return entries.map(function ([ key, store ]) {
-    return { key, store, handler: getHandler (key, store, type) }
+  return entries.map(function (entry) {
+    let key   = entry[0]
+    let store = entry[1]
+
+    return { key, store, handler: getHandler(key, store, type) }
   })
 }

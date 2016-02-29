@@ -14,10 +14,8 @@ export default function Transaction (action, payload) {
 }
 
 Transaction.prototype = {
-  action   : null,
   active   : false,
   error    : false,
-  payload  : undefined,
   complete : false,
 
   execute(params, onNext, onComplete, scope) {
