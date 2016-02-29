@@ -1,6 +1,6 @@
 # Changelog
 
-## 9.20.0 (Release candidate)
+## 9.20.0
 
 This update contains internal updates that were substantial enough to
 warrant a minor release. There should be no breaking changes, but
@@ -13,6 +13,13 @@ app.
   started.
 - Eliminated possible cases where promises trapped errors
 - Drastic performance increase
+
+#### Bailing out early
+
+A Microcosm must be started via `app.start()` before pushing
+actions. With this release, it will now throw an error when this is
+not the case. **When upgrading, ensure that `app.start()` is being
+called before booting your application.
 
 #### Promises
 
