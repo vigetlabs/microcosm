@@ -31,20 +31,6 @@ describe('Stores', function() {
     assert.throws(() => app.addStore(null), error)
   })
 
-  it ('can mount a store at a nested key path', function() {
-    let app = new Microcosm()
-
-    app.addStore([ 'foo', 'bar' ], {
-      getInitialState() {
-        return true
-      }
-    })
-
-    app.start()
-
-    assert(app.state.foo.bar)
-  })
-
   it ('can mount a store at an empty key path', function() {
     let app = new Microcosm()
 

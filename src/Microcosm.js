@@ -169,14 +169,14 @@ Microcosm.prototype = {
       // to support IE9, which has an odd way of referencing
       // arguments
       store   = keyPath
-      keyPath = []
+      keyPath = null
     }
 
     // Reset the registry to account for the new store
     this.registry = {}
 
     this.stores.push([
-      flatten(keyPath),
+      keyPath,
       this.lifecycle(lifecycle.willAddStore, defaults(store))
     ])
 

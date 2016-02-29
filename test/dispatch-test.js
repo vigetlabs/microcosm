@@ -4,19 +4,13 @@ import assert from 'assert'
 
 describe('dispatch', function() {
 
-  it ('returns state if not active', function() {
+  it ('returns state if there are no handlers', function() {
     var app = new Microcosm()
-
-    app.addStore({
-      register() {
-        return { foo: true }
-      }
-    })
 
     app.start()
 
     let old  = app.state
-    let next = app.dispatch(app.state, new Transaction('test'))
+    let next = app.dispatch(old, 'test')
 
     assert.equal(next, old)
   })

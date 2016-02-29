@@ -37,7 +37,7 @@ that rely on Promises.**
 
 #### Performance
 
-Microcosm **dispatches are roughly 600% faster** (depending on the number
+Microcosm **dispatches are roughly 1200% faster** (depending on the number
 of stores, and event subscriptions).
 
 Much of this is attributed to changes in the Tree data structure used

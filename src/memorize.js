@@ -17,10 +17,12 @@ function getHandler (key, store, type) {
 }
 
 export default function memorize (entries, type) {
-  return entries.map(function (entry) {
-    let key   = entry[0]
-    let store = entry[1]
 
-    return { key, store, handler: getHandler(key, store, type) }
-  })
+  return entries.reduce(function (handlers, entry) {
+    let key     = entry[0]
+    let store   = entry[1]
+    let handler = getHandler(key, store, type)
+
+    return handler === undefined ? handlers : handlers.concat({ key, store, handler })
+  }, [])
 }
