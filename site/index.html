@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Microcosm. A Flux by Viget</title>
 
-    <link rel="icon" href="/assets/homepage/images/microcosm-badge.png" />
+    <link rel="icon" href="images/microcosm-badge.png" />
 
     <style>
       *,
@@ -174,7 +174,7 @@
   <body>
     <header class="site__header">
       <h1 class="site__header__brand">
-        <a href=""><img src="/assets/homepage/images/microcosm.svg" alt="Microcosm" /></a>
+        <a href=""><img src="/images/microcosm.svg" alt="Microcosm" /></a>
       </h1>
       <nav class="site__header__nav">
         <a href="http://github.com/vigetlabs/microcosm">Github</a>
@@ -208,15 +208,32 @@
 
     <section class="container">
       <h2 class="type-subheading">Examples</h2>
+
       <ul class="examples-list">
-        {{#examples}}
         <li>
-          <a href="{{ path }}">
-            <p><b>{{ name }}</b></p>
-            <p>{{ description }}</p>
+          <a href="chatbot">
+            <p><b>ChatBot</b></p>
+            <p>A chatbot app that demonstrates optimistic updates.</p>
           </a>
         </li>
-        {{/examples}}
+        <li>
+          <a href="painter">
+            <p><b>Painter</b></p>
+            <p>A simple drawing app.</p>
+          </a>
+        </li>
+        <li>
+          <a href="react-router">
+            <p><b>ReactRouter</b></p>
+            <p>Using Microcosm with ReactRouter.</p>
+          </a>
+        </li>
+        <li>
+          <a href="simple-svg">
+            <p><b>SimpleSVG</b></p>
+            <p>A simple animation of the Viget logo.</p>
+          </a>
+        </li>
       </ul>
     </section>
   </body>
