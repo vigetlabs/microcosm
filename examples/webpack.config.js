@@ -71,7 +71,7 @@ module.exports = {
 // each entry point on development
 if (!isDev) {
   // Otherwise enable production settings
-  config.plugins.push(
+  module.exports.plugins.push(
     new webpack.optimize.UglifyJsPlugin(),
     new webpack.optimize.OccurenceOrderPlugin()
   )
