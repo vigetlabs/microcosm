@@ -46,6 +46,9 @@ prerelease: clean build
 example:
 	@ webpack-dev-server --config examples/webpack.config.js
 
+example-static:
+	@ webpack --config examples/webpack.config.js
+
 clean:
 	@ rm -rf $(OUT)
 
