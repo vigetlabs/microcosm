@@ -1,10 +1,11 @@
 <p align="center">
-  <img alt="Microcosm" src="https://cloud.githubusercontent.com/assets/590904/13533909/95e97a1e-e200-11e5-9032-6f0ca4dbcd6c.png" width="200" />
+  <img alt="Microcosm" src="https://cloud.githubusercontent.com/assets/590904/13533909/95e97a1e-e200-11e5-9032-6f0ca4dbcd6c.png" width="75" />
   <br>
   <strong>Microcosm</strong>
   <br>
   Flux with central, isolated state.
   <br>
+  <br/>
   <a href="https://circleci.com/gh/vigetlabs/microcosm"><img alt="CircleCI" src="https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg" />
 </p>
 
