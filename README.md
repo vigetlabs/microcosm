@@ -1,9 +1,10 @@
 <p align="center">
-  <img alt="Microcosm" src="http://f.cl.ly/items/36051G3A2M443z3v3U3b/microcososm.svg" width="400" />
-</p>
-<p align="center">
-  <strong>A variant of Flux with central, isolated state.</strong>
-  <br><br>
+  <img alt="Microcosm" src="https://cloud.githubusercontent.com/assets/590904/13533909/95e97a1e-e200-11e5-9032-6f0ca4dbcd6c.png" width="200" />
+  <br>
+  <strong>Microcosm</strong>
+  <br>
+  Flux with central, isolated state.
+  <br>
   <a href="https://circleci.com/gh/vigetlabs/microcosm"><img alt="CircleCI" src="https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg" />
 </p>
 
