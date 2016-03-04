@@ -67,6 +67,6 @@ test-watch:
 	NODE_ENV=test karma start
 
 bench: javascript
-	@ node --expose-gc --trace-deopt benchmarks/tree-performance
-	@ node --trace-deopt benchmarks/dispatch-performance
-	@ node --trace-deopt benchmarks/push-performance
+	@ node --expose-gc benchmarks/tree-performance
+	@ node benchmarks/dispatch-performance
+	@ node benchmarks/push-performance

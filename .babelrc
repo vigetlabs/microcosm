@@ -1,0 +1,12 @@
+{
+  "stage": 1,
+  "loose": "all",
+  "sourceMaps": "inline",
+  "env": {
+    "production": {
+      "optional": [
+        "utility.inlineEnvironmentVariables"
+      ]
+    }
+  }
+}

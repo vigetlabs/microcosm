@@ -4,7 +4,6 @@
   "private": true,
   "description": "A variant of Facebook's Flux with centralized, isolated state",
   "main": "src/Microcosm.js",
-  "jsnext:main": "src/Microcosm.js",
   "scripts": {
     "prepublish": "make build",
     "start": "make example",
@@ -23,20 +22,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "diode": "6.2.3",
-    "hoist-non-react-statics": "1.0.3"
-  },
-  "babel": {
-    "stage": 1,
-    "loose": "all",
-    "sourceMaps": "inline",
-    "env": {
-      "production": {
-        "optional": [
-          "utility.inlineEnvironmentVariables"
-        ]
-      }
-    }
+    "diode": "~6.3.0",
+    "hoist-non-react-statics": "~1.0.3"
   },
   "devDependencies": {
     "babel": "5.8.23",
@@ -56,6 +43,7 @@
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "1.7.0",
     "microcosm-debugger": "0.0.0",
+    "microtime": "2.0.0",
     "mocha": "~2.3.3",
     "mustache": "2.2.1",
     "mustache-loader": "0.3.1",

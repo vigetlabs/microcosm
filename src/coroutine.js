@@ -13,11 +13,7 @@ import unpromise from './unpromise'
  * @param {any} value - The target value
  * @param {Function} callback - An error-first callback
  */
-let nodeify = function (value, callback) {
-  if (!isPromise(value)) {
-    return callback(null, value, true)
-  }
-
+function nodeify (value, callback) {
   unpromise(value, function (error, body) {
     callback(error, body, true)
   })
@@ -32,7 +28,7 @@ let nodeify = function (value, callback) {
  * @param {Function} callback - An error-first callback
  */
 
-let waterfall = function (iterator, callback) {
+function waterfall (iterator, callback) {
   let start = iterator.next()
 
   return coroutine(start.value, function step (error, body, complete) {
@@ -58,8 +54,14 @@ let waterfall = function (iterator, callback) {
  * @param {any} value - The compared value
  * @param {Function} callback - An error-first callback
  */
-let coroutine = function (value, callback) {
-  return (isGenerator(value) ? waterfall : nodeify)(value, callback)
-}
+export default function coroutine (value, callback) {
+  if (isPromise(value)) {
+    return nodeify(value, callback)
+  }
 
-export default coroutine
+  if (isGenerator(value)) {
+    return waterfall(value, callback)
+  }
+
+  return callback(null, value, true)
+}

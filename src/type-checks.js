@@ -11,5 +11,5 @@ export function isObject (obj) {
 }
 
 export function isPromise (obj) {
-  return !!obj && (isObject(obj) || isFunction(obj)) && isFunction(obj.then)
+  return (isObject(obj) || isFunction(obj)) && isFunction(obj.then)
 }

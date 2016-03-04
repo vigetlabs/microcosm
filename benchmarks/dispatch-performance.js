@@ -9,7 +9,10 @@
 
 var Microcosm   = require('../dist/Microcosm')
 var Transaction = require('../dist/Transaction')
-var SIZE = 10000
+var time        = require('microtime')
+
+var SIZE        = 10000
+var SAMPLES     = 500
 
 var app = new Microcosm({ maxHistory: Infinity })
 
@@ -53,17 +56,16 @@ for (var i = 0; i < SIZE; i++) {
  * are thrown.
  */
 
-for (var q = 0; q < 10; q++) {
-  app.push(action, true)
+var average = 0
+for (var q = 0; q < SAMPLES; q++) {
+  var then = time.now()
+  app.rollforward()
+  average += (time.now() - then) / 1000
 }
 
-var seconds = 1000 * 60
-var frames = (1000 / 60)
-var duration = (SIZE * frames) / (1000 * 60)
-var label = "Time to dispatch " + SIZE + " actions"
+average /= SAMPLES
 
-console.time(label)
-app.push(action, true)
-console.timeEnd(label)
+var duration = (SIZE * (1000 / 60)) / (1000 * 60)
 
+console.log('Average time dispatch %s: %sms (%s samples)', SIZE, average.toFixed(2), SAMPLES)
 console.log("(%s minutes of recorded history)\n", duration.toFixed(2))
