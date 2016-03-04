@@ -5,7 +5,6 @@
   
 Flux with central, isolated state
 
----
 
 <a href="https://circleci.com/gh/vigetlabs/microcosm"><img alt="CircleCI" src="https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg" />
 
