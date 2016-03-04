@@ -1,7 +1,7 @@
  
 
 
-<h1> <img alt="Microcosm" src="https://cloud.githubusercontent.com/assets/590904/13533909/95e97a1e-e200-11e5-9032-6f0ca4dbcd6c.png" width="24" /> Microcosm</h1>
+<h1><img alt="" src="https://cloud.githubusercontent.com/assets/590904/13533909/95e97a1e-e200-11e5-9032-6f0ca4dbcd6c.png" width="24" /> Microcosm</h1>
   
 Flux with central, isolated state
 
