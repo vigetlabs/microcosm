@@ -1,14 +1,13 @@
-![Microcososm](http://f.cl.ly/items/36051G3A2M443z3v3U3b/microcososm.svg)
+<p align="center">
+  <img alt="Microcosm" src="http://f.cl.ly/items/36051G3A2M443z3v3U3b/microcososm.svg" width="400" />
+</p>
+<p align="center">
+  <strong>A variant of Flux with central, isolated state.</strong>
+  <br><br>
+  <a href="https://circleci.com/gh/vigetlabs/microcosm"><img alt="CircleCI" src="https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg" />
+</p>
+
 ---
-
-A variant of [Flux](https://facebook.github.io/flux/) with
-central, isolated state.
-
-[![Circle CI](https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg)](https://circleci.com/gh/vigetlabs/microcosm)
-
----
-
-## Table of Contents
 
 1. [Documentation](docs)
 2. [Overview](#overview)
