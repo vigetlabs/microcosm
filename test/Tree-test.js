@@ -202,4 +202,44 @@ describe('Tree', function() {
 
     assert.equal(tree.root(), a)
   })
+
+  it ('can determine children', function() {
+    let tree = new Tree()
+    let a = tree.append('a')
+    let b = tree.append('b')
+
+    tree.checkout(a)
+
+    let c = tree.append('c')
+
+    assert.deepEqual(a.children.map(child => child.value), ['c', 'b'])
+  })
+
+  it ('does not lose children when checking out nodes on the left', function() {
+    let tree = new Tree()
+    let a = tree.append('a')
+    let b = tree.append('b')
+    let c = tree.append('c')
+
+    tree.checkout(b)
+
+    let d = tree.append('d')
+
+    assert.deepEqual(b.children.map(child => child.value), ['d', 'c'])
+  })
+
+  it ('does not lose children when checking out nodes on the right', function() {
+    let tree = new Tree()
+    let a = tree.append('a')
+    let b = tree.append('b')
+    let c = tree.append('c')
+
+    tree.checkout(b)
+
+    let d = tree.append('d')
+
+    tree.checkout(c)
+
+    assert.deepEqual(b.children.map(child => child.value), ['d', 'c'])
+  })
 })

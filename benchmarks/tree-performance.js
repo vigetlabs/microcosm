@@ -4,7 +4,7 @@
 
 var Tree  = require(__dirname + '/../dist/Tree')
 var time  = require('microtime')
-var SIZE  = 10000
+var SIZE  = 50000
 var stats = { build: 0, root: 0, merge: 0, size: 0, prune: 0, memory: 0 }
 var tree  = new Tree()
 

@@ -11,8 +11,8 @@ var Microcosm   = require('../dist/Microcosm')
 var Transaction = require('../dist/Transaction')
 var time        = require('microtime')
 
-var SIZE        = 10000
-var SAMPLES     = 500
+var SIZE        = 50000
+var SAMPLES     = 50
 
 var app = new Microcosm({ maxHistory: Infinity })
 
@@ -45,9 +45,11 @@ app.start()
  * `push` takes anywhere from 0.5ms to 15ms depending on the sample range.
  * This adds up to a very slow boot time!
  */
+var startMemory = process.memoryUsage().heapUsed
 for (var i = 0; i < SIZE; i++) {
   app.history.append(new Transaction(action, true))
 }
+var endMemory = process.memoryUsage().heapUsed
 
 /**
  * Warm up `::push()`
@@ -67,5 +69,7 @@ average /= SAMPLES
 
 var duration = (SIZE * (1000 / 60)) / (1000 * 60)
 
-console.log('Average time dispatch %s: %sms (%s samples)', SIZE, average.toFixed(2), SAMPLES)
-console.log("(%s minutes of recorded history)\n", duration.toFixed(2))
+console.log('%sms to dispatch %s actions (%s samples)', average.toFixed(2), SIZE, SAMPLES)
+console.log('- %smbs of memory', ((endMemory - startMemory) / 100000).toFixed(2))
+console.log("- %s minutes of history", duration.toFixed(2))
+console.log("") // New line

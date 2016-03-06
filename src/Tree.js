@@ -26,7 +26,7 @@ Tree.prototype = {
   },
 
   append(item) {
-    this.focus  = Node(item, this.focus)
+    this.focus  = new Node(item, this.focus)
     this.anchor = this.anchor || this.focus
 
     return this.focus
@@ -75,16 +75,30 @@ Tree.prototype = {
 }
 
 function Node (value, parent) {
-  let node = { depth: 0, parent, value, children: [] }
+  this.parent = parent
+  this.value  = value
 
   if (parent) {
-    parent.children.push(node)
-    parent.next = node
+    this.depth   = parent.depth + 1
+    this.sibling = parent.next
 
-    node.depth = parent.depth + 1
+    parent.next = this
   }
+}
 
-  return node
+Node.prototype = {
+  depth: 0,
+
+  get children() {
+    var start = this.next
+    var nodes = []
+
+    while (start) {
+      nodes.push(start)
+      start = start.sibling
+    }
+    return nodes
+  }
 }
 
 export default Tree
