@@ -1,12 +1,9 @@
- 
-
-
 <h1><img alt="" src="https://cloud.githubusercontent.com/assets/590904/13533909/95e97a1e-e200-11e5-9032-6f0ca4dbcd6c.png" width="24" /> Microcosm</h1>
-  
+
 Flux with central, isolated state
 
 
-<a href="https://circleci.com/gh/vigetlabs/microcosm"><img alt="CircleCI" src="https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg" />
+<a href="https://circleci.com/gh/vigetlabs/microcosm"><img alt="CircleCI" src="https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg" /></a>
 
 ## Table of Contents
 
@@ -33,10 +30,12 @@ Microcosm, taking the value they return and using it as the parameters
 for processing within Stores.
 
 ```javascript
+// An action is a pure function that accepts parameters and returns a payload.
 let addPlanet = function (params) {
   return params
 }
 
+// Creates a transaction of type "addPlanet" that dispatches to stores
 app.push(addPlanet, params)
 ```
 
@@ -54,11 +53,14 @@ what actions a store should respond to:
 
 ```javascript
 let Planets = {
+  // Tells a Microcosm how a store should respond to actions
   register() {
     return {
       [addPlanet] : this.add
     }
   },
+  // Store handlers are pure functions that take an old state and
+  // transform it into a new state
   add(planets, props) {
     return planets.concat(props)
   }
