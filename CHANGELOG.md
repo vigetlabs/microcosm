@@ -1,5 +1,12 @@
 # Changelog
 
+## Edge (master)
+
+- The history tree now uses its nodes as linked lists to calculate
+  children instead of allocation an array. This results in about a 60%
+  reduction in memory usage.
+- Added `children` getter to Tree Node class.
+
 ## 9.20.0
 
 This update contains internal updates that were substantial enough to
