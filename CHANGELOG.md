@@ -1,6 +1,6 @@
 # Changelog
 
-## 9.21.0 (alpha)
+## 9.21.0
 
 - The history tree now uses its nodes as linked lists to calculate
   children instead of allocation an array.
