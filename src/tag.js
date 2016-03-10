@@ -11,7 +11,7 @@ export function formatTag (value) {
 
 export default function tag (fn, name) {
   if (process.env.NODE_ENV !== 'production' && (typeof fn !== 'function')) {
-    throw TypeError('Attempted to tag an action, but the provided value is not a function. Instead got ' + typeof fn)
+    throw TypeError(`app.push only accepts actions that are functions. Instead, it got a ${ typeof fn }.`)
   }
 
   /**

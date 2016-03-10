@@ -18,7 +18,7 @@ describe('tag', function() {
   it ('throws an error if the provided value is not a function', function() {
     assert.throws(function() {
       tag(null)
-    }, /is not a function/)
+    }, /only accepts actions that are functions/)
   })
 
 })

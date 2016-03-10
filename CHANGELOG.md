@@ -1,11 +1,13 @@
 # Changelog
 
-## Edge (master)
+## 9.21.0 (alpha)
 
 - The history tree now uses its nodes as linked lists to calculate
-  children instead of allocation an array. This results in about a 60%
-  reduction in memory usage.
+  children instead of allocation an array.
+    - This results in about a 60% reduction in memory usage.
 - Added `children` getter to Tree Node class.
+- Updated some development-only validation errors and worked around a
+  silly React Native bug with using `import` statements in comments.
 
 ## 9.20.0
 

@@ -19,9 +19,9 @@ if (process.env.NODE_ENV !== 'production') {
     if (transaction.action == null) {
       throw new TypeError([
         `Unable to perform: app.push(${ transaction.action })\n`,
-        'This typically happens when an action is accessed from the wrong key of an object, such as:\n',
-        '• Actions.mispelledAction',
-        '• import { mispelledAction } from "actions"'
+        'Because this action is ${ transaction.action }, our hunch is:\n',
+        '• A mispelled key was pulled out of an object, like Actions.mispelledAction.',
+        '• A mispelled namespace was imported from an action module.'
       ].join('\n'))
     }
 

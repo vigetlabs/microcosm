@@ -6,7 +6,7 @@ OUT   := dist
 
 VPATH := $(OUT)
 
-.PHONY: clean deliverables test test-fast test-browser test-watch example bench javascript
+.PHONY: clean deliverables test test-fast test-browser test-watch example bench javascript package.json
 
 build: package.json $(wildcard *.md) docs deliverables javascript
 
@@ -68,5 +68,5 @@ test-watch:
 
 bench: javascript
 	@ node --expose-gc benchmarks/tree-performance
-	@ node benchmarks/dispatch-performance
+	@ node --expose-gc benchmarks/dispatch-performance
 	@ node benchmarks/push-performance

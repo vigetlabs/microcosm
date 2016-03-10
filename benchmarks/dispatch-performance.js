@@ -10,66 +10,82 @@
 var Microcosm   = require('../dist/Microcosm')
 var Transaction = require('../dist/Transaction')
 var time        = require('microtime')
+var SIZES       = [ 1000, 10000, 50000, 100000, 200000]
+var SAMPLES     = 25
 
-var SIZE        = 50000
-var SAMPLES     = 50
+console.log('\nConducting dispatch benchmark...\n')
 
-var app = new Microcosm({ maxHistory: Infinity })
+var results = SIZES.map(function (SIZE) {
+  /**
+   * Force garbage collection. This is exposed by invoking
+   * node with --expose-gc. This allows us to record heap usage
+   * before and after the test to check for memory leakage
+   */
+  global.gc()
 
-var action = function test () {}
-action.toString = function () { return 'test' }
+  var app = new Microcosm({ maxHistory: Infinity })
 
-var Store = function() {
-  return {
-    getInitialState: 0,
-    test: function(n) { return n + 1}
+  var action = function test () {}
+  action.toString = function () { return 'test' }
+
+  var Store = function() {
+    return {
+      getInitialState: 0,
+      test: function(n) { return n + 1}
+    }
   }
-}
+
+  /**
+   * Add the store at multiple keys. This is a better simulation of actual
+   * applications. Otherwise, efficiencies are obtained enumerating over
+   * very few keys. This is never the case in real-world applications.
+   */
+  app.addStore('one',   Store)
+  app.addStore('two',   Store)
+  app.addStore('three', Store)
+  app.addStore('four',  Store)
+  app.addStore('five',  Store)
+
+  app.start()
+
+  /**
+   * Append a given number of transactions into history. We use this method
+   * instead of `::push()` for benchmark setup performance. At the time of writing,
+   * `push` takes anywhere from 0.5ms to 15ms depending on the sample range.
+   * This adds up to a very slow boot time!
+   */
+  var startMemory = process.memoryUsage().heapUsed
+  for (var i = 0; i < SIZE; i++) {
+    app.history.append(new Transaction(action, true))
+  }
+  var endMemory = process.memoryUsage().heapUsed
+
+  /**
+   * Warm up `::push()`
+   * This gives V8 time to analyze the types for the code.
+   * Otherwise confusing "insufficient type data" deoptimizations
+   * are thrown.
+   */
+
+  var average = 0
+  for (var q = 0; q < SAMPLES; q++) {
+    var then = time.now()
+    app.rollforward()
+    average += (time.now() - then) / 1000
+  }
+
+  average /= SAMPLES
+
+  return {
+    'Actions'      : SIZE.toLocaleString(),
+    'Rollforward'  : average.toLocaleString() + 'ms',
+    'Memory Usage' : ((endMemory - startMemory) / 1000000).toFixed(2) + 'mbs'
+  }
+})
 
 /**
- * Add the store at multiple keys. This is a better simulation of actual
- * applications. Otherwise, efficiencies are obtained enumerating over
- * very few keys. This is never the case in real-world applications.
- */
-app.addStore('one',   Store)
-app.addStore('two',   Store)
-app.addStore('three', Store)
-app.addStore('four',  Store)
-app.addStore('five',  Store)
-
-app.start()
-
-/**
- * Append a given number of transactions into history. We use this method
- * instead of `::push()` for benchmark setup performance. At the time of writing,
- * `push` takes anywhere from 0.5ms to 15ms depending on the sample range.
- * This adds up to a very slow boot time!
- */
-var startMemory = process.memoryUsage().heapUsed
-for (var i = 0; i < SIZE; i++) {
-  app.history.append(new Transaction(action, true))
-}
-var endMemory = process.memoryUsage().heapUsed
-
-/**
- * Warm up `::push()`
- * This gives V8 time to analyze the types for the code.
- * Otherwise confusing "insufficient type data" deoptimizations
- * are thrown.
+ * Finally, report our findings.
  */
 
-var average = 0
-for (var q = 0; q < SAMPLES; q++) {
-  var then = time.now()
-  app.rollforward()
-  average += (time.now() - then) / 1000
-}
-
-average /= SAMPLES
-
-var duration = (SIZE * (1000 / 60)) / (1000 * 60)
-
-console.log('%sms to dispatch %s actions (%s samples)', average.toFixed(2), SIZE, SAMPLES)
-console.log('- %smbs of memory', ((endMemory - startMemory) / 100000).toFixed(2))
-console.log("- %s minutes of history", duration.toFixed(2))
-console.log("") // New line
+require('console.table')
+console.table(results)
