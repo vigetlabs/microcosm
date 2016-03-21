@@ -5,13 +5,15 @@ import hoistStatics   from 'hoist-non-react-statics'
 import shallowEqual   from './shallow-equal'
 
 const defaults = {
-  pure : true
+  pure    : true,
+  valueOf : false
 }
 
 export default function connect (mapStateToProps, options) {
   options = { ...defaults, ...options }
 
   const isPure = !!options.pure
+  const useValueOf = !!options.valueOf
 
   return function wrapWithConnect(WrappedComponent) {
 
@@ -56,7 +58,13 @@ export default function connect (mapStateToProps, options) {
         let nextState = {}
 
         for (let key in propMap) {
-          nextState[key] = propMap[key](this.app.state)
+          let answer = propMap[key](this.app.state)
+
+          if (useValueOf) {
+            answer = answer ? answer.valueOf() : answer
+          }
+
+          nextState[key] = answer
         }
 
         if (isPure && shallowEqual(this.state, nextState)) {

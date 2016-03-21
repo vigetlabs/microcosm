@@ -251,4 +251,47 @@ describe('Connect Add-on', function() {
 
   })
 
+  describe('valueOf option', function () {
+
+    beforeEach(function (done) {
+      this.app = new Microcosm()
+      this.app.start(done)
+    })
+
+    it ('calls valueOf on getters when configured', function () {
+      this.app.replace({ name: 'Kurtz' })
+
+      let Namer = Connect(props => ({
+        name: state => ({ valueOf: () => state.name.toLowerCase() })
+      }), { valueOf: true })(({ name }) => (<p>{ name }</p>))
+
+      let namer = Test.renderIntoDocument(<Namer app={ this.app } />)
+
+      assert.equal(namer.state.name, 'kurtz')
+    })
+
+    it ('handles valueOf null', function () {
+      this.app
+
+      let Namer = Connect(props => ({
+        name: state => null
+      }), { valueOf: true })(({ name }) => (<p>{ name }</p>))
+
+      let namer = Test.renderIntoDocument(<Namer app={ this.app } />)
+
+      assert.equal(namer.state.name, null)
+    })
+
+    it ('handles valueOf undefined', function () {
+      this.app
+
+      let Namer = Connect(props => ({
+        name: state => undefined
+      }), { valueOf: true })(({ name }) => (<p>{ name }</p>))
+
+      let namer = Test.renderIntoDocument(<Namer app={ this.app } />)
+
+      assert.equal(namer.state.name, undefined)
+    })
+  })
 })
