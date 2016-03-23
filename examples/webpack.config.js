@@ -64,7 +64,8 @@ module.exports = {
   devServer: {
     contentBase : path.resolve(root, '..', 'site'),
     publicPath  : '/',
-    port        : process.env.PORT || 4000
+    port        : process.env.PORT || 4000,
+    noInfo      : true
   }
 }
 

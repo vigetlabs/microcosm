@@ -7,13 +7,13 @@ import DOM from 'react-dom'
 import Provider from '../../../../src/addons/provider'
 import React from 'react'
 import Routes from '../routes'
-import {Router} from 'react-router'
-import {useBasename, createHistory} from 'history'
+import { Router } from 'react-router'
+import { browserHistory } from 'react-router'
 
 export default function Render (app, el) {
   let Root = (
     <Provider app={ app }>
-      <Router history={ useBasename(createHistory)() }>
+      <Router history={ browserHistory }>
         { Routes }
       </Router>
     </Provider>
