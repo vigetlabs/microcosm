@@ -1,6 +1,21 @@
 # Stores API
 
-Stores do not enforce any particular structure. However specific methods can be defined on stores to configure specific behavior within Microcosm.
+Stores define the rules in which resolved actions are converted into
+new state. They are added to a Microcosm instance using `addStore`:
+
+```
+// Mount a store that operates on a specific key in application state.
+// Any operations the store handles are recorded at `app.state.key`:
+app.addStore('key', Store)
+
+// Mount a store that operates on all application state, handlers will
+// write directly to `app.state` itself:
+app.addStore(Store)
+```
+
+Stores do not enforce any particular structure. However specific
+methods can be defined on stores to configure behavior at key points
+in a Microcosm's lifecycle.
 
 ### `getInitialState()`
 
