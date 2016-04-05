@@ -6,9 +6,11 @@
 import coroutine from './coroutine'
 import flatten   from './flatten'
 
+const identity = n => n
+
 export default function Transaction (action, payload) {
-  this.action  = action
   this.type    = `${ action }`
+  this.action  = typeof action === 'function' ? action : identity
   this.active  = arguments.length > 1
   this.payload = payload
 }

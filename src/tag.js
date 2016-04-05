@@ -5,19 +5,17 @@
 
 let uid = 0
 
+const FALLBACK = 'microcosm_action'
+
 export function formatTag (value) {
   return `${ value }`.replace(/_\d+$/, '')
 }
 
 export default function tag (fn, name) {
-  if (process.env.NODE_ENV !== 'production' && (typeof fn !== 'function')) {
-    throw TypeError(`app.push only accepts actions that are functions. Instead, it got a ${ typeof fn }.`)
-  }
-
   /**
-   * Respect existing toString methods.
+   * Respect strings and existing toString methods.
    */
-  if (fn.hasOwnProperty('toString')) {
+  if (typeof fn === 'string' || fn.hasOwnProperty('toString')) {
     return fn
   }
 
@@ -31,7 +29,7 @@ export default function tag (fn, name) {
    * Function.name lacks legacy support. For these browsers, fallback
    * to a consistent name:
    */
-  var symbol = name || (fn.name || 'microcosm_action') + '_' + suffix
+  var symbol = name || (fn.name || FALLBACK) + '_' + suffix
 
   fn.toString = () => symbol
 
