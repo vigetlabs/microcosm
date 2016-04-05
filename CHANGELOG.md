@@ -1,5 +1,9 @@
 # Changelog
 
+## Edge (not released)
+
+- Actions can now be simple strings. In these cases, the first argument of the pushed action is forwarded to stores.
+
 ## 9.21.0
 
 - The history tree now uses its nodes as linked lists to calculate
