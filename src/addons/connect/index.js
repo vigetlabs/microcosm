@@ -33,7 +33,7 @@ export default function connect (mapStateToProps, options) {
       }
 
       componentDidMount() {
-        this.app.listen(this.updateState, this)
+        this.app.listen(this.updateState, this, true)
       }
 
       componentWillUnmount() {
@@ -41,11 +41,10 @@ export default function connect (mapStateToProps, options) {
       }
 
       componentWillReceiveProps(nextProps) {
-        if (isPure && shallowEqual(nextProps, this.props)) {
-          return null
+        if (!(isPure && shallowEqual(nextProps, this.props))) {
+          this.updatePropMap(nextProps)
         }
 
-        this.updatePropMap(nextProps)
         this.updateState()
       }
 
@@ -56,7 +55,6 @@ export default function connect (mapStateToProps, options) {
       updateState() {
         let propMap   = this.propMap
         let nextState = {}
-
         for (let key in propMap) {
           let answer = propMap[key](this.app.state)
 

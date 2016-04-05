@@ -1,5 +1,5 @@
 import Debug       from './plugins/debug'
-import Diode       from 'diode'
+import Emitter     from './Emitter'
 import History     from './plugins/history'
 import MetaStore   from './stores/meta'
 import Transaction from './Transaction'
@@ -17,12 +17,7 @@ import tag         from './tag'
  * @class
  */
 function Microcosm (options) {
-  /**
-   * Microcosm uses Diode for event emission. Diode is an event emitter
-   * with a single event.
-   * https://github.com/vigetlabs/diode
-   */
-  Diode(this)
+  Emitter(this)
 
   this.state    = {}
   this.stores   = []
