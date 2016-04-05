@@ -3,7 +3,7 @@
  */
 
 function Emitter (app) {
-  var callbacks = []
+  let callbacks = []
 
   /**
    * Given a CALLBACK function, add it to the Set of all callbacks.
