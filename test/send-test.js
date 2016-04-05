@@ -1,6 +1,6 @@
-let Microcosm = require('../src/Microcosm')
-let assert = require('assert')
-let lifecycle = require('../src/lifecycle')
+import Microcosm from '../src/Microcosm'
+import assert from 'assert'
+import lifecycle from '../src/lifecycle'
 
 describe('sending actions', function() {
 

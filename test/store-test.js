@@ -1,5 +1,5 @@
-let Microcosm = require('../src/Microcosm')
-let assert    = require('assert')
+import Microcosm from '../src/Microcosm'
+import assert from 'assert'
 
 describe('Stores', function() {
 

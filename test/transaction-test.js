@@ -1,5 +1,5 @@
-let Transaction = require('../src/Transaction')
-let assert = require('assert')
+import Transaction from '../src/Transaction'
+import assert from 'assert'
 
 describe('Transactions', function() {
 

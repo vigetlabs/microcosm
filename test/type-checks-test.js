@@ -1,5 +1,5 @@
-let typeChecks = require('../src/type-checks')
-let assert = require('assert')
+import * as typeChecks from '../src/type-checks'
+import assert from 'assert'
 
 describe('isObject', function() {
 

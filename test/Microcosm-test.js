@@ -1,8 +1,8 @@
-let Action      = require('./fixtures/Action')
-let DummyStore  = require('./fixtures/DummyStore')
-let Microcosm   = require('../src/Microcosm')
-let Transaction = require('../src/Transaction')
-let assert      = require('assert')
+import Action      from  './fixtures/Action'
+import DummyStore  from './fixtures/DummyStore'
+import Microcosm   from '../src/Microcosm'
+import Transaction from '../src/Transaction'
+import assert      from 'assert'
 
 describe('Microcosm', function() {
   let app;

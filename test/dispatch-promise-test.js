@@ -1,6 +1,6 @@
-let Microcosm = require('../src/Microcosm')
-let Promise   = require('promise')
-let assert    = require('assert')
+import Microcosm from '../src/Microcosm'
+import Promise from 'promise'
+import assert from 'assert'
 
 describe('When dispatching promises', function() {
   let pass = function(n) {
