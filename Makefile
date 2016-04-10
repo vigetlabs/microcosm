@@ -52,19 +52,19 @@ example-static:
 clean:
 	@ rm -rf $(OUT)
 
-test: test-browser test-fast
+test: test-browser test-node
 
 test-browser:
 	@ NODE_ENV=test karma start --single-run
 
-test-fast: $(shell find {test,examples} -name '*-test.js')
-	@ NODE_ENV=test mocha -R dot --compilers js:babel/register $^
-
-test-fast-watch: $(shell find {test,examples} -name '*-test.js')
-	@ NODE_ENV=test mocha -R dot --compilers js:babel/register $^ -w
-
 test-watch:
-	NODE_ENV=test karma start
+	@ NODE_ENV=test karma start
+
+test-node: $(shell find {test,examples} -name '*-test.js')
+	@ NODE_ENV=test mocha -R dot --compilers js:babel/register $(MOCHA_OPTIONS) test examples
+
+test-node-watch: $(shell find {test,examples} -name '*-test.js')
+	@ make test-node MOCHA_OPTIONS="-w"
 
 bench: javascript
 	@ node --expose-gc benchmarks/tree-performance

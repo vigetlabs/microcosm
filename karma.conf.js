@@ -13,8 +13,8 @@ module.exports = function (config) {
     ],
 
     preprocessors: {
-      'test/**/*.js*': [ 'webpack'],
-      'examples/*/test/**/*-test.js*': [ 'webpack']
+      'test/**/*.js*': [ 'webpack', 'sourcemap' ],
+      'examples/*/test/**/*-test.js*': [ 'webpack', 'sourcemap' ]
     },
 
     reporters: [ 'mocha' ],
