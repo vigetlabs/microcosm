@@ -1,6 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
 var StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin')
+var HappyPack = require('happypack')
 
 var isDev = process.env.NODE_ENV !== 'production'
 var root  = __dirname
@@ -37,6 +38,10 @@ module.exports = {
 
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
+    }),
+
+    new HappyPack({
+      id: 'js'
     })
   ],
 
@@ -49,16 +54,18 @@ module.exports = {
       {
         test: /\.html/,
         loader: 'mustache',
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        happy: { id: 'js' }
       },
       {
-      test     : /\.jsx*$/,
-      loader   : 'babel',
-      query    : {
-        optional : [ 'runtime' ]
-      },
-      exclude: /node_modules/
-    }]
+        test     : /\.jsx*$/,
+        loader   : 'babel',
+        query    : {
+          optional : [ 'runtime' ]
+        },
+        exclude: /node_modules/,
+        happy: { id: 'js' }
+      }]
   },
 
   devServer: {

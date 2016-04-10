@@ -1,6 +1,9 @@
+var HappyPack = require('happypack')
+var path = require('path')
+
 module.exports = function (config) {
   config.set({
-    browsers: [ 'Chrome' ],
+    browsers: [ 'PhantomJS' ],
 
     frameworks: [ 'mocha' ],
 
@@ -10,11 +13,11 @@ module.exports = function (config) {
     ],
 
     preprocessors: {
-      'test/**/*.js*': [ 'webpack', 'sourcemap' ],
-      'examples/*/test/**/*-test.js*': [ 'webpack', 'sourcemap' ]
+      'test/**/*.js*': [ 'webpack'],
+      'examples/*/test/**/*-test.js*': [ 'webpack']
     },
 
-    reporters: [ 'mocha', 'coverage' ],
+    reporters: [ 'mocha' ],
 
     mochaReporter: {
       output: 'minimal'
@@ -26,34 +29,30 @@ module.exports = function (config) {
       subdir: '.'
     },
 
+    webpackMiddleware: {
+      noInfo: true
+    },
+
     webpack: {
       devtool: 'inline-source-map',
-
       resolve: {
-        extensions: [ '', '.js', '.jsx', '.json', '.scss', '.svg' ],
-        modulesDirectories: [ 'web_modules', 'node_modules' ]
+        extensions: [ '', '.js', '.jsx', '.json' ],
+        modulesDirectories: [ 'node_modules' ]
       },
 
       module: {
         loaders: [{
           test: /\.jsx*$/,
           exclude: /node_modules/,
-          loader: 'babel',
-          query: {
-            optional: ['runtime']
-          }
-        }],
-
-        postLoaders: [{
-          test: /\.jsx*$/,
-          exclude: /(test|__tests__|node_modules)\//,
-          loader: 'istanbul-instrumenter'
+          loader: 'happypack/loader',
         }]
-      }
-    },
+      },
 
-    webpackServer: {
-      noInfo: true
+      plugins: [
+        new HappyPack({
+          loaders: [ 'babel?optional=runtime' ]
+        })
+      ]
     }
   })
 }
