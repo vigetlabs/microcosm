@@ -69,4 +69,4 @@ test-node-watch: $(shell find {test,examples} -name '*-test.js')
 bench: javascript
 	@ node --expose-gc benchmarks/tree-performance
 	@ node --expose-gc benchmarks/dispatch-performance
-	@ node benchmarks/push-performance
+	@ node --expose-gc benchmarks/push-performance

@@ -43,18 +43,20 @@ var results = SIZES.map(function (SIZE) {
    * `push` takes anywhere from 0.5ms to 15ms depending on the sample range.
    * This adds up to a very slow boot time!
    */
-
+  var startMemory = process.memoryUsage().heapUsed
   for (var i = 0; i < SIZE; i++) {
     app.push(action)
   }
+  var endMemory = process.memoryUsage().heapUsed
 
   var total   = (time.now() - then) / 1000
   var average = total / SIZE
 
   return {
-    Volume  : SIZE.toLocaleString(),
-    Total   : total.toLocaleString() + 'ms',
-    Average : average.toLocaleString() + 'ms'
+    'Volume' : SIZE.toLocaleString(),
+    'Total' : total.toLocaleString() + 'ms',
+    'Average' : average.toLocaleString() + 'ms',
+    'Memory Usage' : ((endMemory - startMemory) / 1000000).toFixed(2) + 'mbs'
   }
 })
 
