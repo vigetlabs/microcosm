@@ -2,7 +2,10 @@
 
 ## Edge (not released)
 
-- Actions can now be simple strings. In these cases, the first argument of the pushed action is forwarded to stores.
+- Actions can now be simple strings. In these cases, the first
+  argument of the pushed action is forwarded to stores.
+- Properly display missing action reporting when dispatching an
+  undefined action.
 
 ## 9.21.0
 
