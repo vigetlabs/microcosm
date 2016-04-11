@@ -9,7 +9,7 @@
     "start": "make example",
     "test": "make test",
     "test:watch": "make test-watch",
-    "test:fast": "make test-fast",
+    "test:fast": "make test-node",
     "release": "make release"
   },
   "repository": {
