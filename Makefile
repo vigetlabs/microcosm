@@ -55,10 +55,10 @@ clean:
 test: test-browser test-node
 
 test-browser:
-	@ NODE_ENV=test karma start --single-run
+	@ NODE_ENV=test karma start $(TEST_OPTIONS)
 
 test-watch:
-	@ NODE_ENV=test karma start
+	@ make test-browser TEST_OPTIONS="--watch"
 
 test-node: $(shell find {test,examples} -name '*-test.js')
 	@ NODE_ENV=test mocha -R dot --compilers js:babel/register $(MOCHA_OPTIONS) test examples
