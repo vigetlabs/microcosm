@@ -4,24 +4,18 @@
  */
 
 import coroutine from './coroutine'
-import flatten   from './flatten'
 
-const identity = n => n
-
-export default function Transaction (action, payload) {
-  this.type    = `${ action }`
-  this.action  = typeof action === 'function' ? action : identity
-  this.active  = arguments.length > 1
-  this.payload = payload
+export default function Transaction (action) {
+  this.type = `${ action }`
 }
 
 Transaction.prototype = {
   active   : false,
   error    : false,
   complete : false,
+  payload  : null,
 
-  execute(params, onNext, onComplete, scope) {
-    let body = this.action.apply(null, flatten(params))
+  execute(body, onNext, onComplete, scope) {
 
     return coroutine(body, (error, payload, done) => {
       this.active   = !error

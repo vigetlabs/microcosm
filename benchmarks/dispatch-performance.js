@@ -56,7 +56,12 @@ var results = SIZES.map(function (SIZE) {
    */
   var startMemory = process.memoryUsage().heapUsed
   for (var i = 0; i < SIZE; i++) {
-    app.history.append(new Transaction(action, true))
+    var t = new Transaction(action)
+
+    t.active = true
+    t.payload = true
+
+    app.history.append(t)
   }
   var endMemory = process.memoryUsage().heapUsed
 

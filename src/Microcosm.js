@@ -12,6 +12,8 @@ import memorize    from './memorize'
 import merge       from './merge'
 import tag         from './tag'
 
+const identity = (n => n)
+
 /**
  * Microcosm
  * @class
@@ -24,10 +26,11 @@ function Microcosm (options) {
    */
   Diode(this)
 
-  this.state    = {}
-  this.stores   = []
-  this.plugins  = []
-  this.registry = {}
+  this.state     = {}
+  this.stores    = []
+  this.plugins   = []
+  this.registry  = {}
+  this.workflows = {}
 
   // Standard store reduction behaviors
   this.addStore(MetaStore)
@@ -114,11 +117,36 @@ Microcosm.prototype = {
    * @return {any} The result of the action
    */
   push(action, params, callback) {
-    let transaction = new Transaction(tag(action))
+    tag(action)
+
+    let actor = typeof action === 'function' ? action : identity
+    let body  = actor.apply(this, flatten(params))
+
+    let transaction = new Transaction(action)
 
     this.lifecycle(lifecycle.willOpenTransaction, transaction)
 
-    return transaction.execute(params, this.rollforward, callback, this)
+    return transaction.execute(body, this.rollforward, callback, this)
+  },
+
+  /**
+   * Workflows are functions that can dispatch additional actions,
+   * sharing a common state within a closure.
+   */
+  workflow(action, params, callback) {
+    tag(action)
+
+    if (!this.workflow[action]) {
+      this.workflows[action] = action(this.push.bind(this), (error, body) => {
+        this.workflows[action] = null
+
+        if (callback) {
+          callback(error, body)
+        }
+      })
+    }
+
+    return this.workflows[action].apply(this, flatten(params))
   },
 
   /**
