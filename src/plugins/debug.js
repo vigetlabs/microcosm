@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== 'production') {
       throw new Error('Cannot push: Did you forget to call app.start()?')
     }
 
-    if (transaction.action == null) {
+    if (transaction.type == null) {
       throw new TypeError([
         `Unable to perform: app.push(${ transaction.action })\n`,
         `Because this action is ${ transaction.action }, our hunch is:`,
