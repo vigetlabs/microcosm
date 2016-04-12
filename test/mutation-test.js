@@ -6,7 +6,7 @@ describe('Mutation', function() {
   context('when a store writes mutatively', function() {
     let action = function() {}
 
-    beforeEach(function(done) {
+    beforeEach(function() {
       this.app = new Microcosm()
 
       this.app.addStore(function() {
@@ -20,15 +20,13 @@ describe('Mutation', function() {
           }
         }
       })
-
-      this.app.start(done)
     })
 
 
     it ('it writes to application state', function (done) {
-      this.app.push(action, true, error => {
+      this.app.push(action, true).onDone(() => {
         assert.equal(this.app.state.test, true)
-        done(error)
+        done()
       })
     })
   })

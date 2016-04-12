@@ -7,17 +7,19 @@ describe('When dispatching promises', function() {
     return n
   }
   let single = function(n) {
-    return Promise.resolve(n)
+    return new Promise(function (resolve, reject) {
+      setTimeout(_ => resolve(n))
+    })
   }
   let chain  = n => Promise.resolve(n).then(n => Promise.resolve(n))
   let error  = function(n) {
     return new Promise(function (resolve, reject) {
-      setTimeout(reject)
+      setTimeout(reject, 10)
     })
   }
   let late = function(n) {
     return new Promise(function (resolve, reject) {
-      setTimeout(_ => resolve(n))
+      setTimeout(_ => resolve(n), 20)
     })
   }
 
@@ -50,66 +52,55 @@ describe('When dispatching promises', function() {
     }
   }
 
-  beforeEach(function(done) {
+  beforeEach(function() {
     app = new Microcosm()
     app.addStore('test', TestStore)
-    app.start(done)
   })
 
   it ('returns the promise from app.push', function(done) {
-    app.push(single, 2).done(function() {
+    app.push(single, 2).onDone(function() {
       assert.equal(app.state.test, 3)
       done()
     })
   })
 
   it ('does not alter state if the promise fails', function(done) {
-    app.push(error, []).nodeify(function(error) {
+    app.push(error, []).onError(function(error) {
       assert.equal(app.state.test, app.getInitialState().test)
-      done(error)
+      done()
     })
   })
 
   it ('waits for all promises in the chain to resolve', function(done) {
-    app.push(chain, 1, function() {
+    app.push(chain, 1).onDone(function() {
       assert.equal(app.state.test, 2)
       done()
     })
   })
 
   it ('respects future changes when it fails', function(done) {
-    app.push(error, 1).nodeify(function(error) {
+    app.push(error, 1).onError(function (error) {
       assert.equal(app.state.test, 5, 'State was not the result of 5 + 1')
-      done(error)
+      done()
     })
 
     app.push(single, 4)
   })
 
-  it ('does not dispatch transactions for unresolved promises', function(done) {
-    app.push(late, 1, function(error) {
+  it ('does not dispatch actions for unresolved promises', function(done) {
+    app.push(late, 1).onDone(function() {
       assert.equal(app.state.test, 6, 'should have been: 1 + 4 + 1 = 6')
-      done(error)
+      done()
     })
 
-    app.push(pass, 4)
-    assert.equal(app.state.test, 5, 'should have been: 1 + 4 = 5')
+    app.push(pass, 4).onDone(function() {
+      assert.equal(app.state.test, 5, 'should have been: 1 + 4 = 5')
+    })
   })
 
   it ('handles errors thrown by promises', function(done) {
-    app.push(throws, 1, function (error) {
+    app.push(throws, 1).onError(function (error) {
       assert(error instanceof ReferenceError)
-      done()
-    })
-  })
-
-  it ('returns the original payload when dispatching a promise', function (done) {
-    function testAction (number) {
-      return Promise.resolve(number)
-    }
-
-    app.push(testAction, 2).done(function(params) {
-      assert.equal(params, 2)
       done()
     })
   })

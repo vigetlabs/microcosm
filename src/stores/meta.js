@@ -4,10 +4,8 @@
  * default behavior for other stores.
  */
 
+import lifecycle from '../lifecycle'
+
 export default {
-
-  willReset(state, next) {
-    return next
-  }
-
+  [lifecycle.willReset] : (state, next) => next
 }

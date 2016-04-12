@@ -1,16 +1,12 @@
-import { formatTag } from './tag'
-
 function getHandler (key, store, type) {
   let handler = store[type]
 
   if (handler === undefined && store.register) {
-    let registrations = store.register()
+    handler = store.register()[type]
+  }
 
-    if (process.env.NODE_ENV !== 'production' && type in registrations && registrations[type] === undefined) {
-      console.warn(`Store for ${ key } is registered to the action ${ formatTag(type) }, but the handler is undefined! Check the store's register function.`)
-    }
-
-    handler = registrations[type]
+  if (handler !== undefined && typeof handler !== 'function') {
+    throw new TypeError(`Store handlers must be functions. Instead got "${ handler }"`)
   }
 
   return handler

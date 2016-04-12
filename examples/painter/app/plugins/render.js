@@ -2,14 +2,12 @@ import DOM     from 'react-dom'
 import Drawing from '../components/drawing'
 import React   from 'react'
 
-export default function Render (app, el, next) {
+export default function Render (app, el) {
   function render () {
     DOM.render(<Drawing app={ app } />, el)
   }
 
   render()
 
-  app.listen(render)
-
-  next()
+  app.on('change', render)
 }

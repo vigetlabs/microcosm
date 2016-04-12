@@ -13,14 +13,14 @@ module.exports = {
 
   entry: {
     'chatbot'      : './chatbot/client',
-    'react-router' : './react-router/client',
+     'react-router' : './react-router/client',
     'simple-svg'   : './simple-svg/client',
-    'painter'      : './painter/client',
+    /* 'painter'      : './painter/client',*/
 
     'chatbot-static'      : './chatbot/static',
     'react-router-static' : './react-router/static',
     'simple-svg-static'   : './simple-svg/static',
-    'painter-static'      : './painter/static'
+     /* 'painter-static'      : './painter/static'*/
   },
 
   output: {
@@ -32,8 +32,9 @@ module.exports = {
   plugins: [
     new StaticSiteGeneratorPlugin('chatbot-static', ['chatbot' ], {}),
     new StaticSiteGeneratorPlugin('react-router-static', ['react-router' ], {}),
+
     new StaticSiteGeneratorPlugin('simple-svg-static', ['simple-svg' ], {}),
-    new StaticSiteGeneratorPlugin('painter-static', ['painter' ], {}),
+      /* new StaticSiteGeneratorPlugin('painter-static', ['painter' ], {}),*/
 
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)

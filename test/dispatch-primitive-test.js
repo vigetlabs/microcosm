@@ -14,16 +14,13 @@ describe('When dispatching primitive values', function() {
     }
   }
 
-  it ('properly reduces from a store', function(done) {
+  it ('properly reduces from a store', function() {
     app = new Microcosm()
 
     app.addStore('test', Store)
 
-    app.start()
-
-    app.push(add, 2, function() {
+    app.push(add, 2).onDone(function() {
       assert.equal(app.state.test, 3)
-      done()
     })
   })
 })

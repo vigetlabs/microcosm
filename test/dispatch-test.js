@@ -1,13 +1,10 @@
 import Microcosm from '../src/Microcosm'
-import Transaction from '../src/Transaction'
 import assert from 'assert'
 
 describe('dispatch', function() {
 
   it ('returns state if there are no handlers', function() {
     var app = new Microcosm()
-
-    app.start()
 
     let old  = app.state
     let next = app.dispatch(old, 'test')
@@ -38,8 +35,6 @@ describe('dispatch', function() {
         }
       }
     })
-
-    app.start()
 
     app.push(mutation)
     assert.equal(app.history.size(), 0)

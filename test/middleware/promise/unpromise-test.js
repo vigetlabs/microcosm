@@ -1,7 +1,7 @@
-import Microcosm from '../src/Microcosm'
-import Promise from 'promise'
-import assert from 'assert'
-import unpromise from '../src/unpromise'
+import Microcosm from '../../../src/Microcosm'
+import Promise   from 'promise'
+import assert    from 'assert'
+import unpromise from '../../../src/action/middleware/promise/unpromise'
 
 describe('unpromise', function() {
 
@@ -32,7 +32,7 @@ describe('unpromise', function() {
     let action = () => Promise.resolve(true)
     let error  = new Error('Uncaught error during dispatch!')
 
-    beforeEach(function(done) {
+    beforeEach(function() {
       this.app = new Microcosm()
 
       this.app.addStore(function() {
@@ -40,8 +40,6 @@ describe('unpromise', function() {
           [action]: () => { throw error }
         }
       })
-
-      this.app.start(done)
     })
 
     it ('does not trap errors raised in that store handler', function (done) {
@@ -50,7 +48,7 @@ describe('unpromise', function() {
         done()
       }
 
-      this.app.push(action).catch(done)
+      this.app.push(action)
     })
   })
 })

@@ -6,9 +6,8 @@ import { addList, removeList } from '../../../app/resources/lists/actions'
 describe('Item Actions', function() {
   var app;
 
-  beforeEach(function(done) {
+  beforeEach(function() {
     app = new App()
-    app.start(done)
   })
 
   describe('when sent a addItem message', function() {
@@ -16,7 +15,7 @@ describe('Item Actions', function() {
 
     beforeEach(function() {
       app.push(addList, { name: 'parent' })
-      app.push(addItem, [app.state.lists[0].id, { name }])
+      app.push(addItem, app.state.lists[0].id, { name })
     })
 
     it ('should create a new item with the proper name', function() {
@@ -30,7 +29,7 @@ describe('Item Actions', function() {
 
     beforeEach(function() {
       app.push(addList, { name: 'parent' })
-      app.push(addItem, [ app.state.lists[0].id, { name } ])
+      app.push(addItem, app.state.lists[0].id, { name })
       app.push(removeItem, app.state.items[0].id)
     })
 

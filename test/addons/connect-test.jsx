@@ -15,8 +15,6 @@ describe('Connect Add-on', function() {
   it ('given context, it injects an application instance into a component as a prop', function(done) {
     let app = new Microcosm()
 
-    app.start()
-
     let Namer = Connect()(React.createClass({
       componentDidMount() {
         assert.equal(this.props.app, app)
@@ -30,10 +28,9 @@ describe('Connect Add-on', function() {
     Test.renderIntoDocument(<Provider app={ app }><Namer /></Provider>)
   })
 
-  it ('listens to an application when it mounts', function(done) {
+  it ('listens to an application when it mounts', function (done) {
     let app = new Microcosm()
 
-    app.start()
     app.listen = () => done()
 
     let Component = Connect()(props => <p>MVP</p>)
@@ -43,7 +40,6 @@ describe('Connect Add-on', function() {
   it ('ignores an application when it unmounts', function(done) {
     let app = new Microcosm()
 
-    app.start()
     app.ignore = () => done()
 
     let Child  = Connect()(props => <p>MVP</p>)
@@ -57,14 +53,13 @@ describe('Connect Add-on', function() {
     })
 
     let component = Test.renderIntoDocument(<Parent />)
-
     component.setState({ display: false })
   })
 
   it ('maps application state to props', function () {
     let app = new Microcosm()
 
-    app.start().replace({ name: 'Kurtz' })
+    app.replace({ name: 'Kurtz' })
 
     let Namer = Connect(function(props) {
       return { name: state => props.prefix + ' ' + state.name }
@@ -80,7 +75,7 @@ describe('Connect Add-on', function() {
   it ('sends new props to the component when an application changes', function () {
     let app = new Microcosm()
 
-    app.start().replace({ name: 'Kurtz' })
+    app.replace({ name: 'Kurtz' })
 
     let Namer = Connect(function(props) {
       return { name: state => props.prefix + ' ' + state.name }
@@ -101,7 +96,7 @@ describe('Connect Add-on', function() {
       let app = new Microcosm()
       let renders = 0
 
-      app.start().replace({ name: 'Kurtz' })
+      app.replace({ name: 'Kurtz' })
 
       let Namer = Connect(function() {
         return { name: state => state.name }
@@ -121,7 +116,7 @@ describe('Connect Add-on', function() {
       let app = new Microcosm()
       let renders = 0
 
-      app.start().replace({ name: 'Kurtz' })
+      app.replace({ name: 'Kurtz' })
 
       let Namer = Connect(function() {
         return { name: state => state.name }
@@ -145,7 +140,7 @@ describe('Connect Add-on', function() {
       let app = new Microcosm()
       let renders = 0
 
-      app.start().replace({ name: 'Kurtz' })
+      app.replace({ name: 'Kurtz' })
 
       let Namer = Connect(function() {
         return { name: state => state.name }
@@ -169,7 +164,7 @@ describe('Connect Add-on', function() {
       let app = new Microcosm()
       let renders = 0
 
-      app.start().replace({ name: 'Kurtz' })
+      app.replace({ name: 'Kurtz' })
 
       let Namer = Connect(function(props) {
         return { name: state => props.prefix + ' ' + state.name }
@@ -197,7 +192,7 @@ describe('Connect Add-on', function() {
       let app = new Microcosm()
       let remappings = 0
 
-      app.start().replace({ name: 'Kurtz' })
+      app.replace({ name: 'Kurtz' })
 
       let Namer = Connect(function(props) {
         remappings += 1
@@ -225,7 +220,7 @@ describe('Connect Add-on', function() {
       let app = new Microcosm()
       let remappings = 0
 
-      app.start().replace({ name: 'Kurtz' })
+      app.replace({ name: 'Kurtz' })
 
       let Namer = Connect(function(props) {
         remappings += 1
@@ -253,9 +248,8 @@ describe('Connect Add-on', function() {
 
   describe('valueOf option', function () {
 
-    beforeEach(function (done) {
+    beforeEach(function () {
       this.app = new Microcosm()
-      this.app.start(done)
     })
 
     it ('calls valueOf on getters when configured', function () {

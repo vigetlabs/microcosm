@@ -3,8 +3,9 @@
  * Uniquely tag a function. This is used to identify actions
  */
 
-let uid = 0
+import States from './states'
 
+let uid = 0
 const FALLBACK = 'microcosm_action'
 
 export function formatTag (value) {
@@ -15,9 +16,11 @@ export default function tag (fn, name) {
   /**
    * Respect strings and existing toString methods.
    */
-  if (typeof fn === 'string' || fn.hasOwnProperty('toString')) {
+  if (fn.__tagged) {
     return fn
   }
+
+  fn.__tagged = true
 
   /**
    * Auto-increment a stepper suffix to prevent two actions with the
@@ -31,7 +34,14 @@ export default function tag (fn, name) {
    */
   var symbol = name || (fn.name || FALLBACK) + '_' + suffix
 
-  fn.toString = () => symbol
+  for (var key in States) {
+    fn[key.toLowerCase()] = symbol + '_' + key
+  }
+
+  fn.done = symbol
+
+  // The default state is done
+  fn.toString = () => fn.done
 
   return fn
 }

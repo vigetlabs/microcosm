@@ -1,17 +1,16 @@
 /**
  * Dispatch Performance Benchmark
  * The goal of this script is to evaluate if our goal of 10,000
- * uniquely folded transactions can be done in under 16ms.
+ * uniquely folded actions can be done in under 16ms.
  *
  * This test does not account for hardware diversity. It is a simple
  * gut check of "are we fast yet?"
  */
 
-var Microcosm   = require('../dist/Microcosm')
-var Transaction = require('../dist/Transaction')
-var time        = require('microtime')
-var SIZES       = [ 1000, 10000, 50000, 100000, 200000]
-var SAMPLES     = 25
+var Microcosm = require('../dist/Microcosm').default
+var time      = require('microtime')
+var SIZES     = [ 1000, 10000, 50000, 100000, 200000]
+var SAMPLES   = 25
 
 console.log('\nConducting dispatch benchmark...\n')
 
@@ -30,8 +29,8 @@ var results = SIZES.map(function (SIZE) {
 
   var Store = function() {
     return {
-      getInitialState: 0,
-      test: function(n) { return n + 1}
+      getInitialState: () => 0,
+      test: (n) => n + 1
     }
   }
 
@@ -46,17 +45,15 @@ var results = SIZES.map(function (SIZE) {
   app.addStore('four',  Store)
   app.addStore('five',  Store)
 
-  app.start()
-
   /**
-   * Append a given number of transactions into history. We use this method
+   * Append a given number of actions into history. We use this method
    * instead of `::push()` for benchmark setup performance. At the time of writing,
    * `push` takes anywhere from 0.5ms to 15ms depending on the sample range.
    * This adds up to a very slow boot time!
    */
   var startMemory = process.memoryUsage().heapUsed
   for (var i = 0; i < SIZE; i++) {
-    app.history.append(new Transaction(action, true))
+    app.history.append(action).send(true)
   }
   var endMemory = process.memoryUsage().heapUsed
 

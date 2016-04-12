@@ -1,8 +1,8 @@
-import Microcosm      from '../../Microcosm'
+import Microcosm      from '../Microcosm'
 import React          from 'react'
-import getDisplayName from './get-display-name'
+import getDisplayName from './connect/get-display-name'
 import hoistStatics   from 'hoist-non-react-statics'
-import shallowEqual   from './shallow-equal'
+import shallowEqual   from './connect/shallow-equal'
 
 const defaults = {
   pure    : true,

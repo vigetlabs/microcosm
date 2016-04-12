@@ -12,10 +12,8 @@ import template from './template.html'
 export default function render (locals, next) {
   let app = new ChatBot()
 
-  app.start(function (error) {
-    let markup = DOM.renderToString(React.createElement(Chat, { app }))
-    let output = template({ markup, payload: JSON.stringify(app) })
+  let markup = DOM.renderToString(React.createElement(Chat, { app }))
+  let output = template({ markup, payload: JSON.stringify(app) })
 
-    next(error, output)
-  })
+  next(null, output)
 }

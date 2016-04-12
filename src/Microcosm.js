@@ -1,101 +1,61 @@
-import Debug       from './plugins/debug'
-import Diode       from 'diode'
-import History     from './plugins/history'
-import MetaStore   from './stores/meta'
-import Transaction from './Transaction'
-import defaults    from './defaults'
-import dispatch    from './dispatch'
-import flatten     from './flatten'
-import install     from './install'
-import lifecycle   from './lifecycle'
-import memorize    from './memorize'
-import merge       from './merge'
-import tag         from './tag'
+import Diode     from 'diode'
+import MetaStore from './stores/meta'
+import Tree      from './Tree'
+import dispatch  from './dispatch'
+import lifecycle from './lifecycle'
+import memorize  from './memorize'
 
-/**
- * Microcosm
- * @class
- */
-function Microcosm (options) {
-  /**
-   * Microcosm uses Diode for event emission. Diode is an event emitter
-   * with a single event.
-   * https://github.com/vigetlabs/diode
-   */
+function Microcosm (config = {}) {
   Diode(this)
 
+  this.maxHistory = 'maxHistory' in config ? config.maxHistory : Infinity
+
+  this.cache    = {}
   this.state    = {}
-  this.stores   = []
-  this.plugins  = []
   this.registry = {}
+  this.stores   = []
+  this.history  = new Tree()
 
   // Standard store reduction behaviors
   this.addStore(MetaStore)
-
-  // A place to keep all developer warnings
-  this.addPlugin(Debug)
-
-  // Keep track of history as a tree
-  this.addPlugin(History, options)
 }
 
 Microcosm.prototype = {
   constructor: Microcosm,
-  started: false,
 
-  /**
-   * Dispatch the `getInitialState` action type to stores to determine
-   * new state. Stores receive the old state as the payload.
-   *
-   * @return {object} The initial state of the Microcosm instance.
-   */
   getInitialState() {
-    return this.dispatch({}, lifecycle.willStart, this.state)
+    return this.dispatch({}, { type: lifecycle.willStart, payload: this.state })
   },
 
-  /**
-   * Determines the next application state by reducing the result of
-   * the `willUpdate` lifecycle hook.
-   *
-   * @private
-   * @return {Microcosm}
-   */
+  shouldHistoryKeep() {
+    return this.maxHistory > 0 && this.history.size() <= this.maxHistory
+  },
+
+  clean(action) {
+    if (action.is('failed')) {
+      return true
+    }
+
+    if (action.is('done') && this.shouldHistoryKeep() === false) {
+      this.cache = this.dispatch(this.cache, action)
+
+      return true
+    }
+
+    return false
+  },
+
   rollforward() {
-    this.state = this.lifecycle(lifecycle.willUpdate)
+    this.history.prune(this.clean, this)
+
+    this.state = this.history.reduce(this.dispatch, this.cache, this)
 
     this.emit(this.state)
 
     return this
   },
 
-  /**
-   * For each plugin that implements a specific lifecycle method,
-   * reduce a given state over those methods sequentially and return
-   * the result.
-   *
-   * @param hook {function} The lifecycle method to reduce
-   * @param {any} [initial={}] The initial state before reducing
-   *
-   * @private
-   */
-  lifecycle(hook, initial={}) {
-    return this.plugins.reduce((state, plugin) => {
-      return plugin[hook] ? plugin[hook](this, state) : state
-    }, initial)
-  },
-
-  /**
-   * Given an old state, an action type, and a payload, reduce through
-   * the registry (or memorize it) for the given action type to determine
-   * new state.
-   *
-   * @param state {object} The starting application state
-   * @param type {string} The action type to reduce
-   * @param payload {any} The data to send to stores
-   *
-   * @private
-   */
-  dispatch(state, type, payload) {
+  dispatch(state, { type, payload }) {
     if (!this.registry[type]) {
       this.registry[type] = memorize(this.stores, type)
     }
@@ -103,66 +63,14 @@ Microcosm.prototype = {
     return dispatch(state, this.registry[type], payload)
   },
 
-  /**
-   * Resolves an action. Sends the result and any errors to a given
-   * error-first callback.
-   *
-   * @param {function} action - The action that will be resolved.
-   * @param {any|Array} [params] - A list or single value to call the action with.
-   * @param {function} [callback] - An error-first callback to execute when the action resolves
-   *
-   * @return {any} The result of the action
-   */
-  push(action, params, callback) {
-    let transaction = new Transaction(tag(action))
+  push(type, ...params) {
+    let action = this.history.append(type)
 
-    this.lifecycle(lifecycle.willOpenTransaction, transaction)
+    action.on('change', this.rollforward.bind(this))
 
-    return transaction.execute(params, this.rollforward, callback, this)
+    return action.execute(...params)
   },
 
-  /**
-   * Partially applies `push`.
-   *
-   * @param {function} action - The action to eventually push
-   * @param {any|Array} [params] - A list or single value to prepopulate the params argument of push()
-   *
-   * @return {Function}
-   */
-  prepare(action, params=[]) {
-    return (more=[], callback) => this.push(action, flatten(params, more), callback)
-  },
-
-  /**
-   * Pushes a plugin in to the registry for a given microcosm.
-   * When `app.start()` is called, it will execute plugins in
-   * the order in which they have been added using this function.
-   *
-   * @param {object|Function} plugin - A plugin object or register function
-   * @param {object} [options] - Passed into the register function when the app starts.
-   *
-   * @return {Microcosm} The invoking instance of Microcosm
-   */
-  addPlugin(plugin, options={}) {
-    let prepared = merge({ app: this, options }, defaults(plugin))
-
-    this.plugins.push(
-      this.lifecycle(lifecycle.willAddPlugin, prepared)
-    )
-
-    return this
-  },
-
-  /**
-   * Generates a store based on the provided `config` and assigns it to
-   * manage the provided `key`. Whenever this store responds to an action,
-   * it will be provided the current state for that particular key.
-   *
-   * @param {string} [key] - The key in which the store will write to application state
-   * @param {object} store - A Microcosm store object
-   *
-   * @return {Microcosm} The invoking instance of Microcosm
-   */
   addStore(keyPath, store) {
     if (arguments.length < 2) {
       // Important! Assignment this way is important
@@ -172,86 +80,61 @@ Microcosm.prototype = {
       keyPath = null
     }
 
-    // Reset the registry to account for the new store
-    this.registry = {}
+    if (typeof store === 'function') {
+      store = { register: store }
+    }
 
-    this.stores.push([
-      keyPath,
-      this.lifecycle(lifecycle.willAddStore, defaults(store))
-    ])
+    this.stores = this.stores.concat([[ keyPath, store ]])
+
+    this.rebase()
 
     return this
   },
 
-  /**
-   * Reset by pushing an action that will always return
-   * a given state.
-   *
-   * @param {object} state - The new state to reset the application with
-   * @param {function} [callback] - A callback to execute after the application resets
-   *
-   * @return {object} The new state object
-   */
-  reset(state, callback) {
-    return this.push(lifecycle.willReset, merge(this.getInitialState(), state), callback)
+  reset(state) {
+    return this.push(lifecycle.willReset, Object.assign(this.getInitialState(), state))
   },
 
-  /**
-   * Deserialize a given state and pass it into reset to determine a new state.
-   *
-   * @param {object} data - State to deserialize and reset the application with
-   * @param {function} [callback] - A callback to execute after the application resets
-   *
-   * @return {object} The new state object
-   */
-  replace(data, callback) {
-    return this.reset(this.deserialize(data), callback)
+  replace(data) {
+    return this.reset(this.deserialize(data))
   },
 
-  /**
-   * Returns an object that is the result of transforming application state
-   * according to the `serialize` method described by each store.
-   *
-   * @return {object} Serialized state
-   */
   serialize() {
-    return this.dispatch(this.state, lifecycle.willSerialize, this.state)
+    return this.dispatch(this.state, { type: lifecycle.willSerialize, payload: this.state })
   },
 
-  /**
-   * For each key in the provided `data` parameter, transform it using
-   * the `deserialize` method provided by the store managing that key.
-   * Then fold the deserialized data over the current application state.
-   *
-   * @param {object} data - Data to deserialize
-   * @return {object} Deserialized state
-   */
-  deserialize(data) {
-    return data == undefined ? this.state : this.dispatch(data, lifecycle.willDeserialize, data)
+  deserialize(payload) {
+    if (payload != null) {
+      return this.dispatch(payload, { type: lifecycle.willDeserialize, payload })
+    }
   },
 
-  /**
-   * Alias for `serialize`
-   */
   toJSON() {
     return this.serialize()
   },
 
-  /**
-   * Starts an application:
-   * 1. Run through all plugins, it will terminate if any fail
-   * 2. Execute the provided callback, passing along any errors
-   *    generated if installing plugins fails.
-   *
-   * @param {function} [callback] - A callback to execute after the application starts
-   * @return {Microcosm} The invoking instance of Microcosm
-   */
-  start(callback) {
-    this.started = true
-    install(this.plugins, callback)
-    return this
-  }
+  rebase() {
+    this.registry = {}
+    this.cache = Object.assign(this.getInitialState(), this.cache)
 
+    this.rollforward()
+  },
+
+  fork(stores) {
+    const clone = Object.create(this)
+
+    if (Array.isArray(stores)) {
+      stores.forEach(store => clone.addStore(store))
+    } else if (stores && typeof stores === 'object') {
+      Object.keys(stores).forEach(function(key) {
+        clone.addStore(key, stores[key])
+      })
+    } else if (stores) {
+      clone.addStore(stores)
+    }
+
+    return clone
+  }
 }
 
 export default Microcosm

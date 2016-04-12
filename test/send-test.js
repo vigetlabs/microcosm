@@ -20,7 +20,7 @@ describe('sending actions', function() {
       }
     }
 
-    app.addStore('test', store).start().push(action)
+    app.addStore('test', store).push(action)
   })
 
   it ('returns the same state if a handler is not provided', function(done) {
@@ -32,15 +32,13 @@ describe('sending actions', function() {
       }
     })
 
-    app.start()
-
-    app.push(action, [], function() {
+    app.push(action).onDone(function() {
       assert.equal(app.state.test, 'test')
       done()
     })
   })
 
-  it ('allows handlers to not be functions', function(done) {
+  it ('forces handlers to be functions', function(done) {
     let app = new Microcosm()
 
     app.addStore('test', {
@@ -51,27 +49,12 @@ describe('sending actions', function() {
       }
     })
 
-    app.start().push(action, [], function() {
-      assert.equal(app.state.test, 5)
+    try {
+      app.push(action)
+    } catch (x) {
+      assert(x.message.match(/must be functions/))
       done()
-    })
-  })
-
-  it ('sends all application state as the third argument', function(done) {
-    let app = new Microcosm()
-
-    app.addStore('test', {
-      register() {
-        return {
-          [action](subset, body, state) {
-            assert.deepEqual(state, app.state)
-            done()
-          }
-        }
-      }
-    })
-
-    app.start().push(action)
+    }
   })
 
   it ('sends passes state from previous store operations', function() {
@@ -89,38 +72,8 @@ describe('sending actions', function() {
     app.addStore('one', store)
        .addStore('one', store)
 
-    app.start()
-
-    app.push(action, [], function() {
+    app.push(action).onDone(function() {
       assert.equal(app.state.one, 3)
-    })
- })
-
-  it ('can make decisions from all app state based on prior operations', function() {
-    let app = new Microcosm()
-
-    app.addStore('count', {
-      getInitialState() {
-        return 0
-      },
-      register() {
-        return { [action]: total => total + 1 }
-      }
-    })
-
-    app.addStore('isEven', {
-      register() {
-        return {
-          [action]: (isEven, _, state) => !(state.count % 2)
-        }
-      }
-    })
-
-    app.start()
-
-    app.push(action, [], function() {
-      assert.equal(app.state.count, 1)
-      assert.equal(app.state.isEven, false)
     })
   })
 
@@ -135,9 +88,7 @@ describe('sending actions', function() {
         }
       })
 
-      app.start()
-
-      app.push(lifecycle.willStart, [], function() {
+      app.push(lifecycle.willStart).onDone(function() {
         assert.equal(app.state.test, 'test')
       })
     })
@@ -148,37 +99,12 @@ describe('sending actions', function() {
       app.addStore('test', {
         register() {
           return {
-            [lifecycle.willStart]: 'test'
+            [lifecycle.willStart]: () => 'test'
           }
         }
       })
 
-      app.start(function() {
-        assert.equal(app.state.test, 'test')
-      })
+      assert.equal(app.state.test, 'test')
     })
-
-    it ('warns if a store registers to an action, but it is undefined', function (done) {
-      let app  = new Microcosm()
-      let warn = console.warn
-
-      console.warn = function (message) {
-        assert.equal(message, "Store for test is registered to the action getInitialState, but the handler is undefined! Check the store's register function.")
-        console.warn = warn
-        done()
-      }
-
-      app.addStore('test', {
-        register() {
-          return {
-            [lifecycle.willStart]: this.undefinedMember
-          }
-        }
-      })
-
-      app.start()
-    })
-
   })
-
 })

@@ -4,15 +4,11 @@
  * actions.
  */
 
-export default {
-  willStart           : 'getInitialState',
-  willSerialize       : 'serialize',
-  willDeserialize     : 'deserialize',
-  willReset           : 'willReset',
+import tag from './action/tag'
 
-  // The following lifecycle methods are private for the time being:
-  willUpdate          : '__willUpdate',
-  willAddStore        : '__willAddStore',
-  willAddPlugin       : '__willAddPlugin',
-  willOpenTransaction : '__willOpenTransaction'
+export default {
+  willStart       : tag(function getInitialState (n) { return n },'getInitialState'),
+  willSerialize   : tag(function serialize (n) { return n }, 'serialize'),
+  willDeserialize : tag(function deserialize (n) { return n }, 'deserialize'),
+  willReset       : tag(function willReset (n) { return n }, 'willReset')
 }

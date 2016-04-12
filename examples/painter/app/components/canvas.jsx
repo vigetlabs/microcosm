@@ -12,7 +12,7 @@ const Canvas = React.createClass({
 
   getRow(row, y) {
     return row.map(function(cell, x) {
-      return (<rect key={ x + "." + y } x={ x } y={ y } onClick={ e => this.props.onClick([ x, y ]) } fill={ cell ? 'black' : 'white' } width="1" height="1"/>)
+      return (<rect key={ x + "." + y } x={ x } y={ y } onClick={ e => this.props.onClick(x, y) } fill={ cell ? 'black' : 'white' } width="1" height="1"/>)
     }, this)
   },
 

@@ -15,14 +15,10 @@ import {match, RouterContext} from 'react-router'
 export default function render (locals, next) {
   let app = new Todos()
 
-  app.start(function (error) {
-    if (error) throw error
+  match({ routes, location: '/' }, function (error, redirect, props) {
+    let markup = DOM.renderToString(<Provider app={ app }><RouterContext{ ...props } /></Provider>)
+    let output = template({ basename: locals.path, markup, payload: JSON.stringify(app) })
 
-    match({ routes, location: '/' }, function (error, redirect, props) {
-      let markup = DOM.renderToString(<Provider app={ app }><RouterContext{ ...props } /></Provider>)
-      let output = template({ basename: locals.path, markup, payload: JSON.stringify(app) })
-
-      next(error, output)
-    })
+    next(error, output)
   })
 }

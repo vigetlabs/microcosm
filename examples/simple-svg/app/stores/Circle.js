@@ -1,28 +1,29 @@
-import { update } from '../actions/circle'
+import { animate } from '../actions/circle'
 
-let Circle = {
+const Circle = {
 
   getInitialState() {
-    return Circle.set(null, Date.now())
+    return Circle.set(null, { color: 'orange', time: Date.now() })
   },
 
-  register() {
-    return {
-      [update]: Circle.set
-    }
-  },
-
-  set(old, time) {
+  set (_, { color, time }) {
     let sin = Math.sin(time / 200)
     let cos = Math.cos(time / 200)
 
     return {
-      cx : 50 * sin,
-      cy : 35 * cos,
-      r  : 12 + (8 * cos)
+      color : color,
+      cx    : 50 * sin,
+      cy    : 35 * cos,
+      r     : 12 + (8 * cos)
+    }
+  },
+
+  register () {
+    return {
+      [animate.loading] : Circle.set,
+      [animate.done]    : Circle.set
     }
   }
-
 }
 
 export default Circle

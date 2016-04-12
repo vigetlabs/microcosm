@@ -3,10 +3,8 @@
  * on top of it. This is different than other Flux implementations.
  *
  * Dispatch answers the question:
- * "What will change when I account for a transaction?"
+ * "What will change when I account for a action?"
  */
-
-import merge from './merge'
 
 function get (target, key) {
   return key == null ? target : target[key]
@@ -15,20 +13,22 @@ function get (target, key) {
 function set (target, key, value) {
   if (key == null) return value
 
-  target[key] = value
+  if (target && target[key] === value) {
+    return target
+  }
 
-  return target
+  return Object.assign({}, target, { [key] : value })
 }
 
 export default function dispatch (state, handlers, payload) {
   if (handlers.length <= 0) return state
 
-  let next = merge({}, state)
+  let next = Object.assign({}, state)
 
   for (var i = 0, size = handlers.length; i < size; i++) {
     let { key, store, handler } = handlers[i]
 
-    let answer = typeof handler === 'function' ? handler.call(store, get(next, key), payload, next) : handler
+    let answer = typeof handler === 'function' ? handler.call(store, get(next, key), payload) : handler
 
     if (answer !== undefined) {
       next = set(next, key, answer)

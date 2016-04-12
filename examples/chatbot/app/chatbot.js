@@ -3,8 +3,8 @@ import Microcosm from '../../../src/Microcosm'
 
 class ChatBot extends Microcosm {
 
-  constructor() {
-    super()
+  constructor(options) {
+    super(options)
     this.addStore('messages', Messages)
   }
 

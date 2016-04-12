@@ -3,7 +3,7 @@
  * Measures the performance of pushing a single action.
  */
 
-var Microcosm = require('../dist/Microcosm')
+var Microcosm = require('../dist/Microcosm').default
 var time      = require('microtime')
 var SIZES     = [ 1000, 10000, 50000, 100000, 200000]
 
@@ -17,8 +17,8 @@ var results = SIZES.map(function (SIZE) {
 
   var Store = function() {
     return {
-      getInitialState: 0,
-      test: function(n) { return n + 1 }
+      getInitialState: () => 0,
+      test: (n) => n + 1
     }
   }
 
@@ -33,12 +33,10 @@ var results = SIZES.map(function (SIZE) {
   app.addStore('four',  Store)
   app.addStore('five',  Store)
 
-  app.start()
-
   var then = time.now()
 
   /**
-   * Append a given number of transactions into history. We use this method
+   * Append a given number of actions into history. We use this method
    * instead of `::push()` for benchmark setup performance. At the time of writing,
    * `push` takes anywhere from 0.5ms to 15ms depending on the sample range.
    * This adds up to a very slow boot time!

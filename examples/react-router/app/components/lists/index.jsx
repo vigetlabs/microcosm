@@ -20,7 +20,7 @@ export default Presenter(React.createClass({
     return (
       <li key={ id }>
         <Link to={ `/lists/${ id }` }>{ name } ({ counts[id] })</Link>
-        <button className="btn" onClick={ app.prepare(removeList, id) }>
+        <button className="btn" onClick={ () => app.push(removeList, id) }>
           Delete
         </button>
       </li>
@@ -41,7 +41,7 @@ export default Presenter(React.createClass({
         <main role="main" className="container">
           <aside className="aside">
             <h2 className="subhead">New List</h2>
-            <ListForm onSubmit={ app.prepare(addList) }/>
+            <ListForm onSubmit={ data => app.push(addList, data) }/>
           </aside>
 
           <ul className="list">

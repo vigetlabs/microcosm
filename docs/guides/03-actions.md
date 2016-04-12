@@ -4,9 +4,8 @@ Microcosm is a transactional system. Whenever an action is invoked, a transactio
 
 When an transaction updates, Microcosm runs through all outstanding transactions to determine the new application state. For example, if a Promise is returned from an action, Microcosm will wait for it to resolve. The value the Promise eventually returns will then be dispatched to stores.
 
-In more complicated scenarios, actions can fail and their associated transactions will be rejected. However at their most basic, actions return primitive values:
-
 ```javascript
+
 function doSomething (params) {
   // These params will be forwarded to all stores
   // listening to this action

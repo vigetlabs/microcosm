@@ -1,16 +1,14 @@
-import Action      from  './fixtures/Action'
-import DummyStore  from './fixtures/DummyStore'
-import Microcosm   from '../src/Microcosm'
-import Transaction from '../src/Transaction'
-import assert      from 'assert'
+import Action     from  './fixtures/Action'
+import DummyStore from './fixtures/DummyStore'
+import Microcosm  from '../src/Microcosm'
+import assert     from 'assert'
 
 describe('Microcosm', function() {
   let app;
 
-  beforeEach(function(done) {
+  beforeEach(function() {
     app = new Microcosm()
     app.addStore('dummy', DummyStore)
-    app.start(done)
   })
 
   it ('can be extended - Address loose mode Babel bug', function() {
@@ -41,36 +39,6 @@ describe('Microcosm', function() {
     app.replace({ dummy: 'different' })
   })
 
-  it ('binds arguments to push', function() {
-    app.prepare(function(...args) {
-      assert.deepEqual(args, [ 1, 2, 3 ])
-    }, [ 1, 2 ])(3)
-  })
-
-  it ('prepare handles cases with no arguments', function(done) {
-    let expected = 3
-
-    function test(a) {
-      assert.equal(arguments.length, 1)
-      assert.equal(a, expected)
-      done()
-    }
-
-    app.prepare(test)(expected)
-  })
-
-  it ('prepare does not inject nully', function(done) {
-    let expected = 3
-
-    function test(a) {
-      assert.equal(arguments.length, 1)
-      assert.equal(a, expected)
-      done()
-    }
-
-    app.prepare(test, expected)()
-  })
-
   it ('throws an error if asked to push a non-function value', function(done) {
     try {
       app.push(null)
@@ -82,8 +50,6 @@ describe('Microcosm', function() {
 
   it ('can manipulate how many transactions are merged', function() {
     let app = new Microcosm({ maxHistory: 5 })
-
-    app.start()
 
     let identity = n => n
 
@@ -103,27 +69,6 @@ describe('Microcosm', function() {
   it ('throws an error if asked to push an undefined action', function() {
     assert.throws(function() {
       app.push(undefined)
-    })
-  })
-
-  it ('throws an error if asked to push before start() has been called', function() {
-    let app = new Microcosm()
-
-    assert.throws(function() {
-      app.push(() => {})
-    }, /Cannot push: Did you forget to call app.start()?/)
-  })
-
-  context('when a microcosm plugin passes an error', function() {
-    let app   = new Microcosm()
-    let error = 'This error should exist!'
-
-    app.addPlugin(function willFail (app, options, next) {
-      next(error)
-    })
-
-    it ('start() throws the error if a callback is not provided', function() {
-      assert.throws(() => app.start(), error)
     })
   })
 })

@@ -6,9 +6,8 @@ import {addList, removeList} from '../../../app/resources/lists/actions'
 describe('List Actions', function() {
   var app;
 
-  beforeEach(function(done) {
+  beforeEach(function() {
     app = new App()
-    app.start(done)
   })
 
   describe('when sent a ListActions.add message', function() {
@@ -43,7 +42,7 @@ describe('List Actions', function() {
 
     beforeEach(function() {
       app.push(addList, { name: 'parent' })
-      app.push(addItem, [ app.state.lists[0].id, { name } ])
+      app.push(addItem, app.state.lists[0].id, { name })
       app.push(removeList, app.state.lists[0].id)
     })
 

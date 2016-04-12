@@ -1,7 +1,5 @@
-export default function Hydrate (app, key, next) {
+export default function Hydrate (app, key) {
   if (key in window) {
-    return app.replace(window[key], next)
+    return app.replace(window[key])
   }
-
-  return next()
 }

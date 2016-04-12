@@ -12,11 +12,16 @@ export default React.createClass({
     }
   },
 
+  reset() {
+    this.setState({ message: '' })
+  },
+
   send(e) {
     e.preventDefault()
 
     if (this.state.message.length > 0) {
       this.props.onSubmit(this.state.message)
+      this.reset()
     }
   },
 
@@ -24,10 +29,6 @@ export default React.createClass({
     this.setState({
       message: e.target.value
     })
-  },
-
-  componentWillReceiveProps() {
-    this.setState({ message: '' })
   },
 
   render() {

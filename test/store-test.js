@@ -9,26 +9,14 @@ describe('Stores', function() {
 
     app.addStore('test', function() {
       return {
-        [action]: true
+        [action]: () => true
       }
     })
 
-    app.start()
-
-    app.push(action, [], function() {
+    app.push(action, []).onDone(function() {
       assert(app.state.test)
       done()
     })
-  })
-
-  it ('throws if not given a store', function() {
-    let app   = new Microcosm()
-    let error = new RegExp('Expected a store object or function')
-
-    assert.throws(() => app.addStore('test'), error)
-    assert.throws(() => app.addStore('test', 'fiz'), error)
-    assert.throws(() => app.addStore('test', null), error)
-    assert.throws(() => app.addStore(null), error)
   })
 
   it ('can mount a store at an empty key path', function() {
@@ -40,8 +28,6 @@ describe('Stores', function() {
       }
     })
 
-    app.start()
-
     assert(app.state.test)
   })
 
@@ -50,8 +36,7 @@ describe('Stores', function() {
 
     beforeEach(function(done) {
       this.app = new Microcosm()
-      this.app.start()
-      this.app.push(action, null, done)
+      this.app.push(action).onDone(done)
     })
 
     context ('and a new store is added', function() {
@@ -66,7 +51,7 @@ describe('Stores', function() {
 
       context('and that action is pushed again', function () {
         beforeEach(function(done) {
-          this.app.push(action, null, done)
+          this.app.push(action).onDone(done)
         })
 
         it ('accounts for the new handler', function () {

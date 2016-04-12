@@ -15,8 +15,6 @@ describe('Serialization', function() {
       }
     })
 
-    app.start()
-
     assert.equal(app.toJSON()['serialize-test'], 'this is a test')
   })
 
@@ -30,18 +28,7 @@ describe('Serialization', function() {
       }
     })
 
-    app.start().toJSON()
-  })
-
-  it ('properly deserializes nully values', function() {
-    let app = new Microcosm()
-
-    app.addStore('fiz', {})
-
-    app.start()
-
-    assert.equal(false, 'fiz' in app.deserialize(null))
-    assert.equal(false, 'fiz' in app.deserialize(undefined))
+    app.toJSON()
   })
 
   it ('defaults to getInitialState when no deserialize method is provided', function(done) {
@@ -53,9 +40,7 @@ describe('Serialization', function() {
       }
     })
 
-    app.start()
-
-    app.replace({}, function() {
+    app.replace({}).onDone(function() {
       assert.deepEqual(app.state, { fiz: true })
       done()
     })
@@ -72,7 +57,6 @@ describe('Serialization', function() {
       }
     })
 
-    app.start()
     app.deserialize({ fiz: 'buzz'})
   })
 })

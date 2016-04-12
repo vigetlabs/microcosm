@@ -22,7 +22,7 @@ export default Presenter(React.createClass({
     return (
       <li key={ id }>
         { name }
-        <button className="btn" onClick={ this.props.app.prepare(removeItem, id) }>
+        <button className="btn" onClick={ () => this.props.app.push(removeItem, id) }>
           Delete
         </button>
       </li>

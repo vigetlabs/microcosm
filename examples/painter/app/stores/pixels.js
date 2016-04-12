@@ -1,4 +1,4 @@
-import { report } from '../actions/pixels'
+import { paint }  from '../actions/pixels'
 import { update } from 'sprout-data'
 
 const Pixels = {
@@ -7,11 +7,13 @@ const Pixels = {
     return Array(15).join().split(',').map(_ => Array(15).join().split(','))
   },
 
+  flipBit(pixels, { x, y }) {
+    return update(pixels, [y, x], val => val ? 0 :  1)
+  },
+
   register() {
     return {
-      [report](pixels, { x, y }) {
-        return update(pixels, [y, x], val => val ? 0 :  1)
-      }
+      [paint] : Pixels.flipBit
     }
   }
 

@@ -12,13 +12,13 @@ export default React.createClass({
   },
 
   render() {
-    const { user, time, message, pending } = this.props
+    const { user, time, message, error, pending } = this.props
 
-    const status   = pending ? 'sending...' : '✔'
+    const status   = pending ? 'sending...' : error ? '✖' : '✔'
     const safeTime = new Date(time)
 
     return (
-      <li className={ pending ? 'loading' : null }>
+      <li className={ pending ? 'loading' : error ? 'error' : null }>
         <b>{ user } </b>
         <time dateTime={ safeTime.toString() }>
           { safeTime.toDateString() } { status }

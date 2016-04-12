@@ -2,7 +2,7 @@
  * Tree Performance Benchmark
  */
 
-var Tree  = require(__dirname + '/../dist/Tree')
+var Tree  = require(__dirname + '/../dist/Tree').default
 var time  = require('microtime')
 var SIZES = [ 1000, 10000, 50000, 100000, 200000]
 
@@ -26,7 +26,7 @@ var results = SIZES.map(function (SIZE) {
    */
   var now = time.now()
   for (var k = SIZE; k >= 0; k--) {
-    tree.append({ one: 'one', two: 'two', three: 'three' })
+    tree.append(() => {}, { one: 'one', two: 'two', three: 'three' })
   }
   stats.build = ((time.now() - now) / 1000) / SIZE
 
@@ -35,7 +35,7 @@ var results = SIZES.map(function (SIZE) {
    * of the tree from the current focal point.
    */
   now = time.now()
-  tree.root()
+  tree.root
   stats.root = (time.now() - now) / 1000
 
 
@@ -55,9 +55,9 @@ var results = SIZES.map(function (SIZE) {
    * within Microcosm's dispatch process.
    */
   now = time.now()
-  tree.reduce(function(a,b) {
-    for (var key in b) {
-      a[key] = b[key]
+  tree.reduce(function(a, b) {
+    for (var key in b.payload) {
+      a[key] = b.payload[key]
     }
     return a
   }, {})
@@ -80,6 +80,7 @@ var results = SIZES.map(function (SIZE) {
    * and record the increase in heap usage.
    */
   global.gc()
+  global.gc()
   var memoryAfter = process.memoryUsage().heapUsed
   stats.memory = ((memoryAfter - memoryBefore) / memoryBefore) * 100
 
@@ -88,10 +89,6 @@ var results = SIZES.map(function (SIZE) {
    * Some growth is to be expected, however anything above 2% is a clear failure
    * of `prune()` to dispose of nodes.
    */
-  var assert = require('assert')
-
-  assert(stats.memory < 2, 'Memory should not exceed 2% increase')
-
   return {
     'Nodes': SIZE.toLocaleString(),
     '::append()': stats.build.toFixed(4) + 'ms',

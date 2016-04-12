@@ -1,3 +1,3 @@
-export function report (x, y) {
+export function paint (x, y) {
   return { x, y }
 }

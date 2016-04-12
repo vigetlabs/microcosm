@@ -1,4 +1,4 @@
-import tag from '../src/tag'
+import tag    from '../src/action/tag'
 import assert from 'assert'
 
 describe('tag', function() {

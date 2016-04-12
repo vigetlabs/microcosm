@@ -10,16 +10,19 @@ export default React.createClass({
     app: React.PropTypes.object.isRequired
   },
 
+  sendChat(body) {
+    return this.props.app.push(sendChat, body)
+  },
+
   render() {
-    const { app } = this.props
-    const { messages } = app.state
+    const { messages } = this.props.app.state
 
     const toSay = messages.filter(m => m.user !== 'You').pop()
 
     return (
       <div className="chat">
         <Conversation messages={ messages } />
-        <Form onSubmit={ app.prepare(sendChat) } />
+        <Form onSubmit={ this.sendChat } />
         <Announcer { ...toSay } />
       </div>
     )
