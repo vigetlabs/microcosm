@@ -1,12 +1,18 @@
 {
-  "stage": 1,
-  "loose": "all",
-  "sourceMaps": "inline",
-  "env": {
-    "production": {
-      "optional": [
-        "utility.inlineEnvironmentVariables"
-      ]
+    "presets": [
+        "es2015",
+        "stage-1",
+        "react"
+    ],
+    "plugins": [
+        "transform-object-assign"
+    ],
+    "env": {
+        "test": {
+            "plugins": ["transform-runtime"]
+        },
+        "development": {
+            "plugins": ["transform-runtime"]
+        }
     }
-  }
 }

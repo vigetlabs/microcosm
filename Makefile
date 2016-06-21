@@ -61,7 +61,7 @@ test-watch:
 	@ make test-browser TEST_OPTIONS="--watch"
 
 test-node: $(shell find {test,examples} -name '*-test.js')
-	@ NODE_ENV=test mocha -R dot --compilers js:babel/register $(MOCHA_OPTIONS) test examples
+	@ NODE_ENV=test mocha -R dot --compilers js:babel-register $(MOCHA_OPTIONS) test examples
 
 test-node-watch: $(shell find {test,examples} -name '*-test.js')
 	@ make test-node MOCHA_OPTIONS="-w"

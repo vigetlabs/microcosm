@@ -60,9 +60,6 @@ module.exports = {
       {
         test     : /\.jsx*$/,
         loader   : 'babel',
-        query    : {
-          optional : [ 'runtime' ]
-        },
         exclude: /node_modules/,
         happy: { id: 'js' }
       }]

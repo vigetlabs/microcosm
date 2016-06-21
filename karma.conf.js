@@ -1,4 +1,3 @@
-var HappyPack = require('happypack')
 var path = require('path')
 
 module.exports = function (config) {
@@ -46,22 +45,16 @@ module.exports = function (config) {
         modulesDirectories: [ 'node_modules' ]
       },
 
-      plugins: [
-        new HappyPack({ id: 'js' })
-      ],
-
       module: {
         loaders: [{
           test: /\.jsx*$/,
           exclude: /node_modules/,
-          loader: 'babel?optional=runtime',
-          happy: { id: 'js' }
+          loader: 'babel'
         }],
         postLoaders: withCoverage ? [{
           test: /\.jsx*$/,
           exclude: /(test|__tests__|node_modules)\//,
-          loader: 'istanbul-instrumenter',
-          happy: { id: 'js' }
+          loader: 'istanbul-instrumenter'
         }] : null
       }
     }
