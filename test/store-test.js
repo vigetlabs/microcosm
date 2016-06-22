@@ -3,9 +3,9 @@ import assert from 'assert'
 
 describe('Stores', function() {
 
-  it ('a store can be a function', function(done) {
-    let action = function() {}
-    let app = new Microcosm()
+  it ('a store can be a function', function() {
+    let app    = new Microcosm()
+    let action = n => n
 
     app.addStore('test', function() {
       return {
@@ -13,10 +13,9 @@ describe('Stores', function() {
       }
     })
 
-    app.push(action, []).onDone(function() {
-      assert(app.state.test)
-      done()
-    })
+    app.push(action)
+
+    assert.equal(app.state.test, true)
   })
 
   it ('can mount a store at an empty key path', function() {
@@ -34,9 +33,9 @@ describe('Stores', function() {
   context('when a microcosm is pushes an action', function() {
     let action = n => n
 
-    beforeEach(function(done) {
+    beforeEach(function() {
       this.app = new Microcosm()
-      this.app.push(action).onDone(done)
+      this.app.push(action)
     })
 
     context ('and a new store is added', function() {
@@ -50,8 +49,8 @@ describe('Stores', function() {
       })
 
       context('and that action is pushed again', function () {
-        beforeEach(function(done) {
-          this.app.push(action).onDone(done)
+        beforeEach(function() {
+          this.app.push(action)
         })
 
         it ('accounts for the new handler', function () {

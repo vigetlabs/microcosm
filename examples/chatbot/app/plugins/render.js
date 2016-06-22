@@ -7,7 +7,7 @@ export default function Render (app, el) {
     DOM.render(<Chat app={ app } />, el)
   }
 
-  render()
+  app.on('change', render)
 
-  app.listen(render)
+  render()
 }

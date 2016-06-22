@@ -72,11 +72,11 @@ Action.prototype = {
   open(payload) {
     this.state = States.OPEN
     this.set(payload)
-    this.emit('open')
+    this.emit('open', this.payload)
   },
 
   send(payload) {
-    this.state |= States.LOADING
+    this.state = States.LOADING
     this.set(payload)
     this.emit('update', this.payload)
   },
@@ -101,7 +101,7 @@ Action.prototype = {
 
   toggle() {
     this.state ^= States.DISABLED
-    this.emit()
+    this.emit('change')
   },
 
   onError(callback, scope) {

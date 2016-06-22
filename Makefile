@@ -16,7 +16,6 @@ docs:
 bundle: $(OUT)
 	rollup -f cjs ./src/Microcosm.js > $(OUT)/microcosm.es6.js
 	buble $(OUT)/microcosm.es6.js > $(OUT)/microcosm.js
-	browserify $(OUT)/microcosm.js > $(OUT)/microcosm.build.js
 
 $(OUT)/%.js: $(IN)/%.js
 	@ mkdir -p $(@D)

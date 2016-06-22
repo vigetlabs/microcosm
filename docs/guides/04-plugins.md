@@ -17,7 +17,7 @@ let Logger = {
   },
 
   register(app, options) {
-    app.listen(i => log(app.toJSON()))
+    app.on('change', i => log(app.toJSON()))
   }
 
 }

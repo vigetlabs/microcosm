@@ -1,4 +1,4 @@
-import Tree   from '../src/tree'
+import Tree from '../src/Tree'
 import assert from 'assert'
 
 describe('Tree', function() {

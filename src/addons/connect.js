@@ -33,7 +33,7 @@ export default function connect (mapStateToProps, options) {
       }
 
       componentDidMount() {
-        this.app.listen(this.updateState, this)
+        this.app.on('change', this.updateState, this)
       }
 
       componentWillUnmount() {

@@ -20,7 +20,7 @@ function set (target, key, value) {
   return Object.assign({}, target, { [key] : value })
 }
 
-export default function dispatch (state, handlers, payload) {
+export default function dispatch (state, handlers, payload, params) {
   if (handlers.length <= 0) return state
 
   let next = Object.assign({}, state)
@@ -28,7 +28,7 @@ export default function dispatch (state, handlers, payload) {
   for (var i = 0, size = handlers.length; i < size; i++) {
     let { key, store, handler } = handlers[i]
 
-    let answer = typeof handler === 'function' ? handler.call(store, get(next, key), payload) : handler
+    let answer = typeof handler === 'function' ? handler.call(store, get(next, key), payload, params) : handler
 
     if (answer !== undefined) {
       next = set(next, key, answer)

@@ -13,7 +13,7 @@ export default function Render (app, el) {
   app.listen(render)
 
   function loop ({ time = Date.now() }) {
-    let action = app.push(animate, time, 1000).onDone(loop)
+    app.push(animate, { time, delay: 1000 }, loop)
   }
 
   loop({ time: Date.now() })

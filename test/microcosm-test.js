@@ -1,6 +1,6 @@
-import Action     from  './fixtures/Action'
-import DummyStore from './fixtures/DummyStore'
-import Microcosm  from '../src/Microcosm'
+import Action     from  './fixtures/action'
+import DummyStore from './fixtures/dummy-store'
+import Microcosm  from '../src/microcosm'
 import assert     from 'assert'
 
 describe('Microcosm', function() {
@@ -32,7 +32,7 @@ describe('Microcosm', function() {
   })
 
   it ('deserializes when replace is invoked', function() {
-    app.listen(function() {
+    app.on('change', function() {
       assert.equal(app.state.dummy, 'DIFFERENT')
     })
 

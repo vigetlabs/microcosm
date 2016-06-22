@@ -1,14 +1,12 @@
-import Diode     from 'diode'
+import Emitter   from 'component-emitter'
 import MetaStore from './stores/meta'
-import Tree      from './Tree'
+import Tree      from './tree'
 import dispatch  from './dispatch'
 import lifecycle from './lifecycle'
 import memorize  from './memorize'
 
-function Microcosm (config = {}) {
-  Diode(this)
-
-  this.maxHistory = 'maxHistory' in config ? config.maxHistory : Infinity
+function Microcosm ({ maxHistory = -Infinity } = {}) {
+  this.maxHistory = maxHistory
 
   this.cache    = {}
   this.state    = {}
@@ -50,7 +48,7 @@ Microcosm.prototype = {
 
     this.state = this.history.reduce(this.dispatch, this.cache, this)
 
-    this.emit(this.state)
+    this.emit('change', this.state)
 
     return this
   },
@@ -68,7 +66,9 @@ Microcosm.prototype = {
 
     action.on('change', this.rollforward.bind(this))
 
-    return action.execute(...params)
+    action.execute(...params)
+
+    return action
   },
 
   addStore(keyPath, store) {
@@ -118,23 +118,10 @@ Microcosm.prototype = {
     this.cache = Object.assign(this.getInitialState(), this.cache)
 
     this.rollforward()
-  },
-
-  fork(stores) {
-    const clone = Object.create(this)
-
-    if (Array.isArray(stores)) {
-      stores.forEach(store => clone.addStore(store))
-    } else if (stores && typeof stores === 'object') {
-      Object.keys(stores).forEach(function(key) {
-        clone.addStore(key, stores[key])
-      })
-    } else if (stores) {
-      clone.addStore(stores)
-    }
-
-    return clone
   }
+
 }
+
+Emitter(Microcosm.prototype)
 
 export default Microcosm

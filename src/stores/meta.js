@@ -7,5 +7,5 @@
 import lifecycle from '../lifecycle'
 
 export default {
-  [lifecycle.willReset] : (state, next) => next
+  [lifecycle.willReset]: (_, next) => next
 }

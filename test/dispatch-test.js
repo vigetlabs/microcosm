@@ -37,6 +37,7 @@ describe('dispatch', function() {
     })
 
     app.push(mutation)
+
     assert.equal(app.history.size(), 0)
     assert.equal(app.state.toggled, true)
 
