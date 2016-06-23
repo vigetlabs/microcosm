@@ -121,6 +121,10 @@ describe('Action', function() {
               assert.equal(this.action.is('loading'), false)
               assert.equal(this.action.is('done'), true)
             })
+
+            it ('is disposable', function() {
+              assert.equal(this.action.is('disposable'), true)
+            })
           })
 
           context('and then fails', function() {
@@ -136,6 +140,10 @@ describe('Action', function() {
               assert.equal(this.action.is('loading'), false)
               assert.equal(this.action.is('failed'), true)
             })
+
+            it ('is disposable', function() {
+              assert.equal(this.action.is('disposable'), true)
+            })
           })
 
           context('when it is cancelled', function() {
@@ -147,8 +155,8 @@ describe('Action', function() {
               assert.equal(this.action.is('cancelled'), true)
             })
 
-            it ('identifies as complete', function() {
-              assert.equal(this.action.is('done'), true)
+            it ('identifies as disposable', function() {
+              assert.equal(this.action.is('disposable'), true)
             })
           })
 

@@ -1,6 +1,5 @@
 SHELL := /bin/bash
 PATH  := node_modules/.bin:$(PATH)
-NAME  := $(shell node -e 'console.log(require("./package.json").name)')
 IN    := src
 OUT   := dist
 
@@ -14,7 +13,7 @@ docs:
 	@ cp -rp $@ $^
 
 bundle: $(OUT)
-	rollup -f cjs ./src/Microcosm.js > $(OUT)/microcosm.es6.js
+	rollup -f cjs ./src/microcosm.js > $(OUT)/microcosm.es6.js
 	buble $(OUT)/microcosm.es6.js > $(OUT)/microcosm.js
 
 $(OUT)/%.js: $(IN)/%.js
@@ -39,7 +38,7 @@ $(OUT):
 	cp -p $@ $^
 
 package.json: $(OUT)
-	@ node -p 'p=require("./package");p.main="Microcosm.js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $(OUT)/package.json
+	@ node -p 'p=require("./package");p.main="microcosm.js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $(OUT)/package.json
 
 release: clean build
 	npm publish $(OUT)

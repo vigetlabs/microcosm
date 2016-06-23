@@ -22,8 +22,7 @@ describe('Mutation', function() {
       })
     })
 
-
-    it ('it writes to application state', function (done) {
+    it ('writes to application state', function (done) {
       this.app.push(action, true).onDone(() => {
         assert.equal(this.app.state.test, true)
         done()

@@ -10,11 +10,11 @@ export default function Render (app, el) {
 
   render(app.state)
 
-  app.listen(render)
+  app.on('change', render)
 
-  function loop ({ time = Date.now() }) {
-    app.push(animate, { time, delay: 1000 }, loop)
+  function loop ({ time = Date.now() } = {}) {
+    app.push(animate, time, 1000).onDone(loop)
   }
 
-  loop({ time: Date.now() })
+  loop()
 }

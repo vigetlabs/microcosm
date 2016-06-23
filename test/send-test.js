@@ -10,10 +10,12 @@ describe('sending actions', function() {
     let app = new Microcosm()
 
     let store = {
+      test: true,
+
       register() {
         return {
           [action](state) {
-            assert.equal(this, store)
+            assert.equal(this.test, true)
             done()
           }
         }
@@ -36,25 +38,6 @@ describe('sending actions', function() {
       assert.equal(app.state.test, 'test')
       done()
     })
-  })
-
-  it ('forces handlers to be functions', function(done) {
-    let app = new Microcosm()
-
-    app.addStore('test', {
-      register() {
-        return {
-          [action]: 5
-        }
-      }
-    })
-
-    try {
-      app.push(action)
-    } catch (x) {
-      assert(x.message.match(/must be functions/))
-      done()
-    }
   })
 
   it ('sends passes state from previous store operations', function() {

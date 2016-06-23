@@ -82,19 +82,19 @@ Action.prototype = {
   },
 
   reject(payload) {
-    this.state = States.FAILED | States.DONE
+    this.state = States.FAILED | States.DISPOSABLE
     this.set(payload)
     this.emit('error', payload)
   },
 
   close(payload) {
-    this.state = States.DONE
+    this.state = States.DONE | States.DISPOSABLE
     this.set(payload)
     this.emit('done', this.payload)
   },
 
   cancel() {
-    this.state = States.CANCELLED | States.DONE
+    this.state = States.CANCELLED | States.DISPOSABLE
     this.emit('change')
     this.emit('cancel', this.payload)
   },
