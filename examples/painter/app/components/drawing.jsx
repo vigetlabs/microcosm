@@ -4,8 +4,8 @@ import { paint } from '../actions/pixels'
 
 const Drawing = React.createClass({
 
-  flipBit(position) {
-    return this.props.app.push(paint, position)
+  flipBit(x, y) {
+    return this.props.app.push(paint, x, y)
   },
 
   render() {

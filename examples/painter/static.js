@@ -12,10 +12,8 @@ import template from './template.html'
 export default function render (locals, next) {
   let app = new Painter()
 
-  app.start(function (error) {
-    let markup = DOM.renderToString(React.createElement(Drawing, { app }))
-    let output = template({ markup })
+  let markup = DOM.renderToString(React.createElement(Drawing, { app }))
+  let output = template({ markup })
 
-    next(error, output)
-  })
+  next(null, output)
 }
