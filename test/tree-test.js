@@ -10,7 +10,7 @@ describe('Tree', function() {
 
     tree.append(action)
     tree.append(action)
-    assert.equal(tree.focus.action, action)
+    assert.equal(tree.focus.behavior, action)
   })
 
   it ('prunes all the way up to the focal point', function() {

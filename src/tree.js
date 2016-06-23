@@ -15,8 +15,8 @@ Tree.prototype = {
     this.focus = node || this.focus
   },
 
-  append(type) {
-    const action = new Action(type)
+  append(behavior) {
+    const action = new Action(behavior)
 
     this.focus = action.appendTo(this.focus)
 

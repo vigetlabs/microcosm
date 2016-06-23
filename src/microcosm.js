@@ -114,8 +114,8 @@ Microcosm.prototype = {
    *
    * @return {Action} action representation of the invoked function
    */
-  push(type, ...params) {
-    let action = this.history.append(type)
+  push(behavior, ...params) {
+    let action = this.history.append(behavior)
 
     action.on('change', this.rollforward.bind(this))
     action.execute(...params)
