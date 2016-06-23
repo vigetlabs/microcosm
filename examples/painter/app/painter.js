@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/Microcosm'
+import Microcosm from '../../../src/microcosm'
 import Pixels    from './stores/pixels'
 
 export default class Painter extends Microcosm {

@@ -1,4 +1,4 @@
-import Microcosm      from '../Microcosm'
+import Microcosm      from '../microcosm'
 import React          from 'react'
 import getDisplayName from './connect/get-display-name'
 import hoistStatics   from 'hoist-non-react-statics'
@@ -33,11 +33,12 @@ export default function connect (mapStateToProps, options) {
       }
 
       componentDidMount() {
-        this.app.on('change', this.updateState, this)
+        this._listener = this.updateState.bind(this)
+        this.app.on('change', this._listener)
       }
 
       componentWillUnmount() {
-        this.app.ignore(this.updateState, this)
+        this.app.off('change', this._listener)
       }
 
       componentWillReceiveProps(nextProps) {

@@ -1,4 +1,4 @@
-import Action     from  './fixtures/action'
+import Action     from  './fixtures/Action'
 import DummyStore from './fixtures/dummy-store'
 import Microcosm  from '../src/microcosm'
 import assert     from 'assert'

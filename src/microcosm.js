@@ -182,16 +182,6 @@ Microcosm.prototype = {
   },
 
   /**
-   * Serialize application state by asking every store how to serialize the state
-   * they manage (via the serialize store function).
-   *
-   * @return {Object} The serialized version of application state.
-   */
-  serialize() {
-    return this.dispatch(this.state, { type: lifecycle.willSerialize, payload: this.state })
-  },
-
-  /**
    * Deserialize a given payload by asking every store how to it
    * should process it (via the deserialize store function).
    *
@@ -206,11 +196,17 @@ Microcosm.prototype = {
   },
 
   /**
-   * Alias for serialize
-   * @returns {Object} the result of this.serialize()
+   * Serialize application state by asking every store how to serialize the state
+   * they manage (via the serialize store function).
+   *
+   * @example
+   *     app.toJSON() // => { planets: [...] }
+   *     JSON.stringify(app) // => '{ "planets": [...] }'
+   *
+   * @return {Object} The serialized version of application state.
    */
   toJSON() {
-    return this.serialize()
+    return this.dispatch(this.state, { type: lifecycle.willSerialize, payload: this.state })
   },
 
   /**
@@ -220,6 +216,7 @@ Microcosm.prototype = {
    *
    * This will produce a "change" event.
    *
+   * @api private
    * @returns {Microcosm} self
    */
   rebase() {

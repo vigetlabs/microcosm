@@ -1,4 +1,4 @@
-import Microcosm from '../src/Microcosm'
+import Microcosm from '../src/microcosm'
 import assert from 'assert'
 
 describe('dispatch', function() {

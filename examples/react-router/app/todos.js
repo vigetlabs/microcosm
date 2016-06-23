@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/Microcosm'
+import Microcosm from '../../../src/microcosm'
 import ItemStore from './resources/items/store'
 import ListStore from './resources/lists/store'
 

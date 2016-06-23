@@ -3,7 +3,7 @@
   "version": "9.21.0",
   "private": true,
   "description": "A variant of Facebook's Flux with centralized, isolated state",
-  "main": "src/Microcosm.js",
+  "main": "src/microcosm.js",
   "scripts": {
     "prepublish": "make build",
     "start": "make example",

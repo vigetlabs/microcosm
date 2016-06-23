@@ -1,5 +1,5 @@
 import React, { PropTypes, Children } from 'react'
-import Microcosm from '../Microcosm'
+import Microcosm from '../microcosm'
 
 const Provider = React.createClass({
 

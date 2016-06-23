@@ -1,6 +1,6 @@
 import Connect   from '../../src/addons/connect'
 import DOM       from 'react-dom'
-import Microcosm from '../../src/Microcosm'
+import Microcosm from '../../src/microcosm'
 import Provider  from '../../src/addons/provider'
 import React     from 'react'
 import Test      from 'react-addons-test-utils'
@@ -31,7 +31,7 @@ describe('Connect Add-on', function() {
   it ('listens to an application when it mounts', function (done) {
     let app = new Microcosm()
 
-    app.listen = () => done()
+    app.on = () => done()
 
     let Component = Connect()(props => <p>MVP</p>)
     let component = Test.renderIntoDocument(<Component app={ app } />)
@@ -40,7 +40,7 @@ describe('Connect Add-on', function() {
   it ('ignores an application when it unmounts', function(done) {
     let app = new Microcosm()
 
-    app.ignore = () => done()
+    app.off = () => done()
 
     let Child  = Connect()(props => <p>MVP</p>)
     let Parent = React.createClass({

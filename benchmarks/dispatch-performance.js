@@ -7,7 +7,7 @@
  * gut check of "are we fast yet?"
  */
 
-var Microcosm = require('../dist/Microcosm').default
+var Microcosm = require('../dist/microcosm').default
 var time      = require('microtime')
 var SIZES     = [ 1000, 10000, 50000, 100000, 200000]
 var SAMPLES   = 25
