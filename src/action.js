@@ -1,25 +1,29 @@
 import Emitter   from 'component-emitter'
+import States    from './action/states'
 import coroutine from './action/coroutine'
 import tag       from './action/tag'
-import States    from './action/states'
 
 /**
  * Actions are the result of using `push()` within a Microcosm
  * instance. They are dispatched to stores to produce new state.
  *
+ * @example
+ *     new Action(id => promiseAjax.get(id))
+ *     new Action(lifecycle.willStart)
+ *
  * @api private
  *
- * @param {Function} Action type.
+ * @param {Function} behavior - how the action should resolve.
  */
-export default function Action (behavior) {
-  this.behavior = tag(behavior)
-}
+export default class Action {
 
-Action.prototype = {
-  depth   : 0,
-  parent  : null,
-  sibling : null,
-  state   : States.UNSET,
+  constructor (behavior) {
+    this.behavior = tag(behavior)
+    this.depth    = 0
+    this.parent   = null
+    this.sibling  = null
+    this.state    = States.UNSET
+  }
 
   /**
    * Append an action to another, making that action its parent. This
@@ -42,7 +46,7 @@ Action.prototype = {
     }
 
     return this
-  },
+  }
 
   /**
    * Check the state of the action to determine what `type` should be
@@ -61,7 +65,7 @@ Action.prototype = {
     if (this.is(States.OPEN))      return this.behavior.open
 
     return null
-  },
+  }
 
   /**
    * Get all child actions, those dispatched after this one within
@@ -82,7 +86,7 @@ Action.prototype = {
     }
 
     return nodes
-  },
+  }
 
   /**
    * Given a string or State constant, determine if the `state` bitmask for
@@ -103,7 +107,7 @@ Action.prototype = {
     }
 
     return (this.state & type) === type
-  },
+  }
 
   /**
    * Evaluate the action by invoking the action's behavior with
@@ -115,10 +119,11 @@ Action.prototype = {
    */
   execute(/** params **/) {
     coroutine(this, this.behavior.apply(this, arguments))
-  },
+  }
 
   /**
-   * If defined, sets the payload for the action and triggers a change event.
+   * If defined, sets the payload for the action and triggers a
+   * "change" event.
    *
    * @api private
    */
@@ -128,11 +133,11 @@ Action.prototype = {
     }
 
     this.emit('change')
-  },
+  }
 
   /**
-   * Set the action state to "open", then set a payload if provided. Triggers the
-   * "open" event.
+   * Set the action state to "open", then set a payload if
+   * provided. Triggers the "open" event.
    *
    * @api public
    */
@@ -140,11 +145,11 @@ Action.prototype = {
     this.state = States.OPEN
     this.set(payload)
     this.emit('open', this.payload)
-  },
+  }
 
   /**
-   * Set the action state to "loading", then set a payload if provided. Triggers the
-   * "update" event.
+   * Set the action state to "loading", then set a payload if
+   * provided. Triggers the "update" event.
    *
    * @api public
    */
@@ -152,7 +157,7 @@ Action.prototype = {
     this.state = States.LOADING
     this.set(payload)
     this.emit('update', this.payload)
-  },
+  }
 
   /**
    * Set the action state to "failed" and marks the action for clean
@@ -164,7 +169,7 @@ Action.prototype = {
     this.state = States.FAILED | States.DISPOSABLE
     this.set(payload)
     this.emit('error', payload)
-  },
+  }
 
   /**
    * Set the action state to "done" and marks the action for clean
@@ -176,7 +181,7 @@ Action.prototype = {
     this.state = States.DONE | States.DISPOSABLE
     this.set(payload)
     this.emit('done', this.payload)
-  },
+  }
 
   /**
    * Set the action state to "cancelled" and marks the action for clean
@@ -188,7 +193,7 @@ Action.prototype = {
     this.state = States.CANCELLED | States.DISPOSABLE
     this.emit('change')
     this.emit('cancel', this.payload)
-  },
+  }
 
   /**
    * Toggles the disabled state, where the action will not
@@ -200,7 +205,7 @@ Action.prototype = {
   toggle() {
     this.state ^= States.DISABLED
     this.emit('change')
-  },
+  }
 
   /**
    * Listen to failure. If the action has already failed, it will
@@ -222,7 +227,7 @@ Action.prototype = {
     }
 
     return this
-  },
+  }
 
   /**
    * Listen to progress. Wait and trigger a provided callback on the "update" event.
@@ -238,7 +243,7 @@ Action.prototype = {
     this.listen('update', callback.bind(scope))
 
     return this
-  },
+  }
 
   /**
    * Listen for completion. If the action has already completed, it will
@@ -261,6 +266,7 @@ Action.prototype = {
 
     return this
   }
+
 }
 
 Emitter(Action.prototype)

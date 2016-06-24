@@ -21,20 +21,19 @@ import lifecycle from './lifecycle'
  * @param {{maxHistory: Number}} options - Instantiation options.
  * @api public
  */
-function Microcosm ({ maxHistory = -Infinity } = {}) {
-  this.maxHistory = maxHistory
+export default class Microcosm {
 
-  this.cache    = {}
-  this.state    = {}
-  this.stores   = []
-  this.history  = new Tree()
+  constructor ({ maxHistory = -Infinity } = {}) {
+    this.maxHistory = maxHistory
 
-  // Standard store reduction behaviors
-  this.addStore(MetaStore)
-}
+    this.cache    = {}
+    this.state    = {}
+    this.stores   = []
+    this.history  = new Tree()
 
-Microcosm.prototype = {
-  constructor: Microcosm,
+    // Standard store reduction behaviors
+    this.addStore(MetaStore)
+  }
 
   /**
    * Determines the initial state of the Microcosm instance by
@@ -43,9 +42,9 @@ Microcosm.prototype = {
    *
    * @return {Object} State object representing the initial state.
    */
-  getInitialState() {
+  getInitialState () {
     return this.dispatch({}, { type: lifecycle.willStart, payload: this.state })
-  },
+  }
 
   /**
    * Microcosms maintain a cache of "merged" actions. Actions that are
@@ -59,14 +58,14 @@ Microcosm.prototype = {
    *
    * @return {Boolean} Was the action merged into the state cache?
    */
-  clean(action) {
+  clean (action) {
     if (action.is('disposable') && this.history.size() > this.maxHistory) {
       this.cache = this.dispatch(this.cache, action)
       return true
     }
 
     return false
-  },
+  }
 
   /**
    * When an action emits a change, Microcosm uses this method to run
@@ -79,7 +78,7 @@ Microcosm.prototype = {
    *
    * @return {Microcosm} self
    */
-  rollforward() {
+  rollforward () {
     this.history.prune(this.clean, this)
 
     this.state = this.history.reduce(this.dispatch, this.cache, this)
@@ -87,7 +86,7 @@ Microcosm.prototype = {
     this.emit('change', this.state)
 
     return this
-  },
+  }
 
   /**
    * Given a state, sends an action to all stores for processing. This is pure,
@@ -98,9 +97,9 @@ Microcosm.prototype = {
    *
    * @return {Object} state - A new state object
    */
-  dispatch(state, { type, payload }) {
+  dispatch (state, { type, payload }) {
     return this.stores.reduce((next, [key, store]) => store.receive(next, type, payload, key), state)
-  },
+  }
 
 
   /**
@@ -114,14 +113,14 @@ Microcosm.prototype = {
    *
    * @return {Action} action representation of the invoked function
    */
-  push(behavior, ...params) {
+  push (behavior, ...params) {
     let action = this.history.append(behavior)
 
     action.on('change', this.rollforward.bind(this))
     action.execute(...params)
 
     return action
-  },
+  }
 
   /**
    * Adds a store to the Microcosm instance. A store informs the
@@ -141,7 +140,7 @@ Microcosm.prototype = {
    *
    * @return {Microcosm} self
    */
-  addStore(key, config) {
+  addStore (key, config) {
     if (arguments.length < 2) {
       // Important! Assignment this way is important
       // to support IE9, which has an odd way of referencing
@@ -155,7 +154,7 @@ Microcosm.prototype = {
     this.rebase()
 
     return this
-  },
+  }
 
   /**
    * Push an action to reset the state of the instance. This state is folded
@@ -165,9 +164,9 @@ Microcosm.prototype = {
    *
    * @return {Action} action - An action representing the reset operation.
    */
-  reset(state) {
+  reset (state) {
     return this.push(lifecycle.willReset, Object.assign(this.getInitialState(), state))
-  },
+  }
 
   /**
    * Deserialize a given state and reset the instance with that
@@ -177,9 +176,9 @@ Microcosm.prototype = {
    *
    * @return {Action} action - An action representing the replace operation.
    */
-  replace(data) {
+  replace (data) {
     return this.reset(this.deserialize(data))
-  },
+  }
 
   /**
    * Deserialize a given payload by asking every store how to it
@@ -189,11 +188,11 @@ Microcosm.prototype = {
 
    * @return {Object} The deserialized version of the provided payload.
    */
-  deserialize(payload) {
+  deserialize (payload) {
     if (payload != null) {
       return this.dispatch(payload, { type: lifecycle.willDeserialize, payload })
     }
-  },
+  }
 
   /**
    * Serialize application state by asking every store how to serialize the state
@@ -205,9 +204,9 @@ Microcosm.prototype = {
    *
    * @return {Object} The serialized version of application state.
    */
-  toJSON() {
+  toJSON () {
     return this.dispatch(this.state, { type: lifecycle.willSerialize, payload: this.state })
-  },
+  }
 
   /**
    * Recalculate initial state by back-filling the cache object with the result
@@ -217,9 +216,10 @@ Microcosm.prototype = {
    * This will produce a "change" event.
    *
    * @api private
+   *
    * @returns {Microcosm} self
    */
-  rebase() {
+  rebase () {
     this.cache = Object.assign(this.getInitialState(), this.cache)
     return this.rollforward()
   }
@@ -227,5 +227,3 @@ Microcosm.prototype = {
 }
 
 Emitter(Microcosm.prototype)
-
-export default Microcosm
