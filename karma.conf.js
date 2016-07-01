@@ -23,6 +23,10 @@ module.exports = function (config) {
 
     reporters: [ 'mocha' ],
 
+    client: {
+      captureConsole: true
+    },
+
     coverageReporter: {
       dir: process.env.CIRCLE_ARTIFACTS || 'coverage',
       type: 'html',

@@ -1,11 +1,9 @@
 import React   from 'react'
-import DOM     from 'react-dom'
-import Test    from 'react-addons-test-utils'
+import {mount}  from 'enzyme'
 import Destroy from '../../../../app/views/lists/parts/destroy'
-import Catch   from '../../../helpers/catch'
 import assert  from 'assert'
 
-describe('Destroy', function () {
+describe('ReactRouter | Views | Destroy', function () {
 
   it ('sends the correct form parameters when it submits', function (done) {
     function assertion (intent, params) {
@@ -14,13 +12,14 @@ describe('Destroy', function () {
       done()
     }
 
-    const form = Test.renderIntoDocument(
-      <Catch send={ assertion }>
-        <Destroy intent="destroy" id="3" />
-      </Catch>
-    )
+    const form = mount(<Destroy intent="destroy" id="3" />, {
+      context : { send: assertion },
+      childContextTypes: {
+        send : React.PropTypes.func
+      }
+    })
 
-    Test.Simulate.submit(DOM.findDOMNode(form))
+    form.simulate('submit')
   })
 
 })

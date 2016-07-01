@@ -36,12 +36,12 @@ const Form = React.createClass({
     const params = this.props.serializer(form)
     const action = this.context.send(this.props.intent, params)
 
-    this.props.onSubmit(event)
-
     if (action instanceof Action) {
       action.onDone(payload => this.props.onSuccess(payload, form))
             .onError(error  => this.props.onFailure(error, form))
     }
+
+    this.props.onSubmit(event)
   }
 
 })

@@ -1,8 +1,6 @@
 import React    from 'react'
-import DOM      from 'react-dom'
-import Test     from 'react-addons-test-utils'
+import {mount}  from 'enzyme'
 import ItemForm from '../../../../app/views/lists/parts/item-form'
-import Catch    from '../../../helpers/catch'
 import assert   from 'assert'
 
 describe('ReactRouter | Views | ItemForm', function () {
@@ -10,16 +8,23 @@ describe('ReactRouter | Views | ItemForm', function () {
   it ('sends the correct form parameters when it submits', function (done) {
     function assertion (intent, params) {
       assert.equal(intent, 'addItem')
-      assert.equal(params.name, 'John Doe')
+      assert.equal(params.name, 'Eggs')
+      assert.equal(params.list, 2)
       done()
     }
 
-    const form = Test.renderIntoDocument(<Catch send={ assertion }><ItemForm /></Catch>)
-    const el   = DOM.findDOMNode(form)
+    const form = mount(<ItemForm list="2" />, {
+      context: {
+        send : assertion
+      },
+      childContextTypes: {
+        send : React.PropTypes.func
+      }
+    })
 
-    el.querySelector('#item-name').value = 'John Doe'
+    form.find('[name="name"]').simulate('change', { target: { value: 'Eggs' } })
 
-    Test.Simulate.submit(el)
+    form.simulate('submit')
   })
 
 })

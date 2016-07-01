@@ -1,9 +1,7 @@
-import React  from 'react'
-import DOM    from 'react-dom'
-import Test   from 'react-addons-test-utils'
-import Catch  from 'microcosm/addons/catch'
-import Prompt from '../../app/views/prompt'
-import assert from 'assert'
+import React   from 'react'
+import {mount} from 'enzyme'
+import Prompt  from '../../app/views/prompt'
+import assert  from 'assert'
 
 describe('Chatbot | Views | Prompt', function () {
 
@@ -14,12 +12,18 @@ describe('Chatbot | Views | Prompt', function () {
       done()
     }
 
-    const form = Test.renderIntoDocument(<Catch send={ assertion }><Prompt /></Catch>)
-    const el   = DOM.findDOMNode(form)
+    const form = mount(<Prompt />, {
+      context: {
+        send : assertion
+      },
+      childContextTypes: {
+        send : React.PropTypes.func
+      }
+    })
 
-    el.querySelector('#message').value = 'Hello'
+    form.find('[name="message"]').simulate('change', { target: { value: 'Hello' } })
 
-    Test.Simulate.submit(el)
+    form.simulate('submit')
   })
 
 })

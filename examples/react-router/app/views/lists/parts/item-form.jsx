@@ -1,19 +1,38 @@
 import React from 'react'
 import Form  from 'microcosm/addons/form'
 
-export default function ItemForm ({ list }) {
-  const onSuccess = (_, form) => form.reset()
+const ItemForm = React.createClass({
 
-  return (
-    <Form intent="addItem" onSuccess={ onSuccess }>
-      <input type="hidden" name="list" value={ list } />
+  getInitialState() {
+    return {
+      name : ''
+    }
+  },
 
-      <div className="textfield">
-        <label htmlFor="item-name">Name</label>
-        <input id="item-name" name="name" required />
-      </div>
+  reset() {
+    this.setState({ name: '' })
+  },
 
-      <button className="btn">Add Item</button>
-    </Form>
-  )
-}
+  setName(e) {
+    this.setState({ name : e.target.value })
+  },
+
+  render() {
+    const { name } = this.state
+
+    return (
+      <Form intent="addItem" onSubmit={ this.reset }>
+        <input type="hidden" name="list" value={ this.props.list } />
+
+        <div className="textfield">
+          <label htmlFor="item-name">Name</label>
+          <input id="item-name" name="name" value={ name } onChange={ this.setName } required />
+        </div>
+
+        <button className="btn">Add Item</button>
+      </Form>
+    )
+  }
+})
+
+export default ItemForm
