@@ -1,7 +1,6 @@
-import Microcosm      from '../microcosm'
 import React          from 'react'
-import getDisplayName from './connect/get-display-name'
 import hoistStatics   from 'hoist-non-react-statics'
+import getDisplayName from './connect/get-display-name'
 import shallowEqual   from './connect/shallow-equal'
 
 const defaults = {
@@ -10,7 +9,7 @@ const defaults = {
 }
 
 export default function connect (mapStateToProps, options) {
-  options = { ...defaults, ...options }
+  options = Object.assign({}, defaults, options)
 
   const isPure = !!options.pure
   const useValueOf = !!options.valueOf
@@ -42,11 +41,10 @@ export default function connect (mapStateToProps, options) {
       }
 
       componentWillReceiveProps(nextProps) {
-        if (isPure && shallowEqual(nextProps, this.props)) {
-          return null
+        if (!(isPure && shallowEqual(nextProps, this.props))) {
+          this.updatePropMap(nextProps)
         }
 
-        this.updatePropMap(nextProps)
         this.updateState()
       }
 
@@ -78,11 +76,7 @@ export default function connect (mapStateToProps, options) {
       render() {
         let { app, props, state } = this
 
-        return React.createElement(WrappedComponent, {
-          app,
-          ...props,
-          ...state
-        })
+        return React.createElement(WrappedComponent, Object.assign({ app }, props, state))
       }
     }
 
@@ -91,11 +85,11 @@ export default function connect (mapStateToProps, options) {
     Connect.WrappedComponent = WrappedComponent
 
     Connect.contextTypes = {
-      app: React.PropTypes.instanceOf(Microcosm)
+      app: React.PropTypes.object
     }
 
     Connect.propTypes = {
-      app: React.PropTypes.instanceOf(Microcosm)
+      app: React.PropTypes.object
     }
 
     return hoistStatics(Connect, WrappedComponent)

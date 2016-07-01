@@ -1,15 +1,12 @@
+var StaticSite = require('static-site-generator-webpack-plugin')
 var path = require('path')
-var webpack = require('webpack')
-var StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin')
-
-var isDev = process.env.NODE_ENV !== 'production'
-var root  = __dirname
+var root = __dirname
 
 module.exports = {
 
   context: root,
 
-  devtool: isDev ? 'inline-source-map' : 'source-map',
+  devtool: 'inline-source-map',
 
   entry: {
     'chatbot'      : './chatbot/client',
@@ -30,19 +27,18 @@ module.exports = {
   },
 
   plugins: [
-    new StaticSiteGeneratorPlugin('chatbot-static', ['chatbot' ], {}),
-    new StaticSiteGeneratorPlugin('react-router-static', ['react-router' ], {}),
-
-    new StaticSiteGeneratorPlugin('simple-svg-static', ['simple-svg' ], {}),
-    new StaticSiteGeneratorPlugin('painter-static', ['painter' ], {}),
-
-    new webpack.DefinePlugin({
-      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
-    })
+    new StaticSite('chatbot-static', ['chatbot' ], {}),
+    new StaticSite('react-router-static', ['react-router' ], {}),
+    new StaticSite('simple-svg-static', ['simple-svg' ], {}),
+    new StaticSite('painter-static', ['painter'], {})
   ],
 
   resolve: {
-    extensions: [ '', '.js', '.jsx' ]
+    extensions: [ '', '.js', '.jsx' ],
+    alias: {
+      'microcosm': path.resolve(__dirname, '../src'),
+      'microcosm-debugger': path.resolve(__dirname, '../../microcosm-debugger/dist/microcosm-debugger')
+    }
   },
 
   module: {
@@ -56,7 +52,8 @@ module.exports = {
         test     : /\.jsx*$/,
         loader   : 'babel',
         exclude: /node_modules/
-      }]
+      }
+    ]
   },
 
   devServer: {
@@ -65,14 +62,4 @@ module.exports = {
     port        : process.env.PORT || 4000,
     noInfo      : true
   }
-}
-
-// Inject the dev server hot module replacement into
-// each entry point on development
-if (!isDev) {
-  // Otherwise enable production settings
-  module.exports.plugins.push(
-    new webpack.optimize.UglifyJsPlugin(),
-    new webpack.optimize.OccurenceOrderPlugin()
-  )
 }

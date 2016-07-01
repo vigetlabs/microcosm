@@ -288,4 +288,34 @@ describe('Connect Add-on', function() {
       assert.equal(namer.state.name, undefined)
     })
   })
+
+  describe('Nested connect instances', function() {
+    beforeEach(function () {
+      this.app = new Microcosm()
+    })
+
+    it ('does not waste rendering on nested children', function() {
+      var renders = 0
+
+      let Child = Connect(function (props) {
+        return { name: state => state.name }
+      })(function Child (props) {
+        renders += 1
+        return <p>{ props.name }</p>
+      })
+
+      let Parent = Connect(function (props) {
+        return { name: state => state.name }
+      })(function Parent (props) {
+        renders += 1
+        return <Child app={ props.app } />
+      })
+
+      let namer = Test.renderIntoDocument(<Parent app={ this.app } />)
+
+      this.app.replace({ name: 'Billy Booster' }, function() {
+        assert.equal(renders, 4)
+      })
+    })
+  })
 })

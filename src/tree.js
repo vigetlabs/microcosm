@@ -18,16 +18,43 @@ Tree.prototype = {
   append(behavior) {
     const action = new Action(behavior)
 
-    this.focus = action.appendTo(this.focus)
+    if (this.focus != null) {
+      this.connect(action, this.focus)
+    }
 
-    this.root  = this.root || this.focus
+    this.focus = action
+
+    if (this.root == null) {
+      this.root = this.focus
+    }
 
     return this.focus
   },
 
+  /**
+   * Append an action to another, making that action its parent. This
+   * produces history.
+   *
+   * @api private
+   *
+   * @param {Action} child action to append
+   * @param {Action} parent action to append to
+   *
+   * @returns {Tree} self
+   */
+  connect(child, parent) {
+    child.parent  = parent
+    child.sibling = parent.next
+    child.depth   = parent.depth + 1
+
+    parent.next   = child
+
+    return this
+  },
+
   prune(shouldRemove, scope) {
-    while (this.root && shouldRemove.call(scope, this.root)) {
-      this.root = this.root.next
+    while (this.root !== null && shouldRemove.call(scope, this.root)) {
+      this.root = this.root.hasOwnProperty('next') ? this.root.next : null
     }
 
     // If we reach the end (there is no next node), it means
@@ -43,7 +70,9 @@ Tree.prototype = {
   toArray() {
     let node  = this.focus
     let size  = this.size()
-    let items = Array(size)
+    let items = []
+
+    items.length = size
 
     while (--size >= 0) {
       items[size] = node

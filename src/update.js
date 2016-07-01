@@ -1,3 +1,5 @@
+import merge from './merge'
+
 /**
  * Retrieve a value from an object. If no key is provided, just
  * return the object.
@@ -34,15 +36,20 @@ export function get (object, key) {
  * @returns {Any} A copy of the object with the new assignment.
  */
 export function set (object, key, value) {
-  if (typeof value === 'undefined') {
+  // Never assign undefined values
+  if (value === undefined) {
     return object
   }
 
-  if (key == null) return value
+  // If the key path is null, there's no need to traverse
+  // the object. Just return the value.
+  if (key == null) {
+    return value
+  }
 
   if (object && object[key] === value) {
     return object
   }
 
-  return Object.assign({}, object, { [key] : value })
+  return merge({}, object, { [key] : value })
 }

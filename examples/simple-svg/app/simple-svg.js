@@ -1,11 +1,11 @@
-import Circle    from './stores/Circle'
-import Microcosm from '../../../src/microcosm'
+import Store     from './store'
+import Microcosm from 'microcosm'
 
 export default class SimpleSVG extends Microcosm {
 
   constructor() {
     super()
-    this.addStore('circle', Circle)
+    this.addStore('circle', Store)
   }
 
 }

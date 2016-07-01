@@ -1,12 +1,14 @@
-import Emitter   from 'component-emitter'
-import MetaStore from './stores/meta'
-import Store     from './store'
-import Tree      from './tree'
-import lifecycle from './lifecycle'
+import Emitter      from './emitter'
+import Store        from './store'
+import MetaStore    from './stores/meta'
+import Tree         from './tree'
+import lifecycle    from './lifecycle'
+import merge        from './merge'
+import { get, set } from './update'
 
 /**
- * The Microcosm class. You can extend this class with additional methods,
- * or perform setup within the constructor of a subclass.
+ * The Microcosm class. You can extend this class with additional
+ * methods, or perform setup within the constructor of a subclass.
  *
  * Options:
  *
@@ -21,19 +23,21 @@ import lifecycle from './lifecycle'
  * @param {{maxHistory: Number}} options - Instantiation options.
  * @api public
  */
-export default class Microcosm {
+export default function Microcosm ({ maxHistory = -Infinity } = {}) {
+  this.maxHistory = maxHistory
 
-  constructor ({ maxHistory = -Infinity } = {}) {
-    this.maxHistory = maxHistory
+  this.cache   = {}
+  this.state   = {}
+  this.stores  = []
+  this.history = new Tree()
 
-    this.cache    = {}
-    this.state    = {}
-    this.stores   = []
-    this.history  = new Tree()
+  // Standard store reduction behaviors
+  this.addStore(MetaStore)
+}
 
-    // Standard store reduction behaviors
-    this.addStore(MetaStore)
-  }
+Microcosm.prototype = {
+
+  constructor: Microcosm,
 
   /**
    * Determines the initial state of the Microcosm instance by
@@ -44,7 +48,7 @@ export default class Microcosm {
    */
   getInitialState () {
     return this.dispatch({}, { type: lifecycle.willStart, payload: this.state })
-  }
+  },
 
   /**
    * Microcosms maintain a cache of "merged" actions. Actions that are
@@ -65,7 +69,7 @@ export default class Microcosm {
     }
 
     return false
-  }
+  },
 
   /**
    * When an action emits a change, Microcosm uses this method to run
@@ -83,10 +87,10 @@ export default class Microcosm {
 
     this.state = this.history.reduce(this.dispatch, this.cache, this)
 
-    this.emit('change', this.state)
+    this._emit('change', this.state)
 
     return this
-  }
+  },
 
   /**
    * Given a state, sends an action to all stores for processing. This is pure,
@@ -97,10 +101,15 @@ export default class Microcosm {
    *
    * @return {Object} state - A new state object
    */
-  dispatch (state, { type, payload }) {
-    return this.stores.reduce((next, [key, store]) => store.receive(next, type, payload, key), state)
-  }
+  dispatch (state, action) {
+    for (var i = 0, len = this.stores.length; i < len; i++) {
+      const [ key, store ] = this.stores[i]
 
+      state = set(state, key, store.receive(get(state, key), action))
+    }
+
+    return state
+  },
 
   /**
    * Push an action into Microcosm. This will trigger the lifecycle for updating
@@ -108,7 +117,7 @@ export default class Microcosm {
    *
    * @api public
    *
-   * @param {Function} type - An action function
+   * @param {Function} behavior - An action function
    * @param {...Array} params - Parameters to invoke the type with
    *
    * @return {Action} action representation of the invoked function
@@ -120,7 +129,7 @@ export default class Microcosm {
     action.execute(...params)
 
     return action
-  }
+  },
 
   /**
    * Adds a store to the Microcosm instance. A store informs the
@@ -154,7 +163,7 @@ export default class Microcosm {
     this.rebase()
 
     return this
-  }
+  },
 
   /**
    * Push an action to reset the state of the instance. This state is folded
@@ -165,26 +174,26 @@ export default class Microcosm {
    * @return {Action} action - An action representing the reset operation.
    */
   reset (state) {
-    return this.push(lifecycle.willReset, Object.assign(this.getInitialState(), state))
-  }
+    return this.push(lifecycle.willReset, merge(this.getInitialState(), state))
+  },
 
   /**
    * Deserialize a given state and reset the instance with that
    * processed state object.
    *
-   * @param {Object} state - A raw state object to deserialize and apply to the instance
+   * @param {Object} data - A raw state object to deserialize and apply to the instance
    *
    * @return {Action} action - An action representing the replace operation.
    */
   replace (data) {
     return this.reset(this.deserialize(data))
-  }
+  },
 
   /**
    * Deserialize a given payload by asking every store how to it
    * should process it (via the deserialize store function).
    *
-   * @param {Object} payload - A raw object to deserialize into a valid application state
+   * @param {Object} payload - A raw object to deserialize.
 
    * @return {Object} The deserialized version of the provided payload.
    */
@@ -192,11 +201,12 @@ export default class Microcosm {
     if (payload != null) {
       return this.dispatch(payload, { type: lifecycle.willDeserialize, payload })
     }
-  }
+  },
 
   /**
-   * Serialize application state by asking every store how to serialize the state
-   * they manage (via the serialize store function).
+   * Serialize application state by asking every store how to
+   * serialize the state they manage (via the serialize store
+   * function).
    *
    * @example
    *     app.toJSON() // => { planets: [...] }
@@ -206,12 +216,13 @@ export default class Microcosm {
    */
   toJSON () {
     return this.dispatch(this.state, { type: lifecycle.willSerialize, payload: this.state })
-  }
+  },
 
   /**
-   * Recalculate initial state by back-filling the cache object with the result
-   * of getInitialState(). This is used when a store is added to Microcosm to ensure
-   * the initial state of the store is respected.
+   * Recalculate initial state by back-filling the cache object with
+   * the result of getInitialState(). This is used when a store is
+   * added to Microcosm to ensure the initial state of the store is
+   * respected.
    *
    * This will produce a "change" event.
    *
@@ -220,7 +231,8 @@ export default class Microcosm {
    * @returns {Microcosm} self
    */
   rebase () {
-    this.cache = Object.assign(this.getInitialState(), this.cache)
+    this.cache = merge(this.getInitialState(), this.cache)
+
     return this.rollforward()
   }
 

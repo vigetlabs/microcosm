@@ -1,75 +1,52 @@
-SHELL := /bin/bash
-PATH  := node_modules/.bin:$(PATH)
-IN    := src
-OUT   := dist
+MAKEFLAGS += '-j 4'
 
-VPATH := $(OUT)
+SHELL   := /bin/bash
+PATH    := node_modules/.bin:$(PATH)
+SCRIPTS := $(shell find src -name '*.js')
 
-.PHONY: clean deliverables test test-fast test-browser test-watch example bench javascript package.json
+build: package.json $(wildcard *.md) docs bundle
 
-build: package.json $(wildcard *.md) docs deliverables javascript
+bundle: dist/index.js dist/addons/connect.js dist/addons/provider.js
 
-docs:
+docs: dist
 	@ cp -rp $@ $^
 
-bundle: $(OUT)
-	rollup -f cjs ./src/microcosm.js > $(OUT)/microcosm.es6.js
-	buble $(OUT)/microcosm.es6.js > $(OUT)/microcosm.js
-
-$(OUT)/%.js: $(IN)/%.js
+dist/%.js: src/%.js $(SCRIPTS)
 	@ mkdir -p $(@D)
-	@ babel $< > $@
-	@ echo "Compiled $@"
+	@ rollup -m inline -f cjs $< | buble > $@
 
-$(OUT)/%.jsx: $(IN)/%.jsx
-	@ mkdir -p $(@D)
-	@ babel $< > $@
-	@ echo "Compiled $*.js"
+dist:
+	@ mkdir -p dist
 
-deliverables: $(OUT)
-	@ cp -rf $(IN) $(OUT)/$(IN)
+%.md: dist
+	@ cp -p $@ $<
 
-javascript: $(subst $(IN),$(OUT),$(shell find ./src -name "*.js*"))
-
-$(OUT):
-	@ mkdir -p $(OUT)
-
-%.md: $(OUT)
-	cp -p $@ $^
-
-package.json: $(OUT)
-	@ node -p 'p=require("./package");p.main="microcosm.js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $(OUT)/package.json
+package.json: dist
+	@ node -p 'p=require("./package");p.main="microcosm.js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > dist/package.json
 
 release: clean build
-	npm publish $(OUT)
+	npm publish dist
 
 prerelease: clean build
-	npm publish $(OUT) --tag beta
+	npm publish dist --tag beta
 
 example:
 	@ webpack-dev-server --config examples/webpack.config.js
 
-example-static:
-	@ webpack --config examples/webpack.config.js
-
-clean:
-	@ rm -rf $(OUT)
-
 test: test-browser test-node
 
 test-browser:
-	@ NODE_ENV=test karma start $(TEST_OPTIONS)
+	@ NODE_ENV=test karma start
 
-test-watch:
-	@ make test-browser TEST_OPTIONS="--watch"
+test-node:
+	@ NODE_ENV=test mocha -R dot --compilers js:babel-register
 
-test-node: $(shell find {test,examples} -name '*-test.js')
-	@ NODE_ENV=test mocha -R dot --compilers js:babel-register $(MOCHA_OPTIONS) test examples
+bench: bundle
+	@ node --expose-gc scripts/bench/tree-performance
+	@ node --expose-gc scripts/bench/dispatch-performance
+	@ node --expose-gc scripts/bench/push-performance
 
-test-node-watch: $(shell find {test,examples} -name '*-test.js')
-	@ make test-node MOCHA_OPTIONS="-w"
+clean:
+	@ rm -rf dist/*
 
-bench: javascript
-	@ node --expose-gc benchmarks/tree-performance
-	@ node --expose-gc benchmarks/dispatch-performance
-	@ node --expose-gc benchmarks/push-performance
+.PHONY: clean deliverables test test-node test-browser example bench package.json

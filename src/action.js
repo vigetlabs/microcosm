@@ -1,4 +1,4 @@
-import Emitter   from 'component-emitter'
+import Emitter   from './emitter'
 import States    from './action/states'
 import coroutine from './action/coroutine'
 import tag       from './action/tag'
@@ -15,38 +15,19 @@ import tag       from './action/tag'
  *
  * @param {Function} behavior - how the action should resolve.
  */
-export default class Action {
+export default function Action (behavior) {
+  this.behavior = tag(behavior)
+}
 
-  constructor (behavior) {
-    this.behavior = tag(behavior)
-    this.depth    = 0
-    this.parent   = null
-    this.sibling  = null
-    this.state    = States.UNSET
-  }
+Action.prototype = {
 
-  /**
-   * Append an action to another, making that action its parent. This
-   * is used by the Tree module to produce history.
-   *
-   * @api private
-   *
-   * @param {Action} parent action to append to
-   *
-   * @returns {Action} self
-   */
-  appendTo(parent) {
-    this.parent = parent
+  constructor : Action,
 
-    if (parent) {
-      this.depth   = parent.depth + 1
-      this.sibling = parent.next
+  depth   : 0,
+  parent  : null,
+  sibling : null,
+  state   : States.unset,
 
-      parent.next = this
-    }
-
-    return this
-  }
 
   /**
    * Check the state of the action to determine what `type` should be
@@ -57,15 +38,15 @@ export default class Action {
    * @returns {String|Null} The action type to dspatch.
    */
   get type() {
-    if (this.is(States.DISABLED))  return null
-    if (this.is(States.CANCELLED)) return this.behavior.cancelled
-    if (this.is(States.FAILED))    return this.behavior.failed
-    if (this.is(States.DONE))      return this.behavior.done
-    if (this.is(States.LOADING))   return this.behavior.loading
-    if (this.is(States.OPEN))      return this.behavior.open
+    if (this.is(States.disabled))  return null
+    if (this.is(States.cancelled)) return this.behavior.cancelled
+    if (this.is(States.failed))    return this.behavior.failed
+    if (this.is(States.done))      return this.behavior.done
+    if (this.is(States.loading))   return this.behavior.loading
+    if (this.is(States.open))      return this.behavior.open
 
     return null
-  }
+  },
 
   /**
    * Get all child actions, those dispatched after this one within
@@ -86,7 +67,7 @@ export default class Action {
     }
 
     return nodes
-  }
+  },
 
   /**
    * Given a string or State constant, determine if the `state` bitmask for
@@ -103,11 +84,11 @@ export default class Action {
    */
   is (type) {
     if (typeof type === 'string') {
-      type = States[type.toUpperCase()]
+      type = States[type]
     }
 
     return (this.state & type) === type
-  }
+  },
 
   /**
    * Evaluate the action by invoking the action's behavior with
@@ -119,7 +100,7 @@ export default class Action {
    */
   execute(/** params **/) {
     coroutine(this, this.behavior.apply(this, arguments))
-  }
+  },
 
   /**
    * If defined, sets the payload for the action and triggers a
@@ -132,8 +113,8 @@ export default class Action {
       this.payload = payload
     }
 
-    this.emit('change')
-  }
+    this._emit('change')
+  },
 
   /**
    * Set the action state to "open", then set a payload if
@@ -142,10 +123,10 @@ export default class Action {
    * @api public
    */
   open(payload) {
-    this.state = States.OPEN
+    this.state = States.open
     this.set(payload)
-    this.emit('open', this.payload)
-  }
+    this._emit('open', this.payload)
+  },
 
   /**
    * Set the action state to "loading", then set a payload if
@@ -154,10 +135,10 @@ export default class Action {
    * @api public
    */
   send(payload) {
-    this.state = States.LOADING
+    this.state = States.loading
     this.set(payload)
-    this.emit('update', this.payload)
-  }
+    this._emit('update', payload)
+  },
 
   /**
    * Set the action state to "failed" and marks the action for clean
@@ -166,10 +147,10 @@ export default class Action {
    * @api public
    */
   reject(payload) {
-    this.state = States.FAILED | States.DISPOSABLE
+    this.state = States.failed | States.disposable
     this.set(payload)
-    this.emit('error', payload)
-  }
+    this._emit('error', payload)
+  },
 
   /**
    * Set the action state to "done" and marks the action for clean
@@ -178,10 +159,10 @@ export default class Action {
    * @api public
    */
   close(payload) {
-    this.state = States.DONE | States.DISPOSABLE
+    this.state = States.done | States.disposable
     this.set(payload)
-    this.emit('done', this.payload)
-  }
+    this._emit('done', this.payload)
+  },
 
   /**
    * Set the action state to "cancelled" and marks the action for clean
@@ -190,10 +171,10 @@ export default class Action {
    * @api public
    */
   cancel() {
-    this.state = States.CANCELLED | States.DISPOSABLE
-    this.emit('change')
-    this.emit('cancel', this.payload)
-  }
+    this.state = States.cancelled | States.disposable
+    this._emit('change')
+    this._emit('cancel', this.payload)
+  },
 
   /**
    * Toggles the disabled state, where the action will not
@@ -203,9 +184,9 @@ export default class Action {
    * @api public
    */
   toggle() {
-    this.state ^= States.DISABLED
-    this.emit('change')
-  }
+    this.state ^= States.disabled
+    this._emit('change')
+  },
 
   /**
    * Listen to failure. If the action has already failed, it will
@@ -220,14 +201,14 @@ export default class Action {
    * @returns {Action} self
    */
   onError(callback, scope) {
-    if (this.is('failed')) {
+    if (this.is(States.failed)) {
       callback(this.payload, scope)
     } else {
       this.once('error', callback.bind(scope))
     }
 
     return this
-  }
+  },
 
   /**
    * Listen to progress. Wait and trigger a provided callback on the "update" event.
@@ -243,7 +224,7 @@ export default class Action {
     this.listen('update', callback.bind(scope))
 
     return this
-  }
+  },
 
   /**
    * Listen for completion. If the action has already completed, it will
@@ -258,7 +239,7 @@ export default class Action {
    * @returns {Action} self
    */
   onDone(callback, scope) {
-    if (this.is('done')) {
+    if (this.is(States.done)) {
       callback(this.payload, scope)
     } else {
       this.once('done', callback.bind(scope))

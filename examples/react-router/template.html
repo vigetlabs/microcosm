@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf8">
     <title>Advanced Microcosm Example</title>
-    <base href="{{ basename }}"/>
+
     <style>
       body {
         margin: 0;
@@ -126,7 +126,7 @@
         border-top: 1px solid #d9d9d9;
       }
 
-      .list .btn {
+      .list form {
         float: right;
       }
 
@@ -139,9 +139,6 @@
   </head>
   <body className="text-body">
     <div id="app">{{{ markup }}}</div>
-    <script>
-      window.REACT_ROUTER_SEED = {{{ payload }}}
-    </script>
     <script async src="/react-router/main.js"></script>
   </body>
 </html>

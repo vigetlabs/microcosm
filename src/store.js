@@ -1,4 +1,4 @@
-import { get, set } from './update'
+const EMPTY = {}
 
 /**
  * Stores are responsible for determing how a microcosm should respond
@@ -12,39 +12,44 @@ import { get, set } from './update'
  *
  * @param {Object|Function} options a register function or object of handlers
  */
-export default class Store {
-
-  constructor(options) {
-    if (typeof options === 'function') {
-      options = { register: options }
-    }
-
-    Object.assign(this, options)
+export default function Store (options) {
+  if (typeof options === 'function') {
+    options = { register: options }
   }
+
+  for (var key in options) {
+    if (options.hasOwnProperty(key)) {
+      this[key] = options[key]
+    }
+  }
+}
+
+Store.prototype = {
+
+  constructor: Store,
 
   /**
    * The public API for stores is `register`, however `receive`
    * provides an escape hatch for more flexibility in how a store
-   * responds to actions. You can override this method when
+   * responds to actions.
    *
    * @api public
    *
-   * @param {Object} state The current state of a Microcosm.
+   * @param {Object} previous The previous state
    * @param {Function|String} type The type of the associated action.
    * @param {Any} payload - The body of the action.
-   * @param {String} key - The key path this store is mounted to.
    *
    * @returns {Object} A new state
    */
-  receive(state, type, payload, key) {
+  receive(previous, { type, payload }) {
     const handler = this[type] || this.register()[type]
 
     if (handler == undefined) {
-      return state
+      return previous
     }
 
-    return set(state, key, handler.call(this, get(state, key), payload))
-  }
+    return handler.call(this, previous, payload)
+  },
 
   /**
    * Used to map store handlers to action types. This is how change
@@ -70,7 +75,7 @@ export default class Store {
    * @returns {Object} A new state
    */
   register() {
-    return {}
+    return EMPTY
   }
 
 }

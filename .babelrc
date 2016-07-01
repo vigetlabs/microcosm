@@ -6,13 +6,5 @@
     ],
     "plugins": [
         "transform-object-assign"
-    ],
-    "env": {
-        "test": {
-            "plugins": ["transform-runtime"]
-        },
-        "development": {
-            "plugins": ["transform-runtime"]
-        }
-    }
+    ]
 }

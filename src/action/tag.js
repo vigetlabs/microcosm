@@ -8,34 +8,25 @@ import States from './states'
 let uid = 0
 const FALLBACK = 'microcosm_action'
 
-export function formatTag (value) {
-  return `${ value }`.replace(/_\d+$/, '')
-}
-
 export default function tag (fn, name) {
-  /**
-   * Respect strings and existing toString methods.
-   */
-  if (fn.__tagged) {
+  if (fn.hasOwnProperty('toString')) {
     return fn
   }
-
-  fn.__tagged = true
 
   /**
    * Auto-increment a stepper suffix to prevent two actions with the
    * same name from colliding.
    */
-  var suffix = uid++
+  uid += 1
 
   /**
    * Function.name lacks legacy support. For these browsers, fallback
    * to a consistent name:
    */
-  var symbol = name || (fn.name || FALLBACK) + '_' + suffix
+  const symbol = name || (fn.name || FALLBACK) + '_' + uid
 
   for (var key in States) {
-    fn[key.toLowerCase()] = symbol + '_' + key
+    fn[key] = symbol + '_' + key
   }
 
   fn.done = symbol

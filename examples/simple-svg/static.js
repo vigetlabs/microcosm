@@ -6,14 +6,14 @@
 import DOM       from 'react-dom/server'
 import React     from 'react'
 import SimpleSVG from './app/simple-svg'
-import Viget     from './app/components/Viget'
+import View      from './app/view'
 import template  from './template.html'
 
 export default function render (locals, next) {
-  let app = new SimpleSVG()
+  const app = new SimpleSVG()
 
-  let markup = DOM.renderToString(React.createElement(Viget, app.state))
-  let output = template({ markup, payload: JSON.stringify(app) })
+  const markup = DOM.renderToString(React.createElement(View, app.state))
+  const output = template({ markup, payload: JSON.stringify(app) })
 
   next(null, output)
 }

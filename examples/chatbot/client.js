@@ -2,25 +2,32 @@
  * Browser entrypoint for the ChatBot example
  */
 
+import React    from 'react'
+import DOM      from 'react-dom'
+import Debugger from 'microcosm-debugger'
 import ChatBot  from './app/chatbot'
-import Hydrate  from './app/plugins/hydrate'
-import Render   from './app/plugins/render'
-import Debugger from '../../../microcosm-debugger/dist/microcosm-debugger'
+import Chat     from './app/presenters/chat'
 
-let chat = new ChatBot({ maxHistory: Infinity })
+const app = new ChatBot({ maxHistory: Infinity })
 
-Debugger(chat)
+Debugger(app)
 
 /**
  * When the application starts, reset state to the serialized
  * data from the server. See index.js to learn how this state
  * is generated.
  */
-Hydrate(chat, 'CHAT_BOT_SEED')
+app.replace(window['CHAT_BOT_SEED'])
 
 
 /**
  * When the application starts, render the user interface to the
  * provided DOM location.
  */
-Render(chat, document.getElementById('app'))
+function render () {
+  DOM.render(<Chat app={ app } />, document.getElementById('app'))
+}
+
+app.on('change', render)
+
+render()

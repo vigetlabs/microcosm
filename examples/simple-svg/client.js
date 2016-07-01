@@ -1,8 +1,21 @@
-import Hydrate   from './app/plugins/hydrate'
-import Render    from './app/plugins/render'
-import SimpleSVG from './app/simple-svg'
+import DOM         from 'react-dom'
+import React       from 'react'
+import SimpleSVG   from './app/simple-svg'
+import View        from './app/view'
+import { animate } from './app/actions'
 
-let app = new SimpleSVG()
+const app = new SimpleSVG()
 
-Hydrate(app, 'SIMPLE_SVG_SEED')
-Render(app, document.getElementById('app'))
+app.on('change', function (state) {
+  DOM.render(<View { ...state } />, document.getElementById('app'))
+})
+
+// Seed the application with the same data that was used to render
+// the static html
+app.replace(window['SIMPLE_SVG_SEED'])
+
+function loop ({ time = Date.now() } = {}) {
+  app.push(animate, time, 1000).onDone(loop)
+}
+
+loop()

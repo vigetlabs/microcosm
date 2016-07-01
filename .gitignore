@@ -4,4 +4,4 @@ dist
 node_modules
 *.asm
 *.cfg
-.happypack
+tmp

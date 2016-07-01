@@ -1,25 +1,22 @@
-import React, { PropTypes, Children } from 'react'
-import Microcosm from '../microcosm'
+import { Component, PropTypes, Children } from 'react'
 
-const Provider = React.createClass({
-
-  propTypes: {
-    app      : PropTypes.instanceOf(Microcosm).isRequired,
-    children : PropTypes.element.isRequired
-  },
-
-  childContextTypes: {
-    app : PropTypes.instanceOf(Microcosm).isRequired
-  },
+export default class Provider extends Component {
 
   getChildContext() {
     return { app: this.props.app }
-  },
+  }
 
   render() {
     return Children.only(this.props.children)
   }
 
-})
+}
 
-export default Provider
+Provider.propTypes = {
+  app      : PropTypes.object.isRequired,
+  children : PropTypes.element.isRequired
+}
+
+Provider.childContextTypes = {
+  app : PropTypes.object.isRequired
+}

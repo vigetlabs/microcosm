@@ -1,7 +1,8 @@
 import Microcosm from './microcosm'
-import tag       from './action/tag'
 import Tree      from './tree'
+import Action    from './action'
+import tag       from './action/tag'
 
-export { tag, Tree, Microcosm }
+export { tag, Action, Tree, Microcosm }
 
 export default Microcosm

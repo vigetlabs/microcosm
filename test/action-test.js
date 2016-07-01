@@ -72,10 +72,6 @@ describe('Action', function() {
         this.action = new Action(identity)
       })
 
-      it('tags the action', function() {
-        assert.equal(identity.__tagged, true)
-      })
-
       it ('starts unset', function() {
         assert.equal(this.action.is('unset'), true)
       })

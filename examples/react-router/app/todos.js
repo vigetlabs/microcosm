@@ -1,21 +1,21 @@
-import Microcosm from '../../../src/microcosm'
-import ItemStore from './resources/items/store'
-import ListStore from './resources/lists/store'
+import Microcosm from 'microcosm'
+import Items     from './stores/items'
+import Lists     from './stores/lists'
 
 class Todos extends Microcosm {
 
-  constructor() {
-    super()
+  constructor(options) {
+    super(options)
 
     // Stores modify a global application state object
     // Dispatching actions occurs in the order specified
     // here:
 
     // 1. Lists
-    this.addStore('lists', ListStore)
+    this.addStore('lists', Lists)
 
     // 2. List Items
-    this.addStore('items', ItemStore)
+    this.addStore('items', Items)
   }
 
 }
