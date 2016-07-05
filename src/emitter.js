@@ -7,9 +7,7 @@
 import merge from './merge'
 
 export default function Emitter(obj) {
-  if (obj) {
-    return merge(obj, Emitter.prototype)
-  }
+  return merge(obj, Emitter.prototype)
 }
 
 /**

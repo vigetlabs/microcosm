@@ -1,6 +1,10 @@
 import Tree   from '../src/tree'
 import assert from 'assert'
 
+const toArray = function (list, node) {
+  return list.concat(node)
+}
+
 describe('Tree', function() {
   let concat = (a, b) => a.concat(b.action)
   let action = n => n
@@ -48,7 +52,7 @@ describe('Tree', function() {
     tree.checkout(first)
     let third = tree.append(action)
 
-    assert.deepEqual(tree.toArray(), [ first, third ])
+    assert.deepEqual(tree.reduce(toArray, []), [ first, third ])
   })
 
   it ('does not walk past the focal point', function() {
@@ -59,7 +63,7 @@ describe('Tree', function() {
     tree.append(action)
     tree.checkout(one)
 
-    assert.deepEqual(tree.toArray(), [ one ])
+    assert.deepEqual(tree.reduce(toArray, []), [ one ])
   })
 
   it ('properly handles forks', function() {
@@ -74,11 +78,11 @@ describe('Tree', function() {
     let four = tree.append(action)
     let five = tree.append(action)
 
-    assert.deepEqual(tree.toArray(), [ one, two, four, five ])
+    assert.deepEqual(tree.reduce(toArray, []), [ one, two, four, five ])
 
     tree.checkout(three)
 
-    assert.deepEqual(tree.toArray(), [ one, two, three ])
+    assert.deepEqual(tree.reduce(toArray, []), [ one, two, three ])
   })
 
   it ('can get the previous node in the chain', function() {
@@ -158,7 +162,6 @@ describe('Tree', function() {
     let d = tree.append(action)
 
     tree.checkout(c)
-
-    assert.deepEqual(b.children, [d, c])
+    assert.deepEqual(b.children, [c, d])
   })
 })

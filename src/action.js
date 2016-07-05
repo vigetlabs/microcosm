@@ -3,6 +3,8 @@ import States    from './action/states'
 import coroutine from './action/coroutine'
 import tag       from './action/tag'
 
+const identity = n => n
+
 /**
  * Actions are the result of using `push()` within a Microcosm
  * instance. They are dispatched to stores to produce new state.
@@ -23,11 +25,13 @@ Action.prototype = {
 
   constructor : Action,
 
-  depth   : 0,
-  parent  : null,
-  sibling : null,
-  state   : States.unset,
-
+  behavior : identity,
+  depth    : 0,
+  parent   : null,
+  next     : null,
+  left     : null,
+  right    : null,
+  state    : States.unset,
 
   /**
    * Check the state of the action to determine what `type` should be
@@ -63,7 +67,7 @@ Action.prototype = {
 
     while (start) {
       nodes.push(start)
-      start = start.sibling
+      start = start.right
     }
 
     return nodes

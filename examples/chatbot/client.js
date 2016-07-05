@@ -24,10 +24,4 @@ app.replace(window['CHAT_BOT_SEED'])
  * When the application starts, render the user interface to the
  * provided DOM location.
  */
-function render () {
-  DOM.render(<Chat app={ app } />, document.getElementById('app'))
-}
-
-app.on('change', render)
-
-render()
+DOM.render(<Chat app={ app } />, document.getElementById('app'))

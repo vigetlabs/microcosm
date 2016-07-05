@@ -62,8 +62,8 @@ Microcosm.prototype = {
    *
    * @return {Boolean} Was the action merged into the state cache?
    */
-  clean (action) {
-    if (action.is('disposable') && this.history.size() > this.maxHistory) {
+  clean (action, size) {
+    if (action.is('disposable') && size > this.maxHistory) {
       this.cache = this.dispatch(this.cache, action)
       return true
     }
@@ -232,6 +232,21 @@ Microcosm.prototype = {
    */
   rebase () {
     this.cache = merge(this.getInitialState(), this.cache)
+
+    return this.rollforward()
+  },
+
+  /**
+   * Change the focus of the history tree. This allows for features
+   * like undo and redo.
+   *
+   * @api public
+   *
+   * @param {Action} action to checkout
+   * @return {Microcosm} self
+   */
+  checkout (action) {
+    this.history.checkout(action)
 
     return this.rollforward()
   }
