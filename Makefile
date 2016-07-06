@@ -30,9 +30,6 @@ release: clean build
 prerelease: clean build
 	npm publish dist --tag beta
 
-example:
-	@ webpack-dev-server --config examples/webpack.config.js
-
 test: test-browser test-node
 
 test-browser:

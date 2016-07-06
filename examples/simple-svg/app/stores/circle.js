@@ -1,4 +1,4 @@
-import { animate } from './actions'
+import { animate } from '../actions/animate'
 
 const Circle = {
 

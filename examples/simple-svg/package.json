@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "start": "PORT=4003 webpack-dev-server --config ../webpack.config.js"
+  }
+}

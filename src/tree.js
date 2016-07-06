@@ -1,5 +1,6 @@
 /**
- * Each node represents a action. Branches are changes over time.
+ * Each node represents a action. Branches are changes
+ * over time.
  */
 
 import Action from './action'
@@ -7,46 +8,25 @@ import Action from './action'
 export default function Tree () {}
 
 Tree.prototype = {
-  root    : null,
-  focus   : null,
+  root  : null,
+  focus : null,
 
   checkout(node) {
     this.focus = node || this.focus
-
-    // Children are stored as a linked list. When we draw focus
-    // to a node, we need to set it up as the first child, therefore
-    // we need to move it to the beginning of this list, tying together
-    // the surrounding nodes.
-    //
-    // While this may be a bit tedious, it lets use `reduce` forward
-    // through pointer stepping, instead of building a list by
-    // stepping backwards and refering. This is roughly 250% faster.
-    if (this.size() > 1) {
-      let { left, right } = this.focus
-
-      if (left) {
-        left.right = right
-      }
-
-      if (right) {
-        right.left = left
-      }
-
-      // At this point, the
-      this.connect(this.focus, this.focus.parent)
-    }
   },
 
   append(behavior) {
     const action = new Action(behavior)
 
-    if (this.focus) {
+    if (this.focus != null) {
       this.connect(action, this.focus)
-    } else {
-      this.root = action
     }
 
     this.focus = action
+
+    if (this.root == null) {
+      this.root = this.focus
+    }
 
     return this.focus
   },
@@ -63,53 +43,50 @@ Tree.prototype = {
    * @returns {Tree} self
    */
   connect(child, parent) {
-    child.parent = parent
-    child.depth  = parent.depth + 1
+    child.parent  = parent
+    child.sibling = parent.next
+    child.depth   = parent.depth + 1
 
-    if (parent.next) {
-      parent.next.left = child
-    }
-
-    child.left  = null
-    child.right = parent.next
-
-    parent.next = child
+    parent.next   = child
 
     return this
   },
 
   prune(shouldRemove, scope) {
-    let size = this.size()
-    let node = this.root
-
-    while (node && shouldRemove.call(scope, node, size--)) {
-      node = node.next
+    while (this.root !== null && shouldRemove.call(scope, this.root)) {
+      this.root = this.root.next || null
     }
-
-    this.root = node
 
     // If we reach the end (there is no next node), it means
     // we've completely wiped away the tree, so nullify focus
     // to mark a completely empty tree.
-    if (node == null) {
+    if (!this.root) {
       this.focus = null
     }
 
     return this
   },
 
+  toArray() {
+    let node  = this.focus
+    let size  = this.size()
+    let items = []
+
+    items.length = size
+
+    while (--size >= 0) {
+      items[size] = node
+      node = node.parent
+    }
+
+    return items
+  },
+
   reduce(fn, state, scope) {
-    let node = this.root
-    let i    = 0
+    let items = this.toArray()
 
-    while (node) {
-      state = fn.call(scope, state, node, i++)
-
-      if (node === this.focus) {
-        break
-      } else {
-        node = node.next
-      }
+    for (var i = 0, len = items.length; i < len; i++) {
+      state = fn.call(scope, state, items[i], i)
     }
 
     return state

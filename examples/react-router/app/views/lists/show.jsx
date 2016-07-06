@@ -14,7 +14,7 @@ export default function ListShow ({ list, items }) {
       <header className="header">
         <div className="container">
           <h1 className="text-display">
-            <Link to="/react-router">Lists</Link> › { list.name }
+            <Link to="/">Lists</Link> › { list.name }
           </h1>
         </div>
       </header>

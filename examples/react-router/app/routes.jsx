@@ -6,7 +6,7 @@ import ListShow  from './presenters/list-show'
 import NotFound  from './views/notfound'
 
 export default (
-  <Route name="home" path="/react-router" ref="routes">
+  <Route name="home" path="/">
     <IndexRoute component={ ListIndex } />
     <Route path="lists/:id" component={ ListShow } />
     <Route path="*" component={ NotFound } />

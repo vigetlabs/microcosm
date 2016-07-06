@@ -20,8 +20,9 @@ import { get, set } from './update'
  *     let app = new Microcosm()
  *     let app = new Microcosm({ maxHistory: 10 })
  *
- * @param {{maxHistory: Number}} options - Instantiation options.
  * @api public
+ *
+ * @param {{maxHistory: Number}} options - Instantiation options.
  */
 export default function Microcosm ({ maxHistory = -Infinity } = {}) {
   this.maxHistory = maxHistory
@@ -62,8 +63,8 @@ Microcosm.prototype = {
    *
    * @return {Boolean} Was the action merged into the state cache?
    */
-  clean (action, size) {
-    if (action.is('disposable') && size > this.maxHistory) {
+  clean (action) {
+    if (action.is('disposable') && this.history.size() > this.maxHistory) {
       this.cache = this.dispatch(this.cache, action)
       return true
     }

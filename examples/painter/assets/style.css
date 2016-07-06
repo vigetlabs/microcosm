@@ -1,0 +1,20 @@
+body {
+  color: #555;
+  font-family: sans-serif;
+  margin: 2em;
+  width: 100%;
+}
+
+rect,
+circle {
+  transition: 0.3s fill, 0.3s r;
+  cursor: pointer;
+}
+
+svg {
+  border: 1px solid #ccc;
+}
+
+svg + svg {
+  border-left: 0;
+}

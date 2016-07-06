@@ -3,7 +3,7 @@ import sendChat from '../actions/sendChat'
 
 import { Bot } from '../../lib/chat'
 
-let Messages = {
+const Messages = {
 
   getInitialState() {
     return [ Message({ user: 'Eliza', message: Bot.getInitial() }) ]

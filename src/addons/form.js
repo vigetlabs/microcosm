@@ -9,12 +9,15 @@ const Form = React.createClass({
   },
 
   propTypes: {
-    intent : React.PropTypes.string.isRequired
+    intent    : PropTypes.string.isRequired,
+    onSubmit  : PropTypes.func,
+    onSuccess : PropTypes.func,
+    onFailure : PropTypes.func
   },
 
   getDefaultProps() {
     return {
-      serializer : form => serialize(form, { hash: true }),
+      serializer : form => serialize(form, { hash: true, empty: true }),
       onSubmit   : () => {},
       onSuccess  : () => {},
       onFailure  : () => {}
@@ -22,11 +25,9 @@ const Form = React.createClass({
   },
 
   render() {
-    return (
-      <form { ...this.props } onSubmit={ this.onSubmit } ref="form">
-        { this.props.children }
-      </form>
-    )
+    const { intent, onSubmit, onSuccess, onFailure, serializer, ...props } = this.props
+
+    return <form { ...props } onSubmit={ this.onSubmit } ref="form" />
   },
 
   onSubmit(event) {
@@ -41,7 +42,7 @@ const Form = React.createClass({
             .onError(error  => this.props.onFailure(error, form))
     }
 
-    this.props.onSubmit(event)
+    this.props.onSubmit(event, action)
   }
 
 })

@@ -1,11 +1,10 @@
 var path = require('path')
 
 module.exports = function (config) {
-  var fullSweep = process.env.CI || config.full
   var withCoverage = process.env.CI || config.coverage
 
   config.set({
-    browsers: fullSweep ? ['Chrome', 'Firefox'] : ['Chrome'],
+    browsers: [ 'Chrome' ],
 
     frameworks: [ 'mocha' ],
 

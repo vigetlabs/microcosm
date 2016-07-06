@@ -1,0 +1,68 @@
+# Examples
+
+1. [What's in here](whats-in-here)
+   a. [Chatbot](chatbot)
+   b. [Painter](painter)
+   c. [ReactRouter](reactrouter)
+   d. [SimpleSVG](simplesvg)
+2. [Run the examples](run-the-examples)
+3. [Project Structure](project-structure)
+
+## What's in here
+
+### ChatBot
+
+A messaging client that interacts with a chat bot. This example
+demonstrates optimistic updates, asynchronous requests, and loading
+states.
+
+### Painter
+
+A simple drawing application. Click tiles across a grid to flip them
+between black and white. This example was created to test the
+time-travel debugger for Microcosm.
+
+### ReactRouter
+
+Demonstrates use of Microcosm with ReactRouter.
+
+### SimpleSVG
+
+An animated SVG example that uses actions to animate the orbiting of
+one circle around another. Demonstrates the thunk usage pattern for
+actions.
+
+
+## Run the examples
+
+To run these examples, install project dependencies and execute `npm
+start` in any of the directories:
+
+```
+$ git clone https://github.com/vigetlabs/microcosm
+$ cd microcosm
+$ npm install
+
+$ cd examples/simple-svg
+$ npm start
+```
+
+## Project Structure
+
+All examples maintain the following project structure:
+
+```
+.
+├── app
+│   ├── actions      | Flux Actions
+│   ├── presenters   | Intermediary layer between app state and views
+│   ├── records      | Data Types
+│   ├── stores       | Flux Stores
+│   ├── views        | Passive react components isolated from app state
+│   └── boot.js      | Start script
+├── assets           | Static files like images and stylesheets
+├── lib              | Utilities, business-logic
+├── test             | Test suite
+├── index.html       | Application shell
+└── package.json     | Start command (via npm start)
+````

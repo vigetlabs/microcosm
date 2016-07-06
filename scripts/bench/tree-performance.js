@@ -9,8 +9,7 @@ var SIZES = [
   10000,
   50000,
   100000,
-  200000,
-  400000
+  200000
 ]
 
 console.log('\nConducting tree benchmark...\n')
@@ -57,6 +56,14 @@ var results = SIZES.map(function (SIZE) {
   stats.size = (time.now() - now) / 1000
 
   /**
+   * Measure time to build an array of the current branch. This is used
+   * by other tree operations.
+   */
+  now = time.now()
+  tree.toArray()
+  stats.toArray = (time.now() - now) / 1000
+
+  /**
    * Measure time to merge together all nodes. This is a useful
    * gut check of the potential fastest possible merger of objects
    * within Microcosm's dispatch process.
@@ -98,6 +105,7 @@ var results = SIZES.map(function (SIZE) {
     'Nodes': SIZE.toLocaleString(),
     '::append()': stats.build.toFixed(4) + 'ms',
     '::root()': stats.root.toFixed(4) + 'ms',
+    '::toArray()': stats.toArray.toFixed(4) + 'ms',
     '::reduce(merge)': stats.merge.toFixed(2) + 'ms',
     '::size()': stats.size.toFixed(2) + 'ms',
     '::prune()': stats.prune.toFixed(2) + 'ms',

@@ -1,8 +1,8 @@
 import React     from 'react'
 import DOM       from 'react-dom'
 import Debugger  from 'microcosm-debugger'
-import Painter   from './app/painter'
-import Workspace from './app/presenters/workspace'
+import Painter   from './painter'
+import Workspace from './presenters/workspace'
 
 const app = new Painter({ maxHistory: Infinity })
 

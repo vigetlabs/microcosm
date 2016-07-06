@@ -28,9 +28,7 @@ Action.prototype = {
   behavior : identity,
   depth    : 0,
   parent   : null,
-  next     : null,
-  left     : null,
-  right    : null,
+  sibling  : null,
   state    : States.unset,
 
   /**
@@ -67,7 +65,7 @@ Action.prototype = {
 
     while (start) {
       nodes.push(start)
-      start = start.right
+      start = start.sibling
     }
 
     return nodes

@@ -1,6 +1,5 @@
-import Eliza   from 'elizabot'
-import Promise from 'promise'
-import uid     from 'uid'
+import Eliza from 'elizabot'
+import uid   from 'uid'
 
 export const Bot = new Eliza()
 

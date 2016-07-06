@@ -1,0 +1,19 @@
+body {
+  color: #555;
+  font-family: sans-serif;
+  margin: 0;
+  width: 100%;
+}
+
+svg {
+  display: block;
+  margin: 0 auto;
+}
+
+text {
+  fill: currentColor;
+}
+
+circle {
+  transition: 0.3s fill;
+}

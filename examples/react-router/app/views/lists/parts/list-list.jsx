@@ -3,11 +3,10 @@ import Destroy from './destroy'
 import {Link}  from 'react-router'
 
 function List ({ id, name, count }) {
-  const link = `/react-router/lists/${ id }`
 
   return (
     <li key={ id }>
-      <Link to={ link }>{ name } ({ count })</Link>
+      <Link to={ `/lists/${ id }` }>{ name } ({ count })</Link>
       <Destroy intent="removeList" id={ id } />
     </li>
   )

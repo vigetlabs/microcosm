@@ -1,37 +1,26 @@
-var StaticSite = require('static-site-generator-webpack-plugin')
 var path = require('path')
-var root = __dirname
+var root = process.cwd()
+
+if (root === __dirname) {
+  console.log("\nHalt! Run `npm start` inside of an example, like:\n")
+  console.log("  $ cd simple-svg")
+  console.log("  $ npm start\n")
+
+  process.exit(1)
+}
 
 module.exports = {
-
   context: root,
 
   devtool: 'inline-source-map',
 
   entry: {
-    'chatbot'      : './chatbot/client',
-    'react-router' : './react-router/client',
-    'simple-svg'   : './simple-svg/client',
-    'painter'      : './painter/client',
-
-    'chatbot-static'      : './chatbot/static',
-    'react-router-static' : './react-router/static',
-    'simple-svg-static'   : './simple-svg/static',
-    'painter-static'      : './painter/static'
+    'application'  : './app/boot'
   },
 
   output: {
-    filename: '[name]/main.js',
-    path: path.resolve(root, '..', 'site'),
-    libraryTarget: 'umd'
+    filename : '[name].js'
   },
-
-  plugins: [
-    new StaticSite('chatbot-static', ['chatbot' ], {}),
-    new StaticSite('react-router-static', ['react-router' ], {}),
-    new StaticSite('simple-svg-static', ['simple-svg' ], {}),
-    new StaticSite('painter-static', ['painter'], {})
-  ],
 
   resolve: {
     extensions: [ '', '.js', '.jsx' ],
@@ -42,24 +31,18 @@ module.exports = {
   },
 
   module: {
-    loaders: [
-      {
-        test: /\.html/,
-        loader: 'mustache',
-        exclude: /node_modules/
-      },
-      {
-        test     : /\.jsx*$/,
-        loader   : 'babel',
-        exclude: /node_modules/
-      }
-    ]
+    loaders: [{
+      test     : /\.jsx*$/,
+      loader   : 'babel',
+      exclude  : /node_modules/
+    }]
   },
 
   devServer: {
-    contentBase : path.resolve(root, '..', 'site'),
-    publicPath  : '/',
-    port        : process.env.PORT || 4000,
-    noInfo      : true
+    contentBase: root,
+    publicPath: '/',
+    port: process.env.PORT || 4000,
+    noInfo: true,
+    historyApiFallback: true
   }
 }
