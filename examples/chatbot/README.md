@@ -2,6 +2,13 @@
 
 A chat application where users interact with an Elizabot chat program.
 
+## Setup
+
+```
+npm install
+npm start
+```
+
 ## How it works
 
 This example demonstrates using the current state of actions to

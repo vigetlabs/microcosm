@@ -14,7 +14,7 @@ describe('sending actions', function() {
 
       register() {
         return {
-          [action](state) {
+          [action]() {
             assert.equal(this.test, true)
             done()
           }

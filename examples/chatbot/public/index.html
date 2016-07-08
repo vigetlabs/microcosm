@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>ChatBot</title>
+    <style>
+      *,
+      *:before,
+      *:after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background: #2196F3;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        font: normal 14px/1 sans-serif;
+        padding: 0 16px 16px;
+      }
+
+      #app {
+        display: flex;
+        flex-grow: 1;
+        width: 100%;
+      }
+
+      .chat {
+        color: rgba(0, 0, 0, 0.875);
+        border-radius: 3px;
+        background: #fff;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        width: 100%;
+        flex-grow: 1;
+
+        &:after {
+          background: linear-gradient(#fff, rgba(255, 255, 255, 0.1));
+          border-radius: inherit;
+          content: "";
+          height: 16px;
+          left: 0;
+          position: absolute;
+          top: 0;
+          width: 100%;
+        }
+      }
+
+      .title {
+        flex-shrink: 0;
+        font-family: sans-serif;
+        font-weight: normal;
+        text-align: center;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+      }
+
+      .conversation {
+        list-style: none;
+        margin: 0;
+        overflow: scroll;
+        padding: 0;
+        flex-grow: 1;
+      }
+
+      .conversation li {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        position: relative;
+        padding: 16px;
+      }
+
+      .conversation time {
+        opacity: 0.5;
+        font-size: 11px;
+      }
+
+      @keyframes loading {
+        0% {
+          transform: scaleX(0);
+        }
+        60% {
+          left: 60%;
+          transform: scaleX(0.50);
+        }
+        100% {
+          left: 100%;
+          transform: scaleX(0);
+        }
+      }
+
+      .loading:after {
+        animation: 1s loading infinite linear;
+        background: orange;
+        bottom: 0;
+        content: "";
+        height: 3px;
+        left: -16px;
+        position: absolute;
+        transform-origin: 0 0;
+        width: 100%;
+      }
+
+      .error {
+        color: #f55;
+      }
+
+      blockquote {
+        margin: 8px 0 0;
+      }
+
+      form {
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-shrink: 0;
+        margin: 0;
+        padding: 16px;
+      }
+
+      input[type=text] {
+        border-radius: 0;
+        border: 1px solid #d9d9d9;
+        border-width: 0 0 1px;
+        flex-grow: 1;
+        font-size: 14px;
+        padding: (8px * 0.5) 0;
+      }
+
+      input[type=text]:focus {
+        box-shadow: 0 2px 0 0 #FF9800;
+        border-color: transparent;
+        outline: none;
+      }
+
+      input[type=submit] {
+        background: transparent;
+        border: 0;
+        font-size: 8px * 1.5;
+        padding: 0;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin: 0 0 0 16px;
+      }
+
+      .audible {
+        clip: rect(0, 0, 0, 0);
+        height: 0;
+        left: 0;
+        margin: -1px;
+        position: absolute;
+        width: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Chat-o-matic</h1>
+    <div id="app"></div>
+    <script src="/application.js"></script>
+  </body>
+
+</html>

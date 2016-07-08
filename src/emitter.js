@@ -20,12 +20,12 @@ export default function Emitter(obj) {
  */
 
 Emitter.prototype.on =
-Emitter.prototype.addEventListener = function (event, fn){
+Emitter.prototype.addEventListener = function (event, fn, reverse){
   this._callbacks = this._callbacks || {}
 
   const callback = this._callbacks['$' + event] = this._callbacks['$' + event] || []
 
-  callback.push(fn)
+  reverse ? callback.unshift(fn) : callback.push(fn)
 
   return this
 }
@@ -40,7 +40,7 @@ Emitter.prototype.addEventListener = function (event, fn){
  * @api public
  */
 
-Emitter.prototype.once = function (event, fn){
+Emitter.prototype.once = function (event, fn, reverse){
   function on() {
     this.off(event, on)
     fn.apply(this, arguments)
@@ -48,7 +48,7 @@ Emitter.prototype.once = function (event, fn){
 
   on.fn = fn
 
-  this.on(event, on)
+  this.on(event, on, reverse)
 
   return this
 }

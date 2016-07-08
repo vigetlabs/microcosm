@@ -21,7 +21,7 @@ export default function ListIndex ({ counts, lists }) {
           <ListForm />
         </aside>
 
-        <ListList items={ lists } />
+        <ListList items={ rows } />
       </main>
     </div>
   )

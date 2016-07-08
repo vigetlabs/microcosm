@@ -7,8 +7,8 @@ describe('When dispatching promises', function() {
     return n
   }
   let single = function(n) {
-    return new Promise(function (resolve, reject) {
-      setTimeout(_ => resolve(n))
+    return new Promise(function (resolve, _reject) {
+      setTimeout(() => resolve(n))
     })
   }
   let chain  = n => Promise.resolve(n).then(n => Promise.resolve(n))
@@ -25,7 +25,7 @@ describe('When dispatching promises', function() {
 
   let throws = function(n) {
     return new Promise(function() {
-      (this-will-fail-because-of-a-syntax-error)
+      throw new Error("This is an intentional error.")
     })
   }
 
@@ -100,7 +100,7 @@ describe('When dispatching promises', function() {
 
   it ('handles errors thrown by promises', function(done) {
     app.push(throws, 1).onError(function (error) {
-      assert(error instanceof ReferenceError)
+      assert(error instanceof Error)
       done()
     })
   })

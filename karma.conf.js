@@ -1,4 +1,4 @@
-var path = require('path')
+var HappyPack = require('happypack')
 
 module.exports = function (config) {
   var withCoverage = process.env.CI || config.coverage
@@ -22,10 +22,6 @@ module.exports = function (config) {
 
     reporters: [ 'mocha' ],
 
-    client: {
-      captureConsole: true
-    },
-
     coverageReporter: {
       dir: process.env.CIRCLE_ARTIFACTS || 'coverage',
       type: 'html',
@@ -43,10 +39,12 @@ module.exports = function (config) {
     webpack: {
       devtool: 'inline-source-map',
 
+      plugins: [ new HappyPack({ id: 'test' }) ],
+
       resolve: {
         extensions: [ '', '.js', '.jsx', '.json' ],
         alias: {
-          'microcosm': path.resolve(__dirname, 'src')
+          'microcosm': __dirname + '/src'
         }
       },
 
@@ -62,11 +60,13 @@ module.exports = function (config) {
           {
             test     : /\.jsx*$/,
             loader   : 'babel',
-            exclude  : /node_modules/
+            exclude  : /node_modules/,
+            happy    : { id: 'test' }
           },
           {
             test     : /\.json$/,
-            loader   : 'json'
+            loader   : 'json',
+            happy    : { id: 'test' }
           }
         ],
         postLoaders: withCoverage ? [{

@@ -1,34 +1,33 @@
-import Message  from '../records/message'
-import sendChat from '../actions/sendChat'
-
-import { Bot } from '../../lib/chat'
+import Message from '../records/message'
+import { send } from '../actions/messages'
 
 const Messages = {
 
   getInitialState() {
-    return [ Message({ user: 'Eliza', message: Bot.getInitial() }) ]
+    return [ Message({ user: 'Elizia', message: "What's new with you?" }) ]
   },
 
-  add(state, message) {
-    return state.concat(message)
+  add(state, items) {
+    const messages = [].concat(items).map(Message)
+
+    return state.concat(messages)
   },
 
-  addLoading(state, message) {
-    return this.add(state, Message({ message, user: 'You', pending: true }))
+  addLoading(state, params) {
+    return Messages.add(state, { ...params, pending: true })
   },
 
-  addError(state, error) {
-    return this.add(state, Message({ ...error, error: true }))
+  addError(state, params) {
+    return Messages.add(state, { ...params, error: true })
   },
 
   register() {
     return {
-      [sendChat.open]    : Messages.addLoading,
-      [sendChat.done]    : Messages.add,
-      [sendChat.failed]  : Messages.addError
+      [send.open]    : Messages.addLoading,
+      [send.done]    : Messages.add,
+      [send.failure] : Messages.addError
     }
   }
-
 }
 
 export default Messages

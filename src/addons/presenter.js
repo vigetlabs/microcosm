@@ -1,62 +1,73 @@
 import shallowEqual from './connect/shallow-equal'
 
-import { Component, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
 
-export default class Presenter extends Component {
+const Presenter = {
 
-  constructor(props, context) {
-    super(props, context)
+  contextTypes: {
+    app  : PropTypes.object,
+    send : PropTypes.func
+  },
 
-    this.app   = props.app || context.app
-    this.state = {}
+  childContextTypes: {
+    send : PropTypes.func
+  },
 
-    this.updatePropMap(props)
-  }
+  getChildContext() {
+    return {
+      send : this.send
+    }
+  },
+
+  getInitialState() {
+    this.app = this.props.app || this.context.app
+
+    this.updatePropMap(this.props)
+
+    return this.getState()
+  },
 
   componentWillMount() {
     this.updateState()
-  }
+  },
 
   componentDidMount() {
-    this._listener = this.updateState.bind(this)
-    this.app.on('change', this._listener)
-  }
+    this.app.on('change', this.updateState, true)
+  },
 
   componentWillUnmount() {
-    this.app.off('change', this._listener)
-  }
+    this.app.off('change', this.updateState)
+  },
 
   componentWillReceiveProps(nextProps) {
-    if (shallowEqual(nextProps, this.props) === false) {
+    if (this.props.pure === false || shallowEqual(nextProps, this.props) === false) {
       this.updatePropMap(nextProps)
     }
 
     this.updateState()
-  }
+  },
 
   updatePropMap(props) {
     this.propMap = this.viewModel ? this.viewModel(props) : {}
-  }
+  },
 
   updateState() {
-    let nextState = {}
+    const next = this.getState()
+
+    if (this.props.pure === false || shallowEqual(this.state, next) === false) {
+      return this.setState(next)
+    }
+  },
+
+  getState() {
+    const nextState = {}
 
     for (let key in this.propMap) {
       nextState[key] = this.propMap[key].call(this, this.app.state)
     }
 
-    if (shallowEqual(this.state, nextState)) {
-      return null
-    }
-
-    this.setState(nextState)
-  }
-
-  getChildContext() {
-    return {
-      send : this.send.bind(this)
-    }
-  }
+    return nextState
+  },
 
   send(intent, ...params) {
     if (this[intent]) {
@@ -69,14 +80,12 @@ export default class Presenter extends Component {
 
     throw new Error(`No Presenter implements intent “${ intent }”.`)
   }
-
 }
 
-Presenter.contextTypes = {
-  app  : PropTypes.object,
-  send : PropTypes.func
-}
+export default React.createClass({
+  mixins: [ Presenter ],
 
-Presenter.childContextTypes = {
-  send : PropTypes.func
-}
+  render() {
+    throw new TypeError('Presenter must implement of render method.')
+  }
+})

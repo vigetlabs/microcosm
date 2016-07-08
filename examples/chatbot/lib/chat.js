@@ -1,51 +1,50 @@
-import Eliza from 'elizabot'
-import uid   from 'uid'
+var Eliza = require('elizabot')
+var uid   = require('uid')
 
-export const Bot = new Eliza()
+var COMMANDS = {
 
-const COMMANDS = {
-
-  error(message) {
-    let answer  = { user: 'You', id: uid(), message }
-
-    return new Promise(function (resolve, reject) {
-      setTimeout(() => reject(answer), 1000)
-    })
+  error(bot, message) {
+    return { id: uid(), error: true, user: 'You', message }
   },
 
-  reply(message) {
-    let answer  = [
-      { user: 'You',   id: uid(), message: message },
-      { user: 'Eliza', id: uid(), message: Bot.transform(message) }
+  reply(bot, message) {
+    return [
+      { id: uid(), user: 'You',   message: message },
+      { id: uid(), user: 'Eliza', message: bot.transform(message) }
     ]
-
-    return new Promise(function (resolve, reject) {
-      setTimeout(() => resolve(answer), 1500)
-    })
   },
 
-  unknown(message) {
-    return Promise.reject({
+  unknown(bot, message) {
+    return {
+      id      : uid(),
       user    : 'System',
       message : `Unknown command “${ message }”`,
       error   : true
-    })
+    }
   }
-
 }
 
-export function say (message) {
-  let command = message.match(/^\/(\w+)\s*(.*)/)
+exports.start = function() {
+  return new Eliza()
+}
+
+exports.greet = function (bot) {
+  return { id: uid(), user: 'Eliza', message: bot.getInitial() }
+}
+
+exports.parse = function parse (bot, message) {
+  var command = message.match(/^\/(\w+)\s*(.*)/)
 
   if (command) {
-    let [_, action, options ] = command
+    var action  = command[1]
+    var options = command[2]
 
     if (action in COMMANDS) {
-      return COMMANDS[action](options)
+      return COMMANDS[action](bot, options)
     } else {
-      return COMMANDS.unknown(action)
+      return COMMANDS.unknown(bot, action)
     }
   }
 
-  return COMMANDS.reply(message)
+  return COMMANDS.reply(bot, message)
 }

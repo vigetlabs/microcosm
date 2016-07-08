@@ -28,7 +28,7 @@ describe('dispatch', function() {
 
       register() {
         return {
-          [mutation](state, next) {
+          [mutation](state) {
             state.toggled = !state.toggled
             return state
           }

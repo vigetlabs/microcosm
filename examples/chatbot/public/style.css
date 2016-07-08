@@ -15,7 +15,7 @@ body {
   color: #fff;
   display: flex;
   flex-direction: column;
-  font: normal 14px/1 Roboto, sans-serif;
+  font: normal 14px/1 sans-serif;
   padding: 0 16px 16px;
 }
 
@@ -50,7 +50,7 @@ body {
 
 .title {
   flex-shrink: 0;
-  font-family: 'Roboto Slab', sans-serif;
+  font-family: sans-serif;
   font-weight: normal;
   text-align: center;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);

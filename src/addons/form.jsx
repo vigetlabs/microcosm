@@ -9,14 +9,16 @@ const Form = React.createClass({
   },
 
   propTypes: {
-    intent    : PropTypes.string.isRequired,
-    onSubmit  : PropTypes.func,
-    onSuccess : PropTypes.func,
-    onFailure : PropTypes.func
+    intent     : PropTypes.string.isRequired,
+    serializer : PropTypes.func,
+    onSubmit   : PropTypes.func,
+    onSuccess  : PropTypes.func,
+    onFailure  : PropTypes.func
   },
 
   getDefaultProps() {
     return {
+      intent     : null,
       serializer : form => serialize(form, { hash: true, empty: true }),
       onSubmit   : () => {},
       onSuccess  : () => {},
@@ -25,15 +27,22 @@ const Form = React.createClass({
   },
 
   render() {
-    const { intent, onSubmit, onSuccess, onFailure, serializer, ...props } = this.props
+    const props = { ...this.props }
 
-    return <form { ...props } onSubmit={ this.onSubmit } ref="form" />
+    // Remove special properties
+    delete props.intent
+    delete props.serializer
+    delete props.onSubmit
+    delete props.onSuccess
+    delete props.onFailure
+
+    return React.createElement('form', { ...props, onSubmit: this.onSubmit })
   },
 
   onSubmit(event) {
     event.preventDefault()
 
-    const form   = this.refs.form
+    const form   = event.target
     const params = this.props.serializer(form)
     const action = this.context.send(this.props.intent, params)
 

@@ -133,6 +133,19 @@ Microcosm.prototype = {
   },
 
   /**
+   * Partially apply push
+   *
+   * @api public
+   *
+   * @param {...Array} params - Parameters to invoke the type with
+   *
+   * @return {Function} A partially applied push function
+   */
+  prepare(...params) {
+    return (...more) => this.push(...params, ...more)
+  },
+
+  /**
    * Adds a store to the Microcosm instance. A store informs the
    * microcosm how to process various action types. If no key
    * is given, the store will operate on all application state.

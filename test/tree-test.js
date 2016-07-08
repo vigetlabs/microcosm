@@ -2,7 +2,6 @@ import Tree   from '../src/tree'
 import assert from 'assert'
 
 describe('Tree', function() {
-  let concat = (a, b) => a.concat(b.action)
   let action = n => n
 
   it ('adjusts the focal point when adding a node', function() {
@@ -16,12 +15,14 @@ describe('Tree', function() {
   it ('prunes all the way up to the focal point', function() {
     let tree = new Tree()
 
-    let one = tree.append(action)
+    tree.append(action)
+
     let two = tree.append(action)
-    let three = tree.append(action)
+
+    tree.append(action)
 
     tree.checkout(two)
-    tree.prune(node => true)
+    tree.prune(() => true)
 
     assert.equal(tree.focus, null)
   })
@@ -31,10 +32,11 @@ describe('Tree', function() {
 
     let one = tree.append(action)
     let two = tree.append(action)
-    let three = tree.append(action)
+
+    tree.append(action)
 
     tree.checkout(two)
-    tree.prune(node => false)
+    tree.prune(() => false)
 
     assert.equal(tree.focus, two)
     assert.equal(tree.focus.parent, one)
@@ -44,8 +46,11 @@ describe('Tree', function() {
     let tree = new Tree()
 
     let first = tree.append(action)
-    let second = tree.append(action)
+
+    tree.append(action)
+
     tree.checkout(first)
+
     let third = tree.append(action)
 
     assert.deepEqual(tree.toArray(), [ first, third ])
@@ -116,8 +121,9 @@ describe('Tree', function() {
     let tree = new Tree()
 
     let a = tree.append(action)
-    let b = tree.append(action)
-    let c = tree.append(action)
+
+    tree.append(action)
+    tree.append(action)
 
     assert.equal(tree.root, a)
   })
@@ -136,7 +142,9 @@ describe('Tree', function() {
 
   it ('does not lose children when checking out nodes on the left', function() {
     let tree = new Tree()
-    let a = tree.append(action)
+
+    tree.append(action)
+
     let b = tree.append(action)
     let c = tree.append(action)
 
@@ -149,7 +157,9 @@ describe('Tree', function() {
 
   it ('does not lose children when checking out nodes on the right', function() {
     let tree = new Tree()
-    let a = tree.append(action)
+
+    tree.append(action)
+
     let b = tree.append(action)
     let c = tree.append(action)
 

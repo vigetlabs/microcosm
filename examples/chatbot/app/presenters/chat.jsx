@@ -1,12 +1,12 @@
 import React     from 'react'
 import Presenter from 'microcosm/addons/presenter'
 import Messenger from '../views/messenger'
-import sendChat  from '../actions/sendChat'
+import { send }  from '../actions/messages'
 
-export default class Chat extends Presenter {
+export default class ChatPresenter extends Presenter {
 
   sendChat(app, { message }) {
-    return app.push(sendChat, message)
+    return app.push(send, message)
   }
 
   viewModel() {

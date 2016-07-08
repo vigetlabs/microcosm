@@ -1,45 +1,45 @@
+var HappyPack = require('happypack')
 var path = require('path')
-var root = process.cwd()
-
-if (root === __dirname) {
-  console.log("\nHalt! Run `npm start` inside of an example, like:\n")
-  console.log("  $ cd simple-svg")
-  console.log("  $ npm start\n")
-
-  process.exit(1)
-}
 
 module.exports = {
-  context: root,
+  context: path.resolve(__dirname, '..'),
 
   devtool: 'inline-source-map',
 
-  entry: {
-    'application'  : './app/boot'
+  output: {
+    filename : '[name].js',
+    path     : process.cwd()
   },
 
-  output: {
-    filename : '[name].js'
-  },
+  plugins: [
+    new HappyPack({
+      id: 'examples'
+    }),
+    function Logger () {
+      this.plugin("done", function (stats) {
+        console.log("Built in %sms", stats.endTime - stats.startTime)
+      })
+    }
+  ],
 
   resolve: {
     extensions: [ '', '.js', '.jsx' ],
     alias: {
-      'microcosm': path.resolve(__dirname, '../src'),
-      'microcosm-debugger': path.resolve(__dirname, '../../microcosm-debugger/dist/microcosm-debugger')
+      'microcosm': path.resolve(__dirname, '..', 'src')
     }
   },
 
   module: {
     loaders: [{
-      test     : /\.jsx*$/,
-      loader   : 'babel',
-      exclude  : /node_modules/
+      test: /\.jsx*/,
+      loader: 'babel',
+      exclude: [/node_modules/],
+      happy: { id: "examples" }
     }]
   },
 
   devServer: {
-    contentBase: root,
+    contentBase: process.cwd(),
     publicPath: '/',
     port: process.env.PORT || 4000,
     noInfo: true,
