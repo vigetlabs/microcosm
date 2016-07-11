@@ -6,4 +6,4 @@ node_modules
 tmp
 dist
 .happypack
-.ny-
+.nyc_output
