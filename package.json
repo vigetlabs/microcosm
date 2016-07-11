@@ -27,7 +27,6 @@
     "require": [
       "./test/helpers/setup-browser-env.js"
     ],
-    "timeout": "5s",
     "babel": "inherit"
   },
   "dependencies": {
