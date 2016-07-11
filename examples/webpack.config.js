@@ -1,13 +1,12 @@
 var HappyPack = require('happypack')
-var path = require('path')
 
 module.exports = {
-  context: path.resolve(__dirname, '..'),
+  context: __dirname,
 
   devtool: 'inline-source-map',
 
   output: {
-    filename : '[name].js',
+    filename : 'application.js',
     path     : process.cwd()
   },
 
@@ -23,10 +22,7 @@ module.exports = {
   ],
 
   resolve: {
-    extensions: [ '', '.js', '.jsx' ],
-    alias: {
-      'microcosm': path.resolve(__dirname, '..', 'src')
-    }
+    extensions: [ '', '.js', '.jsx' ]
   },
 
   module: {

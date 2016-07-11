@@ -6,9 +6,7 @@ var webpack    = require('webpack')
 var webpackDev = require('webpack-dev-middleware')
 var config     = require('../../webpack.config')
 
-config.entry = {
-  'application' : './examples/chatbot/app/boot'
-}
+config.entry = './chatbot/app/boot'
 
 module.exports = function() {
   var compiler = webpack(config)

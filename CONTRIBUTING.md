@@ -4,9 +4,8 @@ Thanks you for considering a contribution to Microcosm!
 
 Microcosm is built using tools written for
 [nodejs](http://nodejs.org). We recommend installing Node with
-[nvm](https://github.com/creationix/nvm). this also means that
-dependencies are managed with an [`npm`](https://npmjs.org) `package.json`
-file.
+[nvm](https://github.com/creationix/nvm). Dependencies are managed
+through `package.json`.
 
 You can install dependencies with:
 
@@ -33,18 +32,14 @@ This will host a web server with all examples at `http://localhost:4000`.
 
 ## Testing
 
-The fastest way to get immediate feedback is to test against node:
-
-```bash
-npm run test:node
-```
-
-This will test the core Microcosm modules, however it won't cover
-addons such as Connect and Provider. These modules require a
-browser. To perform a complete run of all tests, run:
-
 ```bash
 npm test
+```
+
+For test coverage:
+
+```bash
+npm run test:cov
 ```
 
 Be sure to check the `./coverage` folder to verify all code paths are
@@ -80,14 +75,6 @@ for style, shoot for:
 - 2 spaces for indentation (no tabs)
 - Prefer ' over ", use string interpolation
 - 80 character line length
-
-### Testing
-
-Additionally, we aspire for 100% code coverage. However 100% code
-coverage is not a foolproof indicator of good testing. Tests that
-cover as much surface area as possible (for the sake of coverage)
-should be avoided. This is a much softer measure than a style guide,
-and will fall to code review for enforcement.
 
 ### Reviews
 

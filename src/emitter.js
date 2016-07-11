@@ -1,12 +1,25 @@
 /**
- * Initialize a new `Emitter`.
+ * EventEmitter
  *
- * @api public
+ * This is a private event emitter based upon the component/emitter
+ * implementation. It enforces a few constraints to ensure users of
+ * Microcosm have a good time:
+ *
+ * - `emit` is private
+ * - subscriptions can be prioritized (to improve rendering efficiency)
+ *
+ * component/emitter:
+ * https://github.com/component/emitter/pull/74/files
  */
 
 import merge from './merge'
 
-export default function Emitter(obj) {
+/**
+ * Initialize a new `Emitter`.
+ *
+ * @api public
+ */
+export default function Emitter (obj) {
   return merge(obj, Emitter.prototype)
 }
 
@@ -25,14 +38,21 @@ Emitter.prototype.addEventListener = function (event, fn, reverse){
 
   const callback = this._callbacks['$' + event] = this._callbacks['$' + event] || []
 
+  /**
+   * Reversing priority helps addons like 'Connect' and 'Presenter'
+   * work more efficiently. It allows changes to occur "top down"
+   * instead of "bottom up". This is because event subscription occurs
+   * within React lifecycle methods, which prioritize children before
+   * parents.
+   */
   reverse ? callback.unshift(fn) : callback.push(fn)
 
   return this
 }
 
 /**
- * Adds an `event` listener that will be invoked a single
- * time then automatically removed.
+ * Adds an `event` listener that will be invoked a single time then
+ * automatically removed.
  *
  * @param {String} event
  * @param {Function} fn
@@ -67,18 +87,17 @@ Emitter.prototype.off =
 Emitter.prototype.removeListener =
 Emitter.prototype.removeAllListeners =
 Emitter.prototype.removeEventListener = function (event, fn){
-  this._callbacks = this._callbacks || {}
-
-  // all
+  // Remove all listeners
   if (0 == arguments.length) {
-    this._callbacks = {}
+    delete this._callbacks
+  }
+
+  if (!this._callbacks || this._callbacks.hasOwnProperty('$' + event) === false) {
     return this
   }
 
   // specific event
-  var callbacks = this._callbacks['$' + event]
-
-  if (!callbacks) return this
+  let callbacks = this._callbacks['$' + event]
 
   // remove all handlers
   if (1 == arguments.length) {
@@ -86,15 +105,19 @@ Emitter.prototype.removeEventListener = function (event, fn){
     return this
   }
 
-  // remove specific handler
-  var cb
-  for (var i = 0; i < callbacks.length; i++) {
-    cb = callbacks[i]
-    if (cb === fn || cb.fn === fn) {
-      callbacks.splice(i, 1)
-      break
-    }
+  // Remove the specific handler
+  callbacks = callbacks.filter(cb => !(cb === fn || cb.fn === fn))
+
+  /**
+   * Remove event specific arrays for event types that no
+   + one is subscribed for to avoid memory leak.
+   */
+  if (callbacks.length === 0) {
+    delete this._callbacks['$' + event]
+  } else {
+    this._callbacks['$' + event] = callbacks
   }
+
   return this
 }
 
@@ -107,16 +130,15 @@ Emitter.prototype.removeEventListener = function (event, fn){
  * @param {Mixed} ...
  * @return {Emitter}
  */
-
 Emitter.prototype._emit = function (event, ...params) {
-  this._callbacks = this._callbacks || {}
+  if (!this._callbacks) {
+    return this
+  }
 
-  let callbacks = this._callbacks['$' + event]
+  const callbacks = this._callbacks['$' + event]
 
   if (callbacks) {
-    callbacks = callbacks.slice(0)
-
-    for (var i = 0, len = callbacks.length; i < len; ++i) {
+    for (let i = 0, len = callbacks.length; i < len; ++i) {
       callbacks[i].apply(this, params)
     }
   }

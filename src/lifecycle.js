@@ -7,8 +7,8 @@
 import tag from './action/tag'
 
 export default {
-  willStart       : tag(function getInitialState (n) { return n },'getInitialState'),
-  willSerialize   : tag(function serialize (n) { return n }, 'serialize'),
-  willDeserialize : tag(function deserialize (n) { return n }, 'deserialize'),
-  willReset       : tag(function willReset (n) { return n }, 'willReset')
+  willStart       : tag(n => n, 'getInitialState'),
+  willSerialize   : tag(n => n, 'serialize'),
+  willDeserialize : tag(n => n, 'deserialize'),
+  willReset       : tag(n => n, 'willReset')
 }

@@ -1,5 +1,5 @@
 import React     from 'react'
-import Presenter from 'microcosm/addons/presenter'
+import Presenter from '../../../../src/addons/presenter'
 import Messenger from '../views/messenger'
 import { send }  from '../actions/messages'
 

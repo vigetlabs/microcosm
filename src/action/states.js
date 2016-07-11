@@ -5,6 +5,7 @@
  * important: the numbers here matter. they must be powers of 2. an action's
  * `state` property is a bitmask of these state values.
  */
+
 export default {
   // nothing has happened yet. the action has not executed.
   unset : 1,

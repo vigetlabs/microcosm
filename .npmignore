@@ -1,9 +1,9 @@
 coverage
 example
-docs
 src
 karma.conf.js
 CONTRIBUTING.md
 CHANGELOG.md
 webpack.config.js
 webpack.example.config.js
+js.cache

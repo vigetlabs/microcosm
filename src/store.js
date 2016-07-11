@@ -1,3 +1,5 @@
+import merge from './merge'
+
 const EMPTY = {}
 
 /**
@@ -12,16 +14,10 @@ const EMPTY = {}
  *
  * @param {Object|Function} options a register function or object of handlers
  */
-export default function Store (options) {
-  if (typeof options === 'function') {
-    options = { register: options }
-  }
+export default function Store (config) {
+  const options = typeof config === 'function' ? { register: config } : config
 
-  for (var key in options) {
-    if (options.hasOwnProperty(key)) {
-      this[key] = options[key]
-    }
-  }
+  merge(this, options)
 }
 
 Store.prototype = {
@@ -42,13 +38,18 @@ Store.prototype = {
    * @returns {Object} A new state
    */
   receive(previous, { type, payload }) {
-    const handler = this[type] || this.register()[type]
-
-    if (handler == undefined) {
-      return previous
+    if (this[type]) {
+      return this[type].call(this, previous, payload)
     }
 
-    return handler.call(this, previous, payload)
+    const registry = this.register()
+    const handler  = registry[type]
+
+    if ('undefined' in registry) {
+      throw new Error("This store's registry contains a 'undefined' key. Check the register method for this store.")
+    }
+
+    return handler == undefined ? previous : handler.call(this, previous, payload)
   },
 
   /**

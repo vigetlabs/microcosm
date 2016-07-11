@@ -4,13 +4,14 @@
  * behavior. This middleware will execute that function with the
  * action as the first argument.
  */
+
 export default {
 
-  condition(value) {
+  condition (value) {
     return typeof value === 'function'
   },
 
-  call(action, body) {
+  call (action, body) {
     return body(action)
   }
 

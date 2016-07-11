@@ -3,8 +3,6 @@ import States    from './action/states'
 import coroutine from './action/coroutine'
 import tag       from './action/tag'
 
-const identity = n => n
-
 /**
  * Actions are the result of using `push()` within a Microcosm
  * instance. They are dispatched to stores to produce new state.
@@ -18,6 +16,12 @@ const identity = n => n
  * @param {Function} behavior - how the action should resolve.
  */
 export default function Action (behavior) {
+  if (typeof behavior !== 'function') {
+    throw new TypeError('Action was created with an invalid type of ' +
+                        (typeof behavior) +
+                        '. Actions must be functions.')
+  }
+
   this.behavior = tag(behavior)
 }
 
@@ -25,7 +29,7 @@ Action.prototype = {
 
   constructor : Action,
 
-  behavior : identity,
+  behavior : null,
   depth    : 0,
   parent   : null,
   sibling  : null,
@@ -99,9 +103,11 @@ Action.prototype = {
    * processes.
    *
    * @api private
+   *
+   * @returns the result of invoking the behavior
    */
   execute(/** params **/) {
-    coroutine(this, this.behavior.apply(this, arguments))
+    return coroutine(this, this.behavior.apply(this, arguments))
   },
 
   /**
@@ -223,7 +229,7 @@ Action.prototype = {
    * @returns {Action} self
    */
   onUpdate(callback, scope) {
-    this.listen('update', callback.bind(scope))
+    this.on('update', callback.bind(scope))
 
     return this
   },

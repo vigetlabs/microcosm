@@ -1,3 +1,4 @@
+import Microcosm from '../microcosm'
 import shallowEqual from './connect/shallow-equal'
 
 import React, { PropTypes } from 'react'
@@ -5,16 +6,22 @@ import React, { PropTypes } from 'react'
 const Presenter = {
 
   contextTypes: {
-    app  : PropTypes.object,
+    app  : PropTypes.instanceOf(Microcosm),
     send : PropTypes.func
   },
 
+  propTypes: {
+    app : PropTypes.instanceOf(Microcosm)
+  },
+
   childContextTypes: {
+    app  : PropTypes.instanceOf(Microcosm),
     send : PropTypes.func
   },
 
   getChildContext() {
     return {
+      app  : this.app,
       send : this.send
     }
   },
@@ -73,12 +80,11 @@ const Presenter = {
     if (this[intent]) {
       return this[intent].apply(this, [ this.app, ...params ])
     }
-
-    if (this.context.send) {
+    else if (this.context.send) {
       return this.context.send(intent, ...params)
     }
 
-    throw new Error(`No Presenter implements intent “${ intent }”.`)
+    throw new Error(`No presenter implements intent “${ intent }”.`)
   }
 }
 
@@ -86,6 +92,6 @@ export default React.createClass({
   mixins: [ Presenter ],
 
   render() {
-    throw new TypeError('Presenter must implement of render method.')
+    throw new Error('Presenter must implement a render method.')
   }
 })

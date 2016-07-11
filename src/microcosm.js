@@ -113,6 +113,25 @@ Microcosm.prototype = {
   },
 
   /**
+   * Append an action to a microcosm's history. In a production application, this is
+   * typically reserved for testing. `append` will not execute an action, making it
+   * easier to test individual action operations.
+   *
+   * @api public
+   *
+   * @param {Function} behavior - An action function
+   *
+   * @return {Action} action representation of the invoked function
+   */
+  append(behavior) {
+    const action = this.history.append(behavior)
+
+    action.on('change', this.rollforward.bind(this))
+
+    return action
+  },
+
+  /**
    * Push an action into Microcosm. This will trigger the lifecycle for updating
    * state.
    *
@@ -124,9 +143,8 @@ Microcosm.prototype = {
    * @return {Action} action representation of the invoked function
    */
   push (behavior, ...params) {
-    let action = this.history.append(behavior)
+    const action = this.append(behavior)
 
-    action.on('change', this.rollforward.bind(this))
     action.execute(...params)
 
     return action
@@ -142,7 +160,7 @@ Microcosm.prototype = {
    * @return {Function} A partially applied push function
    */
   prepare(...params) {
-    return (...more) => this.push(...params, ...more)
+    return this.push.bind(this, ...params)
   },
 
   /**
@@ -212,9 +230,11 @@ Microcosm.prototype = {
    * @return {Object} The deserialized version of the provided payload.
    */
   deserialize (payload) {
-    if (payload != null) {
-      return this.dispatch(payload, { type: lifecycle.willDeserialize, payload })
+    if (payload == null) {
+      return {}
     }
+
+    return this.dispatch(payload, { type: lifecycle.willDeserialize, payload })
   },
 
   /**
@@ -223,13 +243,25 @@ Microcosm.prototype = {
    * function).
    *
    * @example
-   *     app.toJSON() // => { planets: [...] }
+   *     app.serialize() // => { planets: [...] }
    *     JSON.stringify(app) // => '{ "planets": [...] }'
    *
+   * @api public
    * @return {Object} The serialized version of application state.
    */
-  toJSON () {
+  serialize() {
     return this.dispatch(this.state, { type: lifecycle.willSerialize, payload: this.state })
+  },
+
+
+  /**
+   * Alias serialize for JS interoperability.
+   *
+   * @api public
+   * @return result of serialize
+   */
+  toJSON() {
+    return this.serialize()
   },
 
   /**
@@ -247,7 +279,9 @@ Microcosm.prototype = {
   rebase () {
     this.cache = merge(this.getInitialState(), this.cache)
 
-    return this.rollforward()
+    this.rollforward()
+
+    return this
   },
 
   /**
@@ -262,7 +296,9 @@ Microcosm.prototype = {
   checkout (action) {
     this.history.checkout(action)
 
-    return this.rollforward()
+    this.rollforward()
+
+    return this
   }
 
 }

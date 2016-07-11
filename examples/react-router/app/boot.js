@@ -1,6 +1,6 @@
 import React     from 'react'
 import DOM       from 'react-dom'
-import Provider  from 'microcosm/addons/provider'
+import Provider  from '../../../src/addons/provider'
 import Debugger  from 'microcosm-debugger'
 import Todos     from './todos'
 import routes    from './routes'

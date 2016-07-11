@@ -1,5 +1,5 @@
 import React from 'react'
-import Form  from 'microcosm/addons/form'
+import Form  from '../../../../../../src/addons/form'
 
 const ItemForm = React.createClass({
 

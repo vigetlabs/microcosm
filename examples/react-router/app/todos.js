@@ -1,4 +1,4 @@
-import Microcosm from 'microcosm'
+import Microcosm from '../../../src/microcosm'
 import Items     from './stores/items'
 import Lists     from './stores/lists'
 

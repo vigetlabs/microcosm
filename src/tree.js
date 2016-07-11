@@ -53,14 +53,15 @@ Tree.prototype = {
   },
 
   prune(shouldRemove, scope) {
-    while (this.root !== null && shouldRemove.call(scope, this.root)) {
-      this.root = this.root.next || null
+    while (this.root && shouldRemove.call(scope, this.root)) {
+      this.root = this.root.next
     }
 
     // If we reach the end (there is no next node), it means
     // we've completely wiped away the tree, so nullify focus
     // to mark a completely empty tree.
     if (!this.root) {
+      this.root  = null
       this.focus = null
     }
 
@@ -68,11 +69,9 @@ Tree.prototype = {
   },
 
   toArray() {
-    let node  = this.focus
     let size  = this.size()
-    let items = []
-
-    items.length = size
+    let items = new Array(size)
+    let node  = this.focus
 
     while (--size >= 0) {
       items[size] = node
@@ -83,9 +82,9 @@ Tree.prototype = {
   },
 
   reduce(fn, state, scope) {
-    let items = this.toArray()
+    const items = this.toArray()
 
-    for (var i = 0, len = items.length; i < len; i++) {
+    for (let i = 0, len = items.length; i < len; i++) {
       state = fn.call(scope, state, items[i], i)
     }
 

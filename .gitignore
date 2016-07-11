@@ -1,8 +1,9 @@
 coverage
 stats.json
-dist
 node_modules
 *.asm
 *.cfg
 tmp
+dist
 .happypack
+.ny-

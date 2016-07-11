@@ -1,6 +1,6 @@
 import DOM         from 'react-dom'
 import React       from 'react'
-import Microcosm   from 'microcosm'
+import Microcosm   from '../../../src/microcosm'
 import Circle      from './stores/circle'
 import Logo        from './views/logo'
 import { animate } from './actions/animate'

@@ -1,52 +1,50 @@
-MAKEFLAGS += '-j 4'
-
 SHELL   := /bin/bash
 PATH    := node_modules/.bin:$(PATH)
-SCRIPTS := $(shell find src test examples -name '*.js') $(shell find src test examples -name '*.jsx')
+MODULES := $(shell find src examples bench test -name '*.js*')
 
-build: package.json $(wildcard *.md) docs bundle
+all: documentation package.json javascript
+	@ rsync -uraq tmp/src/ dist/
 
-bundle: dist/index.js dist/addons/connect.js dist/addons/provider.js
+javascript: tmp/js.cache
 
-docs: dist
-	@ cp -rp $@ $^
+tmp/js.cache: $(MODULES)
+	@ # Compile over all JavaScript modules
+	@ babel -q -s inline -d $(@D) $(filter %.js %.jsx, $?)
+	@ # Copy over anything else
+	@ rsync -uraq $(filter-out %.js %.jsx, $?) $(@D)
+	@ # Set a time stamp for the cache
+	@ date > $@
+	@ # Report work completed
+	@ echo "Compiled $(words $?) files."
 
-dist/%.js: tmp/src/%.js javascript
-	@ mkdir -p $(@D)
-	@ rollup -m inline -f cjs $< > $@
+documentation: *.md docs
+	@ mkdir -p dist/
+	@ cp -R $^ dist/
 
-dist:
-	@ mkdir -p dist
-
-%.md: dist
-	@ cp -p $@ $<
-
-lint: $(SCRIPTS)
+lint: $(MODULES)
 	@ eslint $^
 
-package.json: dist
+package.json:
 	@ node -p 'p=require("./package");p.main="microcosm.js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > dist/package.json
 
-release: clean build
+release: clean all
 	npm publish dist
 
-prerelease: clean build
+prerelease: clean all
 	npm publish dist --tag beta
 
-test: lint test-browser test-node
+test: lint javascript
+	@ ava --fail-fast --tap | tap-dot
 
-test-browser:
-	@ NODE_ENV=test karma start
+test-cov: lint javascript
+	@ nyc --reporter html ava
 
-test-node:
-	@ NODE_ENV=test mocha -R dot --compilers js:babel-register --recursive
-
-bench: bundle
-	@ node --expose-gc scripts/bench/tree-performance
-	@ node --expose-gc scripts/bench/dispatch-performance
-	@ node --expose-gc scripts/bench/push-performance
+bench: javascript
+	@ node --expose-gc tmp/bench/tree-performance
+	@ node --expose-gc tmp/bench/dispatch-performance
+	@ node --expose-gc tmp/bench/push-performance
 
 clean:
-	@ rm -rf dist/*
+	@ rm -rf {tmp,dist}/*
 
-.PHONY: clean deliverables test test-node test-browser example bench package.json javascript lint
+.PHONY: all clean test test-coverage bench lint package.json documentation release prerelease
