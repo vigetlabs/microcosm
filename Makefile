@@ -34,7 +34,7 @@ prerelease: clean all
 	npm publish dist --tag beta
 
 test: lint javascript
-	@ ava --fail-fast --tap | tap-dot
+	@ ava --fail-fast
 
 test-cov: lint javascript
 	@ nyc --reporter html ava
