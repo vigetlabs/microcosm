@@ -2,3 +2,6 @@ general:
   branches:
     ignore:
       - gh-pages
+machine:
+  node:
+    version: 5.7.1
