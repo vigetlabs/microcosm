@@ -1,6 +1,6 @@
 const hasOwn = Object.prototype.hasOwnProperty
 
-function merge (a, b) {
+function foldInTo (a, b) {
   if (a == null || b == null) {
     return a
   }
@@ -14,6 +14,14 @@ function merge (a, b) {
   return a
 }
 
-export default function (...values) {
-  return values.reduce(merge)
+/**
+ * Merge any number of objects into a provided object
+ *
+ * @private
+ * @params {...Object} Any number of objects to fold properties into the first
+ * @return {Object} The first provided value, extended with all others
+ */
+export default function merge (...values) {
+
+  return values.reduce(foldInTo)
 }

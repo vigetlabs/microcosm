@@ -14,11 +14,9 @@ export default function connect (mapStateToProps, options) {
       }
 
       render() {
-        return React.createElement(Component, {
-          app: this.app,
-          ...this.props,
-          ...this.state
-        })
+        const props = { ...this.props, ...this.state, app: this.app }
+
+        return React.createElement(Component, props)
       }
     }
 

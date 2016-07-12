@@ -8,12 +8,10 @@ import merge from './merge'
  *     get({ foo: 'bar' }, 'foo') // 'bar'
  *     get({ foo: 'bar' }, undefined) // { foo: 'bar' }
  *
- * @api private
- *
  * @param {Object} object - The target object
  * @param {String} key - The key to access
- *
- * @returns {Any} A retrieved value
+ * @return {Any} A retrieved value
+ * @private
  */
 export function get (object, key) {
   return key == null ? object : object[key]
@@ -27,13 +25,11 @@ export function get (object, key) {
  * @example
  *     set({ foo: 'bar' }, 'baz', 'bip') // { foo: 'bar', baz: 'bip' }
  *
- * @api private
- *
  * @param {Object} object - The target object
  * @param {String} key - The key to set
  * @param {Any} value - The value to assign
- *
- * @returns {Any} A copy of the object with the new assignment.
+ * @return {Any} A copy of the object with the new assignment.
+ * @private
  */
 export function set (object, key, value) {
   // Never assign undefined values

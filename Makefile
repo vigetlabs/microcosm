@@ -19,7 +19,7 @@ tmp/js.cache: $(MODULES)
 
 documentation: *.md docs
 	@ mkdir -p dist/
-	@ cp -R $^ dist/
+	@ cp *.md dist/
 
 lint: $(MODULES)
 	@ eslint $^

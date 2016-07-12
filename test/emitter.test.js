@@ -1,19 +1,6 @@
 import test from 'ava'
 import Emitter from '../src/emitter'
 
-function Custom () {
-  Emitter.call(this)
-}
-
-Custom.prototype.__proto__ = Emitter.prototype
-
-test.cb('assigning the emitter prototype', t => {
-  const emitter = new Custom()
-
-  emitter.on('foo', () => t.end())
-  emitter._emit('foo')
-})
-
 test('adds listeners', t => {
   const emitter = new Emitter
   const calls = []
@@ -153,13 +140,4 @@ test('should remove all listeners', t => {
   emitter._emit('bar')
 
   t.deepEqual(calls, ['one', 'two'])
-})
-
-test.cb('can be used as a mixin', t => {
-  const proto = {}
-
-  Emitter(proto)
-
-  proto.on('something', () => t.end())
-  proto._emit('something')
 })

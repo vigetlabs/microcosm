@@ -28,12 +28,11 @@ const Form = React.createClass({
   },
 
   render() {
-    const props = { ...this.props }
+    let props = { ...this.props }
 
-    // Remove special properties
+    // Remove invalid props to prevent React warnings
     delete props.intent
     delete props.serializer
-    delete props.onSubmit
     delete props.onSuccess
     delete props.onProgress
     delete props.onFailure

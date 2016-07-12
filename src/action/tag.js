@@ -1,13 +1,16 @@
-/**
- * Tag
- * Uniquely tag a function. This is used to identify actions
- */
-
 import States from './states'
 
 let uid = 0
 const FALLBACK = 'microcosm_action'
 
+/**
+ * Uniquely tag a function. This is used to identify actions.
+ *
+ * @param {function} fn The target function to add action identifiers to.
+ * @param {string} [name] An override to use instead of `fn.name`.
+ * @return {function} The tagged function (same as `fn`).
+ * @private
+ */
 export default function tag (fn, name) {
   if (fn.hasOwnProperty('toString')) {
     return fn

@@ -7,3 +7,4 @@ tmp
 dist
 .happypack
 .nyc_output
+esdoc

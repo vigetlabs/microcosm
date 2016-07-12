@@ -9,19 +9,13 @@
  * - subscriptions can be prioritized (to improve rendering efficiency)
  *
  * component/emitter:
- * https://github.com/component/emitter/pull/74/files
- */
-
-import merge from './merge'
-
-/**
- * Initialize a new `Emitter`.
+ * https://github.com/component/emitter
  *
- * @api public
+ * @private
  */
-export default function Emitter (obj) {
-  return merge(obj, Emitter.prototype)
-}
+export default function Emitter () {}
+
+Emitter.prototype.constructor = Emitter
 
 /**
  * Listen on the given `event` with `fn`.
@@ -29,9 +23,7 @@ export default function Emitter (obj) {
  * @param {String} event
  * @param {Function} fn
  * @return {Emitter}
- * @api public
  */
-
 Emitter.prototype.on =
 Emitter.prototype.addEventListener = function (event, fn, reverse){
   this._callbacks = this._callbacks || {}
@@ -57,9 +49,7 @@ Emitter.prototype.addEventListener = function (event, fn, reverse){
  * @param {String} event
  * @param {Function} fn
  * @return {Emitter}
- * @api public
  */
-
 Emitter.prototype.once = function (event, fn, reverse){
   function on() {
     this.off(event, on)
@@ -80,9 +70,7 @@ Emitter.prototype.once = function (event, fn, reverse){
  * @param {String} event
  * @param {Function} fn
  * @return {Emitter}
- * @api public
  */
-
 Emitter.prototype.off =
 Emitter.prototype.removeListener =
 Emitter.prototype.removeAllListeners =
@@ -124,11 +112,11 @@ Emitter.prototype.removeEventListener = function (event, fn){
 /**
  * Emit `event` with the given args.
  *
- * @api private
  *
  * @param {String} event
  * @param {Mixed} ...
  * @return {Emitter}
+ * @private
  */
 Emitter.prototype._emit = function (event, ...params) {
   if (!this._callbacks) {

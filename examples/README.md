@@ -44,25 +44,5 @@ $ cd microcosm
 $ npm install
 
 $ cd examples/simple-svg
-$ npm start
+$ make
 ```
-
-## Project Structure
-
-All examples maintain the following project structure:
-
-```
-.
-├── app
-│   ├── actions      | Flux Actions
-│   ├── presenters   | Intermediary layer between app state and views
-│   ├── records      | Data Types
-│   ├── stores       | Flux Stores
-│   ├── views        | Passive react components isolated from app state
-│   └── boot.js      | Start script
-├── assets           | Static files like images and stylesheets
-├── lib              | Utilities, business-logic
-├── test             | Test suite
-├── index.html       | Application shell
-└── package.json     | Start command (via npm start)
-````

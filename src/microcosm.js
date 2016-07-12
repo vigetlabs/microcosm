@@ -7,8 +7,8 @@ import merge        from './merge'
 import { get, set } from './update'
 
 /**
- * The Microcosm class. You can extend this class with additional
- * methods, or perform setup within the constructor of a subclass.
+ * You can extend this class with additional methods, or perform setup
+ * within the constructor of a subclass.
  *
  * Options:
  *
@@ -17,28 +17,27 @@ import { get, set } from './update'
  *    (-Infinity).
  *
  * @example
- *     let app = new Microcosm()
- *     let app = new Microcosm({ maxHistory: 10 })
+ *     const app = new Microcosm()
+ *     const app = new Microcosm({ maxHistory: 10 })
  *
- * @api public
- *
+ * @extends {Emitter}
  * @param {{maxHistory: Number}} options - Instantiation options.
  */
-export default function Microcosm ({ maxHistory = -Infinity } = {}) {
-  this.maxHistory = maxHistory
+export default class Microcosm extends Emitter {
 
-  this.cache   = {}
-  this.state   = {}
-  this.stores  = []
-  this.history = new Tree()
+  constructor ({ maxHistory = -Infinity } = {}) {
+    super()
 
-  // Standard store reduction behaviors
-  this.addStore(MetaStore)
-}
+    this.maxHistory = maxHistory
 
-Microcosm.prototype = {
+    this.cache   = {}
+    this.state   = {}
+    this.stores  = []
+    this.history = new Tree()
 
-  constructor: Microcosm,
+    // Standard store reduction behaviors
+    this.addStore(MetaStore)
+  }
 
   /**
    * Determines the initial state of the Microcosm instance by
@@ -49,7 +48,7 @@ Microcosm.prototype = {
    */
   getInitialState () {
     return this.dispatch({}, { type: lifecycle.willStart, payload: this.state })
-  },
+  }
 
   /**
    * Microcosms maintain a cache of "merged" actions. Actions that are
@@ -70,7 +69,7 @@ Microcosm.prototype = {
     }
 
     return false
-  },
+  }
 
   /**
    * When an action emits a change, Microcosm uses this method to run
@@ -91,7 +90,7 @@ Microcosm.prototype = {
     this._emit('change', this.state)
 
     return this
-  },
+  }
 
   /**
    * Given a state, sends an action to all stores for processing. This is pure,
@@ -110,7 +109,7 @@ Microcosm.prototype = {
     }
 
     return state
-  },
+  }
 
   /**
    * Append an action to a microcosm's history. In a production application, this is
@@ -129,7 +128,7 @@ Microcosm.prototype = {
     action.on('change', this.rollforward.bind(this))
 
     return action
-  },
+  }
 
   /**
    * Push an action into Microcosm. This will trigger the lifecycle for updating
@@ -148,7 +147,7 @@ Microcosm.prototype = {
     action.execute(...params)
 
     return action
-  },
+  }
 
   /**
    * Partially apply push
@@ -161,7 +160,7 @@ Microcosm.prototype = {
    */
   prepare(...params) {
     return this.push.bind(this, ...params)
-  },
+  }
 
   /**
    * Adds a store to the Microcosm instance. A store informs the
@@ -195,7 +194,7 @@ Microcosm.prototype = {
     this.rebase()
 
     return this
-  },
+  }
 
   /**
    * Push an action to reset the state of the instance. This state is folded
@@ -207,7 +206,7 @@ Microcosm.prototype = {
    */
   reset (state) {
     return this.push(lifecycle.willReset, merge(this.getInitialState(), state))
-  },
+  }
 
   /**
    * Deserialize a given state and reset the instance with that
@@ -219,7 +218,7 @@ Microcosm.prototype = {
    */
   replace (data) {
     return this.reset(this.deserialize(data))
-  },
+  }
 
   /**
    * Deserialize a given payload by asking every store how to it
@@ -235,7 +234,7 @@ Microcosm.prototype = {
     }
 
     return this.dispatch(payload, { type: lifecycle.willDeserialize, payload })
-  },
+  }
 
   /**
    * Serialize application state by asking every store how to
@@ -251,7 +250,7 @@ Microcosm.prototype = {
    */
   serialize() {
     return this.dispatch(this.state, { type: lifecycle.willSerialize, payload: this.state })
-  },
+  }
 
 
   /**
@@ -262,7 +261,7 @@ Microcosm.prototype = {
    */
   toJSON() {
     return this.serialize()
-  },
+  }
 
   /**
    * Recalculate initial state by back-filling the cache object with
@@ -274,7 +273,7 @@ Microcosm.prototype = {
    *
    * @api private
    *
-   * @returns {Microcosm} self
+   * @return {Microcosm} self
    */
   rebase () {
     this.cache = merge(this.getInitialState(), this.cache)
@@ -282,7 +281,7 @@ Microcosm.prototype = {
     this.rollforward()
 
     return this
-  },
+  }
 
   /**
    * Change the focus of the history tree. This allows for features
@@ -302,5 +301,3 @@ Microcosm.prototype = {
   }
 
 }
-
-Emitter(Microcosm.prototype)
