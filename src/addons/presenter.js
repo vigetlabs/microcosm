@@ -111,6 +111,10 @@ export default class Presenter extends Component {
     const nextState = {}
 
     for (let key in this.propMap) {
+      if (typeof this.propMap[key] !== 'function') {
+        throw new TypeError(`Expected '${ key }' to be a function, instead got ${ typeof this.propMap[key]}`)
+      }
+
       nextState[key] = this.propMap[key].call(this, this.app.state)
     }
 

@@ -38,7 +38,7 @@ test('throws if no presenter implements an intent', t => {
       return <View />
     }
   }
-  
+
   t.throws(function() {
     mount(<MyPresenter app={ new Microcosm() } />).find(View).simulate('click')
   }, /implements intent/)
@@ -62,6 +62,23 @@ test('builds the view model into state', t => {
   app.replace({ color: 'red' })
 
   t.is(presenter.state('color'), 'red')
+})
+
+test('throws if a presenters view model contains a non-function', t => {
+  class MyPresenter extends Presenter {
+    viewModel() {
+      return {
+        color: 'red'
+      }
+    }
+    render() {
+      return <p>{ this.state.color }</p>
+    }
+  }
+
+  t.throws(function() {
+    mount(<MyPresenter app={ new Microcosm() } />)
+  }, /Expected 'color' to be a function/)
 })
 
 test('send bubbles up to parent presenters', t => {
