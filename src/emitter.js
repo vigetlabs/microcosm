@@ -13,9 +13,7 @@
  *
  * @private
  */
-export default function Emitter () {}
-
-Emitter.prototype.constructor = Emitter
+export default function Emitter (obj) {}
 
 /**
  * Listen on the given `event` with `fn`.

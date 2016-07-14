@@ -8,28 +8,16 @@ import shallowEqual from './connect/shallow-equal'
  * majority of view code does not have to.
  */
 export default class Presenter extends Component {
-  /**
-   * @private
-   */
+
   constructor (props, context) {
     super(props, context)
 
-    /**
-     * @type {Microcosm}
-     */
     this.app = props.app || context.app
-
-    /**
-     * @type {Object] Presenters are React components this is the same as component state.
-     */
     this.state = {}
 
     this.updatePropMap(props)
   }
 
-  /**
-   * @private
-   */
   getChildContext () {
     return {
       app  : this.app,
@@ -61,33 +49,21 @@ export default class Presenter extends Component {
     // NOOP
   }
 
-  /**
-   * @protected
-   */
   componentWillMount () {
     this.presenterWillMount(this.app, this.props)
     this.updateState()
   }
 
-  /**
-   * @protected
-   */
   componentDidMount () {
     this._listener = this.updateState.bind(this)
 
     this.app.on('change', this._listener, true)
   }
 
-  /**
-   * @protected
-   */
   componentWillUnmount () {
     this.app.off('change', this._listener, true)
   }
 
-  /**
-   * @protected
-   */
   componentWillReceiveProps (nextProps) {
     if (this.props.pure === false || shallowEqual(nextProps, this.props) === false) {
       this.updatePropMap(nextProps)
@@ -119,19 +95,10 @@ export default class Presenter extends Component {
     return {}
   }
 
-  /**
-   * @private
-   */
   updatePropMap (props) {
-    /**
-     * @private
-     */
     this.propMap = this.viewModel(props)
   }
 
-  /**
-   * @private
-   */
   updateState () {
     const next = this.getState()
 
@@ -140,9 +107,6 @@ export default class Presenter extends Component {
     }
   }
 
-  /**
-   * @private
-   */
   getState () {
     const nextState = {}
 

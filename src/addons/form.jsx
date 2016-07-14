@@ -28,7 +28,7 @@ const Form = React.createClass({
   },
 
   render() {
-    let props = { ...this.props }
+    const props = { ...this.props, onSubmit: this.onSubmit }
 
     // Remove invalid props to prevent React warnings
     delete props.intent
@@ -37,7 +37,7 @@ const Form = React.createClass({
     delete props.onProgress
     delete props.onFailure
 
-    return React.createElement('form', { ...props, onSubmit: this.onSubmit })
+    return React.createElement('form', props)
   },
 
   onSubmit(event) {

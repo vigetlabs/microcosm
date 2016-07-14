@@ -11,9 +11,8 @@ import merge from './merge'
  * @param {Object} object - The target object
  * @param {String} key - The key to access
  * @return {Any} A retrieved value
- * @private
  */
-export function get (object, key) {
+function get (object, key) {
   return key == null ? object : object[key]
 }
 
@@ -29,9 +28,8 @@ export function get (object, key) {
  * @param {String} key - The key to set
  * @param {Any} value - The value to assign
  * @return {Any} A copy of the object with the new assignment.
- * @private
  */
-export function set (object, key, value) {
+function set (object, key, value) {
   // Never assign undefined values
   if (value === undefined) {
     return object
@@ -49,3 +47,5 @@ export function set (object, key, value) {
 
   return merge({}, object, { [key] : value })
 }
+
+export default { get, set }

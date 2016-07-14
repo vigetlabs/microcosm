@@ -1,48 +1,50 @@
 import Emitter      from './emitter'
-import Store        from './store'
 import MetaStore    from './stores/meta'
 import Tree         from './tree'
 import lifecycle    from './lifecycle'
+import memorize     from './memorize'
 import merge        from './merge'
-import { get, set } from './update'
+import update       from './update'
 
 /**
- * You can extend this class with additional methods, or perform setup
- * within the constructor of a subclass.
- *
- * Options:
- *
- * - `maxHistory`. Microcosm maintains a tree of all actions. This is
- *    how deep that tree should be allowed to grow. Defaults to none
- *    (-Infinity).
- *
- * @example
- *     const app = new Microcosm()
- *     const app = new Microcosm({ maxHistory: 10 })
+ * A tree-like data structure that keeps track of the execution order
+ * of actions that are pushed into it, sequentially folding them
+ * together to produce an object that can be rendered by a
+ * presentation library (such as React).
  *
  * @extends {Emitter}
- * @param {{maxHistory: Number}} options - Instantiation options.
  */
 export default class Microcosm extends Emitter {
 
+  /**
+   * @param {{maxHistory: Number}} options - Instantiation options.
+   */
   constructor ({ maxHistory = -Infinity } = {}) {
     super()
 
-    this.maxHistory = maxHistory
-
-    this.cache   = {}
-    this.state   = {}
-    this.stores  = []
     this.history = new Tree()
+    this.maxHistory = maxHistory
+    this.stores = []
+
+    // cache store registry methods for efficiency
+    this.registry = {}
+
+    // cache represents the result of dispatching all complete
+    // actions.
+    this.cache = {}
+
+    // state represents the result of dispatching all outstanding
+    // actions over cache
+    this.state = {}
 
     // Standard store reduction behaviors
     this.addStore(MetaStore)
   }
 
   /**
-   * Determines the initial state of the Microcosm instance by
-   * dispatching the `willStart` lifecycle action. This is pure,
-   * calling getInitialState does not produce side-effects.
+   * Generates the starting state for a Microcosm instance. This is
+   * the result of dispatching `getInitialState` to all stores. It is
+   * pure; calling this function will not update state.
    *
    * @return {Object} State object representing the initial state.
    */
@@ -51,41 +53,63 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Microcosms maintain a cache of "merged" actions. Actions that are
-   * done, that will never change again. This decision is based upon
-   * the `maxHistory` option provided to a Microcosm instance. This is
-   * internal plumbing, you shouldn't have to invoke this method.
+   * Microcosm maintains a cache of "merged" actions. When an action completes,
+   * it checks the maxHistory property to decide if it should prune the action
+   * and dispatch it into the cache.
    *
-   * @api private
-   *
+   * @private
    * @param {Action} action target action to "clean"
-   *
+   * @param {Number} size the depth of the tree
    * @return {Boolean} Was the action merged into the state cache?
    */
-  clean (action) {
-    if (action.is('disposable') && this.history.size() > this.maxHistory) {
+  clean (action, size) {
+    const shouldMerge = size > this.maxHistory && action.is('disposable')
+
+    if (shouldMerge) {
       this.cache = this.dispatch(this.cache, action)
-      return true
     }
 
-    return false
+    return shouldMerge
+  }
+
+  /**
+   * Dispatch an action to a list of stores. This is used by state
+   * management methods, like `rollforward` and `getInitialState` to
+   * compute state.
+   *
+   * @private
+   * @param {Object} state - The starting state of a Microcosm
+   * @param {Action} action - The action do dispatch
+   * @return {Object} The new state
+   */
+  dispatch (state, { type, payload }) {
+    if (!this.registry[type]) {
+      this.registry[type] = memorize(this.stores, type)
+    }
+
+    const handlers = this.registry[type]
+
+    for (var i = 0, len = handlers.length; i < len; i++) {
+      const { key, store, handler } = handlers[i]
+
+      state = update.set(state, key, handler.call(store, update.get(state, key), payload))
+    }
+
+    return state
   }
 
   /**
    * When an action emits a change, Microcosm uses this method to run
    * through the action history, dispatching their associated types
-   * and payloads to stores for processing.
+   * and payloads to stores for processing. Emits "change".
    *
-   * This will produce a "change" event.
-   *
-   * @api private
-   *
+   * @private
    * @return {Microcosm} self
    */
   rollforward () {
-    this.history.prune(this.clean, this)
+    this.history.prune((action, size) => this.clean(action, size))
 
-    this.state = this.history.reduce(this.dispatch, this.cache, this)
+    this.state = this.history.reduce((state, action) => this.dispatch(state, action), this.cache)
 
     this._emit('change', this.state)
 
@@ -93,33 +117,12 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Given a state, sends an action to all stores for processing. This is pure,
-   * assuming stores do not produce side-effects. The results of this function
-   * are used by `rollforward()` to determine state changes.
-   *
-   * @api private
-   *
-   * @return {Object} state - A new state object
-   */
-  dispatch (state, action) {
-    for (var i = 0, len = this.stores.length; i < len; i++) {
-      const [ key, store ] = this.stores[i]
-
-      state = set(state, key, store.receive(get(state, key), action))
-    }
-
-    return state
-  }
-
-  /**
-   * Append an action to a microcosm's history. In a production application, this is
-   * typically reserved for testing. `append` will not execute an action, making it
-   * easier to test individual action operations.
-   *
-   * @api public
+   * Append an action to a microcosm's history. In a production
+   * application, this is typically reserved for testing. `append`
+   * will not execute an action, making it easier to test individual
+   * action operations.
    *
    * @param {Function} behavior - An action function
-   *
    * @return {Action} action representation of the invoked function
    */
   append(behavior) {
@@ -134,28 +137,18 @@ export default class Microcosm extends Emitter {
    * Push an action into Microcosm. This will trigger the lifecycle for updating
    * state.
    *
-   * @api public
-   *
    * @param {Function} behavior - An action function
    * @param {...Array} params - Parameters to invoke the type with
-   *
    * @return {Action} action representation of the invoked function
    */
   push (behavior, ...params) {
-    const action = this.append(behavior)
-
-    action.execute(...params)
-
-    return action
+    return this.append(behavior).execute(...params)
   }
 
   /**
    * Partially apply push
    *
-   * @api public
-   *
    * @param {...Array} params - Parameters to invoke the type with
-   *
    * @return {Function} A partially applied push function
    */
   prepare(...params) {
@@ -167,17 +160,8 @@ export default class Microcosm extends Emitter {
    * microcosm how to process various action types. If no key
    * is given, the store will operate on all application state.
    *
-   * @example
-   *     var app = new Microcosm()
-   *
-   *     app.addStore(planets, {
-   *       getInitialState: () => [],
-   *       add: (planets, planet) => planets.concat(planet)
-   *     })
-   *
    * @param {String} key - The namespace within application state for the store.
    * @param {Object|Function} config - Configuration options for the store
-   *
    * @return {Microcosm} self
    */
   addStore (key, config) {
@@ -189,7 +173,11 @@ export default class Microcosm extends Emitter {
       key = null
     }
 
-    this.stores = this.stores.concat([[ key, new Store(config) ]])
+    if (typeof config === 'function') {
+      config = { register: config }
+    }
+
+    this.stores = this.stores.concat([[ key, config ]])
 
     this.rebase()
 
@@ -201,7 +189,6 @@ export default class Microcosm extends Emitter {
    * on to the result of `getInitialState()`.
    *
    * @param {Object} state - A new state object to apply to the instance
-   *
    * @return {Action} action - An action representing the reset operation.
    */
   reset (state) {
@@ -213,7 +200,6 @@ export default class Microcosm extends Emitter {
    * processed state object.
    *
    * @param {Object} data - A raw state object to deserialize and apply to the instance
-   *
    * @return {Action} action - An action representing the replace operation.
    */
   replace (data) {
@@ -225,7 +211,6 @@ export default class Microcosm extends Emitter {
    * should process it (via the deserialize store function).
    *
    * @param {Object} payload - A raw object to deserialize.
-
    * @return {Object} The deserialized version of the provided payload.
    */
   deserialize (payload) {
@@ -241,23 +226,15 @@ export default class Microcosm extends Emitter {
    * serialize the state they manage (via the serialize store
    * function).
    *
-   * @example
-   *     app.serialize() // => { planets: [...] }
-   *     JSON.stringify(app) // => '{ "planets": [...] }'
-   *
-   * @api public
    * @return {Object} The serialized version of application state.
    */
   serialize() {
     return this.dispatch(this.state, { type: lifecycle.willSerialize, payload: this.state })
   }
 
-
   /**
    * Alias serialize for JS interoperability.
-   *
-   * @api public
-   * @return result of serialize
+   * @return {Object} result of `serialize`.
    */
   toJSON() {
     return this.serialize()
@@ -267,15 +244,14 @@ export default class Microcosm extends Emitter {
    * Recalculate initial state by back-filling the cache object with
    * the result of getInitialState(). This is used when a store is
    * added to Microcosm to ensure the initial state of the store is
-   * respected.
+   * respected. Emits a "change" event.
    *
-   * This will produce a "change" event.
-   *
-   * @api private
-   *
+   * @private
    * @return {Microcosm} self
    */
   rebase () {
+    this.registry = {}
+
     this.cache = merge(this.getInitialState(), this.cache)
 
     this.rollforward()
@@ -286,8 +262,6 @@ export default class Microcosm extends Emitter {
   /**
    * Change the focus of the history tree. This allows for features
    * like undo and redo.
-   *
-   * @api public
    *
    * @param {Action} action to checkout
    * @return {Microcosm} self

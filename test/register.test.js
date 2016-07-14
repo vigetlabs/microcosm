@@ -40,20 +40,6 @@ test('returns the same state if a handler is not provided', t => {
   })
 })
 
-test('allows defined lifecycle methods to bypass the register function', t => {
-  const app = new Microcosm()
-
-  app.addStore('test', {
-    getInitialState() {
-      return 'test'
-    }
-  })
-
-  const state = app.dispatch({}, { type: lifecycle.willStart })
-
-  t.is(state.test, 'test')
-})
-
 test('allows lifecycle methods as registered actions', t => {
   const app = new Microcosm()
 

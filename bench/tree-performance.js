@@ -94,7 +94,7 @@ var results = SIZES.map(function (SIZE) {
 
   return {
     'Nodes': SIZE.toLocaleString(),
-    '::append()': stats.build.toFixed(4) + 'ms',
+    '::append()': stats.build.toFixed(2) + 'ms',
     '::toArray()': stats.toArray.toFixed(4) + 'ms',
     '::reduce(merge)': stats.merge.toFixed(2) + 'ms',
     '::size()': stats.size.toFixed(2) + 'ms',

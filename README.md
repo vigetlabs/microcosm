@@ -1,9 +1,12 @@
-<h1><img alt="" src="https://cloud.githubusercontent.com/assets/590904/13533909/95e97a1e-e200-11e5-9032-6f0ca4dbcd6c.png" width="24" /> Microcosm</h1>
+# Microcosm
 
-Flux with central, isolated state
+Flux with central, isolated state.
 
+![CircleCI](https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg)
 
-<a href="https://circleci.com/gh/vigetlabs/microcosm"><img alt="CircleCI" src="https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg" /></a>
+## Documentation
+
+[Read the manual!](manual)
 
 ## Table of Contents
 

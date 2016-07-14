@@ -4,7 +4,19 @@ import { update } from 'sprout-data'
 const Pixels = {
 
   getInitialState() {
-    return Array(15).join().split(',').map(() => Array(15).join().split(','))
+    const matrix = []
+
+    while (matrix.length < 15) {
+      const row = []
+
+      while (row.length < 15) {
+        row.push(0)
+      }
+
+      matrix.push(row)
+    }
+
+    return matrix
   },
 
   flipBit(pixels, { x, y }) {

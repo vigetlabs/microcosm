@@ -16,16 +16,10 @@ import { Component, PropTypes, Children } from 'react'
  * ), document.getElementById('app'))
  */
 export default class Provider extends Component {
-  /**
-   * @private
-   */
   getChildContext() {
     return { app: this.props.app }
   }
 
-  /**
-   * @private
-   */
   render() {
     return Children.only(this.props.children)
   }

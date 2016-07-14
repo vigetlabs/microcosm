@@ -18,7 +18,7 @@ npm install
 A production build can be built by running:
 
 ```bash
-npm run prepublish
+npm run build
 ```
 
 However most of the time developing with Microcosm, you will want

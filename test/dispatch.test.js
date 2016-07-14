@@ -2,16 +2,16 @@ import test from 'ava'
 import Microcosm from '../src/microcosm'
 
 test('returns state if there are no handlers', t => {
-  var app = new Microcosm()
+  const app = new Microcosm()
+  const old = app.state
 
-  let old  = app.state
-  let next = app.dispatch(old, 'test')
+  app.push(n => n)
 
-  t.is(next, old)
+  t.is(app.state, old)
 })
 
 test('does not mutate base state on prior dispatches', t => {
-  var app = new Microcosm()
+  const app = new Microcosm()
 
   function mutation() {
     return true

@@ -266,3 +266,11 @@ test('actions are disposable when they are cancelled', t => {
 
   t.is(action.is('disposable'), true)
 })
+
+test('actions interop with promises', t => {
+  const action = new Action(identity)
+
+  action.close('Test')
+
+  return action.then(result => t.is(result, 'Test'))
+})

@@ -1,5 +1,10 @@
 # Microcosm
 
+A tree-like data structure that keeps track of the execution order of
+actions that are pushed into it, sequentially folding them together to
+produce an object that can be rendered by a presentation library (such
+as [React](https://facebook.github.io/react/)).
+
 1. [API](#overview)
 2. [Listening to Changes](#listening-to-changes)
 3. [Running an instance](#running-an-instance)
@@ -8,11 +13,21 @@
 
 ### `getInitialState()`
 
-Generates the starting state a microcosm starts with. The reduction of
-calling `getInitialState` on all stores.
+Generates the starting state for a Microcosm instance. This is the
+result of dispatching `getInitialState` to all stores. It is
+pure; calling this function will not update state.
 
-This function is usually not called directly. However it is open to
-extension. The only requirement is that it returns an object primitive.
+### `push(action, ...parameters)`
+
+Resolves an action. Sends the result and any errors to a given error-first callback.
+
+```javascript
+app.push(createPlanet, [{ name: 'Merkur' }], function(error, body) {
+  if (error) {
+    handleError(error)
+  }
+})
+```
 
 ### `reset()`
 
@@ -78,18 +93,6 @@ app.deserialize(data) // => cleaned data
 ### `toJSON()`
 
 Alias for `serialize`
-
-### `push(action, [...action arguments], callback)`
-
-Resolves an action. Sends the result and any errors to a given error-first callback.
-
-```javascript
-app.push(createPlanet, [{ name: 'Merkur' }], function(error, body) {
-  if (error) {
-    handleError(error)
-  }
-})
-```
 
 ### `prepare(action, [...action arguments])`
 

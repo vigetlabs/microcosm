@@ -5,7 +5,7 @@ This guide assumes some prior knowledge of [Facebook's Flux](http://facebook.git
 - [Flux structure and data flow](http://facebook.github.io/flux/docs/overview.html#structure-and-data-flow)
 - [Flux actions](http://facebook.github.io/flux/docs/overview.html#actions)
 
-Microcosm also leans on a couple of new language features in the JavaScript 2015 specification. These features are:
+Microcosm also leans on a couple of language features in the JavaScript 2015 specification. These features are:
 
 - [Classes](http://babeljs.io/docs/learn-es2015/#classes)
 - [Computed keys](http://babeljs.io/docs/learn-es2015/#enhanced-object-literals), like `{ [name]: value }`.

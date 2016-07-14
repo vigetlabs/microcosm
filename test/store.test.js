@@ -1,15 +1,19 @@
 import test from 'ava'
-import Store from '../src/store'
 import Microcosm from '../src/microcosm'
 
-test('overrides the register method when given a configuration', t => {
-  const config = n => n
-  const store = new Store(config)
+test('stores can be functions', t => {
+  const app = new Microcosm()
 
-  t.is(store.register, config)
+  app.addStore('key', function() {
+    return {
+      getInitialState: () => true
+    }
+  })
+
+  t.is(app.state.key, true)
 })
 
-test('injects its initial state when added to a microcosm', t => {
+test('stores can be objects with lifecycle methods', t => {
   const app = new Microcosm()
 
   app.addStore('key', {
@@ -19,14 +23,33 @@ test('injects its initial state when added to a microcosm', t => {
   t.is(app.state.key, true)
 })
 
-test('throws if register contains an undefined key', t => {
-  const store = new Store(function() {
+test('throws if a registery contains an undefined key', t => {
+  const app = new Microcosm()
+
+  // This will throw when added to a store because it will dispatch
+  // "getInitialState"
+  const badStore = function() {
     return {
-      [undefined]: () => {}
+      [undefined]: n => n
+    }
+  }
+
+  t.throws(function() {
+    app.addStore('test', badStore)
+  }, /'undefined' property within the store/)
+})
+
+test('throws if a register handler is undefined', t => {
+  const app = new Microcosm()
+  const action = n => n
+
+  app.addStore('key', function() {
+    return {
+      [action]: undefined
     }
   })
 
   t.throws(function() {
-    store.receive({}, { type: 'test' })
-  }, /registry/)
+    app.push(action)
+  }, /Check the register method for this store/)
 })
