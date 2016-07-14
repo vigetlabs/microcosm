@@ -23,7 +23,7 @@ test('stores can be objects with lifecycle methods', t => {
   t.is(app.state.key, true)
 })
 
-test('throws if a registery contains an undefined key', t => {
+test('throws if a registry contains an undefined key', t => {
   const app = new Microcosm()
 
   // This will throw when added to a store because it will dispatch
@@ -36,7 +36,7 @@ test('throws if a registery contains an undefined key', t => {
 
   t.throws(function() {
     app.addStore('test', badStore)
-  }, /'undefined' property within the store/)
+  }, /\"undefined\" attribute within register/)
 })
 
 test('throws if a register handler is undefined', t => {

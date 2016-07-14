@@ -1,3 +1,9 @@
+function format (string) {
+  const [ _, action, state ] = `${ string }`.match(/(\w*)\_\d+\_(\w*)/, ' ') || []
+
+  return action ? `the ${ action } action's ${ state } state` : string
+}
+
 function getHandler (key, store, type) {
   let handler = store[type]
 
@@ -6,15 +12,15 @@ function getHandler (key, store, type) {
 
     if (process.env.NODE_ENV !== 'production') {
       if ('undefined' in registrations) {
-        throw new Error(`When dispatching '${ type }' to a store for '${ key }', `
-                        + `we discovered an 'undefined' property within the store's `
-                        + `register function. This usually happens when an action `
-                        + `is imported from the wrong namespace, or by referencing an `
-                        + `invalid action state.`)
+        throw new Error(`When dispatching ${ format(type) } to the ${ key } store, `
+                        + `we encountered an "undefined" attribute within register(). `
+                        + `This usually happens when an action is imported `
+                        + `from the wrong namespace, or by referencing an invalid `
+                        + `action state.`)
       }
 
       if (type in registrations && registrations[type] === undefined) {
-        throw new Error(`The handler for '${ type }' within a store for '${ key }' `
+        throw new Error(`The handler for "${ format(type) }" within a store for "${ key }" `
                         + `is undefined. Check the register method for this store.`)
       }
     }
