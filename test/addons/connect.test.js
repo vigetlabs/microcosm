@@ -4,6 +4,15 @@ import Microcosm from '../../src/microcosm'
 import React from 'react'
 import {mount} from 'enzyme'
 
+test('handles nully compute functions', t => {
+  const Child = () => (<p>Test</p>)
+
+  const Nully = Connect(null)(Child)
+  mount(<Nully app={ new Microcosm() } />)
+
+  const Undefined = Connect(undefined)(Child)
+  mount(<Undefined app={ new Microcosm() } />)
+})
 
 test('injects an app from context into the wrapped component', t => {
   const app    = new Microcosm()
