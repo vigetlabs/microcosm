@@ -18,9 +18,11 @@ Microcosm distinguishes itself from traditional Flux in a number of ways:
 
 **Data is kept in one place.** Stores and actions are collections of pure functions; they have no state of their own. They provide instructions for how a microcosm should update itself.
 
+**Action types are generated automatically**. Actions constants are generated for an action creator when they are first triggered. Instead of subscribing to a constant, Stores listen to things like `action.open`, `action.loading`, `action.done`, and `action.failed`.
+
 **Microcosm is a transactional system**. Microcosm keeps track of all outstanding actions and operates on them sequentially as they resolve, in the order they were originally invoked.
 
-This design seeks to achieve a reasonable trade off between the simplicity of singletons and the privacy of class instances. In this guide, we'll break some of that down through a basic implementation.
+In this guide, we'll break some of this down through a basic implementation.
 
 ## Constructing a Microcosm
 
@@ -42,7 +44,7 @@ const app = new SolarSystem()
 
 Each `SolarSystem` instance as its own state. In the example above, it can be accessed from `app.state`.
 
-## Stores - Kind manipulators of state
+## Stores - transformers of state
 
 A store is a JavaScript configuration object that teaches Microcosm how to operate on data. They operate on a single key, defined when it is registered:
 
