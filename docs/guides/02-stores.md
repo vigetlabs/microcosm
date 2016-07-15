@@ -7,18 +7,18 @@ This guide will go into the specifics of this process, starting with the beginni
 
 ## Getting initial state
 
-A Microcosm asks each of its stores for the initial value of their associated key when it calls `start()`. This is determined by `getInitialState`:
+A Microcosm asks each of its stores for the initial value of their
+associated key when `addStore()` is invoked. This value is determined by
+`getInitialState`:
 
 ```javascript
-var Planets = {
+const Planets = {
   getInitialState() {
     return [ 'Mercury', 'Venus', 'Earth', 'Mars' ]
   }
 }
 
 app.addStore('planets', Planet)
-
-app.start()
 ```
 
 Returning an array sets up future expectations. This prevents the need to conduct type checks and another annoying conditional logic before making updates.
@@ -29,10 +29,10 @@ Returning an array sets up future expectations. This prevents the need to conduc
 
 ```javascript
 function addPlanet(data) {
-	return data
+  return data
 }
 
-var Planets = {
+const Planets = {
   getInitialState() {
     return []
   },
@@ -58,7 +58,7 @@ If a store can not respond to an action, it returns the original state. No modif
 Store methods designated as handlers have an expected signature:
 
 ```javascript
-let Store = {
+const Store = {
   handler(oldState, parameters) {
     return newState
   }
@@ -73,7 +73,7 @@ function getUsers() {
   return ajax('/users')
 }
 
-let Users = {
+const Users = {
   getInitialState() {
     return []
   },
@@ -102,7 +102,7 @@ For example, if using
 look like:
 
 ```javascript
-var Planets = {
+const Planets = {
   getInitialState() {
     return Immutable.List()
   },
@@ -117,7 +117,7 @@ var Planets = {
 Data can be injected into a Microcosm using `app.replace`. When this occurs, `deserialize` will be called on all Stores to allow data to be processed before it enters the application:
 
 ```javascript
-var Planets = {
+const Planets = {
   getInitialState() {
     return Immutable.List()
   },

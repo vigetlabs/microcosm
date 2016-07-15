@@ -4,10 +4,10 @@ import coroutine from './action/coroutine'
 import tag       from './action/tag'
 
 /**
- * Actions represent the progress of resolving an action creator
- * "behavior". For most purposes, they should never be created on
- * their own. Use `push()` within a Microcosm instance so that it
- * can be tracked within its internal state.
+ * Actions encapsulate the course of resolving an action creator
+ * (internally called behaviors). For most purposes, they should never
+ * be created on their own. Use `push()` within a Microcosm instance
+ * so that it can be tracked within its internal state.
  *
  * @extends {Emitter}
  */
@@ -26,7 +26,7 @@ export default class Action extends Emitter {
     }
 
     this.depth = 0
-    this.behavior = Action.tag(behavior)
+    this.behavior = tag(behavior)
     this.payload = null
     this.parent = null
     this.sibling = null
@@ -34,22 +34,11 @@ export default class Action extends Emitter {
   }
 
   /**
-   * Store a reference to tag on the action for ergonimics.
-   *
-   * @param {Function} fn The target function to add action identifiers to.
-   * @param {String} [name] An override to use instead of `fn.name`.
-   * @return {Function} The tagged function (same as `fn`).
-   */
-  static tag (fn, name) {
-    return tag(fn, name)
-  }
-
-  /**
    * Check the state of the action to determine what `type` should be
    * dispatched to stores for processing (via register()).
    *
-   * @return {String|Null} The action type to dspatch.
    * @private
+   * @return {String|Null} The action type to dspatch.
    */
   get type () {
     if (this.is(States.disabled))  return null
@@ -67,8 +56,8 @@ export default class Action extends Emitter {
    * history. This is used by the Microcosm debugger to visualize
    * action history as a DAG.
    *
-   * @return {Array} children list of actions
    * @private
+   * @return {Array} children list of actions
    */
   get children () {
     let start = this.next
@@ -117,7 +106,7 @@ export default class Action extends Emitter {
    * If defined, sets the payload for the action and triggers a
    * "change" event.
    *
-   * @private
+   * @api private
    * @return {Action} self
    */
   set (payload) {

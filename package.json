@@ -16,8 +16,8 @@
     "url": "git://github.com/vigetlabs/microcosm.git"
   },
   "bugs": {
-    "url" : "https://github.com/vigetlabs/microcosm/issues",
-    "email" : "developers@viget.com"
+    "url": "https://github.com/vigetlabs/microcosm/issues",
+    "email": "developers@viget.com"
   },
   "keywords": [
     "react",

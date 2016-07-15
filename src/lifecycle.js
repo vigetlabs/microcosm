@@ -10,5 +10,5 @@ export default {
   willStart       : tag(n => n, 'getInitialState'),
   willSerialize   : tag(n => n, 'serialize'),
   willDeserialize : tag(n => n, 'deserialize'),
-  willReset       : tag(n => n, 'willReset')
+  willReset       : tag(n => n, '__willReset')
 }

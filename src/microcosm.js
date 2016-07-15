@@ -46,6 +46,7 @@ export default class Microcosm extends Emitter {
    * the result of dispatching `getInitialState` to all stores. It is
    * pure; calling this function will not update state.
    *
+   * @private
    * @return {Object} State object representing the initial state.
    */
   getInitialState () {
@@ -128,7 +129,7 @@ export default class Microcosm extends Emitter {
   append(behavior) {
     const action = this.history.append(behavior)
 
-    action.on('change', this.rollforward.bind(this))
+    action.on('change', () => this.rollforward())
 
     return action
   }

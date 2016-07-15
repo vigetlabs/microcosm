@@ -9,7 +9,6 @@ Microcosm also leans on a couple of language features in the JavaScript 2015 spe
 
 - [Classes](http://babeljs.io/docs/learn-es2015/#classes)
 - [Computed keys](http://babeljs.io/docs/learn-es2015/#enhanced-object-literals), like `{ [name]: value }`.
-- [Generators](http://babeljs.io/docs/learn-es2015/#generators). Only necessary for optimistic updates, covered in later guides.
 
 Also check out the [Babel](http://babeljs.io/) JavaScript compiler. It breaks down new language features into code browsers understand. [It's also easy to integrate into most build systems](http://babeljs.io/docs/setup/).
 
@@ -38,14 +37,10 @@ class SolarSystem extends Microcosm {
   }
 }
 
-let app = new SolarSystem()
-
-app.start(function() {
-  console.log('Hello, Microcosm.')
-})
+const app = new SolarSystem()
 ```
 
-Each `SolarSystem` instance will have its own state. In the example above, it can be accessed from `app.state` once it has started.
+Each `SolarSystem` instance as its own state. In the example above, it can be accessed from `app.state`.
 
 ## Stores - Kind manipulators of state
 
@@ -65,11 +60,7 @@ class SolarSystem extends Microcosm {
   }
 }
 
-let app = new SolarSystem()
-
-app.start(function() {
-  console.log('Hello, Microcosm')
-})
+const app = new SolarSystem()
 ```
 
 There are a couple of special method stores can implement to describe state at certain points in the Microcosm lifecycle. One of those methods is `getInitialState`, which tells the Microcosm what value the store will start with:
@@ -77,7 +68,7 @@ There are a couple of special method stores can implement to describe state at c
 ```javascript
 import Microcosm from 'microcosm'
 
-let Planets = {
+const Planets = {
   getInitialState() {
     return [{ name: 'Mercury' }]
   }
@@ -90,11 +81,9 @@ class SolarSystem extends Microcosm {
   }
 }
 
-let app = new SolarSystem()
+const app = new SolarSystem()
 
-app.start(function() {
-  console.log(app.state.planets) // [{ name: 'Mercury' }]
-})
+console.log(app.state.planets) // [{ name: 'Mercury' }]
 ```
 
 Now a `SolarSystem` will always start with the planet Mercury.
@@ -117,7 +106,7 @@ function addPlanet(options) {
   return options
 }
 
-let Planets = {
+const Planets = {
   getInitialState() {
     return [{ name: 'Mercury' }]
   },
@@ -138,12 +127,11 @@ class SolarSystem extends Microcosm {
   }
 }
 
-let app = new SolarSystem()
+const app = new SolarSystem()
 
-app.start(function() {
-  app.push(Actions.addPlanet, { name: 'Venus' })
-  console.log(app.state.planets) // [{ name: 'Mercury' }, { name: 'Venus' }]
-})
+app.push(Actions.addPlanet, { name: 'Venus' })
+
+console.log(app.state.planets) // [{ name: 'Mercury' }, { name: 'Venus' }]
 ```
 
 When the `SolarSystem` sees `addPlanet` was pushed, it will invoke it within the context of the individual app and send the result the `Planets` store.

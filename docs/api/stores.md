@@ -1,9 +1,15 @@
-# Stores API
+# Stores
+
+1. [Overview](#overview)
+2. [Subscribing to different action states](#subscribing-to-different-action-states)
+3. [API](#api)
+
+## Overview
 
 Stores define the rules in which resolved actions are converted into
 new state. They are added to a Microcosm instance using `addStore`:
 
-```
+```javascript
 // Mount a store that operates on a specific key in application state.
 // Any operations the store handles are recorded at `app.state.key`:
 app.addStore('key', Store)
@@ -16,6 +22,33 @@ app.addStore(Store)
 Stores do not enforce any particular structure. However specific
 methods can be defined on stores to configure behavior at key points
 in a Microcosm's lifecycle.
+
+## Subscribing to different action states
+
+Stores can provide a `register` method to dictate what actions they
+listen to:
+
+```javascript
+const Store = {
+
+  // ... Other store methods
+
+  register() {
+    return {
+      [action.open]         : this.setLoading,
+      [action.loading]   : this.setProgress,
+      [action.done]      : this.addRecord,
+      [action.failed]    : this.setError,
+      [action.cancelled] : this.setCancelled
+    }
+  }
+}
+```
+
+`action` referenced directly, like `[action]: callback`, refer to the
+`done` state.
+
+## API
 
 ### `getInitialState()`
 
@@ -31,19 +64,6 @@ var Planets = {
 }
 ```
 
-### `willReset()`
-
-Called whenever an application will reset to a new state. Internally, this is used
-to non-destructively reset application within transaction history.
-
-```javascript
-var Planets = {
-  willReset(state, next) {
-    return next
-  }
-}
-```
-
 ### `serialize(state)`
 
 Allows a store to transform data before it leaves the system. It gives
@@ -55,7 +75,7 @@ For example, if using
 look like:
 
 ```javascript
-var Planets = {
+const Planets = {
   getInitialState() {
     return Immutable.List()
   },
@@ -72,7 +92,7 @@ Microcosm. This is the reverse operation to `serialize`. Drawing from
 the example in `serialize`:
 
 ```javascript
-var Planets = {
+const Planets = {
   getInitialState() {
     return Immutable.List()
   },
@@ -91,14 +111,16 @@ Returns an object mapping actions to methods on the store. This is the
 communication point between a store and the rest of the system.
 
 ```javascript
-var Planets = {
+import { addPlanet } from '../actions/planets'
+
+const Planets = {
   //...
   register() {
     return {
-      [Action.add]: this.add
+      [addPlanet]: this.append
     }
   },
-  add(planets, params) {
+  append(planets, params) {
     return planets.concat(params)
   }
 }

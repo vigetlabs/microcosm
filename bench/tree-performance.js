@@ -3,6 +3,8 @@
  */
 
 var Tree  = require('../src/tree').default
+var merge = require('../src/merge').default
+
 var time  = require('microtime')
 var SIZES = [
   1000,
@@ -60,14 +62,8 @@ var results = SIZES.map(function (SIZE) {
    * within Microcosm's dispatch process.
    */
   now = time.now()
-  tree.reduce(function(a, b) {
-    if (b.payload != null) {
-      for (var key in b.payload) {
-        a[key] = b.payload[key]
-      }
-    }
-
-    return a
+  tree.reduce(function (a, b) {
+    return merge(a, b.payload)
   }, {})
   stats.merge = (time.now() - now) / 1000
 

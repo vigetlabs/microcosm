@@ -1,13 +1,14 @@
 # Microcosm
 
+1. [Overview](#overview)
+2. [API](#api)
+
+## Overview
+
 A tree-like data structure that keeps track of the execution order of
 actions that are pushed into it, sequentially folding them together to
 produce an object that can be rendered by a presentation library (such
 as [React](https://facebook.github.io/react/)).
-
-1. [API](#overview)
-2. [Listening to Changes](#listening-to-changes)
-3. [Running an instance](#running-an-instance)
 
 ## API
 
@@ -22,11 +23,7 @@ pure; calling this function will not update state.
 Resolves an action. Sends the result and any errors to a given error-first callback.
 
 ```javascript
-app.push(createPlanet, [{ name: 'Merkur' }], function(error, body) {
-  if (error) {
-    handleError(error)
-  }
-})
+app.push(createPlanet, { name: 'Merkur' })
 ```
 
 ### `reset()`
@@ -45,18 +42,6 @@ server. It will not blow away keys that haven't been provided.
 app.replace({
   planets: [{ name: 'Tatooine' }, { name: 'Dagobah' }]
 })
-```
-
-### `addPlugin(plugin, options)`
-
-Pushes a plugin in to the registry for a given microcosm.
-When `app.start()` is called, it will execute plugins in the order in
-which they have been added using this function.
-
-[See the documentation on plugins](plugins.md).
-
-```javascript
-app.addPlugin(saveToLocalStorage, { key: 'SolarSystem' })
 ```
 
 ### `addStore(key, config)`
@@ -94,31 +79,58 @@ app.deserialize(data) // => cleaned data
 
 Alias for `serialize`
 
-### `prepare(action, [...action arguments])`
+### `prepare(action, ...params)`
 
-Partially applies `push`. Sucessive calls will append new parameters (see `push()`)
+Partially applies `push`. Sucessive calls will append new parameters
+(see `push()`)
 
-## Listening to changes
+### `checkout(action)`
+
+Change the current focal point of the history data structure used by
+Microcosm. This is useful for undo/redo, or for debugging purposes:
 
 ```javascript
-let app = new Microcosm()
+const red = app.push(changeColor, "red")
+const green = app.push(changeColor, "green")
+const blue = app.push(changeColor, "blue")
 
-// Add a callback
-app.listen(callback)
+console.log(app.state.color) // "blue"
 
+// Undo:
+app.checkout(blue.parent)
+console.log(app.state.color) // "green"
+
+// Redo:
+app.checkout(green.next)
+console.log(app.state.color) // "blue"
+
+// Skip:
+app.checkout(red)
+console.log(app.state.color) // "red"
+```
+
+The `maxHistory` option passed into a Microcosm dictates how far back
+it will track history. By default, it will only track incomplete
+actions. Try setting `maxHistory` to a specific value, like `10` or `100`.
+
+### `on(event, callback)`
+
+Adds an event listener to a Microcosm instance. Currently, this events
+are:
+
+- `change`: The Microcosm instance updated state
+
+```javascript
+const app = new Microcosm()
+
+app.on('change', callback)
+```
+
+### `off(event, callback)`
+
+Remove an event listener.
+
+```javascript
 // Remove a callback
-app.ignore(callback)
-```
-
-## Running an instance
-
-`Microcosm::start` begins an application. This will setup initial
-state, run plugins, then execute a callback:
-
-```
-let app = new Microcosm()
-
-app.start(function(error) {
-  // Now do something
-})
+app.off('change', callback)
 ```
