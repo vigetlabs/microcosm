@@ -44,7 +44,7 @@ const app = new SolarSystem()
 
 Each `SolarSystem` instance as its own state. In the example above, it can be accessed from `app.state`.
 
-## Stores - transformers of state
+## Stores - Transformers of State
 
 A store is a JavaScript configuration object that teaches Microcosm how to operate on data. They operate on a single key, defined when it is registered:
 
