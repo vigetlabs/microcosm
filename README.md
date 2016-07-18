@@ -22,14 +22,15 @@ specific instance of Microcosm.
 This design seeks to achieve a reasonable trade off between the
 simplicity of singletons and the privacy of class instances.
 
-### No Action Constants
+### No action constants
 
 Microcosm automatically generates action type constants based upon the
 referential identity of the action and the current state of its
 lifecycle.
 
-For example, a store can subscribe to multiple states an
-action may be in:
+An action can be in several states: `open`, `loading`, `done`,
+`failed`, and `cancelled`. Stores can subscribe to each of these
+states through the use of a `register` function:
 
 ```javascript
 function createPlanet (params) {
