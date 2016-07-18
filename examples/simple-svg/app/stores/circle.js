@@ -20,7 +20,7 @@ const Circle = {
 
   register () {
     return {
-      [animate.loadings] : Circle.set,
+      [animate.loading] : Circle.set,
       [animate.done]    : Circle.set
     }
   }
