@@ -4,10 +4,6 @@ Flux with central, isolated state.
 
 ![CircleCI](https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg)
 
-## Documentation
-
-[Read the manual!](manual)
-
 ## Table of Contents
 
 1. [Documentation](docs)
