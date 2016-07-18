@@ -59,7 +59,7 @@
     "console.table": "0.7.0",
     "elizabot": "0.0.2",
     "enzyme": "2.4.1",
-    "eslint": "3.0.1",
+    "eslint": "3.1.0",
     "eslint-plugin-react": "5.2.2",
     "express": "4.14.0",
     "happypack": "2.1.1",
