@@ -4,9 +4,9 @@ SCRIPTS := $(shell find src bench -name '*.js*')
 all: javascript documentation package.json
 
 javascript: $(SCRIPTS)
+	@ echo "Compiling $(words $^) modules..."
 	@ $(BABEL) -q -s inline -d tmp $^
 	@ rsync -uraq tmp/src/ dist/
-	@ echo "Compiled $(words $^) modules."
 
 documentation: *.md docs
 	@ rsync -uraq $^ dist/
