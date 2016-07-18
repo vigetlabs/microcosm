@@ -12,7 +12,8 @@ start. Beyond that, check out [the example apps](../examples).
 ## API
 
 1. [Microcosm](api/microcosm.md)
-3. [Stores](api/stores.md)
+2. [Stores](api/stores.md)
+3. [Actions](api/actions.md)
 
 ## Addons
 

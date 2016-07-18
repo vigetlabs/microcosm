@@ -35,7 +35,7 @@ const Store = {
 
   register() {
     return {
-      [action.open]         : this.setLoading,
+      [action.open]      : this.setLoading,
       [action.loading]   : this.setProgress,
       [action.done]      : this.addRecord,
       [action.failed]    : this.setError,

@@ -26,24 +26,59 @@ specific instance of Microcosm.
 This design seeks to achieve a reasonable trade off between the
 simplicity of singletons and the privacy of class instances.
 
-### Actions
+### No Action Constants
 
-Actions are simple functions. They are called within the context of
-Microcosm, taking the value they return and using it as the parameters
-for processing within Stores.
+Microcosm automatically generates action type constants based upon the
+referential identity of the action and the current state of its
+lifecycle.
+
+For example, a store can subscribe to multiple states an
+action may be in:
 
 ```javascript
-// An action is a pure function that accepts parameters and returns a payload.
-let addPlanet = function (params) {
-  return params
+function createPlanet (params) {
+  return ajax.post('/planets', params)
 }
 
-// Creates a transaction of type "addPlanet" that dispatches to stores
-app.push(addPlanet, params)
+app.addStore('planets', {
+  getInitialState() {
+    return { records: [], loading: false }
+  },
+
+  addPlanet(planets, props) {
+    return { ...planets, records: planets.records.concat(props) }
+  },
+
+  setLoading(planets) {
+    return { ...planets, loading: true }
+  },
+
+  register() {
+    [createPlanet]      : this.addPlanet,
+    [createPlanet.open] : this.setLoading,
+  }
+})
+
+
+// Creates a action of type "createPlanet" that dispatches to stores
+app.push(createPlanet, params)
 ```
 
-When an action is pushed, it is placed into a historical record of all
-actions that have occurred.
+When an action is pushed, it is placed into a journal of all actions
+that have occurred. During the `open` state, the action is in a state
+where the request has been opened however it is not complete. When the
+request finishes, the action spawned by `createPlanet` will move into
+a `done` state. Microcosm will then re-run through the list of actions
+documented in the journey to produce a new application state that
+accounts for the completion of the request.
+
+This is heavily inspired by event sourced message queues, such as
+[Apache Kafka](http://kafka.apache.org/), or the
+[LMAX Architecture](http://martinfowler.com/articles/lmax.html),
+though there is significant difference in implementation.
+
+Visit [the API documentation for actions](./docs/api/actions.md) to
+read more.
 
 ### Stores
 
@@ -55,7 +90,7 @@ transform old data into new data. The `register` hook tells Microcosm
 what actions a store should respond to:
 
 ```javascript
-let Planets = {
+const Planets = {
   // Tells a Microcosm how a store should respond to actions
   register() {
     return {
@@ -70,21 +105,21 @@ let Planets = {
 }
 ```
 
+Visit [the API documentation for stores](./docs/api/stores.md) to
+read more.
+
 ### Launching an app
 
-Once stores have been added to a Microcosm, it is ready to begin work.
+Once stores have been added to a Microcosm, it is ready to begin
+work. For example, an app's state can be sent down to a component tree:
 
 ```javascript
-let app = new Microcosm()
+const app = new Microcosm()
 
 // All state is contained in `app`, but transformed with `Planets`
 app.addStore(Planets, 'planets')
-```
 
-From there, an app's state can be sent down your React component tree:
-
-``` javascript
-React.render(<SolarSystem app={ app } planets={ app.state.planets } />, document.body)
+React.render(<SolarSystem app={ app } planets={ app.state.planets } />, document.getElementById(entry'))
 ```
 
 ## Opinions
