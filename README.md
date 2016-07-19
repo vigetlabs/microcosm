@@ -142,7 +142,7 @@ function search (query) {
 const page1 = app.push(search, { term: 'cats', page: 1 })
 
 // (User visits page 2 before page 1 loads)
-action.cancel()
+page1.cancel()
 
 const page2 = app.push(search, { term: 'cats', page: 2 })
 ```
