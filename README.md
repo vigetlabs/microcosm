@@ -106,7 +106,7 @@ Every action spawned by `app.push()` returns an `Action` to represent
 its resolution. This object provides a consistent API, no matter what
 value is returned from an action creator:
 
-```
+```javascript
 const action = app.push(myAction)
 
 action.onUpdate(handleProgress)
@@ -120,7 +120,7 @@ Often an action needs to be cancelled. Users leave a page, or submit a
 new query. Actions provide a `cancel` method and event API for dealing
 with these circumstances:
 
-```
+```javascript
 function search (query) {
   // The "thunk" mode for action creators. See the ./docs/api/actions.md
   function (action) {
