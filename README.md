@@ -97,11 +97,6 @@ a `done` state. Microcosm will then re-run through the list of actions
 documented in the journey to produce a new application state that
 accounts for the completion of the request.
 
-This is heavily inspired by event sourced message queues such as the
-[LMAX Architecture](http://martinfowler.com/articles/lmax.html), or
-[Apache Kafka](http://kafka.apache.org/), though there is significant
-difference in implementation.
-
 Visit [the API documentation for actions](./docs/api/actions.md) to
 read more.
 
