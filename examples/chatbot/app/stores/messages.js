@@ -23,9 +23,9 @@ const Messages = {
 
   register() {
     return {
-      [send.open]    : Messages.addLoading,
-      [send.done]    : Messages.add,
-      [send.failure] : Messages.addError
+      [send.open]   : Messages.addLoading,
+      [send.done]   : Messages.add,
+      [send.failed] : Messages.addError
     }
   }
 }
