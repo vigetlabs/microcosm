@@ -3,10 +3,10 @@ import Action from '../src/action'
 
 const identity = n => n
 
-test('will not create an action with a non-function behavior', t => {
-  t.throws(function() {
-    new Action(undefined)
-  }, /invalid type/)
+test('accommodates string actions', t => {
+  const action = new Action('test').close()
+
+  t.is(action.type, 'test')
 })
 
 test('initially returns no type', t => {
@@ -136,6 +136,18 @@ test('immediately invokes onDone if the action already closed', t => {
   action.close(true)
 
   action.onDone(payload => {
+    t.is(payload, true)
+  })
+})
+
+test('immediately invokes onError if the action already failed', t => {
+  const action = new Action(identity)
+
+  t.plan(1)
+
+  action.reject(true)
+
+  action.onError(payload => {
     t.is(payload, true)
   })
 })
