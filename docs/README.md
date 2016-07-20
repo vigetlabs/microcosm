@@ -9,6 +9,10 @@ start. Beyond that, check out [the example apps](../examples).
 2. [Stores](guides/02-stores.md)
 3. [Actions](guides/03-actions.md)
 
+## Recipes
+
+1. [React Router](recipes/react-router.md)
+
 ## API
 
 1. [Microcosm](api/microcosm.md)

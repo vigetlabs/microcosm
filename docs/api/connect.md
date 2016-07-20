@@ -43,9 +43,9 @@ var AppToJSON = connection(React.createClass({
 }))
 
 ReactDOM.render((
-    <Provider app={ app }>
-        <AppToJSON />
-    </Provider>
+  <Provider app={ app }>
+    <AppToJSON />
+  </Provider>
 ), element)
 ```
 
@@ -61,9 +61,9 @@ component.
 var app = new Microcosm()
 
 var connection = connect(function (props) {
-    return {
-        planets: state => state.planets
-    }
+  return {
+    planets: state => state.planets
+  }
 })
 
 var Planets = connection(React.createClass({
@@ -71,10 +71,11 @@ var Planets = connection(React.createClass({
     var { app, planets } = this.props
 
     return (
-        <ul>
-            { planets.map(planet => (<li>{ planet.name }</li>)) }
-        </ul>
+      <ul>
+        { planets.map(planet => (<li>{ planet.name }</li>)) }
+      </ul>
     )
+  }
 }))
 
 ReactDOM.render((
@@ -93,12 +94,12 @@ it much easier to set up tests:
 
 ```javascript
 it ('[test description]', function() {
-    let app = new Microcosm()
+  let app = new Microcosm()
 
-    app.replace(fixtureData)
+  app.replace(fixtureData)
 
-    let component = (<Component app={ app } />)
+  let component = (<Component app={ app } />)
 
-    // Perform your test using the stub application
+  // Perform your test using the stub application
 })
 ```
