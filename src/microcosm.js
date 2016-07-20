@@ -42,11 +42,9 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Generates the starting state for a Microcosm instance. This is
-   * the result of dispatching `getInitialState` to all stores. It is
-   * pure; calling this function will not update state.
+   * Generates the starting state for a Microcosm instance by asking every
+   * store store that subscribes to `getInitialState`.
    *
-   * @private
    * @return {Object} State object representing the initial state.
    */
   getInitialState () {
@@ -76,7 +74,9 @@ export default class Microcosm extends Emitter {
   /**
    * Dispatch an action to a list of stores. This is used by state
    * management methods, like `rollforward` and `getInitialState` to
-   * compute state.
+   * compute state. Assuming there are no side-effects in store
+   * handlers, this is pure. Calling this method will not update
+   * application state.
    *
    * @private
    * @param {Object} state - The starting state of a Microcosm
@@ -100,9 +100,8 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * When an action emits a change, Microcosm uses this method to run
-   * through the action history, dispatching their associated types
-   * and payloads to stores for processing. Emits "change".
+   * Run through the action history, dispatching their associated
+   * types and payloads to stores for processing. Emits "change".
    *
    * @private
    * @return {Microcosm} self

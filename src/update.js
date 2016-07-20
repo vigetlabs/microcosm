@@ -35,12 +35,13 @@ function set (object, key, value) {
     return object
   }
 
-  // If the key path is null, there's no need to traverse
-  // the object. Just return the value.
+  // If the key path is null, there's no need to traverse the
+  // object. Just return the value.
   if (key == null) {
     return value
   }
 
+  // Do not perform any work if the value is not going to change
   if (object && object[key] === value) {
     return object
   }
