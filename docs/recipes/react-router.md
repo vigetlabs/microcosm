@@ -1,6 +1,6 @@
 # React Router Integration
 
-For more applications that utilize React Router, having access to
+For most applications that utilize React Router, having access to
 Microcosm is essential for dispatching actions as route handlers enter
 the stage. One way of handling this is to expose Microcosm within
 `context`. The `Provider` addon does just that:
