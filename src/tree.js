@@ -22,7 +22,12 @@ export default class Tree {
    * @return {Tree} self
    */
   checkout (action) {
-    this.focus = action || this.focus
+    this.focus = action
+
+    if (!this.focus) {
+      this.focus = null
+      this.root  = null
+    }
 
     return this
   }

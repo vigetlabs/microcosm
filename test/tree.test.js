@@ -100,22 +100,14 @@ test('can get the previous node in the chain', t => {
   t.is(three.parent, two)
 })
 
-test('will not check out an undefined node', t => {
+test('sets the root to null if checking out a null node', t => {
   const tree  = new Tree()
   const first = tree.append(action)
 
   tree.checkout()
 
-  t.is(tree.focus, first)
-})
-
-test('will not check out a null node', t => {
-  const tree = new Tree()
-  const first = tree.append(action)
-
-  tree.checkout(null)
-
-  t.is(tree.focus, first)
+  t.is(tree.root, null)
+  t.is(tree.focus, null)
 })
 
 test('can determine the root node', t => {
@@ -172,9 +164,3 @@ test('does not lose children when checking out nodes on the right', t => {
 
   t.deepEqual(b.children, [d, c])
 })
-
-
-
-
-
-
