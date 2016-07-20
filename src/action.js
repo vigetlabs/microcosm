@@ -19,12 +19,6 @@ export default class Action extends Emitter {
   constructor (behavior) {
     super()
 
-    if (typeof behavior !== 'function') {
-      throw new TypeError('Action was created with an invalid type of ' +
-                          (typeof behavior) +
-                          '. Actions must be functions.')
-    }
-
     this.depth = 0
     this.behavior = tag(behavior)
     this.payload = null

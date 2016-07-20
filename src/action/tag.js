@@ -16,6 +16,11 @@ export default function tag (fn, name) {
     return fn
   }
 
+  if (typeof fn === 'string') {
+    name = fn
+    fn = n => n
+  }
+
   /**
    * Auto-increment a stepper suffix to prevent two actions with the
    * same name from colliding.
