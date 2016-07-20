@@ -1,10 +1,10 @@
-import Emitter      from './emitter'
-import MetaStore    from './stores/meta'
-import Tree         from './tree'
-import lifecycle    from './lifecycle'
-import memorize     from './memorize'
-import merge        from './merge'
-import update       from './update'
+import Emitter          from './emitter'
+import MetaStore        from './stores/meta'
+import Tree             from './tree'
+import lifecycle        from './lifecycle'
+import getStoreHandlers from './getStoreHandlers'
+import merge            from './merge'
+import update           from './update'
 
 /**
  * A tree-like data structure that keeps track of the execution order
@@ -85,7 +85,7 @@ export default class Microcosm extends Emitter {
    */
   dispatch (state, { type, payload }) {
     if (!this.registry[type]) {
-      this.registry[type] = memorize(this.stores, type)
+      this.registry[type] = getStoreHandlers(this.stores, type)
     }
 
     const handlers = this.registry[type]

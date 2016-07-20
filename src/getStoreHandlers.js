@@ -31,7 +31,7 @@ function getHandler (key, store, type) {
   return handler
 }
 
-export default function memorize (entries, type) {
+export default function getStoreHandlers (entries, type) {
 
   return entries.reduce(function (handlers, entry) {
     let key     = entry[0]
