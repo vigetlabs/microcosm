@@ -20,7 +20,7 @@ states.
 
 A simple drawing application. Click tiles across a grid to flip them
 between black and white. This example was created to test the
-time-travel debugger for Microcosm.
+[time-travel debugger for Microcosm](https://github.com/vigetlabs/microcosm-debugger).
 
 ### ReactRouter
 

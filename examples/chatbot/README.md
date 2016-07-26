@@ -1,12 +1,15 @@
 # Chatbot Example
 
-A chat application where users interact with an Elizabot chat program.
+A messaging client that interacts with a chat bot. This example
+demonstrates optimistic updates, asynchronous requests, and loading
+states.
 
 ## Setup
 
 ```
 npm install
-npm start
+make start
+open http://localhost:4000
 ```
 
 ## How it works
@@ -25,9 +28,9 @@ const Messages = {
   // ..
   register() {
     return {
-      [sendChat.open]    : Messages.addLoading,
-      [sendChat.done]    : Messages.add,
-      [sendChat.failed]  : Messages.addError
+      [send.open]   : Messages.addLoading,
+      [send.done]   : Messages.add,
+      [send.failed] : Messages.addError
     }
   }
 }
