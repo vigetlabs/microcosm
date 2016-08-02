@@ -11,10 +11,21 @@ Flux with central, isolated state.
 [9-stable branch](https://github.com/vigetlabs/microcosm/tree/9-stable)
 for relevant documentation and examples.
 
-1. [Documentation](docs)
+1. [Documentation](#documentation)
 2. [Overview](#overview)
 3. [Opinions](#opinions)
 4. [What is it trying to solve?](#what-is-it-trying-to-solve)
+
+## Documentation
+
+Comprehensive documentation can be found in the [docs section of this repo](docs).
+
+If you'd rather look at working code, head over to the [example apps](examples).
+
+### Installation
+```
+npm install --save microcosm
+```
 
 ## Overview
 
