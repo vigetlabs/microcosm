@@ -1,6 +1,8 @@
 # Microcosm
 
-![CircleCI](https://circleci.com/gh/vigetlabs/microcosm.svg?style=svg)
+[![CircleCI](https://img.shields.io/circleci/project/vigetlabs/microcosm.svg?maxAge=2592000)](https://circleci.com/gh/vigetlabs/microcosm)
+[![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
+[![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 
 Flux with central, isolated state.
 
