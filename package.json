@@ -8,7 +8,8 @@
     "build": "make all",
     "lint": "eslint {src,test,examples}/**",
     "test": "ava",
-    "test:cov": "nyc --cache --reporter=html ava",
+    "test:cov:html": "nyc --cache --reporter=html ava",
+    "test:cov:lcov": "nyc --cache --reporter=text-lcov ava",
     "report-coverage": "nyc report --reporter=text-lcov | coveralls",
     "release": "make release"
   },

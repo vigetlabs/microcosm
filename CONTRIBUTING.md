@@ -39,7 +39,8 @@ npm test
 For test coverage:
 
 ```bash
-npm run test:cov
+npm run test:cov:html
+open ./coverage/index.html
 ```
 
 Be sure to check the `./coverage` folder to verify all code paths are
