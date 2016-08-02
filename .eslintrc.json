@@ -19,12 +19,13 @@
     "semi": 0
   },
   "plugins": [
-    "react"
+    "react",
+    "markdown"
   ],
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "rules": {
     "react/prop-types" : 0,
     "no-console": 0,
-    "no-unused-vars" : ["error", { "args": "none" }]
+    "no-unused-vars" : [2, { "args": "none" }]
   }
 }

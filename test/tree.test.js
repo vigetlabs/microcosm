@@ -102,7 +102,7 @@ test('can get the previous node in the chain', t => {
 
 test('sets the root to null if checking out a null node', t => {
   const tree  = new Tree()
-  const first = tree.append(action)
+  tree.append(action)
 
   tree.checkout()
 

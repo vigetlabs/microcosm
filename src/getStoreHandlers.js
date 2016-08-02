@@ -1,5 +1,7 @@
 function format (string) {
+  /*eslint-disable no-unused-vars*/
   const [ _, action, state ] = `${ string }`.match(/(\w*)\_\d+\_(\w*)/, ' ') || []
+  /*eslint-enable no-unused-vars*/
 
   return action ? `the ${ action } action's ${ state } state` : string
 }
