@@ -24,7 +24,7 @@ function getSite () {
   return request.get('http://code.viget.com/microcosm')
 }
 
-repo.addStore('site', function () {
+repo.addDomain('site', function () {
   return {
     [getSite.open]  : () => 'loading',
     [getSite.error] : () => 'error',
@@ -44,7 +44,7 @@ repo.push(getSite)
 When Microcosm detects a Promise returned from an action
 creator, it handles it in the following way:
 
-1. Mark the action as `open`. This gives store handlers a way to
+1. Mark the action as `open`. This gives domain handlers a way to
    subscribe to a loading state.
 2. On resolution, mark the action as `done` and update its payload to
    that of the resolved Promise.
@@ -65,7 +65,7 @@ like:
 1. ajax (open)
 ```
 
-Microcosm then enumerates through this list, using store handlers to
+Microcosm then enumerates through this list, using domain handlers to
 calculate repo state. When the action completes, it moves into a
 `done` state:
 
@@ -77,7 +77,7 @@ Again, Microcosm rolls forward through the history list, recalculating
 state for the repo.
 
 Since the action is no longer in an `open` state, the
-resulting repo state will be as though the loading store
+resulting repo state will be as though the loading domain
 handler never fired. There's no cleanup.
 
 ## Tap into the lower-level action API
@@ -112,7 +112,7 @@ function getSite () {
   }
 }
 
-repo.addStore('site', function () {
+repo.addDomain('site', function () {
   return {
     [getSite.open]  : () => 'loading',
     [getSite.error] : () => 'error',

@@ -5,7 +5,7 @@ test.cb('writes to repo state', t => {
   const action = function() {}
   const repo = new Microcosm()
 
-  repo.addStore({
+  repo.addDomain({
     getInitialState() {
       return { test: false }
     },

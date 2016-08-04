@@ -4,8 +4,10 @@ import Microcosm from '../src/microcosm'
 test('deserializes when replace is invoked', t => {
   const repo = new Microcosm()
 
-  repo.addStore('dummy', {
-    deserialize: state => state.toUpperCase()
+  repo.addDomain('dummy', function() {
+    return {
+      deserialize: state => state.toUpperCase()
+    }
   })
 
   repo.replace({ dummy: 'different' })
@@ -60,11 +62,9 @@ test('can checkout a prior state', t => {
   const repo = new Microcosm({ maxHistory: Infinity })
   const action = n => n
 
-  repo.addStore('number', {
-    register() {
-      return {
-        [action]: (a, b) => b
-      }
+  repo.addDomain('number', function() {
+    return {
+      [action]: (a, b) => b
     }
   })
 
@@ -83,7 +83,7 @@ test('if pure, it will not emit a change if state is shallowly equal', t => {
 
   t.plan(1)
 
-  repo.addStore('test', {
+  repo.addDomain('test', {
     getInitialState() {
       return 0
     },
@@ -105,7 +105,7 @@ test('if pure, it will emit a change if state is not shallowly equal', t => {
 
   t.plan(1)
 
-  repo.addStore('test', {
+  repo.addDomain('test', {
     getInitialState() {
       return 0
     },
@@ -119,4 +119,41 @@ test('if pure, it will emit a change if state is not shallowly equal', t => {
   repo.push(identity, 1).onDone(function() {
     t.not(repo.state, first)
   })
+})
+
+test('warns of domain overwrites', t => {
+  const app = new Microcosm()
+  const domain1 = {}
+  const domain2 = {}
+
+  app.addDomain('foo', domain1)
+
+  t.throws(function() {
+    app.addDomain('foo', domain2)
+  }, Error)
+})
+
+test('can access actions via domains', t => {
+  const app = new Microcosm()
+  const domain = {
+    actions: {
+      barMe: n => n
+    },
+
+    register() {
+      return {
+        [domain.actions.barMe]: this.barMe
+      }
+    },
+
+    barMe() {
+      return 'bar'
+    }
+  }
+
+  app.addDomain('foo', domain)
+
+  app.push(app.domains.get('foo').actions.barMe)
+
+  t.is(app.state.foo, 'bar')
 })

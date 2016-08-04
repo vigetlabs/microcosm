@@ -1,12 +1,12 @@
 import test from 'ava'
 import Microcosm from '../src/microcosm'
-import Store from '../src/store'
+import Domain from '../src/domain'
 import console from './helpers/console'
 
-test('stores can be objects with lifecycle methods', t => {
+test('domains can be objects with lifecycle methods', t => {
   const repo = new Microcosm()
 
-  repo.addStore('key', {
+  repo.addDomain('key', {
     getInitialState: () => true
   })
 
@@ -19,7 +19,7 @@ test('warns if a register handler is undefined', t => {
 
   console.record()
 
-  repo.addStore('key', {
+  repo.addDomain('key', {
     register() {
       return {
         [action]: undefined
@@ -40,7 +40,7 @@ test('can control if state should be committed', t => {
 
   t.plan(1)
 
-  repo.addStore('count', {
+  repo.addDomain('count', {
     getInitialState() {
       return 0
     },
@@ -62,18 +62,18 @@ test('can control if state should be committed', t => {
 
 })
 
-test('stores have a setup step', t => {
+test('domain have a setup step', t => {
   const repo = new Microcosm()
 
   t.plan(1)
 
-  class Counter extends Store {
+  class Counter extends Domain {
     setup() {
       t.pass()
     }
   }
 
-  repo.addStore('count', Counter)
+  repo.addDomain('count', Counter)
 })
 
 test('last state in shouldCommit starts as initial state', t => {
@@ -81,7 +81,7 @@ test('last state in shouldCommit starts as initial state', t => {
 
   t.plan(1)
 
-  class Counter extends Store {
+  class Counter extends Domain {
     getInitialState() {
       return 0
     }
@@ -90,5 +90,5 @@ test('last state in shouldCommit starts as initial state', t => {
     }
   }
 
-  repo.addStore('count', Counter)
+  repo.addDomain('count', Counter)
 })

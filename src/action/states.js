@@ -24,7 +24,7 @@ const STATES = {
   // the action has failed
   error : 32,
 
-  // prevent the action from dispatching to stores. this is used by
+  // prevent the action from dispatching to domains. this is used by
   // the microcosm debugger to toggle actions within the history tree.
   cancelled : 64,
 
@@ -37,7 +37,7 @@ const PRIORITY = [ 'disabled', 'cancelled', 'error', 'done', 'loading', 'open' ]
 
 /**
  * Check the state of the action to determine what `type` should be
- * dispatched to stores for processing (via register()).
+ * dispatched to domains for processing (via register()).
  *
  * @private
  * @param {Action} action - The action to analyze

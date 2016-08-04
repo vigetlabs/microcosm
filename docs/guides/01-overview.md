@@ -16,9 +16,9 @@ Also check out the [Babel](http://babeljs.io/) JavaScript compiler. It breaks do
 
 Microcosm distinguishes itself from traditional Flux in a number of ways:
 
-**Data is kept in one place.** Stores and actions are collections of pure functions; they have no state of their own. They provide instructions for how a microcosm should update itself.
+**Data is kept in one place.** Domains and actions are collections of pure functions; they have no state of their own. They provide instructions for how a microcosm should update itself.
 
-**Action constants are generated automatically**. Instead of subscribing to a constant, Stores listen to things like `action.open`, `action.loading`, `action.done`, and `action.error`.
+**Action constants are generated automatically**. Instead of subscribing to a constant, Domains listen to things like `action.open`, `action.loading`, `action.done`, and `action.error`.
 
 **Microcosm is a transactional system**. Microcosm keeps track of all outstanding actions and operates on them sequentially as they resolve, in the order they were originally invoked.
 
@@ -44,9 +44,9 @@ const repo = new SolarSystem()
 
 Each `SolarSystem` instance as its own state. In the example above, it can be accessed from `repo.state`.
 
-## Stores - Transformers of State
+## Domains - Transformers of State
 
-A store is a JavaScript configuration object that teaches Microcosm how to operate on data. They operate on a single key, defined when it is registered:
+A domain is a JavaScript configuration object that teaches Microcosm how to operate on data. They operate on a single key, defined when it is registered:
 
 ```javascript
 import Microcosm from 'microcosm'
@@ -58,14 +58,14 @@ class SolarSystem extends Microcosm {
     super()
     // Planets will now teach SolarSystem
     // how to manage the 'plants' data
-    this.addStore('planets', Planets)
+    this.addDomain('planets', Planets)
   }
 }
 
 const repo = new SolarSystem()
 ```
 
-There are a couple of special method stores can implement to describe state at certain points in the Microcosm lifecycle. One of those methods is `getInitialState`, which tells the Microcosm what value the store will start with:
+There are a couple of special method domains can implement to describe state at certain points in the Microcosm lifecycle. One of those methods is `getInitialState`, which tells the Microcosm what value the domain will start with:
 
 ```javascript
 import Microcosm from 'microcosm'
@@ -79,7 +79,7 @@ const Planets = {
 class SolarSystem extends Microcosm {
   constructor() {
     super()
-    this.addStore('planets', Planets)
+    this.addDomain('planets', Planets)
   }
 }
 
@@ -104,7 +104,7 @@ import Microcosm from 'microcosm'
 function addPlanet(options) {
   // Here, we are simply returning options. However this
   // gives you an opportunity to modify parameters before they
-  // are sent to stores.
+  // are sent to domains.
   return options
 }
 
@@ -125,7 +125,7 @@ const Planets = {
 class SolarSystem extends Microcosm {
   constructor() {
     super()
-    this.addStore('planets', Planets)
+    this.addDomain('planets', Planets)
   }
 }
 
@@ -136,9 +136,9 @@ repo.push(Actions.addPlanet, { name: 'Venus' })
 console.log(repo.state.planets) // [{ name: 'Mercury' }, { name: 'Venus' }]
 ```
 
-When the `SolarSystem` sees `addPlanet` was pushed, it will invoke it within the context of the individual repo and send the result the `Planets` store.
+When the `SolarSystem` sees `addPlanet` was pushed, it will invoke it within the context of the individual repo and send the result the `Planets` domain.
 
-The critical component in `Planets` is `register`: a function that returns a map associating actions with methods on the Store.
+The critical component in `Planets` is `register`: a function that returns a map associating actions with methods on the Domain.
 
 In this case, `addPlanet` maps directly to the `Planets.add` method. This works because Microcosm assigns a unique `toString()` method to each action, reduces down to a key in this map.
 
@@ -146,6 +146,6 @@ The result is that `addPlanet` will translate into an invocation of `Planet.add`
 
 ## Wrapping up
 
-As it pertains to the Microcosm lifecycle, we've just about come full circle. The next guide moves into the specifics of stores. Check it out!
+As it pertains to the Microcosm lifecycle, we've just about come full circle. The next guide moves into the specifics of domains. Check it out!
 
-[Guide 2: Stores](./02-stores.md)
+[Guide 2: Domains](./02-domains.md)

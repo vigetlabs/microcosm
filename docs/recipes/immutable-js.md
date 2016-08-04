@@ -11,7 +11,7 @@ The most basic integration method is to simply use ImmutableJS:
 import Immutable from 'immutable'
 import actions from 'actions'
 
-const Store = {
+const Domain = {
   getInitialState() {
     return Immutable.Map()
   },
@@ -46,22 +46,22 @@ to better understand how Microcosm accommodates this use case:
 1. **archive** - For performance, Microcosm purges old actions and writes their
 final result to a cache.
 2. **staging** - State before a making change. This is a preparatory state allowing
-stores the ability to transform data one last time before assigning it publicly.
+domains the ability to transform data one last time before assigning it publicly.
 3. **state** - Publicaly available state. This is what is exposed via `repo.state`,
 
 Essentially, Microcosm can maintain ImmutableJS data structures internally, exposing
 plain JavaScript for public consumption. There are two key methods responsible for this:
 
-1. **commit** - A middleware function that dictates how a Store assigns to `repo.state`.
+1. **commit** - A middleware function that dictates how a domain assigns to `repo.state`.
 2. **shouldCommit** - A predicate function that controls invocation of `commit`.
 
-In practice, this results in a small adjustment to the store described earlier:
+In practice, this results in a small adjustment to the domain described earlier:
 
 ```javascript
 import Immutable from 'immutable'
 import actions from 'actions'
 
-const Store = {
+const Domain = {
   getInitialState() {
     return Immutable.Map()
   },

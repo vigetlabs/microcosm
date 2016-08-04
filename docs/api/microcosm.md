@@ -15,12 +15,12 @@ as [React](https://facebook.github.io/react/)).
 ### `setup()`
 
 Called whenever a Microcosm is instantiated. This provides a general
-purpose hook for adding stores and other setup behavior.
+purpose hook for adding domains and other setup behavior.
 
 ```javscript
 class SolarSystem extends Microcosm {
   setup() {
-    this.addStore('planets', Planets)
+    this.addDomain('planets', Planets)
   }
 }
 ```
@@ -28,7 +28,7 @@ class SolarSystem extends Microcosm {
 ### `getInitialState()`
 
 Generates the starting state for a Microcosm instance. This is the
-result of dispatching `getInitialState` to all stores. It is
+result of dispatching `getInitialState` to all domains. It is
 pure; calling this function will not update state.
 
 ### `push(action, ...parameters)`
@@ -57,22 +57,22 @@ repo.replace({
 })
 ```
 
-### `addStore(key, config)`
+### `addDomain(key, config)`
 
-Generates a store based on the provided `config` and assigns it to
-manage the provided `key`. Whenever this store responds to an action,
+Generates a domain based on the provided `config` and assigns it to
+manage the provided `key`. Whenever this domain responds to an action,
 it will be provided the current state for that particular key.
 
-[See the documentation on stores](stores.md).
+[See the documentation on domains](domains.md).
 
 ```javascript
-repo.addStore('planets', planetsConfig)
+repo.addDomain('planets', planetsConfig)
 ```
 
 ### `serialize()`
 
 Returns an object that is the result of transforming repo state
-according to the `serialize` method described by each store.
+according to the `serialize` method described by each domain.
 
 ```javascript
 repo.serialize() // => { planets: [...] }
@@ -81,7 +81,7 @@ repo.serialize() // => { planets: [...] }
 ### `deserialize(data)`
 
 For each key in the provided `data` parameter, transform it using the
-`deserialize` method provided by the store managing that key. Then
+`deserialize` method provided by the domain managing that key. Then
 fold the deserialized data over the current repo state.
 
 ```javascript

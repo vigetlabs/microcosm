@@ -1,5 +1,5 @@
 import test from 'ava'
-import Store from '../src/store'
+import Domain from '../src/domain'
 import Microcosm from '../src/microcosm'
 
 const create  = n => n
@@ -7,7 +7,7 @@ const destroy = n => n
 
 import Immutable from 'immutable'
 
-class TestDomain extends Store {
+class TestDomain extends Domain {
 
   getInitialState() {
     return Immutable.Map()
@@ -40,7 +40,7 @@ class TestDomain extends Store {
 test('adds records', t => {
   var repo = new Microcosm()
 
-  repo.addStore('users', TestDomain)
+  repo.addDomain('users', TestDomain)
 
   repo.push(create, { id: 1, name: 'Bill' })
 
@@ -50,7 +50,7 @@ test('adds records', t => {
 test('removes records', t => {
   var repo = new Microcosm()
 
-  repo.addStore('users', TestDomain)
+  repo.addDomain('users', TestDomain)
 
   repo.push(create, { id: 1, name: 'Bill' })
   repo.push(destroy, 1)
@@ -61,7 +61,7 @@ test('removes records', t => {
 test('does not generate a new array if no state changes', t => {
   var repo = new Microcosm()
 
-  repo.addStore('users', TestDomain)
+  repo.addDomain('users', TestDomain)
 
   repo.push(create, { id: 1, name: 'Bill' })
   repo.push(destroy, 1)

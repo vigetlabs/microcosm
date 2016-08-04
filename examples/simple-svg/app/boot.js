@@ -1,14 +1,14 @@
 import DOM         from 'react-dom'
 import React       from 'react'
 import Microcosm   from '../../../src/microcosm'
-import Circle      from './stores/circle'
+import Circle      from './domains/circle'
 import Logo        from './views/logo'
 import { animate } from './actions/animate'
 
 const repo = new Microcosm()
 const el  = document.getElementById('app')
 
-repo.addStore('circle', Circle)
+repo.addDomain('circle', Circle)
 
 repo.on('change', function (state) {
   DOM.render(<Logo { ...state } />, el)

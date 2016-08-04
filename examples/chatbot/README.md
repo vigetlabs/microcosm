@@ -20,8 +20,8 @@ pushed into a Microcosm, this example uses the `open`, `done`, and
 `error` states to display useful information to the user.
 
 The best place to see where this happens is within
-[`./app/stores/message.js`](./app/stores/message.js), where the
-store's registration method listens to specific action states:
+[`./app/domains/message.js`](./app/domains/message.js), where the
+domain's registration method listens to specific action states:
 
 ```javascript
 const Messages = {
@@ -40,7 +40,7 @@ const Messages = {
 
 Whenever an action creator is pushed into Microcosm, it creates an
 action object to represent the resolution of that action
-creator. Stores can hook into the different states of that action as the
+creator. Domains can hook into the different states of that action as the
 action creator resolves. These states _loosely_ follow the
 `readyState` property of `XMLHTTPRequest`:
 

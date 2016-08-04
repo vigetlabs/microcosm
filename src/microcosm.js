@@ -1,12 +1,12 @@
-import Emitter          from './emitter'
-import MetaStore        from './stores/meta'
-import History          from './history'
-import Store            from './store'
-import lifecycle        from './lifecycle'
-import getStoreHandlers from './getStoreHandlers'
-import merge            from './merge'
-import shallowEqual     from './shallow-equal'
-import update           from './update'
+import Emitter           from './emitter'
+import MetaDomain        from './domains/meta'
+import History           from './history'
+import Domain            from './domain'
+import lifecycle         from './lifecycle'
+import getDomainHandlers from './getDomainHandlers'
+import merge             from './merge'
+import shallowEqual      from './shallow-equal'
+import update            from './update'
 
 /**
  * A tree-like data structure that keeps track of the execution order
@@ -24,12 +24,16 @@ export default class Microcosm extends Emitter {
   constructor ({ maxHistory = -Infinity, pure = true } = {}) {
     super()
 
-    this.history = new History()
-    this.pure = pure
     this.maxHistory = maxHistory
-    this.stores = []
+    this.pure = pure
 
-    // cache store registry methods for efficiency
+    this.history = new History()
+    this.domains = []
+
+    // for backwards compatibility
+    this.addDomain = this.addDomain
+
+    // cache domain registry methods for efficiency
     this.registry = {}
 
     /**
@@ -39,11 +43,11 @@ export default class Microcosm extends Emitter {
      *             writing them to an archive allows the actions to be disposed,
      *             improving dispatch efficiency.
      * 2. staged   The "private" state, before writing for public consumption.
-     *             Store may not operate on primitive (like ImmutableJS), this
-     *             allows a store to work with complex data types while still
+     *             Domain may not operate on primitive (like ImmutableJS), this
+     *             allows a domain to work with complex data types while still
      *             exposing a primitive public state
      * 3. state    Public state. The `willCommit` lifecycle method allows a
-     *             store to transform private state before it changes. This
+     *             domain to transform private state before it changes. This
      *             is useful for turning something like Immutable.Map() or
      *             a linked-list into a primitive object or array.
      */
@@ -51,8 +55,8 @@ export default class Microcosm extends Emitter {
     this.staged = {}
     this.state = {}
 
-    // Standard store reduction behaviors
-    this.addStore(MetaStore)
+    // Standard domain reduction behaviors
+    this.addDomain(MetaDomain)
 
     // Microcosm is now ready. Call the setup lifecycle method
     this.setup()
@@ -69,7 +73,7 @@ export default class Microcosm extends Emitter {
 
   /**
    * Generates the starting state for a Microcosm instance by asking every
-   * store store that subscribes to `getInitialState`.
+   * domain that subscribes to `getInitialState`.
    *
    * @return {Object} State object representing the initial state.
    */
@@ -98,9 +102,9 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Dispatch an action to a list of stores. This is used by state
+   * Dispatch an action to a list of domains. This is used by state
    * management methods, like `rollforward` and `getInitialState` to
-   * compute state. Assuming there are no side-effects in store
+   * compute state. Assuming there are no side-effects in domain
    * handlers, this is pure. Calling this method will not update
    * repo state.
    *
@@ -111,18 +115,18 @@ export default class Microcosm extends Emitter {
    */
   dispatch (state, { type, payload }) {
     if (!this.registry[type]) {
-      this.registry[type] = getStoreHandlers(this.stores, type)
+      this.registry[type] = getDomainHandlers(this.domains, type)
     }
 
     const handlers = this.registry[type]
 
     for (var i = 0, len = handlers.length; i < len; i++) {
-      const { key, store, handler } = handlers[i]
+      const { key, domain, handler } = handlers[i]
 
       const last = update.get(state, key)
-      const next = handler.call(store, last, payload)
+      const next = handler.call(domain, last, payload)
 
-      state = update.set(state, key, store.stage(last, next))
+      state = update.set(state, key, domain.stage(last, next))
     }
 
     return state
@@ -130,7 +134,7 @@ export default class Microcosm extends Emitter {
 
   /**
    * Run through the action history, dispatching their associated
-   * types and payloads to stores for processing. Emits "change".
+   * types and payloads to domains for processing. Emits "change".
    *
    * @private
    * @return {Microcosm} self
@@ -140,8 +144,8 @@ export default class Microcosm extends Emitter {
 
     const staged = this.history.reduce(this.dispatch, this.archive, this)
 
-    const next = this.stores.reduce((memo, store) => {
-      return this.commit(memo, store[0], store[1])
+    const next = this.domains.reduce((memo, domain) => {
+      return this.commit(memo, domain[0], domain[1])
     }, staged)
 
     this.staged = staged
@@ -155,14 +159,14 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Identify the last and next staged state, then ask the associated store
+   * Identify the last and next staged state, then ask the associated domain
    * if it should commit it. If so, roll state forward.
    * @private
    */
-  commit (staged, key, store) {
+  commit (staged, key, domain) {
     const last  = update.get(this.staged, key)
     const next  = update.get(staged, key)
-    const value = store.shouldCommit(next, last) ? store.commit(next) : update.get(this.state, key)
+    const value = domain.shouldCommit(next, last) ? domain.commit(next) : update.get(this.state, key)
 
     return update.set(staged, key, value)
   }
@@ -196,15 +200,15 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Adds a store to the Microcosm instance. A store informs the
+   * Adds a domain to the Microcosm instance. A domain informs the
    * microcosm how to process various action types. If no key
-   * is given, the store will operate on all repo state.
+   * is given, the domain will operate on all application state.
    *
-   * @param {String} key - The namespace within repo state for the store.
-   * @param {Object|Function} config - Configuration options for the store
+   * @param {String} key - The namespace within application state for the domain.
+   * @param {Object|Function} config - Configuration options for the domain
    * @return {Microcosm} self
    */
-  addStore (key, config) {
+  addDomain (key, config) {
     if (arguments.length < 2) {
       // Important! Assignment this way is important
       // to support IE9, which has an odd way of referencing
@@ -213,18 +217,17 @@ export default class Microcosm extends Emitter {
       key = null
     }
 
-    let store = null
+    let domain = null
 
     if (typeof config === 'function') {
-      store = new config()
+      domain = new config()
     } else {
-      store = merge(new Store(), config)
+      domain = merge(new Domain(), config)
     }
 
-    this.stores = this.stores.concat([[ key, store ]])
+    this.domains = this.domains.concat([[ key, domain ]])
 
-    // Setup is called once, whenever to store is added to the microcosm
-    store.setup()
+    domain.setup()
 
     this.rebase()
 
@@ -254,8 +257,8 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Deserialize a given payload by asking every store how to it
-   * should process it (via the deserialize store function).
+   * Deserialize a given payload by asking every domain how to it
+   * should process it (via the deserialize domain function).
    *
    * @param {Object} payload - A raw object to deserialize.
    * @return {Object} The deserialized version of the provided payload.
@@ -269,8 +272,8 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Serialize repo state by asking every store how to
-   * serialize the state they manage (via the serialize store
+   * Serialize application state by asking every domain how to
+   * serialize the state they manage (via the serialize domain
    * function).
    *
    * @return {Object} The serialized version of repo state.
@@ -288,10 +291,10 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Recalculate initial state by back-filling the archive with the
-   * result of getInitialState(). This is used when a store is added
-   * to Microcosm to ensure the initial state of the store is respected
-   * Emits a "change" event.
+   * Recalculate initial state by back-filling the cache object with
+   * the result of getInitialState(). This is used when a domain is
+   * added to Microcosm to ensure the initial state of the domain is
+   * respected. Emits a "change" event.
    *
    * @private
    * @return {Microcosm} self

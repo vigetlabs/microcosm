@@ -2,7 +2,7 @@
 
 1. [Overview](#overview)
 2. [Writing action creators](#writing-action-creators)
-3. [Dispatching to Stores](#dispatching-to-stores)
+3. [Dispatching to Domains](#dispatching-to-domains)
 4. [How this works](#how-this-works)
 5. [API](#api)
 
@@ -42,7 +42,7 @@ repo.push(addPlanet, { name: 'Saturn' })
 
 Action creators that return a promise move through several states:
 
-1. `open`: The action is opened immediately. This allows stores to
+1. `open`: The action is opened immediately. This allows domains to
    handle a loading state.
 2. `done`: The action completes when the Promise resolves
 3. `error`: The action fails when the Promise is rejected
@@ -87,19 +87,19 @@ function readPlanets () {
 repo.push(readPlanets)
 ```
 
-## Dispatching to Stores
+## Dispatching to Domains
 
 One of the differences between Microcosm and other Flux
-implementations is the dispatch process. Sending actions to stores is
+implementations is the dispatch process. Sending actions to domains is
 handled by Microcosm. Instead of dispatching `ACTION_LOADING` or
 `ACTION_FAILED`, actions go through various states as they
-resolve. You can subscribe to these states within stores like:
+resolve. You can subscribe to these states within domains like:
 
 ```javascript
-// A sample store that subscribes to every action state
+// A sample domain that subscribes to every action state
 const SolarSystem = {
 
-  // ... Other store methods
+  // ... Other domain methods
 
   register() {
     return {
@@ -183,29 +183,29 @@ repo.push(promiseAction).then(success, failure)
 ### `open([payload])`
 
 Elevate an action into the `open` state and optional update the
-payload. Stores registered to `action.open` will pick up on an action
+payload. Domains registered to `action.open` will pick up on an action
 within this state.
 
 ### `send([payload])`
 
 Send a progress update. This will move an action into the `loading`
-state and optional update the payload. Stores registered to
+state and optional update the payload. Domains registered to
 `action.loading` will pick up on an action within this state.
 
 ### `reject([payload])`
 
 Reject an action. This will move an action into the `error` state and
-optional update the payload. Stores registered to `action.error` will
+optional update the payload. Domains registered to `action.error` will
 pick up on an action within this state.
 
 ### `close([payload])`
 
 Resolve an action. This will move an action into the `done` state and
-optional update the payload. Stores registered to `action` or `action.done`
+optional update the payload. Domains registered to `action` or `action.done`
 will pick up on an action within this state.
 
 ### `cancel()`
 
 Cancel an action. This is useful for handling cases such as aborting
-ajax requests. Moves an action into the `cancelled`. Stores registered
+ajax requests. Moves an action into the `cancelled`. Domains registered
 to `action.cancelled` will pick up on an action within this state.

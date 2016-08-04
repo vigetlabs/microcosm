@@ -28,7 +28,7 @@ var results = SIZES.map(function (SIZE) {
   var action = function test () {}
   action.toString = function () { return 'test' }
 
-  var Store = {
+  var Domain = {
     getInitialState: () => 0,
     register() {
       return {
@@ -38,15 +38,15 @@ var results = SIZES.map(function (SIZE) {
   }
 
   /**
-   * Add the store at multiple keys. This is a better simulation of actual
+   * Add the domain at multiple keys. This is a better simulation of actual
    * applications. Otherwise, efficiencies are obtained enumerating over
    * very few keys. This is never the case in real-world applications.
    */
-  repo.addStore('one',   Store)
-  repo.addStore('two',   Store)
-  repo.addStore('three', Store)
-  repo.addStore('four',  Store)
-  repo.addStore('five',  Store)
+  repo.addDomain('one',   Domain)
+  repo.addDomain('two',   Domain)
+  repo.addDomain('three', Domain)
+  repo.addDomain('four',  Domain)
+  repo.addDomain('five',  Domain)
 
   /**
    * Append a given number of actions into history. We use this method

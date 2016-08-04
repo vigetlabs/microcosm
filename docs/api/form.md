@@ -23,7 +23,7 @@ const repo = new Microcosm()
 
 const increaseCount = n => n
 
-repo.addStore('count', {
+repo.addDomain('count', {
   getInitialState() {
     return 0
   },

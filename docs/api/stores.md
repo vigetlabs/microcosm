@@ -1,4 +1,4 @@
-# Stores
+# Domains
 
 1. [Overview](#overview)
 2. [Subscribing to different action states](#subscribing-to-different-action-states)
@@ -6,32 +6,32 @@
 
 ## Overview
 
-Stores define the rules in which resolved actions are converted into
-new state. They are added to a Microcosm instance using `addStore`:
+Domains define the rules in which resolved actions are converted into
+new state. They are added to a Microcosm instance using `addDomain`:
 
 ```javascript
-// Mount a store that operates on a specific key in repo state.
-// Any operations the store handles are recorded at `repo.state.key`:
-repo.addStore('key', Store)
+// Mount a domain that operates on a specific key in repo state.
+// Any operations the domain handles are recorded at `repo.state.key`:
+repo.addDomain('key', Domain)
 
-// Mount a store that operates on all repo state, handlers will
+// Mount a domain that operates on all repo state, handlers will
 // write directly to `repo.state` itself:
-repo.addStore(Store)
+repo.addDomain(Domain)
 ```
 
-Stores do not enforce any particular structure. However specific
-methods can be defined on stores to configure behavior at key points
+Domains do not enforce any particular structure. However specific
+methods can be defined on domains to configure behavior at key points
 in a Microcosm's lifecycle.
 
 ## Subscribing to different action states
 
-Stores can provide a `register` method to dictate what actions they
+Domains can provide a `register` method to dictate what actions they
 listen to:
 
 ```javascript
-const Store = {
+const Domain = {
 
-  // ... Other store methods
+  // ... Other domain methods
 
   register() {
     return {
@@ -52,8 +52,8 @@ const Store = {
 
 ### `getInitialState()`
 
-Generate the starting value for the particular state this store is
-managing. This will be called by the Microcosm using this store when
+Generate the starting value for the particular state this domain is
+managing. This will be called by the Microcosm using this domain when
 it is started.
 
 ```javascript
@@ -66,13 +66,13 @@ var Planets = {
 
 ### `setup()`
 
-Setup runs right after a store is added to a Microcosm, but before it runs
+Setup runs right after a domain is added to a Microcosm, but before it runs
 getInitialState. This is useful for one-time setup instructions.
 
 ### `serialize(state)`
 
-Allows a store to transform data before it leaves the system. It gives
-the store the opportunity to reduce non-primitive values into
+Allows a domain to transform data before it leaves the system. It gives
+the domain the opportunity to reduce non-primitive values into
 JSON.
 
 For example, if using
@@ -112,8 +112,8 @@ const Planets = {
 
 ### `register()`
 
-Returns an object mapping actions to methods on the store. This is the
-communication point between a store and the rest of the system.
+Returns an object mapping actions to methods on the domain. This is the
+communication point between a domain and the rest of the system.
 
 ```javascript
 import { addPlanet } from '../actions/planets'
@@ -135,7 +135,7 @@ repo.push(Actions.add, { name: 'earth' }) // this will add Earth
 
 ### `commit(next)`
 
-How should a store actually write to `repo.state`? This is useful for serializing a complex data structure, such as a `Map`, into form easier for public consumption:
+How should a domain actually write to `repo.state`? This is useful for serializing a complex data structure, such as a `Map`, into form easier for public consumption:
 
 ```javascript
 import Immutable from 'immutable'

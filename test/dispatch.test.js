@@ -8,7 +8,7 @@ test('does not mutate base state on prior dispatches', t => {
     return true
   }
 
-  repo.addStore({
+  repo.addDomain({
     getInitialState() {
       return {
         toggled: false

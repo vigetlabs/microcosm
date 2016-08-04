@@ -8,24 +8,24 @@ When an action updates, Microcosm runs through all outstanding
 actions to determine the new repo state. For example, if a
 Promise is returned from an action, Microcosm will wait for it to
 resolve. The value the Promise eventually returns will then be
-dispatched to stores.
+dispatched to domains.
 
 ```javascript
 
 function doSomething (params) {
-  // These params will be forwarded to all stores
+  // These params will be forwarded to all domains
   // listening to this action
   return params
 }
 ```
 
 The action above is synchronous; there is no waiting
-involved. Parameters are immediately dispatched to stores and
+involved. Parameters are immediately dispatched to domains and
 processed. Under the hood, the following steps occur:
 
 1. Create an action for `doSomething`
 2. Resolve `doSomething`; mark action as complete
-3. Dispatch `doSomething` to stores
+3. Dispatch `doSomething` to domains
 4. Save new state, emit change
 
 Not all actions are synchronous. To account for this, Microcosm has
@@ -46,19 +46,19 @@ it resolves successfully.
 
 What if it were to fail? If a returned Promise is rejected, the
 associated action moves into a `error` state. This can be subscribed
-to within stores:
+to within domains:
 
 ```javascript
 function getPlanet (id) {
   return ajax.get('http://myapi.com/planets/' + id)
 }
 
-const Store = {
+const Domain = {
   // ...
   register() {
     return {
-      [getPlanet.done]  : Store.updatePlanet,
-      [getPlanet.error] : Store.handleError
+      [getPlanet.done]  : Domain.updatePlanet,
+      [getPlanet.error] : Domain.handleError
     }
   }
 }
@@ -77,16 +77,16 @@ intuitive and responsive.
 Up until now, we've only dealt with an action's `done` and `error`
 state. However, when returning Promises, actions switch into an `open`
 state while it waites for the Promise to resolve. This can also be
-subscribed to within a store:
+subscribed to within a domain:
 
 ```javascript
-const Store = {
+const Domain = {
   // ...
   register() {
     return {
-      [getPlanet.open]  : Store.setLoading,
-      [getPlanet.done]  : Store.updatePlanet,
-      [getPlanet.error] : Store.handleError
+      [getPlanet.open]  : Domain.setLoading,
+      [getPlanet.done]  : Domain.updatePlanet,
+      [getPlanet.error] : Domain.handleError
     }
   }
 }

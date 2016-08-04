@@ -1,16 +1,16 @@
 /**
- * Store
- * This is the base class with which all stores draw their common
+ * Domain
+ * This is the base class with which all domains draw their common
  * behavior. It can also be extended.
  */
 
 const EMPTY = {}
 
-export default class Store {
+export default class Domain {
 
   /**
-   * Setup runs right after a store is added to a Microcosm, but before
-   * it rebases state to include the store's `getInitialState` value. This
+   * Setup runs right after a domain is added to a Microcosm, but before
+   * it rebases state to include the domain's `getInitialState` value. This
    * is useful for one-time setup instructions
    */
   setup() {
@@ -42,7 +42,7 @@ export default class Store {
   /**
   * This is the actual operation used to write state to a Microcosm.
   * Normally this isn't overridden, but it is useful for staging custom
-  * store behavior. This is currently a private API.
+  * domain behavior. This is currently a private API.
   *
   * @private
   * @param {object} state - The current application state
@@ -58,7 +58,7 @@ export default class Store {
    * repo.state. This gives libraries such as ImmutableJS a chance to serialize
    * into a primitive JavaScript form before being publically exposed.
    *
-   * @param {any} next - The next state for the store
+   * @param {any} next - The next state for the domain
    */
   commit(next) {
     return next

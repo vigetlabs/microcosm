@@ -1,15 +1,15 @@
 import Microcosm from '../../../src/microcosm'
-import Items     from './stores/items'
-import Lists     from './stores/lists'
+import Items     from './domains/items'
+import Lists     from './domains/lists'
 
 export default class Todos extends Microcosm {
 
   setup() {
     // 1. Lists
-    this.addStore('lists', Lists)
+    this.addDomain('lists', Lists)
 
     // 2. List Items
-    this.addStore('items', Items)
+    this.addDomain('items', Items)
   }
 
 }
