@@ -29,7 +29,7 @@ export default class Action extends Emitter {
 
   /**
    * Check the state of the action to determine what `type` should be
-   * dispatched to stores for processing (via register()).
+   * dispatched to domains for processing (via register()).
    *
    * @private
    * @return {String|Null} The action type to dspatch.

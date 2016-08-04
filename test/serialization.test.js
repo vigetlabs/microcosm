@@ -1,10 +1,10 @@
 import test from 'ava'
 import Microcosm from '../src/microcosm'
 
-test('runs through serialize methods on stores', t => {
+test('runs through serialize methods on domains', t => {
   const app = new Microcosm()
 
-  app.addStore('serialize-test', {
+  app.addDomain('serialize-test', {
     getInitialState() {
       return 'this will not display'
     },
@@ -21,7 +21,7 @@ test('sends all state as the second argument', t => {
 
   const app = new Microcosm()
 
-  app.addStore('serialize-test', {
+  app.addDomain('serialize-test', {
     serialize(subset, state) {
       t.is(state, app.state)
     }
@@ -35,7 +35,7 @@ test('defaults to getInitialState when no deserialize method is provided', t => 
 
   const app = new Microcosm()
 
-  app.addStore('fiz', {
+  app.addDomain('fiz', {
     getInitialState() {
       return true
     }
@@ -50,7 +50,7 @@ test('passes the raw data as the seconda argument of deserialize', t => {
   t.plan(2)
   const app = new Microcosm()
 
-  app.addStore('fiz', {
+  app.addDomain('fiz', {
     deserialize(subset, raw) {
       t.is(subset, 'buzz')
       t.deepEqual(raw, { fiz: 'buzz' })

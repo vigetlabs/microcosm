@@ -4,7 +4,7 @@ import Microcosm from '../src/microcosm'
 test('deserializes when replace is invoked', t => {
   const app = new Microcosm()
 
-  app.addStore('dummy', function() {
+  app.addDomain('dummy', function() {
     return {
       deserialize: state => state.toUpperCase()
     }
@@ -62,7 +62,7 @@ test('can checkout a prior state', t => {
   const app = new Microcosm({ maxHistory: Infinity })
   const action = n => n
 
-  app.addStore('number', function() {
+  app.addDomain('number', function() {
     return {
       [action]: (a, b) => b
     }
@@ -75,4 +75,29 @@ test('can checkout a prior state', t => {
   app.checkout(app.history.root)
 
   t.is(app.state.number, 1)
+})
+
+test('can access actions via domains', t => {
+  const app = new Microcosm()
+  const domain = {
+    actions: {
+      barMe: n => n
+    },
+
+    register() {
+      return {
+        [domain.actions.barMe]: this.barMe
+      }
+    },
+
+    barMe() {
+      return 'bar'
+    }
+  }
+
+  app.addDomain('foo', domain)
+
+  app.push(app.domains.foo.actions.barMe)
+
+  t.is(app.state.foo, 'bar')
 })

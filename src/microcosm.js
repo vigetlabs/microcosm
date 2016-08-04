@@ -1,10 +1,10 @@
-import Emitter          from './emitter'
-import MetaStore        from './stores/meta'
-import Tree             from './tree'
-import lifecycle        from './lifecycle'
-import getStoreHandlers from './getStoreHandlers'
-import merge            from './merge'
-import update           from './update'
+import Emitter           from './emitter'
+import MetaDomain        from './domains/meta'
+import Tree              from './tree'
+import lifecycle         from './lifecycle'
+import getDomainHandlers from './getDomainHandlers'
+import merge             from './merge'
+import update            from './update'
 
 /**
  * A tree-like data structure that keeps track of the execution order
@@ -22,11 +22,14 @@ export default class Microcosm extends Emitter {
   constructor ({ maxHistory = -Infinity } = {}) {
     super()
 
+    // for backwards compatibility
+    this.addStore = this.addDomain
+
     this.history = new Tree()
     this.maxHistory = maxHistory
-    this.stores = []
+    this.domains = []
 
-    // cache store registry methods for efficiency
+    // cache domain registry methods for efficiency
     this.registry = {}
 
     // cache represents the result of dispatching all complete
@@ -37,13 +40,13 @@ export default class Microcosm extends Emitter {
     // actions over cache
     this.state = {}
 
-    // Standard store reduction behaviors
-    this.addStore(MetaStore)
+    // Standard domain reduction behaviors
+    this.addDomain(MetaDomain)
   }
 
   /**
    * Generates the starting state for a Microcosm instance by asking every
-   * store store that subscribes to `getInitialState`.
+   * domain that subscribes to `getInitialState`.
    *
    * @return {Object} State object representing the initial state.
    */
@@ -72,9 +75,9 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Dispatch an action to a list of stores. This is used by state
+   * Dispatch an action to a list of domains. This is used by state
    * management methods, like `rollforward` and `getInitialState` to
-   * compute state. Assuming there are no side-effects in store
+   * compute state. Assuming there are no side-effects in domain
    * handlers, this is pure. Calling this method will not update
    * application state.
    *
@@ -85,15 +88,15 @@ export default class Microcosm extends Emitter {
    */
   dispatch (state, { type, payload }) {
     if (!this.registry[type]) {
-      this.registry[type] = getStoreHandlers(this.stores, type)
+      this.registry[type] = getDomainHandlers(this.domains, type)
     }
 
     const handlers = this.registry[type]
 
     for (var i = 0, len = handlers.length; i < len; i++) {
-      const { key, store, handler } = handlers[i]
+      const { key, domain, handler } = handlers[i]
 
-      state = update.set(state, key, handler.call(store, update.get(state, key), payload))
+      state = update.set(state, key, handler.call(domain, update.get(state, key), payload))
     }
 
     return state
@@ -101,7 +104,7 @@ export default class Microcosm extends Emitter {
 
   /**
    * Run through the action history, dispatching their associated
-   * types and payloads to stores for processing. Emits "change".
+   * types and payloads to domains for processing. Emits "change".
    *
    * @private
    * @return {Microcosm} self
@@ -156,15 +159,15 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Adds a store to the Microcosm instance. A store informs the
+   * Adds a domain to the Microcosm instance. A domain informs the
    * microcosm how to process various action types. If no key
-   * is given, the store will operate on all application state.
+   * is given, the domain will operate on all application state.
    *
-   * @param {String} key - The namespace within application state for the store.
-   * @param {Object|Function} config - Configuration options for the store
+   * @param {String} key - The namespace within application state for the domain.
+   * @param {Object|Function} config - Configuration options for the domain
    * @return {Microcosm} self
    */
-  addStore (key, config) {
+  addDomain (key, config) {
     if (arguments.length < 2) {
       // Important! Assignment this way is important
       // to support IE9, which has an odd way of referencing
@@ -177,7 +180,14 @@ export default class Microcosm extends Emitter {
       config = { register: config }
     }
 
-    this.stores = this.stores.concat([[ key, config ]])
+    this.domains = this.domains.concat([[ key, config ]])
+
+    for (const domain of this.domains) {
+      const [key, config] = domain
+      if (key) {
+        this.domains[key] = config
+      }
+    }
 
     this.rebase()
 
@@ -207,8 +217,8 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Deserialize a given payload by asking every store how to it
-   * should process it (via the deserialize store function).
+   * Deserialize a given payload by asking every domain how to it
+   * should process it (via the deserialize domain function).
    *
    * @param {Object} payload - A raw object to deserialize.
    * @return {Object} The deserialized version of the provided payload.
@@ -222,8 +232,8 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Serialize application state by asking every store how to
-   * serialize the state they manage (via the serialize store
+   * Serialize application state by asking every domain how to
+   * serialize the state they manage (via the serialize domain
    * function).
    *
    * @return {Object} The serialized version of application state.
@@ -242,8 +252,8 @@ export default class Microcosm extends Emitter {
 
   /**
    * Recalculate initial state by back-filling the cache object with
-   * the result of getInitialState(). This is used when a store is
-   * added to Microcosm to ensure the initial state of the store is
+   * the result of getInitialState(). This is used when a domain is
+   * added to Microcosm to ensure the initial state of the domain is
    * respected. Emits a "change" event.
    *
    * @private

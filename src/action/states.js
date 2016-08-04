@@ -24,7 +24,7 @@ export default {
   // the action has failed
   failed : 16,
 
-  // prevent the action from dispatching to stores. this is used by
+  // prevent the action from dispatching to domains. this is used by
   // the microcosm debugger to toggle actions within the history tree.
   disabled : 32,
 

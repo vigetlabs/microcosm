@@ -6,15 +6,15 @@ function format (string) {
   return action ? `the ${ action } action's ${ state } state` : string
 }
 
-function getHandler (key, store, type) {
-  let handler = store[type]
+function getHandler (key, domain, type) {
+  let handler = domain[type]
 
-  if (handler === undefined && store.register) {
-    const registrations = store.register()
+  if (handler === undefined && domain.register) {
+    const registrations = domain.register()
 
     if (process.env.NODE_ENV !== 'production') {
       if ('undefined' in registrations) {
-        throw new Error(`When dispatching ${ format(type) } to the ${ key } store, `
+        throw new Error(`When dispatching ${ format(type) } to the ${ key } domain, `
                         + `we encountered an "undefined" attribute within register(). `
                         + `This usually happens when an action is imported `
                         + `from the wrong namespace, or by referencing an invalid `
@@ -22,8 +22,8 @@ function getHandler (key, store, type) {
       }
 
       if (type in registrations && registrations[type] === undefined) {
-        throw new Error(`The handler for "${ format(type) }" within a store for "${ key }" `
-                        + `is undefined. Check the register method for this store.`)
+        throw new Error(`The handler for "${ format(type) }" within a domain for "${ key }" `
+                        + `is undefined. Check the register method for this domain.`)
       }
     }
 
@@ -33,13 +33,13 @@ function getHandler (key, store, type) {
   return handler
 }
 
-export default function getStoreHandlers (entries, type) {
+export default function getDomainHandlers (entries, type) {
 
   return entries.reduce(function (handlers, entry) {
     let key     = entry[0]
-    let store   = entry[1]
-    let handler = getHandler(key, store, type)
+    let domain  = entry[1]
+    let handler = getHandler(key, domain, type)
 
-    return handler === undefined ? handlers : handlers.concat({ key, store, handler })
+    return handler === undefined ? handlers : handlers.concat({ key, domain, handler })
   }, [])
 }
