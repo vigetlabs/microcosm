@@ -33,13 +33,16 @@ function getHandler (key, domain, type) {
   return handler
 }
 
-export default function getDomainHandlers (entries, type) {
+export default function getDomainHandlers (domains, type) {
+  const handlers = []
 
-  return entries.reduce(function (handlers, entry) {
-    let key     = entry[0]
-    let domain  = entry[1]
+  domains.forEach(function (domain, key) {
     let handler = getHandler(key, domain, type)
 
-    return handler === undefined ? handlers : handlers.concat({ key, domain, handler })
-  }, [])
+    if (handler !== undefined) {
+      handlers.push({ key, domain, handler })
+    }
+  })
+
+  return handlers
 }

@@ -22,12 +22,12 @@ export default class Microcosm extends Emitter {
   constructor ({ maxHistory = -Infinity } = {}) {
     super()
 
-    // for backwards compatibility
-    this.addStore = this.addDomain
-
     this.history = new Tree()
     this.maxHistory = maxHistory
-    this.domains = []
+    this.domains = new Map()
+
+    // for backwards compatibility
+    this.addStore = this.addDomain
 
     // cache domain registry methods for efficiency
     this.registry = {}
@@ -180,15 +180,15 @@ export default class Microcosm extends Emitter {
       config = { register: config }
     }
 
-    this.domains = this.domains.concat([[ key, config ]])
-
-    for (const domain of this.domains) {
-      const [key, config] = domain
-      if (key) {
-        this.domains[key] = config
+    if (process.env.NODE_ENV !== 'production') {
+      if (key && this.domains.has(key)) {
+        throw new Error(`You are attempting to add a "${ key }" domain, however a `
+                        + `domain of the same name already exists. The new domain will `
+                        + `overwrite the old one, which may cause strange behavior. `)
       }
     }
 
+    this.domains.set(key, config)
     this.rebase()
 
     return this

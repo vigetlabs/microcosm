@@ -77,6 +77,18 @@ test('can checkout a prior state', t => {
   t.is(app.state.number, 1)
 })
 
+test('warns of domain overwrites', t => {
+  const app = new Microcosm()
+  const domain1 = {}
+  const domain2 = {}
+
+  app.addDomain('foo', domain1)
+
+  t.throws(function() {
+    app.addDomain('foo', domain2)
+  }, Error)
+})
+
 test('can access actions via domains', t => {
   const app = new Microcosm()
   const domain = {
@@ -97,7 +109,7 @@ test('can access actions via domains', t => {
 
   app.addDomain('foo', domain)
 
-  app.push(app.domains.foo.actions.barMe)
+  app.push(app.domains.get('foo').actions.barMe)
 
   t.is(app.state.foo, 'bar')
 })
