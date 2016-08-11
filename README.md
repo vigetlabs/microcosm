@@ -108,7 +108,7 @@ that have occurred. During the `open` state, the action is in a state
 where the request has been opened however it is not complete. When the
 request finishes, the action spawned by `createPlanet` will move into
 a `done` state. Microcosm will then re-run through the list of actions
-documented in the journey to produce a new application state that
+documented in the journey to produce a new repo state that
 accounts for the completion of the request.
 
 Visit [the API documentation for actions](./docs/api/actions.md) to

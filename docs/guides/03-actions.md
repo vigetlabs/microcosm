@@ -5,7 +5,7 @@ invoked, an action will be created to represent the process of
 resolving it.
 
 When an action updates, Microcosm runs through all outstanding
-actions to determine the new application state. For example, if a
+actions to determine the new repo state. For example, if a
 Promise is returned from an action, Microcosm will wait for it to
 resolve. The value the Promise eventually returns will then be
 dispatched to stores.

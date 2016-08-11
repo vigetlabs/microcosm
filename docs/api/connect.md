@@ -36,7 +36,7 @@ var connection = connect()
 
 var RepoToJSON = connection(React.createClass({
   render() {
-    // this component will have access to the application
+    // this component will have access to the repo
     // via this.props.repo
     return { JSON.stringify(this.props.repo) }
   }
@@ -100,6 +100,6 @@ it ('[test description]', function() {
 
   let component = (<Component repo={ repo } />)
 
-  // Perform your test using the stub application
+  // Perform your test using the stub repo
 })
 ```

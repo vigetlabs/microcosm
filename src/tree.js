@@ -123,7 +123,7 @@ export default class Tree {
 
   /**
    * Reduce over toArray. This function is called by a Microcosm to
-   * determine the next application state, so it has been expanded
+   * determine the next repo state, so it has been expanded
    * from Array.prototype.reduce into a for loop
    *
    * @param {Function} reducer - The function invoked by each iteration of reduce

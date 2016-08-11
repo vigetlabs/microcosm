@@ -77,7 +77,7 @@ export default class Presenter extends Component {
   /**
    * Used by the presenter to calculate it's internal state. This function must return
    * an object who's keys will be assigned to state, and who's values are functions that
-   * are given the application state and can return a specific point in that state.
+   * are given the repo state and can return a specific point in that state.
    *
    * If none of the keys have changed, `this.updateState` will not set a new state.
    *

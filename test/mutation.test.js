@@ -1,7 +1,7 @@
 import test from 'ava'
 import Microcosm from '../src/microcosm'
 
-test.cb('writes to application state', t => {
+test.cb('writes to repo state', t => {
   const action = function() {}
   const repo = new Microcosm()
 

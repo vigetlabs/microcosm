@@ -26,7 +26,7 @@ test('injects an repo from context into the wrapped component', t => {
   t.is(component.find(Child).prop('repo'), repo)
 })
 
-test('ignores an application when it unmounts', t => {
+test('ignores an repo when it unmounts', t => {
   t.plan(1)
 
   const repo = new Microcosm()
@@ -38,7 +38,7 @@ test('ignores an application when it unmounts', t => {
   mount(<Child repo={ repo } />).unmount()
 })
 
-test('maps application state to props', t => {
+test('maps repo state to props', t => {
   const repo = new Microcosm()
 
   repo.replace({ name: 'Kurtz' })
@@ -54,7 +54,7 @@ test('maps application state to props', t => {
   t.is(component.text(), 'Colonel Kurtz')
 })
 
-test('sends new props to the component when an application changes', t => {
+test('sends new props to the component when an repo changes', t => {
   const repo = new Microcosm()
 
   repo.replace({ name: 'Kurtz' })

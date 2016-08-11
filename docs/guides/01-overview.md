@@ -92,7 +92,7 @@ Now a `SolarSystem` will always start with the planet Mercury.
 
 ## Actions - Signaling that state should change
 
-Actions provide an identity to the types of events that trigger changes to application state. Microcosm only expects that they are functions that return values.
+Actions provide an identity to the types of events that trigger changes to repo state. Microcosm only expects that they are functions that return values.
 
 Of course there is sophistication in _what_ they return. For example Microcosm will wait for Promises to resolve before doing anything with them. However this will be covered in a later guide specifically about actions.
 

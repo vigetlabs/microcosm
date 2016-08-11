@@ -76,7 +76,7 @@ export default class Microcosm extends Emitter {
    * management methods, like `rollforward` and `getInitialState` to
    * compute state. Assuming there are no side-effects in store
    * handlers, this is pure. Calling this method will not update
-   * application state.
+   * repo state.
    *
    * @private
    * @param {Object} state - The starting state of a Microcosm
@@ -118,7 +118,7 @@ export default class Microcosm extends Emitter {
 
   /**
    * Append an action to a microcosm's history. In a production
-   * application, this is typically reserved for testing. `append`
+   * repo, this is typically reserved for testing. `append`
    * will not execute an action, making it easier to test individual
    * action operations.
    *
@@ -158,9 +158,9 @@ export default class Microcosm extends Emitter {
   /**
    * Adds a store to the Microcosm instance. A store informs the
    * microcosm how to process various action types. If no key
-   * is given, the store will operate on all application state.
+   * is given, the store will operate on all repo state.
    *
-   * @param {String} key - The namespace within application state for the store.
+   * @param {String} key - The namespace within repo state for the store.
    * @param {Object|Function} config - Configuration options for the store
    * @return {Microcosm} self
    */
@@ -222,11 +222,11 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Serialize application state by asking every store how to
+   * Serialize repo state by asking every store how to
    * serialize the state they manage (via the serialize store
    * function).
    *
-   * @return {Object} The serialized version of application state.
+   * @return {Object} The serialized version of repo state.
    */
   serialize() {
     return this.dispatch(this.state, { type: lifecycle.willSerialize, payload: this.state })

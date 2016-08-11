@@ -10,11 +10,11 @@ Stores define the rules in which resolved actions are converted into
 new state. They are added to a Microcosm instance using `addStore`:
 
 ```javascript
-// Mount a store that operates on a specific key in application state.
+// Mount a store that operates on a specific key in repo state.
 // Any operations the store handles are recorded at `repo.state.key`:
 repo.addStore('key', Store)
 
-// Mount a store that operates on all application state, handlers will
+// Mount a store that operates on all repo state, handlers will
 // write directly to `repo.state` itself:
 repo.addStore(Store)
 ```

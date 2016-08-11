@@ -33,7 +33,7 @@ Resets state to the result of calling `getInitialState()`
 ### `replace(data)`
 
 Executes `deserialize` on the provided data and then merges it into
-the current application state.
+the current repo state.
 
 This function is great for bootstrapping data when rendering from the
 server. It will not blow away keys that haven't been provided.
@@ -58,7 +58,7 @@ repo.addStore('planets', planetsConfig)
 
 ### `serialize()`
 
-Returns an object that is the result of transforming application state
+Returns an object that is the result of transforming repo state
 according to the `serialize` method described by each store.
 
 ```javascript
@@ -69,7 +69,7 @@ repo.serialize() // => { planets: [...] }
 
 For each key in the provided `data` parameter, transform it using the
 `deserialize` method provided by the store managing that key. Then
-fold the deserialized data over the current application state.
+fold the deserialized data over the current repo state.
 
 ```javascript
 repo.deserialize(data) // => cleaned data

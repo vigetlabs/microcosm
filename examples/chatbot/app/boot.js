@@ -20,7 +20,7 @@ Debugger(repo)
 
 
 /**
- * When the application starts, render the user interface to the
+ * When the repo starts, render the user interface to the
  * provided DOM location.
  */
 DOM.render(<Chat repo={ repo } />, document.getElementById('app'))

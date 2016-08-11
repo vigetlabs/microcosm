@@ -7,7 +7,7 @@ import merge          from '../merge'
 /**
  * Used to associate a React component to an instance of
  * Microcosm. Additionally, it is used to listen for changes in
- * application state and intelligently propagate computed properties.
+ * repo state and intelligently propagate computed properties.
  *
  * @param {Function} computer A function that returns a list of computed properties.
  * @param {{pure:Boolean}} options An object of settings for the connection
