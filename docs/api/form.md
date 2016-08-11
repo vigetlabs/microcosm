@@ -52,6 +52,11 @@ class CountPresenter extends Presenter {
       count: state => state.count
     }
   }
+  register() {
+    return {
+      increaseCount: this.increaseCount
+    }
+  }
   increaseCount(repo, { amount }) {
     return repo.push(increment, amount)
   }

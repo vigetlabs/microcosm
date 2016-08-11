@@ -110,6 +110,13 @@ class CountPresenter extends Presenter {
       count: state => state.count
     }
   }
+
+  register() {
+    return {
+      increaseCount: this.increaseCount
+    }
+  },
+
   increaseCount(repo, { amount }) {
     return repo.push(increment, amount)
   }
@@ -123,7 +130,7 @@ DOM.render(<CountPresenter repo={ repo } />, document.getElementById('container'
 
 Whenever the form is submitted, an `increaseCount` intent will bubble
 up to the associated Presenter including the serialized parameters of
-the form. Since this Presenter implements `increaseCount`, it will
+the form. Since this Presenter's register method includes `increaseCount`, it will
 invoke the method with the associated parameters.
 
 If a Presenter does not implement an intent, it will bubble up to any
