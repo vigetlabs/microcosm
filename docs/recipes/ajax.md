@@ -14,17 +14,17 @@ resolve/reject:
 
 ```javascript
 // Run this code yourself at:
-// https://tonicdev.com/57ac614723722e17003526a7/57ac68df74054114008fbb19
-var Microcosm = require("microcosm")
+// https://tonicdev.com/57ac614723722e17003526a7/57acbf88a55ecf1200fa3763
+var Microcosm = require('microcosm')
 var request = require('superagent')
 
-var app = new Microcosm()
+var repo = new Microcosm()
 
 function getSite () {
   return request.get('http://code.viget.com/microcosm')
 }
 
-app.addStore('site', function () {
+repo.addStore('site', function () {
   return {
     [getSite.open]   : () => 'loading',
     [getSite.failed] : () => 'failed',
@@ -32,11 +32,11 @@ app.addStore('site', function () {
   }
 })
 
-app.on('change', function (state) {
+repo.on('change', function (state) {
   console.log(state.site) // loading, done
 })
 
-app.push(getSite)
+repo.push(getSite)
 ```
 
 ### How it works
@@ -66,18 +66,18 @@ like:
 ```
 
 Microcosm then enumerates through this list, using store handlers to
-calculate application state. When the action completes, it moves into
-a `done` state:
+calculate repo state. When the action completes, it moves into a
+`done` state:
 
 ```
 1. ajax (done)
 ```
 
 Again, Microcosm rolls forward through the history list, recalculating
-state for the application.
+state for the repo.
 
 Since the action is no longer in an `open` state, the
-resulting application state will be as though the loading store
+resulting repo state will be as though the loading store
 handler never fired. There's no cleanup.
 
 ## Tap into the lower-level action API
@@ -91,10 +91,12 @@ the lower level API for an action:
 
 ```javascript
 // Run this code yourself
-// https://tonicdev.com/57ac614723722e17003526a7/57ac7db6a55ecf1200fa1e5c
+//
+https://tonicdev.com/57ac614723722e17003526a7/57acbfab74054114008fda70
+var Microcosm = require('microcosm')
 var request = require('superagent')
 
-var app = new Microcosm()
+var repo = new Microcosm()
 
 function getSite () {
   return function (action) {
@@ -110,7 +112,7 @@ function getSite () {
   }
 }
 
-app.addStore('site', function () {
+repo.addStore('site', function () {
   return {
     [getSite.open]   : () => 'loading',
     [getSite.failed] : () => 'failed',
@@ -118,9 +120,9 @@ app.addStore('site', function () {
   }
 })
 
-app.on('change', function (state) {
+repo.on('change', function (state) {
   console.log(state.site)
 })
 
-app.push(getSite)
+repo.push(getSite)
 ```
