@@ -2,11 +2,11 @@
  * Tree Performance Benchmark
  */
 
-var Tree  = require('../src/tree').default
-var merge = require('../src/merge').default
+import Tree from '../src/tree'
+import merge from '../src/merge'
+import time from 'microtime'
 
-var time  = require('microtime')
-var SIZES = [
+const SIZES = [
   1000,
   10000,
   50000,
@@ -17,7 +17,7 @@ var SIZES = [
 
 console.log('\nConducting tree benchmark...\n')
 
-var results = SIZES.map(function (SIZE) {
+const results = SIZES.map(function (SIZE) {
   /**
    * Force garbage collection. This is exposed by invoking
    * node with --expose-gc. This allows us to record heap usage

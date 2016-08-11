@@ -5,7 +5,7 @@ all: javascript documentation package.json
 
 javascript: $(SCRIPTS)
 	@ echo "Compiling $(words $^) modules..."
-	@ $(BABEL) -q -s inline -d tmp $^
+	@ $(BABEL) -c -q -s inline -d tmp $^
 	@ rsync -uraq tmp/src/ dist/
 
 documentation: *.md docs

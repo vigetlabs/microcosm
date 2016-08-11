@@ -7,10 +7,11 @@
  * gut check of "are we fast yet?"
  */
 
-var Microcosm = require('../src/microcosm').default
-var time      = require('microtime')
-var SIZES     = [ 1000, 10000, 50000, 100000, 200000 ]
-var SAMPLES   = 5
+import Microcosm from '../src/microcosm'
+import time      from 'microtime'
+
+const SIZES   = [ 1000, 10000, 50000, 100000, 200000 ]
+const SAMPLES = 5
 
 console.log('\nConducting dispatch benchmark...\n')
 
