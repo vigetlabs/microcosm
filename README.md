@@ -137,7 +137,7 @@ with these circumstances:
 ```javascript
 function search (query) {
   // The "thunk" mode for action creators. See the ./docs/api/actions.md
-  function (action) {
+  return function (action) {
     action.open()
 
     var request = ajax.get('/search', query, function (error, body) {
