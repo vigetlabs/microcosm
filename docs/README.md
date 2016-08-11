@@ -12,6 +12,7 @@ start. Beyond that, check out [the example apps](../examples).
 ## Recipes
 
 1. [React Router](recipes/react-router.md)
+2. [AJAX](recipes/ajax.md)
 
 ## API
 
