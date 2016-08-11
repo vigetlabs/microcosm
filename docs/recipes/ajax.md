@@ -55,8 +55,7 @@ creator, it handles it in the following way:
 
 Microcosm's state management model enables easy clean up of loading
 states. Whenever the action moves from `open` to `done`, Microcosm
-re-executes all incomplete actions in the order they were
-pushed.
+re-executes all outstanding actions in the order they were pushed.
 
 To illustrate, when the action creator is first pushed into Microcosm,
 it inserts an action into Microcosm's historical ledger of all actions
