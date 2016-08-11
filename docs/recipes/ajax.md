@@ -7,10 +7,10 @@ There are two ways to manage asynchronous requests in Microcosm:
 
 ## Return a Promise
 
-Many AJAX libraries return Promises. In order to improve
-integration with these libraries, Microcosm provides default behaviors
-around Promises. Whenever an action creator returns a Promise, it will
-wait for that Promise to resolve/reject:
+Microcosm implements standard behaviors for Promise resolution;
+convenient for Promise based AJAX libraries. Whenever an action
+creator returns a Promise, it will wait for that Promise to
+resolve/reject:
 
 ```javascript
 // Run this code yourself at:
