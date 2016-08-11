@@ -6,6 +6,7 @@
   argument of the pushed action is forwarded to stores.
 - Properly display missing action reporting when dispatching an
   undefined action.
+- References to `app` are now `repo`
 
 ## 9.21.0
 
