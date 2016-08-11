@@ -3,9 +3,9 @@ import Microcosm from '../src/microcosm'
 
 test.cb('writes to application state', t => {
   const action = function() {}
-  const app = new Microcosm()
+  const repo = new Microcosm()
 
-  app.addStore(function() {
+  repo.addStore(function() {
     return {
       getInitialState() {
         return { test: false }
@@ -17,8 +17,8 @@ test.cb('writes to application state', t => {
     }
   })
 
-  app.push(action, true).onDone(() => {
-    t.is(app.state.test, true)
+  repo.push(action, true).onDone(() => {
+    t.is(repo.state.test, true)
     t.end()
   })
 })

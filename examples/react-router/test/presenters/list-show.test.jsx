@@ -5,7 +5,7 @@ import ListShow from '../../app/presenters/list-show'
 import {mount} from 'enzyme'
 
 test('creates a list item when sent the addItem intent', t => {
-  const presenter = mount(<ListShow app={ new Todos() } params={{ id: 2 } } />)
+  const presenter = mount(<ListShow repo={ new Todos() } params={{ id: 2 } } />)
 
   presenter.instance().send('addItem', { list: 2, name: 'Test' })
 
@@ -13,10 +13,10 @@ test('creates a list item when sent the addItem intent', t => {
 })
 
 test('removes a list item when sent the removeItem intent', t => {
-  const app = new Todos()
-  const presenter = mount(<ListShow app={ app } params={{ id: 2 } } />)
+  const repo = new Todos()
+  const presenter = mount(<ListShow repo={ repo } params={{ id: 2 } } />)
 
-  app.reset({ items: [{ id: 2, list: 1 }]})
+  repo.reset({ items: [{ id: 2, list: 1 }]})
 
   presenter.instance().send('removeItem', { id: 2 })
 

@@ -5,8 +5,8 @@ import { send }  from '../actions/messages'
 
 export default class ChatPresenter extends Presenter {
 
-  sendChat(app, { message }) {
-    return app.push(send, message)
+  sendChat(repo, { message }) {
+    return repo.push(send, message)
   }
 
   viewModel() {

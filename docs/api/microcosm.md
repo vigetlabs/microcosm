@@ -23,7 +23,7 @@ pure; calling this function will not update state.
 Resolves an action. Sends the result and any errors to a given error-first callback.
 
 ```javascript
-app.push(createPlanet, { name: 'Merkur' })
+repo.push(createPlanet, { name: 'Merkur' })
 ```
 
 ### `reset()`
@@ -39,7 +39,7 @@ This function is great for bootstrapping data when rendering from the
 server. It will not blow away keys that haven't been provided.
 
 ```javascript
-app.replace({
+repo.replace({
   planets: [{ name: 'Tatooine' }, { name: 'Dagobah' }]
 })
 ```
@@ -53,7 +53,7 @@ it will be provided the current state for that particular key.
 [See the documentation on stores](stores.md).
 
 ```javascript
-app.addStore('planets', planetsConfig)
+repo.addStore('planets', planetsConfig)
 ```
 
 ### `serialize()`
@@ -62,7 +62,7 @@ Returns an object that is the result of transforming application state
 according to the `serialize` method described by each store.
 
 ```javascript
-app.serialize() // => { planets: [...] }
+repo.serialize() // => { planets: [...] }
 ```
 
 ### `deserialize(data)`
@@ -72,7 +72,7 @@ For each key in the provided `data` parameter, transform it using the
 fold the deserialized data over the current application state.
 
 ```javascript
-app.deserialize(data) // => cleaned data
+repo.deserialize(data) // => cleaned data
 ```
 
 ### `toJSON()`
@@ -90,23 +90,23 @@ Change the current focal point of the history data structure used by
 Microcosm. This is useful for undo/redo, or for debugging purposes:
 
 ```javascript
-const red = app.push(changeColor, "red")
-const green = app.push(changeColor, "green")
-const blue = app.push(changeColor, "blue")
+const red = repo.push(changeColor, "red")
+const green = repo.push(changeColor, "green")
+const blue = repo.push(changeColor, "blue")
 
-console.log(app.state.color) // "blue"
+console.log(repo.state.color) // "blue"
 
 // Undo:
-app.checkout(blue.parent)
-console.log(app.state.color) // "green"
+repo.checkout(blue.parent)
+console.log(repo.state.color) // "green"
 
 // Redo:
-app.checkout(green.next)
-console.log(app.state.color) // "blue"
+repo.checkout(green.next)
+console.log(repo.state.color) // "blue"
 
 // Skip:
-app.checkout(red)
-console.log(app.state.color) // "red"
+repo.checkout(red)
+console.log(repo.state.color) // "red"
 ```
 
 The `maxHistory` option passed into a Microcosm dictates how far back
@@ -121,9 +121,9 @@ are:
 - `change`: The Microcosm instance updated state
 
 ```javascript
-const app = new Microcosm()
+const repo = new Microcosm()
 
-app.on('change', callback)
+repo.on('change', callback)
 ```
 
 ### `off(event, callback)`
@@ -132,5 +132,5 @@ Remove an event listener.
 
 ```javascript
 // Remove a callback
-app.off('change', callback)
+repo.off('change', callback)
 ```

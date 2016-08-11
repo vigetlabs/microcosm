@@ -2,22 +2,22 @@ import test from 'ava'
 import Microcosm from '../src/microcosm'
 
 test('returns state if there are no handlers', t => {
-  const app = new Microcosm()
-  const old = app.state
+  const repo = new Microcosm()
+  const old = repo.state
 
-  app.push(n => n)
+  repo.push(n => n)
 
-  t.is(app.state, old)
+  t.is(repo.state, old)
 })
 
 test('does not mutate base state on prior dispatches', t => {
-  const app = new Microcosm()
+  const repo = new Microcosm()
 
   function mutation() {
     return true
   }
 
-  app.addStore({
+  repo.addStore({
     getInitialState() {
       return {
         toggled: false
@@ -34,16 +34,16 @@ test('does not mutate base state on prior dispatches', t => {
     }
   })
 
-  app.push(mutation)
+  repo.push(mutation)
 
-  t.is(app.history.size(), 0)
-  t.is(app.state.toggled, true)
+  t.is(repo.history.size(), 0)
+  t.is(repo.state.toggled, true)
 
-  app.push(mutation)
-  t.is(app.history.size(), 0)
-  t.is(app.state.toggled, false)
+  repo.push(mutation)
+  t.is(repo.history.size(), 0)
+  t.is(repo.state.toggled, false)
 
-  app.push(mutation)
-  t.is(app.history.size(), 0)
-  t.is(app.state.toggled, true)
+  repo.push(mutation)
+  t.is(repo.history.size(), 0)
+  t.is(repo.state.toggled, true)
 })

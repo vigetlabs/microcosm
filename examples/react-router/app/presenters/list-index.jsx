@@ -14,12 +14,12 @@ class ListIndex extends Presenter {
     }
   }
 
-  addList(app, params) {
-    return app.push(addList, params)
+  addList(repo, params) {
+    return repo.push(addList, params)
   }
 
-  removeList(app, params) {
-    return app.push(removeList, params.id)
+  removeList(repo, params) {
+    return repo.push(removeList, params.id)
   }
 
   render() {

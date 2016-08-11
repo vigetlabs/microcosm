@@ -6,18 +6,18 @@ import { Component, PropTypes, Children } from 'react'
  * so that an instance of Microcosm can be made available.
  *
  * @example
- * const app = new Microcosm()
+ * const repo = new Microcosm()
  *
- * // <ChildComponent /> will receive `app` within its context.
+ * // <ChildComponent /> will receive `repo` within its context.
  * ReactDOM.mount((
- *   <Provider app={ app }>
+ *   <Provider repo={ repo }>
  *      <ChildComponent />
  *   </Provider>
- * ), document.getElementById('app'))
+ * ), document.getElementById('repo'))
  */
 export default class Provider extends Component {
   getChildContext() {
-    return { app: this.props.app }
+    return { repo: this.props.repo }
   }
 
   render() {
@@ -26,10 +26,10 @@ export default class Provider extends Component {
 }
 
 Provider.propTypes = {
-  app      : PropTypes.instanceOf(Microcosm).isRequired,
+  repo      : PropTypes.instanceOf(Microcosm).isRequired,
   children : PropTypes.element.isRequired
 }
 
 Provider.childContextTypes = {
-  app : PropTypes.instanceOf(Microcosm).isRequired
+  repo : PropTypes.instanceOf(Microcosm).isRequired
 }

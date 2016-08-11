@@ -8,40 +8,40 @@ test('handles nully compute functions', t => {
   const Child = () => (<p>Test</p>)
 
   const Nully = Connect(null)(Child)
-  mount(<Nully app={ new Microcosm() } />)
+  mount(<Nully repo={ new Microcosm() } />)
 
   const Undefined = Connect(undefined)(Child)
-  mount(<Undefined app={ new Microcosm() } />)
+  mount(<Undefined repo={ new Microcosm() } />)
 })
 
-test('injects an app from context into the wrapped component', t => {
-  const app    = new Microcosm()
+test('injects an repo from context into the wrapped component', t => {
+  const repo    = new Microcosm()
   const Child  = () => (<p>Test</p>)
   const Parent = Connect()(Child)
 
   const component = mount(<Parent />, {
-    context : { app }
+    context : { repo }
   })
 
-  t.is(component.find(Child).prop('app'), app)
+  t.is(component.find(Child).prop('repo'), repo)
 })
 
 test('ignores an application when it unmounts', t => {
   t.plan(1)
 
-  const app = new Microcosm()
+  const repo = new Microcosm()
 
-  app.off = () => t.pass()
+  repo.off = () => t.pass()
 
   const Child = Connect()(() => <p>MVP</p>)
 
-  mount(<Child app={ app } />).unmount()
+  mount(<Child repo={ repo } />).unmount()
 })
 
 test('maps application state to props', t => {
-  const app = new Microcosm()
+  const repo = new Microcosm()
 
-  app.replace({ name: 'Kurtz' })
+  repo.replace({ name: 'Kurtz' })
 
   const Namer = Connect(function(props) {
     return { name: state => props.prefix + ' ' + state.name }
@@ -49,15 +49,15 @@ test('maps application state to props', t => {
     return (<p>{ name }</p>)
   })
 
-  const component = mount(<Namer app={ app } prefix="Colonel" />)
+  const component = mount(<Namer repo={ repo } prefix="Colonel" />)
 
   t.is(component.text(), 'Colonel Kurtz')
 })
 
 test('sends new props to the component when an application changes', t => {
-  const app = new Microcosm()
+  const repo = new Microcosm()
 
-  app.replace({ name: 'Kurtz' })
+  repo.replace({ name: 'Kurtz' })
 
   const Namer = Connect(function(props) {
     return { name: state => props.prefix + ' ' + state.name }
@@ -65,18 +65,18 @@ test('sends new props to the component when an application changes', t => {
     return (<p>{ name }</p>)
   })
 
-  const parent = mount(<Namer app={ app } prefix="Colonel" />)
+  const parent = mount(<Namer repo={ repo } prefix="Colonel" />)
 
-  app.replace({ name: 'Hawk' })
+  repo.replace({ name: 'Hawk' })
 
   t.is(parent.text(), 'Colonel Hawk')
 })
 
 test('does not cause a re-render if mapped state values do not change', t => {
-  const app = new Microcosm()
+  const repo = new Microcosm()
   let renders = 0
 
-  app.replace({ name: 'Kurtz' })
+  repo.replace({ name: 'Kurtz' })
 
   const Namer = Connect(function() {
     return { name: state => state.name }
@@ -85,18 +85,18 @@ test('does not cause a re-render if mapped state values do not change', t => {
     return (<p>{ name }</p>)
   })
 
-  mount(<Namer app={ app } />)
+  mount(<Namer repo={ repo } />)
 
-  app.replace({ name: 'Kurtz', unrelated: true })
+  repo.replace({ name: 'Kurtz', unrelated: true })
 
   t.is(renders, 1)
 })
 
 test('does not cause a re-render if state is the same', t => {
-  const app = new Microcosm()
+  const repo = new Microcosm()
   let renders = 0
 
-  app.replace({ name: 'Kurtz' })
+  repo.replace({ name: 'Kurtz' })
 
   const Namer = Connect(function() {
     return { name: state => state.name }
@@ -105,18 +105,18 @@ test('does not cause a re-render if state is the same', t => {
     return (<p>{ name }</p>)
   })
 
-  mount(<Namer app={ app } />)
+  mount(<Namer repo={ repo } />)
 
-  app.replace({ name: 'Kurtz' })
+  repo.replace({ name: 'Kurtz' })
 
   t.is(renders, 1)
 })
 
 test('always re-renders impure connections', t => {
-  const app = new Microcosm()
+  const repo = new Microcosm()
   let renders = 0
 
-  app.replace({ name: 'Kurtz' })
+  repo.replace({ name: 'Kurtz' })
 
   const Namer = Connect(function() {
     return { name: state => state.name }
@@ -125,17 +125,17 @@ test('always re-renders impure connections', t => {
     return (<p>{ name }</p>)
   })
 
-  mount(<Namer app={ app } />)
+  mount(<Namer repo={ repo } />)
 
-  app.replace({ name: 'Kurtz', unrelated: true })
+  repo.replace({ name: 'Kurtz', unrelated: true })
 
   t.is(renders, 2)
 })
 
 test('recalculates mappings if the props are different', t => {
-  const app = new Microcosm()
+  const repo = new Microcosm()
 
-  app.replace({ name: 'Kurtz' })
+  repo.replace({ name: 'Kurtz' })
 
   const Namer = Connect(function(props) {
     return { name: state => props.prefix + ' ' + state.name }
@@ -148,7 +148,7 @@ test('recalculates mappings if the props are different', t => {
       return { prefix: this.props.prefix }
     },
     render() {
-      return <Namer app={ app } prefix={ this.state.prefix } />
+      return <Namer repo={ repo } prefix={ this.state.prefix } />
     }
   })
 
@@ -160,10 +160,10 @@ test('recalculates mappings if the props are different', t => {
 })
 
 test('does not recalculate mappings if the props are the same', t => {
-  const app = new Microcosm()
+  const repo = new Microcosm()
   let remappings = 0
 
-  app.replace({ name: 'Kurtz' })
+  repo.replace({ name: 'Kurtz' })
 
   const Namer = Connect(function(props) {
     remappings += 1
@@ -177,7 +177,7 @@ test('does not recalculate mappings if the props are the same', t => {
       return { prefix: this.props.prefix }
     },
     render() {
-      return <Namer app={ app } prefix={ this.state.prefix } />
+      return <Namer repo={ repo } prefix={ this.state.prefix } />
     }
   })
 
@@ -188,10 +188,10 @@ test('does not recalculate mappings if the props are the same', t => {
 })
 
 test('always recalculates mappings when impure', t => {
-  const app = new Microcosm()
+  const repo = new Microcosm()
   let remappings = 0
 
-  app.replace({ name: 'Kurtz' })
+  repo.replace({ name: 'Kurtz' })
 
   const Namer = Connect(function(props) {
     remappings += 1
@@ -205,7 +205,7 @@ test('always recalculates mappings when impure', t => {
       return { prefix: this.props.prefix }
     },
     render() {
-      return <Namer app={ app } prefix={ this.state.prefix } />
+      return <Namer repo={ repo } prefix={ this.state.prefix } />
     }
   })
 
@@ -217,7 +217,7 @@ test('always recalculates mappings when impure', t => {
 })
 
 test('does not waste rendering on nested children', t => {
-  const app = new Microcosm()
+  const repo = new Microcosm()
   let renders = 0
 
   const Child = Connect(function () {
@@ -230,12 +230,12 @@ test('does not waste rendering on nested children', t => {
   const Parent = Connect(function () {
     return { name: state => state.name }
   })(function Parent (props) {
-    return <Child app={ props.app } />
+    return <Child repo={ props.repo } />
   })
 
-  mount(<Parent app={ app } />)
+  mount(<Parent repo={ repo } />)
 
-  app.replace({ name: 'Billy Booster' })
+  repo.replace({ name: 'Billy Booster' })
 
   t.is(renders, 2, 'Child should have only rendered twice. Instead rendered ' + renders + ' times')
 })

@@ -14,7 +14,7 @@ within a Microcosm instance so that it can be tracked within its
 internal state:
 
 ```javascript
-const action = app.push(createPlanet, { name: 'Venus' })
+const action = repo.push(createPlanet, { name: 'Venus' })
 
 action.onDone(function () {
   // All done!
@@ -24,7 +24,7 @@ action.onDone(function () {
 ## Writing Action Creators
 
 There are three ways to write action creators in Microcosm, all of
-which relate to the value returned from functions passed into `app.push()`.
+which relate to the value returned from functions passed into `repo.push()`.
 
 ### Return a primitive value
 
@@ -35,7 +35,7 @@ function addPlanet (props) {
   return props
 }
 
-app.push(addPlanet, { name: 'Saturn' })
+repo.push(addPlanet, { name: 'Saturn' })
 ```
 
 ### Return a promise
@@ -53,7 +53,7 @@ function readPlanets () {
   return ajax.get('/planets')
 }
 
-app.push(readPlanets)
+repo.push(readPlanets)
 ```
 
 ### Return a function
@@ -84,7 +84,7 @@ function readPlanets () {
   }
 }
 
-app.push(readPlanets)
+repo.push(readPlanets)
 ```
 
 ## Dispatching to Stores
@@ -115,7 +115,7 @@ const SolarSystem = {
 
 ## How this works
 
-Whenever `app.push()` is invoked, Microcosm creates a new `Action`
+Whenever `repo.push()` is invoked, Microcosm creates a new `Action`
 object, appending it to a ledger of all actions. As the state of an
 action changes, the associated microcosm will run through all
 outstanding actions to determine the next state.
@@ -124,7 +124,7 @@ By default, Microcosm will only hold on to unresolved actions. This
 can be extended by setting the `maxHistory` setting when creating a Microcosm:
 
 ```javascript
-const app = new Microcosm({ maxHistory: 100 })
+const repo = new Microcosm({ maxHistory: 100 })
 ```
 
 This is useful for debugging purposes, or to implement undo/redo
@@ -159,7 +159,7 @@ function wait () {
   }
 }
 
-app.push(wait).onUpdate(function (payload) {
+repo.push(wait).onUpdate(function (payload) {
   console.log(payload) // 25...50...75
 })
 ```
@@ -174,10 +174,10 @@ with `async/await`, or working with testing tools like `ava` or
 `mocha`.
 
 ```javascript
-const result = await app.push(promiseAction)
+const result = await repo.push(promiseAction)
 
 // or
-app.push(promiseAction).then(success, failure)
+repo.push(promiseAction).then(success, failure)
 ```
 
 ### `open([payload])`

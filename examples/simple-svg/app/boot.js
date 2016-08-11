@@ -5,17 +5,17 @@ import Circle      from './stores/circle'
 import Logo        from './views/logo'
 import { animate } from './actions/animate'
 
-const app = new Microcosm()
+const repo = new Microcosm()
 const el  = document.getElementById('app')
 
-app.addStore('circle', Circle)
+repo.addStore('circle', Circle)
 
-app.on('change', function (state) {
+repo.on('change', function (state) {
   DOM.render(<Logo { ...state } />, el)
 })
 
 function loop ({ time = Date.now() } = {}) {
-  app.push(animate, time, 1000).onDone(loop)
+  repo.push(animate, time, 1000).onDone(loop)
 }
 
 loop()

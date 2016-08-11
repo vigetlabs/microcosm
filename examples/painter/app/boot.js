@@ -4,8 +4,8 @@ import Debugger  from 'microcosm-debugger'
 import Painter   from './painter'
 import Workspace from './presenters/workspace'
 
-const app = new Painter({ maxHistory: Infinity })
+const repo = new Painter({ maxHistory: Infinity })
 
-Debugger(app)
+Debugger(repo)
 
-DOM.render(<Workspace app={ app } />, document.querySelector('#app'))
+DOM.render(<Workspace repo={ repo } />, document.querySelector('#app'))

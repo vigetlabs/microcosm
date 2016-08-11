@@ -19,7 +19,7 @@ components, see the API documentation for `connect`.
 
 ## Props
 
-- `app`: An instance of Microcosm (or a class that extends from it).
+- `repo`: An instance of Microcosm (or a class that extends from it).
 - `children`: A single child component. The root of your component tree.
 
 ## Examples
@@ -27,10 +27,10 @@ components, see the API documentation for `connect`.
 ### Standard React Rendering
 
 ```javascript
-var app = new Microcosm()
+var repo = new Microcosm()
 
 ReactDOM.render((
-    <Provider app={ app }>
+    <Provider repo={ repo }>
         <ChildComponent />
     </Provider>
 ), element)
@@ -39,10 +39,10 @@ ReactDOM.render((
 ### React Router (as of 1.0)
 
 ```javascript
-var app = new Microcosm()
+var repo = new Microcosm()
 
 ReactDOM.render((
-  <Provider app={ app }>
+  <Provider repo={ repo }>
     <Router history={ history }>...</Router>
   </Provider>
 ), element)

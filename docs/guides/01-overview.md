@@ -39,10 +39,10 @@ class SolarSystem extends Microcosm {
   }
 }
 
-const app = new SolarSystem()
+const repo = new SolarSystem()
 ```
 
-Each `SolarSystem` instance as its own state. In the example above, it can be accessed from `app.state`.
+Each `SolarSystem` instance as its own state. In the example above, it can be accessed from `repo.state`.
 
 ## Stores - Transformers of State
 
@@ -62,7 +62,7 @@ class SolarSystem extends Microcosm {
   }
 }
 
-const app = new SolarSystem()
+const repo = new SolarSystem()
 ```
 
 There are a couple of special method stores can implement to describe state at certain points in the Microcosm lifecycle. One of those methods is `getInitialState`, which tells the Microcosm what value the store will start with:
@@ -83,9 +83,9 @@ class SolarSystem extends Microcosm {
   }
 }
 
-const app = new SolarSystem()
+const repo = new SolarSystem()
 
-console.log(app.state.planets) // [{ name: 'Mercury' }]
+console.log(repo.state.planets) // [{ name: 'Mercury' }]
 ```
 
 Now a `SolarSystem` will always start with the planet Mercury.
@@ -129,14 +129,14 @@ class SolarSystem extends Microcosm {
   }
 }
 
-const app = new SolarSystem()
+const repo = new SolarSystem()
 
-app.push(Actions.addPlanet, { name: 'Venus' })
+repo.push(Actions.addPlanet, { name: 'Venus' })
 
-console.log(app.state.planets) // [{ name: 'Mercury' }, { name: 'Venus' }]
+console.log(repo.state.planets) // [{ name: 'Mercury' }, { name: 'Venus' }]
 ```
 
-When the `SolarSystem` sees `addPlanet` was pushed, it will invoke it within the context of the individual app and send the result the `Planets` store.
+When the `SolarSystem` sees `addPlanet` was pushed, it will invoke it within the context of the individual repo and send the result the `Planets` store.
 
 The critical component in `Planets` is `register`: a function that returns a map associating actions with methods on the Store.
 

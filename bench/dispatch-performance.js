@@ -23,7 +23,7 @@ var results = SIZES.map(function (SIZE) {
    */
   global.gc()
 
-  var app = new Microcosm({ maxHistory: Infinity })
+  var repo = new Microcosm({ maxHistory: Infinity })
 
   var action = function test () {}
   action.toString = function () { return 'test' }
@@ -40,11 +40,11 @@ var results = SIZES.map(function (SIZE) {
    * applications. Otherwise, efficiencies are obtained enumerating over
    * very few keys. This is never the case in real-world applications.
    */
-  app.addStore('one',   Store)
-  app.addStore('two',   Store)
-  app.addStore('three', Store)
-  app.addStore('four',  Store)
-  app.addStore('five',  Store)
+  repo.addStore('one',   Store)
+  repo.addStore('two',   Store)
+  repo.addStore('three', Store)
+  repo.addStore('four',  Store)
+  repo.addStore('five',  Store)
 
   /**
    * Append a given number of actions into history. We use this method
@@ -54,7 +54,7 @@ var results = SIZES.map(function (SIZE) {
    */
   var startMemory = process.memoryUsage().heapUsed
   for (var i = 0; i < SIZE; i++) {
-    app.history.append(action).close(true)
+    repo.history.append(action).close(true)
   }
   var endMemory = process.memoryUsage().heapUsed
 
@@ -68,7 +68,7 @@ var results = SIZES.map(function (SIZE) {
   var average = 0
   for (var q = 0; q < SAMPLES; q++) {
     var then = time.now()
-    app.rollforward()
+    repo.rollforward()
     average += (time.now() - then) / 1000
   }
 

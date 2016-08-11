@@ -12,7 +12,7 @@ class Workspace extends Presenter {
   }
 
   paint(x, y) {
-    return this.app.push(paint, x, y)
+    return this.repo.push(paint, x, y)
   }
 
   render() {

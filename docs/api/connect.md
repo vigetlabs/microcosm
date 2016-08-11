@@ -26,25 +26,25 @@ this project.
 ### Simple (no computed properties)
 
 When no arguments are passed to `connect`, it will simply make the
-instance of Microcosm provided to `<Provider />` available as an `app`
+instance of Microcosm provided to `<Provider />` available as an `repo`
 prop.
 
 ```javascript
-var app = new Microcosm()
+var repo = new Microcosm()
 
 var connection = connect()
 
-var AppToJSON = connection(React.createClass({
+var RepoToJSON = connection(React.createClass({
   render() {
     // this component will have access to the application
-    // via this.props.app
-    return { JSON.stringify(this.props.app) }
+    // via this.props.repo
+    return { JSON.stringify(this.props.repo) }
   }
 }))
 
 ReactDOM.render((
-  <Provider app={ app }>
-    <AppToJSON />
+  <Provider repo={ repo }>
+    <RepoToJSON />
   </Provider>
 ), element)
 ```
@@ -52,13 +52,13 @@ ReactDOM.render((
 ### Computed Properties
 
 When a function is provided to `connect`, in addition to providing an
-`app` property to a wrapped component, it will take a returned set of
-key/value pairs and compute them based upon app state. If these
+`repo` property to a wrapped component, it will take a returned set of
+key/value pairs and compute them based upon repo state. If these
 properties do not change, they will not be sent to the wrapped
 component.
 
 ```javascript
-var app = new Microcosm()
+var repo = new Microcosm()
 
 var connection = connect(function (props) {
   return {
@@ -68,7 +68,7 @@ var connection = connect(function (props) {
 
 var Planets = connection(React.createClass({
   render() {
-    var { app, planets } = this.props
+    var { repo, planets } = this.props
 
     return (
       <ul>
@@ -79,7 +79,7 @@ var Planets = connection(React.createClass({
 }))
 
 ReactDOM.render((
-  <Provider app={ app }>
+  <Provider repo={ repo }>
     <Planets />
   </Provider>
 ), element)
@@ -88,17 +88,17 @@ ReactDOM.render((
 ## Testing
 
 Optionally, connected React components do not require a `<Provider />`
-wrapper. By passing an `app` prop into a connected component, it will
-draw the app instance from `props` rather than `context`. This makes
+wrapper. By passing an `repo` prop into a connected component, it will
+draw the repo instance from `props` rather than `context`. This makes
 it much easier to set up tests:
 
 ```javascript
 it ('[test description]', function() {
-  let app = new Microcosm()
+  let repo = new Microcosm()
 
-  app.replace(fixtureData)
+  repo.replace(fixtureData)
 
-  let component = (<Component app={ app } />)
+  let component = (<Component repo={ repo } />)
 
   // Perform your test using the stub application
 })

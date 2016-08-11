@@ -64,7 +64,7 @@ const Store = {
 }
 
 // let's assume the ajax request fails
-app.push(getPlanets, 2)
+repo.push(getPlanets, 2)
 ```
 
 ## Pending state

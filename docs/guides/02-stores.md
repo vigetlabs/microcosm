@@ -18,7 +18,7 @@ const Planets = {
   }
 }
 
-app.addStore('planets', Planet)
+repo.addStore('planets', Planet)
 ```
 
 Returning an array sets up future expectations. This prevents the need to conduct type checks and another annoying conditional logic before making updates.
@@ -46,7 +46,7 @@ const Planets = {
   }
 }
 
-app.push(addPlanet, { name: 'earth' }) // this will add Earth
+repo.push(addPlanet, { name: 'earth' }) // this will add Earth
 ```
 
 Microcosm assigns a unique `toString()` method to each action. When using the ES6 computed key syntax, the result is a function that translates actions into handlers.
@@ -114,7 +114,7 @@ const Planets = {
 
 ## Importing data
 
-Data can be injected into a Microcosm using `app.replace`. When this occurs, `deserialize` will be called on all Stores to allow data to be processed before it enters the application:
+Data can be injected into a Microcosm using `repo.replace`. When this occurs, `deserialize` will be called on all Stores to allow data to be processed before it enters the application:
 
 ```javascript
 const Planets = {

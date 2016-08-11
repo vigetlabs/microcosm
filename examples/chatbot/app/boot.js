@@ -5,22 +5,22 @@ import Microcosm   from '../../../src/microcosm'
 import Messages    from './stores/messages'
 import Chat        from './presenters/chat'
 
-const app = new Microcosm({ maxHistory: Infinity })
+const repo = new Microcosm({ maxHistory: Infinity })
 
 /**
  * Setup stores
  */
-app.addStore('messages', Messages)
+repo.addStore('messages', Messages)
 
 
 /**
  * Enable the time-travel debugger.
  */
-Debugger(app)
+Debugger(repo)
 
 
 /**
  * When the application starts, render the user interface to the
  * provided DOM location.
  */
-DOM.render(<Chat app={ app } />, document.getElementById('app'))
+DOM.render(<Chat repo={ repo } />, document.getElementById('app'))

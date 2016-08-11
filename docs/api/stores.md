@@ -11,12 +11,12 @@ new state. They are added to a Microcosm instance using `addStore`:
 
 ```javascript
 // Mount a store that operates on a specific key in application state.
-// Any operations the store handles are recorded at `app.state.key`:
-app.addStore('key', Store)
+// Any operations the store handles are recorded at `repo.state.key`:
+repo.addStore('key', Store)
 
 // Mount a store that operates on all application state, handlers will
-// write directly to `app.state` itself:
-app.addStore(Store)
+// write directly to `repo.state` itself:
+repo.addStore(Store)
 ```
 
 Stores do not enforce any particular structure. However specific
@@ -125,5 +125,5 @@ const Planets = {
   }
 }
 
-app.push(Actions.add, { name: 'earth' }) // this will add Earth
+repo.push(Actions.add, { name: 'earth' }) // this will add Earth
 ```

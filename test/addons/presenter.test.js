@@ -21,7 +21,7 @@ test('receives intent events', t => {
   t.plan(1)
 
   class MyPresenter extends Presenter {
-    test(app, params) {
+    test(repo, params) {
       t.is(params, true)
     }
     render() {
@@ -29,7 +29,7 @@ test('receives intent events', t => {
     }
   }
 
-  mount(<MyPresenter app={ new Microcosm() } />).find(View).simulate('click')
+  mount(<MyPresenter repo={ new Microcosm() } />).find(View).simulate('click')
 })
 
 test('throws if no presenter implements an intent', t => {
@@ -40,7 +40,7 @@ test('throws if no presenter implements an intent', t => {
   }
 
   t.throws(function() {
-    mount(<MyPresenter app={ new Microcosm() } />).find(View).simulate('click')
+    mount(<MyPresenter repo={ new Microcosm() } />).find(View).simulate('click')
   }, /implements intent/)
 })
 
@@ -56,10 +56,10 @@ test('builds the view model into state', t => {
     }
   }
 
-  const app = new Microcosm()
-  const presenter = mount(<MyPresenter app={ app } />)
+  const repo = new Microcosm()
+  const presenter = mount(<MyPresenter repo={ repo } />)
 
-  app.replace({ color: 'red' })
+  repo.replace({ color: 'red' })
 
   t.is(presenter.state('color'), 'red')
 })
@@ -77,7 +77,7 @@ test('throws if a presenters view model contains a non-function', t => {
   }
 
   t.throws(function() {
-    mount(<MyPresenter app={ new Microcosm() } />)
+    mount(<MyPresenter repo={ new Microcosm() } />)
   }, /Expected 'color' to be a function/)
 })
 
@@ -91,7 +91,7 @@ test('send bubbles up to parent presenters', t => {
   }
 
   class Parent extends Presenter {
-    test(app, params) {
+    test(repo, params) {
       t.is(params, true)
     }
     render() {
@@ -99,5 +99,5 @@ test('send bubbles up to parent presenters', t => {
     }
   }
 
-  mount(<Parent app={ new Microcosm() } />).find(View).simulate('click')
+  mount(<Parent repo={ new Microcosm() } />).find(View).simulate('click')
 })

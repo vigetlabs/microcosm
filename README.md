@@ -79,7 +79,7 @@ function createPlanet (params) {
   return ajax.post('/planets', params)
 }
 
-app.addStore('planets', {
+repo.addStore('planets', {
   getInitialState() {
     return { records: [], loading: false }
   },
@@ -100,7 +100,7 @@ app.addStore('planets', {
 
 
 // Creates a action of type "createPlanet" that dispatches to stores
-app.push(createPlanet, params)
+repo.push(createPlanet, params)
 ```
 
 When an action is pushed, it is placed into a journal of all actions
@@ -116,12 +116,12 @@ read more.
 
 ### Actions are first-class entities
 
-Every action spawned by `app.push()` returns an `Action` to represent
+Every action spawned by `repo.push()` returns an `Action` to represent
 its resolution. This object provides a consistent API, no matter what
 value is returned from an action creator:
 
 ```javascript
-const action = app.push(myAction)
+const action = repo.push(myAction)
 
 action.onUpdate(handleProgress)
 action.onDone(handleSuccess)
@@ -153,12 +153,12 @@ function search (query) {
   }
 }
 
-const page1 = app.push(search, { term: 'cats', page: 1 })
+const page1 = repo.push(search, { term: 'cats', page: 1 })
 
 // (User visits page 2 before page 1 loads)
 page1.cancel()
 
-const page2 = app.push(search, { term: 'cats', page: 2 })
+const page2 = repo.push(search, { term: 'cats', page: 2 })
 ```
 
 Cancelled actions are put into a `cancelled` state, which can be

@@ -12,7 +12,7 @@ export default class Presenter extends Component {
   constructor (props, context) {
     super(props, context)
 
-    this.app = props.app || context.app
+    this.repo = props.repo || context.repo
     this.state = {}
 
     this.updatePropMap(props)
@@ -20,7 +20,7 @@ export default class Presenter extends Component {
 
   getChildContext () {
     return {
-      app  : this.app,
+      repo  : this.repo,
       send : this.send.bind(this)
     }
   }
@@ -30,10 +30,10 @@ export default class Presenter extends Component {
    * render method). This hook provides a way to "prepare" work before
    * rendering to the page.
    *
-   * @param {Microcosm} app - The presenter's Microcosm instance
+   * @param {Microcosm} repo - The presenter's Microcosm instance
    * @param {Object} props - The presenter's props
    */
-  presenterWillMount (app, props) {
+  presenterWillMount (repo, props) {
     // NOOP
   }
 
@@ -42,26 +42,26 @@ export default class Presenter extends Component {
    * perform new work if a presenter is given new props. For example: if a
    * route parameter changes.
    *
-   * @param {Microcosm} app - The presenter's Microcosm instance
+   * @param {Microcosm} repo - The presenter's Microcosm instance
    * @param {Object} props - The new props sent into the presenter
    */
-  presenterWillReceiveProps (app, props) {
+  presenterWillReceiveProps (repo, props) {
     // NOOP
   }
 
   componentWillMount () {
-    this.presenterWillMount(this.app, this.props)
+    this.presenterWillMount(this.repo, this.props)
     this.updateState()
   }
 
   componentDidMount () {
     this._listener = this.updateState.bind(this)
 
-    this.app.on('change', this._listener, true)
+    this.repo.on('change', this._listener, true)
   }
 
   componentWillUnmount () {
-    this.app.off('change', this._listener, true)
+    this.repo.off('change', this._listener, true)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -69,7 +69,7 @@ export default class Presenter extends Component {
       this.updatePropMap(nextProps)
     }
 
-    this.presenterWillReceiveProps(this.app, nextProps)
+    this.presenterWillReceiveProps(this.repo, nextProps)
 
     this.updateState()
   }
@@ -115,7 +115,7 @@ export default class Presenter extends Component {
         throw new TypeError(`Expected '${ key }' to be a function, instead got ${ typeof this.propMap[key]}`)
       }
 
-      nextState[key] = this.propMap[key].call(this, this.app.state)
+      nextState[key] = this.propMap[key].call(this, this.repo.state)
     }
 
     return nextState
@@ -136,7 +136,7 @@ export default class Presenter extends Component {
    */
   send (intent, ...params) {
     if (this[intent]) {
-      return this[intent].apply(this, [ this.app, ...params ])
+      return this[intent].apply(this, [ this.repo, ...params ])
     }
     else if (this.context.send) {
       return this.context.send(intent, ...params)
@@ -156,15 +156,15 @@ export default class Presenter extends Component {
 }
 
 Presenter.propTypes = {
-  app : PropTypes.instanceOf(Microcosm)
+  repo : PropTypes.instanceOf(Microcosm)
 }
 
 Presenter.contextTypes = {
-  app  : PropTypes.instanceOf(Microcosm),
+  repo  : PropTypes.instanceOf(Microcosm),
   send : PropTypes.func
 }
 
 Presenter.childContextTypes = {
-  app  : PropTypes.instanceOf(Microcosm),
+  repo  : PropTypes.instanceOf(Microcosm),
   send : PropTypes.func
 }

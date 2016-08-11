@@ -22,7 +22,7 @@ export default function connect (computer, options) {
       }
 
       render() {
-        const props = merge({ app: this.app }, this.props, this.state)
+        const props = merge({ repo: this.repo }, this.props, this.state)
 
         return React.createElement(Component, props)
       }

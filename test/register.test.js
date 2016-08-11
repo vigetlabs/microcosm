@@ -7,9 +7,9 @@ const action = a => a
 test('sends actions in the context of the store', t => {
   t.plan(1)
 
-  const app = new Microcosm()
+  const repo = new Microcosm()
 
-  app.addStore('test', {
+  repo.addStore('test', {
     test: true,
 
     register() {
@@ -21,29 +21,29 @@ test('sends actions in the context of the store', t => {
     }
   })
 
-  app.push(action)
+  repo.push(action)
 })
 
 test('returns the same state if a handler is not provided', t => {
   t.plan(1)
 
-  const app = new Microcosm()
+  const repo = new Microcosm()
 
-  app.addStore('test', {
+  repo.addStore('test', {
     getInitialState() {
       return 'test'
     }
   })
 
-  app.push(action).onDone(function() {
-    t.is(app.state.test, 'test')
+  repo.push(action).onDone(function() {
+    t.is(repo.state.test, 'test')
   })
 })
 
 test('allows lifecycle methods as registered actions', t => {
-  const app = new Microcosm()
+  const repo = new Microcosm()
 
-  app.addStore('test', {
+  repo.addStore('test', {
     register() {
       return {
         [lifecycle.willStart]: () => 'test'
@@ -51,5 +51,5 @@ test('allows lifecycle methods as registered actions', t => {
     }
   })
 
-  t.is(app.state.test, 'test')
+  t.is(repo.state.test, 'test')
 })

@@ -14,10 +14,10 @@ import routes    from './routes'
 
 import { Router, browserHistory } from 'react-router'
 
-const app = new Microcosm()
+const repo = new Microcosm()
 
 DOM.render((
-  <Provider app={ app }>
+  <Provider repo={ repo }>
     <Router history={ browserHistory } routes={ routes } />
   </Provider>
 ), document.getElementById('entry-point'))
@@ -35,7 +35,7 @@ const connection = Connect(function (props) {
   }
 })
 
-const Planets = connection(function ({ app, planets }) {
+const Planets = connection(function ({ repo, planets }) {
   return (
     <ul>
       { planets.map(planet => (<li>{ planet.name }</li>)) }

@@ -14,12 +14,12 @@ class ListShow extends Presenter {
     }
   }
 
-  addItem(app, params) {
-    return app.push(addItem, params)
+  addItem(repo, params) {
+    return repo.push(addItem, params)
   }
 
-  removeItem(app, params) {
-    return app.push(removeItem, params.id)
+  removeItem(repo, params) {
+    return repo.push(removeItem, params.id)
   }
 
   render() {

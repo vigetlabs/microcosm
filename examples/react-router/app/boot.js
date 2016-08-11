@@ -7,14 +7,14 @@ import routes    from './routes'
 
 import { Router, browserHistory } from 'react-router'
 
-const app = new Todos({ maxHistory: Infinity })
+const repo = new Todos({ maxHistory: Infinity })
 
 // Install the debugger
-Debugger(app)
+Debugger(repo)
 
 // Render
 DOM.render((
-  <Provider app={ app }>
+  <Provider repo={ repo }>
     <Router history={ browserHistory } routes={ routes } />
   </Provider>
 ), document.getElementById('app'))

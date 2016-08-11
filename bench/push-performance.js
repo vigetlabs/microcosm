@@ -17,7 +17,7 @@ const SIZES = [
 console.log('\nConducting push benchmark...\n')
 
 var results = SIZES.map(function (SIZE) {
-  var app = new Microcosm()
+  var repo = new Microcosm()
 
   var action = function test () {}
   action.toString = function () { return 'test' }
@@ -34,11 +34,11 @@ var results = SIZES.map(function (SIZE) {
    * applications. Otherwise, efficiencies are obtained enumerating over
    * very few keys. This is never the case in real-world applications.
    */
-  app.addStore('one',   Store)
-  app.addStore('two',   Store)
-  app.addStore('three', Store)
-  app.addStore('four',  Store)
-  app.addStore('five',  Store)
+  repo.addStore('one',   Store)
+  repo.addStore('two',   Store)
+  repo.addStore('three', Store)
+  repo.addStore('four',  Store)
+  repo.addStore('five',  Store)
 
   var then = time.now()
 
@@ -50,7 +50,7 @@ var results = SIZES.map(function (SIZE) {
    */
   var startMemory = process.memoryUsage().heapUsed
   for (var i = 0; i < SIZE; i++) {
-    app.push(action)
+    repo.push(action)
   }
   var endMemory = process.memoryUsage().heapUsed
 
