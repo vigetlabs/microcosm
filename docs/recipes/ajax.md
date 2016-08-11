@@ -41,10 +41,10 @@ app.push(getSite)
 
 ### How it works
 
-Microcosm will detect that a Promise was returned from the action
-creator and handle it in the following way:
+When Microcosm detects a Promise returned from an action
+creator, it handles it in the following way:
 
-1. Mark the action as open. This gives store handlers a way to
+1. Mark the action as `open`. This gives store handlers a way to
    subscribe to a loading state.
 2. On resolution, mark the action as `done` and update its payload to
    that of the resolved Promise.
