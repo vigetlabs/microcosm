@@ -84,18 +84,18 @@ submission, this function is given the associated form HTML element.
 An event callback executed immediately after the form submits and the
 intent is broadcasted.
 
-### onSuccess(payload, form)
+### onDone(payload, form)
 
 After broadcasting, if the Presenter handler returns a Microcosm
 action, this callback will execute when the action resolves
 successfully.
 
-### onFailure(error, form)
+### onError(error, form)
 
 After broadcasting, if the Presenter handler returns a Microcosm
 action, this callback will execute when the action fails.
 
-### onLoading(payload, form)
+### onUpdate(payload, form)
 
 After broadcasting, if the Presenter handler returns a Microcosm
 action, this callback will execute when the action emits a progress

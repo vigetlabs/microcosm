@@ -4,12 +4,12 @@ import Form from '../../src/addons/form'
 import Action from '../../src/action'
 import {mount} from 'enzyme'
 
-test('executes onSuccess when that action completes', t => {
+test('executes onDone when that action completes', t => {
   t.plan(1)
 
   const action = new Action(n => n)
 
-  const form = mount(<Form intent="test" onSuccess={ () => t.pass() } />, {
+  const form = mount(<Form intent="test" onDone={ () => t.pass() } />, {
     context: {
       send: () => action
     }
@@ -20,12 +20,12 @@ test('executes onSuccess when that action completes', t => {
   action.close()
 })
 
-test('executes onFailure when that action completes', t => {
+test('executes onError when that action completes', t => {
   t.plan(1)
 
   const action = new Action(n => n)
 
-  const form = mount(<Form intent="test" onFailure={ () => t.pass() } />, {
+  const form = mount(<Form intent="test" onError={ () => t.pass() } />, {
     context: {
       send: () => action
     }
@@ -36,12 +36,12 @@ test('executes onFailure when that action completes', t => {
   action.reject()
 })
 
-test('executes onLoading when that action sends an update', t => {
+test('executes onUpdate when that action sends an update', t => {
   t.plan(1)
 
   const action = new Action(n => n)
 
-  const form = mount(<Form intent="test" onLoading={ () => t.pass() } />, {
+  const form = mount(<Form intent="test" onUpdate={ () => t.pass() } />, {
     context: {
       send: () => action
     }
@@ -65,8 +65,8 @@ const shouldNotCall = function (t, event, expected) {
   }).simulate('submit')
 }
 
-test('does not execute onSuccess if not given an action', shouldNotCall, 'onSuccess')
+test('does not execute onDone if not given an action', shouldNotCall, 'onDone')
 
-test('does not execute onFailure if not given an action', shouldNotCall, 'onFailure')
+test('does not execute onError if not given an action', shouldNotCall, 'onError')
 
-test('does not execute onLoading if not given an action', shouldNotCall, 'onLoading')
+test('does not execute onUpdate if not given an action', shouldNotCall, 'onUpdate')
