@@ -5,14 +5,20 @@ import { send }  from '../actions/messages'
 
 export default class ChatPresenter extends Presenter {
 
-  sendChat(repo, { message }) {
-    return repo.push(send, message)
-  }
-
   viewModel() {
     return {
       messages : state => state.messages
     }
+  }
+
+  register() {
+    return {
+      sendChat : this.sendChat
+    }
+  }
+
+  sendChat(repo, { message }) {
+    return repo.push(send, message)
   }
 
   render() {

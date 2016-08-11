@@ -21,8 +21,12 @@ test('receives intent events', t => {
   t.plan(1)
 
   class MyPresenter extends Presenter {
-    test(repo, params) {
-      t.is(params, true)
+    register() {
+      return {
+        test(repo, params) {
+          t.is(params, true)
+        }
+      }
     }
     render() {
       return <View />
@@ -91,8 +95,12 @@ test('send bubbles up to parent presenters', t => {
   }
 
   class Parent extends Presenter {
-    test(repo, params) {
-      t.is(params, true)
+    register() {
+      return {
+        test(repo, params) {
+          t.is(params, true)
+        }
+      }
     }
     render() {
       return <Child />

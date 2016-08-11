@@ -121,6 +121,10 @@ export default class Presenter extends Component {
     return nextState
   }
 
+  register() {
+    // NOOP
+  }
+
   /**
    * Provides a way for views to send messages back to the presenter
    * in a way that does not require passing callbacks down through the
@@ -135,8 +139,10 @@ export default class Presenter extends Component {
    * @param {...any} params - Arguments to invoke the named method with
    */
   send (intent, ...params) {
-    if (this[intent]) {
-      return this[intent].apply(this, [ this.repo, ...params ])
+    var registry = this.register()
+
+    if (registry && registry[intent]) {
+      return registry[intent].apply(this, [ this.repo, ...params ])
     }
     else if (this.context.send) {
       return this.context.send(intent, ...params)
