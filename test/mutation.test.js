@@ -5,7 +5,7 @@ test.cb('writes to application state', t => {
   const action = function() {}
   const app = new Microcosm()
 
-  app.addStore(function() {
+  app.addDomain(function() {
     return {
       getInitialState() {
         return { test: false }

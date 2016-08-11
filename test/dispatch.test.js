@@ -17,7 +17,7 @@ test('does not mutate base state on prior dispatches', t => {
     return true
   }
 
-  app.addStore({
+  app.addDomain({
     getInitialState() {
       return {
         toggled: false

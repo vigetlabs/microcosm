@@ -1,10 +1,10 @@
 import test from 'ava'
 import Microcosm from '../src/microcosm'
 
-test('stores can be functions', t => {
+test('domains can be functions', t => {
   const app = new Microcosm()
 
-  app.addStore('key', function() {
+  app.addDomain('key', function() {
     return {
       getInitialState: () => true
     }
@@ -13,10 +13,10 @@ test('stores can be functions', t => {
   t.is(app.state.key, true)
 })
 
-test('stores can be objects with lifecycle methods', t => {
+test('domains can be objects with lifecycle methods', t => {
   const app = new Microcosm()
 
-  app.addStore('key', {
+  app.addDomain('key', {
     getInitialState: () => true
   })
 
@@ -26,16 +26,16 @@ test('stores can be objects with lifecycle methods', t => {
 test('throws if a registry contains an undefined key', t => {
   const app = new Microcosm()
 
-  // This will throw when added to a store because it will dispatch
+  // This will throw when added to a domain because it will dispatch
   // "getInitialState"
-  const badStore = function() {
+  const badDomain = function() {
     return {
       [undefined]: n => n
     }
   }
 
   t.throws(function() {
-    app.addStore('test', badStore)
+    app.addDomain('test', badDomain)
   }, /\"undefined\" attribute within register/)
 })
 
@@ -43,7 +43,7 @@ test('throws if a register handler is undefined', t => {
   const app = new Microcosm()
   const action = n => n
 
-  app.addStore('key', function() {
+  app.addDomain('key', function() {
     return {
       [action]: undefined
     }
@@ -51,5 +51,5 @@ test('throws if a register handler is undefined', t => {
 
   t.throws(function() {
     app.push(action)
-  }, /Check the register method for this store/)
+  }, /Check the register method for this domain/)
 })

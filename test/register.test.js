@@ -4,12 +4,12 @@ import lifecycle from '../src/lifecycle'
 
 const action = a => a
 
-test('sends actions in the context of the store', t => {
+test('sends actions in the context of the domain', t => {
   t.plan(1)
 
   const app = new Microcosm()
 
-  app.addStore('test', {
+  app.addDomain('test', {
     test: true,
 
     register() {
@@ -29,7 +29,7 @@ test('returns the same state if a handler is not provided', t => {
 
   const app = new Microcosm()
 
-  app.addStore('test', {
+  app.addDomain('test', {
     getInitialState() {
       return 'test'
     }
@@ -43,7 +43,7 @@ test('returns the same state if a handler is not provided', t => {
 test('allows lifecycle methods as registered actions', t => {
   const app = new Microcosm()
 
-  app.addStore('test', {
+  app.addDomain('test', {
     register() {
       return {
         [lifecycle.willStart]: () => 'test'
