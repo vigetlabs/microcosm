@@ -36,12 +36,12 @@ test('executes onFailure when that action completes', t => {
   action.reject()
 })
 
-test('executes onProgress when that action sends an update', t => {
+test('executes onLoading when that action sends an update', t => {
   t.plan(1)
 
   const action = new Action(n => n)
 
-  const form = mount(<Form intent="test" onProgress={ () => t.pass() } />, {
+  const form = mount(<Form intent="test" onLoading={ () => t.pass() } />, {
     context: {
       send: () => action
     }
@@ -53,7 +53,7 @@ test('executes onProgress when that action sends an update', t => {
 })
 
 const shouldNotCall = function (t, event, expected) {
-  const element = React.createElement(Form, { 
+  const element = React.createElement(Form, {
     intent: 'test',
     [event]: () => t.fail()
   })
@@ -69,4 +69,4 @@ test('does not execute onSuccess if not given an action', shouldNotCall, 'onSucc
 
 test('does not execute onFailure if not given an action', shouldNotCall, 'onFailure')
 
-test('does not execute onProgress if not given an action', shouldNotCall, 'onProgress')
+test('does not execute onLoading if not given an action', shouldNotCall, 'onLoading')

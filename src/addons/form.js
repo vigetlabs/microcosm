@@ -22,7 +22,7 @@ const Form = React.createClass({
       serializer : form => serialize(form, { hash: true, empty: true }),
       onSubmit   : () => {},
       onSuccess  : () => {},
-      onProgress : () => {},
+      onLoading  : () => {},
       onFailure  : () => {}
     }
   },
@@ -34,7 +34,7 @@ const Form = React.createClass({
     delete props.intent
     delete props.serializer
     delete props.onSuccess
-    delete props.onProgress
+    delete props.onLoading
     delete props.onFailure
 
     return React.createElement('form', props)
@@ -49,7 +49,7 @@ const Form = React.createClass({
 
     if (action && action instanceof Action) {
       action.onDone(payload => this.props.onSuccess(payload, form))
-            .onUpdate(payload => this.props.onProgress(payload, form))
+            .onUpdate(payload => this.props.onLoading(payload, form))
             .onError(error  => this.props.onFailure(error, form))
     }
 
