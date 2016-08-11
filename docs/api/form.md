@@ -75,8 +75,9 @@ Form inputs are serialized to JSON upon submission using
 
 ### intent
 
-A string value to broadcast out upon submission. This should
-coordinate with a method implemented on a Presenter.
+A string value to send to Presenters. If a Presenter is registered to
+that string via its `register()` method, it will execute the
+associated callback.
 
 ### serializer
 
