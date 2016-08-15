@@ -1,4 +1,4 @@
-import { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 import Microcosm from '../microcosm'
 import shallowEqual from './connect/shallow-equal'
 
@@ -20,7 +20,7 @@ export default class Presenter extends Component {
 
   getChildContext () {
     return {
-      repo  : this.repo,
+      repo : this.repo,
       send : this.send.bind(this)
     }
   }
@@ -111,11 +111,9 @@ export default class Presenter extends Component {
     const nextState = {}
 
     for (let key in this.propMap) {
-      if (typeof this.propMap[key] !== 'function') {
-        throw new TypeError(`Expected '${ key }' to be a function, instead got ${ typeof this.propMap[key]}`)
-      }
+      const entry = this.propMap[key]
 
-      nextState[key] = this.propMap[key].call(this, this.repo.state)
+      nextState[key] = typeof entry === 'function' ? entry.call(this, this.repo.state) : entry
     }
 
     return nextState
@@ -162,15 +160,15 @@ export default class Presenter extends Component {
 }
 
 Presenter.propTypes = {
-  repo : PropTypes.instanceOf(Microcosm)
+  repo : React.PropTypes.instanceOf(Microcosm)
 }
 
 Presenter.contextTypes = {
-  repo  : PropTypes.instanceOf(Microcosm),
-  send : PropTypes.func
+  repo : React.PropTypes.instanceOf(Microcosm),
+  send : React.PropTypes.func
 }
 
 Presenter.childContextTypes = {
-  repo  : PropTypes.instanceOf(Microcosm),
-  send : PropTypes.func
+  repo : React.PropTypes.instanceOf(Microcosm),
+  send : React.PropTypes.func
 }

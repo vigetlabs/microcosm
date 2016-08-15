@@ -1,5 +1,5 @@
 import Microcosm from '../microcosm'
-import { Component, PropTypes, Children } from 'react'
+import React, { Component, Children } from 'react'
 
 /**
  * Sets up the required context for a React component tree
@@ -26,10 +26,10 @@ export default class Provider extends Component {
 }
 
 Provider.propTypes = {
-  repo      : PropTypes.instanceOf(Microcosm).isRequired,
-  children : PropTypes.element.isRequired
+  repo     : React.PropTypes.instanceOf(Microcosm).isRequired,
+  children : React.PropTypes.element.isRequired
 }
 
 Provider.childContextTypes = {
-  repo : PropTypes.instanceOf(Microcosm).isRequired
+  repo : React.PropTypes.instanceOf(Microcosm).isRequired
 }

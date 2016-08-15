@@ -68,21 +68,21 @@ test('builds the view model into state', t => {
   t.is(presenter.state('color'), 'red')
 })
 
-test('throws if a presenters view model contains a non-function', t => {
+test('handles non-function view model bindings', t => {
   class MyPresenter extends Presenter {
-    viewModel() {
+    viewModel({ name }) {
       return {
-        color: 'red'
+        upper: name.toUpperCase()
       }
     }
     render() {
-      return <p>{ this.state.color }</p>
+      return <p>{this.state.upper}</p>
     }
   }
 
-  t.throws(function() {
-    mount(<MyPresenter repo={ new Microcosm() } />)
-  }, /Expected 'color' to be a function/)
+  var presenter = mount(<MyPresenter name="phil" repo={new Microcosm()} />)
+
+  t.is(presenter.text(), 'PHIL')
 })
 
 test('send bubbles up to parent presenters', t => {

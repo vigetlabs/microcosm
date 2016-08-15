@@ -13,12 +13,8 @@ export default class ChatPresenter extends Presenter {
 
   register() {
     return {
-      sendChat : this.sendChat
+      sendChat : (repo, data) => repo.push(send, data)
     }
-  }
-
-  sendChat(repo, { message }) {
-    return repo.push(send, message)
   }
 
   render() {
