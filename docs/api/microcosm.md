@@ -12,6 +12,19 @@ as [React](https://facebook.github.io/react/)).
 
 ## API
 
+### `setup()`
+
+Called whenever a Microcosm is instantiated. This provides a general
+purpose hook for adding stores and other setup behavior.
+
+```javscript
+class SolarSystem extends Microcosm {
+  setup() {
+    this.addStore('planets', Planets)
+  }
+}
+```
+
 ### `getInitialState()`
 
 Generates the starting state for a Microcosm instance. This is the

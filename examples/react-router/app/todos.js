@@ -4,9 +4,7 @@ import Lists     from './stores/lists'
 
 export default class Todos extends Microcosm {
 
-  constructor(options) {
-    super(options)
-
+  setup() {
     // 1. Lists
     this.addStore('lists', Lists)
 
