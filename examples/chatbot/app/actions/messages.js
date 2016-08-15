@@ -1,4 +1,4 @@
-export function send (message) {
+export function send ({ message }) {
   var request = new XMLHttpRequest()
 
   return function (action) {
