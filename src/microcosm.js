@@ -40,7 +40,7 @@ export default class Microcosm extends Emitter {
     // Standard store reduction behaviors
     this.addStore(MetaStore)
 
-    // Microcosm is now ready. Call the initialize method
+    // Microcosm is now ready. Call the setup lifecycle method
     this.setup()
   }
 
