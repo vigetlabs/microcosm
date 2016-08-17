@@ -1,8 +1,7 @@
-import React          from 'react'
-import Presenter      from './presenter'
-import hoistStatics   from 'hoist-non-react-statics'
-import getDisplayName from './connect/get-display-name'
-import merge          from '../merge'
+import React        from 'react'
+import Presenter    from './presenter'
+import hoistStatics from 'hoist-non-react-statics'
+import merge        from '../merge'
 
 /**
  * Used to associate a React component to an instance of
@@ -29,7 +28,7 @@ export default function connect (computer, options) {
     }
 
     Connect.defaultProps     = options
-    Connect.displayName      = `Connect(${getDisplayName(Component)})`
+    Connect.displayName      = `Connect(${Component.displayName || Component.name || 'Component'})`
     Connect.WrappedComponent = Component
 
     return hoistStatics(Connect, Component)
