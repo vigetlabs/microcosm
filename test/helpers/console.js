@@ -20,7 +20,7 @@ export default {
 
   count(key) {
     if (key in messages === false) {
-      throw new Error(`console.${key} is not tracked. Please add it to "${ __filename}"`)
+      throw new Error(`console.${key} is not tracked. Please add it to "${ __filename }."`)
     }
 
     return messages[key].length
