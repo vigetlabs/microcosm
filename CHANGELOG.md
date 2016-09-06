@@ -1,6 +1,14 @@
 # Changelog
 
-## Edge (not released)
+## 10.0.0-beta4
+
+- Presenters (and Connect) now except non-function values as computed properties
+- Presenters expose intents via a `register()` method (similarly to Stores)
+- Removed faulty missing action error (added in beta3). Reduced some errors to
+  warnings.
+- Improved efficiency of some internal state tree operations  
+
+## 10.0.0-beta3
 
 - Actions can now be simple strings. In these cases, the first
   argument of the pushed action is forwarded to stores.
