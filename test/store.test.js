@@ -1,5 +1,6 @@
 import test from 'ava'
 import Microcosm from '../src/microcosm'
+import console from './helpers/console'
 
 test('stores can be functions', t => {
   const repo = new Microcosm()
@@ -23,25 +24,11 @@ test('stores can be objects with lifecycle methods', t => {
   t.is(repo.state.key, true)
 })
 
-test('throws if a registry contains an undefined key', t => {
-  const repo = new Microcosm()
-
-  // This will throw when added to a store because it will dispatch
-  // "getInitialState"
-  const badStore = function() {
-    return {
-      [undefined]: n => n
-    }
-  }
-
-  t.throws(function() {
-    repo.addStore('test', badStore)
-  }, /\"undefined\" attribute within register/)
-})
-
-test('throws if a register handler is undefined', t => {
+test('warns if a register handler is undefined', t => {
   const repo = new Microcosm()
   const action = n => n
+
+  console.record()
 
   repo.addStore('key', function() {
     return {
@@ -49,7 +36,9 @@ test('throws if a register handler is undefined', t => {
     }
   })
 
-  t.throws(function() {
-    repo.push(action)
-  }, /Check the register method for this store/)
+  repo.push(action)
+
+  t.is(console.count('warn'), 1)
+
+  console.restore()
 })

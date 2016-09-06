@@ -13,17 +13,9 @@ function getHandler (key, store, type) {
     const registrations = store.register()
 
     if (process.env.NODE_ENV !== 'production') {
-      if ('undefined' in registrations) {
-        throw new Error(`When dispatching ${ format(type) } to the ${ key } store, `
-                        + `we encountered an "undefined" attribute within register(). `
-                        + `This usually happens when an action is imported `
-                        + `from the wrong namespace, or by referencing an invalid `
-                        + `action state.`)
-      }
-
       if (type in registrations && registrations[type] === undefined) {
-        throw new Error(`The handler for "${ format(type) }" within a store for "${ key }" `
-                        + `is undefined. Check the register method for this store.`)
+        console.warn('The handler for "%s" within a store for "%s" is undefined. ' +
+                     'Check the register method for this store.', format(type), key)
       }
     }
 
