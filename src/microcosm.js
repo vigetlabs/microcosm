@@ -119,9 +119,9 @@ export default class Microcosm extends Emitter {
    * @return {Microcosm} self
    */
   rollforward () {
-    this.history.prune((action, size) => this.clean(action, size))
+    this.history.prune(this.clean, this)
 
-    this.state = this.history.reduce((state, action) => this.dispatch(state, action), this.cache)
+    this.state = this.history.reduce(this.dispatch, this.cache, this)
 
     this._emit('change', this.state)
 

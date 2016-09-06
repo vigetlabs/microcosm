@@ -84,11 +84,11 @@ export default class Tree {
    * @param {Function} scope - Scope to invoke `shouldRemove`
    * @return {Tree} self
    */
-  prune (shouldRemove) {
+  prune (shouldRemove, scope) {
     let root = this.root
     let size = this.size()
 
-    while (size >= 1 && shouldRemove(root, size)) {
+    while (size >= 1 && shouldRemove.call(scope, root, size)) {
       root = root.next
       size = size - 1
     }
@@ -128,13 +128,14 @@ export default class Tree {
    *
    * @param {Function} reducer - The function invoked by each iteration of reduce
    * @param {Any} state - The initial state of the reduction
+   * @param {Any} scope - Scope of the invoked reducer
    * @return {Any} The result of reducing over state
    */
-  reduce (reducer, state) {
+  reduce (reducer, state, scope) {
     const items = this.toArray()
 
     for (let i = 0, len = items.length; i < len; i++) {
-      state = reducer(state, items[i], i, items)
+      state = reducer.call(scope, state, items[i], i, items)
     }
 
     return state
