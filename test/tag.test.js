@@ -12,3 +12,10 @@ test('assigns a default name', t => {
 test('can have an override name', t => {
   t.is(tag(function(){}, 'test').toString(), 'test')
 })
+
+test('is unique', t => {
+  let a = tag(function(){}).toString()
+  let b = tag(function(){}).toString()
+
+  t.not(a, b)
+})
