@@ -28,10 +28,12 @@ var results = SIZES.map(function (SIZE) {
   var action = function test () {}
   action.toString = function () { return 'test' }
 
-  var Store = function() {
-    return {
-      getInitialState: () => 0,
-      test: (n) => n + 1
+  var Store = {
+    getInitialState: () => 0,
+    register() {
+      return {
+        test: (n) => n + 1
+      }
     }
   }
 
