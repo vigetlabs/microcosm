@@ -4,8 +4,6 @@
  * behavior. It can also be extended.
  */
 
-import update from './update'
-
 const EMPTY = {}
 
 export default class Store {
