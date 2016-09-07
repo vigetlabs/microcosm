@@ -1,5 +1,5 @@
 import test from 'ava'
-import shallowEqual from '../../src/addons/presenter/shallow-equal'
+import shallowEqual from '../src/shallow-equal'
 
 test('returns true when given the exact same object', t => {
   const sample = {}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Microcosm from '../microcosm'
-import shallowEqual from './presenter/shallow-equal'
+import shallowEqual from '../shallow-equal'
 
 /**
  * A general component abstraction for high-responsibility React
