@@ -9,7 +9,7 @@ function format (string) {
 function getHandler (key, store, type) {
   let handler = store[type]
 
-  if (handler === undefined && store.register) {
+  if (handler === undefined) {
     const registrations = store.register()
 
     if (process.env.NODE_ENV !== 'production') {

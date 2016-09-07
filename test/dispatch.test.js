@@ -1,15 +1,6 @@
 import test from 'ava'
 import Microcosm from '../src/microcosm'
 
-test('returns state if there are no handlers', t => {
-  const repo = new Microcosm()
-  const old = repo.state
-
-  repo.push(n => n)
-
-  t.is(repo.state, old)
-})
-
 test('does not mutate base state on prior dispatches', t => {
   const repo = new Microcosm()
 

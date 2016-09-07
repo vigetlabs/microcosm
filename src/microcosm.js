@@ -1,9 +1,11 @@
 import Emitter          from './emitter'
 import MetaStore        from './stores/meta'
 import Tree             from './tree'
+import Store            from './store'
 import lifecycle        from './lifecycle'
 import getStoreHandlers from './getStoreHandlers'
 import merge            from './merge'
+import shallowEqual     from './shallow-equal'
 import update           from './update'
 
 /**
@@ -19,22 +21,34 @@ export default class Microcosm extends Emitter {
   /**
    * @param {{maxHistory: Number}} options - Instantiation options.
    */
-  constructor ({ maxHistory = -Infinity } = {}) {
+  constructor ({ maxHistory = -Infinity, pure = false } = {}) {
     super()
 
     this.history = new Tree()
+    this.pure = pure
     this.maxHistory = maxHistory
     this.stores = []
 
     // cache store registry methods for efficiency
     this.registry = {}
 
-    // cache represents the result of dispatching all complete
-    // actions.
-    this.cache = {}
-
-    // state represents the result of dispatching all outstanding
-    // actions over cache
+    /**
+     * State is captured in three phases. Each stage solves a different problem:
+     *
+     * 1. archive  A cache of completed actions. Since actions will never change,
+     *             writing them to an archive allows the actions to be disposed,
+     *             improving dispatch efficiency.
+     * 2. staged   The "private" state, before writing for public consumption.
+     *             Store may not operate on primitive (like ImmutableJS), this
+     *             allows a store to work with complex data types while still
+     *             exposing a primitive public state
+     * 3. state    Public state. The `willCommit` lifecycle method allows a
+     *             store to transform private state before it changes. This
+     *             is useful for turning something like Immutable.Map() or
+     *             a linked-list into a primitive object or array.
+     */
+    this.archive = {}
+    this.staged = {}
     this.state = {}
 
     // Standard store reduction behaviors
@@ -64,20 +78,20 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Microcosm maintains a cache of "merged" actions. When an action completes,
+   * Microcosm maintains an archive of "merged" actions. When an action completes,
    * it checks the maxHistory property to decide if it should prune the action
-   * and dispatch it into the cache.
+   * and dispatch it into the archive.
    *
    * @private
    * @param {Action} action target action to "clean"
    * @param {Number} size the depth of the tree
-   * @return {Boolean} Was the action merged into the state cache?
+   * @return {Boolean} Was the action merged into the archive?
    */
   clean (action, size) {
     const shouldMerge = size > this.maxHistory && action.is('disposable')
 
     if (shouldMerge) {
-      this.cache = this.dispatch(this.cache, action)
+      this.archive = this.dispatch(this.archive, action)
     }
 
     return shouldMerge
@@ -105,7 +119,10 @@ export default class Microcosm extends Emitter {
     for (var i = 0, len = handlers.length; i < len; i++) {
       const { key, store, handler } = handlers[i]
 
-      state = update.set(state, key, handler.call(store, update.get(state, key), payload))
+      const last = update.get(state, key)
+      const next = handler.call(store, last, payload)
+
+      state = update.set(state, key, store.set(last, next))
     }
 
     return state
@@ -121,11 +138,28 @@ export default class Microcosm extends Emitter {
   rollforward () {
     this.history.prune(this.clean, this)
 
-    this.state = this.history.reduce(this.dispatch, this.cache, this)
+    const staged = this.history.reduce(this.dispatch, this.archive, this)
 
-    this._emit('change', this.state)
+    const next = this.stores.reduce((memo, store) => {
+      return this.commit(memo, store[0], store[1])
+    }, merge({}, staged))
+
+    this.staged = staged
+
+    if (!this.pure || shallowEqual(this.state, next) === false) {
+      this.state = next
+      this._emit('change', next)
+    }
 
     return this
+  }
+
+  commit(staged, key, store) {
+    const last  = update.get(this.staged, key)
+    const next  = update.get(staged, key)
+    const value = store.shouldCommit(next, last) ? store.commit(next) : update.get(this.state, key)
+
+    return update.set(staged, key, value)
   }
 
   /**
@@ -185,11 +219,18 @@ export default class Microcosm extends Emitter {
       key = null
     }
 
+    let store = null
+
     if (typeof config === 'function') {
-      config = { register: config }
+      store = new config()
+    } else {
+      store = merge(new Store(), config)
     }
 
-    this.stores = this.stores.concat([[ key, config ]])
+    this.stores = this.stores.concat([[ key, store ]])
+
+    // Setup is called once, whenever to store is added to the microcosm
+    store.setup()
 
     this.rebase()
 
@@ -253,10 +294,10 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Recalculate initial state by back-filling the cache object with
-   * the result of getInitialState(). This is used when a store is
-   * added to Microcosm to ensure the initial state of the store is
-   * respected. Emits a "change" event.
+   * Recalculate initial state by back-filling the archive with the
+   * result of getInitialState(). This is used when a store is added
+   * to Microcosm to ensure the initial state of the store is respected
+   * Emits a "change" event.
    *
    * @private
    * @return {Microcosm} self
@@ -264,7 +305,7 @@ export default class Microcosm extends Emitter {
   rebase () {
     this.registry = {}
 
-    this.cache = merge(this.getInitialState(), this.cache)
+    this.archive = merge(this.getInitialState(), this.archive)
 
     this.rollforward()
 

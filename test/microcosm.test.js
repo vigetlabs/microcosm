@@ -4,10 +4,8 @@ import Microcosm from '../src/microcosm'
 test('deserializes when replace is invoked', t => {
   const repo = new Microcosm()
 
-  repo.addStore('dummy', function() {
-    return {
-      deserialize: state => state.toUpperCase()
-    }
+  repo.addStore('dummy', {
+    deserialize: state => state.toUpperCase()
   })
 
   repo.replace({ dummy: 'different' })
@@ -62,9 +60,11 @@ test('can checkout a prior state', t => {
   const repo = new Microcosm({ maxHistory: Infinity })
   const action = n => n
 
-  repo.addStore('number', function() {
-    return {
-      [action]: (a, b) => b
+  repo.addStore('number', {
+    register() {
+      return {
+        [action]: (a, b) => b
+      }
     }
   })
 
@@ -75,4 +75,48 @@ test('can checkout a prior state', t => {
   repo.checkout(repo.history.root)
 
   t.is(repo.state.number, 1)
+})
+
+test('if pure, it will not emit a change if state is shallowly equal', t => {
+  const repo = new Microcosm({ pure: true })
+  const identity = n => n
+
+  t.plan(1)
+
+  repo.addStore('test', {
+    getInitialState() {
+      return 0
+    },
+    register() {
+      return { [identity] : (state, next) => next }
+    }
+  })
+
+  const first = repo.state
+
+  repo.push(identity, 0).onDone(function() {
+    t.is(first, repo.state)
+  })
+})
+
+test('if pure, it will emit a change if state is not shallowly equal', t => {
+  const repo = new Microcosm({ pure: true })
+  const identity = n => n
+
+  t.plan(1)
+
+  repo.addStore('test', {
+    getInitialState() {
+      return 0
+    },
+    register() {
+      return { [identity] : (state, next) => next }
+    }
+  })
+
+  const first = repo.state
+
+  repo.push(identity, 1).onDone(function() {
+    t.not(repo.state, first)
+  })
 })

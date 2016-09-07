@@ -5,14 +5,16 @@ test.cb('writes to repo state', t => {
   const action = function() {}
   const repo = new Microcosm()
 
-  repo.addStore(function() {
-    return {
-      getInitialState() {
-        return { test: false }
-      },
-      [action](state) {
-        state.test = true
-        return state
+  repo.addStore({
+    getInitialState() {
+      return { test: false }
+    },
+    register() {
+      return {
+        [action](state) {
+          state.test = true
+          return state
+        }
       }
     }
   })
