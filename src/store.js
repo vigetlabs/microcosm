@@ -41,15 +41,15 @@ export default class Store {
 
   /**
   * This is the actual operation used to write state to a Microcosm.
-  * Normally this isn't overridden, but it is useful for writing custom
-  * store behavior.
+  * Normally this isn't overridden, but it is useful for staging custom
+  * store behavior. This is currently a private API.
   *
+  * @private
   * @param {object} state - The current application state
-  * @param {string} key - the key path to assign
   * @param {any} value - The value to assign to a key
   * @return {object} newState - The next state for the Microcosm instance
   */
-  set(last, next) {
+  stage(last, next) {
     return next
   }
 

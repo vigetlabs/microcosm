@@ -122,7 +122,7 @@ export default class Microcosm extends Emitter {
       const last = update.get(state, key)
       const next = handler.call(store, last, payload)
 
-      state = update.set(state, key, store.set(last, next))
+      state = update.set(state, key, store.stage(last, next))
     }
 
     return state

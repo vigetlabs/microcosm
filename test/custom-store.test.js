@@ -11,7 +11,7 @@ class TestDomain extends Store {
     return ['reset']
   }
 
-  set(state, [operation, path, params]) {
+  stage(state, [operation, path, params]) {
     switch (operation) {
       case 'reset':
         return {}

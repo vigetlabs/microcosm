@@ -127,3 +127,44 @@ const Planets = {
 
 repo.push(Actions.add, { name: 'earth' }) // this will add Earth
 ```
+
+### `commit(next)`
+
+How should a store actually write to `repo.state`? This is useful for serializing a complex data structure, such as a `Map`, into form easier for public consumption:
+
+```javascript
+import Immutable from 'immutable'
+
+const Planets = {
+  getInitialState() {
+    return Immutable.Map()
+  },
+
+  commit(next) {
+    return Array.from(next.values())
+  }
+}
+```
+
+### `shouldCommit(next, last)`
+
+Based on the next and last state, should `commit` be called? Useful for
+custom change management behavior.
+
+```javascript
+import Immutable from 'immutable'
+
+const Planets = {
+  getInitialState() {
+    return Immutable.Map()
+  },
+
+  shouldCommit(next, last) {
+    return Immutable.is(next, last)
+  }
+
+  commit(next) {
+    return Array.from(next.values())
+  }
+}
+```
