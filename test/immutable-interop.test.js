@@ -1,5 +1,5 @@
 import test from 'ava'
-import Store from '../src/Store'
+import Store from '../src/store'
 import Microcosm from '../src/microcosm'
 
 const create  = n => n
