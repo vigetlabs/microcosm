@@ -141,25 +141,24 @@ will raise.
 
 ## API
 
-### `presenterWillMount(repo, props)`
+### `setup(repo, props)`
 
-Similar to componentWillMount. Called before the presenter mounts.
+Called when a presenter is created, before it has calculated a view model.
+Useful for fetching data and other prep-work.
 
-### `presenterDidMount(repo, props)`
+### `update(repo, props)`
 
-Similar to componentDidMount. Called when a presenter mounts.
+Called when a presenter gets new props. This is useful for secondary
+data fetching and other work that must happen when a Presenter receives
+new information.
 
-### `presenterWillReceiveProps(repo, props)`
+If pure (by default) this will only get called if properties are shallowly
+different.
 
-Similar to componentWillReceiveProps. Called when a presenter receives new props.
+### `teardown()`
 
-### `presenterWillUpdate(repo, props)`
-
-Similar to componentWillUpdate. Called when a presenter is about to update.
-
-### `presenterDidUpdate(repo, props)`
-
-Similar to componentDidUpdate. Called when a presenter updates.
+Teardown subscriptions and other setup behavior. Only necessary if overriding
+`componentWillUnmount`.
 
 ### `viewModel(props)`
 

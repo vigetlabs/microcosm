@@ -23,7 +23,7 @@ export default function Emitter (obj) {}
  * @return {Emitter}
  */
 Emitter.prototype.on =
-Emitter.prototype.addEventListener = function (event, fn, reverse){
+Emitter.prototype.addEventListener = function (event, fn){
   this._callbacks = this._callbacks || {}
 
   const callback = this._callbacks['$' + event] = this._callbacks['$' + event] || []
@@ -35,7 +35,7 @@ Emitter.prototype.addEventListener = function (event, fn, reverse){
    * within React lifecycle methods, which prioritize children before
    * parents.
    */
-  reverse ? callback.unshift(fn) : callback.push(fn)
+  callback.push(fn)
 
   return this
 }
@@ -48,7 +48,7 @@ Emitter.prototype.addEventListener = function (event, fn, reverse){
  * @param {Function} fn
  * @return {Emitter}
  */
-Emitter.prototype.once = function (event, fn, reverse){
+Emitter.prototype.once = function (event, fn){
   function on() {
     this.off(event, on)
     fn.apply(this, arguments)
@@ -56,7 +56,7 @@ Emitter.prototype.once = function (event, fn, reverse){
 
   on.fn = fn
 
-  this.on(event, on, reverse)
+  this.on(event, on)
 
   return this
 }

@@ -13,12 +13,17 @@ export default class Presenter extends Component {
     super(props, context)
 
     this.repo = props.repo || context.repo
-
     this.pure = this._getRepoPurity(this.repo, this.props)
 
-    this._updatePropMap(this.props)
+    this.setup(this.repo, this.props)
 
+    this._updatePropMap(this.props)
     this.state = this._getState()
+
+    if (this.repo) {
+      this._listener = this._updateState.bind(this)
+      this.repo.on('change', this._listener)
+    }
   }
 
   getChildContext () {
@@ -29,98 +34,48 @@ export default class Presenter extends Component {
   }
 
   /**
-   * Proxy to componentWillMount
+   * Called when a presenter is created, before it has calculated a view model.
+   * Useful for fetching data and other prep-work.
    *
    * @param {Microcosm} repo - The presenter's Microcosm instance
    * @param {Object} props - The presenter's props
    */
-  presenterWillMount (repo, props) {
+  setup (repo, props) {
     // NOOP
   }
 
   /**
-   * Proxy to componentDidMount.
+   * Called when a presenter gets new props. This is useful for secondary
+   * data fetching and other work that must happen when a Presenter receives
+   * new information
    *
    * @param {Microcosm} repo - The presenter's Microcosm instance
    * @param {Object} props - The presenter's props
    */
-  presenterDidMount (repo, props) {
+  update (repo, props) {
     // NOOP
   }
 
   /**
-   * Called when a presenter receives new props. This hook provides a way to
-   * perform new work if a presenter is given new props. For example: if a
-   * route parameter changes.
+   * Teardown subscriptions and other behavior.
    *
    * @param {Microcosm} repo - The presenter's Microcosm instance
-   * @param {Object} props - The new props sent into the presenter
    */
-  presenterWillReceiveProps (repo, props) {
-    // NOOP
+  teardown() {
+    if (this._listener) {
+      this.repo.off('change', this._listener)
+    }
   }
 
-  /**
-   * Proxy to componentWillUpdate.
-   *
-   * @param {Microcosm} repo - The presenter's Microcosm instance
-   * @param {Object} props - The presenter's props
-   */
-  presenterWillUpdate (repo, props) {
-    // NOOP
-  }
-
-  /**
-   * Proxy to componentWillUnmount.
-   *
-   * @param {Microcosm} repo - The presenter's Microcosm instance
-   * @param {Object} props - The presenter's props
-   */
-  presenterWillUnmount (repo, props) {
-    // NOOP
-  }
-
-  /**
-   * Proxy to componentWillUpdate.
-   *
-   * @param {Microcosm} repo - The presenter's Microcosm instance
-   * @param {Object} props - The presenter's props
-   */
-  presenterDidUpdate (repo, props) {
-    // NOOP
-  }
-
-  componentWillMount () {
-    this.presenterWillMount(this.repo, this.props)
-  }
-
-  componentDidMount () {
-    this._listener = this._updateState.bind(this)
-
-    this.repo.on('change', this._listener, true)
-
-    this.presenterDidMount(this.repo, this.props)
-  }
-
-  componentWillUpdate (props) {
-    this.presenterWillUpdate(this.repo, props)
-  }
-
-  componentDidUpdate (props) {
-    this.presenterDidUpdate(this.repo, props)
-  }
-
-  componentWillUnmount () {
-    this.repo.off('change', this._listener, true)
-    this.presenterWillUnmount(this.repo, this.props)
+  componentWillUnmount() {
+    this.teardown()
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.pure === false || shallowEqual(nextProps, this.props) === false) {
       this._updatePropMap(nextProps)
+      this.update(this.repo, nextProps)
     }
-
-    this.presenterWillReceiveProps(this.repo, nextProps)
 
     this._updateState()
   }
@@ -191,11 +146,11 @@ export default class Presenter extends Component {
    * @private
    */
   _getRepoPurity(repo, props) {
-    if (repo) {
-      return props.hasOwnProperty('pure') ? props.pure : repo.pure
+    if (props.hasOwnProperty('pure')) {
+      return !!props.pure
     }
 
-    return !!props.pure
+    return repo ? repo.pure : false
   }
 
   /**
