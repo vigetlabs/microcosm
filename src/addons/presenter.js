@@ -14,13 +14,9 @@ export default class Presenter extends Component {
 
     this.repo = props.repo || context.repo
 
-    if (this.repo) {
-      this.pure = props.hasOwnProperty('pure') ? props.pure : this.repo.pure
-    } else {
-      this.pure = !!props.pure
-    }
+    this.pure = this._getRepoPurity(this.repo, this.props)
 
-    this._updatePropMap(props)
+    this._updatePropMap(this.props)
 
     this.state = this._getState()
   }
@@ -120,7 +116,7 @@ export default class Presenter extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.pure === false || shallowEqual(nextProps, this.props) === false) {
+    if (this.pure === false || shallowEqual(nextProps, this.props) === false) {
       this._updatePropMap(nextProps)
     }
 
@@ -163,7 +159,7 @@ export default class Presenter extends Component {
   _updateState () {
     const next = this._getState()
 
-    if (this.props.pure === false || shallowEqual(this.state, next) === false) {
+    if (this.pure === false || shallowEqual(this.state, next) === false) {
       return this.setState(next)
     }
   }
@@ -173,16 +169,42 @@ export default class Presenter extends Component {
    */
   _getState () {
     const nextState = {}
+    const repoState = this._getRepoState()
 
     for (let key in this.propMap) {
       const entry = this.propMap[key]
 
-      nextState[key] = typeof entry === 'function' ? entry.call(this, this.repo.state) : entry
+      nextState[key] = typeof entry === 'function' ? entry.call(this, repoState) : entry
     }
 
     return nextState
   }
 
+  /**
+   * @private
+   */
+  _getRepoState() {
+    return this.repo ? this.repo.state : {}
+  }
+
+  /**
+   * @private
+   */
+  _getRepoPurity(repo, props) {
+    if (repo) {
+      return props.hasOwnProperty('pure') ? props.pure : repo.pure
+    }
+
+    return !!props.pure
+  }
+
+  /**
+   * Expose "intent" subscriptions to child components. This is used with the <Form />
+   * add-on to improve the ergonomics of presenter/view communication (though this only
+   * occurs from the view to the presenter).
+   *
+   * @return {Object} A list of subscriptions
+   */
   register () {
     // NOOP
   }
