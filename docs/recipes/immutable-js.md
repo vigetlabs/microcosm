@@ -36,8 +36,9 @@ const Store = {
 ## Immutable in, Vanilla out
 
 We've found it can be much simpler to expose vanilla JavaScript data to our
-presentation layer. Unfortunately, this tends to mitigates much of the benefit
-of immutable data. It also can impose penalties serializing between the two formats.
+presentation layer. Unfortunately, this tends to mitigate much of the benefit
+of immutable data. It also can impose serious performance penalties serializing
+between the two formats.
 
 It is worth walking through the phases of state a Microcosm works through in order
 to better understand how Microcosm accommodates this use case:
