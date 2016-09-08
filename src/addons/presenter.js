@@ -61,13 +61,13 @@ export default class Presenter extends Component {
    *
    * @param {Microcosm} repo - The presenter's Microcosm instance
    */
-  teardown() {
+  teardown () {
     if (this._listener) {
       this.repo.off('change', this._listener)
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.teardown()
   }
 
