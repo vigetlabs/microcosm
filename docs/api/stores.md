@@ -64,6 +64,11 @@ var Planets = {
 }
 ```
 
+### `setup()`
+
+Setup runs right after a store is added to a Microcosm, but before it runs
+getInitialState. This is useful for one-time setup instructions.
+
 ### `serialize(state)`
 
 Allows a store to transform data before it leaves the system. It gives
