@@ -3,6 +3,7 @@
 1. [Overview](#overview)
 2. [Computed Properties](#computed-properties)
 3. [Receiving Intents](#receiving-intents)
+4. [API](#api)
 
 ## Overview
 
@@ -115,11 +116,12 @@ class CountPresenter extends Presenter {
     return {
       increaseCount: this.increaseCount
     }
-  },
+  }
 
   increaseCount(repo, { amount }) {
     return repo.push(increment, amount)
   }
+
   render() {
     return <StepperForm count={ this.state.count } />
   }
@@ -136,3 +138,73 @@ invoke the method with the associated parameters.
 If a Presenter does not implement an intent, it will bubble up to any
 parent Presenters. If no Presenter implements the intent, an exception
 will raise.
+
+## API
+
+### `presenterWillMount(repo, props)`
+
+Similar to componentWillMount. Called before the presenter mounts.
+
+### `presenterDidMount(repo, props)`
+
+Similar to componentDidMount. Called when a presenter mounts.
+
+### `presenterWillReceiveProps(repo, props)`
+
+Similar to componentWillReceiveProps. Called when a presenter receives new props.
+
+### `presenterWillUpdate(repo, props)`
+
+Similar to componentWillUpdate. Called when a presenter is about to update.
+
+### `presenterDidUpdate(repo, props)`
+
+Similar to componentDidUpdate. Called when a presenter updates.
+
+### `viewModel(props)`
+
+Builds a view model for the current props. This must return an object of key/value
+pairs. If the value is a function, it will be calculated by passing in the repo's
+current state:
+
+```javascript
+class PlanetPresenter extends Presenter {
+  viewModel(props) {
+    return {
+      planet : state => state.planets.find(p => p.id === props.planetId)
+    }
+  }
+  // ...
+}
+```
+
+If the Presenter is pure (passed in as either a prop or as an option to the
+associated repo), this will only update state if shallowly equal.
+
+### register()
+
+Expose "intent" subscriptions to child components. This is used with the <Form />
+add-on to improve the ergonomics of presenter/view communication (though this only
+occurs from the view to the presenter).
+
+```javascript
+import Form from 'microcosm/addons/form'
+
+class HelloWorldPresenter extends Presenter {
+  register() {
+    return {
+      'greet': this.greet
+    }
+  }
+  greet() {
+    alert("hello world!")
+  }
+  render() {
+    return (
+      <Form intent="greet">
+        <button>Greet</button>
+      </Form>
+    )
+  }
+}
+```

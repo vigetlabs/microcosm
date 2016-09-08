@@ -13,9 +13,16 @@ export default class Presenter extends Component {
     super(props, context)
 
     this.repo = props.repo || context.repo
-    this.state = {}
 
-    this.updatePropMap(props)
+    if (this.repo) {
+      this.pure = props.hasOwnProperty('pure') ? props.pure : this.repo.pure
+    } else {
+      this.pure = !!props.pure
+    }
+
+    this._updatePropMap(props)
+
+    this.state = this._getState()
   }
 
   getChildContext () {
@@ -26,14 +33,22 @@ export default class Presenter extends Component {
   }
 
   /**
-   * Called before a presenter will mount it's view (returned from the
-   * render method). This hook provides a way to "prepare" work before
-   * rendering to the page.
+   * Proxy to componentWillMount
    *
    * @param {Microcosm} repo - The presenter's Microcosm instance
    * @param {Object} props - The presenter's props
    */
   presenterWillMount (repo, props) {
+    // NOOP
+  }
+
+  /**
+   * Proxy to componentDidMount.
+   *
+   * @param {Microcosm} repo - The presenter's Microcosm instance
+   * @param {Object} props - The presenter's props
+   */
+  presenterDidMount (repo, props) {
     // NOOP
   }
 
@@ -49,29 +64,69 @@ export default class Presenter extends Component {
     // NOOP
   }
 
+  /**
+   * Proxy to componentWillUpdate.
+   *
+   * @param {Microcosm} repo - The presenter's Microcosm instance
+   * @param {Object} props - The presenter's props
+   */
+  presenterWillUpdate (repo, props) {
+    // NOOP
+  }
+
+  /**
+   * Proxy to componentWillUnmount.
+   *
+   * @param {Microcosm} repo - The presenter's Microcosm instance
+   * @param {Object} props - The presenter's props
+   */
+  presenterWillUnmount (repo, props) {
+    // NOOP
+  }
+
+  /**
+   * Proxy to componentWillUpdate.
+   *
+   * @param {Microcosm} repo - The presenter's Microcosm instance
+   * @param {Object} props - The presenter's props
+   */
+  presenterDidUpdate (repo, props) {
+    // NOOP
+  }
+
   componentWillMount () {
     this.presenterWillMount(this.repo, this.props)
-    this.updateState()
   }
 
   componentDidMount () {
-    this._listener = this.updateState.bind(this)
+    this._listener = this._updateState.bind(this)
 
     this.repo.on('change', this._listener, true)
+
+    this.presenterDidMount(this.repo, this.props)
+  }
+
+  componentWillUpdate (props) {
+    this.presenterWillUpdate(this.repo, props)
+  }
+
+  componentDidUpdate (props) {
+    this.presenterDidUpdate(this.repo, props)
   }
 
   componentWillUnmount () {
     this.repo.off('change', this._listener, true)
+    this.presenterWillUnmount(this.repo, this.props)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.pure === false || shallowEqual(nextProps, this.props) === false) {
-      this.updatePropMap(nextProps)
+      this._updatePropMap(nextProps)
     }
 
     this.presenterWillReceiveProps(this.repo, nextProps)
 
-    this.updateState()
+    this._updateState()
   }
 
   /**
@@ -91,23 +146,32 @@ export default class Presenter extends Component {
    * @param {Object} props - The presenter's props, or new props entering a presenter.
    * @returns {Object} The properties to assign to state
    */
-  viewModel(props) {
+  viewModel (props) {
     return {}
   }
 
-  updatePropMap (props) {
+  /**
+   * @private
+   */
+  _updatePropMap (props) {
     this.propMap = this.viewModel(props)
   }
 
-  updateState () {
-    const next = this.getState()
+  /**
+   * @private
+   */
+  _updateState () {
+    const next = this._getState()
 
     if (this.props.pure === false || shallowEqual(this.state, next) === false) {
       return this.setState(next)
     }
   }
 
-  getState () {
+  /**
+   * @private
+   */
+  _getState () {
     const nextState = {}
 
     for (let key in this.propMap) {
@@ -119,7 +183,7 @@ export default class Presenter extends Component {
     return nextState
   }
 
-  register() {
+  register () {
     // NOOP
   }
 
@@ -141,12 +205,11 @@ export default class Presenter extends Component {
 
     if (registry && registry[intent]) {
       return registry[intent].apply(this, [ this.repo, ...params ])
-    }
-    else if (this.context.send) {
+    } else if (this.context.send) {
       return this.context.send(intent, ...params)
     }
 
-    throw new Error(`No presenter implements intent “${ intent }”.`)
+    console.warn(`No presenter implements intent “${ intent }”.`)
   }
 
   /**

@@ -21,7 +21,7 @@ export default class Microcosm extends Emitter {
   /**
    * @param {{maxHistory: Number}} options - Instantiation options.
    */
-  constructor ({ maxHistory = -Infinity, pure = false } = {}) {
+  constructor ({ maxHistory = -Infinity, pure = true } = {}) {
     super()
 
     this.history = new Tree()

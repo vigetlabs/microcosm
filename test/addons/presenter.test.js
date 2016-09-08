@@ -2,6 +2,7 @@ import test from 'ava'
 import React from 'react'
 import Microcosm from '../../src/microcosm'
 import Presenter from '../../src/addons/presenter'
+import console from '../helpers/console'
 import {mount} from 'enzyme'
 
 const View = React.createClass({
@@ -36,16 +37,20 @@ test('receives intent events', t => {
   mount(<MyPresenter repo={ new Microcosm() } />).find(View).simulate('click')
 })
 
-test('throws if no presenter implements an intent', t => {
+test('warns if no presenter implements an intent', t => {
   class MyPresenter extends Presenter {
     render() {
       return <View />
     }
   }
 
-  t.throws(function() {
-    mount(<MyPresenter repo={ new Microcosm() } />).find(View).simulate('click')
-  }, /implements intent/)
+  console.record()
+
+  mount(<MyPresenter repo={ new Microcosm() } />).find(View).simulate('click')
+
+  t.is(console.count('warn'), 1)
+
+  console.restore()
 })
 
 test('builds the view model into state', t => {
