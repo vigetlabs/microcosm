@@ -18,7 +18,7 @@ class TestDomain extends Store {
       case 'add':
         return { ...state, [path]: params }
       case 'remove':
-        let next = {...state}
+        var next = {...state}
         delete next[path]
         return next
     }
