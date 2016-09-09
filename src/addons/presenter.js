@@ -12,7 +12,7 @@ export default class Presenter extends Component {
   constructor (props, context) {
     super(props, context)
 
-    this.repo = props.repo || context.repo
+    this.repo = this._getRepo()
     this.pure = this._getRepoPurity(this.repo, this.props)
 
     this.setup(this.repo, this.props)
@@ -133,6 +133,13 @@ export default class Presenter extends Component {
     }
 
     return nextState
+  }
+
+  /**
+   * @private
+   */
+  _getRepo() {
+    return this.props.repo || this.context.repo
   }
 
   /**
