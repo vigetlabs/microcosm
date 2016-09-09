@@ -198,3 +198,26 @@ test('inherits purity from repo', t => {
 
   wrapper.setProps({ test: "foo" })
 })
+
+test('does not update the view model when umounted', t => {
+  t.plan(1)
+
+  class MyPresenter extends Presenter {
+    // This should only run once
+    viewModel() {
+      t.pass()
+      return {}
+    }
+
+    render() {
+      return <View />
+    }
+  }
+
+  let repo = new Microcosm({ pure: false })
+  let wrapper = mount(<MyPresenter repo={repo} />)
+
+  wrapper.unmount()
+
+  repo.replace({ foo: 'bar' })
+})
