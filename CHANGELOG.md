@@ -1,12 +1,49 @@
 # Changelog
 
+## 10.0.0-beta5
+
+Almost there. This is an important revision. Any new changes after
+this should focus primarily API design (what do we call stuff?).
+
+### Microcosm
+
+- Added `pure` option to (true by default). When true, change events
+  will only fire when state is shallowly not equal.
+- Repo state now has an extra phase: `staging`. Stores can implement a
+  `stage` method to determine how to write state to `staging`,
+
+### Stores
+
+- **Stores can no longer be functions that return a
+  registration**. This wasn't being used, and makes it easier to check
+  if a Store should be instantiated when added (see next item).
+- Stores can now be classes. When added, they will be
+  instantiated (though no parameters are currently passed to the
+  constructor; still figuring this one out).
+- Added a `setup` method to Stores. This is a one time lifecycle
+  method that runs when a store is added to a Microcosm.
+- Stores can now implement a `commit` method that indicates how a
+  store should write to `repo.state`. When used with `staging`, this
+  is useful for keeping complex data types internal to a Microcosm,
+  exposing vanilla JS data via `repo.state`.
+- Stores can now implement a `shouldCommit` method that determines if
+  `commit` should run (see `docs/recipes/immutable-js.md`)
+
+### Presenter Addon
+
+- Added `setup` method. This is a one time lifecycle method that
+  eliminates the need to crack open the constructor, and should be
+  consistent with Microcosm.
+- Presenters inherit `pure` from their provided repo. This behaves
+  similarly to Microcosm's pure, only on the ``viewModel`.`
+
 ## 10.0.0-beta4
 
 - Presenters (and Connect) now except non-function values as computed properties
 - Presenters expose intents via a `register()` method (similarly to Stores)
 - Removed faulty missing action error (added in beta3). Reduced some errors to
   warnings.
-- Improved efficiency of some internal state tree operations  
+- Improved efficiency of some internal state tree operations
 
 ## 10.0.0-beta3
 
