@@ -114,3 +114,87 @@ test('send bubbles up to parent presenters', t => {
 
   mount(<Parent repo={ new Microcosm() } />).find(View).simulate('click')
 })
+
+test('runs a setup function when created', t => {
+  t.plan(1)
+
+  class MyPresenter extends Presenter {
+    setup() {
+      t.pass()
+    }
+    render() {
+      return <View />
+    }
+  }
+
+  mount(<MyPresenter repo={ new Microcosm() } />)
+})
+
+test('runs an update function when it gets new props', t => {
+  t.plan(1)
+
+  class MyPresenter extends Presenter {
+    update(repo, props) {
+      t.is(props.test, "bar")
+    }
+    render() {
+      return <View />
+    }
+  }
+
+  let wrapper = mount(<MyPresenter repo={ new Microcosm() } test="foo" />)
+
+  wrapper.setProps({ test: "bar" })
+})
+
+test('does not run an update function when it is pure and no props change', t => {
+  class MyPresenter extends Presenter {
+    update(repo, props) {
+      throw new Error('Presenter update method should not have been called')
+    }
+
+    render() {
+      return <View />
+    }
+  }
+
+  let wrapper = mount(<MyPresenter repo={ new Microcosm() } test="foo" />)
+
+  wrapper.setProps({ test: "foo" })
+})
+
+test('always runs update when impure', t => {
+  t.plan(1)
+
+  class MyPresenter extends Presenter {
+    update() {
+      t.pass()
+    }
+
+    render() {
+      return <View />
+    }
+  }
+
+  let wrapper = mount(<MyPresenter repo={ new Microcosm() } test="foo" pure={false} />)
+
+  wrapper.setProps({ test: "foo" })
+})
+
+test('inherits purity from repo', t => {
+  t.plan(1)
+
+  class MyPresenter extends Presenter {
+    update() {
+      t.pass()
+    }
+
+    render() {
+      return <View />
+    }
+  }
+
+  let wrapper = mount(<MyPresenter repo={ new Microcosm({ pure: false }) } test="foo" />)
+
+  wrapper.setProps({ test: "foo" })
+})
