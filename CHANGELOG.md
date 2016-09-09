@@ -7,7 +7,7 @@ this should focus primarily API design (what do we call stuff?).
 
 ### Microcosm
 
-- Added `pure` option to (true by default). When true, change events
+- Added `pure` option, true by default. When true, change events
   will only fire when state is shallowly not equal.
 - Repo state now has an extra phase: `staging`. Stores can implement a
   `stage` method to determine how to write state to `staging`,
