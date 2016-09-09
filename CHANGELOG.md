@@ -35,7 +35,7 @@ this should focus primarily API design (what do we call stuff?).
   eliminates the need to crack open the constructor, and should be
   consistent with Microcosm.
 - Presenters inherit `pure` from their provided repo. This behaves
-  similarly to Microcosm's pure, only on the ``viewModel`.`
+  similarly to Microcosm's pure, only on the `viewModel`.
 
 ## 10.0.0-beta4
 
