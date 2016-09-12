@@ -15,8 +15,6 @@ export default class Presenter extends Component {
     this.repo = this._getRepo()
     this.pure = this._getRepoPurity(this.repo, this.props)
 
-    this.setup(this.repo, this.props)
-
     this._updatePropMap(this.props)
     this.state = this._getState()
 
@@ -65,6 +63,10 @@ export default class Presenter extends Component {
     if (this._listener) {
       this.repo.off('change', this._listener)
     }
+  }
+
+  componentWillMount() {
+    this.setup(this.repo, this.props)
   }
 
   componentWillUnmount () {
