@@ -13,6 +13,12 @@ class ListShow extends Presenter {
       items : Query.where('items', 'list', params.id)
     }
   }
+  register() {
+    return {
+      addItem    : this.addItem,
+      removeItem : this.removeItem
+    }
+  }
 
   addItem(repo, params) {
     return repo.push(addItem, params)

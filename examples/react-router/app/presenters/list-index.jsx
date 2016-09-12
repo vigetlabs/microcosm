@@ -14,6 +14,13 @@ class ListIndex extends Presenter {
     }
   }
 
+  register() {
+    return {
+      addList    : this.addList,
+      removeList : this.removeList
+    }
+  }
+
   addList(repo, params) {
     return repo.push(addList, params)
   }
