@@ -221,3 +221,22 @@ test('does not update the view model when umounted', t => {
 
   repo.replace({ foo: 'bar' })
 })
+
+test('calling setState in setup does not raise a warning', t => {
+  class MyPresenter extends Presenter {
+    setup() {
+      this.setState({ foo: 'bar' })
+    }
+    render() {
+      return <View />
+    }
+  }
+
+  console.record()
+
+  mount(<MyPresenter repo={ new Microcosm() } />)
+
+  t.is(console.count('warn'), 0)
+
+  console.restore()
+})

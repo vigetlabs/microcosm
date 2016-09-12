@@ -143,8 +143,8 @@ will raise.
 
 ### `setup(repo, props)`
 
-Called when a presenter is created, before it has calculated a view model.
-Useful for fetching data and other prep-work.
+Called when a presenter is created, useful for initial data fetching and other
+prep work.
 
 ### `update(repo, props)`
 
