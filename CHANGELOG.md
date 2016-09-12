@@ -1,5 +1,14 @@
 # Changelog
 
+## 10.0.0-beta6
+
+Couple of bug fixes:
+
+- Presenter setup needs to happen in `componentWillMount`, otherwise React warns
+  when setState is called in a constructor.
+- Cut some unused, undocumented methods from the base Emitter class.
+- Ensure there is always a "last" state when executing `shouldCommit` in stores.
+
 ## 10.0.0-beta5
 
 Almost there. This is an important revision. Any new changes after
