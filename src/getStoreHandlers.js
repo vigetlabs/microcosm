@@ -14,7 +14,7 @@ function getHandler (key, store, type) {
 
     if (process.env.NODE_ENV !== 'production') {
       if (type in registrations && registrations[type] === undefined) {
-        console.warn('The handler for "%s" within a store for "%s" is undefined. ' +
+        console.warn('The handler for %s within a store for "%s" is undefined. ' +
                      'Check the register method for this store.', format(type), key)
       }
     }

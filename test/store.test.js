@@ -75,3 +75,20 @@ test('stores have a setup step', t => {
 
   repo.addStore('count', Counter)
 })
+
+test('last state in shouldCommit starts as initial state', t => {
+  const repo = new Microcosm()
+
+  t.plan(1)
+
+  class Counter extends Store {
+    getInitialState() {
+      return 0
+    }
+    shouldCommit(next, last) {
+      t.is(last, 0)
+    }
+  }
+
+  repo.addStore('count', Counter)
+})

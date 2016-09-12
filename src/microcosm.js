@@ -154,6 +154,11 @@ export default class Microcosm extends Emitter {
     return this
   }
 
+  /**
+   * Identify the last and next staged state, then ask the associated store
+   * if it should commit it. If so, roll state forward.
+   * @private
+   */
   commit(staged, key, store) {
     const last  = update.get(this.staged, key)
     const next  = update.get(staged, key)
@@ -306,6 +311,9 @@ export default class Microcosm extends Emitter {
     this.registry = {}
 
     this.archive = merge(this.getInitialState(), this.archive)
+
+    // This ensures there is always a last state for "shouldCommit"
+    this.staged = merge({}, this.archive, this.staged)
 
     this.rollforward()
 

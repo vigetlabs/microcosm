@@ -30,7 +30,7 @@ function get (object, key) {
  * @return {Any} A copy of the object with the new assignment.
  */
 function set (object, key, value) {
-  // Never assign undefined values
+  // Never assign the same or undefined values
   if (value === undefined) {
     return object
   }
