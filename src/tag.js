@@ -1,4 +1,4 @@
-import States from './states'
+import States from './action/states'
 
 let uid = 0
 const FALLBACK = 'microcosm_action'
@@ -12,6 +12,10 @@ const FALLBACK = 'microcosm_action'
  * @private
  */
 export default function tag (fn, name) {
+  if (fn == null) {
+    throw new TypeError('Unable to identify ' + fn + ' action. Did you push the correct action?')
+  }
+
   if (fn.hasOwnProperty('toString')) {
     return fn
   }

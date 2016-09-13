@@ -1,7 +1,7 @@
 import Emitter   from './emitter'
 import States    from './action/states'
 import coroutine from './action/coroutine'
-import tag       from './action/tag'
+import tag       from './tag'
 
 /**
  * Actions encapsulate the course of resolving an action creator

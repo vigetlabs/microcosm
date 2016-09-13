@@ -1,8 +1,20 @@
 import test from 'ava'
-import tag  from '../src/action/tag'
+import tag  from '../src/tag'
 
 test('includes the function name', t => {
   t.is(tag(function test() {}).toString().search('test'), 0)
+})
+
+test('will not tag a null action', t => {
+  t.throws(function () {
+    tag(null)
+  }, /Unable to identify null action/)
+})
+
+test('will not tag an undefined action', t => {
+  t.throws(function () {
+    tag(undefined)
+  }, /Unable to identify undefined action/)
 })
 
 test('assigns a default name', t => {

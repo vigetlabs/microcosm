@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import Action from '../action'
 import serialize from 'form-serialize'
+import merge from '../merge'
 
 const Form = React.createClass({
 
@@ -28,7 +29,7 @@ const Form = React.createClass({
   },
 
   render() {
-    const props = { ...this.props, onSubmit: this.onSubmit }
+    const props = merge({}, this.props, { onSubmit: this.onSubmit })
 
     // Remove invalid props to prevent React warnings
     delete props.intent

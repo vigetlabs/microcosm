@@ -1,5 +1,9 @@
 # Changelog
 
+## Edge
+
+- Throw an error before attempting to tag `null` or `undefined`.
+
 ## 10.0.0-beta6
 
 Couple of bug fixes:
