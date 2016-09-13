@@ -246,6 +246,25 @@ export default class Action extends Emitter {
   }
 
   /**
+   * Listen for cancel. If the action has already cancelled, it will
+   * execute the provided callback, otherwise it will wait and trigger
+   * upon the "cancel" event.
+   *
+   * @param {Function} callback
+   * @param {any} scope
+   * @return {Action} self
+   */
+  onCancel (callback, scope) {
+    if (this.is(States.cancelled)) {
+      callback(this.payload, scope)
+    } else {
+      this.on('cancel', callback.bind(scope))
+    }
+
+    return this
+  }
+
+  /**
    * For interop with promises. Returns a promise that
    * resolves or rejects based on the action's resolution.
    * @return {Promise}
