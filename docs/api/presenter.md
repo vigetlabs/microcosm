@@ -60,6 +60,24 @@ planets from the Microcosm instance provided to it via the `repo`
 prop. This is available as state, which the Presenter can send into a
 child component.
 
+### Listening to all state changes
+
+While we do not recommend it for large projects, some times it's simply easier
+to subscribe to all repo changes. `viewModel` can also return a function, which
+will be called with state:
+
+```javascript
+class PlanetsPresenter extends Presenter {
+  viewModel(props) {
+    return state => state
+  }
+
+  render() {
+    return <p>{ this.state.planets.join(', ') }</p>
+  }
+}
+```
+
 ## Receiving Intents
 
 Though explicit, passing event callbacks down through a deep component
