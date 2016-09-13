@@ -14,8 +14,12 @@ export default {
   record() {
     for (let key in messages) {
       originals[key] = console[key]
-      console[key] = (...args) => messages[key].push([args])
+      console[key] = (...args) => messages[key].push([args.join(' ')])
     }
+  },
+
+  last(key) {
+    return messages[key][messages[key].length - 1]
   },
 
   count(key) {

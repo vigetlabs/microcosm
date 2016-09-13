@@ -107,7 +107,14 @@ export default class Presenter extends Component {
    * @private
    */
   _updatePropMap (props) {
-    this.propMap = this.viewModel(props)
+    this.propMap = this.viewModel ? this.viewModel(props) : {}
+
+    if (this.repo && this.propMap === this.repo.state) {
+      console.warn("The view model for this presenter returned repo.state. " +
+                   "This method onlys run when a presenter is given new properties. " +
+                   "If you would like to subscribe to all state changes, return a " +
+                   "function like: `(state) => state`.")
+    }
   }
 
   /**
@@ -125,8 +132,13 @@ export default class Presenter extends Component {
    * @private
    */
   _getState () {
-    const nextState = {}
     const repoState = this._getRepoState()
+
+    if (typeof this.propMap === 'function') {
+      return this.propMap(repoState)
+    }
+
+    const nextState = {}
 
     for (let key in this.propMap) {
       const entry = this.propMap[key]

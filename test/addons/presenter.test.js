@@ -240,3 +240,37 @@ test('calling setState in setup does not raise a warning', t => {
 
   console.restore()
 })
+
+test('warns when setState in setup does not raise a warning', t => {
+  class MyPresenter extends Presenter {
+    viewModel() {
+      return this.repo.state
+    }
+    render() {
+      return <p>Test</p>
+    }
+  }
+
+  console.record()
+
+  mount(<MyPresenter repo={ new Microcosm() } />)
+
+  t.regex(console.last('warn'), /The view model for this presenter returned repo\.state/i)
+
+  console.restore()
+})
+
+test('allows functions to return from viewModel', t => {
+  class MyPresenter extends Presenter {
+    viewModel() {
+      return state => state
+    }
+    render() {
+      return <p>Test</p>
+    }
+  }
+
+  const el = mount(<MyPresenter repo={new Microcosm()} />)
+
+  t.is(el.state(), el.instance().repo.state)
+})
