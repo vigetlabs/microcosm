@@ -5,6 +5,8 @@
 - Throw an error before attempting to tag `null` or `undefined`.
 - Warn if `Presenter::viewModel` returns `repo.state` directly, allow
   `viewModel` to return a function similar to an individual key/value binding.
+- Add `onCancel` event to actions (returned from
+  `repo.push()`). Thanks @djmccormick!
 
 ## 10.0.0-beta6
 
