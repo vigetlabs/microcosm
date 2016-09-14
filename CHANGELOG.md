@@ -4,13 +4,14 @@
 
 - Throw an error before attempting to tag `null` or `undefined`.
 - Warn if `Presenter::viewModel` returns `repo.state` directly, allow
-  `viewModel` to return a function similar to an individual key/value binding.
+  `viewModel` to return a function similar to an individual key/value
+  binding.
 - Add `onCancel` event to actions (returned from
   `repo.push()`). Thanks @djmccormick!
 - Presenter no longer throws an error if no render method is
   implemented, instead it just passes along children (when it can)
-- Add `onCancel` event to actions (returned from
-  `repo.push()`). Thanks @djmccormick!
+- Removed Connect and Provider addons. The Presenter accommodates both
+  uses cases.
 
 ## 10.0.0-beta6
 
