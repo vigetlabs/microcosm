@@ -1,15 +1,15 @@
 BABEL := node_modules/.bin/babel
 SCRIPTS := $(shell find src bench -name '*.js*')
 
-all: javascript documentation package.json
+all: javascript docs package.json
 
 javascript: $(SCRIPTS)
 	@ echo "Compiling $(words $^) modules..."
 	@ $(BABEL) -c -q -s inline -d tmp $^
 	@ rsync -uraq tmp/src/ dist/
 
-documentation: *.md docs
-	@ rsync -uraq $^ dist/
+docs: LICENSE.md README.md
+	@ rsync -uaq $^ dist/
 
 package.json:
 	@ node -p 'p=require("./package");p.main="microcosm.js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > dist/package.json
