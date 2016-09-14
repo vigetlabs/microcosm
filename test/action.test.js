@@ -286,3 +286,24 @@ test('actions interop with promises', t => {
 
   return action.then(result => t.is(result, 'Test'))
 })
+
+test('cancel can be subscribed to', t => {
+  const action = new Action(identity)
+
+  t.plan(1)
+
+  action.onCancel(() => t.pass())
+
+  action.cancel()
+})
+
+test('onCancel is a one time binding', t => {
+  const action = new Action(identity)
+
+  t.plan(1)
+
+  action.onCancel(() => t.pass())
+
+  action.cancel()
+  action.cancel()
+})
