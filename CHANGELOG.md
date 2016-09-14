@@ -3,6 +3,8 @@
 ## Edge
 
 - Throw an error before attempting to tag `null` or `undefined`.
+- Warn if `Presenter::viewModel` returns `repo.state` directly, allow
+  `viewModel` to return a function similar to an individual key/value binding.
 
 ## 10.0.0-beta6
 
