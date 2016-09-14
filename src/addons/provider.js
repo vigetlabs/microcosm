@@ -1,5 +1,4 @@
-import Microcosm from '../microcosm'
-import React, { Component, Children } from 'react'
+import Presenter from './presenter'
 
 /**
  * Sets up the required context for a React component tree
@@ -15,21 +14,6 @@ import React, { Component, Children } from 'react'
  *   </Provider>
  * ), document.getElementById('repo'))
  */
-export default class Provider extends Component {
-  getChildContext() {
-    return { repo: this.props.repo }
-  }
+export default class Provider extends Presenter {
 
-  render() {
-    return Children.only(this.props.children)
-  }
-}
-
-Provider.propTypes = {
-  repo     : React.PropTypes.instanceOf(Microcosm).isRequired,
-  children : React.PropTypes.element.isRequired
-}
-
-Provider.childContextTypes = {
-  repo : React.PropTypes.instanceOf(Microcosm).isRequired
 }

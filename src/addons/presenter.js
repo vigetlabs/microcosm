@@ -210,18 +210,15 @@ export default class Presenter extends Component {
     console.warn(`No presenter implements intent “${ intent }”.`)
   }
 
-  /**
-   * Presenters require a render method. This will throw an error unless
-   * implemented by a subclass.
-   */
   render () {
-    throw new Error('Presenter must implement a render method.')
+    return this.props.children ? React.Children.only(this.props.children) : null
   }
 
 }
 
 Presenter.propTypes = {
-  repo : React.PropTypes.instanceOf(Microcosm)
+  repo     : React.PropTypes.instanceOf(Microcosm),
+  children : React.PropTypes.element
 }
 
 Presenter.contextTypes = {

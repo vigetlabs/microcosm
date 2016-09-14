@@ -14,8 +14,10 @@ const View = React.createClass({
   }
 })
 
-test('requires an implementation of a render method', t => {
-  t.throws(() => mount(<Presenter />), /implement a render method/)
+test('the default render implementation passes children', t => {
+  let wrapper = mount(<Presenter><p>Test</p></Presenter>)
+
+  t.is(wrapper.text(), 'Test')
 })
 
 test('receives intent events', t => {
@@ -208,10 +210,6 @@ test('does not update the view model when umounted', t => {
       t.pass()
       return {}
     }
-
-    render() {
-      return <View />
-    }
   }
 
   let repo = new Microcosm({ pure: false })
@@ -226,9 +224,6 @@ test('calling setState in setup does not raise a warning', t => {
   class MyPresenter extends Presenter {
     setup() {
       this.setState({ foo: 'bar' })
-    }
-    render() {
-      return <View />
     }
   }
 
@@ -246,9 +241,6 @@ test('warns when setState in setup does not raise a warning', t => {
     viewModel() {
       return this.repo.state
     }
-    render() {
-      return <p>Test</p>
-    }
   }
 
   console.record()
@@ -264,9 +256,6 @@ test('allows functions to return from viewModel', t => {
   class MyPresenter extends Presenter {
     viewModel() {
       return state => state
-    }
-    render() {
-      return <p>Test</p>
     }
   }
 
