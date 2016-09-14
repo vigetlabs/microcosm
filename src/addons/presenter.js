@@ -217,8 +217,7 @@ export default class Presenter extends Component {
 }
 
 Presenter.propTypes = {
-  repo     : React.PropTypes.instanceOf(Microcosm),
-  children : React.PropTypes.element
+  repo : React.PropTypes.instanceOf(Microcosm)
 }
 
 Presenter.contextTypes = {
