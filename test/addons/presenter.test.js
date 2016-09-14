@@ -201,6 +201,15 @@ test('inherits purity from repo', t => {
   wrapper.setProps({ test: "foo" })
 })
 
+test('ignores an repo when it unmounts', t => {
+  t.plan(1)
+
+  const repo = new Microcosm()
+  repo.off = () => t.pass()
+
+  mount(<Presenter repo={repo} />).unmount()
+})
+
 test('does not update the view model when umounted', t => {
   t.plan(1)
 
@@ -262,4 +271,116 @@ test('allows functions to return from viewModel', t => {
   const el = mount(<MyPresenter repo={new Microcosm()} />)
 
   t.is(el.state(), el.instance().repo.state)
+})
+
+test('does not cause a re-render when shallowly equal and pure', t => {
+  const repo = new Microcosm({ pure: true })
+  let renders = 0
+
+  repo.replace({ name: 'Kurtz' })
+
+  class Namer extends Presenter {
+    viewModel() {
+      return { name: state => state.name }
+    }
+    render() {
+      renders += 1
+      return <p>{ this.state.name }</p>
+    }
+  }
+
+  mount(<Namer repo={ repo } />)
+
+  repo.replace({ name: 'Kurtz', unrelated: true })
+
+  t.is(renders, 1)
+})
+
+test('always re-renders impure repos', t => {
+  const repo = new Microcosm({ pure: false })
+  let renders = 0
+
+  repo.replace({ name: 'Kurtz' })
+
+  class Namer extends Presenter {
+    viewModel() {
+      return { name: state => state.name }
+    }
+    render() {
+      renders += 1
+      return (<p>{ this.state.name }</p>)
+    }
+  }
+
+  mount(<Namer repo={ repo } />)
+  repo.replace({ name: 'Kurtz', unrelated: true })
+  t.is(renders, 2)
+})
+
+test('recalculates the view model if the props are different', t => {
+  const repo = new Microcosm()
+
+  repo.replace({ name: 'Kurtz' })
+
+  class Namer extends Presenter {
+    viewModel(props) {
+      return {
+        name: state => props.prefix + ' ' + state.name
+      }
+    }
+    render() {
+      return (<p>{ this.state.name }</p>)
+    }
+  }
+
+  const wrapper = mount(<Namer prefix="Colonel" repo={repo} />)
+
+  wrapper.setProps({ prefix: 'Captain' })
+
+  t.is(wrapper.text(), 'Captain Kurtz')
+})
+
+test('does not recalculate the view model if the props are the same', t => {
+  const repo = new Microcosm()
+
+  t.plan(1)
+
+  class Namer extends Presenter {
+    viewModel(props) {
+      t.pass()
+      return {}
+    }
+  }
+
+  const wrapper = mount(<Namer prefix="Colonel" repo={repo} />)
+
+  wrapper.setProps({ prefix: 'Colonel' })
+})
+
+test('does not waste rendering on nested children', t => {
+  const repo = new Microcosm()
+
+  t.plan(2)
+
+  class Child extends Presenter {
+    viewModel() {
+      return { name: state => state.name }
+    }
+    render() {
+      t.pass()
+      return <p>{ this.state.name }</p>
+    }
+  }
+
+  class Parent extends Presenter {
+    viewModel() {
+      return { name: state => state.name }
+    }
+    render() {
+      return <Child />
+    }
+  }
+
+  mount(<Parent repo={ repo } />)
+  repo.replace({ name: 'Billy Booster' })
 })

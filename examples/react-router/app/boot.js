@@ -1,6 +1,6 @@
 import React     from 'react'
 import DOM       from 'react-dom'
-import Provider  from '../../../src/addons/provider'
+import Presenter from '../../../src/addons/presenter'
 import Debugger  from 'microcosm-debugger'
 import Todos     from './todos'
 import routes    from './routes'
@@ -14,7 +14,7 @@ Debugger(repo)
 
 // Render
 DOM.render((
-  <Provider repo={ repo }>
+  <Presenter repo={ repo }>
     <Router history={ browserHistory } routes={ routes } />
-  </Provider>
+  </Presenter>
 ), document.getElementById('app'))

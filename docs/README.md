@@ -23,7 +23,5 @@ start. Beyond that, check out [the example apps](../examples).
 
 ## Addons
 
-1. [Provider](api/provider.md)
-2. [Connect](api/connect.md)
-3. [Presenter](api/presenter.md)
-4. [Form](api/form.md)
+1. [Presenter](api/presenter.md)
+2. [Form](api/form.md)

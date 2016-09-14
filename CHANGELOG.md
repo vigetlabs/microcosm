@@ -7,6 +7,10 @@
   `viewModel` to return a function similar to an individual key/value binding.
 - Add `onCancel` event to actions (returned from
   `repo.push()`). Thanks @djmccormick!
+- Presenter no longer throws an error if no render method is
+  implemented, instead it just passes along children (when it can)
+- Add `onCancel` event to actions (returned from
+  `repo.push()`). Thanks @djmccormick!
 
 ## 10.0.0-beta6
 
