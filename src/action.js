@@ -258,7 +258,7 @@ export default class Action extends Emitter {
     if (this.is(States.cancelled)) {
       callback(this.payload, scope)
     } else {
-      this.on('cancel', callback.bind(scope))
+      this.once('cancel', callback.bind(scope))
     }
 
     return this
