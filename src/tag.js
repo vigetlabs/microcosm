@@ -1,5 +1,3 @@
-import States from './action/states'
-
 let uid = 0
 const FALLBACK = 'microcosm_action'
 
