@@ -1,7 +1,7 @@
-import Emitter   from './emitter'
-import States    from './action/states'
+import Emitter from './emitter'
+import States, {getType} from './action/states'
 import coroutine from './action/coroutine'
-import tag       from './tag'
+import tag from './tag'
 
 /**
  * Actions encapsulate the course of resolving an action creator
@@ -24,25 +24,8 @@ export default class Action extends Emitter {
     this.payload = null
     this.parent = null
     this.sibling = null
-    this.state = States.unset
-  }
-
-  /**
-   * Check the state of the action to determine what `type` should be
-   * dispatched to stores for processing (via register()).
-   *
-   * @private
-   * @return {String|Null} The action type to dspatch.
-   */
-  get type () {
-    if (this.is(States.disabled))  return null
-    if (this.is(States.cancelled)) return this.behavior.cancelled
-    if (this.is(States.failed))    return this.behavior.failed
-    if (this.is(States.done))      return this.behavior.done
-    if (this.is(States.loading))   return this.behavior.loading
-    if (this.is(States.open))      return this.behavior.open
-
-    return null
+    this.state = States.disabled
+    this.type = null
   }
 
   /**
@@ -103,7 +86,12 @@ export default class Action extends Emitter {
    * @api private
    * @return {Action} self
    */
-  set (payload) {
+  set (state, payload) {
+    if (state != undefined) {
+      this.state = state
+      this.type = getType(this, this.behavior)
+    }
+
     if (payload != undefined) {
       this.payload = payload
     }
@@ -119,8 +107,8 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   open (payload) {
-    this.state = States.open
-    this.set(payload)
+    this.set(States.open, payload)
+
     this._emit('open', this.payload)
 
     return this
@@ -132,9 +120,8 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   send (payload) {
-    this.state = States.loading
+    this.set(States.loading, payload)
 
-    this.set(payload)
     this._emit('update', payload)
 
     return this
@@ -146,9 +133,8 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   reject (payload) {
-    this.state = States.failed | States.disposable
+    this.set(States.failed | States.disposable, payload)
 
-    this.set(payload)
     this._emit('error', payload)
 
     return this
@@ -160,9 +146,8 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   close (payload) {
-    this.state = States.done | States.disposable
+    this.set(States.done | States.disposable, payload)
 
-    this.set(payload)
     this._emit('done', this.payload)
 
     return this
@@ -175,9 +160,8 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   cancel () {
-    this.state = States.cancelled | States.disposable
+    this.set(States.cancelled | States.disposable, null)
 
-    this._emit('change')
     this._emit('cancel', this.payload)
 
     return this
@@ -190,8 +174,7 @@ export default class Action extends Emitter {
    * @private
    */
   toggle () {
-    this.state ^= States.disabled
-    this._emit('change')
+    this.set(this.state ^ States.disabledn)
   }
 
   /**
@@ -237,7 +220,7 @@ export default class Action extends Emitter {
    */
   onDone (callback, scope) {
     if (this.is(States.done)) {
-      callback(this.payload, scope)
+      callback.call(scope, this.payload)
     } else {
       this.once('done', callback.bind(scope))
     }
@@ -256,7 +239,7 @@ export default class Action extends Emitter {
    */
   onCancel (callback, scope) {
     if (this.is(States.cancelled)) {
-      callback(this.payload, scope)
+      callback.call(scope, this.payload)
     } else {
       this.once('cancel', callback.bind(scope))
     }

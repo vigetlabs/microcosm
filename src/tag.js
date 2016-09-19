@@ -37,11 +37,11 @@ export default function tag (fn, name) {
    */
   const symbol = name || (fn.name || FALLBACK) + '_' + uid
 
-  for (var key in States) {
-    fn[key] = symbol + '_' + key
-  }
-
-  fn.done = symbol
+  fn.open      = symbol + '_open'
+  fn.loading   = symbol + '_loading'
+  fn.done      = symbol // intentional
+  fn.failed    = symbol + '_failed'
+  fn.cancelled = symbol + '_cancelled'
 
   // The default state is done
   fn.toString = () => fn.done
