@@ -307,3 +307,17 @@ test('onCancel is a one time binding', t => {
   action.cancel()
   action.cancel()
 })
+
+test('executes onCancel if the action is already cancelled', t => {
+  const action = new Action(identity)
+
+  t.plan(1)
+
+  action.cancel()
+
+  action.on = function() {
+    throw new Error('Should not have subscribed cancel. Action already cancelled.')
+  }
+
+  action.onCancel(() => t.pass())
+})
