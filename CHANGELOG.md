@@ -1,5 +1,11 @@
 # Changelog
 
+## 10.0.0-beta-8
+
+- Call action callbacks with provided scope (bug fix)
+- Do not use a getter to compute type, just calculate it
+  once when state changes. This also provides a small perf boost.
+
 ## 10.0.0-beta7
 
 - Throw an error before attempting to tag `null` or `undefined`
