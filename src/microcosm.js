@@ -63,7 +63,7 @@ export default class Microcosm extends Emitter {
    * more intentional preparation phase that does not require
    * tapping into the constructor
    */
-  setup() {
+  setup () {
     // NOOP
   }
 
@@ -74,7 +74,7 @@ export default class Microcosm extends Emitter {
    * @return {Object} State object representing the initial state.
    */
   getInitialState () {
-    return this.dispatch({}, { type: lifecycle.willStart, payload: this.state })
+    return this.dispatch({}, { type: lifecycle.willStart })
   }
 
   /**
@@ -159,7 +159,7 @@ export default class Microcosm extends Emitter {
    * if it should commit it. If so, roll state forward.
    * @private
    */
-  commit(staged, key, store) {
+  commit (staged, key, store) {
     const last  = update.get(this.staged, key)
     const next  = update.get(staged, key)
     const value = store.shouldCommit(next, last) ? store.commit(next) : update.get(this.state, key)
@@ -176,7 +176,7 @@ export default class Microcosm extends Emitter {
    * @param {Function} behavior - An action function
    * @return {Action} action representation of the invoked function
    */
-  append(behavior) {
+  append (behavior) {
     const action = this.history.append(behavior)
 
     action.on('change', () => this.rollforward())
@@ -202,7 +202,7 @@ export default class Microcosm extends Emitter {
    * @param {...Array} params - Parameters to invoke the type with
    * @return {Function} A partially applied push function
    */
-  prepare(...params) {
+  prepare (...params) {
     return this.push.bind(this, ...params)
   }
 
@@ -286,7 +286,7 @@ export default class Microcosm extends Emitter {
    *
    * @return {Object} The serialized version of repo state.
    */
-  serialize() {
+  serialize () {
     return this.dispatch(this.state, { type: lifecycle.willSerialize, payload: this.state })
   }
 
@@ -294,7 +294,7 @@ export default class Microcosm extends Emitter {
    * Alias serialize for JS interoperability.
    * @return {Object} result of `serialize`.
    */
-  toJSON() {
+  toJSON () {
     return this.serialize()
   }
 
