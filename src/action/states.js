@@ -40,6 +40,7 @@ const PRIORITY = [ 'disabled', 'cancelled', 'failed', 'done', 'loading', 'open' 
  * dispatched to stores for processing (via register()).
  *
  * @private
+ * @param {Action} action - The action to analyze
  * @return {String|Null} The action type to dspatch.
  */
 export function getType (action) {

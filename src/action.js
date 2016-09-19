@@ -89,7 +89,7 @@ export default class Action extends Emitter {
   set (state, payload) {
     if (state != undefined) {
       this.state = state
-      this.type = getType(this, this.behavior)
+      this.type = getType(this)
     }
 
     if (payload != undefined) {
