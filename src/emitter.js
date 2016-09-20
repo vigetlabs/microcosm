@@ -22,7 +22,7 @@ export default class Emitter {
    * @param {Function} fn
    * @return {Emitter}
    */
-  on (event, fn) {
+  on (event, fn, scope) {
     this._callbacks = this._callbacks || {}
 
     const callback = this._callbacks['$' + event] = this._callbacks['$' + event] || []
@@ -34,7 +34,7 @@ export default class Emitter {
      * within React lifecycle methods, which prioritize children before
      * parents.
      */
-    callback.push(fn)
+    callback[callback.length] = [fn, scope || this]
 
     return this
   }
@@ -47,10 +47,10 @@ export default class Emitter {
    * @param {Function} fn
    * @return {Emitter}
    */
-  once (event, fn) {
+  once (event, fn, scope) {
     function on () {
       this.off(event, on)
-      fn.apply(this, arguments)
+      fn.apply(scope || this, arguments)
     }
 
     on.fn = fn
@@ -88,7 +88,7 @@ export default class Emitter {
     }
 
     // Remove the specific handler
-    callbacks = callbacks.filter(cb => !(cb === fn || cb.fn === fn))
+    callbacks = callbacks.filter(cb => !(cb[0] === fn || cb[0].fn === fn))
 
     /**
      * Remove event specific arrays for event types that no
@@ -121,7 +121,8 @@ export default class Emitter {
 
     if (callbacks) {
       for (let i = 0, len = callbacks.length; i < len; ++i) {
-        callbacks[i].apply(this, params)
+        let fn = callbacks[i]
+        fn[0].apply(fn[1], params)
       }
     }
 

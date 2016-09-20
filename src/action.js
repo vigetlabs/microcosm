@@ -188,7 +188,7 @@ export default class Action extends Emitter {
     if (this.is(States.failed)) {
       callback(this.payload, scope)
     } else {
-      this.once('error', callback.bind(scope))
+      this.once('error', callback, scope)
     }
 
     return this
@@ -202,7 +202,7 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   onUpdate (callback, scope) {
-    this.on('update', callback.bind(scope))
+    this.on('update', callback, scope)
 
     return this
   }
@@ -220,7 +220,7 @@ export default class Action extends Emitter {
     if (this.is(States.done)) {
       callback.call(scope, this.payload)
     } else {
-      this.once('done', callback.bind(scope))
+      this.once('done', callback, scope)
     }
 
     return this
@@ -239,7 +239,7 @@ export default class Action extends Emitter {
     if (this.is(States.cancelled)) {
       callback.call(scope, this.payload)
     } else {
-      this.once('cancel', callback.bind(scope))
+      this.once('cancel', callback, scope)
     }
 
     return this
