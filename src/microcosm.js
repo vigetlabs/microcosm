@@ -142,7 +142,7 @@ export default class Microcosm extends Emitter {
 
     const next = this.stores.reduce((memo, store) => {
       return this.commit(memo, store[0], store[1])
-    }, merge({}, staged))
+    }, staged)
 
     this.staged = staged
 
