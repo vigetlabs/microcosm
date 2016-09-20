@@ -179,7 +179,7 @@ export default class Microcosm extends Emitter {
   append (behavior) {
     const action = this.history.append(behavior)
 
-    action.on('change', () => this.rollforward())
+    action.on('change', this.rollforward, this)
 
     return action
   }

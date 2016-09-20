@@ -15,6 +15,18 @@ test('initially returns no type', t => {
   t.is(action.type, null)
 })
 
+test('is toggleable', t => {
+  const action = new Action(identity)
+
+  action.open()
+
+  action.toggle()
+  t.truthy(action.is('disabled'))
+
+  action.toggle()
+  t.falsy(action.is('disabled'))
+})
+
 test('returns no type when disabled', t => {
   const action = new Action(identity)
 

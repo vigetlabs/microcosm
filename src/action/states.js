@@ -51,6 +51,8 @@ export function getType (action) {
       return action.behavior[type] || null
     }
   }
+
+  return null
 }
 
 export default STATES

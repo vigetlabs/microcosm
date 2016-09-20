@@ -172,7 +172,7 @@ export default class Action extends Emitter {
    * @private
    */
   toggle () {
-    this.set(this.state ^ States.disabledn)
+    this.set(this.state ^ States.disabled)
   }
 
   /**
