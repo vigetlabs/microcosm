@@ -168,23 +168,6 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Append an action to a microcosm's history. In a production
-   * repo, this is typically reserved for testing. `append`
-   * will not execute an action, making it easier to test individual
-   * action operations.
-   *
-   * @param {Function} behavior - An action function
-   * @return {Action} action representation of the invoked function
-   */
-  append (behavior) {
-    const action = this.history.append(behavior)
-
-    action.on('change', this.rollforward, this)
-
-    return action
-  }
-
-  /**
    * Push an action into Microcosm. This will trigger the lifecycle for updating
    * state.
    *
@@ -193,7 +176,13 @@ export default class Microcosm extends Emitter {
    * @return {Action} action representation of the invoked function
    */
   push (behavior, ...params) {
-    return this.append(behavior).execute(...params)
+    const action = this.history.append(behavior)
+
+    action.on('change', this.rollforward, this)
+
+    action.execute(...params)
+
+    return action
   }
 
   /**
