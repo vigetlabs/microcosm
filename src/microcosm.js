@@ -30,9 +30,6 @@ export default class Microcosm extends Emitter {
     this.history = new History()
     this.domains = []
 
-    // for backwards compatibility
-    this.addDomain = this.addDomain
-
     // cache domain registry methods for efficiency
     this.registry = {}
 
@@ -213,7 +210,7 @@ export default class Microcosm extends Emitter {
       // Important! Assignment this way is important
       // to support IE9, which has an odd way of referencing
       // arguments
-      config  = key
+      config = key
       key = null
     }
 
@@ -232,6 +229,11 @@ export default class Microcosm extends Emitter {
     this.rebase()
 
     return this
+  }
+
+  addStore() {
+    console.warn('repo.addStore has been deprecated. Please use repo.addDomain')
+    return this.addDomain.apply(this, arguments)
   }
 
   /**

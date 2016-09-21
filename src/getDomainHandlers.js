@@ -28,7 +28,7 @@ function getHandler (key, domain, type) {
 export default function getDomainHandlers (domains, type) {
   const handlers = []
 
-  domains.forEach(function (domain, key) {
+  domains.forEach(function ([key, domain]) {
     let handler = getHandler(key, domain, type)
 
     if (handler !== undefined) {
