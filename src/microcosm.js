@@ -1,6 +1,6 @@
 import Emitter          from './emitter'
 import MetaStore        from './stores/meta'
-import Tree             from './tree'
+import History          from './history'
 import Store            from './store'
 import lifecycle        from './lifecycle'
 import getStoreHandlers from './getStoreHandlers'
@@ -24,7 +24,7 @@ export default class Microcosm extends Emitter {
   constructor ({ maxHistory = -Infinity, pure = true } = {}) {
     super()
 
-    this.history = new Tree()
+    this.history = new History()
     this.pure = pure
     this.maxHistory = maxHistory
     this.stores = []
@@ -84,7 +84,7 @@ export default class Microcosm extends Emitter {
    *
    * @private
    * @param {Action} action target action to "clean"
-   * @param {Number} size the depth of the tree
+   * @param {Number} size the depth of the history
    * @return {Boolean} Was the action merged into the archive?
    */
   clean (action, size) {

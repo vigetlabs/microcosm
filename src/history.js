@@ -5,7 +5,7 @@ import Action from './action'
  * a Microcosm. Each node in the tree represents an action. Branches
  * are changes over time.
  */
-export default class Tree {
+export default class History {
 
   constructor () {
     this.root  = null
@@ -19,7 +19,7 @@ export default class Tree {
    *
    * @private
    * @param {Action} action - An action to set as the new focus
-   * @return {Tree} self
+   * @return {History} self
    */
   checkout (action) {
     this.focus = action
@@ -63,7 +63,7 @@ export default class Tree {
    * @private
    * @param {Action} parent action to append to
    * @param {Action} child action to append
-   * @return {Tree} self
+   * @return {History} self
    */
   connect (parent, child) {
     child.parent  = parent
@@ -82,7 +82,7 @@ export default class Tree {
    * @private
    * @param {Function} shouldRemove - A predicate for if the action should be removed
    * @param {Function} scope - Scope to invoke `shouldRemove`
-   * @return {Tree} self
+   * @return {History} self
    */
   prune (shouldRemove, scope) {
     let root = this.root

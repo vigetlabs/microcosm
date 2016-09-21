@@ -21,7 +21,7 @@ prerelease: clean all
 	npm publish dist --tag beta
 
 bench: javascript
-	@ node --expose-gc tmp/bench/tree-performance
+	@ node --expose-gc tmp/bench/history-performance
 	@ node --expose-gc tmp/bench/dispatch-performance
 	@ node --expose-gc tmp/bench/push-performance
 

@@ -1,8 +1,8 @@
 /**
- * Tree Performance Benchmark
+ * History Performance Benchmark
  */
 
-import Tree from '../src/tree'
+import History from '../src/history'
 import merge from '../src/merge'
 import time from 'microtime'
 
@@ -15,7 +15,7 @@ const SIZES = [
   400000
 ]
 
-console.log('\nConducting tree benchmark...\n')
+console.log('\nConducting history benchmark...\n')
 
 const results = SIZES.map(function (SIZE) {
   /**
@@ -27,7 +27,7 @@ const results = SIZES.map(function (SIZE) {
 
   var action = () => {}
   var stats  = { build: 0, root: 0, merge: 0, size: 0, prune: 0, memory: 0 }
-  var tree   = new Tree()
+  var history   = new History()
 
   var memoryBefore = process.memoryUsage().heapUsed
 
@@ -36,7 +36,7 @@ const results = SIZES.map(function (SIZE) {
    */
   var now = time.now()
   for (var k = SIZE; k >= 0; k--) {
-    tree.append(action)
+    history.append(action)
   }
   stats.build = ((time.now() - now) / 1000)
 
@@ -45,15 +45,15 @@ const results = SIZES.map(function (SIZE) {
    * the current branch.
    */
   now = time.now()
-  tree.size()
+  history.size()
   stats.size = (time.now() - now) / 1000
 
   /**
    * Measure time to build an array of the current branch. This is used
-   * by other tree operations.
+   * by other history operations.
    */
   now = time.now()
-  tree.toArray()
+  history.toArray()
   stats.toArray = (time.now() - now) / 1000
 
   /**
@@ -62,25 +62,25 @@ const results = SIZES.map(function (SIZE) {
    * within Microcosm's dispatch process.
    */
   now = time.now()
-  tree.reduce(function (a, b) {
+  history.reduce(function (a, b) {
     return merge(a, b.payload)
   }, {})
   stats.merge = (time.now() - now) / 1000
 
 
   /**
-   * Measure time to dispose all nodes in the tree. This also has
+   * Measure time to dispose all nodes in the history. This also has
    * the side effect of helping to test memory leakage later.
    */
   now = time.now()
-  tree.prune(function() {
+  history.prune(function() {
     return true
   })
   stats.prune = (time.now() - now) / 1000
 
 
   /**
-   * Now that the tree has been pruned, force garbage collection
+   * Now that the history has been pruned, force garbage collection
    * and record the increase in heap usage.
    */
   global.gc()

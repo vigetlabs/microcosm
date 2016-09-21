@@ -1,166 +1,166 @@
 import test from 'ava'
-import Tree from '../src/tree'
+import History from '../src/history'
 
 const action = n => n
 
 test('adjusts the focal point when adding a node', t => {
-  const tree = new Tree()
+  const history = new History()
 
-  tree.append(action)
-  tree.append(action)
+  history.append(action)
+  history.append(action)
 
-  t.is(tree.focus.behavior, action)
+  t.is(history.focus.behavior, action)
 })
 
 test('prunes all the way up to the focal point', t => {
-  const tree = new Tree()
+  const history = new History()
 
   // One
-  tree.append(action)
+  history.append(action)
 
   // Two
-  const two = tree.append(action)
+  const two = history.append(action)
 
   // Three
-  tree.append(action)
+  history.append(action)
 
-  tree.checkout(two)
-  tree.prune(() => true)
+  history.checkout(two)
+  history.prune(() => true)
 
-  t.is(tree.focus, null)
+  t.is(history.focus, null)
 })
 
 test('prunes removes nodes until it returns false', t => {
-  const tree = new Tree()
+  const history = new History()
 
-  const one = tree.append(action)
-  const two = tree.append(action)
+  const one = history.append(action)
+  const two = history.append(action)
 
-  tree.append(action)
+  history.append(action)
 
-  tree.checkout(two)
-  tree.prune(() => false)
+  history.checkout(two)
+  history.prune(() => false)
 
-  t.is(tree.focus, two)
-  t.is(tree.focus.parent, one)
+  t.is(history.focus, two)
+  t.is(history.focus.parent, one)
 })
 
 test('only walks through the main timeline', t => {
-  const tree = new Tree()
+  const history = new History()
 
-  const first = tree.append(action)
+  const first = history.append(action)
 
-  tree.append(action)
+  history.append(action)
 
-  tree.checkout(first)
+  history.checkout(first)
 
-  const third = tree.append(action)
+  const third = history.append(action)
 
-  t.deepEqual(tree.toArray(), [ first, third ])
+  t.deepEqual(history.toArray(), [ first, third ])
 })
 
 test('does not walk past the focal point', t => {
-  const tree = new Tree()
+  const history = new History()
 
-  let one = tree.append(action)
-  tree.append(action)
-  tree.append(action)
-  tree.checkout(one)
+  let one = history.append(action)
+  history.append(action)
+  history.append(action)
+  history.checkout(one)
 
-  t.deepEqual(tree.toArray(), [ one ])
+  t.deepEqual(history.toArray(), [ one ])
 })
 
 test('properly handles forks', t => {
-  let tree = new Tree()
+  let history = new History()
 
-  let one   = tree.append(action)
-  let two   = tree.append(action)
-  let three = tree.append(action)
+  let one   = history.append(action)
+  let two   = history.append(action)
+  let three = history.append(action)
 
-  tree.checkout(two)
+  history.checkout(two)
 
-  let four = tree.append(action)
-  let five = tree.append(action)
+  let four = history.append(action)
+  let five = history.append(action)
 
-  t.deepEqual(tree.toArray(), [ one, two, four, five ])
+  t.deepEqual(history.toArray(), [ one, two, four, five ])
 
-  tree.checkout(three)
+  history.checkout(three)
 
-  t.deepEqual(tree.toArray(), [ one, two, three ])
+  t.deepEqual(history.toArray(), [ one, two, three ])
 })
 
 test('can get the previous node in the chain', t => {
-  const tree = new Tree()
+  const history = new History()
 
-  const one = tree.append(action)
-  const two = tree.append(action)
-  const three = tree.append(action)
+  const one = history.append(action)
+  const two = history.append(action)
+  const three = history.append(action)
 
   t.is(two.parent, one)
   t.is(three.parent, two)
 })
 
 test('sets the root to null if checking out a null node', t => {
-  const tree  = new Tree()
-  tree.append(action)
+  const history  = new History()
+  history.append(action)
 
-  tree.checkout()
+  history.checkout()
 
-  t.is(tree.root, null)
-  t.is(tree.focus, null)
+  t.is(history.root, null)
+  t.is(history.focus, null)
 })
 
 test('can determine the root node', t => {
-  const tree = new Tree()
+  const history = new History()
 
-  const a = tree.append(action)
+  const a = history.append(action)
 
-  tree.append(action)
-  tree.append(action)
+  history.append(action)
+  history.append(action)
 
-  t.is(tree.root, a)
+  t.is(history.root, a)
 })
 
 test('can determine children', t => {
-  const tree = new Tree()
-  const a = tree.append(action)
-  const b = tree.append(action)
+  const history = new History()
+  const a = history.append(action)
+  const b = history.append(action)
 
-  tree.checkout(a)
+  history.checkout(a)
 
-  const c = tree.append(action)
+  const c = history.append(action)
 
   t.deepEqual(a.children, [ c, b ])
 })
 
 test('does not lose children when checking out nodes on the left', t => {
-  const tree = new Tree()
+  const history = new History()
 
-  tree.append(action)
+  history.append(action)
 
-  const b = tree.append(action)
-  const c = tree.append(action)
+  const b = history.append(action)
+  const c = history.append(action)
 
-  tree.checkout(b)
+  history.checkout(b)
 
-  const d = tree.append(action)
+  const d = history.append(action)
 
   t.deepEqual(b.children, [ d, c ])
 })
 
 test('does not lose children when checking out nodes on the right', t => {
-  const tree = new Tree()
+  const history = new History()
 
-  tree.append(action)
+  history.append(action)
 
-  const b = tree.append(action)
-  const c = tree.append(action)
+  const b = history.append(action)
+  const c = history.append(action)
 
-  tree.checkout(b)
+  history.checkout(b)
 
-  const d = tree.append(action)
+  const d = history.append(action)
 
-  tree.checkout(c)
+  history.checkout(c)
 
   t.deepEqual(b.children, [d, c])
 })
