@@ -1,5 +1,18 @@
 # Changelog
 
+## Edge (not released)
+
+- Removed `Microcosm::append`. This was only used internally, and is
+  no longer necessary.
+- Updated Presenter to take advantage of scope management in event
+  emitter.
+- Renamed the `failed` action state to `error` to be consistent with
+  `Action::onError` and the `error` event listener trigger.
+
+### Upgrading
+
+Rename all `failed` subscriptions in Store register methods to `error`.
+
 ## 10.0.0-beta-8
 
 - Call action callbacks with provided scope (bug fix)
