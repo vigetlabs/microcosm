@@ -19,8 +19,7 @@ export default class Presenter extends Component {
     this.state = this._getState()
 
     if (this.repo) {
-      this._listener = this._updateState.bind(this)
-      this.repo.on('change', this._listener)
+      this.repo.on('change', this._updateState, this)
     }
   }
 
@@ -60,8 +59,8 @@ export default class Presenter extends Component {
    * @param {Microcosm} repo - The presenter's Microcosm instance
    */
   teardown () {
-    if (this._listener) {
-      this.repo.off('change', this._listener)
+    if (this.repo) {
+      this.repo.off('change', this._updateState)
     }
   }
 

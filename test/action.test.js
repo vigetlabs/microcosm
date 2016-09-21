@@ -60,12 +60,12 @@ test('becomes disposable when cancelled', t => {
   t.is(action.is('disposable'), true)
 })
 
-test('exposes a failed type when rejected', t => {
+test('exposes a error type when rejected', t => {
   const action = new Action(identity)
 
   action.reject()
 
-  t.is(action.type, identity.failed)
+  t.is(action.type, identity.error)
 })
 
 test('exposes an open type when opened', t => {

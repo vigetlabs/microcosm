@@ -38,7 +38,7 @@ export default function tag (fn, name) {
   fn.open      = symbol + '_open'
   fn.loading   = symbol + '_loading'
   fn.done      = symbol // intentional
-  fn.failed    = symbol + '_failed'
+  fn.error     = symbol + '_error'
   fn.cancelled = symbol + '_cancelled'
 
   // The default state is done

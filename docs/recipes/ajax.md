@@ -26,9 +26,9 @@ function getSite () {
 
 repo.addStore('site', function () {
   return {
-    [getSite.open]   : () => 'loading',
-    [getSite.failed] : () => 'failed',
-    [getSite.done]   : () => 'done'
+    [getSite.open]  : () => 'loading',
+    [getSite.error] : () => 'error',
+    [getSite.done]  : () => 'done'
   }
 })
 
@@ -48,7 +48,7 @@ creator, it handles it in the following way:
    subscribe to a loading state.
 2. On resolution, mark the action as `done` and update its payload to
    that of the resolved Promise.
-3. On failure, mark the action as `failed` and update its payload to
+3. On failure, mark the action as `error` and update its payload to
    the associated error.
 
 ### Why did my loading state go away when the action completed?
@@ -114,9 +114,9 @@ function getSite () {
 
 repo.addStore('site', function () {
   return {
-    [getSite.open]   : () => 'loading',
-    [getSite.failed] : () => 'failed',
-    [getSite.done]   : () => 'done'
+    [getSite.open]  : () => 'loading',
+    [getSite.error] : () => 'error',
+    [getSite.done]  : () => 'done'
   }
 })
 

@@ -45,7 +45,7 @@ Action creators that return a promise move through several states:
 1. `open`: The action is opened immediately. This allows stores to
    handle a loading state.
 2. `done`: The action completes when the Promise resolves
-3. `failed`: The action fails when the Promise is rejected
+3. `error`: The action fails when the Promise is rejected
 
 ```javascript
 function readPlanets () {
@@ -106,7 +106,7 @@ const SolarSystem = {
       [getPlanet.open]      : this.setLoading,
       [getPlanet.loading]   : this.setProgress,
       [getPlanet.done]      : this.addPlanet,
-      [getPlanet.failed]    : this.setError,
+      [getPlanet.error]     : this.setError,
       [getPlanet.cancelled] : this.setCancelled
     }
   }
@@ -194,8 +194,8 @@ state and optional update the payload. Stores registered to
 
 ### `reject([payload])`
 
-Reject an action. This will move an action into the `failed` state and
-optional update the payload. Stores registered to `action.failed` will
+Reject an action. This will move an action into the `error` state and
+optional update the payload. Stores registered to `action.error` will
 pick up on an action within this state.
 
 ### `close([payload])`

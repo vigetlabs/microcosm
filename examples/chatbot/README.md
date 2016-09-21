@@ -17,7 +17,7 @@ open http://localhost:4000
 This example demonstrates using the current state of actions to
 provide optimistic updates and loading states. When an action is
 pushed into a Microcosm, this example uses the `open`, `done`, and
-`failed` states to display useful information to the user.
+`error` states to display useful information to the user.
 
 The best place to see where this happens is within
 [`./app/stores/message.js`](./app/stores/message.js), where the
@@ -28,9 +28,9 @@ const Messages = {
   // ..
   register() {
     return {
-      [send.open]   : Messages.addLoading,
-      [send.done]   : Messages.add,
-      [send.failed] : Messages.addError
+      [send.open]  : Messages.addLoading,
+      [send.done]  : Messages.add,
+      [send.error] : Messages.addError
     }
   }
 }

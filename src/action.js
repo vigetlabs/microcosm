@@ -126,12 +126,12 @@ export default class Action extends Emitter {
   }
 
   /**
-   * Set the action state to "failed" and marks the action for clean
+   * Set the action state to "error" and marks the action for clean
    * up, then set a payload if provided. Triggers the "error" event.
    * @return {Action} self
    */
   reject (payload) {
-    this.set(States.failed | States.disposable, payload)
+    this.set(States.error | States.disposable, payload)
 
     this._emit('error', payload)
 
@@ -185,7 +185,7 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   onError (callback, scope) {
-    if (this.is(States.failed)) {
+    if (this.is(States.error)) {
       callback(this.payload, scope)
     } else {
       this.once('error', callback, scope)

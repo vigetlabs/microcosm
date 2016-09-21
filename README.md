@@ -71,7 +71,7 @@ referential identity of the action and the current state of its
 lifecycle.
 
 An action can be in several states: `open`, `loading`, `done`,
-`failed`, and `cancelled`. Stores can subscribe to each of these
+`error`, and `cancelled`. Stores can subscribe to each of these
 states through the use of a `register` function:
 
 ```javascript

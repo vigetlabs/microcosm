@@ -22,7 +22,7 @@ const STATES = {
   done : 16,
 
   // the action has failed
-  failed : 32,
+  error : 32,
 
   // prevent the action from dispatching to stores. this is used by
   // the microcosm debugger to toggle actions within the history tree.
@@ -33,7 +33,7 @@ const STATES = {
   disposable : 128
 }
 
-const PRIORITY = [ 'disabled', 'cancelled', 'failed', 'done', 'loading', 'open' ]
+const PRIORITY = [ 'disabled', 'cancelled', 'error', 'done', 'loading', 'open' ]
 
 /**
  * Check the state of the action to determine what `type` should be

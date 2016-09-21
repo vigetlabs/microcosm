@@ -45,11 +45,11 @@ wait for the promise complete and only move an action forward if
 it resolves successfully.
 
 What if it were to fail? If a returned Promise is rejected, the
-associated action moves into a `failed` state. This can be subscribed
+associated action moves into a `error` state. This can be subscribed
 to within stores:
 
 ```javascript
-function updatePlanet (id) {
+function getPlanet (id) {
   return ajax.get('http://myapi.com/planets/' + id)
 }
 
@@ -57,14 +57,14 @@ const Store = {
   // ...
   register() {
     return {
-      [getPlanet.done]   : Store.updatePlanet,
-      [getPlanet.failed] : Store.handleError
+      [getPlanet.done]  : Store.updatePlanet,
+      [getPlanet.error] : Store.handleError
     }
   }
 }
 
 // let's assume the ajax request fails
-repo.push(getPlanets, 2)
+repo.push(getPlanet, 2)
 ```
 
 ## Pending state
@@ -74,7 +74,7 @@ sends a message, it immediately shows up on their user interface and
 is persisted to other clients in the background. This makes apps feel
 intuitive and responsive.
 
-Up until now, we've only dealt with an action's `done` and `failed`
+Up until now, we've only dealt with an action's `done` and `error`
 state. However, when returning Promises, actions switch into an `open`
 state while it waites for the Promise to resolve. This can also be
 subscribed to within a store:
@@ -84,9 +84,9 @@ const Store = {
   // ...
   register() {
     return {
-      [getPlanet.open]   : Store.setLoading,
-      [getPlanet.done]   : Store.updatePlanet,
-      [getPlanet.failed] : Store.handleError
+      [getPlanet.open]  : Store.setLoading,
+      [getPlanet.done]  : Store.updatePlanet,
+      [getPlanet.error] : Store.handleError
     }
   }
 }

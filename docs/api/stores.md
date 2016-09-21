@@ -38,7 +38,7 @@ const Store = {
       [action.open]      : this.setLoading,
       [action.loading]   : this.setProgress,
       [action.done]      : this.addRecord,
-      [action.failed]    : this.setError,
+      [action.error]     : this.setError,
       [action.cancelled] : this.setCancelled
     }
   }

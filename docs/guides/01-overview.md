@@ -18,7 +18,7 @@ Microcosm distinguishes itself from traditional Flux in a number of ways:
 
 **Data is kept in one place.** Stores and actions are collections of pure functions; they have no state of their own. They provide instructions for how a microcosm should update itself.
 
-**Action constants are generated automatically**. Instead of subscribing to a constant, Stores listen to things like `action.open`, `action.loading`, `action.done`, and `action.failed`.
+**Action constants are generated automatically**. Instead of subscribing to a constant, Stores listen to things like `action.open`, `action.loading`, `action.done`, and `action.error`.
 
 **Microcosm is a transactional system**. Microcosm keeps track of all outstanding actions and operates on them sequentially as they resolve, in the order they were originally invoked.
 
