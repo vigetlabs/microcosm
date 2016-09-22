@@ -1,5 +1,6 @@
 import test from 'ava'
 import Microcosm from '../src/microcosm'
+import console from './helpers/console'
 
 test('deserializes when replace is invoked', t => {
   const repo = new Microcosm()
@@ -119,4 +120,16 @@ test('if pure, it will emit a change if state is not shallowly equal', t => {
   repo.push(identity, 1).onDone(function() {
     t.not(repo.state, first)
   })
+})
+
+test('warns when using addStore', t => {
+  const repo = new Microcosm({ pure: true })
+
+  console.record()
+
+  repo.addStore('test', {})
+
+  t.is(console.count('warn'), 1)
+
+  console.restore()
 })
