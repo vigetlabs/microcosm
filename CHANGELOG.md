@@ -8,10 +8,16 @@
   emitter.
 - Renamed the `failed` action state to `error` to be consistent with
   `Action::onError` and the `error` event listener trigger.
+- Added a new `withIntent` addon. See [the docs for more info](./docs/api/with-intent)
+- All instances of `store` have been renamed to `domain`.
 
 ### Upgrading
 
-Rename all `failed` subscriptions in Store register methods to `error`.
+- Rename all `failed` subscriptions in Store register methods to
+  `error`.
+- Instead of calling `repo.addStore`, call `repo.addDomain`. We've
+  kept `addStore` temporarily to make upgrading easier, but will
+  remove it with the 10.0.0 release.
 
 ## 10.0.0-beta-8
 
