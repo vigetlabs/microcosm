@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.0.0-rc2
+
+- Fixed a bug where the presenter's subscription would be removed when
+  children unmounted.
+
 ## 10.0.0-rc
 
 - Removed `Microcosm::append`. This was only used internally, and is

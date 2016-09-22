@@ -19,7 +19,8 @@ export default class Presenter extends Component {
     this.state = this._getState()
 
     if (this.repo) {
-      this.repo.on('change', this._updateState, this)
+      this._listener = () => this._updateState()
+      this.repo.on('change', this._listener)
     }
   }
 
@@ -60,7 +61,7 @@ export default class Presenter extends Component {
    */
   teardown () {
     if (this.repo) {
-      this.repo.off('change', this._updateState)
+      this.repo.off('change', this._listener)
     }
   }
 

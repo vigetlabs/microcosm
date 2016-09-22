@@ -403,3 +403,25 @@ test('remembers inline properties', t => {
 
   t.is(wrapper.state('test'), true)
 })
+
+test('does not tear down other listeners', t => {
+  const repo = new Microcosm()
+
+  class Parent extends Presenter {
+    render() {
+      return this.props.hide ? <p>Nothing</p> : this.props.children
+    }
+  }
+
+  class Child extends Presenter {
+    render() {
+      return <p>Hey</p>
+    }
+  }
+
+  let wrapper = mount(<Parent repo={ repo }><Child /></Parent>)
+
+  wrapper.setProps({ hide: true })
+
+  t.is(repo._callbacks['$change'].length, 1)
+})
