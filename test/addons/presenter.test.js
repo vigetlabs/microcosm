@@ -384,3 +384,22 @@ test('does not waste rendering on nested children', t => {
   mount(<Parent repo={ repo } />)
   repo.replace({ name: 'Billy Booster' })
 })
+
+test('remembers inline properties', t => {
+  const repo = new Microcosm()
+
+  class Subject extends Presenter {
+    state = {
+      test: true
+    }
+    viewModel() {
+      return {
+        prop: state => true
+      }
+    }
+  }
+
+  let wrapper = mount(<Subject repo={ repo } />)
+
+  t.is(wrapper.state('test'), true)
+})
