@@ -13,11 +13,11 @@
 
 ### Upgrading
 
-- Rename all `failed` subscriptions in Store register methods to
-  `error`.
 - Instead of calling `repo.addStore`, call `repo.addDomain`. We've
   kept `addStore` temporarily to make upgrading easier, but will
   remove it with the 10.0.0 release.
+- Rename all `failed` subscriptions in Domain register methods to
+  `error`.
 
 ## 10.0.0-beta-8
 
