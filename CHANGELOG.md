@@ -1,6 +1,6 @@
 # Changelog
 
-## Edge (not released)
+## 10.0.0-rc
 
 - Removed `Microcosm::append`. This was only used internally, and is
   no longer necessary.
