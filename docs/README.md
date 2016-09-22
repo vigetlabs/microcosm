@@ -25,3 +25,4 @@ start. Beyond that, check out [the example apps](../examples).
 
 1. [Presenter](api/presenter.md)
 2. [Form](api/form.md)
+3. [withIntent](api/with-intent.md)
