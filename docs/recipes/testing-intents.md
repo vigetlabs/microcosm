@@ -8,7 +8,7 @@
 
 Presenters have a powerful `intent` feature that allows view
 components to utilize the [Form](../api/form.md)
-or [`ithIntent](../api/with-intent.md) add-ons to communicate to a
+or [withIntent](../api/with-intent.md) add-ons to communicate to a
 Presenter even if they are deep within a tree. This recipe walks
 through testing that functionality.
 
