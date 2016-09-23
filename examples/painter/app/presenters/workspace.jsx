@@ -4,21 +4,21 @@ import Canvas    from '../views/canvas'
 import {paint}   from '../actions/pixels'
 
 class Workspace extends Presenter {
+  register () {
+    return {
+      paint: (repo, point) => this.repo.push(paint, point)
+    }
+  }
 
-  viewModel() {
+  model () {
     return {
       pixels : state => state.pixels
     }
   }
 
-  paint(x, y) {
-    return this.repo.push(paint, x, y)
+  view ({ pixels }) {
+    return <Canvas pixels={pixels} />
   }
-
-  render() {
-    return <Canvas pixels={ this.state.pixels } onClick={ this.paint.bind(this) } />
-  }
-
 }
 
 export default Workspace

@@ -1,10 +1,12 @@
 import React from 'react'
+import withIntent from '../../../../src/addons/with-intent'
 
-function Cell ({ x, y, active, onClick }) {
+withIntent(function Cell ({ x, y, active, send }) {
   const color = active ? 'black' : 'white'
+  const paint = () => send('paint', { x, y })
 
-  return <rect key={ x } x={ x } y={ y } onClick={ () => onClick(x, y) } fill={ color } width="1" height="1"/>
-}
+  return <rect key={x} x={x} y={y} onClick={paint} fill={color} width="1" height="1"/>
+})
 
 export default function Row ({ cells, y, onClick }) {
 
