@@ -273,6 +273,21 @@ test('allows functions to return from viewModel', t => {
   t.is(el.state(), el.instance().repo.state)
 })
 
+test('passes all state by default', t => {
+  class MyPresenter extends Presenter {
+    view ({ text }) {
+      return <p>{ text }</p>
+    }
+  }
+
+  const repo = new Microcosm()
+  const el = mount(<MyPresenter repo={repo} />)
+
+  repo.replace({ text: 'Space, the final frontier' })
+
+  t.is(el.text(), 'Space, the final frontier')
+})
+
 test('does not cause a re-render when shallowly equal and pure', t => {
   const repo = new Microcosm({ pure: true })
   let renders = 0
@@ -427,10 +442,10 @@ test('does not tear down other listeners', t => {
 })
 
 test('model is an alias for viewModel', t => {
-  class HelloWorld extends Presenter {
-    model () {
+  class Hello extends Presenter {
+    model ({ place }) {
       return {
-        greeting: "Hello, world!"
+        greeting: "Hello, " + place + "!"
       }
     }
 
@@ -439,7 +454,7 @@ test('model is an alias for viewModel', t => {
     }
   }
 
-  let wrapper = mount(<HelloWorld />)
+  let wrapper = mount(<Hello place="world" />)
 
   t.is(wrapper.text(), 'Hello, world!')
 })

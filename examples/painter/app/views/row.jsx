@@ -1,18 +1,19 @@
 import React from 'react'
 import withIntent from '../../../../src/addons/with-intent'
 
-withIntent(function Cell ({ x, y, active, send }) {
+const Cell = function ({ x, y, active, onClick }) {
   const color = active ? 'black' : 'white'
-  const paint = () => send('paint', { x, y })
 
-  return <rect key={x} x={x} y={y} onClick={paint} fill={color} width="1" height="1"/>
-})
+  return (
+    <rect x={x} y={y} onClick={onClick} fill={color} width="1" height="1"/>
+  )
+}
 
-export default function Row ({ cells, y, onClick }) {
+export default withIntent(function Row ({ cells, y, send }) {
 
   return (
     <g key={ y }>
-      { cells.map((active, x) => Cell({ x, y, active, onClick })) }
+      { cells.map((active, x) => <Cell key={x} x={x} y={y} active={active} onClick={() => send('paint', {x, y})} />)}
     </g>
   )
-}
+})

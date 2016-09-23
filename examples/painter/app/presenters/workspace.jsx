@@ -6,7 +6,7 @@ import {paint}   from '../actions/pixels'
 class Workspace extends Presenter {
   register () {
     return {
-      paint: (repo, point) => this.repo.push(paint, point)
+      paint: (repo, point) => repo.push(paint, point)
     }
   }
 

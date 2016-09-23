@@ -101,15 +101,14 @@ export default class Presenter extends Component {
    * @returns {Object} The properties to assign to state
    */
   viewModel (props) {
-    return this.model()
+    return this.model(props)
   }
 
   /**
    * Alias for viewModel
    */
-
-  model() {
-    return {}
+  model(props) {
+    return state => state
   }
 
   /**
