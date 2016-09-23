@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Microcosm from '../microcosm'
 import shallowEqual from '../shallow-equal'
+import merge from '../merge'
 
 /**
  * A general component abstraction for high-responsibility React
@@ -100,6 +101,14 @@ export default class Presenter extends Component {
    * @returns {Object} The properties to assign to state
    */
   viewModel (props) {
+    return this.model()
+  }
+
+  /**
+   * Alias for viewModel
+   */
+
+  model() {
     return {}
   }
 
@@ -210,8 +219,12 @@ export default class Presenter extends Component {
     console.warn(`No presenter implements intent “${ intent }”.`)
   }
 
-  render () {
+  view (model) {
     return this.props.children ? React.Children.only(this.props.children) : null
+  }
+
+  render () {
+    return this.view(merge({}, this.props, this.state))
   }
 
 }

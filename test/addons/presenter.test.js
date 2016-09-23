@@ -82,8 +82,8 @@ test('handles non-function view model bindings', t => {
         upper: name.toUpperCase()
       }
     }
-    render() {
-      return <p>{this.state.upper}</p>
+    view({ upper }) {
+      return <p>{upper}</p>
     }
   }
 
@@ -109,7 +109,7 @@ test('send bubbles up to parent presenters', t => {
         }
       }
     }
-    render() {
+    view () {
       return <Child />
     }
   }
@@ -139,7 +139,7 @@ test('runs an update function when it gets new props', t => {
     update(repo, props) {
       t.is(props.test, "bar")
     }
-    render() {
+    view() {
       return <View />
     }
   }
@@ -155,7 +155,7 @@ test('does not run an update function when it is pure and no props change', t =>
       throw new Error('Presenter update method should not have been called')
     }
 
-    render() {
+    view() {
       return <View />
     }
   }
@@ -173,7 +173,7 @@ test('always runs update when impure', t => {
       t.pass()
     }
 
-    render() {
+    view() {
       return <View />
     }
   }
@@ -191,7 +191,7 @@ test('inherits purity from repo', t => {
       t.pass()
     }
 
-    render() {
+    view() {
       return <View />
     }
   }
@@ -283,9 +283,9 @@ test('does not cause a re-render when shallowly equal and pure', t => {
     viewModel() {
       return { name: state => state.name }
     }
-    render() {
+    view ({ name }) {
       renders += 1
-      return <p>{ this.state.name }</p>
+      return <p>{ name }</p>
     }
   }
 
@@ -306,9 +306,9 @@ test('always re-renders impure repos', t => {
     viewModel() {
       return { name: state => state.name }
     }
-    render() {
+    view ({ name }) {
       renders += 1
-      return (<p>{ this.state.name }</p>)
+      return (<p>{ name }</p>)
     }
   }
 
@@ -323,13 +323,13 @@ test('recalculates the view model if the props are different', t => {
   repo.replace({ name: 'Kurtz' })
 
   class Namer extends Presenter {
-    viewModel(props) {
+    viewModel (props) {
       return {
         name: state => props.prefix + ' ' + state.name
       }
     }
-    render() {
-      return (<p>{ this.state.name }</p>)
+    view ({ name }) {
+      return (<p>{ name }</p>)
     }
   }
 
@@ -346,7 +346,7 @@ test('does not recalculate the view model if the props are the same', t => {
   t.plan(1)
 
   class Namer extends Presenter {
-    viewModel(props) {
+    viewModel (props) {
       t.pass()
       return {}
     }
@@ -363,20 +363,20 @@ test('does not waste rendering on nested children', t => {
   t.plan(2)
 
   class Child extends Presenter {
-    viewModel() {
+    viewModel () {
       return { name: state => state.name }
     }
-    render() {
+    view () {
       t.pass()
       return <p>{ this.state.name }</p>
     }
   }
 
   class Parent extends Presenter {
-    viewModel() {
+    viewModel () {
       return { name: state => state.name }
     }
-    render() {
+    view () {
       return <Child />
     }
   }
@@ -408,13 +408,13 @@ test('does not tear down other listeners', t => {
   const repo = new Microcosm()
 
   class Parent extends Presenter {
-    render() {
+    view () {
       return this.props.hide ? <p>Nothing</p> : this.props.children
     }
   }
 
   class Child extends Presenter {
-    render() {
+    view () {
       return <p>Hey</p>
     }
   }
@@ -424,4 +424,22 @@ test('does not tear down other listeners', t => {
   wrapper.setProps({ hide: true })
 
   t.is(repo._callbacks['$change'].length, 1)
+})
+
+test('model is an alias for viewModel', t => {
+  class HelloWorld extends Presenter {
+    model () {
+      return {
+        greeting: "Hello, world!"
+      }
+    }
+
+    view ({ greeting }) {
+      return <p>{ greeting }</p>
+    }
+  }
+
+  let wrapper = mount(<HelloWorld />)
+
+  t.is(wrapper.text(), 'Hello, world!')
 })
