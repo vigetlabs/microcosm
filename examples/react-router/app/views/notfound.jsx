@@ -17,7 +17,7 @@ export default function NotFound ({ resource = 'Page' }) {
           removed or never existed.
         </p>
         <p className="spacious">
-          <Link to="/react-router">Try starting over from the beginning</Link>
+          <Link to="/">Try starting over from the beginning</Link>
         </p>
       </main>
     </div>
