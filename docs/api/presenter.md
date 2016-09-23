@@ -198,6 +198,28 @@ class PlanetPresenter extends Presenter {
 If the Presenter is pure (passed in as either a prop or as an option to the
 associated repo), this will only update state if shallowly equal.
 
+### `model(props)`
+
+Alias for `viewModel`.
+
+### `view(model)`
+
+A special render method that is given the current result of
+`viewModel`.
+
+```javascript
+class Greeter extends Presenter {
+  model ({ greet })
+    return {
+      message: state => "Hello, " + greet
+    }
+  }
+  view ({ message }) {
+    return <p>{message}</p>
+  }
+}
+```
+
 ### register()
 
 Expose "intent" subscriptions to child components. This is used with the <Form />
