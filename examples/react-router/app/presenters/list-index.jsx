@@ -6,33 +6,23 @@ import Index     from '../views/lists/index'
 import { addList, removeList } from '../actions/lists'
 
 class ListIndex extends Presenter {
+  register () {
+    return {
+      addList    : (repo, params) => repo.push(addList, params),
+      removeList : (repo, params) => repo.push(removeList, params.id)
+    }
+  }
 
-  viewModel() {
+  model () {
     return {
       lists  : Query.all('lists'),
       counts : Query.count('lists', 'items', 'list')
     }
   }
 
-  register() {
-    return {
-      addList    : this.addList,
-      removeList : this.removeList
-    }
+  view ({ lists, counts }) {
+    return <Index lists={lists} counts={counts} />
   }
-
-  addList(repo, params) {
-    return repo.push(addList, params)
-  }
-
-  removeList(repo, params) {
-    return repo.push(removeList, params.id)
-  }
-
-  render() {
-    return <Index lists={ this.state.lists } counts={ this.state.counts } />
-  }
-
 }
 
 export default ListIndex
