@@ -1,7 +1,7 @@
 import React from 'react'
 import withIntent from '../../../../src/addons/with-intent'
 
-const Cell = function ({ x, y, active, onClick }) {
+function Cell ({ x, y, active, onClick }) {
   const color = active ? 'black' : 'white'
 
   return (
