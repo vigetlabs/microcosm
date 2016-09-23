@@ -205,7 +205,7 @@ Alias for `model`.
 ### `view(model)`
 
 A special render method that is given the current result of
-`viewModel`.
+`model`.
 
 ```javascript
 class Greeter extends Presenter {
