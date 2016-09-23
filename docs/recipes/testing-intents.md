@@ -1,13 +1,16 @@
 # Testing Intents
 
+1. [Overview](#overview)
+2. [The Basic Mechanics](#the-basic-mechanics)
+3. [A Test Helper](#a-test-helper)
+
+## Overview
+
 Presenters have a powerful `intent` feature that allows view
 components to utilize the [Form](../api/form.md)
-or [`withIntent`](../api/with-intent.md) add-ons to communicate to a
+or [`ithIntent](../api/with-intent.md) add-ons to communicate to a
 Presenter even if they are deep within a tree. This recipe walks
 through testing that functionality.
-
-1. [The basic mechanics](#the-basic-mechanics)
-2. [A test helper](#a-test-helper)
 
 ## The Basic Mechanics
 
@@ -41,7 +44,7 @@ it('broadcasts an intent when submitted', function () {
 })
 ```
 
-## A test helper
+## A Test Helper
 
 The section above describes using enzyme to frame context. We like to
 keep this in a test helper to reduce boilerplate:
