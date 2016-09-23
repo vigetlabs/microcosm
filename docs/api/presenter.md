@@ -40,14 +40,14 @@ repo.replace({ planets: [ 'Mercury', 'Venus', 'Earth' ]})
 
 class PlanetsPresenter extends Presenter {
 
-  viewModel(props) {
+  model (props) {
     return {
       planets: state => state.planets
     }
   }
 
-  render() {
-    return <p>{ this.state.planets.join(', ') }</p>
+  view ({ planets }) {
+    return <p>{ planets.join(', ') }</p>
   }
 
 }
@@ -63,17 +63,17 @@ child component.
 ### Listening to all state changes
 
 While we do not recommend it for large projects, some times it's simply easier
-to subscribe to all repo changes. `viewModel` can also return a function, which
+to subscribe to all repo changes. `model` can also return a function, which
 will be called with state:
 
 ```javascript
 class PlanetsPresenter extends Presenter {
-  viewModel(props) {
+  model ({ props }) {
     return state => state
   }
 
-  render() {
-    return <p>{ this.state.planets.join(', ') }</p>
+  view ({ planets }) {
+    return <p>{ planets.join(', ') }</p>
   }
 }
 ```
@@ -124,24 +124,24 @@ function StepperForm ({ count }) {
 }
 
 class CountPresenter extends Presenter {
-  viewModel() {
+  model () {
     return {
       count: state => state.count
     }
   }
 
-  register() {
+  register () {
     return {
       increaseCount: this.increaseCount
     }
   }
 
-  increaseCount(repo, { amount }) {
+  increaseCount (repo, { amount }) {
     return repo.push(increment, amount)
   }
 
-  render() {
-    return <StepperForm count={ this.state.count } />
+  view ({ count }) {
+    return <StepperForm count={ count } />
   }
 }
 
@@ -186,7 +186,7 @@ current state:
 
 ```javascript
 class PlanetPresenter extends Presenter {
-  viewModel(props) {
+  model (props) {
     return {
       planet : state => state.planets.find(p => p.id === props.planetId)
     }
@@ -238,7 +238,7 @@ class HelloWorldPresenter extends Presenter {
   greet() {
     alert("hello world!")
   }
-  render() {
+  view () {
     return (
       <Form intent="greet">
         <button>Greet</button>
