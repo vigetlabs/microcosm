@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.0.0-rc3
+
+- Added `view` method and `model` alias for `viewModel` on Presenter.
+
 ## 10.0.0-rc2
 
 - Fixed a bug where the presenter's subscription would be removed when
