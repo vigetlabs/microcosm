@@ -273,21 +273,6 @@ test('allows functions to return from viewModel', t => {
   t.is(el.state(), el.instance().repo.state)
 })
 
-test('passes all state by default', t => {
-  class MyPresenter extends Presenter {
-    view ({ text }) {
-      return <p>{ text }</p>
-    }
-  }
-
-  const repo = new Microcosm()
-  const el = mount(<MyPresenter repo={repo} />)
-
-  repo.replace({ text: 'Space, the final frontier' })
-
-  t.is(el.text(), 'Space, the final frontier')
-})
-
 test('does not cause a re-render when shallowly equal and pure', t => {
   const repo = new Microcosm({ pure: true })
   let renders = 0

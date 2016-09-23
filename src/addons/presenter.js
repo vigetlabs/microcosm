@@ -3,6 +3,8 @@ import Microcosm from '../microcosm'
 import shallowEqual from '../shallow-equal'
 import merge from '../merge'
 
+const EMPTY = {}
+
 /**
  * A general component abstraction for high-responsibility React
  * components that interact with non-presentational logic so that the
@@ -108,7 +110,7 @@ export default class Presenter extends Component {
    * Alias for viewModel
    */
   model(props) {
-    return state => state
+    return EMPTY
   }
 
   /**
