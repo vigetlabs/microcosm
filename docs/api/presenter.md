@@ -178,7 +178,7 @@ different.
 Teardown subscriptions and other setup behavior. Only necessary if overriding
 `componentWillUnmount`.
 
-### `viewModel(props)`
+### `model(props)`
 
 Builds a view model for the current props. This must return an object of key/value
 pairs. If the value is a function, it will be calculated by passing in the repo's
@@ -198,9 +198,9 @@ class PlanetPresenter extends Presenter {
 If the Presenter is pure (passed in as either a prop or as an option to the
 associated repo), this will only update state if shallowly equal.
 
-### `model(props)`
+### `viewModel(props)`
 
-Alias for `viewModel`.
+Alias for `model`.
 
 ### `view(model)`
 
