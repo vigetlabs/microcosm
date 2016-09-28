@@ -13,7 +13,7 @@ function getHandler (key, domain, type) {
     const registrations = domain.register()
 
     if (process.env.NODE_ENV !== 'production') {
-      if (type in registrations && registrations[type] === undefined) {
+      if (registrations.hasOwnProperty(type) && registrations[type] === undefined) {
         console.warn('The handler for %s within a domain for "%s" is undefined. ' +
                      'Check the register method for this domain.', format(type), key)
       }
