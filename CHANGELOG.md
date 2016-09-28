@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.0.0-rc4
+
+- `replace` works as advertised. Merge data into existing state.
+
 ## 10.0.0-rc3
 
 - Added `view` method and `model` alias for `viewModel` on Presenter.
