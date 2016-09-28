@@ -13,7 +13,7 @@ export default class Domain {
    * it rebases state to include the domain's `getInitialState` value. This
    * is useful for one-time setup instructions
    */
-  setup() {
+  setup () {
     // NOOP
   }
 
@@ -21,7 +21,7 @@ export default class Domain {
    * A default register function that just returns an empty object. This helps
    * keep other code from branching.
    */
-  register() {
+  register () {
     // NOOP
     return EMPTY
   }
@@ -35,7 +35,7 @@ export default class Domain {
    *
    * @return {boolean} Should the state update?
    */
-  shouldCommit(next, last) {
+  shouldCommit (next, last) {
     return true
   }
 
@@ -49,7 +49,7 @@ export default class Domain {
   * @param {any} value - The value to assign to a key
   * @return {object} newState - The next state for the Microcosm instance
   */
-  stage(last, next) {
+  stage (last, next) {
     return next
   }
 
@@ -60,7 +60,7 @@ export default class Domain {
    *
    * @param {any} next - The next state for the domain
    */
-  commit(next) {
+  commit (next) {
     return next
   }
 
