@@ -87,8 +87,16 @@ export default class Emitter {
       return this
     }
 
-    // Remove the specific handler
-    callbacks = callbacks.filter(cb => !(cb[0] === fn || cb[0].fn === fn))
+    // Remove the specific handler, splice so that listeners removed
+    // during another event broadcast are not invoked
+    var cb;
+    for (var i = 0; i < callbacks.length; i++) {
+      cb = callbacks[i];
+      if (cb[0] === fn || cb[0].fn === fn) {
+        callbacks.splice(i, 1);
+        break;
+      }
+    }
 
     /**
      * Remove event specific arrays for event types that no
@@ -96,8 +104,6 @@ export default class Emitter {
      */
     if (callbacks.length === 0) {
       delete this._callbacks['$' + event]
-    } else {
-      this._callbacks['$' + event] = callbacks
     }
 
     return this
@@ -113,19 +119,16 @@ export default class Emitter {
    * @private
    */
   _emit (event, ...params) {
-    if (!this._callbacks) {
-      return this
-    }
+    this._callbacks = this._callbacks || {}
 
-    const callbacks = this._callbacks['$' + event]
+    var callbacks = this._callbacks['$' + event]
 
     if (callbacks) {
-      for (let i = 0, len = callbacks.length; i < len; ++i) {
-        let fn = callbacks[i]
-        fn[0].apply(fn[1], params)
-      }
+      callbacks.forEach(function (callback) {
+        callback[0].apply(callback[1], params)
+      })
     }
 
-    return this
+    return this;
   }
 }

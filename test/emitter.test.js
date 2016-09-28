@@ -85,25 +85,6 @@ test('should work with .once()', t => {
   t.deepEqual(calls, [])
 })
 
-test('should work when called from an event', t => {
-  const emitter = new Emitter
-
-  let called = false
-
-  function b () {
-    called = true
-  }
-  emitter.on('tobi', function () {
-    emitter.off('tobi', b)
-  })
-  emitter.on('tobi', b)
-  emitter._emit('tobi')
-  t.is(called, true)
-  called = false
-  emitter._emit('tobi')
-  t.is(called, false)
-})
-
 test('should remove all listeners for an event', t => {
   const emitter = new Emitter
   const calls = []
@@ -119,6 +100,25 @@ test('should remove all listeners for an event', t => {
   emitter._emit('foo')
 
   t.deepEqual(calls, [])
+})
+
+test('does not call listeners removed when another is emitted', t => {
+  t.plan(1)
+
+  const emitter = new Emitter
+
+  function two () {
+    throw new Error("should not have been called")
+  }
+
+  emitter.on('foo', function() {
+    t.pass()
+    emitter.off('foo', two)
+  })
+
+  emitter.on('foo', two)
+
+  emitter._emit('foo')
 })
 
 test('should remove all listeners', t => {

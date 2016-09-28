@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.0.0-rc5
+
+- Do not execute callbacks in event listeners when another callback
+  unsubscribes them.
+
 ## 10.0.0-rc4
 
 - `replace` works as advertised. Merge data into existing state.
