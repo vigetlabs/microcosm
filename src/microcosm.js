@@ -255,7 +255,7 @@ export default class Microcosm extends Emitter {
    * @return {Action} action - An action representing the replace operation.
    */
   replace (data) {
-    return this.reset(this.deserialize(data))
+    return this.reset(merge({}, this.staged, this.deserialize(data)))
   }
 
   /**
@@ -281,7 +281,7 @@ export default class Microcosm extends Emitter {
    * @return {Object} The serialized version of repo state.
    */
   serialize () {
-    return this.dispatch(this.state, { type: lifecycle.willSerialize, payload: this.state })
+    return this.dispatch(this.staged, { type: lifecycle.willSerialize })
   }
 
   /**

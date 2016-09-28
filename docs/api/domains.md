@@ -69,7 +69,7 @@ var Planets = {
 Setup runs right after a domain is added to a Microcosm, but before it runs
 getInitialState. This is useful for one-time setup instructions.
 
-### `serialize(state)`
+### `serialize(staged)`
 
 Allows a domain to transform data before it leaves the system. It gives
 the domain the opportunity to reduce non-primitive values into

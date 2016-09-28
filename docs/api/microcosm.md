@@ -71,8 +71,10 @@ repo.addDomain('planets', planetsConfig)
 
 ### `serialize()`
 
-Returns an object that is the result of transforming repo state
-according to the `serialize` method described by each domain.
+Serialize the Microcosm's state into a plain object. By default,
+domains will pass through their current staged state
+(pre-commit). Domains can change this behavior by implementing
+`serialize`.
 
 ```javascript
 repo.serialize() // => { planets: [...] }

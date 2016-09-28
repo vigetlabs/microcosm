@@ -16,20 +16,6 @@ test('runs through serialize methods on domains', t => {
   t.is(repo.toJSON()['serialize-test'], 'this is a test')
 })
 
-test('sends all state as the second argument', t => {
-  t.plan(1)
-
-  const repo = new Microcosm()
-
-  repo.addDomain('serialize-test', {
-    serialize(subset, state) {
-      t.is(state, repo.state)
-    }
-  })
-
-  repo.toJSON()
-})
-
 test('defaults to getInitialState when no deserialize method is provided', t => {
   t.plan(1)
 

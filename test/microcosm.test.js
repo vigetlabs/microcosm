@@ -14,6 +14,23 @@ test('deserializes when replace is invoked', t => {
   t.is(repo.state.dummy, 'DIFFERENT')
 })
 
+test('replace partially updates', t => {
+  const repo = new Microcosm()
+
+  repo.addDomain('a', {
+    getInitialState: n => true
+  })
+
+  repo.addDomain('b', {
+    getInitialState: n => true
+  })
+
+  repo.replace({ a: false })
+
+  t.is(repo.state.a, false)
+  t.is(repo.state.b, true)
+})
+
 test('it will not deserialize null', t => {
   const repo = new Microcosm()
 
