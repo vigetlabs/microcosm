@@ -25,9 +25,9 @@ const results = SIZES.map(function (SIZE) {
    */
   global.gc()
 
-  var action = () => {}
-  var stats  = { build: 0, root: 0, merge: 0, size: 0, prune: 0, memory: 0 }
-  var history   = new History()
+  var action  = () => {}
+  var stats   = { build: 0, root: 0, merge: 0, size: 0, prune: 0, memory: 0 }
+  var history = new History()
 
   var memoryBefore = process.memoryUsage().heapUsed
 
@@ -45,7 +45,7 @@ const results = SIZES.map(function (SIZE) {
    * the current branch.
    */
   now = time.now()
-  history.size()
+  history.setSize()
   stats.size = (time.now() - now) / 1000
 
   /**
@@ -67,17 +67,15 @@ const results = SIZES.map(function (SIZE) {
   }, {})
   stats.merge = (time.now() - now) / 1000
 
+  var memoryUsage = process.memoryUsage().heapUsed - memoryBefore
 
   /**
    * Measure time to dispose all nodes in the history. This also has
    * the side effect of helping to test memory leakage later.
    */
   now = time.now()
-  history.prune(function() {
-    return true
-  })
+  history.toArray().reverse().forEach(a => a.close())
   stats.prune = (time.now() - now) / 1000
-
 
   /**
    * Now that the history has been pruned, force garbage collection
@@ -93,8 +91,9 @@ const results = SIZES.map(function (SIZE) {
     '::append()': stats.build.toFixed(2) + 'ms',
     '::toArray()': stats.toArray.toFixed(4) + 'ms',
     '::reduce(merge)': stats.merge.toFixed(2) + 'ms',
-    '::size()': stats.size.toFixed(2) + 'ms',
+    '::setSize()': stats.size.toFixed(2) + 'ms',
     '::prune()': stats.prune.toFixed(2) + 'ms',
+    'Memory': (memoryUsage / 1000000).toFixed(3) + 'mbs',
     'Memory Growth': stats.memory.toFixed(3) + '%'
   }
 })

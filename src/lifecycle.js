@@ -8,5 +8,6 @@ export default {
   willStart       : 'getInitialState',
   willSerialize   : 'serialize',
   willDeserialize : 'deserialize',
-  willReset       : '__willReset'
+  willReset       : '__willReset',
+  willReplace     : '__willReplace'
 }

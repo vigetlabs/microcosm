@@ -30,23 +30,15 @@ function get (object, key) {
  * @return {Any} A copy of the object with the new assignment.
  */
 function set (object, key, value) {
-  // Never assign the same or undefined values
-  if (value === undefined) {
-    return object
-  }
-
   // If the key path is null, there's no need to traverse the
   // object. Just return the value.
   if (key == null) {
     return value
   }
 
-  // Do not perform any work if the value is not going to change
-  if (object && object[key] === value) {
-    return object
-  }
+  object[key] = value
 
-  return merge({}, object, { [key] : value })
+  return object
 }
 
 export default { get, set }

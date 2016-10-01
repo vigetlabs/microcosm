@@ -20,69 +20,51 @@ test('adds listeners', t => {
   t.deepEqual(calls, [ 'one', 1, 'two', 1, 'one', 2, 'two', 2 ])
 })
 
-test('should add listeners for events which are same names with methods of Object.prototype', t => {
-  const emitter = new Emitter
-  const calls = []
-
-  emitter.on('constructor', function (val) {
-    calls.push('one', val)
-  })
-
-  emitter.on('__proto__', function (val) {
-    calls.push('two', val)
-  })
-
-  emitter._emit('constructor', 1)
-  emitter._emit('__proto__', 2)
-
-  t.deepEqual(calls, [ 'one', 1, 'two', 2 ])
-})
-
 test('adds a single-shot listener', t => {
   const emitter = new Emitter
-  const calls = []
+
+  t.plan(1)
 
   emitter.once('foo', function (val) {
-    calls.push('one', val)
+    t.is(val, 1)
   })
 
   emitter._emit('foo', 1)
   emitter._emit('foo', 2)
   emitter._emit('foo', 3)
   emitter._emit('bar', 1)
-
-  t.deepEqual(calls, [ 'one', 1 ])
 })
 
 test('should remove a listener', t => {
-    var emitter = new Emitter
-    var calls = []
+  var emitter = new Emitter
+  var calls = []
 
-    function one () { calls.push('one') }
-    function two () { calls.push('two') }
+  function one () { calls.push('one') }
+  function two () { calls.push('two') }
 
-    emitter.on('foo', one)
-    emitter.on('foo', two)
-    emitter.off('foo', two)
+  emitter.on('foo', one)
+  emitter.on('foo', two)
+  emitter.off('foo', two)
 
-    emitter._emit('foo')
+  emitter._emit('foo')
 
   t.deepEqual(calls, [ 'one' ])
 })
 
-test('should work with .once()', t => {
-  const emitter = new Emitter
-  const calls = []
+test('off removes once subscriptions', t => {
+  const emitter = new Emitter()
 
-  function one () { calls.push('one') }
+  t.plan(0)
+
+  function one () {
+    t.pass()
+  }
 
   emitter.once('foo', one)
   emitter.once('fee', one)
   emitter.off('foo', one)
 
   emitter._emit('foo')
-
-  t.deepEqual(calls, [])
 })
 
 test('should remove all listeners for an event', t => {
@@ -140,4 +122,41 @@ test('should remove all listeners', t => {
   emitter._emit('bar')
 
   t.deepEqual(calls, ['one', 'two'])
+})
+
+test('can listen to another emitter', t => {
+  const a = new Emitter()
+  const b = new Emitter()
+
+  t.plan(1)
+
+  a.listenTo(b, 'change', () => t.pass())
+
+  b._emit('change')
+})
+
+test('stops listening listen to another emitter when that target disposes', t => {
+  const a = new Emitter()
+  const b = new Emitter()
+
+  t.plan(1)
+
+  a.listenTo(b, 'change', () => t.pass())
+
+  b._emit('change')
+  b.off()
+  b._emit('change')
+})
+
+test('stops listening listen to another emitter when it disposes', t => {
+  const a = new Emitter()
+  const b = new Emitter()
+
+  t.plan(1)
+
+  a.listenTo(b, 'change', () => t.pass())
+
+  b._emit('change')
+  a.stopListening()
+  b._emit('change')
 })

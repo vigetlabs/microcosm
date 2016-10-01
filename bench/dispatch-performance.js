@@ -7,6 +7,7 @@
  * gut check of "are we fast yet?"
  */
 
+import History   from '../src/history'
 import Microcosm from '../src/microcosm'
 import time      from 'microtime'
 
@@ -14,6 +15,17 @@ const SIZES   = [ 1000, 10000, 50000, 100000, 200000 ]
 const SAMPLES = 5
 
 console.log('\nConducting dispatch benchmark...\n')
+
+const action = n => n
+
+const Domain = {
+  getInitialState: () => 0,
+  register() {
+    return {
+      [action]: (n) => n + 1
+    }
+  }
+}
 
 var results = SIZES.map(function (SIZE) {
   /**
@@ -23,19 +35,18 @@ var results = SIZES.map(function (SIZE) {
    */
   global.gc()
 
-  var repo = new Microcosm({ maxHistory: Infinity })
+  /**
+   * Step 1. Build a history tree before making a Microcosm,
+   * this lets us isolate history building so we can specifically
+   * profile the dispatch process
+   */
+  var history = new History({ limit: Infinity })
 
-  var action = function test () {}
-  action.toString = function () { return 'test' }
-
-  var Domain = {
-    getInitialState: () => 0,
-    register() {
-      return {
-        test: (n) => n + 1
-      }
-    }
+  for (var i = 0; i < SIZE; i++) {
+    history.append(action).close(true)
   }
+
+  var repo = new Microcosm({ history })
 
   /**
    * Add the domain at multiple keys. This is a better simulation of actual
@@ -47,18 +58,6 @@ var results = SIZES.map(function (SIZE) {
   repo.addDomain('three', Domain)
   repo.addDomain('four',  Domain)
   repo.addDomain('five',  Domain)
-
-  /**
-   * Append a given number of actions into history. We use this method
-   * instead of `::push()` for benchmark setup performance. At the time of writing,
-   * `push` takes anywhere from 0.5ms to 15ms depending on the sample range.
-   * This adds up to a very slow boot time!
-   */
-  var startMemory = process.memoryUsage().heapUsed
-  for (var i = 0; i < SIZE; i++) {
-    repo.history.append(action).close(true)
-  }
-  var endMemory = process.memoryUsage().heapUsed
 
   /**
    * Warm up `::push()`
@@ -78,8 +77,7 @@ var results = SIZES.map(function (SIZE) {
 
   return {
     'Actions'      : SIZE.toLocaleString(),
-    'Rollforward'  : average.toLocaleString() + 'ms',
-    'Memory Usage' : ((endMemory - startMemory) / 1000000).toFixed(2) + 'mbs'
+    'Rollforward'  : average.toLocaleString() + 'ms'
   }
 })
 

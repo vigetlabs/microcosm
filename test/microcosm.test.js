@@ -55,10 +55,10 @@ test('can manipulate how many transactions are merged', t => {
   repo.push(identity, 4)
   repo.push(identity, 5)
 
-  t.is(repo.history.size(), 5)
+  t.is(repo.history.size, 5)
   repo.push(identity, 6)
 
-  t.is(repo.history.size(), 5)
+  t.is(repo.history.size, 5)
   t.deepEqual(repo.history.reduce((a, b) => a.concat(b.payload), []), [ 2, 3, 4, 5, 6 ])
 })
 

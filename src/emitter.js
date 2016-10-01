@@ -13,6 +13,7 @@
  *
  * @private
  */
+
 export default class Emitter {
 
   /**
@@ -23,9 +24,9 @@ export default class Emitter {
    * @return {Emitter}
    */
   on (event, fn, scope) {
-    this._callbacks = this._callbacks || {}
+    this._listeners = this._listeners || {}
 
-    const callback = this._callbacks['$' + event] = this._callbacks['$' + event] || []
+    const callback = this._listeners['$' + event] = this._listeners['$' + event] || []
 
     /**
      * Reversing priority helps addons like 'Connect' and 'Presenter'
@@ -48,14 +49,14 @@ export default class Emitter {
    * @return {Emitter}
    */
   once (event, fn, scope) {
-    function on () {
-      this.off(event, on)
-      fn.apply(scope || this, arguments)
+    function listener () {
+      this.off(event, listener)
+      fn.apply(this, arguments)
     }
 
-    on.fn = fn
+    listener.fn = fn
 
-    this.on(event, on)
+    this.on(event, listener, scope)
 
     return this
   }
@@ -68,22 +69,22 @@ export default class Emitter {
    * @param {Function} fn
    * @return {Emitter}
    */
-  off (event, fn) {
+  off (event, fn, scope) {
     // Remove all listeners
     if (0 == arguments.length) {
-      delete this._callbacks
+      delete this._listeners
     }
 
-    if (!this._callbacks || this._callbacks.hasOwnProperty('$' + event) === false) {
+    if (!this._listeners || this._listeners.hasOwnProperty('$' + event) === false) {
       return this
     }
 
     // specific event
-    let callbacks = this._callbacks['$' + event]
+    let callbacks = this._listeners['$' + event]
 
     // remove all handlers
     if (1 == arguments.length) {
-      delete this._callbacks['$' + event]
+      delete this._listeners['$' + event]
       return this
     }
 
@@ -92,18 +93,10 @@ export default class Emitter {
     var cb;
     for (var i = 0; i < callbacks.length; i++) {
       cb = callbacks[i];
-      if (cb[0] === fn || cb[0].fn === fn) {
+      if ((cb[0] === fn || cb[0].fn === fn) && cb[1] === (scope || this)) {
         callbacks.splice(i, 1);
         break;
       }
-    }
-
-    /**
-     * Remove event specific arrays for event types that no
-     + one is subscribed for to avoid memory leak.
-     */
-    if (callbacks.length === 0) {
-      delete this._callbacks['$' + event]
     }
 
     return this
@@ -119,16 +112,46 @@ export default class Emitter {
    * @private
    */
   _emit (event, ...params) {
-    this._callbacks = this._callbacks || {}
-
-    var callbacks = this._callbacks['$' + event]
-
-    if (callbacks) {
-      callbacks.forEach(function (callback) {
-        callback[0].apply(callback[1], params)
-      })
+    if (!this._listeners) {
+      return this
     }
 
-    return this;
+    let callbacks = this._listeners['$' + event]
+
+    if (callbacks) {
+      for (var i = 0; i < callbacks.length; i++) {
+        callbacks[i][0].apply(callbacks[i][1], params)
+      }
+    }
+
+    return this
   }
+
+  listenTo (emitter, event, fn) {
+    this._listening = this.listening || []
+
+    emitter.on(event, fn, this)
+
+    this._listening.push({ source: emitter, event, fn, scope: this })
+
+    return this
+  }
+
+  stopListening (emitter) {
+    if (!this._listening) {
+      return this
+    }
+
+    for (var i = 0; i < this._listening.length; i++) {
+      var { source, event, fn, scope } = this._listening[i]
+
+      if (source === emitter || emitter == null) {
+        source.off(event, fn, scope)
+        this._listening.splice(i, 1)
+      }
+    }
+
+    return this
+  }
+
 }

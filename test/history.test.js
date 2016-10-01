@@ -13,21 +13,27 @@ test('adjusts the focal point when adding a node', t => {
 })
 
 test('prunes all the way up to the focal point', t => {
-  const history = new History()
+  const history = new History(-Infinity)
 
   // One
-  history.append(action)
+  const one = history.append(action)
 
   // Two
   const two = history.append(action)
 
   // Three
-  history.append(action)
+  const three = history.append(action)
 
   history.checkout(two)
-  history.prune(() => true)
 
-  t.is(history.focus, null)
+  // Mark for disposal
+  one.close()
+  two.close()
+
+  // Three should be ignored!
+  history.prune()
+
+  t.is(history.size, 0)
 })
 
 test('prunes removes nodes until it returns false', t => {

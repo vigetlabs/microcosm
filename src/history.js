@@ -1,13 +1,18 @@
 import Action from './action'
+import Emitter from './emitter'
 
 /**
  * The central tree data structure that is used to calculate state for
  * a Microcosm. Each node in the tree represents an action. Branches
  * are changes over time.
  */
-export default class History {
+export default class History extends Emitter {
 
-  constructor () {
+  constructor (limit = 0) {
+    super()
+
+    this.size  = 0
+    this.limit = Math.max(limit, 0)
     this.root  = null
     this.focus = null
   }
@@ -29,6 +34,9 @@ export default class History {
       this.root  = null
     }
 
+    this.setSize()
+    this.reconcile()
+
     return this
   }
 
@@ -41,7 +49,7 @@ export default class History {
    * @return {Action} The new focus
    */
   append (behavior) {
-    const action = new Action(behavior)
+    const action = new Action(behavior, this)
 
     if (this.focus != null) {
       this.connect(this.focus, action)
@@ -52,6 +60,8 @@ export default class History {
     if (this.root == null) {
       this.root = this.focus
     }
+
+    this.size += 1
 
     return this.focus
   }
@@ -68,7 +78,6 @@ export default class History {
   connect (parent, child) {
     child.parent  = parent
     child.sibling = parent.next
-    child.depth   = parent.depth + 1
 
     parent.next   = child
 
@@ -76,27 +85,51 @@ export default class History {
   }
 
   /**
-   * Walks from the root to the focus until it the given predicate
-   * returns false. All actions prior to this point will be forgotten.
-   *
+   * Eliminate a node from the tree.
    * @private
-   * @param {Function} shouldRemove - A predicate for if the action should be removed
-   * @param {Function} scope - Scope to invoke `shouldRemove`
+   * @param {Action} node - node to disconnect
    * @return {History} self
    */
-  prune (shouldRemove, scope) {
-    let root = this.root
-    let size = this.size()
+  disconnect (node) {
+    this.stopListening(node)
+    this._emit('archive', node)
 
-    while (size >= 1 && shouldRemove.call(scope, root, size)) {
+    if (node.parent) {
+      node.parent.next = null
+    }
+
+    node.parent = null
+    node.sibling = null
+  }
+
+  /**
+   * Prune down the tree then emit a change
+   */
+  reconcile () {
+    this.prune()
+    this._emit('change')
+  }
+
+  /**
+   * Prunes the tree. Stops if the curent node is not disposable.
+   * @private
+   * @return {History} self
+   */
+  prune () {
+    let root = this.root
+    let limit = Math.max(0, this.limit)
+
+    while (this.size - limit > 0 && root.is('disposable')) {
+      this.disconnect(root)
+      this.size -= 1
+
       root = root.next
-      size = size - 1
     }
 
     // If we reach the end (there is no next action), it means
     // we've completely wiped away the tree, so nullify focus
     // to mark a completely empty tree.
-    if (size <= 0) {
+    if (this.size <= 0) {
       this.root = this.focus = null
     } else {
       this.root = root
@@ -106,10 +139,15 @@ export default class History {
   }
 
   /**
-   * @return {Array} A list representation of the current branch of history
+   * Get an array of the active branch
+   *
+   * @param {Function} reducer - The function invoked by each iteration of reduce
+   * @param {Any} state - The initial state of the reduction
+   * @param {Any} scope - Scope of the invoked reducer
+   * @return {Any} The result of reducing over state
    */
   toArray () {
-    let size  = this.size()
+    let size  = this.size
     let items = new Array(size)
     let node  = this.focus
 
@@ -122,9 +160,7 @@ export default class History {
   }
 
   /**
-   * Reduce over toArray. This function is called by a Microcosm to
-   * determine the next repo state, so it has been expanded
-   * from Array.prototype.reduce into a for loop
+   * Reduce over each action.
    *
    * @param {Function} reducer - The function invoked by each iteration of reduce
    * @param {Any} state - The initial state of the reduction
@@ -142,11 +178,17 @@ export default class History {
   }
 
   /**
-   * Get the length of the tree from root to focus.
-   * @return {Number} The size of the current branch
+   * Update the current size
    */
-  size () {
-    return this.root ? 1 + (this.focus.depth - this.root.depth) : 0
-  }
+  setSize () {
+    let count = this.root ? 1 : 0
+    let node  = this.focus
 
+    while (node !== this.root) {
+      count += 1
+      node = node.parent
+    }
+
+    this.size = count
+  }
 }

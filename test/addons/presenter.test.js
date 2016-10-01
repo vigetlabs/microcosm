@@ -2,7 +2,7 @@ import test from 'ava'
 import React from 'react'
 import Microcosm from '../../src/microcosm'
 import Presenter from '../../src/addons/presenter'
-import console from '../helpers/console'
+import logger from '../helpers/console'
 import {mount} from 'enzyme'
 
 const View = React.createClass({
@@ -46,13 +46,13 @@ test('warns if no presenter implements an intent', t => {
     }
   }
 
-  console.record()
+  logger.record()
 
   mount(<MyPresenter repo={ new Microcosm() } />).find(View).simulate('click')
 
-  t.is(console.count('warn'), 1)
+  t.is(logger.count('warn'), 1)
 
-  console.restore()
+  logger.restore()
 })
 
 test('builds the view model into state', t => {
@@ -205,9 +205,14 @@ test('ignores an repo when it unmounts', t => {
   t.plan(1)
 
   const repo = new Microcosm()
-  repo.off = () => t.pass()
 
-  mount(<Presenter repo={repo} />).unmount()
+  class Test extends Presenter {
+    setup (repo) {
+      repo.off = () => t.pass()
+    }
+  }
+
+  mount(<Test repo={repo} />).unmount()
 })
 
 test('does not update the view model when umounted', t => {
@@ -236,13 +241,13 @@ test('calling setState in setup does not raise a warning', t => {
     }
   }
 
-  console.record()
+  logger.record()
 
   mount(<MyPresenter repo={ new Microcosm() } />)
 
-  t.is(console.count('warn'), 0)
+  t.is(logger.count('warn'), 0)
 
-  console.restore()
+  logger.restore()
 })
 
 test('warns when setState in setup does not raise a warning', t => {
@@ -252,13 +257,13 @@ test('warns when setState in setup does not raise a warning', t => {
     }
   }
 
-  console.record()
+  logger.record()
 
   mount(<MyPresenter repo={ new Microcosm() } />)
 
-  t.regex(console.last('warn'), /The view model for this presenter returned repo\.state/i)
+  t.regex(logger.last('warn'), /The view model for this presenter returned repo\.state/i)
 
-  console.restore()
+  logger.restore()
 })
 
 test('allows functions to return from viewModel', t => {
@@ -402,28 +407,6 @@ test('remembers inline properties', t => {
   let wrapper = mount(<Subject repo={ repo } />)
 
   t.is(wrapper.state('test'), true)
-})
-
-test('does not tear down other listeners', t => {
-  const repo = new Microcosm()
-
-  class Parent extends Presenter {
-    view () {
-      return this.props.hide ? <p>Nothing</p> : this.props.children
-    }
-  }
-
-  class Child extends Presenter {
-    view () {
-      return <p>Hey</p>
-    }
-  }
-
-  let wrapper = mount(<Parent repo={ repo }><Child /></Parent>)
-
-  wrapper.setProps({ hide: true })
-
-  t.is(repo._callbacks['$change'].length, 1)
 })
 
 test('model is an alias for viewModel', t => {

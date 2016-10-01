@@ -1,3 +1,5 @@
+import update from './update'
+
 function format (string) {
   /*eslint-disable no-unused-vars*/
   const [ _, action, state ] = `${ string }`.match(/(\w*)\_\d+\_(\w*)/, ' ') || []
@@ -10,7 +12,7 @@ function getHandler (key, domain, type) {
   let handler = domain[type]
 
   if (handler === undefined) {
-    const registrations = domain.register()
+    const registrations = domain.register(type)
 
     if (process.env.NODE_ENV !== 'production') {
       if (registrations.hasOwnProperty(type) && registrations[type] === undefined) {
@@ -22,17 +24,17 @@ function getHandler (key, domain, type) {
     handler = registrations[type]
   }
 
-  return handler
+  return handler ? { key, domain, handler } : null
 }
 
 export default function getDomainHandlers (domains, type) {
-  const handlers = []
+  let handlers = []
 
   domains.forEach(function ([key, domain]) {
     let handler = getHandler(key, domain, type)
 
-    if (handler !== undefined) {
-      handlers.push({ key, domain, handler })
+    if (handler) {
+      handlers.push(handler)
     }
   })
 

@@ -8,6 +8,10 @@ const EMPTY = {}
 
 export default class Domain {
 
+  constructor() {
+    this.setup()
+  }
+
   /**
    * Setup runs right after a domain is added to a Microcosm, but before
    * it rebases state to include the domain's `getInitialState` value. This
@@ -20,8 +24,11 @@ export default class Domain {
   /**
    * A default register function that just returns an empty object. This helps
    * keep other code from branching.
+   *
+   * @param {string} type - The action type to respond to
+   * @return {object} a mapping of registrations
    */
-  register () {
+  register (type) {
     // NOOP
     return EMPTY
   }

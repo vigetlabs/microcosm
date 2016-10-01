@@ -6,7 +6,7 @@ test.cb('completes when a promise resolves', t => {
 
   action.onDone(() => t.end())
 
-  action.execute('test')
+  action.execute(['test'])
 })
 
 test.cb('rejects when a promise fails', t => {
@@ -14,7 +14,7 @@ test.cb('rejects when a promise fails', t => {
 
   action.onError(() => t.end())
 
-  action.execute('test')
+  action.execute(['test'])
 })
 
 test.cb('rejects when a promise throws an error', t => {
@@ -24,5 +24,5 @@ test.cb('rejects when a promise throws an error', t => {
 
   action.onError(() => t.end())
 
-  action.execute('test')
+  action.execute(['test'])
 })

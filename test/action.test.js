@@ -222,16 +222,6 @@ test('triggers a cancel event when it is cancelled', t => {
   action.cancel()
 })
 
-test('triggers a change event when it is toggled', t => {
-  const action = new Action(identity)
-
-  t.plan(1)
-
-  action.once('change', () => t.pass())
-
-  action.toggle()
-})
-
 test('actions are unset when first created', t => {
   const action = new Action(identity)
 

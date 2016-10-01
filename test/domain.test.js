@@ -1,7 +1,7 @@
 import test from 'ava'
 import Microcosm from '../src/microcosm'
 import Domain from '../src/domain'
-import console from './helpers/console'
+import logger from './helpers/console'
 
 test('domains can be objects with lifecycle methods', t => {
   const repo = new Microcosm()
@@ -17,7 +17,7 @@ test('warns if a register handler is undefined', t => {
   const repo = new Microcosm()
   const action = n => n
 
-  console.record()
+  logger.record()
 
   repo.addDomain('key', {
     register() {
@@ -29,9 +29,9 @@ test('warns if a register handler is undefined', t => {
 
   repo.push(action)
 
-  t.is(console.count('warn'), 1)
+  t.is(logger.count('warn'), 1)
 
-  console.restore()
+  logger.restore()
 })
 
 test('can control if state should be committed', t => {

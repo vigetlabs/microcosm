@@ -16,16 +16,16 @@ export default class Action extends Emitter {
   /**
    * @param {Function} behavior - how the action should resolve.
    */
-  constructor (behavior) {
+  constructor (behavior, history) {
     super()
 
-    this.depth = 0
-    this.behavior = tag(behavior)
+    this.type = null
     this.payload = null
+    this.behavior = tag(behavior)
+    this.history = history
+    this.state = States.disabled
     this.parent = null
     this.sibling = null
-    this.state = States.disabled
-    this.type = null
   }
 
   /**
@@ -73,8 +73,8 @@ export default class Action extends Emitter {
    * @private
    * @return {Action} self
    */
-  execute (/** params **/) {
-    coroutine(this, this.behavior.apply(this, arguments))
+  execute (params) {
+    coroutine(this, this.behavior.apply(this, params))
 
     return this
   }
@@ -94,7 +94,9 @@ export default class Action extends Emitter {
       this.payload = payload
     }
 
-    this._emit('change', this.payload)
+    if (this.history) {
+      this.history.reconcile()
+    }
 
     return this
   }

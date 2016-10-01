@@ -1,7 +1,7 @@
 const hasOwn = Object.prototype.hasOwnProperty
 
 function foldInTo (a, b) {
-  if (b == null) {
+  if (b == null || a === b) {
     return a
   }
 

@@ -19,12 +19,10 @@ export default class Presenter extends Component {
     this.pure = this._getRepoPurity(this.repo, this.props)
 
     this._updatePropMap(this.props)
+
     this.state = this._getState()
 
-    if (this.repo) {
-      this._listener = () => this._updateState()
-      this.repo.on('change', this._listener)
-    }
+    this.repo.on('change', this._updateState, this)
   }
 
   getChildContext () {
@@ -58,7 +56,7 @@ export default class Presenter extends Component {
   }
 
   /**
-   * Teardown subscriptions and other behavior.
+   * Opposite of setup. Useful for cleaning up side-effects.
    *
    * @param {Microcosm} repo - The presenter's Microcosm instance
    * @param {Object} props - The presenter's props
@@ -67,10 +65,8 @@ export default class Presenter extends Component {
     // NOOP
   }
 
-  unsubscribe() {
-    if (this.repo) {
-      this.repo.off('change', this._listener)
-    }
+  shouldComponentUpdate (props, state) {
+    return !this.pure || !shallowEqual(state, this.state) || !shallowEqual(props, this.props)
   }
 
   componentWillMount() {
@@ -79,12 +75,13 @@ export default class Presenter extends Component {
 
   componentWillUnmount () {
     this.teardown(this.repo, this.props)
-    this.unsubscribe()
+    this.repo.teardown()
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.pure === false || shallowEqual(nextProps, this.props) === false) {
       this._updatePropMap(nextProps)
+
       this.update(this.repo, nextProps)
     }
 
@@ -123,9 +120,9 @@ export default class Presenter extends Component {
    * @private
    */
   _updatePropMap (props) {
-    this.propMap = this.viewModel ? this.viewModel(props) : {}
+    this.propMap = this.viewModel(props)
 
-    if (this.repo && this.propMap === this.repo.state) {
+    if (this.propMap === this.repo.state) {
       console.warn("The view model for this presenter returned repo.state. " +
                    "This method onlys run when a presenter is given new properties. " +
                    "If you would like to subscribe to all state changes, return a " +
@@ -148,7 +145,7 @@ export default class Presenter extends Component {
    * @private
    */
   _getState () {
-    const repoState = this._getRepoState()
+    const repoState = this.repo.state
 
     if (typeof this.propMap === 'function') {
       return this.propMap(repoState)
@@ -169,14 +166,9 @@ export default class Presenter extends Component {
    * @private
    */
   _getRepo() {
-    return this.props.repo || this.context.repo
-  }
+    const repo = this.props.repo || this.context.repo
 
-  /**
-   * @private
-   */
-  _getRepoState() {
-    return this.repo ? this.repo.state : {}
+    return repo ? repo.fork() : new Microcosm()
   }
 
   /**

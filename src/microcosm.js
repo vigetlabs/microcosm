@@ -1,12 +1,11 @@
-import Emitter           from './emitter'
-import MetaDomain        from './domains/meta'
-import History           from './history'
-import Domain            from './domain'
-import lifecycle         from './lifecycle'
-import getDomainHandlers from './getDomainHandlers'
-import merge             from './merge'
-import shallowEqual      from './shallow-equal'
-import update            from './update'
+import Emitter      from './emitter'
+import History      from './history'
+import MetaDomain   from './domains/meta'
+import Realm        from './realm'
+import lifecycle    from './lifecycle'
+import merge        from './merge'
+import shallowEqual from './shallow-equal'
+import update       from './update'
 
 /**
  * A tree-like data structure that keeps track of the execution order
@@ -21,17 +20,18 @@ export default class Microcosm extends Emitter {
   /**
    * @param {{maxHistory: Number}} options - Instantiation options.
    */
-  constructor ({ maxHistory = -Infinity, pure = true } = {}) {
+  constructor ({ maxHistory, pure=true, history, parent } = {}) {
     super()
 
-    this.maxHistory = maxHistory
+    this.history = history || new History(maxHistory)
+    this.realm = new Realm()
+
     this.pure = pure
+    this.parent = parent
 
-    this.history = new History()
-    this.domains = []
-
-    // cache domain registry methods for efficiency
-    this.registry = {}
+    // Listen to key events on parents if they exist
+    this.listenTo(this.history, 'archive', this.archive)
+    this.listenTo(this.history, 'change', this.rollforward)
 
     /**
      * State is captured in three phases. Each stage solves a different problem:
@@ -48,7 +48,7 @@ export default class Microcosm extends Emitter {
      *             is useful for turning something like Immutable.Map() or
      *             a linked-list into a primitive object or array.
      */
-    this.archive = {}
+    this.archived = {}
     this.staged = {}
     this.state = {}
 
@@ -69,6 +69,17 @@ export default class Microcosm extends Emitter {
   }
 
   /**
+   * Remove all subscriptions
+   */
+  teardown() {
+    // Remove all listeners
+    this.off()
+
+    // Remove all observers on history
+    this.stopListening()
+  }
+
+  /**
    * Generates the starting state for a Microcosm instance by asking every
    * domain that subscribes to `getInitialState`.
    *
@@ -79,23 +90,12 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Microcosm maintains an archive of "merged" actions. When an action completes,
-   * it checks the maxHistory property to decide if it should prune the action
-   * and dispatch it into the archive.
-   *
+   * Similarly to a domain (maybe we can reconcile these), get all handlers
+   * registered for a type
    * @private
-   * @param {Action} action target action to "clean"
-   * @param {Number} size the depth of the history
-   * @return {Boolean} Was the action merged into the archive?
    */
-  clean (action, size) {
-    const shouldMerge = size > this.maxHistory && action.is('disposable')
-
-    if (shouldMerge) {
-      this.archive = this.dispatch(this.archive, action)
-    }
-
-    return shouldMerge
+  register (type) {
+    return this.realm.register(type)
   }
 
   /**
@@ -111,11 +111,7 @@ export default class Microcosm extends Emitter {
    * @return {Object} The new state
    */
   dispatch (state, { type, payload }) {
-    if (!this.registry[type]) {
-      this.registry[type] = getDomainHandlers(this.domains, type)
-    }
-
-    const handlers = this.registry[type]
+    let handlers = this.register(type)
 
     for (var i = 0, len = handlers.length; i < len; i++) {
       const { key, domain, handler } = handlers[i]
@@ -130,6 +126,54 @@ export default class Microcosm extends Emitter {
   }
 
   /**
+   * Cache an action, then emit an archive event for any forks
+   * @param {Action} action - Action to archive
+   * @return {Microcosm} self
+   */
+  archive (action) {
+    this.archived = this.dispatch(this.archived, action)
+
+    return this
+  }
+
+  /**
+   * Given an archive, get the next staged state.
+   * @param {Object} archive - Base archive to work from
+   * @return {Object} staged state
+   */
+  stage (archive) {
+    // Copy state to protect older revisions
+    let clone = merge({}, archive)
+
+    return this.history.reduce(this.dispatch, clone, this)
+  }
+
+  /**
+   * Identify the last and next staged state, then ask the associated domain
+   * if it should commit it. If so, roll state forward.
+   * @private
+   */
+  commit (staged) {
+    let next = this.realm.reduce(this.write, merge({}, staged), this)
+
+    return merge({}, this.parent ? this.parent.state : null, next)
+  }
+
+  /**
+   * How microcosm actually writes to state
+   */
+  write (state, key, domain) {
+    const last = update.get(this.staged, key)
+    const next = update.get(state, key)
+
+    if (domain.shouldCommit(last, next)) {
+      return update.set(state, key, domain.commit(next))
+    }
+
+    return update.set(state, key, update.get(this.state, key))
+  }
+
+  /**
    * Run through the action history, dispatching their associated
    * types and payloads to domains for processing. Emits "change".
    *
@@ -137,13 +181,8 @@ export default class Microcosm extends Emitter {
    * @return {Microcosm} self
    */
   rollforward () {
-    this.history.prune(this.clean, this)
-
-    const staged = this.history.reduce(this.dispatch, this.archive, this)
-
-    const next = this.domains.reduce((memo, domain) => {
-      return this.commit(memo, domain[0], domain[1])
-    }, staged)
+    let staged = this.stage(this.archived)
+    let next   = this.commit(staged)
 
     this.staged = staged
 
@@ -156,19 +195,6 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Identify the last and next staged state, then ask the associated domain
-   * if it should commit it. If so, roll state forward.
-   * @private
-   */
-  commit (staged, key, domain) {
-    const last  = update.get(this.staged, key)
-    const next  = update.get(staged, key)
-    const value = domain.shouldCommit(last, next) ? domain.commit(next) : update.get(this.state, key)
-
-    return update.set(staged, key, value)
-  }
-
-  /**
    * Append an action to history and return it. This is used by push,
    * but also useful for testing action states
    *
@@ -176,11 +202,7 @@ export default class Microcosm extends Emitter {
    * @return {Action} action representation of the invoked function
    */
   append (behavior) {
-    const action = this.history.append(behavior)
-
-    action.on('change', this.rollforward, this)
-
-    return action
+    return this.history.append(behavior)
   }
 
   /**
@@ -192,11 +214,7 @@ export default class Microcosm extends Emitter {
    * @return {Action} action representation of the invoked function
    */
   push (behavior, ...params) {
-    const action = this.append(behavior)
-
-    action.execute(...params)
-
-    return action
+    return this.append(behavior).execute(params)
   }
 
   /**
@@ -218,30 +236,10 @@ export default class Microcosm extends Emitter {
    * @param {Object|Function} config - Configuration options for the domain
    * @return {Microcosm} self
    */
-  addDomain (key, config) {
-    if (arguments.length < 2) {
-      // Important! Assignment this way is important
-      // to support IE9, which has an odd way of referencing
-      // arguments
-      config = key
-      key = null
-    }
+  addDomain () {
+    this.realm.add.apply(this.realm, arguments)
 
-    let domain = null
-
-    if (typeof config === 'function') {
-      domain = new config()
-    } else {
-      domain = merge(new Domain(), config)
-    }
-
-    this.domains = this.domains.concat([[ key, domain ]])
-
-    domain.setup()
-
-    this.rebase()
-
-    return this
+    return this.rebase()
   }
 
   addStore() {
@@ -268,7 +266,7 @@ export default class Microcosm extends Emitter {
    * @return {Action} action - An action representing the replace operation.
    */
   replace (data) {
-    return this.reset(merge({}, this.staged, this.deserialize(data)))
+    return this.push(lifecycle.willReplace, this.deserialize(data))
   }
 
   /**
@@ -315,12 +313,10 @@ export default class Microcosm extends Emitter {
    * @return {Microcosm} self
    */
   rebase () {
-    this.registry = {}
-
-    this.archive = merge(this.getInitialState(), this.archive)
+    this.archived = merge(this.getInitialState(), this.archived)
 
     // This ensures there is always a last state for "shouldCommit"
-    this.staged = merge({}, this.archive, this.staged)
+    this.staged = merge({}, this.archived, this.staged)
 
     this.rollforward()
 
@@ -337,9 +333,20 @@ export default class Microcosm extends Emitter {
   checkout (action) {
     this.history.checkout(action)
 
-    this.rollforward()
-
     return this
+  }
+
+  /**
+   * Create a copy of this Microcosm, passing in the same history and
+   * a reference to itself. As actions are pushed into the shared history,
+   * each Microcosm will resolve differently.
+   */
+  fork () {
+    return new Microcosm({
+      parent  : this,
+      pure    : this.pure,
+      history : this.history
+    })
   }
 
 }
