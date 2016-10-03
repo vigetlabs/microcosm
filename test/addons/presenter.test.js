@@ -455,3 +455,15 @@ test('calls a teardown method when it unmounts', t => {
 
   mount(<Test />).unmount()
 })
+
+test('teardown gets the last props', t => {
+  t.plan(1)
+
+  class Test extends Presenter {
+    teardown (repo, props) {
+      t.is(props.test, 'bar')
+    }
+  }
+
+  mount(<Test test="foo" />).setProps({ test: 'bar' }).unmount()
+})

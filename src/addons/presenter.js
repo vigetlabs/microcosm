@@ -78,7 +78,7 @@ export default class Presenter extends Component {
   }
 
   componentWillUnmount () {
-    this.teardown()
+    this.teardown(this.repo, this.props)
     this.unsubscribe()
   }
 
