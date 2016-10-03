@@ -173,10 +173,9 @@ new information.
 If pure (by default) this will only get called if properties are shallowly
 different.
 
-### `teardown()`
+### `teardown(repo, props)`
 
-Teardown subscriptions and other setup behavior. Only necessary if overriding
-`componentWillUnmount`.
+Runs when the presenter unmounts. Useful for tearing down subscriptions and other setup behavior.
 
 ### `model(props)`
 

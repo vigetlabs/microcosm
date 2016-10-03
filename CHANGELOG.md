@@ -4,6 +4,7 @@
 
 - Flipped `shouldCommit`'s signature to `shouldCommit(last, next)` to
   be consistent with other store methods.
+- Added `Presenter::teardown`, the opposite of `Presenter::setup`
 
 ## 10.0.0-rc5
 

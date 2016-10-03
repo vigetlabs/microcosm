@@ -61,8 +61,13 @@ export default class Presenter extends Component {
    * Teardown subscriptions and other behavior.
    *
    * @param {Microcosm} repo - The presenter's Microcosm instance
+   * @param {Object} props - The presenter's props
    */
-  teardown () {
+  teardown (repo, props) {
+    // NOOP
+  }
+
+  unsubscribe() {
     if (this.repo) {
       this.repo.off('change', this._listener)
     }
@@ -74,6 +79,7 @@ export default class Presenter extends Component {
 
   componentWillUnmount () {
     this.teardown()
+    this.unsubscribe()
   }
 
   componentWillReceiveProps (nextProps) {

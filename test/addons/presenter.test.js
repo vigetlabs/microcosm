@@ -443,3 +443,15 @@ test('model is an alias for viewModel', t => {
 
   t.is(wrapper.text(), 'Hello, world!')
 })
+
+test('calls a teardown method when it unmounts', t => {
+  t.plan(1)
+
+  class Test extends Presenter {
+    teardown () {
+      t.pass()
+    }
+  }
+
+  mount(<Test />).unmount()
+})
