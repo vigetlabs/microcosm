@@ -1,5 +1,10 @@
 # Changelog
 
+## Edge
+
+- Flipped `shouldCommit`'s signature to `shouldCommit(last, next)` to
+  be consistent with other store methods.
+
 ## 10.0.0-rc5
 
 - Do not execute callbacks in event listeners when another callback

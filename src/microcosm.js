@@ -163,7 +163,7 @@ export default class Microcosm extends Emitter {
   commit (staged, key, domain) {
     const last  = update.get(this.staged, key)
     const next  = update.get(staged, key)
-    const value = domain.shouldCommit(next, last) ? domain.commit(next) : update.get(this.state, key)
+    const value = domain.shouldCommit(last, next) ? domain.commit(next) : update.get(this.state, key)
 
     return update.set(staged, key, value)
   }

@@ -35,7 +35,7 @@ export default class Domain {
    *
    * @return {boolean} Should the state update?
    */
-  shouldCommit (next, last) {
+  shouldCommit (last, next) {
     return true
   }
 

@@ -151,7 +151,7 @@ const Planets = {
 }
 ```
 
-### `shouldCommit(next, last)`
+### `shouldCommit(last, next)`
 
 Based on the next and last state, should `commit` be called? Useful for
 custom change management behavior.
@@ -164,8 +164,8 @@ const Planets = {
     return Immutable.Map()
   },
 
-  shouldCommit(next, last) {
-    return Immutable.is(next, last)
+  shouldCommit(last, next) {
+    return Immutable.is(last, next)
   }
 
   commit(next) {

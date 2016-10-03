@@ -66,12 +66,12 @@ const Domain = {
     return Immutable.Map()
   },
 
-  shouldCommit(next, previous) {
-    return Immutable.is(next, previous) === false
+  shouldCommit(last, next) {
+    return Immutable.is(last, next) === false
   },
 
-  commit(state) {
-    return Array.from(state.values())
+  commit(next) {
+    return Array.from(next.values())
   },
 
   add(state, record) {
