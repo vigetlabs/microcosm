@@ -5,6 +5,8 @@
 - Flipped `shouldCommit`'s signature to `shouldCommit(last, next)` to
   be consistent with other store methods.
 - Added `Presenter::teardown`, the opposite of `Presenter::setup`
+- Added back `Microcosm::append` and made it a public API. It's simply
+  too useful for testing.
 
 ## 10.0.0-rc5
 
