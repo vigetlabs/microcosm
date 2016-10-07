@@ -1,6 +1,6 @@
 # Changelog
 
-## Edge
+## 10.0.0-rc6
 
 - Flipped `shouldCommit`'s signature to `shouldCommit(last, next)` to
   be consistent with other store methods.
