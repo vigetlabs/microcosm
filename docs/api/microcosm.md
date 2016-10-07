@@ -31,6 +31,25 @@ Generates the starting state for a Microcosm instance. This is the
 result of dispatching `getInitialState` to all domains. It is
 pure; calling this function will not update state.
 
+### `append(action)`
+
+Appends an action to a Microcosm's history, however does not execute
+it. This is useful for testing store responses to a specific action.
+
+```javascript
+let action = repo.append(createPlanet)
+
+// Test that opening an action for a planet marks
+// that planet as loading
+action.open({ id: 'pluto' })
+assert.equal(repo.state.planets.pluto.loading, true)
+
+// And then test that closing the action moves marks
+// the planet as no longer loading
+action.close({ id: 'pluto' })
+assert.falsy(repo.state.planets.pluto.loading)
+```
+
 ### `push(action, ...parameters)`
 
 Resolves an action. Sends the result and any errors to a given error-first callback.

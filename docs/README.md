@@ -14,7 +14,8 @@ start. Beyond that, check out [the example apps](../examples).
 1. [React Router](recipes/react-router.md)
 2. [AJAX](recipes/ajax.md)
 3. [ImmutableJS](recipes/immutable-js.md)
-4. [Testing Intents](recipes/testing-intents.md)
+4. [Testing Domains](recipes/testing-domains.md)
+5. [Testing Intents](recipes/testing-intents.md)
 
 ## API
 

@@ -1,5 +1,6 @@
 import test from 'ava'
 import Action from '../src/action'
+import Microcosm from '../src/microcosm'
 
 const identity = n => n
 
@@ -332,4 +333,24 @@ test('executes onCancel if the action is already cancelled', t => {
   }
 
   action.onCancel(() => t.pass())
+})
+
+test('actions can be tested in reverse', t => {
+  const repo = new Microcosm()
+  const identity = n => n
+
+  repo.addDomain('test', {
+    register () {
+      return {
+        [identity.open] : () => 'open',
+        [identity.done] : () => 'done'
+      }
+    }
+  })
+
+  repo.append(identity).open()
+  t.is(repo.state.test, 'open')
+
+  repo.append(identity).close()
+  t.is(repo.state.test, 'done')
 })

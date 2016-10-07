@@ -169,6 +169,21 @@ export default class Microcosm extends Emitter {
   }
 
   /**
+   * Append an action to history and return it. This is used by push,
+   * but also useful for testing action states
+   *
+   * @param {Function} behavior - An action function
+   * @return {Action} action representation of the invoked function
+   */
+  append (behavior) {
+    const action = this.history.append(behavior)
+
+    action.on('change', this.rollforward, this)
+
+    return action
+  }
+
+  /**
    * Push an action into Microcosm. This will trigger the lifecycle for updating
    * state.
    *
@@ -177,9 +192,7 @@ export default class Microcosm extends Emitter {
    * @return {Action} action representation of the invoked function
    */
   push (behavior, ...params) {
-    const action = this.history.append(behavior)
-
-    action.on('change', this.rollforward, this)
+    const action = this.append(behavior)
 
     action.execute(...params)
 
