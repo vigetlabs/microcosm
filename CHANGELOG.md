@@ -1,5 +1,13 @@
 # Changelog
 
+## Edge
+
+- Added "fork" feature to Microcosm. This method returns a new
+  Microcosm that shares the same history tree the original and will
+  receive the parent's state, however does not share domains.
+- Presenters fork their given repo by default.
+- Renamed `action.close()` to `action.resolve()`
+
 ## 10.0.0-rc6
 
 - Flipped `shouldCommit`'s signature to `shouldCommit(last, next)` to

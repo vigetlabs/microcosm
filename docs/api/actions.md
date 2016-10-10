@@ -73,7 +73,7 @@ function readPlanets () {
     xhr.setRequestHeader('Content-Type', 'application/json')
 
     xhr.addEventListener('load', function () {
-      action.close(JSON.parse(xhr.responseText))
+      action.resolve(JSON.parse(xhr.responseText))
     })
 
     xhr.addEventListener('error', function () {
@@ -155,7 +155,7 @@ function wait () {
     setTimeout(() => action.send(25), 500)
     setTimeout(() => action.send(50), 1000)
     setTimeout(() => action.send(75), 1500)
-    setTimeout(() => action.close(100), 1000)
+    setTimeout(() => action.resolve(100), 1000)
   }
 }
 
@@ -198,7 +198,7 @@ Reject an action. This will move an action into the `error` state and
 optional update the payload. Domains registered to `action.error` will
 pick up on an action within this state.
 
-### `close([payload])`
+### `resolve([payload])`
 
 Resolve an action. This will move an action into the `done` state and
 optional update the payload. Domains registered to `action` or `action.done`

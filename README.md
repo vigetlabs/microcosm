@@ -145,7 +145,7 @@ function search (query) {
       if (error) {
         return action.reject(error)
       } else {
-        action.close(body)
+        action.resolve(body)
       }
     })
 

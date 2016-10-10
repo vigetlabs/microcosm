@@ -17,7 +17,7 @@ test('executes onDone when that action completes', t => {
 
   form.simulate('submit')
 
-  action.close()
+  action.resolve()
 })
 
 test('executes onError when that action completes', t => {

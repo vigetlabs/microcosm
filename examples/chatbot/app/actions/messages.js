@@ -11,7 +11,7 @@ export function send ({ message }) {
 
         // Complete
         case 4:
-          return action.close(JSON.parse(request.responseText))
+          return action.resolve(JSON.parse(request.responseText))
 
         default:
           return null

@@ -5,7 +5,7 @@ import Microcosm from '../src/microcosm'
 const identity = n => n
 
 test('accommodates string actions', t => {
-  const action = new Action('test').close()
+  const action = new Action('test').resolve()
 
   t.is(action.type, 'test')
 })
@@ -39,7 +39,7 @@ test('returns no type when disabled', t => {
 test('preserves other states when disabled', t => {
   const action = new Action(identity)
 
-  action.close()
+  action.resolve()
   action.toggle()
 
   t.is(action.is('done'), true)
@@ -88,7 +88,7 @@ test('exposes a loading type when in progress', t => {
 test('exposes a done type when completed', t => {
   const action = new Action(identity)
 
-  action.close()
+  action.resolve()
 
   t.is(action.type, identity.done)
 })
@@ -138,7 +138,7 @@ test('listens to completion', t => {
     t.is(payload, true)
   })
 
-  action.close(true)
+  action.resolve(true)
 })
 
 test('immediately invokes onDone if the action already closed', t => {
@@ -146,7 +146,7 @@ test('immediately invokes onDone if the action already closed', t => {
 
   t.plan(1)
 
-  action.close(true)
+  action.resolve(true)
 
   action.onDone(payload => {
     t.is(payload, true)
@@ -189,7 +189,7 @@ test('triggers an update event when it sends', t => {
   action.send(3)
 })
 
-test('triggers a done event when it closes', t => {
+test('triggers a done event when it resolves', t => {
   const action = new Action(identity)
 
   t.plan(1)
@@ -198,7 +198,7 @@ test('triggers a done event when it closes', t => {
     t.is(body, 3)
   })
 
-  action.close(3)
+  action.resolve(3)
 })
 
 test('triggers a error event when it is rejected', t => {
@@ -252,16 +252,16 @@ test('actions are no loading open when they complete', t => {
 
   action.open(true)
   action.send(true)
-  action.close(true)
+  action.resolve(true)
 
   t.is(action.is('loading'), false)
   t.is(action.is('done'), true)
 })
 
-test('actions are disposable when they close', t => {
+test('actions are disposable when they resolve', t => {
   const action = new Action(identity)
 
-  action.close(true)
+  action.resolve(true)
 
   t.is(action.is('disposable'), true)
 })
@@ -285,7 +285,7 @@ test('actions are disposable when they are cancelled', t => {
 test('actions interop with promises', t => {
   const action = new Action(identity)
 
-  action.close('Test')
+  action.resolve('Test')
 
   return action.then(result => t.is(result, 'Test'))
 })
@@ -341,6 +341,6 @@ test('actions can be tested in reverse', t => {
   repo.append(identity).open()
   t.is(repo.state.test, 'open')
 
-  repo.append(identity).close()
+  repo.append(identity).resolve()
   t.is(repo.state.test, 'done')
 })

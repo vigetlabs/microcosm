@@ -10,7 +10,7 @@ export function animate (time, duration) {
     time += 16
 
     if (time > goal) {
-      action.close({ color, time })
+      action.resolve({ color, time })
     } else {
       action.send({ color, time })
       requestAnimationFrame(() => loop(action))

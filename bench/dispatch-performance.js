@@ -43,7 +43,7 @@ var results = SIZES.map(function (SIZE) {
   var history = new History({ limit: Infinity })
 
   for (var i = 0; i < SIZE; i++) {
-    history.append(action).close(true)
+    history.append(action).resolve(true)
   }
 
   var repo = new Microcosm({ history })

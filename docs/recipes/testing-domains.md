@@ -90,7 +90,7 @@ test('it sets a loading state when pushing getPlanets', assert => {
 
   const action = repo.append(getPlanets)
 
-  action.close([{ id: '1', name: 'Mercury' }])
+  action.resolve([{ id: '1', name: 'Mercury' }])
 
   assert.equal(repo.state.planets.loading, false)
   assert.equal(repo.state.planets.records[0].name, 'Mercury')

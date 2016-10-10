@@ -74,7 +74,7 @@ const results = SIZES.map(function (SIZE) {
    * the side effect of helping to test memory leakage later.
    */
   now = time.now()
-  history.toArray().reverse().forEach(a => a.close())
+  history.toArray().reverse().forEach(a => a.resolve())
   stats.prune = (time.now() - now) / 1000
 
   /**

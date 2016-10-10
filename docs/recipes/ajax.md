@@ -106,7 +106,7 @@ function getSite () {
       if (error) {
         action.reject(error)
       } else {
-        action.close(payload)
+        action.resolve(payload)
       }
     })
   }

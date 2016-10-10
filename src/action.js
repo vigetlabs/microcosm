@@ -145,12 +145,17 @@ export default class Action extends Emitter {
    * up, then set a payload if provided. Triggers the "done" event.
    * @return {Action} self
    */
-  close (payload) {
+  resolve (payload) {
     this.set(States.done | States.disposable, payload)
 
     this._emit('done', this.payload)
 
     return this
+  }
+
+  close () {
+    console.warn("`action.close` has been renamed to `action.resolve`. This deprecation will be removed in the major release. Please update your code to use `action.resolve()`")
+    return resolve.apply(this, arguments)
   }
 
   /**

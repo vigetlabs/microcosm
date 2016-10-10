@@ -46,7 +46,7 @@ assert.equal(repo.state.planets.pluto.loading, true)
 
 // And then test that closing the action moves marks
 // the planet as no longer loading
-action.close({ id: 'pluto' })
+action.resolve({ id: 'pluto' })
 assert.falsy(repo.state.planets.pluto.loading)
 ```
 

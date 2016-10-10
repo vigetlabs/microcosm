@@ -6,7 +6,7 @@
  * 2. Unwrap the promise using `setTimeout`, which prevents errors
  *    elsewhere in the dispatch execution process from being trapped.
  * 3. If the promise is rejected, reject the action
- * 4. Otherwise close the action with the returned body
+ * 4. Otherwise resolve the action with the returned body
  */
 
 import isPromise from 'is-promise'
@@ -19,7 +19,7 @@ export default {
     action.open()
 
     promise.then(
-      body  => global.setTimeout(() => action.close(body), 0),
+      body  => global.setTimeout(() => action.resolve(body), 0),
       error => global.setTimeout(() => action.reject(error), 0)
     )
 

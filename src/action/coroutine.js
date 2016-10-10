@@ -19,5 +19,5 @@ export default function coroutine (action, body) {
     return thunk.call(action, body)
   }
 
-  return action.close(body)
+  return action.resolve(body)
 }

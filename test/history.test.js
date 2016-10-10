@@ -27,8 +27,8 @@ test('prunes all the way up to the focal point', t => {
   history.checkout(two)
 
   // Mark for disposal
-  one.close()
-  two.close()
+  one.resolve()
+  two.resolve()
 
   // Three should be ignored!
   history.prune()
