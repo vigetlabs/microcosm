@@ -1,6 +1,6 @@
 # Changelog
 
-## Edge
+## 10.0.0-rc7
 
 - Added "fork" feature to Microcosm. This method returns a new
   Microcosm that shares the same history tree the original and will
