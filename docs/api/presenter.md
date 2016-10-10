@@ -246,3 +246,26 @@ class HelloWorldPresenter extends Presenter {
   }
 }
 ```
+
+### fork()
+
+Instantiate a new Microcosm that shares the same action history as
+another. This is useful for producing "umbrellas" of Microcosms,
+particularly within a tree of UI components.
+
+```javascript
+// Here we have a repo that manages a roster of people
+var roster = new Microcosm()
+roster.addStore('people', People)
+
+// But what if we want to focus on a single page of users?
+// Fork gives us an answer for that
+var fork = roster.fork()
+
+// Adding a domain to a fork does not add it to the parent
+fork.addDomain('page', PaginatedPeople)
+
+// Pushing from a fork will add an action to the same
+// history as the parent
+fork.push(getPeople)
+```
