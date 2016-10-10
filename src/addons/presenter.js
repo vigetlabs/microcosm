@@ -10,6 +10,7 @@ const EMPTY = {}
  * components that interact with non-presentational logic so that the
  * majority of view code does not have to.
  */
+
 class Presenter extends React.Component {
 
   static propTypes = {
@@ -29,10 +30,12 @@ class Presenter extends React.Component {
   constructor (props, context) {
     super(props, context)
 
-    // Hoist statics for IE11
-    this.constructor.propTypes = Presenter.propTypes
-    this.constructor.contextTypes = Presenter.contextTypes
-    this.constructor.childContextTypes = Presenter.childContextTypes
+    if (!this.constructor.childContextTypes) {
+      console.error('Presenter Error: Unable to obtain context. This environment is unable ' +
+                    'to pass static properties to derived classes. This means that React ' +
+                    'can not pass the required context Presenters need for communication. We ' +
+                    'recommend fixing this by including the Object.setPrototypeOf polyfill.')
+    }
 
     this.repo = this._getRepo()
     this.pure = this._getRepoPurity(this.repo, this.props)

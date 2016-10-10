@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.0.0-rc9
+
+- Almost there, we promise. We were able to identify the core issue
+  behind Presenter statics not forwarding to derived classes. Those
+  using Presenters should include the `Object.setPrototypeOf`
+  polyfill to support IE10 and lower.
+
 ## 10.0.0-rc8
 
 - Hoist Presenter statics for <= IE10
