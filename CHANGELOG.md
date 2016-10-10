@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.0.0-rc8
+
+- Hoist Presenter statics for <= IE10
+
 ## 10.0.0-rc7
 
 - Added "fork" feature to Microcosm. This method returns a new

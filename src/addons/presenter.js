@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Microcosm from '../microcosm'
 import shallowEqual from '../shallow-equal'
 import merge from '../merge'
@@ -10,10 +10,29 @@ const EMPTY = {}
  * components that interact with non-presentational logic so that the
  * majority of view code does not have to.
  */
-export default class Presenter extends Component {
+class Presenter extends React.Component {
+
+  static propTypes = {
+    repo : React.PropTypes.object
+  }
+
+  static contextTypes = {
+    repo : React.PropTypes.object,
+    send : React.PropTypes.func
+  }
+
+  static childContextTypes = {
+    repo : React.PropTypes.object,
+    send : React.PropTypes.func
+  }
 
   constructor (props, context) {
     super(props, context)
+
+    // Hoist statics for IE11
+    this.constructor.propTypes = Presenter.propTypes
+    this.constructor.contextTypes = Presenter.contextTypes
+    this.constructor.childContextTypes = Presenter.childContextTypes
 
     this.repo = this._getRepo()
     this.pure = this._getRepoPurity(this.repo, this.props)
@@ -228,16 +247,4 @@ export default class Presenter extends Component {
 
 }
 
-Presenter.propTypes = {
-  repo : React.PropTypes.instanceOf(Microcosm)
-}
-
-Presenter.contextTypes = {
-  repo : React.PropTypes.instanceOf(Microcosm),
-  send : React.PropTypes.func
-}
-
-Presenter.childContextTypes = {
-  repo : React.PropTypes.instanceOf(Microcosm),
-  send : React.PropTypes.func
-}
+export default Presenter
