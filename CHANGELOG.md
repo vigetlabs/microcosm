@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.0.0-rc10
+
+- Fixed some edge cases in umbrella state sharing
+
 ## 10.0.0-rc9
 
 - Almost there, we promise. We were able to identify the core issue

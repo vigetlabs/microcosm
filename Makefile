@@ -26,6 +26,6 @@ bench: javascript
 	@ node --expose-gc tmp/bench/push-performance
 
 clean:
-	@ rm -rf {tmp,dist}
+	@ rm -rf {tmp,dist/*}
 
 .PHONY: all clean bench package.json documentation release prerelease

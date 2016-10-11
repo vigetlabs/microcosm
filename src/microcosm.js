@@ -29,31 +29,23 @@ export default class Microcosm extends Emitter {
     this.pure = pure
     this.parent = parent
 
-    // Listen to key events on parents if they exist
     this.listenTo(this.history, 'archive', this.archive)
-    this.listenTo(this.history, 'change', this.rollforward)
+    this.listenTo(this.history, 'reconcile', this.reconcile)
+    this.listenTo(this.history, 'release', this.release)
 
-    /**
-     * State is captured in three phases. Each stage solves a different problem:
-     *
-     * 1. archive  A cache of completed actions. Since actions will never change,
-     *             writing them to an archive allows the actions to be disposed,
-     *             improving dispatch efficiency.
-     * 2. staged   The "private" state, before writing for public consumption.
-     *             Domain may not operate on primitive (like ImmutableJS), this
-     *             allows a domain to work with complex data types while still
-     *             exposing a primitive public state
-     * 3. state    Public state. The `willCommit` lifecycle method allows a
-     *             domain to transform private state before it changes. This
-     *             is useful for turning something like Immutable.Map() or
-     *             a linked-list into a primitive object or array.
-     */
     this.archived = {}
     this.staged = {}
+    this.head = {}
+
     this.state = {}
 
-    // Standard domain reduction behaviors
-    this.addDomain(MetaDomain)
+    // Standard domain reduction behaviors, only the root gets a meta
+    // domain.
+    if (!this.parent) {
+      this.addDomain(MetaDomain)
+    } else {
+      this.rollforward()
+    }
 
     // Microcosm is now ready. Call the setup lifecycle method
     this.setup()
@@ -138,14 +130,10 @@ export default class Microcosm extends Emitter {
 
   /**
    * Given an archive, get the next staged state.
-   * @param {Object} archive - Base archive to work from
    * @return {Object} staged state
    */
-  stage (archive) {
-    // Copy state to protect older revisions
-    let clone = merge({}, archive)
-
-    return this.history.reduce(this.dispatch, clone, this)
+  stage () {
+    return this.history.reduce(this.dispatch, merge({}, this.archived), this)
   }
 
   /**
@@ -154,9 +142,7 @@ export default class Microcosm extends Emitter {
    * @private
    */
   commit (staged) {
-    let next = this.realm.reduce(this.write, merge({}, staged), this)
-
-    return merge({}, this.parent ? this.parent.state : null, next)
+    return this.realm.reduce(this.write, merge({}, staged), this)
   }
 
   /**
@@ -170,7 +156,7 @@ export default class Microcosm extends Emitter {
       return update.set(state, key, domain.commit(next))
     }
 
-    return update.set(state, key, update.get(this.state, key))
+    return update.set(state, key, update.get(this.head, key))
   }
 
   /**
@@ -180,18 +166,28 @@ export default class Microcosm extends Emitter {
    * @private
    * @return {Microcosm} self
    */
-  rollforward () {
-    let staged = this.stage(this.archived)
-    let next   = this.commit(staged)
+  reconcile () {
+    let next = this.stage()
 
-    this.staged = staged
-
-    if (!this.pure || shallowEqual(this.state, next) === false) {
-      this.state = next
-      this._emit('change', next)
-    }
+    this.head   = merge({}, this.parent ? this.parent.head : null, this.commit(next))
+    this.staged = next
 
     return this
+  }
+
+  release () {
+    if (this.pure && shallowEqual(this.head, this.state)) {
+      return false
+    }
+
+    this.state = this.head
+
+    this._emit('change', this.state)
+  }
+
+  rollforward() {
+    this.reconcile()
+    this.release()
   }
 
   /**
@@ -315,7 +311,7 @@ export default class Microcosm extends Emitter {
   rebase () {
     this.archived = merge(this.getInitialState(), this.archived)
 
-    // This ensures there is always a last state for "shouldCommit"
+    // Always ensure there is a last "staged" state
     this.staged = merge({}, this.archived, this.staged)
 
     this.rollforward()

@@ -91,7 +91,6 @@ export default class History extends Emitter {
    * @return {History} self
    */
   disconnect (node) {
-    this.stopListening(node)
     this._emit('archive', node)
 
     if (node.parent) {
@@ -107,7 +106,9 @@ export default class History extends Emitter {
    */
   reconcile () {
     this.prune()
-    this._emit('change')
+
+    this._emit('reconcile')
+    this._emit('release')
   }
 
   /**
