@@ -1,5 +1,11 @@
 # Changelog
 
+## 10.0.0-rc11
+
+- Only root microcosms can replace state
+- Finalize solution for Presenter issues in IE < 11 that does not
+  require a polyfil.
+
 ## 10.0.0-rc10
 
 - Fixed some edge cases in umbrella state sharing
