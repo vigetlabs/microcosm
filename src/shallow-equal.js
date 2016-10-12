@@ -8,6 +8,10 @@ export default function shallowEqual(objA, objB) {
     return true
   }
 
+  if ((objA && !objB) || (!objA && objB)) {
+    return false
+  }
+
   const keysA = Object.keys(objA)
   const keysB = Object.keys(objB)
 

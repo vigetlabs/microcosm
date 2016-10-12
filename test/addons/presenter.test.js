@@ -31,7 +31,7 @@ test('receives intent events', t => {
         }
       }
     }
-    render() {
+    view() {
       return <View />
     }
   }
@@ -41,7 +41,7 @@ test('receives intent events', t => {
 
 test('warns if no presenter implements an intent', t => {
   class MyPresenter extends Presenter {
-    render() {
+    view() {
       return <View />
     }
   }
@@ -62,8 +62,8 @@ test('builds the view model into state', t => {
         color: state => state.color
       }
     }
-    render() {
-      return <p>{ this.state.color }</p>
+    view({ color }) {
+      return <p>{ color }</p>
     }
   }
 
@@ -72,7 +72,7 @@ test('builds the view model into state', t => {
 
   repo.replace({ color: 'red' })
 
-  t.is(presenter.state('color'), 'red')
+  t.is(presenter.text(), 'red')
 })
 
 test('handles non-function view model bindings', t => {
@@ -96,7 +96,7 @@ test('send bubbles up to parent presenters', t => {
   t.plan(1)
 
   class Child extends Presenter {
-    render() {
+    view() {
       return <View />
     }
   }
@@ -124,7 +124,7 @@ test('runs a setup function when created', t => {
     setup() {
       t.pass()
     }
-    render() {
+    view() {
       return <View />
     }
   }
@@ -250,32 +250,23 @@ test('calling setState in setup does not raise a warning', t => {
   logger.restore()
 })
 
-test('warns when setState in setup does not raise a warning', t => {
-  class MyPresenter extends Presenter {
-    viewModel() {
-      return this.repo.state
-    }
-  }
-
-  logger.record()
-
-  mount(<MyPresenter repo={ new Microcosm() } />)
-
-  t.regex(logger.last('warn'), /The view model for this presenter returned repo\.state/i)
-
-  logger.restore()
-})
-
 test('allows functions to return from viewModel', t => {
   class MyPresenter extends Presenter {
     viewModel() {
       return state => state
     }
+
+    view ({ color }) {
+      return <p>{color}</p>
+    }
   }
 
-  const el = mount(<MyPresenter repo={new Microcosm()} />)
+  const repo = new Microcosm()
+  const el = mount(<MyPresenter repo={repo} />)
 
-  t.is(el.state(), el.instance().repo.state)
+  repo.replace({ color: 'red' })
+
+  t.is(el.text(), 'red')
 })
 
 test('does not cause a re-render when shallowly equal and pure', t => {
@@ -328,7 +319,7 @@ test('recalculates the view model if the props are different', t => {
   repo.replace({ name: 'Kurtz' })
 
   class Namer extends Presenter {
-    viewModel (props) {
+    model (props) {
       return {
         name: state => props.prefix + ' ' + state.name
       }
@@ -371,9 +362,9 @@ test('does not waste rendering on nested children', t => {
     viewModel () {
       return { name: state => state.name }
     }
-    view () {
+    view ({ name }) {
       t.pass()
-      return <p>{ this.state.name }</p>
+      return <p>{ name }</p>
     }
   }
 

@@ -155,7 +155,7 @@ export default class Action extends Emitter {
 
   close () {
     console.warn("`action.close` has been renamed to `action.resolve`. This deprecation will be removed in the major release. Please update your code to use `action.resolve()`")
-    return resolve.apply(this, arguments)
+    return this.resolve.apply(this, arguments)
   }
 
   /**

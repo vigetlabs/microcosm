@@ -25,3 +25,10 @@ test('returns false when given the exact different keys', t => {
 
   t.is(shallowEqual(a, b), false)
 })
+
+test('returns false if one of the objects is null', t => {
+  const a = { name: 'Bill' }
+
+  t.is(shallowEqual(a, null), false)
+  t.is(shallowEqual(null, a), false)
+})

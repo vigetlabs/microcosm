@@ -1,6 +1,7 @@
 import test from 'ava'
 import Action from '../src/action'
 import Microcosm from '../src/microcosm'
+import logger from './helpers/console'
 
 const identity = n => n
 
@@ -343,4 +344,16 @@ test('actions can be tested in reverse', t => {
 
   repo.append(identity).resolve()
   t.is(repo.state.test, 'done')
+})
+
+test('warns when using closeStore', t => {
+  const action = new Action(n => n)
+
+  logger.record()
+
+  action.close()
+
+  t.is(logger.count('warn'), 1)
+
+  logger.restore()
 })

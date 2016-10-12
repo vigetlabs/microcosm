@@ -39,12 +39,11 @@ export default class Microcosm extends Emitter {
 
     this.state = {}
 
-    // Standard domain reduction behaviors, only the root gets a meta
-    // domain.
-    if (!this.parent) {
-      this.addDomain(MetaDomain)
-    } else {
+    // Only the root gets the meta domain
+    if (this.parent) {
       this.rollforward()
+    } else {
+      this.addDomain(MetaDomain)
     }
 
     // Microcosm is now ready. Call the setup lifecycle method

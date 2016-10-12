@@ -128,3 +128,16 @@ test('tearing down eliminates parent subscriptions', t => {
   t.is(parent.state.color, 'blue')
   t.is(child.state.color, 'red')
 })
+
+test('it deeply inherits state', t => {
+  const tree = new Microcosm({ maxHistory: Infinity })
+
+  tree.replace({ color: 'red' })
+
+  const branch = tree.fork()
+  const leaf = branch.fork()
+
+  t.is(branch.state.color, 'red')
+
+  t.is(leaf.state.color, 'red')
+})

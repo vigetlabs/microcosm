@@ -1,7 +1,7 @@
 import React from 'react'
 import Microcosm from '../microcosm'
-import shallowEqual from '../shallow-equal'
 import merge from '../merge'
+import shallowEqual from '../shallow-equal'
 
 const EMPTY = {}
 
@@ -10,48 +10,61 @@ const EMPTY = {}
  * components that interact with non-presentational logic so that the
  * majority of view code does not have to.
  */
-
 class Presenter extends React.Component {
 
-  static propTypes = {
-    repo : React.PropTypes.object
+  constructor() {
+    super(...arguments)
+
+    this.ready = false
+
+    this._boundSend = this.send.bind(this)
+    this._boundSetRepo = this._setRepo.bind(this)
   }
 
-  static contextTypes = {
-    repo : React.PropTypes.object,
-    send : React.PropTypes.func
-  }
-
-  static childContextTypes = {
-    repo : React.PropTypes.object,
-    send : React.PropTypes.func
-  }
-
-  constructor (props, context) {
-    super(props, context)
-
-    if (!this.constructor.childContextTypes) {
-      console.error('Presenter Error: Unable to obtain context. This environment is unable ' +
-                    'to pass static properties to derived classes. This means that React ' +
-                    'can not pass the required context Presenters need for communication. We ' +
-                    'recommend fixing this by including the Object.setPrototypeOf polyfill.')
+  shouldComponentUpdate(props, state) {
+    if (!this.ready || !this.pure) {
+      return true
     }
 
-    this.repo = this._getRepo()
-    this.pure = this._getRepoPurity(this.repo, this.props)
-
-    this._updatePropMap(this.props)
-
-    this.state = this._getState()
-
-    this.repo.on('change', this._updateState, this)
+    return !shallowEqual(props, this.props) || !shallowEqual(state, this.state)
   }
 
-  getChildContext () {
-    return {
-      repo : this.repo,
-      send : this.send.bind(this)
+  componentWillUnmount () {
+    this.teardown(this.repo, this.props)
+    this.repo.teardown()
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.pure === false || shallowEqual(nextProps, this.props) === false) {
+      this._updatePropMap(nextProps)
+
+      this.update(this.repo, nextProps)
     }
+
+    this._updateState()
+  }
+
+  /**
+   * Provides a way for views to send messages back to the presenter
+   * in a way that does not require passing callbacks down through the
+   * view. This method is exposed by the Presenter via the React context
+   * API.
+   *
+   * Send bubbles. If the closest presenter does not implement the intent,
+   * it will check it's parent presenter. This repeats until there is no parent,
+   * in which case it throws an error.
+   *
+   * @param {string} intent - The name of a method the view wishes to invoke
+   * @param {...any} params - Arguments to invoke the named method with
+   */
+  send (intent, ...params) {
+    var registry = this.register()
+
+    if (registry && registry[intent]) {
+      return registry[intent].apply(this, [ this.repo, ...params ])
+    }
+
+    return false
   }
 
   /**
@@ -87,27 +100,15 @@ class Presenter extends React.Component {
     // NOOP
   }
 
-  shouldComponentUpdate (props, state) {
-    return !this.pure || !shallowEqual(state, this.state) || !shallowEqual(props, this.props)
-  }
-
-  componentWillMount() {
-    this.setup(this.repo, this.props)
-  }
-
-  componentWillUnmount () {
-    this.teardown(this.repo, this.props)
-    this.repo.teardown()
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (this.pure === false || shallowEqual(nextProps, this.props) === false) {
-      this._updatePropMap(nextProps)
-
-      this.update(this.repo, nextProps)
-    }
-
-    this._updateState()
+  /**
+   * Expose "intent" subscriptions to child components. This is used with the <Form />
+   * add-on to improve the ergonomics of presenter/view communication (though this only
+   * occurs from the view to the presenter).
+   *
+   * @return {Object} A list of subscriptions
+   */
+  register () {
+    // NOOP
   }
 
   /**
@@ -117,39 +118,53 @@ class Presenter extends React.Component {
    *
    * If none of the keys have changed, `this.updateState` will not set a new state.
    *
-   * @example
-   * viewModel(props) {
-   *   return {
-   *     user: state => state.users.find(user => user.id == props.id)
-   *   }
-   * }
-   *
    * @param {Object} props - The presenter's props, or new props entering a presenter.
    * @returns {Object} The properties to assign to state
    */
   viewModel (props) {
-    return this.model(props)
+    return EMPTY
   }
 
   /**
    * Alias for viewModel
    */
   model(props) {
-    return EMPTY
+    return this.viewModel(props)
+  }
+
+  view (model) {
+    return model.children ? React.Children.only(model.children) : null
+  }
+
+  render () {
+    var model = merge({}, this.props, this.state)
+
+    return (
+      <PresenterContext repo={this.props.repo} send={this._boundSend} setRepo={this._boundSetRepo}>
+        {this.repo ? this.view.call(this, model) : null}
+      </PresenterContext>
+    )
+  }
+
+  _setRepo(repo) {
+    this.repo = repo
+    this.pure = this.props.hasOwnProperty('pure') ? this.props.pure : repo.pure
+
+    this._updatePropMap(this.props)
+    this.setState(this._getState())
+
+    this.ready = true
+
+    this.repo.on('change', this._updateState, this)
+
+    this.setup(repo, this.props)
   }
 
   /**
    * @private
    */
   _updatePropMap (props) {
-    this.propMap = this.viewModel(props)
-
-    if (this.propMap === this.repo.state) {
-      console.warn("The view model for this presenter returned repo.state. " +
-                   "This method onlys run when a presenter is given new properties. " +
-                   "If you would like to subscribe to all state changes, return a " +
-                   "function like: `(state) => state`.")
-    }
+    this.propMap = this.model(props)
   }
 
   /**
@@ -178,76 +193,68 @@ class Presenter extends React.Component {
     for (let key in this.propMap) {
       const entry = this.propMap[key]
 
-      nextState[key] = typeof entry === 'function' ? entry.call(this, repoState) : entry
+      nextState[key] = typeof entry === 'function' ? entry(repoState) : entry
     }
 
     return nextState
   }
 
-  /**
-   * @private
-   */
-  _getRepo() {
+}
+
+class PresenterContext extends React.Component {
+
+  static propTypes = {
+    repo : React.PropTypes.object
+  }
+
+  static contextTypes = {
+    repo : React.PropTypes.object,
+    send : React.PropTypes.func
+  }
+
+  static childContextTypes = {
+    repo : React.PropTypes.object,
+    send : React.PropTypes.func
+  }
+
+  constructor() {
+    super(...arguments)
+
     const repo = this.props.repo || this.context.repo
 
-    return repo ? repo.fork() : new Microcosm()
+    this.repo = repo ? repo.fork() : new Microcosm()
   }
 
-  /**
-   * @private
-   */
-  _getRepoPurity(repo, props) {
-    if (props.hasOwnProperty('pure')) {
-      return !!props.pure
+  getChildContext () {
+    return {
+      repo : this.repo,
+      send : this.send.bind(this)
+    }
+  }
+
+  componentWillMount() {
+    this.props.setRepo(this.repo)
+  }
+
+  render() {
+    return this.props.children
+  }
+
+  send(intent, ...params) {
+    const action = this.props.send(intent, ...params)
+
+    if (action === false) {
+      if (this.context.send) {
+        return this.context.send(intent, ...params)
+      }
+
+      console.warn(`No presenter implements intent “${ intent }”.`)
     }
 
-    return repo ? repo.pure : false
-  }
-
-  /**
-   * Expose "intent" subscriptions to child components. This is used with the <Form />
-   * add-on to improve the ergonomics of presenter/view communication (though this only
-   * occurs from the view to the presenter).
-   *
-   * @return {Object} A list of subscriptions
-   */
-  register () {
-    // NOOP
-  }
-
-  /**
-   * Provides a way for views to send messages back to the presenter
-   * in a way that does not require passing callbacks down through the
-   * view. This method is exposed by the Presenter via the React context
-   * API.
-   *
-   * Send bubbles. If the closest presenter does not implement the intent,
-   * it will check it's parent presenter. This repeats until there is no parent,
-   * in which case it throws an error.
-   *
-   * @param {string} intent - The name of a method the view wishes to invoke
-   * @param {...any} params - Arguments to invoke the named method with
-   */
-  send (intent, ...params) {
-    var registry = this.register()
-
-    if (registry && registry[intent]) {
-      return registry[intent].apply(this, [ this.repo, ...params ])
-    } else if (this.context.send) {
-      return this.context.send(intent, ...params)
-    }
-
-    console.warn(`No presenter implements intent “${ intent }”.`)
-  }
-
-  view (model) {
-    return this.props.children ? React.Children.only(this.props.children) : null
-  }
-
-  render () {
-    return this.view(merge({}, this.props, this.state))
+    return action
   }
 
 }
+
 
 export default Presenter
