@@ -5,9 +5,9 @@
  */
 
 export default {
-  willStart       : 'getInitialState',
-  willSerialize   : 'serialize',
-  willDeserialize : 'deserialize',
-  willReset       : '__willReset',
-  willReplace     : '__willReplace'
+  getInitialState : 'getInitialState',
+  serialize       : 'serialize',
+  deserialize     : 'deserialize',
+  _willReset      : '_willReset',
+  _willReplace    : '_willReplace'
 }

@@ -1,4 +1,5 @@
 import update from './update'
+import lifecycle from './lifecycle'
 
 function format (string) {
   /*eslint-disable no-unused-vars*/
@@ -9,7 +10,7 @@ function format (string) {
 }
 
 function getHandler (key, domain, type) {
-  let handler = domain[type]
+  let handler = lifecycle.hasOwnProperty(type) ? domain[type] : undefined
 
   if (handler === undefined) {
     const registrations = domain.register(type)

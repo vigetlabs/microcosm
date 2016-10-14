@@ -46,10 +46,22 @@ test('allows lifecycle methods as registered actions', t => {
   repo.addDomain('test', {
     register() {
       return {
-        [lifecycle.willStart]: () => 'test'
+        [lifecycle.getInitialState]: () => 'test'
       }
     }
   })
 
   t.is(repo.state.test, 'test')
+})
+
+test('does not trigger on implemented methods', t => {
+  const repo = new Microcosm()
+
+  repo.addDomain('test', {
+    test() {
+      throw new Error("Should not have invoked test method")
+    }
+  })
+
+  repo.push('test')
 })

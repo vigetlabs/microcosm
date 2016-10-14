@@ -9,11 +9,11 @@ import merge from '../merge'
 
 export default {
 
-  [lifecycle.willReset](_old, next) {
+  [lifecycle._willReset](_old, next) {
     return next
   },
 
-  [lifecycle.willReplace](old, next) {
+  [lifecycle._willReplace](old, next) {
     return merge({}, old, next)
   }
 

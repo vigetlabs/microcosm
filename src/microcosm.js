@@ -77,7 +77,7 @@ export default class Microcosm extends Emitter {
    * @return {Object} State object representing the initial state.
    */
   getInitialState () {
-    return this.dispatch({}, { type: lifecycle.willStart })
+    return this.dispatch({}, { type: lifecycle.getInitialState })
   }
 
   /**
@@ -250,7 +250,7 @@ export default class Microcosm extends Emitter {
    * @return {Action} action - An action representing the reset operation.
    */
   reset (state) {
-    return this.push(lifecycle.willReset, merge(this.getInitialState(), state))
+    return this.push(lifecycle._willReset, merge(this.getInitialState(), state))
   }
 
   /**
@@ -261,7 +261,7 @@ export default class Microcosm extends Emitter {
    * @return {Action} action - An action representing the replace operation.
    */
   replace (data) {
-    return this.push(lifecycle.willReplace, this.deserialize(data))
+    return this.push(lifecycle._willReplace, this.deserialize(data))
   }
 
   /**
@@ -276,7 +276,7 @@ export default class Microcosm extends Emitter {
       return {}
     }
 
-    return this.dispatch(payload, { type: lifecycle.willDeserialize, payload })
+    return this.dispatch(payload, { type: lifecycle.deserialize, payload })
   }
 
   /**
@@ -287,7 +287,7 @@ export default class Microcosm extends Emitter {
    * @return {Object} The serialized version of repo state.
    */
   serialize () {
-    return this.dispatch(this.staged, { type: lifecycle.willSerialize })
+    return this.dispatch(this.staged, { type: lifecycle.serialize })
   }
 
   /**
