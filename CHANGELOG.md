@@ -18,7 +18,7 @@ High level list:
   removed.
 - Removed Plugins
 - Removed the generator form for actions. Actions now support a thunk
-  form (see `[the docs](./docs/api/actions.md)`).
+  form (see [the docs](./docs/api/actions.md)).
 - `repo.push` now returns the action representing the provided action
   creator.
 - Added `pure` option, true by default. When true, change events
@@ -90,6 +90,38 @@ async operations.
   argument of the pushed action is forwarded to stores.
 - Properly display missing action reporting when dispatching an
   undefined action.
+
+We removed the generator form for actions. Instead, actions can return
+a function to get greater control over async operations:
+
+```javascript
+function getUser (id) {
+  return function (action) {
+    const request = ajax('/users/' + id)
+
+    action.open(id)
+
+    request.on('load', (data) => action.resolve(data))
+
+    request.on('error', (error) => action.reject(error))
+  }
+}
+```
+
+Domains can subscribe to these fine-grained action states:
+
+```javascript
+const UserDomain = {
+  // ... handlers
+  register() {
+    return {
+      [getUser.open]  : this.setLoading,
+      [getUser.done]  : this.updateUser,
+      [getUser.error] : this.setFailure
+    }
+  }
+}
+```
 
 ### Presenter Addon
 
