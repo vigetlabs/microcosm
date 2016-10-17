@@ -10,6 +10,7 @@ build/%.js: %.js
 	@ mkdir -p $(@D)
 	@ $(BABEL) -c -s inline $< > $@
 	@ echo "[+] $@"
+	@ rsync -uraq build/src/ build/
 
 docs: LICENSE.md README.md
 	@ mkdir -p build
