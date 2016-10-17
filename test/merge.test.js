@@ -1,31 +1,30 @@
-import test from 'ava'
 import merge from '../src/merge'
 
-test('will not merge a null value into an object', t => {
+test('will not merge a null value into an object', function () {
   const a = {}
   const b = null
 
-  t.is(merge(a, b), a)
+  expect(merge(a, b)).toEqual(a)
 })
 
-test('will not merge into null', t => {
+test('will not merge into null', function () {
   const a = null
   const b = {}
 
-  t.is(merge(a, b), null)
+  expect(merge(a, b)).toEqual(null)
 })
 
-test('will not merge a property it does not own', t => {
+test('will not merge a property it does not own', function () {
   const proto = { red: true }
   const child = Object.create(proto)
 
-  t.deepEqual(merge({}, child), {})
+  expect(merge({}, child)).toEqual({})
 })
 
-test('merges many arguments', t => {
+test('merges many arguments', function () {
   const a = { red: true }
   const b = { green: true }
   const c = { blue: true }
 
-  t.deepEqual(merge(a, b, c), { red: true, green: true, blue: true })
+  expect(merge(a, b, c)).toEqual({ red: true, green: true, blue: true })
 })

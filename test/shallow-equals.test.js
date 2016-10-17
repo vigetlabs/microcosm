@@ -1,34 +1,33 @@
-import test from 'ava'
 import shallowEqual from '../src/shallow-equal'
 
-test('returns true when given the exact same object', t => {
+test('returns true when given the exact same object', function () {
   const sample = {}
 
-  t.is(shallowEqual(sample, sample), true)
+  expect(shallowEqual(sample, sample)).toBe(true)
 })
 
-test('returns true when given the exact same keys', t => {
-  t.is(shallowEqual({ one: 1 }, { one: 1 }), true)
+test('returns true when given the exact same keys', function () {
+  expect(shallowEqual({ one: 1 }, { one: 1 })).toBe(true)
 })
 
-test('returns false when the key count is different', t => {
+test('returns false when the key count is different', function () {
   const a = { foo: 'bar' }
   const b = { foo: 'bar', another: true }
 
-  t.is(shallowEqual(a, b), false)
-  t.is(shallowEqual(b, a), false)
+  expect(shallowEqual(a, b)).toBe(false)
+  expect(shallowEqual(b, a)).toBe(false)
 })
 
-test('returns false when given the exact different keys', t => {
+test('returns false when given the exact different keys', function () {
   const a = { name: 'Bill' }
   const b = { name: 'Cindy' }
 
-  t.is(shallowEqual(a, b), false)
+  expect(shallowEqual(a, b)).toBe(false)
 })
 
-test('returns false if one of the objects is null', t => {
+test('returns false if one of the objects is null', function () {
   const a = { name: 'Bill' }
 
-  t.is(shallowEqual(a, null), false)
-  t.is(shallowEqual(null, a), false)
+  expect(shallowEqual(a, null)).toBe(false)
+  expect(shallowEqual(null, a)).toBe(false)
 })

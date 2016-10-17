@@ -1,16 +1,15 @@
-import test from 'ava'
 import Microcosm from '../src/microcosm'
 
-test('forks inherit state', t => {
+test('forks inherit state', function () {
   const parent = new Microcosm()
   const child = parent.fork()
 
   parent.reset({ foo: 'bar' })
 
-  t.is(child.state.foo, 'bar')
+  expect(child.state.foo).toEqual('bar')
 })
 
-test('pushing actions on the child float up to the parent', t => {
+test('pushing actions on the child float up to the parent', function () {
   const parent = new Microcosm()
   const child = parent.fork()
 
@@ -35,21 +34,21 @@ test('pushing actions on the child float up to the parent', t => {
     }
   })
 
-  t.is(parent.state.color, 'red')
-  t.is(parent.state.shape, undefined)
-  t.is(child.state.color, 'red')
-  t.is(child.state.shape, 'triangle')
+  expect(parent.state.color).toEqual('red')
+  expect(parent.state.shape).toEqual(undefined)
+  expect(child.state.color).toEqual('red')
+  expect(child.state.shape).toEqual('triangle')
 
   child.push(setShape, 'square')
   child.push(setColor, 'blue')
 
-  t.is(parent.state.color, 'blue')
-  t.is(parent.state.shape, undefined)
-  t.is(child.state.color, 'blue')
-  t.is(child.state.shape, 'square')
+  expect(parent.state.color).toEqual('blue')
+  expect(parent.state.shape).toEqual(undefined)
+  expect(child.state.color).toEqual('blue')
+  expect(child.state.shape).toEqual('square')
 })
 
-test('pushing actions on the parent sink down to children', t => {
+test('pushing actions on the parent sink down to children', function () {
   const parent = new Microcosm()
   const child = parent.fork()
 
@@ -74,21 +73,21 @@ test('pushing actions on the parent sink down to children', t => {
     }
   })
 
-  t.is(parent.state.color, 'red')
-  t.is(parent.state.shape, undefined)
-  t.is(child.state.color, 'red')
-  t.is(child.state.shape, 'triangle')
+  expect(parent.state.color).toEqual('red')
+  expect(parent.state.shape).toEqual(undefined)
+  expect(child.state.color).toEqual('red')
+  expect(child.state.shape).toEqual('triangle')
 
   parent.push(setShape, 'square')
   parent.push(setColor, 'blue')
 
-  t.is(parent.state.color, 'blue')
-  t.is(parent.state.shape, undefined)
-  t.is(child.state.color, 'blue')
-  t.is(child.state.shape, 'square')
+  expect(parent.state.color).toEqual('blue')
+  expect(parent.state.shape).toEqual(undefined)
+  expect(child.state.color).toEqual('blue')
+  expect(child.state.shape).toEqual('square')
 })
 
-test('forks from the same parent propagate', t => {
+test('forks from the same parent propagate', function () {
   const parent = new Microcosm()
   const left = parent.fork()
   const right = parent.fork()
@@ -106,16 +105,16 @@ test('forks from the same parent propagate', t => {
 
   parent.push(setColor, 'blue')
 
-  t.is(parent.state.color, 'blue')
-  t.is(right.state.color, 'blue')
-  t.is(left.state.color, 'blue')
+  expect(parent.state.color).toEqual('blue')
+  expect(right.state.color).toEqual('blue')
+  expect(left.state.color).toEqual('blue')
 })
 
-test('tearing down eliminates parent subscriptions', t => {
+test('tearing down eliminates parent subscriptions', function () {
   const parent = new Microcosm()
   const child =  parent.fork()
 
-  parent.replace({ color: 'red' })
+  parent.patch({ color: 'red' })
 
   child.on('change', function() {
     throw new Error('Should not have changed')
@@ -123,21 +122,89 @@ test('tearing down eliminates parent subscriptions', t => {
 
   child.teardown()
 
-  parent.replace({ color: 'blue' })
+  parent.patch({ color: 'blue' })
 
-  t.is(parent.state.color, 'blue')
-  t.is(child.state.color, 'red')
+  expect(parent.state.color).toEqual('blue')
+  expect(child.state.color).toEqual('red')
 })
 
-test('it deeply inherits state', t => {
+test('it deeply inherits state', function () {
   const tree = new Microcosm({ maxHistory: Infinity })
 
-  tree.replace({ color: 'red' })
+  tree.patch({ color: 'red' })
 
   const branch = tree.fork()
   const leaf = branch.fork()
 
-  t.is(branch.state.color, 'red')
+  expect(branch.state.color).toEqual('red')
 
-  t.is(leaf.state.color, 'red')
+  expect(leaf.state.color).toEqual('red')
+})
+
+test('forks do not own state of parents', () => {
+  const parent = new Microcosm()
+  const child = parent.fork()
+
+  const add = n => n
+
+  parent.addDomain('counter', {
+    getInitialState() {
+      return 0
+    },
+    register() {
+      return {
+        [add]: (a, b) => a + b
+      }
+    }
+  })
+
+  child.addDomain('counter', {
+    register() {
+      return {
+        [add]: (a, b)  => a * 2
+      }
+    }
+  })
+
+  parent.push(add, 2)
+
+  expect(parent.state.counter).toEqual(2)
+  expect(child.state.counter).toEqual(4)
+})
+
+test('forks continue to get updates from their parents when there is no archive', () => {
+  const parent = new Microcosm({ maxHistory: Infinity })
+  const child = parent.fork()
+
+  const add = n => n
+
+  parent.addDomain('counter', {
+    getInitialState() {
+      return 0
+    },
+    register() {
+      return {
+        [add]: (a, b) => a + b
+      }
+    }
+  })
+
+  child.addDomain('counter', {
+    register() {
+      return {
+        [add](a) {
+          return a * 2
+        }
+      }
+    }
+  })
+
+  child.push(add, 2)
+  child.push(add, 4)
+
+  expect(parent.state.counter).toEqual(6)
+
+  // If this is 24, then multiplcation applied twice on 6,
+  // rather than multiply 6 by 2
+  expect(child.state.counter).toEqual(12)
 })

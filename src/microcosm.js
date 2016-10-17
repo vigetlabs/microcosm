@@ -11,7 +11,7 @@ import update       from './update'
  * A tree-like data structure that keeps track of the execution order
  * of actions that are pushed into it, sequentially folding them
  * together to produce an object that can be rendered by a
- * presentation library (such as React).
+n * presentation library (such as React).
  *
  * @extends {Emitter}
  */
@@ -20,7 +20,7 @@ export default class Microcosm extends Emitter {
   /**
    * @param {{maxHistory: Number}} options - Instantiation options.
    */
-  constructor ({ maxHistory, pure=true, history, parent } = {}) {
+  constructor ({ maxHistory, pure=true, history, parent=null } = {}) {
     super()
 
     this.history = history || new History(maxHistory)
@@ -29,20 +29,30 @@ export default class Microcosm extends Emitter {
     this.pure = pure
     this.parent = parent
 
-    this.listenTo(this.history, 'archive', this.archive)
-    this.listenTo(this.history, 'reconcile', this.reconcile)
-    this.listenTo(this.history, 'release', this.release)
+    this.history.addRepo(this)
 
-    this.archived = {}
-    this.staged = {}
-    this.head = {}
+    // Long term storage. Keeps track of the root of the history tree
+    this.archived = parent ? parent.archived : {}
 
-    this.state = {}
+    // Temporary storage. Keeps track of the focal point of the
+    // history tree
+    this.cached = parent ? parent.cached : {}
+
+    // Staging. Domains can maintain their own internal representation of
+    // data. Staged keeps track of this so Domains can control what gets
+    // written to the head.
+    // Important: Children only ever get the head state of their parents.
+    this.staged = parent ? parent.head : {}
+
+    // Head state. Keeps track of the head of the tree
+    this.head = parent ? parent.head : {}
+
+    // Publically available data. This gets updated whenever the head state
+    // is shallowly different (or always, if impure).
+    this.state = parent ? parent.state : {}
 
     // Only the root gets the meta domain
-    if (this.parent) {
-      this.rollforward()
-    } else {
+    if (!parent) {
       this.addDomain(MetaDomain)
     }
 
@@ -63,11 +73,14 @@ export default class Microcosm extends Emitter {
    * Remove all subscriptions
    */
   teardown() {
+    // Teardown all domains
+    this.realm.teardown()
+
     // Remove all listeners
     this.off()
 
-    // Remove all observers on history
-    this.stopListening()
+    // Remove this repo from history
+    this.history.removeRepo(this)
   }
 
   /**
@@ -77,7 +90,7 @@ export default class Microcosm extends Emitter {
    * @return {Object} State object representing the initial state.
    */
   getInitialState () {
-    return this.dispatch({}, { type: lifecycle.getInitialState })
+    return this.dispatch({}, { type: lifecycle.getInitialState, payload: null })
   }
 
   /**
@@ -117,22 +130,43 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Cache an action, then emit an archive event for any forks
-   * @param {Action} action - Action to archive
-   * @return {Microcosm} self
+   * Update the archive, this is called when the history tree permanently
+   * removes a node.
    */
   archive (action) {
     this.archived = this.dispatch(this.archived, action)
+  }
 
-    return this
+  /**
+   * Update the archive, this is called when the history tree moves forward
+   * the current cache point.
+   */
+  cache (action) {
+    this.cached = this.dispatch(this.cached, action)
+  }
+
+  /**
+   * Rollback to the last archive, cloning it while we're outside of the
+   * rollforward loop.
+   *
+   * @param {Action} action - Action to archive
+   */
+  rollback () {
+    this.staged = merge({}, this.cached)
   }
 
   /**
    * Given an archive, get the next staged state.
    * @return {Object} staged state
    */
-  stage () {
-    return this.history.reduce(this.dispatch, merge({}, this.archived), this)
+  stage (action) {
+    // If a parent, we need to update the child with their
+    // parent's latest head state
+    if (this.parent !== null) {
+      merge(this.staged, this.parent.head)
+    }
+
+    this.staged = action != null ? this.dispatch(this.staged, action) : this.staged
   }
 
   /**
@@ -140,22 +174,22 @@ export default class Microcosm extends Emitter {
    * if it should commit it. If so, roll state forward.
    * @private
    */
-  commit (staged) {
-    return this.realm.reduce(this.write, merge({}, staged), this)
+  commit () {
+    this.head = this.realm.reduce(this.write, merge({}, this.staged), this)
   }
 
   /**
    * How microcosm actually writes to state
    */
   write (state, key, domain) {
-    const last = update.get(this.staged, key)
+    const last = update.get(this.cached, key)
     const next = update.get(state, key)
 
     if (domain.shouldCommit(last, next)) {
       return update.set(state, key, domain.commit(next))
     }
 
-    return update.set(state, key, update.get(this.head, key))
+    return update.set(state, key, update.get(this.state, key))
   }
 
   /**
@@ -165,28 +199,24 @@ export default class Microcosm extends Emitter {
    * @private
    * @return {Microcosm} self
    */
-  reconcile () {
-    let next = this.stage()
+  reconcile (action) {
+    this.stage(action)
 
-    this.head   = merge({}, this.parent ? this.parent.head : null, this.commit(next))
-    this.staged = next
+    this.commit()
 
     return this
   }
 
   release () {
     if (this.pure && shallowEqual(this.head, this.state)) {
-      return false
+      return this
     }
 
     this.state = this.head
 
     this._emit('change', this.state)
-  }
 
-  rollforward() {
-    this.reconcile()
-    this.release()
+    return this
   }
 
   /**
@@ -237,7 +267,7 @@ export default class Microcosm extends Emitter {
     return this.rebase()
   }
 
-  addStore() {
+  addStore () {
     console.warn('repo.addStore has been deprecated. Please use repo.addDomain')
     return this.addDomain.apply(this, arguments)
   }
@@ -258,10 +288,15 @@ export default class Microcosm extends Emitter {
    * processed state object.
    *
    * @param {Object} data - A raw state object to deserialize and apply to the instance
-   * @return {Action} action - An action representing the replace operation.
+   * @return {Action} action - An action representing the patch operation.
    */
-  replace (data) {
-    return this.push(lifecycle._willReplace, this.deserialize(data))
+  patch (data) {
+    return this.push(lifecycle._willPatch, data)
+  }
+
+  replace (state) {
+    console.warn('repo.replace has been deprecated. Please use repo.patch.')
+    return this.patch(this.deserialize(state))
   }
 
   /**
@@ -287,7 +322,7 @@ export default class Microcosm extends Emitter {
    * @return {Object} The serialized version of repo state.
    */
   serialize () {
-    return this.dispatch(this.staged, { type: lifecycle.serialize })
+    return this.dispatch(this.staged, { type: lifecycle.serialize, payload: null })
   }
 
   /**
@@ -309,11 +344,11 @@ export default class Microcosm extends Emitter {
    */
   rebase () {
     this.archived = merge(this.getInitialState(), this.archived)
+    this.cached = merge(this.getInitialState(), this.cached)
 
-    // Always ensure there is a last "staged" state
-    this.staged = merge({}, this.archived, this.staged)
-
-    this.rollforward()
+    this.rollback()
+    this.reconcile()
+    this.release()
 
     return this
   }
@@ -326,6 +361,8 @@ export default class Microcosm extends Emitter {
    * @return {Microcosm} self
    */
   checkout (action) {
+    this.cached = merge({}, this.archived)
+
     this.history.checkout(action)
 
     return this

@@ -1,3 +1,5 @@
+import merge from './merge'
+
 /**
  * Retrieve a value from an object. If no key is provided, just
  * return the object.

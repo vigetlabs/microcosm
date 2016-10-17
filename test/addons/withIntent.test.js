@@ -1,31 +1,30 @@
-import test from 'ava'
 import React from 'react'
 import withIntent from '../../src/addons/with-intent'
 import {mount} from 'enzyme'
 
-test('extracts send from context', t => {
-  t.plan(1)
-
+test('extracts send from context', function () {
   const Button = withIntent(function ({ send }) {
     return (
       <button type="button" onClick={() => send('intent')}>Click me</button>
     )
   })
 
+  const send = jest.fn()
+
   const component = mount(<Button />, {
-    context: {
-      send: intent => t.is(intent, 'intent')
-    },
+    context: { send },
     childContextTypes: {
       send: React.PropTypes.func
     }
   })
 
   component.simulate('click')
+
+  expect(send).toHaveBeenCalledWith('intent')
 })
 
-test('allows send to be overridden by a prop', t => {
-  t.plan(1)
+test('allows send to be overridden by a prop', function () {
+  const send = jest.fn()
 
   const Button = withIntent(function ({ send }) {
     return (
@@ -35,5 +34,7 @@ test('allows send to be overridden by a prop', t => {
     )
   })
 
-  mount(<Button send={intent => t.is(intent, 'intent')}/>).simulate('click')
+  mount(<Button send={send}/>).simulate('click')
+
+  expect(send).toHaveBeenCalledWith('intent')
 })

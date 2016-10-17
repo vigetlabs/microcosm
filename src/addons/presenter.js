@@ -5,6 +5,14 @@ import shallowEqual from '../shallow-equal'
 
 const EMPTY = {}
 
+function wrappedRender () {
+  return (
+    <PresenterContext {...this.props} presenter={this}>
+      {this.view}
+    </PresenterContext>
+  )
+}
+
 /**
  * A general component abstraction for high-responsibility React
  * components that interact with non-presentational logic so that the
@@ -15,56 +23,10 @@ class Presenter extends React.Component {
   constructor() {
     super(...arguments)
 
-    this.ready = false
-
-    this._boundSend = this.send.bind(this)
-    this._boundSetRepo = this._setRepo.bind(this)
-  }
-
-  shouldComponentUpdate(props, state) {
-    if (!this.ready || !this.pure) {
-      return true
-    }
-
-    return !shallowEqual(props, this.props) || !shallowEqual(state, this.state)
-  }
-
-  componentWillUnmount () {
-    this.teardown(this.repo, this.props)
-    this.repo.teardown()
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (this.pure === false || shallowEqual(nextProps, this.props) === false) {
-      this._updatePropMap(nextProps)
-
-      this.update(this.repo, nextProps)
-    }
-
-    this._updateState()
-  }
-
-  /**
-   * Provides a way for views to send messages back to the presenter
-   * in a way that does not require passing callbacks down through the
-   * view. This method is exposed by the Presenter via the React context
-   * API.
-   *
-   * Send bubbles. If the closest presenter does not implement the intent,
-   * it will check it's parent presenter. This repeats until there is no parent,
-   * in which case it throws an error.
-   *
-   * @param {string} intent - The name of a method the view wishes to invoke
-   * @param {...any} params - Arguments to invoke the named method with
-   */
-  send (intent, ...params) {
-    var registry = this.register()
-
-    if (registry && registry[intent]) {
-      return registry[intent].apply(this, [ this.repo, ...params ])
-    }
-
-    return false
+    // Allow overriding render, generate the context wrapper
+    // upon instantiation
+    this.originalRender = this.render
+    this.render = wrappedRender
   }
 
   /**
@@ -133,72 +95,12 @@ class Presenter extends React.Component {
   }
 
   view (model) {
-    return model.children ? React.Children.only(model.children) : null
+    return this.originalRender()
   }
 
-  render () {
-    var model = merge({}, this.props, this.state)
-
-    return (
-      <PresenterContext repo={this.props.repo} send={this._boundSend} setRepo={this._boundSetRepo}>
-        {this.repo ? this.view.call(this, model) : null}
-      </PresenterContext>
-    )
+  render() {
+    return this.props.children ? React.Children.only(this.props.children) : null
   }
-
-  _setRepo(repo) {
-    this.repo = repo
-    this.pure = this.props.hasOwnProperty('pure') ? this.props.pure : repo.pure
-
-    this._updatePropMap(this.props)
-    this.setState(this._getState())
-
-    this.ready = true
-
-    this.repo.on('change', this._updateState, this)
-
-    this.setup(repo, this.props)
-  }
-
-  /**
-   * @private
-   */
-  _updatePropMap (props) {
-    this.propMap = this.model(props)
-  }
-
-  /**
-   * @private
-   */
-  _updateState () {
-    const next = this._getState()
-
-    if (this.pure === false || shallowEqual(this.state, next) === false) {
-      return this.setState(next)
-    }
-  }
-
-  /**
-   * @private
-   */
-  _getState () {
-    const repoState = this.repo.state
-
-    if (typeof this.propMap === 'function') {
-      return this.propMap(repoState)
-    }
-
-    const nextState = {}
-
-    for (let key in this.propMap) {
-      const entry = this.propMap[key]
-
-      nextState[key] = typeof entry === 'function' ? entry(repoState) : entry
-    }
-
-    return nextState
-  }
-
 }
 
 class PresenterContext extends React.Component {
@@ -220,9 +122,14 @@ class PresenterContext extends React.Component {
   constructor() {
     super(...arguments)
 
-    const repo = this.props.repo || this.context.repo
+    this.repo = this.getRepo()
+    this.pure = this.getPurity()
 
-    this.repo = repo ? repo.fork() : new Microcosm()
+    this.updatePropMap(this.props)
+
+    this.state = this.getState()
+
+    this.repo.on('change', this.updateState, this)
   }
 
   getChildContext () {
@@ -232,26 +139,111 @@ class PresenterContext extends React.Component {
     }
   }
 
+  shouldComponentUpdate(props, state) {
+    if (!this.pure) {
+      return true
+    }
+
+    return !shallowEqual(props, this.props) || !shallowEqual(state, this.state)
+  }
+
+  componentWillReceiveProps (next) {
+    if (this.pure === false || shallowEqual(next, this.props) === false) {
+      this.updatePropMap(next)
+
+      this.props.presenter.update(this.repo, this.safeProps(next))
+    }
+
+    this.updateState()
+  }
+
   componentWillMount() {
-    this.props.setRepo(this.repo)
+    this.props.presenter.setup(this.repo, this.safeProps(this.props))
+  }
+
+  componentWillUnmount() {
+    this.props.presenter.teardown(this.repo, this.safeProps(this.props))
+    this.repo.teardown()
   }
 
   render() {
-    return this.props.children
+    const { presenter } = this.props
+
+    return presenter.view(merge({}, presenter.props, this.state))
   }
 
-  send(intent, ...params) {
-    const action = this.props.send(intent, ...params)
+  getRepo() {
+    const repo = this.props.repo || this.context.repo
 
-    if (action === false) {
-      if (this.context.send) {
-        return this.context.send(intent, ...params)
-      }
+    return repo ? repo.fork() : new Microcosm()
+  }
 
-      console.warn(`No presenter implements intent “${ intent }”.`)
+  getPurity() {
+    return this.props.hasOwnProperty('pure') ? this.props.pure : this.repo.pure
+  }
+
+  safeProps(props) {
+    return props.presenter.props
+  }
+
+  updatePropMap (props) {
+    this.propMap = this.props.presenter.model(this.safeProps(props))
+  }
+
+  updateState () {
+    const next = this.getState()
+
+    if (this.pure === false || shallowEqual(this.state, next) === false) {
+      return this.setState(next)
+    }
+  }
+
+  getState () {
+    const repoState = this.repo.state
+
+    if (typeof this.propMap === 'function') {
+      return this.propMap(repoState)
     }
 
-    return action
+    const nextState = {}
+
+    for (let key in this.propMap) {
+      const entry = this.propMap[key]
+
+      nextState[key] = typeof entry === 'function' ? entry(repoState) : entry
+    }
+
+    return nextState
+  }
+
+  /**
+   * Provides a way for views to send messages back to the presenter
+   * in a way that does not require passing callbacks down through the
+   * view. This method is exposed by the Presenter via the React context
+   * API.
+   *
+   * Send bubbles. If the closest presenter does not implement the intent,
+   * it will check it's parent presenter. This repeats until there is no parent,
+   * in which case it throws an error.
+   *
+   * @param {string} intent - The name of a method the view wishes to invoke
+   * @param {...any} params - Arguments to invoke the named method with
+   */
+  send(intent, ...params) {
+    const registry = this.props.presenter.register()
+
+    // Does the presenter register to this intent?
+    if (registry && registry.hasOwnProperty(intent)) {
+      return registry[intent].apply(this.props.presenter, [ this.repo, ...params ])
+    }
+
+    // No: try the parent presenter
+    if (this.context.send) {
+      return this.context.send(intent, ...params)
+    }
+
+    // If we hit the top, push the intent into the Microcosm instance
+    return this.repo.push(intent, ...params)
   }
 
 }

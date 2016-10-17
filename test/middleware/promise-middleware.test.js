@@ -1,28 +1,27 @@
-import test   from 'ava'
 import Action from '../../src/action'
 
-test.cb('completes when a promise resolves', t => {
+test('completes when a promise resolves', function (done) {
   const action = new Action(n => Promise.resolve(n))
 
-  action.onDone(() => t.end())
+  action.onDone(() => done())
 
   action.execute(['test'])
 })
 
-test.cb('rejects when a promise fails', t => {
+test('rejects when a promise fails', function (done) {
   const action = new Action(n => Promise.reject(n))
 
-  action.onError(() => t.end())
+  action.onError(() => done())
 
   action.execute(['test'])
 })
 
-test.cb('rejects when a promise throws an error', t => {
+test('rejects when a promise throws an error', function (done) {
   const action = new Action(n => new Promise(function (resolve, reject) {
     throw 'This error is intentional'
   }))
 
-  action.onError(() => t.end())
+  action.onError(() => done())
 
   action.execute(['test'])
 })

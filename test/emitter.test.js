@@ -1,7 +1,6 @@
-import test from 'ava'
 import Emitter from '../src/emitter'
 
-test('adds listeners', t => {
+test('adds listeners', function () {
   const emitter = new Emitter
   const calls = []
 
@@ -17,16 +16,15 @@ test('adds listeners', t => {
   emitter._emit('bar', 1)
   emitter._emit('foo', 2)
 
-  t.deepEqual(calls, [ 'one', 1, 'two', 1, 'one', 2, 'two', 2 ])
+  expect(calls).toEqual([ 'one', 1, 'two', 1, 'one', 2, 'two', 2 ])
 })
 
-test('adds a single-shot listener', t => {
+test('adds a single-shot listener', function (done) {
   const emitter = new Emitter
 
-  t.plan(1)
-
   emitter.once('foo', function (val) {
-    t.is(val, 1)
+    expect(val).toBe(1)
+    done()
   })
 
   emitter._emit('foo', 1)
@@ -35,12 +33,12 @@ test('adds a single-shot listener', t => {
   emitter._emit('bar', 1)
 })
 
-test('should remove a listener', t => {
+test('should remove a listener', function () {
   var emitter = new Emitter
   var calls = []
 
-  function one () { calls.push('one') }
-  function two () { calls.push('two') }
+  const one = () => calls.push('one')
+  const two = () => calls.push('two')
 
   emitter.on('foo', one)
   emitter.on('foo', two)
@@ -48,16 +46,14 @@ test('should remove a listener', t => {
 
   emitter._emit('foo')
 
-  t.deepEqual(calls, [ 'one' ])
+  expect(calls).toEqual(['one'])
 })
 
-test('off removes once subscriptions', t => {
+test('off removes once subscriptions', function () {
   const emitter = new Emitter()
 
-  t.plan(0)
-
   function one () {
-    t.pass()
+    throw new Error("Should not have been called")
   }
 
   emitter.once('foo', one)
@@ -67,12 +63,12 @@ test('off removes once subscriptions', t => {
   emitter._emit('foo')
 })
 
-test('should remove all listeners for an event', t => {
+test('should remove all listeners for an event', function () {
   const emitter = new Emitter
   const calls = []
 
-  function one () { calls.push('one') }
-  function two () { calls.push('two') }
+  const one = () => calls.push('one')
+  const two = () => calls.push('two')
 
   emitter.on('foo', one)
   emitter.on('foo', two)
@@ -81,12 +77,10 @@ test('should remove all listeners for an event', t => {
   emitter._emit('foo')
   emitter._emit('foo')
 
-  t.deepEqual(calls, [])
+  expect(calls.length).toBe(0)
 })
 
-test('does not call listeners removed when another is emitted', t => {
-  t.plan(1)
-
+test('does not call listeners removed when another is emitted', function (done) {
   const emitter = new Emitter
 
   function two () {
@@ -94,8 +88,8 @@ test('does not call listeners removed when another is emitted', t => {
   }
 
   emitter.on('foo', function() {
-    t.pass()
     emitter.off('foo', two)
+    done()
   })
 
   emitter.on('foo', two)
@@ -103,7 +97,7 @@ test('does not call listeners removed when another is emitted', t => {
   emitter._emit('foo')
 })
 
-test('should remove all listeners', t => {
+test('should remove all listeners', function () {
   const emitter = new Emitter
   const calls = []
 
@@ -121,42 +115,5 @@ test('should remove all listeners', t => {
   emitter._emit('foo')
   emitter._emit('bar')
 
-  t.deepEqual(calls, ['one', 'two'])
-})
-
-test('can listen to another emitter', t => {
-  const a = new Emitter()
-  const b = new Emitter()
-
-  t.plan(1)
-
-  a.listenTo(b, 'change', () => t.pass())
-
-  b._emit('change')
-})
-
-test('stops listening listen to another emitter when that target disposes', t => {
-  const a = new Emitter()
-  const b = new Emitter()
-
-  t.plan(1)
-
-  a.listenTo(b, 'change', () => t.pass())
-
-  b._emit('change')
-  b.off()
-  b._emit('change')
-})
-
-test('stops listening listen to another emitter when it disposes', t => {
-  const a = new Emitter()
-  const b = new Emitter()
-
-  t.plan(1)
-
-  a.listenTo(b, 'change', () => t.pass())
-
-  b._emit('change')
-  a.stopListening()
-  b._emit('change')
+  expect(calls).toEqual(['one', 'two'])
 })

@@ -1,20 +1,6 @@
-import test from 'ava'
 import Microcosm from '../src/microcosm'
-import console from './helpers/console'
 
-test('deserializes when replace is invoked', t => {
-  const repo = new Microcosm()
-
-  repo.addDomain('dummy', {
-    deserialize: state => state.toUpperCase()
-  })
-
-  repo.replace({ dummy: 'different' })
-
-  t.is(repo.state.dummy, 'DIFFERENT')
-})
-
-test('replace partially updates', t => {
+test('patch partially updates', function () {
   const repo = new Microcosm()
 
   repo.addDomain('a', {
@@ -25,27 +11,25 @@ test('replace partially updates', t => {
     getInitialState: n => true
   })
 
-  repo.replace({ a: false })
+  repo.patch({ a: false })
 
-  t.is(repo.state.a, false)
-  t.is(repo.state.b, true)
+  expect(repo.state.a).toBe(false)
+  expect(repo.state.b).toBe(true)
 })
 
-test('it will not deserialize null', t => {
+test('it will not deserialize null', function () {
   const repo = new Microcosm()
 
-  t.deepEqual(repo.deserialize(null), {})
+  expect(repo.deserialize(null)).toEqual({})
 })
 
-test('throws an error if asked to push a non-function value', t => {
+test('throws an error if asked to push a non-function value', function () {
   const repo = new Microcosm()
 
-  t.throws(function() {
-    repo.push(null)
-  }, TypeError)
+  expect(() => repo.push(null)).toThrow(TypeError)
 })
 
-test('can manipulate how many transactions are merged', t => {
+test('can manipulate how many transactions are merged', function () {
   const repo = new Microcosm({ maxHistory: 5 })
   const identity = n => n
 
@@ -55,26 +39,23 @@ test('can manipulate how many transactions are merged', t => {
   repo.push(identity, 4)
   repo.push(identity, 5)
 
-  t.is(repo.history.size, 5)
+  expect(repo.history.size).toEqual(5)
   repo.push(identity, 6)
 
-  t.is(repo.history.size, 5)
-  t.deepEqual(repo.history.reduce((a, b) => a.concat(b.payload), []), [ 2, 3, 4, 5, 6 ])
+  expect(repo.history.size).toEqual(5)
+  expect(repo.history.toArray().map(a => a.payload)).toEqual([ 2, 3, 4, 5, 6 ])
 })
 
-test('can partially apply push', t => {
-  t.plan(1)
-
+test('can partially apply push', function () {
   const repo = new Microcosm()
-
-  const action = function (...args) {
-    t.deepEqual(args, [ 1, 2, 3 ])
-  }
+  const action = jest.fn()
 
   repo.prepare(action, 1, 2)(3)
+
+  expect(action).toBeCalledWith(1,2,3)
 })
 
-test('can checkout a prior state', t => {
+test('can checkout a prior state', function () {
   const repo = new Microcosm({ maxHistory: Infinity })
   const action = n => n
 
@@ -92,14 +73,12 @@ test('can checkout a prior state', t => {
 
   repo.checkout(repo.history.root)
 
-  t.is(repo.state.number, 1)
+  expect(repo.state.number).toEqual(1)
 })
 
-test('if pure, it will not emit a change if state is shallowly equal', t => {
+test('if pure, it will not emit a change if state is shallowly equal', function () {
   const repo = new Microcosm({ pure: true })
   const identity = n => n
-
-  t.plan(1)
 
   repo.addDomain('test', {
     getInitialState() {
@@ -112,16 +91,14 @@ test('if pure, it will not emit a change if state is shallowly equal', t => {
 
   const first = repo.state
 
-  repo.push(identity, 0).onDone(function() {
-    t.is(first, repo.state)
-  })
+  repo.push(identity, 0)
+
+  expect(first).toBe(repo.state)
 })
 
-test('if pure, it will emit a change if state is not shallowly equal', t => {
+test('if pure, it will emit a change if state is not shallowly equal', function () {
   const repo = new Microcosm({ pure: true })
   const identity = n => n
-
-  t.plan(1)
 
   repo.addDomain('test', {
     getInitialState() {
@@ -134,19 +111,7 @@ test('if pure, it will emit a change if state is not shallowly equal', t => {
 
   const first = repo.state
 
-  repo.push(identity, 1).onDone(function() {
-    t.not(repo.state, first)
-  })
-})
+  repo.push(identity, 1)
 
-test('warns when using addStore', t => {
-  const repo = new Microcosm({ pure: true })
-
-  console.record()
-
-  repo.addStore('test', {})
-
-  t.is(console.count('warn'), 1)
-
-  console.restore()
+  expect(repo.state).not.toEqual(first)
 })

@@ -1,12 +1,9 @@
-import test from 'ava'
 import Microcosm from '../src/microcosm'
 import lifecycle from '../src/lifecycle'
 
 const action = a => a
 
-test('sends actions in the context of the domain', t => {
-  t.plan(1)
-
+test('sends actions in the context of the domain', function (done) {
   const repo = new Microcosm()
 
   repo.addDomain('test', {
@@ -15,7 +12,8 @@ test('sends actions in the context of the domain', t => {
     register() {
       return {
         [action]() {
-          t.truthy(this.test)
+          expect(this.test).toBe(true)
+          done()
         }
       }
     }
@@ -24,9 +22,7 @@ test('sends actions in the context of the domain', t => {
   repo.push(action)
 })
 
-test('returns the same state if a handler is not provided', t => {
-  t.plan(1)
-
+test('returns the same state if a handler is not provided', function () {
   const repo = new Microcosm()
 
   repo.addDomain('test', {
@@ -35,12 +31,12 @@ test('returns the same state if a handler is not provided', t => {
     }
   })
 
-  repo.push(action).onDone(function() {
-    t.is(repo.state.test, 'test')
+  return repo.push(action).onDone(function() {
+    expect(repo.state.test).toEqual('test')
   })
 })
 
-test('allows lifecycle methods as registered actions', t => {
+test('allows lifecycle methods as registered actions', function () {
   const repo = new Microcosm()
 
   repo.addDomain('test', {
@@ -51,17 +47,5 @@ test('allows lifecycle methods as registered actions', t => {
     }
   })
 
-  t.is(repo.state.test, 'test')
-})
-
-test('does not trigger on implemented methods', t => {
-  const repo = new Microcosm()
-
-  repo.addDomain('test', {
-    test() {
-      throw new Error("Should not have invoked test method")
-    }
-  })
-
-  repo.push('test')
+  expect(repo.state.test).toEqual('test')
 })

@@ -56,4 +56,10 @@ export default class Realm {
     return state
   }
 
+  teardown() {
+    for (var i = 0; i < this.domains.length; i++) {
+      this.domains[i][1].teardown()
+    }
+  }
+
 }

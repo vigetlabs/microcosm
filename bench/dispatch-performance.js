@@ -9,10 +9,10 @@
 
 import History   from '../src/history'
 import Microcosm from '../src/microcosm'
+import Action    from '../src/action'
 import time      from 'microtime'
 
 const SIZES   = [ 1000, 10000, 50000, 100000, 200000 ]
-const SAMPLES = 5
 
 console.log('\nConducting dispatch benchmark...\n')
 
@@ -35,18 +35,7 @@ var results = SIZES.map(function (SIZE) {
    */
   global.gc()
 
-  /**
-   * Step 1. Build a history tree before making a Microcosm,
-   * this lets us isolate history building so we can specifically
-   * profile the dispatch process
-   */
-  var history = new History({ limit: Infinity })
-
-  for (var i = 0; i < SIZE; i++) {
-    history.append(action).resolve(true)
-  }
-
-  var repo = new Microcosm({ history })
+  var repo = new Microcosm({ maxHistory: Infinity })
 
   /**
    * Add the domain at multiple keys. This is a better simulation of actual
@@ -59,25 +48,26 @@ var results = SIZES.map(function (SIZE) {
   repo.addDomain('four',  Domain)
   repo.addDomain('five',  Domain)
 
-  /**
-   * Warm up `::push()`
-   * This gives V8 time to analyze the types for the code.
-   * Otherwise confusing "insufficient type data" deoptimizations
-   * are thrown.
-   */
+  var cost = 0
+  var min = Infinity
+  var max = -Infinity
 
-  var average = 0
-  for (var q = 0; q < SAMPLES; q++) {
+  for (var q = 0; q < SIZE; q++) {
     var then = time.now()
-    repo.rollforward()
-    average += (time.now() - then) / 1000
+    repo.push(action)
+    var pass = (time.now() - then) / 1000
+
+    min = Math.min(min, pass)
+    max = Math.max(max, pass)
+    cost += pass
   }
 
-  average /= SAMPLES
-
   return {
-    'Actions'      : SIZE.toLocaleString(),
-    'Rollforward'  : average.toLocaleString() + 'ms'
+    'Actions' : SIZE.toLocaleString(),
+    'Slowest' : max.toLocaleString() + 'ms',
+    'Fastest' : min.toLocaleString() + 'ms',
+    'Average' : (cost / SIZE).toLocaleString() + 'ms',
+    'Total'   : cost.toLocaleString() + 'ms'
   }
 })
 

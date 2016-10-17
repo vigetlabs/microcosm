@@ -69,6 +69,11 @@ var Planets = {
 Setup runs right after a domain is added to a Microcosm, but before it runs
 getInitialState. This is useful for one-time setup instructions.
 
+### `teardown()`
+
+Runs whenever `Microcosm::teardown` is invoked. Useful for cleaning up
+work done in `setup()`.
+
 ### `serialize(staged)`
 
 Allows a domain to transform data before it leaves the system. It gives

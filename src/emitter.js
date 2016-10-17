@@ -90,12 +90,14 @@ export default class Emitter {
 
     // Remove the specific handler, splice so that listeners removed
     // during another event broadcast are not invoked
-    var cb;
-    for (var i = 0; i < callbacks.length; i++) {
-      cb = callbacks[i];
+    let i = 0;
+    while (i < callbacks.length) {
+      let cb = callbacks[i]
+
       if ((cb[0] === fn || cb[0].fn === fn) && cb[1] === (scope || this)) {
-        callbacks.splice(i, 1);
-        break;
+        callbacks.splice(i, 1)
+      } else {
+        i += 1
       }
     }
 
@@ -121,33 +123,6 @@ export default class Emitter {
     if (callbacks) {
       for (var i = 0; i < callbacks.length; i++) {
         callbacks[i][0].apply(callbacks[i][1], params)
-      }
-    }
-
-    return this
-  }
-
-  listenTo (emitter, event, fn) {
-    this._listening = this.listening || []
-
-    emitter.on(event, fn, this)
-
-    this._listening.push({ source: emitter, event, fn, scope: this })
-
-    return this
-  }
-
-  stopListening (emitter) {
-    if (!this._listening) {
-      return this
-    }
-
-    for (var i = 0; i < this._listening.length; i++) {
-      var { source, event, fn, scope } = this._listening[i]
-
-      if (source === emitter || emitter == null) {
-        source.off(event, fn, scope)
-        this._listening.splice(i, 1)
       }
     }
 

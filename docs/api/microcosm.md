@@ -58,20 +58,18 @@ Resolves an action. Sends the result and any errors to a given error-first callb
 repo.push(createPlanet, { name: 'Merkur' })
 ```
 
-### `reset()`
+### `put()`
 
 Resets state to the result of calling `getInitialState()`
 
-### `replace(data)`
+### `patch(data)`
 
-Executes `deserialize` on the provided data and then merges it into
-the current repo state.
-
-This function is great for bootstrapping data when rendering from the
-server. It will not blow away keys that haven't been provided.
+Partially merge in a piece of repo state. This function is great for
+bootstrapping data when rendering from the server. It will not blow
+away keys that haven't been provided.
 
 ```javascript
-repo.replace({
+repo.patch({
   planets: [{ name: 'Tatooine' }, { name: 'Dagobah' }]
 })
 ```

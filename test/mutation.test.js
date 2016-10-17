@@ -1,7 +1,6 @@
-import test from 'ava'
 import Microcosm from '../src/microcosm'
 
-test.cb('writes to repo state', t => {
+test('writes to repo state', function (done) {
   const action = function() {}
   const repo = new Microcosm()
 
@@ -20,7 +19,7 @@ test.cb('writes to repo state', t => {
   })
 
   repo.push(action, true).onDone(() => {
-    t.is(repo.state.test, true)
-    t.end()
+    expect(repo.state.test).toBe(true)
+    done()
   })
 })

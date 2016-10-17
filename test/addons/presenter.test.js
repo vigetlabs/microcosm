@@ -1,8 +1,6 @@
-import test from 'ava'
 import React from 'react'
 import Microcosm from '../../src/microcosm'
 import Presenter from '../../src/addons/presenter'
-import logger from '../helpers/console'
 import {mount} from 'enzyme'
 
 const View = React.createClass({
@@ -10,52 +8,89 @@ const View = React.createClass({
     send: React.PropTypes.func.isRequired
   },
   render() {
-    return <button id="button" onClick={ () => this.context.send('test', true) } />
+    return <button id="button" onClick={() => this.context.send('test', true)} />
   }
 })
 
-test('the default render implementation passes children', t => {
+test('the default render implementation passes children', function () {
   let wrapper = mount(<Presenter><p>Test</p></Presenter>)
 
-  t.is(wrapper.text(), 'Test')
+  expect(wrapper.text()).toEqual('Test')
 })
 
-test('receives intent events', t => {
-  t.plan(1)
+test('allows extending render', function () {
+  class Test extends Presenter {
+    render() {
+      return <p>Test</p>
+    }
+  }
+
+  let wrapper = mount(<Test />)
+
+  expect(wrapper.text()).toEqual('Test')
+})
+
+test('preserves context if render is extended', function () {
+  class Parent extends Presenter {
+    setup (repo) {
+      repo.addDomain('test', {
+        getInitialState() {
+          return true
+        }
+      })
+    }
+    render() {
+      return <div>{this.props.children}</div>
+    }
+  }
+
+  class Child extends Presenter {
+    setup(repo) {
+      this.test = repo.state.test
+    }
+    render() {
+      return <div>{this.test.toString()}</div>
+    }
+  }
+
+  let wrapper = mount(<Parent><Child /></Parent>)
+
+  expect(wrapper.text()).toEqual('true')
+})
+
+test('receives intent events', function () {
+  const test = jest.fn()
 
   class MyPresenter extends Presenter {
     register() {
-      return {
-        test(repo, params) {
-          t.is(params, true)
-        }
-      }
+      return { test }
     }
+
     view() {
       return <View />
     }
   }
 
   mount(<MyPresenter repo={ new Microcosm() } />).find(View).simulate('click')
+
+  expect(test.mock.calls[0][1]).toEqual(true)
 })
 
-test('warns if no presenter implements an intent', t => {
+test('forwards intents to the repo as actions', function () {
   class MyPresenter extends Presenter {
     view() {
       return <View />
     }
   }
 
-  logger.record()
+  const repo = new Microcosm({ maxHistory: 1 })
 
-  mount(<MyPresenter repo={ new Microcosm() } />).find(View).simulate('click')
+  mount(<MyPresenter repo={repo} />).find(View).simulate('click')
 
-  t.is(logger.count('warn'), 1)
-
-  logger.restore()
+  expect(repo.history.head.type).toEqual('test')
 })
 
-test('builds the view model into state', t => {
+test('builds the view model into state', function () {
   class MyPresenter extends Presenter {
     viewModel() {
       return {
@@ -63,19 +98,21 @@ test('builds the view model into state', t => {
       }
     }
     view({ color }) {
-      return <p>{ color }</p>
+      return <div>{color}</div>
     }
   }
 
   const repo = new Microcosm()
-  const presenter = mount(<MyPresenter repo={ repo } />)
+  const presenter = mount(<MyPresenter repo={repo} />)
 
-  repo.replace({ color: 'red' })
+  repo.patch({ color: 'red' })
 
-  t.is(presenter.text(), 'red')
+  const text = presenter.text()
+
+  expect(text).toEqual('red')
 })
 
-test('handles non-function view model bindings', t => {
+test('handles non-function view model bindings', function () {
   class MyPresenter extends Presenter {
     viewModel({ name }) {
       return {
@@ -89,11 +126,11 @@ test('handles non-function view model bindings', t => {
 
   var presenter = mount(<MyPresenter name="phil" repo={new Microcosm()} />)
 
-  t.is(presenter.text(), 'PHIL')
+  expect(presenter.text()).toEqual('PHIL')
 })
 
-test('send bubbles up to parent presenters', t => {
-  t.plan(1)
+test('send bubbles up to parent presenters', function () {
+  const test = jest.fn()
 
   class Child extends Presenter {
     view() {
@@ -103,11 +140,7 @@ test('send bubbles up to parent presenters', t => {
 
   class Parent extends Presenter {
     register() {
-      return {
-        test(repo, params) {
-          t.is(params, true)
-        }
-      }
+      return { test: (repo, props) => test(props) }
     }
     view () {
       return <Child />
@@ -115,31 +148,36 @@ test('send bubbles up to parent presenters', t => {
   }
 
   mount(<Parent repo={ new Microcosm() } />).find(View).simulate('click')
+
+  expect(test).toHaveBeenCalledWith(true)
 })
 
-test('runs a setup function when created', t => {
-  t.plan(1)
+test('runs a setup function when created', function () {
+  const test = jest.fn()
 
   class MyPresenter extends Presenter {
-    setup() {
-      t.pass()
+    get setup () {
+      return test
     }
-    view() {
+
+    view () {
       return <View />
     }
   }
 
   mount(<MyPresenter repo={ new Microcosm() } />)
+
+  expect(test).toHaveBeenCalled()
 })
 
-test('runs an update function when it gets new props', t => {
-  t.plan(1)
+test('runs an update function when it gets new props', function () {
+  const test = jest.fn()
 
   class MyPresenter extends Presenter {
-    update(repo, props) {
-      t.is(props.test, "bar")
+    update (repo, props) {
+      test(props.test)
     }
-    view() {
+    view () {
       return <View />
     }
   }
@@ -147,9 +185,11 @@ test('runs an update function when it gets new props', t => {
   let wrapper = mount(<MyPresenter repo={ new Microcosm() } test="foo" />)
 
   wrapper.setProps({ test: "bar" })
+
+  expect(test).toHaveBeenCalledWith('bar')
 })
 
-test('does not run an update function when it is pure and no props change', t => {
+test('does not run an update function when it is pure and no props change', function () {
   class MyPresenter extends Presenter {
     update(repo, props) {
       throw new Error('Presenter update method should not have been called')
@@ -165,12 +205,12 @@ test('does not run an update function when it is pure and no props change', t =>
   wrapper.setProps({ test: "foo" })
 })
 
-test('always runs update when impure', t => {
-  t.plan(1)
+test('always runs update when impure', function () {
+  const spy = jest.fn()
 
   class MyPresenter extends Presenter {
-    update() {
-      t.pass()
+    get update() {
+      return spy
     }
 
     view() {
@@ -181,16 +221,17 @@ test('always runs update when impure', t => {
   let wrapper = mount(<MyPresenter repo={ new Microcosm() } test="foo" pure={false} />)
 
   wrapper.setProps({ test: "foo" })
+
+  expect(spy).toHaveBeenCalled()
 })
 
-test('inherits purity from repo', t => {
-  t.plan(1)
+test('inherits purity from repo', function () {
+  const spy = jest.fn()
 
   class MyPresenter extends Presenter {
-    update() {
-      t.pass()
+    get update() {
+      return spy
     }
-
     view() {
       return <View />
     }
@@ -199,30 +240,31 @@ test('inherits purity from repo', t => {
   let wrapper = mount(<MyPresenter repo={ new Microcosm({ pure: false }) } test="foo" />)
 
   wrapper.setProps({ test: "foo" })
+
+  expect(spy).toHaveBeenCalled()
 })
 
-test('ignores an repo when it unmounts', t => {
-  t.plan(1)
-
-  const repo = new Microcosm()
+test('ignores an repo when it unmounts', function () {
+  const spy = jest.fn()
 
   class Test extends Presenter {
     setup (repo) {
-      repo.off = () => t.pass()
+      repo.teardown = spy
     }
   }
 
-  mount(<Test repo={repo} />).unmount()
+  mount(<Test />).unmount()
+
+  expect(spy).toHaveBeenCalled()
 })
 
-test('does not update the view model when umounted', t => {
-  t.plan(1)
+test('does not update the view model when umounted', function () {
+  const spy = jest.fn(n => {})
 
   class MyPresenter extends Presenter {
     // This should only run once
-    viewModel() {
-      t.pass()
-      return {}
+    get viewModel() {
+      return spy
     }
   }
 
@@ -231,26 +273,22 @@ test('does not update the view model when umounted', t => {
 
   wrapper.unmount()
 
-  repo.replace({ foo: 'bar' })
+  repo.patch({ foo: 'bar' })
+
+  expect(spy.mock.calls.length).toEqual(1)
 })
 
-test('calling setState in setup does not raise a warning', t => {
+test('calling setState in setup does not raise a warning', function () {
   class MyPresenter extends Presenter {
     setup() {
       this.setState({ foo: 'bar' })
     }
   }
 
-  logger.record()
-
   mount(<MyPresenter repo={ new Microcosm() } />)
-
-  t.is(logger.count('warn'), 0)
-
-  logger.restore()
 })
 
-test('allows functions to return from viewModel', t => {
+test('allows functions to return from viewModel', function () {
   class MyPresenter extends Presenter {
     viewModel() {
       return state => state
@@ -264,59 +302,61 @@ test('allows functions to return from viewModel', t => {
   const repo = new Microcosm()
   const el = mount(<MyPresenter repo={repo} />)
 
-  repo.replace({ color: 'red' })
+  repo.patch({ color: 'red' })
 
-  t.is(el.text(), 'red')
+  expect(el.text()).toEqual('red')
 })
 
-test('does not cause a re-render when shallowly equal and pure', t => {
+test('does not cause a re-render when shallowly equal and pure', function () {
   const repo = new Microcosm({ pure: true })
-  let renders = 0
+  const renders = jest.fn(() => <p>Test</p>)
 
-  repo.replace({ name: 'Kurtz' })
+  repo.patch({ name: 'Kurtz' })
 
   class Namer extends Presenter {
-    viewModel() {
+    model() {
       return { name: state => state.name }
     }
-    view ({ name }) {
-      renders += 1
-      return <p>{ name }</p>
+
+    get view () {
+      return renders
     }
   }
 
   mount(<Namer repo={ repo } />)
 
-  repo.replace({ name: 'Kurtz', unrelated: true })
+  repo.patch({ name: 'Kurtz', unrelated: true })
 
-  t.is(renders, 1)
+  expect(renders.mock.calls.length).toEqual(1)
 })
 
-test('always re-renders impure repos', t => {
+test('always re-renders impure repos', function () {
   const repo = new Microcosm({ pure: false })
-  let renders = 0
+  const renders = jest.fn(() => <p>Test</p>)
 
-  repo.replace({ name: 'Kurtz' })
+  repo.patch({ name: 'Kurtz' })
 
   class Namer extends Presenter {
-    viewModel() {
+    model() {
       return { name: state => state.name }
     }
-    view ({ name }) {
-      renders += 1
-      return (<p>{ name }</p>)
+
+    get view () {
+      return renders
     }
   }
 
   mount(<Namer repo={ repo } />)
-  repo.replace({ name: 'Kurtz', unrelated: true })
-  t.is(renders, 2)
+
+  repo.patch({ name: 'Kurtz', unrelated: true })
+
+  expect(renders.mock.calls.length).toEqual(2)
 })
 
-test('recalculates the view model if the props are different', t => {
+test('recalculates the view model if the props are different', function () {
   const repo = new Microcosm()
 
-  repo.replace({ name: 'Kurtz' })
+  repo.patch({ name: 'Kurtz' })
 
   class Namer extends Presenter {
     model (props) {
@@ -333,38 +373,39 @@ test('recalculates the view model if the props are different', t => {
 
   wrapper.setProps({ prefix: 'Captain' })
 
-  t.is(wrapper.text(), 'Captain Kurtz')
+  expect(wrapper.text()).toEqual('Captain Kurtz')
 })
 
-test('does not recalculate the view model if the props are the same', t => {
+test('does not recalculate the view model if the props are the same', function () {
   const repo = new Microcosm()
-
-  t.plan(1)
+  const spy = jest.fn()
 
   class Namer extends Presenter {
-    viewModel (props) {
-      t.pass()
-      return {}
+    get viewModel () {
+      return spy
     }
   }
 
   const wrapper = mount(<Namer prefix="Colonel" repo={repo} />)
 
   wrapper.setProps({ prefix: 'Colonel' })
+
+  expect(spy.mock.calls.length).toEqual(1)
 })
 
-test('does not waste rendering on nested children', t => {
+test('does not waste rendering on nested children', function () {
   const repo = new Microcosm()
-
-  t.plan(2)
+  const spy = jest.fn(function({ name }) {
+    return <p>{ name }</p>
+  })
 
   class Child extends Presenter {
     viewModel () {
       return { name: state => state.name }
     }
-    view ({ name }) {
-      t.pass()
-      return <p>{ name }</p>
+
+    get view () {
+      return spy
     }
   }
 
@@ -378,29 +419,13 @@ test('does not waste rendering on nested children', t => {
   }
 
   mount(<Parent repo={ repo } />)
-  repo.replace({ name: 'Billy Booster' })
+
+  repo.patch({ name: 'Billy Booster' })
+
+  expect(spy.mock.calls.length).toEqual(2)
 })
 
-test('remembers inline properties', t => {
-  const repo = new Microcosm()
-
-  class Subject extends Presenter {
-    state = {
-      test: true
-    }
-    viewModel() {
-      return {
-        prop: state => true
-      }
-    }
-  }
-
-  let wrapper = mount(<Subject repo={ repo } />)
-
-  t.is(wrapper.state('test'), true)
-})
-
-test('model is an alias for viewModel', t => {
+test('model is an alias for viewModel', function () {
   class Hello extends Presenter {
     model ({ place }) {
       return {
@@ -415,29 +440,23 @@ test('model is an alias for viewModel', t => {
 
   let wrapper = mount(<Hello place="world" />)
 
-  t.is(wrapper.text(), 'Hello, world!')
+  expect(wrapper.text()).toEqual('Hello, world!')
 })
 
-test('calls a teardown method when it unmounts', t => {
-  t.plan(1)
+test('teardown gets the last props', function () {
+  const spy = jest.fn()
 
   class Test extends Presenter {
-    teardown () {
-      t.pass()
+    get teardown () {
+      return spy
     }
   }
 
-  mount(<Test />).unmount()
-})
+  const wrapper = mount(<Test test="foo" />)
 
-test('teardown gets the last props', t => {
-  t.plan(1)
+  wrapper.setProps({ test: 'bar' })
 
-  class Test extends Presenter {
-    teardown (repo, props) {
-      t.is(props.test, 'bar')
-    }
-  }
+  wrapper.unmount()
 
-  mount(<Test test="foo" />).setProps({ test: 'bar' }).unmount()
+  expect(spy.mock.calls[0][1].test).toEqual('bar')
 })

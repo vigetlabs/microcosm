@@ -1,12 +1,8 @@
-import test from 'ava'
 import Microcosm from '../src/microcosm'
 
-test('does not mutate base state on prior dispatches', t => {
+test('does not mutate base state on prior dispatches', function () {
   const repo = new Microcosm()
-
-  function mutation() {
-    return true
-  }
+  const mutation = () => true
 
   repo.addDomain({
     getInitialState() {
@@ -26,15 +22,14 @@ test('does not mutate base state on prior dispatches', t => {
   })
 
   repo.push(mutation)
-
-  t.is(repo.history.size, 0)
-  t.is(repo.state.toggled, true)
-
-  repo.push(mutation)
-  t.is(repo.history.size, 0)
-  t.is(repo.state.toggled, false)
+  expect(repo.history.size).toEqual(0)
+  expect(repo.state.toggled).toEqual(true)
 
   repo.push(mutation)
-  t.is(repo.history.size, 0)
-  t.is(repo.state.toggled, true)
+  expect(repo.history.size).toEqual(0)
+  expect(repo.state.toggled).toEqual(false)
+
+  repo.push(mutation)
+  expect(repo.history.size).toEqual(0)
+  expect(repo.state.toggled).toEqual(true)
 })

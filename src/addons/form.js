@@ -10,21 +10,20 @@ const Form = React.createClass({
   },
 
   propTypes: {
-    intent     : PropTypes.string.isRequired,
+    intent     : PropTypes.oneOfType([ PropTypes.string, PropTypes.func]),
     serializer : PropTypes.func,
     onSubmit   : PropTypes.func,
-    onSuccess  : PropTypes.func,
-    onFailure  : PropTypes.func
+    onDone     : PropTypes.func,
+    onUpdate   : PropTypes.func,
+    onError    : PropTypes.func,
+    onCancel   : PropTypes.func
   },
 
   getDefaultProps() {
     return {
       intent     : null,
       serializer : form => serialize(form, { hash: true, empty: true }),
-      onSubmit   : () => {},
-      onDone     : () => {},
-      onUpdate   : () => {},
-      onError    : () => {}
+      onSubmit   : () => {}
     }
   },
 
@@ -36,6 +35,7 @@ const Form = React.createClass({
     delete props.serializer
     delete props.onDone
     delete props.onUpdate
+    delete props.onCancel
     delete props.onError
 
     return React.createElement('form', props)
@@ -49,9 +49,10 @@ const Form = React.createClass({
     const action = this.context.send(this.props.intent, params)
 
     if (action && action instanceof Action) {
-      action.onDone(payload => this.props.onDone(payload, form))
-            .onUpdate(payload => this.props.onUpdate(payload, form))
-            .onError(error  => this.props.onError(error, form))
+      action.onDone(this.props.onDone)
+            .onUpdate(this.props.onUpdate)
+            .onCancel(this.props.onCancel)
+            .onError(this.props.onError)
     }
 
     this.props.onSubmit(event, action)

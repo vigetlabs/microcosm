@@ -1,38 +1,56 @@
 import Action from './action'
-import Emitter from './emitter'
 
 /**
  * The central tree data structure that is used to calculate state for
  * a Microcosm. Each node in the tree represents an action. Branches
  * are changes over time.
  */
-export default class History extends Emitter {
+export default class History {
 
   constructor (limit = 0) {
-    super()
+    this.size = 0
+    this.limit = limit
 
-    this.size  = 0
-    this.limit = Math.max(limit, 0)
-    this.root  = null
+    this.root = null
     this.focus = null
+    this.head = null
+
+    this.repos = []
+  }
+
+  addRepo(repo) {
+    this.repos.push(repo)
+  }
+
+  removeRepo(repo) {
+    const slot = this.repos.indexOf(repo)
+
+    if (slot >= 0) {
+      this.repos.splice(slot, 1)
+    }
+  }
+
+  invoke(method, payload) {
+    for (var i = 0, len = this.repos.length; i < len; i++) {
+      this.repos[i][method](payload)
+    }
   }
 
   /**
    * Adjust the focus point to target a different node. This has the
    * effect of creating undo/redo. This should not be called outside
    * of Microcosm! Instead, use `Microcosm.prototype.checkout`.
-   *
-   * @private
-   * @param {Action} action - An action to set as the new focus
-   * @return {History} self
    */
   checkout (action) {
-    this.focus = action
+    this.head = action
 
-    if (!this.focus) {
-      this.focus = null
-      this.root  = null
+    if (!this.head) {
+      this.root = null
+      this.head = null
     }
+
+    // Clear the focus, we don't know if it was before the action or it
+    this.focus = null
 
     this.setSize()
     this.reconcile()
@@ -43,139 +61,141 @@ export default class History extends Emitter {
   /**
    * Create a new action and append it to the current focus,
    * then adjust the focus to that of the newly created action.
-   *
-   * @private
-   * @param {Function} behavior - The behavior for the Action
-   * @return {Action} The new focus
    */
   append (behavior) {
     const action = new Action(behavior, this)
 
-    if (this.focus != null) {
-      this.connect(this.focus, action)
+    if (this.head != null) {
+      this.connect(this.head, action)
     }
 
-    this.focus = action
+    this.head = action
 
     if (this.root == null) {
-      this.root = this.focus
+      this.root = this.head
     }
 
     this.size += 1
 
-    return this.focus
+    return this.head
   }
 
   /**
    * Append an action to another, making that action its parent. This
    * produces history.
-   *
-   * @private
-   * @param {Action} parent action to append to
-   * @param {Action} child action to append
-   * @return {History} self
    */
   connect (parent, child) {
     child.parent  = parent
     child.sibling = parent.next
 
-    parent.next   = child
+    parent.next = child
 
     return this
   }
 
-  /**
-   * Eliminate a node from the tree.
-   * @private
-   * @param {Action} node - node to disconnect
-   * @return {History} self
-   */
-  disconnect (node) {
-    this._emit('archive', node)
+  isDormant() {
+    return this.size <= 0 || this.repos.length <= 0
+  }
 
-    if (node.parent) {
-      node.parent.next = null
+  reconcile () {
+    if (this.isDormant()) {
+      return false
     }
 
-    node.parent = null
-    node.sibling = null
+    this.invoke('rollback')
+    this.rollforward()
+    this.archive()
+    this.invoke('release')
+  }
+
+  rollforward() {
+    let actions = this.toArray(this.focus)
+
+    for (var i = 0, count = actions.length; i < count; i++) {
+      this.invoke('reconcile', actions[i])
+      this.moveFocus()
+    }
   }
 
   /**
-   * Prune down the tree then emit a change
+   * Adjust the focus to the youngest disposable action. This makes it
+   * unncessary to rollforward through every single action all the
+   * time.
    */
-  reconcile () {
-    this.prune()
+  moveFocus() {
+    let start = this.focus ? this.focus.next : this.root
 
-    this._emit('reconcile')
-    this._emit('release')
+    if (start && start.is('disposable')) {
+      this.focus = start
+      this.invoke('cache', start)
+
+      return true
+    }
+
+    return false
   }
 
-  /**
-   * Prunes the tree. Stops if the curent node is not disposable.
-   * @private
-   * @return {History} self
-   */
-  prune () {
-    let root = this.root
-    let limit = Math.max(0, this.limit)
+  archive () {
+    // Is the cache pointed at the base? If so, that means we need
+    // to purge the base.
+    while (this.size > this.limit && this.root && this.root.is('disposable')) {
+      let root = this.root
 
-    while (this.size - limit > 0 && root.is('disposable')) {
-      this.disconnect(root)
       this.size -= 1
 
-      root = root.next
+      // Cue up all repos to adjust the archive
+      this.invoke('archive', root)
+
+      // Point the base to the next node
+      this.root = this.root.next
+
+      // Disconnect the pointer to the parent so GC can clean up
+      // disposable actions
+      root.parent  = null
+
+      // Similarly, the base has no siblings
+      root.sibling = null
+
+      // Disconnect the old root from the current
+      root.next = null
     }
 
-    // If we reach the end (there is no next action), it means
-    // we've completely wiped away the tree, so nullify focus
-    // to mark a completely empty tree.
     if (this.size <= 0) {
-      this.root = this.focus = null
-    } else {
-      this.root = root
+      this.root  = null
+      this.head = null
+      this.focus = null
     }
-
-    return this
   }
 
   /**
    * Get an array of the active branch
-   *
-   * @param {Function} reducer - The function invoked by each iteration of reduce
-   * @param {Any} state - The initial state of the reduction
-   * @param {Any} scope - Scope of the invoked reducer
    * @return {Any} The result of reducing over state
    */
-  toArray () {
-    let size  = this.size
-    let items = new Array(size)
-    let node  = this.focus
+  toArray (base) {
+    let items = new Array()
+    let node  = this.head
 
-    while (--size >= 0) {
-      items[size] = node
+    while (node && node !== base) {
+      items.push(node)
+
+      if (node === this.root) {
+        break;
+      }
+
       node = node.parent
     }
 
-    return items
+    return items.reverse()
   }
 
-  /**
-   * Reduce over each action.
-   *
-   * @param {Function} reducer - The function invoked by each iteration of reduce
-   * @param {Any} state - The initial state of the reduction
-   * @param {Any} scope - Scope of the invoked reducer
-   * @return {Any} The result of reducing over state
-   */
-  reduce (reducer, state, scope) {
-    const items = this.toArray()
+  reduce(fn, initial, scope) {
+    let items = this.toArray()
 
-    for (let i = 0, len = items.length; i < len; i++) {
-      state = reducer.call(scope, state, items[i], i, items)
+    for (var i = 0; i < items.length; i++) {
+      initial = fn.call(scope, initial, items[i], i)
     }
 
-    return state
+    return initial
   }
 
   /**
@@ -183,7 +203,7 @@ export default class History extends Emitter {
    */
   setSize () {
     let count = this.root ? 1 : 0
-    let node  = this.focus
+    let node  = this.head
 
     while (node !== this.root) {
       count += 1

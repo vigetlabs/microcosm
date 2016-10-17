@@ -44,7 +44,7 @@ const PlanetsDomain = {
     return { loading: false, records: [] }
   },
 
-  replace (state, records) {
+  patch (state, records) {
     return { ...state, records }
   },
 
@@ -54,7 +54,7 @@ const PlanetsDomain = {
 
   register() {
     return {
-      [getPlanets.done]: this.replace,
+      [getPlanets.done]: this.patch,
       [getPlanets.open]: this.loading
     }
   }

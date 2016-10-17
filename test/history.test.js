@@ -1,18 +1,18 @@
-import test from 'ava'
 import History from '../src/history'
+import Microcosm from '../src/microcosm'
 
 const action = n => n
 
-test('adjusts the focal point when adding a node', t => {
+test('adjusts the focal point when adding a node', function () {
   const history = new History()
 
   history.append(action)
   history.append(action)
 
-  t.is(history.focus.behavior, action)
+  expect(history.head.behavior).toEqual(action)
 })
 
-test('prunes all the way up to the focal point', t => {
+test('archive moves all the way up to the focal point', function () {
   const history = new History(-Infinity)
 
   // One
@@ -31,12 +31,12 @@ test('prunes all the way up to the focal point', t => {
   two.resolve()
 
   // Three should be ignored!
-  history.prune()
+  history.archive()
 
-  t.is(history.size, 0)
+  expect(history.size).toEqual(0)
 })
 
-test('prunes removes nodes until it returns false', t => {
+test('archive removes nodes until it returns false', function () {
   const history = new History()
 
   const one = history.append(action)
@@ -45,13 +45,13 @@ test('prunes removes nodes until it returns false', t => {
   history.append(action)
 
   history.checkout(two)
-  history.prune(() => false)
+  history.archive(() => false)
 
-  t.is(history.focus, two)
-  t.is(history.focus.parent, one)
+  expect(history.head).toEqual(two)
+  expect(history.head.parent).toEqual(one)
 })
 
-test('only walks through the main timeline', t => {
+test('only walks through the main timeline', function () {
   const history = new History()
 
   const first = history.append(action)
@@ -62,10 +62,10 @@ test('only walks through the main timeline', t => {
 
   const third = history.append(action)
 
-  t.deepEqual(history.toArray(), [ first, third ])
+  expect(history.toArray()).toEqual([ first, third ])
 })
 
-test('does not walk past the focal point', t => {
+test('does not walk past the focal point', function () {
   const history = new History()
 
   let one = history.append(action)
@@ -73,10 +73,10 @@ test('does not walk past the focal point', t => {
   history.append(action)
   history.checkout(one)
 
-  t.deepEqual(history.toArray(), [ one ])
+  expect(history.toArray()).toEqual([ one ])
 })
 
-test('properly handles forks', t => {
+test('properly handles forks', function () {
   let history = new History()
 
   let one   = history.append(action)
@@ -88,35 +88,35 @@ test('properly handles forks', t => {
   let four = history.append(action)
   let five = history.append(action)
 
-  t.deepEqual(history.toArray(), [ one, two, four, five ])
+  expect(history.toArray()).toEqual([ one, two, four, five ])
 
   history.checkout(three)
 
-  t.deepEqual(history.toArray(), [ one, two, three ])
+  expect(history.toArray()).toEqual([ one, two, three ])
 })
 
-test('can get the previous node in the chain', t => {
+test('can get the previous node in the chain', function () {
   const history = new History()
 
   const one = history.append(action)
   const two = history.append(action)
   const three = history.append(action)
 
-  t.is(two.parent, one)
-  t.is(three.parent, two)
+  expect(two.parent).toEqual(one)
+  expect(three.parent).toEqual(two)
 })
 
-test('sets the root to null if checking out a null node', t => {
+test('sets the root to null if checking out a null node', function () {
   const history  = new History()
   history.append(action)
 
   history.checkout()
 
-  t.is(history.root, null)
-  t.is(history.focus, null)
+  expect(history.root).toEqual(null)
+  expect(history.head).toEqual(null)
 })
 
-test('can determine the root node', t => {
+test('can determine the root node', function () {
   const history = new History()
 
   const a = history.append(action)
@@ -124,10 +124,10 @@ test('can determine the root node', t => {
   history.append(action)
   history.append(action)
 
-  t.is(history.root, a)
+  expect(history.root).toEqual(a)
 })
 
-test('can determine children', t => {
+test('can determine children', function () {
   const history = new History()
   const a = history.append(action)
   const b = history.append(action)
@@ -136,10 +136,10 @@ test('can determine children', t => {
 
   const c = history.append(action)
 
-  t.deepEqual(a.children, [ c, b ])
+  expect(a.children).toEqual([ c, b ])
 })
 
-test('does not lose children when checking out nodes on the left', t => {
+test('does not lose children when checking out nodes on the left', function () {
   const history = new History()
 
   history.append(action)
@@ -151,10 +151,10 @@ test('does not lose children when checking out nodes on the left', t => {
 
   const d = history.append(action)
 
-  t.deepEqual(b.children, [ d, c ])
+  expect(b.children).toEqual([ d, c ])
 })
 
-test('does not lose children when checking out nodes on the right', t => {
+test('does not lose children when checking out nodes on the right', function () {
   const history = new History()
 
   history.append(action)
@@ -168,5 +168,45 @@ test('does not lose children when checking out nodes on the right', t => {
 
   history.checkout(c)
 
-  t.deepEqual(b.children, [d, c])
+  expect(b.children).toEqual([d, c])
+})
+
+describe('toArray', function() {
+
+  test('does not generate null nodes', function() {
+    const history = new History()
+
+    expect(history.toArray()).toEqual([])
+  })
+
+})
+
+describe('reduce', function() {
+
+  test('Reduces all nodes in the active branch', function() {
+    const history = new History()
+
+    const a = history.append(n => n)
+    const b = history.append(n => n)
+    const c = history.append(n => n)
+
+    const list = history.reduce((a, b) => a.concat(b), [])
+
+    expect(list).toEqual([a,b,c])
+  })
+
+})
+
+describe('repo management', function() {
+
+  test('Does not remove a repo outside of the tracked repo', function() {
+    const history = new History()
+    const repo = new Microcosm()
+
+    history.addRepo(repo)
+    history.removeRepo(new Microcosm())
+
+    expect(history.repos).toEqual([repo])
+  })
+
 })

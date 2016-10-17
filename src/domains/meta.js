@@ -13,7 +13,7 @@ export default {
     return next
   },
 
-  [lifecycle._willReplace](old, next) {
+  [lifecycle._willPatch](old, next) {
     return merge({}, old, next)
   }
 

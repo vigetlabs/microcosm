@@ -13,17 +13,20 @@ import tag from './tag'
  */
 export default class Action extends Emitter {
 
-  /**
-   * @param {Function} behavior - how the action should resolve.
-   */
   constructor (behavior, history) {
     super()
 
+    if (behavior && typeof behavior === 'object') {
+      throw new Error('Action expected string or function, instead got: ' +
+                      JSON.stringify(behavior))
+    }
+
     this.type = null
-    this.payload = null
     this.behavior = tag(behavior)
-    this.history = history
     this.state = States.disabled
+    this.payload = null
+
+    this.history = history
     this.parent = null
     this.sibling = null
   }
@@ -192,8 +195,12 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   onError (callback, scope) {
+    if (typeof callback !== 'function') {
+      return this
+    }
+
     if (this.is(States.error)) {
-      callback(this.payload, scope)
+      callback.call(scope, this.payload)
     } else {
       this.once('error', callback, scope)
     }
@@ -209,6 +216,10 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   onUpdate (callback, scope) {
+    if (typeof callback !== 'function') {
+      return this
+    }
+
     this.on('update', callback, scope)
 
     return this
@@ -224,6 +235,10 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   onDone (callback, scope) {
+    if (typeof callback !== 'function') {
+      return this
+    }
+
     if (this.is(States.done)) {
       callback.call(scope, this.payload)
     } else {
@@ -243,6 +258,10 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   onCancel (callback, scope) {
+    if (typeof callback !== 'function') {
+      return this
+    }
+
     if (this.is(States.cancelled)) {
       callback.call(scope, this.payload)
     } else {

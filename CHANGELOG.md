@@ -1,5 +1,20 @@
 # Changelog
 
+## 10.0.0 (not released)
+
+- Rename `replace` to `patch`, `patch` does not call deserialize
+- Add onCancel to `form`
+- Fix proptypes on `form`
+- `send` no longer raises a warning if no Presenter implements an
+  intent, instead it will dispatch to Microcosm
+- Prevent dispatch from accidentally triggering on Domains with the
+  same method name as an action (should only be the case when
+  dispatching string intents)
+- Forked repos that have domains at the same key as their parents
+  always handle their parent's state instead of their own.
+- Added `teardown` method to Domains. Called whenever the associated
+  Microcosm instance invokes `teardown`.
+
 ## 10.0.0-rc11
 
 - Only root microcosms can replace state

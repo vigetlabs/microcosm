@@ -1,4 +1,3 @@
-import test from 'ava'
 import Domain from '../src/domain'
 import Microcosm from '../src/microcosm'
 
@@ -44,17 +43,17 @@ class TestDomain extends Domain {
   }
 }
 
-test('adds records', t => {
+test('adds records', function () {
   var repo = new Microcosm()
 
   repo.addDomain('users', TestDomain)
 
   repo.push(create, { id: 'bill', name: 'Bill' })
 
-  t.is(repo.state.users.hasOwnProperty('bill'), true)
+  expect(repo.state.users.bill).toBeDefined()
 })
 
-test('removes records', t => {
+test('removes records', function () {
   var repo = new Microcosm()
 
   repo.addDomain('users', TestDomain)
@@ -62,5 +61,5 @@ test('removes records', t => {
   repo.push(create, { id: 'bill', name: 'Bill' })
   repo.push(destroy, 'bill')
 
-  t.is(repo.state.users.hasOwnProperty('bill'), false)
+  expect(repo.state.users.bill).not.toBeDefined()
 })

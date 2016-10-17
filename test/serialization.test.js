@@ -1,7 +1,6 @@
-import test from 'ava'
 import Microcosm from '../src/microcosm'
 
-test('runs through serialize methods on domains', t => {
+test('runs through serialize methods on domains', function () {
   const repo = new Microcosm()
 
   repo.addDomain('serialize-test', {
@@ -13,12 +12,10 @@ test('runs through serialize methods on domains', t => {
     }
   })
 
-  t.is(repo.toJSON()['serialize-test'], 'this is a test')
+  expect(repo.toJSON()['serialize-test']).toBe('this is a test')
 })
 
-test('defaults to getInitialState when no deserialize method is provided', t => {
-  t.plan(1)
-
+test('defaults to getInitialState when no deserialize method is provided', function () {
   const repo = new Microcosm()
 
   repo.addDomain('fiz', {
@@ -27,19 +24,19 @@ test('defaults to getInitialState when no deserialize method is provided', t => 
     }
   })
 
-  repo.replace({}).onDone(function() {
-    t.deepEqual(repo.state, { fiz: true })
+  return repo.patch({}).onDone(function() {
+    expect(repo.state).toEqual({ fiz: true })
   })
 })
 
-test('passes the raw data as the seconda argument of deserialize', t => {
-  t.plan(2)
+test('passes the raw data as the second argument of deserialize', function (done) {
   const repo = new Microcosm()
 
   repo.addDomain('fiz', {
     deserialize(subset, raw) {
-      t.is(subset, 'buzz')
-      t.deepEqual(raw, { fiz: 'buzz' })
+      expect(subset).toEqual('buzz')
+      expect(raw).toEqual({ fiz: 'buzz' })
+      done()
     }
   })
 

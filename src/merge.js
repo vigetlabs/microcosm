@@ -1,19 +1,5 @@
 const hasOwn = Object.prototype.hasOwnProperty
 
-function foldInTo (a, b) {
-  if (b == null || a === b) {
-    return a
-  }
-
-  for (let key in b) {
-    if (hasOwn.call(b, key)) {
-      a[key] = b[key]
-    }
-  }
-
-  return a
-}
-
 /**
  * Merge any number of objects into a provided object
  *
@@ -21,16 +7,16 @@ function foldInTo (a, b) {
  * @params {...Object} values - Any number of objects to fold properties into the first
  * @return {Object} The first provided value, extended with all others
  */
-export default function merge (/** values */) {
-  let reduction = arguments[0]
-
-  if (reduction == null) {
-    return reduction
-  }
-
+export default function merge (subject) {
   for (var i = 1, len = arguments.length; i < len; i++) {
-    reduction = foldInTo(reduction, arguments[i])
+    var next = arguments[i]
+
+    for (var key in next) {
+      if (hasOwn.call(next, key)) {
+        subject[key] = next[key]
+      }
+    }
   }
 
-  return reduction
+  return subject
 }

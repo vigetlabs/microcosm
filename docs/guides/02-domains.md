@@ -114,7 +114,7 @@ const Planets = {
 
 ## Importing data
 
-Data can be injected into a Microcosm using `repo.replace`. When this occurs, `deserialize` will be called on all Domains to allow data to be processed before it enters the repo:
+Data can be injected into a Microcosm using `repo.patch`. When this occurs, `deserialize` will be called on all Domains to allow data to be processed before it enters the repo:
 
 ```javascript
 const Planets = {

@@ -1,19 +1,18 @@
-import test from 'ava'
 import Microcosm from '../src/microcosm'
 import Domain from '../src/domain'
-import logger from './helpers/console'
+import logger from './helpers/logger'
 
-test('domains can be objects with lifecycle methods', t => {
+test('domains can be objects with lifecycle methods', function () {
   const repo = new Microcosm()
 
   repo.addDomain('key', {
     getInitialState: () => true
   })
 
-  t.is(repo.state.key, true)
+  expect(repo.state.key).toBe(true)
 })
 
-test('warns if a register handler is undefined', t => {
+test('warns if a register handler is undefined', function () {
   const repo = new Microcosm()
   const action = n => n
 
@@ -29,16 +28,14 @@ test('warns if a register handler is undefined', t => {
 
   repo.push(action)
 
-  t.is(logger.count('warn'), 1)
+  expect(logger.count('warn')).toEqual(1)
 
   logger.restore()
 })
 
-test('can control if state should be committed', t => {
+test('can control if state should be committed', function () {
   const repo = new Microcosm()
   const add  = n => n
-
-  t.plan(1)
 
   repo.addDomain('count', {
     getInitialState() {
@@ -54,41 +51,42 @@ test('can control if state should be committed', t => {
     }
   })
 
-  var first = repo.state
+  let first = repo.state
 
-  repo.push(add, 0.1).onDone(function() {
-    t.is(repo.state.count, first.count)
+  return repo.push(add, 0.1).onDone(function() {
+    expect(repo.state.count).toBe(first.count)
   })
-
 })
 
-test('domain have a setup step', t => {
+test('domain have a setup step', function () {
   const repo = new Microcosm()
-
-  t.plan(1)
+  const test = jest.fn()
 
   class Counter extends Domain {
-    setup() {
-      t.pass()
+    get setup() {
+      return test
     }
   }
 
   repo.addDomain('count', Counter)
+
+  expect(test).toHaveBeenCalled()
 })
 
-test('last state in shouldCommit starts as initial state', t => {
+test('last state in shouldCommit starts as initial state', function () {
   const repo = new Microcosm()
-
-  t.plan(1)
+  const test = jest.fn(() => false)
 
   class Counter extends Domain {
     getInitialState() {
       return 0
     }
-    shouldCommit(next, last) {
-      t.is(last, 0)
+    get shouldCommit() {
+      return test
     }
   }
 
   repo.addDomain('count', Counter)
+
+  expect(test).toHaveBeenCalledWith(0, 0)
 })

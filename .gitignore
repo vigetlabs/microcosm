@@ -3,8 +3,5 @@ stats.json
 node_modules
 *.asm
 *.cfg
-tmp
-dist
+build
 .happypack
-.nyc_output
-esdoc

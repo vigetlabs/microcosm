@@ -11,8 +11,7 @@ const SIZES = [
   10000,
   50000,
   100000,
-  200000,
-  400000
+  200000
 ]
 
 console.log('\nConducting history benchmark...\n')
@@ -57,24 +56,12 @@ const results = SIZES.map(function (SIZE) {
   stats.toArray = (time.now() - now) / 1000
 
   /**
-   * Measure time to merge together all nodes. This is a useful
-   * gut check of the potential fastest possible merger of objects
-   * within Microcosm's dispatch process.
-   */
-  now = time.now()
-  history.reduce(function (a, b) {
-    return merge(a, b.payload)
-  }, {})
-  stats.merge = (time.now() - now) / 1000
-
-  var memoryUsage = process.memoryUsage().heapUsed - memoryBefore
-
-  /**
    * Measure time to dispose all nodes in the history. This also has
    * the side effect of helping to test memory leakage later.
    */
+  var memoryUsage = process.memoryUsage().heapUsed - memoryBefore
   now = time.now()
-  history.toArray().reverse().forEach(a => a.resolve())
+//  history.toArray().reverse().forEach(a => a.resolve())
   stats.prune = (time.now() - now) / 1000
 
   /**
@@ -90,7 +77,6 @@ const results = SIZES.map(function (SIZE) {
     'Nodes': SIZE.toLocaleString(),
     '::append()': stats.build.toFixed(2) + 'ms',
     '::toArray()': stats.toArray.toFixed(4) + 'ms',
-    '::reduce(merge)': stats.merge.toFixed(2) + 'ms',
     '::setSize()': stats.size.toFixed(2) + 'ms',
     '::prune()': stats.prune.toFixed(2) + 'ms',
     'Memory': (memoryUsage / 1000000).toFixed(3) + 'mbs',

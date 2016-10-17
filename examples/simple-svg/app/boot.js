@@ -5,7 +5,7 @@ import Circle      from './domains/circle'
 import Logo        from './views/logo'
 import { animate } from './actions/animate'
 
-const repo = new Microcosm()
+const repo = new Microcosm({ maxHistory: Infinity})
 const el  = document.getElementById('app')
 
 repo.addDomain('circle', Circle)

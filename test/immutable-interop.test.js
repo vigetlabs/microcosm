@@ -1,4 +1,3 @@
-import test from 'ava'
 import Domain from '../src/domain'
 import Microcosm from '../src/microcosm'
 
@@ -37,17 +36,17 @@ class TestDomain extends Domain {
   }
 }
 
-test('adds records', t => {
+test('adds records', function () {
   var repo = new Microcosm()
 
   repo.addDomain('users', TestDomain)
 
   repo.push(create, { id: 1, name: 'Bill' })
 
-  t.is(repo.state.users[0].name, 'Bill')
+  expect(repo.state.users[0].name).toEqual('Bill')
 })
 
-test('removes records', t => {
+test('removes records', function () {
   var repo = new Microcosm()
 
   repo.addDomain('users', TestDomain)
@@ -55,10 +54,18 @@ test('removes records', t => {
   repo.push(create, { id: 1, name: 'Bill' })
   repo.push(destroy, 1)
 
-  t.is(repo.state.users.length, 0)
+  expect(repo.state.users.length).toEqual(0)
 })
 
-test('does not generate a new array if no state changes', t => {
+test('staged does not get modified', function () {
+  var repo = new Microcosm()
+
+  repo.addDomain('users', TestDomain)
+
+  expect(repo.staged.users instanceof Immutable.Map).toBe(true)
+})
+
+test('does not generate a new array if no state changes', function () {
   var repo = new Microcosm()
 
   repo.addDomain('users', TestDomain)
@@ -70,5 +77,5 @@ test('does not generate a new array if no state changes', t => {
   repo.push(destroy, 1)
   var b = repo.state
 
-  t.is(a.users, b.users)
+  expect(a.users).toEqual(b.users)
 })

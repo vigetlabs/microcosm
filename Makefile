@@ -1,31 +1,36 @@
+MAKEFLAGS ?= '-j 4'
 BABEL := node_modules/.bin/babel
-SCRIPTS := $(shell find src bench -name '*.js*')
+SCRIPTS := $(addprefix build/,$(shell find src bench -name '*.js*'))
 
 all: javascript docs package.json
 
 javascript: $(SCRIPTS)
-	@ echo "Compiling $(words $^) modules..."
-	@ $(BABEL) -c -q -s inline -d tmp $^
-	@ rsync -uraq tmp/src/ dist/
+
+build/%.js: %.js
+	@ mkdir -p $(@D)
+	@ $(BABEL) -c -s inline $< > $@
+	@ echo "[+] $@"
 
 docs: LICENSE.md README.md
-	@ rsync -uaq $^ dist/
+	@ mkdir -p build
+	@ cp $^ build/
 
 package.json:
-	@ node -p 'p=require("./package");p.main="microcosm.js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > dist/package.json
+	@ mkdir -p build
+	@ node -p 'p=require("./package");p.main="microcosm.js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > build/package.json
 
 release: clean all
-	npm publish dist
+	npm publish build
 
 prerelease: clean all
-	npm publish dist --tag beta
+	npm publish build --tag beta
 
 bench: javascript
-	@ node --expose-gc tmp/bench/history-performance
-	@ node --expose-gc tmp/bench/dispatch-performance
-	@ node --expose-gc tmp/bench/push-performance
+	@ node --expose-gc build/bench/history-performance
+	@ node --expose-gc build/bench/dispatch-performance
+	@ node --expose-gc build/bench/push-performance
 
 clean:
-	@ rm -rf {tmp,dist/*}
+	@ rm -rf {build/*}
 
 .PHONY: all clean bench package.json documentation release prerelease

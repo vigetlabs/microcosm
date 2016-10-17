@@ -36,7 +36,7 @@ import Microcosm from 'microcosm'
 
 const repo = new Microcosm()
 
-repo.replace({ planets: [ 'Mercury', 'Venus', 'Earth' ]})
+repo.patch({ planets: [ 'Mercury', 'Venus', 'Earth' ]})
 
 class PlanetsPresenter extends Presenter {
 

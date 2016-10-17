@@ -9,5 +9,5 @@ export default {
   serialize       : 'serialize',
   deserialize     : 'deserialize',
   _willReset      : '_willReset',
-  _willReplace    : '_willReplace'
+  _willPatch      : '_willPatch'
 }

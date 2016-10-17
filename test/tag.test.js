@@ -1,33 +1,34 @@
-import test from 'ava'
 import tag  from '../src/tag'
 
-test('includes the function name', t => {
-  t.is(tag(function test() {}).toString().search('test'), 0)
+test('includes the function name', function () {
+  const tagged = tag(function test() {})
+
+  expect(`${tagged}`.search('test')).toEqual(0)
 })
 
-test('will not tag a null action', t => {
-  t.throws(function () {
-    tag(null)
-  }, /Unable to identify null action/)
+test('assigns a default name', function () {
+  const tagged = tag(n => n)
+
+  expect(`${tagged}`).toContain('microcosm_action')
 })
 
-test('will not tag an undefined action', t => {
-  t.throws(function () {
-    tag(undefined)
-  }, /Unable to identify undefined action/)
+test('will not tag a null action', function () {
+  expect(() => tag(null)).toThrow(/Unable to identify null action/)
 })
 
-test('assigns a default name', t => {
-  t.is(tag(n => n).toString().search('microcosm_action'), 0)
+test('will not tag an undefined action', function () {
+  expect(() => tag(undefined), /Unable to identify undefined action/)
 })
 
-test('can have an override name', t => {
-  t.is(tag(function(){}, 'test').toString(), 'test')
+test('can have an override name', function () {
+  const tagged = tag(function(){}, 'test')
+
+  expect(`${tagged}`).toEqual('test')
 })
 
-test('is unique', t => {
+test('is unique', function () {
   let a = tag(function(){}).toString()
   let b = tag(function(){}).toString()
 
-  t.not(a, b)
+  expect(a).not.toEqual(b)
 })

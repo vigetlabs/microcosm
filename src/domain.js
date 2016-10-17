@@ -22,6 +22,14 @@ export default class Domain {
   }
 
   /**
+   * Runs whenever `Microcosm::teardown` is invoked. Useful for
+   *cleaning up work done in `setup()`.
+   */
+  teardown () {
+    // NOOP
+  }
+
+  /**
    * A default register function that just returns an empty object. This helps
    * keep other code from branching.
    *

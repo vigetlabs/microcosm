@@ -4,7 +4,7 @@ import { send } from '../actions/messages'
 const Messages = {
 
   getInitialState() {
-    return [ Message({ user: 'Elizia', message: "What's new with you?" }) ]
+    return [ Message({ user: 'Eliza', message: "What's new with you?" }) ]
   },
 
   add(state, items) {
