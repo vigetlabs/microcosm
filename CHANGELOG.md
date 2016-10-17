@@ -2,7 +2,7 @@
 
 ## 10.0.0
 
-We made it! Almost. It's been a long road, but we're finally here.
+We made it! It's been a long road, but we're finally here.
 
 This is a significant release. We've added some new tools for medium
 to large applications, and made some naming convention changes to make
