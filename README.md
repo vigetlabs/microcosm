@@ -7,11 +7,6 @@
 
 Flux with central, isolated state.
 
-**Important**. Master is prepping for the next major release
-(10.x). See the
-[9-stable branch](https://github.com/vigetlabs/microcosm/tree/9-stable)
-for relevant documentation and examples.
-
 1. [Documentation](#documentation)
 2. [Overview](#overview)
 3. [Opinions](#opinions)

@@ -1,6 +1,6 @@
 # Changelog
 
-## 10.0.0 (not released)
+## 10.0.0
 
 We made it! Almost. It's been a long road, but we're finally here.
 
