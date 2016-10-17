@@ -57,7 +57,24 @@ class Repo extends Microcosm) {
 }
 ```
 
-### State management
+### Domains (no longer called Stores)
+
+- **Domains can no longer be functions that return a
+  registration**. This wasn't being used, and makes it easier to check
+  if a Store should be instantiated when added (see next item).
+- Domains can now be classes. When added, they will be instantiated
+  (though no parameters are currently passed to the constructor; still
+  figuring this one out).
+- Added a `setup` method to Domains. This is a one time lifecycle
+  method that runs when a store is added to a Microcosm.
+- Domains can now implement a `commit` method that indicates how a
+  store should write to `repo.state`. When used with `staging`, this
+  is useful for keeping complex data types internal to a Microcosm,
+  exposing vanilla JS data via `repo.state`.
+- Domains can now implement a `shouldCommit` method that determines if
+  `commit` should run (see `docs/recipes/immutable-js.md`)
+
+#### State management
 
 Repo state now has two extra phases: `stage` and `commit`. Domains
 handlers work against a internal staging ground. Domains can then
@@ -93,23 +110,6 @@ const ImmutableDomain = {
 along state. When warranted, these new hooks should grant a high
 degree of separation between a Domain's internal data management and
 the data consumed by a component tree.
-
-### Domains (no longer called Stores)
-
-- **Domains can no longer be functions that return a
-  registration**. This wasn't being used, and makes it easier to check
-  if a Store should be instantiated when added (see next item).
-- Domains can now be classes. When added, they will be instantiated
-  (though no parameters are currently passed to the constructor; still
-  figuring this one out).
-- Added a `setup` method to Domains. This is a one time lifecycle
-  method that runs when a store is added to a Microcosm.
-- Domains can now implement a `commit` method that indicates how a
-  store should write to `repo.state`. When used with `staging`, this
-  is useful for keeping complex data types internal to a Microcosm,
-  exposing vanilla JS data via `repo.state`.
-- Domains can now implement a `shouldCommit` method that determines if
-  `commit` should run (see `docs/recipes/immutable-js.md`)
 
 ### Actions
 
