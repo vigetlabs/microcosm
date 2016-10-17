@@ -20,6 +20,7 @@ If you'd rather look at working code, head over to
 the [example apps](examples) or checkout out the [quickstart guide](https://github.com/vigetlabs/microcosm-quickstart),
 
 ### Installation
+
 ```
 npm install --save microcosm
 ```
