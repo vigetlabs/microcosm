@@ -3281,9 +3281,9 @@ methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"
 
-microcosm-debugger@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/microcosm-debugger/-/microcosm-debugger-1.0.0.tgz#49b3cd9165d7e2d6c8fde51abcbca7c9c2d093e2"
+microcosm-debugger@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/microcosm-debugger/-/microcosm-debugger-1.1.0.tgz#68556809721487a8ab2753187a9f72b4b14993bf"
   dependencies:
     classnames "~2.2.5"
     paths-js "~0.4.4"
