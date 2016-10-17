@@ -164,7 +164,7 @@ subscribed to in domains.
 
 ## Action history
 
-Internally, Microcosm calculates state by rolling forward through a historical account of all actions. While still experimental, Microcosm exposes API methods for working with history. For example, the time-travelling Microcosm debugger:
+Internally, Microcosm calculates state by rolling forward through a historical account of all actions. While still experimental, Microcosm exposes API methods for working with history. For example, the [time-travelling Microcosm debugger](https://github.com/vigetlabs/microcosm-debugger):
 
 <a href="https://github.com/vigetlabs/microcosm-debugger" style="display: block">
   <img style="display: block; margin: 0 auto;" src="https://github.com/vigetlabs/microcosm-debugger/raw/master/docs/chat-debugger.gif" alt="Microcosm Debugger" width="600" />
