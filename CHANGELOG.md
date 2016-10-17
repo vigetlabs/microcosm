@@ -59,10 +59,40 @@ class Repo extends Microcosm) {
 
 ### State management
 
-- Repo state now has an extra phase: `staging`. Stores can implement a
-  `stage` method to determine how to write state to `staging`,
-- serialize works on `repo.staged`, not `repo.state`. No longer pass
-  `repo.state` as second argument.
+Repo state now has two extra phases: `stage` and `commit`. Domains
+handlers work against a internal staging ground. Domains can then
+commit state as a separate operation.
+
+For example, when working with ImmutableJS:
+
+```javascript
+const ImmutableDomain = {
+  getInitialState() {
+    return Immutable.Map()
+  },
+
+  shouldCommit(next, previous) {
+    return Immutable.is(next, previous) === false
+  },
+
+  add(state, record) {
+    return state.set(record.id, record)
+  },
+
+  remove(state, id) {
+    return state.remove(id)
+  }
+
+  commit(state) {
+    return Array.from(state.values())
+  }
+}
+```
+
+`shouldCommit` returns `true` by default, and `commit` just passes
+along state. When warranted, these new hooks should grant a high
+degree of separation between a Domain's internal data management and
+the data consumed by a component tree.
 
 ### Domains (no longer called Stores)
 
