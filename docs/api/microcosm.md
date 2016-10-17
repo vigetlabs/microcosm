@@ -58,11 +58,12 @@ Resolves an action. Sends the result and any errors to a given error-first callb
 repo.push(createPlanet, { name: 'Merkur' })
 ```
 
-### `put()`
+### `reset (state)`
 
-Resets state to the result of calling `getInitialState()`
+Resets state to the result of calling `getInitialState()`. Optionally
+folds on a provided state object.
 
-### `patch(data)`
+### `patch(state)`
 
 Partially merge in a piece of repo state. This function is great for
 bootstrapping data when rendering from the server. It will not blow

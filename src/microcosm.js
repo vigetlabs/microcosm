@@ -130,24 +130,24 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * Update the archive, this is called when the history tree permanently
-   * removes a node.
+   * Update the archive, this is called when the history tree
+   * permanently removes a node.
    */
   archive (action) {
     this.archived = this.dispatch(this.archived, action)
   }
 
   /**
-   * Update the archive, this is called when the history tree moves forward
-   * the current cache point.
+   * Update the cache point, this is called when the history tree
+   * moves forward the current cache point.
    */
   cache (action) {
     this.cached = this.dispatch(this.cached, action)
   }
 
   /**
-   * Rollback to the last archive, cloning it while we're outside of the
-   * rollforward loop.
+   * Rollback to the lastest cache, cloning it while we're outside of
+   * the rollforward loop.
    *
    * @param {Action} action - Action to archive
    */
@@ -160,8 +160,8 @@ export default class Microcosm extends Emitter {
    * @return {Object} staged state
    */
   stage (action) {
-    // If a parent, we need to update the child with their
-    // parent's latest head state
+    // If a parent, we need to update the child with their parent's
+    // latest head state
     if (this.parent !== null) {
       merge(this.staged, this.parent.head)
     }
@@ -179,7 +179,7 @@ export default class Microcosm extends Emitter {
   }
 
   /**
-   * How microcosm actually writes to state
+   * Write state to the head
    */
   write (state, key, domain) {
     const last = update.get(this.cached, key)
