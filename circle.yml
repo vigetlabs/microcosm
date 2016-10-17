@@ -11,6 +11,6 @@ machine:
     COVERALLS_SERVICE_NAME: CircleCI
 test:
   override:
-    - npm run test:cov:lcov
+    - npm run test:cov
   post:
     - npm run report-coverage

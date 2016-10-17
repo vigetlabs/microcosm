@@ -7,7 +7,7 @@ We made it! Almost. It's been a long road, but we're finally here.
 This is a significant release. We've added some new tools for medium
 to large applications, and made some naming convention changes to make
 things more accurate to their purpose. Actions and Stores (now
-Domains) also received significant upgrades
+Domains) also received significant upgrades.
 
 High level list:
 
