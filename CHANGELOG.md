@@ -2,8 +2,106 @@
 
 ## 10.0.0 (not released)
 
-- Rename `replace` to `patch`, `patch` does not call deserialize
-- Add onCancel to `form`
+We made it! Almost. It's been a long road, but we're finally here.
+
+This is a significant release. We've added some new tools for medium
+to large applications, and made some naming convention changes to make
+things more accurate to their purpose. Actions and Stores (now
+Domains) also received significant upgrades
+
+High level list:
+
+- All instances of `store` have been renamed to `domain`.
+- All instances of `app` have been renamed to `repo`
+- `Microcosm::replace` is now `Microcosm::patch`. `patch` does not
+  deserialize data. `replace` is deprecated and will eventually be
+  removed.
+- Removed Plugins
+- Removed the generator form for actions. Actions now support a thunk
+  form (see `[the docs](./docs/api/actions.md)`).
+- `repo.push` now returns the action representing the provided action
+  creator.
+- Added `pure` option, true by default. When true, change events
+  will only fire when state is shallowly not equal.
+- Microcosms can now be "forked". "Child" Microcosms receive the state
+  of their parents and share the same action history, however can
+  safely add new domains and make modifications to repo state without
+  affecting the parent.
+- Added `Presenter` add-on that replaces `Provider` and
+  `Connect`. Presenters extend from React.Component and can be used to
+  extract state out of a Microcosm and send it into a "passive view"
+  component.
+- Added `withIntent` and `form` add-on. These add-ons provide an API
+  for sending messages to Presenters without needing to pass callbacks
+  deeply into the component tree.
+
+### No more plugins
+
+Microcosm 9.x has a `start` method that must be called to begin using
+it. This method sets initial state and runs through all plugins,
+executing them in order.
+
+We really liked plugins, however this extra step was cumbersome and
+makes it harder to support embedding microcosms within
+components. This is important for future planning, so we took
+advantage of the major release to remove plugins.
+
+We've added a `setup` method to the `Microcosm` prototype. We've found
+most plugins can easily be converted into direct function calls, like:
+
+```javascript
+class Repo extends Microcosm) {
+  setup () {
+    plugin(this, options)
+  }
+}
+```
+
+### State management
+
+- Repo state now has an extra phase: `staging`. Stores can implement a
+  `stage` method to determine how to write state to `staging`,
+- serialize works on `repo.staged`, not `repo.state`. No longer pass
+  `repo.state` as second argument.
+
+### Domains (no longer called Stores)
+
+- **Domains can no longer be functions that return a
+  registration**. This wasn't being used, and makes it easier to check
+  if a Store should be instantiated when added (see next item).
+- Domains can now be classes. When added, they will be instantiated
+  (though no parameters are currently passed to the constructor; still
+  figuring this one out).
+- Added a `setup` method to Domains. This is a one time lifecycle
+  method that runs when a store is added to a Microcosm.
+- Domains can now implement a `commit` method that indicates how a
+  store should write to `repo.state`. When used with `staging`, this
+  is useful for keeping complex data types internal to a Microcosm,
+  exposing vanilla JS data via `repo.state`.
+- Domains can now implement a `shouldCommit` method that determines if
+  `commit` should run (see `docs/recipes/immutable-js.md`)
+
+### Actions
+
+Actions have been significantly upgraded to allow for complicated
+async operations.
+
+- Actions can now be simple strings. In these cases, the first
+  argument of the pushed action is forwarded to stores.
+- Properly display missing action reporting when dispatching an
+  undefined action.
+
+### Presenter Addon
+
+We've removed the `Connect` and `Provide` addons in favor of a single
+`Presenter` addon. Though the API is different (using classes instead
+of higher order functions), it accomplishes the same goals.
+
+For usage, checkout the [presenter docs](./docs/api/presenter.md)
+
+## Changes 10.0.0 after rc11 (released in 10.0.0)
+
+- Rename `replace` to `patch`, `patch` does not call deserialize.
 - Fix proptypes on `form`
 - `send` no longer raises a warning if no Presenter implements an
   intent, instead it will dispatch to Microcosm
