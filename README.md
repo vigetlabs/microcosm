@@ -11,6 +11,11 @@ data modeling requirements of complicated UIs.
 
 1. [Documentation](#documentation)
 2. [Overview](#overview)
+   1. [Actions](#actions-take-center-stage)
+   2. [Domains](#domains-stateless-stores)
+   3. [Historical State Management](#historical-account-of-everything-that-has-happened)
+   4. [Forks: Global State, Local Concerns](#forks-global-state-local-concerns)
+   5. [Networks of Microcosms](#networks-of-microcosms-with-presenters)
 3. [What is it trying to solve?](#what-is-it-trying-to-solve)
 
 ## Documentation
