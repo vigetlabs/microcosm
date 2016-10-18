@@ -83,6 +83,18 @@ export default class Action extends Emitter {
   }
 
   /**
+   * Trigger history reconciliation if associated with a history
+   * @private
+   */
+  reconcile() {
+    if (this.history) {
+      this.history.reconcile()
+    }
+
+    return this
+  }
+
+  /**
    * If defined, sets the payload for the action and triggers a
    * "change" event.
    *
@@ -90,6 +102,13 @@ export default class Action extends Emitter {
    * @return {Action} self
    */
   set (state, payload) {
+    // Ignore set if the action is already disposable. Rejected
+    // actions can't be resolved. Resolved actions can't be
+    // cancelled...
+    if (this.is(States.disposable)) {
+      return this
+    }
+
     this.state = state
     this.type = getType(this)
 
@@ -97,11 +116,7 @@ export default class Action extends Emitter {
       this.payload = payload
     }
 
-    if (this.history) {
-      this.history.reconcile()
-    }
-
-    return this
+    return this.reconcile()
   }
 
   /**
@@ -182,7 +197,10 @@ export default class Action extends Emitter {
    * @private
    */
   toggle () {
-    this.set(this.state ^ States.disabled)
+    this.state ^= States.disabled
+    this.type = getType(this)
+
+    return this.reconcile()
   }
 
   /**
@@ -281,6 +299,24 @@ export default class Action extends Emitter {
       this.onDone(resolve)
       this.onError(reject)
     }).then(pass, fail)
+  }
+
+  /**
+   * Cleanup an action that has been disconnected from its history
+   */
+  teardown() {
+    // Remove all event listeners
+    this.off()
+
+    // Disconnect the pointer to the parent so GC can clean up
+    // disposable actions
+    this.parent  = null
+
+    // Similarly, the base has no siblings
+    this.sibling = null
+
+    // Disconnect from forward link
+    this.next = null
   }
 
 }

@@ -149,19 +149,11 @@ export default class History {
       // Point the base to the next node
       this.root = this.root.next
 
-      // Disconnect the pointer to the parent so GC can clean up
-      // disposable actions
-      root.parent  = null
-
-      // Similarly, the base has no siblings
-      root.sibling = null
-
-      // Disconnect the old root from the current
-      root.next = null
+      root.teardown()
     }
 
     if (this.size <= 0) {
-      this.root  = null
+      this.root = null
       this.head = null
       this.focus = null
     }
