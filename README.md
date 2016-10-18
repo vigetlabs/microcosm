@@ -5,12 +5,13 @@
 [![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 [![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 
-Flux with central, isolated state.
+Microcosm is an evolution of [Flux](https://facebook.github.io/flux/)
+that makes it easy to manage complicated async workflows and unique
+data modeling requirements of complicated UIs.
 
 1. [Documentation](#documentation)
 2. [Overview](#overview)
-3. [Opinions](#opinions)
-4. [What is it trying to solve?](#what-is-it-trying-to-solve)
+3. [What is it trying to solve?](#what-is-it-trying-to-solve)
 
 ## Documentation
 
@@ -27,168 +28,325 @@ npm install --save microcosm
 
 ## Overview
 
-Microcosm is a variant of [Flux](https://facebook.github.io/flux/)
-that makes it easier to control and modify state in a pure,
-centralized way. It thinks of stores (called domains in Microcosm) and
-actions as stateless collections of pure functions, keeping all data
-encapsulated in a specific instance of Microcosm.
+Microcosm is an evolution of [Flux](https://facebook.github.io/flux/)
+that makes it easy to manage complicated async workflows and unique
+data modeling requirements of complicated UIs.
 
-### Stateless stores
+### Actions take center stage
 
-Microcosm stores hold no state. They are responsible for writing state
-to the repository owned by a Microcosm instance. To further make this
-distinction from traditional flux, we call them _domains_.
-
-This allows domains to be simple collections of pure functions that
-transform old data into new data. The `register` hook tells Microcosm
-what actions a domain should respond to:
+Microcosm is action-centric. Each action creator pushed into a
+Microcosm repo returns an action object to represent it:
 
 ```javascript
-const Planets = {
-  // Tells a Microcosm how a domain should respond to actions
+let repo = new Microcosm()
+
+function getPlanet (id) {
+  // Fetch returns a Promise. Microcosm automatically understands promises
+  return fetch('/planets/' + id).then(response => response.json())
+}
+
+let action = repo.push(getPlanet, 'Saturn')
+
+action.onDone(function(planet) {
+  console.log(planet.id) // Saturn
+})
+```
+
+Actions move through several states, including: `open`, `loading`,
+`done`, `error`, and `cancelled`. In the example above, Microcosm sees
+that a Promise was returned from an action creator and went through
+the following chain of commands:
+
+1. Received Promise, `open` the action
+2. Promise finished loading:
+   - Did it succeed? Mark the action as `done`
+   - Did it fail? Mark the action as 'failed'
+
+In all cases, **action types are automatically generated for
+you**. Domains (stores in old Flux) can subscribe to these unique
+action states, granting fine grained control over the state of data.
+
+### Domains: Stateless Stores
+
+A Microcosm domain fulfills the same role as stores in traditional
+Flux, however they hold no state of their own. A domain is simply a
+set of operations for manipulating data as an action updates.
+
+Old state comes in, new state comes out:
+
+```javascript
+const PlanetsDomain = {
+  getInitialState () {
+    return []
+  },
+
+  addPlanet (planets, record) {
+    return planets.concat(record)
+  },
+
   register() {
     return {
-      [addPlanet] : this.add
+      [getPlanet]: this.addPlanet
     }
-  },
-  // Domain handlers are pure functions that take an old state and
-  // transform it into a new state
-  add(planets, props) {
-    return planets.concat(props)
   }
 }
+
+repo.addDomain('planets', PlanetsDomain)
 ```
 
-Visit [the API documentation for domains](./docs/api/domains.md) to
-read more.
+By implementing a `register` method, domains can subscribe to
+actions. This works by assigning each action a unique string
+identifier. In this case, when `getPlanet` succeeds, the associated
+planet will be added to the list of known planets for the Microcosm.
 
-### No action constants
+#### Pending, failed, and cancelled requests
 
-Microcosm automatically generates action type constants based upon the
-referential identity of the action and the current state of its
-lifecycle.
-
-An action can be in several states: `open`, `loading`, `done`,
-`error`, and `cancelled`. Domains can subscribe to each of these
-states through the use of a `register` function:
+Requests for data can fail, and they can be in more than a pass/fail
+state. Microcosm makes it easy to handle these individual states:
 
 ```javascript
-function createPlanet (params) {
-  return ajax.post('/planets', params)
-}
-
-repo.addDomain('planets', {
-  getInitialState() {
-    return { records: [], loading: false }
-  },
-
-  addPlanet(planets, props) {
-    return { ...planets, records: planets.records.concat(props) }
-  },
-
-  setLoading(planets) {
-    return { ...planets, loading: true }
-  },
+const PlanetsDomain = {
+  // ...handlers
 
   register() {
-    [createPlanet]      : this.addPlanet,
-    [createPlanet.open] : this.setLoading,
+    return {
+      [getPlanet.open]  : this.markLoading,
+      [getPlanet.done]  : this.addPlanet,
+      [getPlanet.error] : this.markError
+    }
   }
-})
-
-
-// Creates a action of type "createPlanet" that dispatches to domains
-repo.push(createPlanet, params)
+}
 ```
 
-When an action is pushed, it is placed into a journal of all actions
-that have occurred. During the `open` state, the action is in a state
-where the request has been opened however it is not complete. When the
-request finishes, the action spawned by `createPlanet` will move into
-a `done` state. Microcosm will then re-run through the list of actions
-documented in the journey to produce a new repo state that
-accounts for the completion of the request.
+`open`, `done`, and `error` are action states. In our action creator, we can
+unlock a deeper level of control by returning a function:
+
+```javascript
+import request from 'superagent'
+
+function getPlanet (id) {
+
+  return function (action) {
+    action.open(id)
+
+    let request = request('/planets/' + id)
+
+    request.end(function (error, response) {
+      if (error) {
+        action.reject(error)
+      } else {
+        action.resolve(response.body)
+      }
+    })
+
+    // Cancellation!
+    action.on('cancel', () => request.abort())
+  }
+}
+```
+
+First, the action becomes `open`. This state is useful when waiting
+for something to happen, such as loading. When the request finishes,
+if it fails, we reject the action, otherwise we resolve it.
+
+There's a final touch here: _cancellation_. Microcosm actions are
+cancellable, emitting the `cancel` event. This can be triggered by
+calling `cancel()` on an action. For example:
+
+```javascript
+let action = repo.push(getPlanet, 'Pluto')
+
+// Wait, Pluto isn't a planet!
+action.cancel()
+```
+
+When `action.cancel()` is called, the action will move into a
+`cancelled` state. Since our domain doesn't handle that action state,
+no data operation will occur.
 
 Visit [the API documentation for actions](./docs/api/actions.md) to
 read more.
 
-### Actions are first-class entities
+### A historical account of everything that has happened
 
-Every action spawned by `repo.push()` returns an `Action` to represent
-its resolution. This object provides a consistent API, no matter what
-value is returned from an action creator:
+Whenever an action creator is pushed into a Microcosm, it creates an
+action to represent it. This gets placed into a tree of all actions
+that have occurred.
 
-```javascript
-const action = repo.push(myAction)
-
-action.onUpdate(handleProgress)
-action.onDone(handleSuccess)
-action.onError(handleFailure)
-```
-
-### Actions are cancellable
-
-Often an action needs to be cancelled. Users leave a page, or submit a
-new query. Actions provide a `cancel` method and event API for dealing
-with these circumstances:
+For performance, completed actions are archived and purged from
+memory, however passing the `maxHistory` option into Microcosm allows
+for a compelling debugging story, For example, [the time-travelling
+Microcosm debugger](https://github.com/vigetlabs/microcosm-debugger):
 
 ```javascript
-function search (query) {
-  // The "thunk" mode for action creators. See the ./docs/api/actions.md
-  return function (action) {
-    action.open()
-
-    var request = ajax.get('/search', query, function (error, body) {
-      if (error) {
-        return action.reject(error)
-      } else {
-        action.resolve(body)
-      }
-    })
-
-
-    action.on('cancel', () => request.abort())
-  }
-}
-
-const page1 = repo.push(search, { term: 'cats', page: 1 })
-
-// (User visits page 2 before page 1 loads)
-page1.cancel()
-
-const page2 = repo.push(search, { term: 'cats', page: 2 })
+let forever = new Microcosm({ maxHistory: Infinity })
 ```
-
-Cancelled actions are put into a `cancelled` state, which can be
-subscribed to in domains.
-
-## Action history
-
-Internally, Microcosm calculates state by rolling forward through a historical account of all actions. While still experimental, Microcosm exposes API methods for working with history. For example, the [time-travelling Microcosm debugger](https://github.com/vigetlabs/microcosm-debugger):
 
 <a href="https://github.com/vigetlabs/microcosm-debugger" style="display: block">
   <img style="display: block; margin: 0 auto;" src="https://github.com/vigetlabs/microcosm-debugger/raw/master/docs/chat-debugger.gif" alt="Microcosm Debugger" width="600" />
 </a>
 
-## Opinions
+#### Optimistic updates
 
-1. Action CONSTANTS are automatically generated by assigning
-   each Action function a unique `toString` signature under the hood.
-2. Actions handle all asynchronous operations. Domains are
-   synchronous.
-3. Domains do not contain data, they _transform_ it.
+But even more importantly, **Microcosm will never dispose an action
+that comes after an incomplete one**. When an action moves from `open`
+to `done`, or `cancelled`, the historical account of actions rolls back
+to the last state, rolling forward with the new action states. This
+makes optimistic updates a sync because action states are self
+cleaning:
+
+```javascript
+import {send} from 'actions/chat'
+
+const Messages = {
+  getInitialState () {
+    return []
+  },
+
+  setPending(messages, item) {
+    return messages.concat({ ...item, pending: true })
+  },
+
+  setError(messages, item) {
+    return messages.concat({ ...item, error: true })
+  },
+
+  addMessage(messages, item) {
+    return messages.concat(item)
+  }
+
+  register () {
+    return {
+      [action.open]  : this.setPending,
+      [action.error] : this.setError,
+      [action.done]  : this.addMessage
+    }
+  }
+}
+```
+
+In this example, as chat messages are sent, we optimistically update
+state with the pending message. At this point, the action is in an
+`open` state. The request has not finished. On completion, when the
+action moves into `error` or `done`, Microcosm recalculates state
+starting from the point _prior_ to the `open` state update. The
+message stops being in a loading state because, as far as Microcosm is
+now concerned, _it never occured_.
+
+### Forks: Global state, local concerns
+
+Global state management reduces the complexity of change propagation
+tremendously. However it can make application features such as
+pagination, sorting, and filtering difficult.
+
+How do we maintain the current page we are on while keeping in sync
+with the total pool of known records?
+
+To accommodate this use case, there is `Microcosm::fork`:
+
+```javascript
+const UsersDomain = {
+  getInitialState() {
+    return []
+  },
+  addUsers(users, next) {
+    return users.concat(next)
+  },
+  register() {
+    return {
+      [getUsers]: this.addUsers
+    }
+  }
+})
+
+const PaginatedUsersDomain {
+  getInitialState() {
+    return []
+  },
+  addUsers(users, next) {
+    let page = next.map(user => user.id)
+
+    return users.filter(user => page.contains(user.id))
+  },
+  register() {
+    return {
+      [getUsers]: this.addUsers
+    }
+  }
+})
+
+let roster = new Microcosm()
+let pagination = parent.fork()
+
+roster.addDomain('users', UsersDomain)
+pagination.addDomain('users', PaginatedUsersDomain)
+
+// Forks share the same history, so you could also push
+// from `pagination`
+roster.push(getUsers, { page: 1 }) // 10 users
+roster.push(getUsers, { page: 2 }) // 10 users
+
+// when it finishes...
+console.log(roster.state.users.length) // 20
+console.log(pagination.state.users.length) // 10
+```
+
+`fork` returns a new Microcosm, however it shares the same action
+history. Additionally, it inherits state updates from its
+parent. In this example, we've added special version of the `roster`
+repo that only keeps track of the current page.
+
+As `getUsers()` is called, the `roster` will add the new users to the
+total pool of records. Forks dispatch sequentially, so the child
+`pagination` repo is able to filter the data set down to only what it
+needs.
+
+This is useful when working with
+the [`Presenter` addon](./docs/api/presenter.md). A special React
+component that can build a view model around a given Microcosm state,
+sending it to child "passive view" components.
+
+All Microcosms sent into a Presenter are forked, granting them a sandbox
+for data operations specific to a particular part of an application:
+
+```javascript
+class PaginatedUsers extends Presenter {
+  setup (repo, { page }) {
+    repo.add('users', PaginatedUsersDomain)
+
+    repo.push(getUsers, page)
+  }
+
+  model () {
+    return {
+      page: state => state.users
+    }
+  }
+
+  view ({ page }) {
+    return <UsersTable users={page} />
+  }
+}
+
+const repo = new Microcosm()
+repo.addDomain('users', UsersDomain)
+
+ReactDOM.render(<PaginatedUsers repo={repo} page="1" />, el)
+```
+
 
 ## What is it trying to solve?
 
-1. State isolation. Requests to render applications server-side should
-   be as stateless as possible. Client-side libraries (such as
-   [Colonel Kurtz](https://github.com/vigetlabs/colonel-kurtz)) need easy
-   containment from other instances on the page.
-2. Singletons are simple, but make it easy to accidentally share
-   state. Microcosm keeps data in one place, operating on it
-   statelessly in other entities.
-3. Easy extension of core API and layering of features out of the
-   framework's scope.
+1. **Batteries included**. Plugins and middleware should not be
+   required to immediately be productive.
+2. **Easy to use**. Complicated UIs warrant complicated
+   workflows. Microcosm should make designing these experiences as
+   easy as possible.
+3. **Performant**. Ergonomics should not come at the cost of
+   performance.
+4. **Powerful:** Microcosm's transactional state management, action
+   statuses, and state sandboxing should provide exceptional tools for
+   building applications.
 
 ## Inspiration
 
@@ -200,8 +358,9 @@ Internally, Microcosm calculates state by rolling forward through a historical a
 - [Event Sourcing Pattern](http://martinfowler.com/eaaDev/EventSourcing.html)
 - [Apache Kafka](http://kafka.apache.org/)
 - [LMAX Architecture](http://martinfowler.com/articles/lmax.html)
+- [Redux](https://github.com/reactjs/redux) (Provider/Connect and thunks)
 
-***
+---
 
 <a href="http://code.viget.com">
   <img src="http://code.viget.com/github-banner.png" alt="Code At Viget">
