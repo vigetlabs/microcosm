@@ -58,13 +58,13 @@ Resolves an action. Sends the result and any errors to a given error-first callb
 repo.push(createPlanet, { name: 'Merkur' })
 ```
 
-### `reset(data, deserialize)`
+### `reset(data, deserialize?)`
 
 Resets state to the result of `Microcosm::getInitialState()`. If the
 first argument is provided, it will merge into this value. If the second
 argument is true, Microcosm will call `deserialize` on the data.
 
-### `patch(data, deserialize)`
+### `patch(data, deserialize?)`
 
 Merges a data payload into the existing state. If the second argument
 is true, Microcosm will call `deserialize` on the data.
