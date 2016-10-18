@@ -58,16 +58,16 @@ Resolves an action. Sends the result and any errors to a given error-first callb
 repo.push(createPlanet, { name: 'Merkur' })
 ```
 
-### `reset (state)`
+### `reset(data, deserialize)`
 
-Resets state to the result of calling `getInitialState()`. Optionally
-folds on a provided state object.
+Resets state to the result of `Microcosm::getInitialState()`. If the
+first argument is provided, it will merge into this value. If the second
+argument is true, Microcosm will call `deserialize` on the data.
 
-### `patch(state)`
+### `patch(data, deserialize)`
 
-Partially merge in a piece of repo state. This function is great for
-bootstrapping data when rendering from the server. It will not blow
-away keys that haven't been provided.
+Merges a data payload into the existing state. If the second argument
+is true, Microcosm will call `deserialize` on the data.
 
 ```javascript
 repo.patch({

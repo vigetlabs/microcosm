@@ -277,10 +277,15 @@ export default class Microcosm extends Emitter {
    * on to the result of `getInitialState()`.
    *
    * @param {Object} state - A new state object to apply to the instance
+   * @param {Object} deserialize - Should the data be deserialized?
    * @return {Action} action - An action representing the reset operation.
    */
-  reset (state) {
-    return this.push(lifecycle._willReset, merge(this.getInitialState(), state))
+  reset (data, deserialize) {
+    if (deserialize === true) {
+      data = this.deserialize(data)
+    }
+
+    return this.push(lifecycle._willReset, merge(this.getInitialState(), data))
   }
 
   /**
@@ -288,15 +293,20 @@ export default class Microcosm extends Emitter {
    * processed state object.
    *
    * @param {Object} data - A raw state object to deserialize and apply to the instance
+   * @param {Object} deserialize - Should the data be deserialized?
    * @return {Action} action - An action representing the patch operation.
    */
-  patch (data) {
+  patch (data, deserialize) {
+    if (deserialize === true) {
+      data = this.deserialize(data)
+    }
+
     return this.push(lifecycle._willPatch, data)
   }
 
   replace (state) {
-    console.warn('repo.replace has been deprecated. Please use repo.patch.')
-    return this.patch(this.deserialize(state))
+    console.warn('Microcosm::replace has been deprecated. Please use repo.patch(state, true).')
+    return this.patch(state, true)
   }
 
   /**

@@ -1,22 +1,5 @@
 import Microcosm from '../src/microcosm'
 
-test('patch partially updates', function () {
-  const repo = new Microcosm()
-
-  repo.addDomain('a', {
-    getInitialState: n => true
-  })
-
-  repo.addDomain('b', {
-    getInitialState: n => true
-  })
-
-  repo.patch({ a: false })
-
-  expect(repo.state.a).toBe(false)
-  expect(repo.state.b).toBe(true)
-})
-
 test('it will not deserialize null', function () {
   const repo = new Microcosm()
 
@@ -114,4 +97,84 @@ test('if pure, it will emit a change if state is not shallowly equal', function 
   repo.push(identity, 1)
 
   expect(repo.state).not.toEqual(first)
+})
+
+describe('patch', function () {
+
+  test('patch partially updates state', function () {
+    const repo = new Microcosm()
+
+    repo.addDomain('a', {
+      getInitialState: n => true
+    })
+
+    repo.addDomain('b', {
+      getInitialState: n => true
+    })
+
+    repo.patch({ a: false })
+
+    expect(repo.state.a).toBe(false)
+    expect(repo.state.b).toBe(true)
+  })
+
+  test('patch can deserialize the provided data', function () {
+    const repo = new Microcosm()
+
+    repo.addDomain('test', {
+      getInitialState: n => '',
+      deserialize: n => n.toUpperCase()
+    })
+
+    repo.patch({ test: 'deserialize' }, true)
+
+    expect(repo.state.test).toBe('DESERIALIZE')
+  })
+
+})
+
+describe('reset', function () {
+
+  test('reverts to the initial state', function () {
+    const repo = new Microcosm()
+
+    repo.addDomain('test', {
+      getInitialState: n => true
+    })
+
+    repo.patch({ test: false })
+
+    expect(repo.state.test).toBe(false)
+
+    repo.reset()
+
+    expect(repo.state.test).toBe(true)
+  })
+
+  test('can fold in a data parameter', function () {
+    const repo = new Microcosm()
+
+    repo.addDomain('first', {
+      getInitialState: n => true
+    })
+
+    repo.reset({ second: true })
+
+    expect(repo.state.first).toBe(true)
+    expect(repo.state.second).toBe(true)
+  })
+
+  test('can deserialized the data parameter', function () {
+    const repo = new Microcosm()
+
+    repo.addDomain('test', {
+      getInitialState: n => '',
+      deserialize: n => n.toUpperCase()
+    })
+
+    repo.reset({ test: 'deserialize' }, true)
+
+    expect(repo.state.test).toBe('DESERIALIZE')
+  })
+
 })
