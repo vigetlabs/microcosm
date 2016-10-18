@@ -45,10 +45,10 @@ function getPlanet (id) {
   return fetch('/planets/' + id).then(response => response.json())
 }
 
-let action = repo.push(getPlanet, 'Saturn')
+let action = repo.push(getPlanet, 'saturn')
 
 action.onDone(function(planet) {
-  console.log(planet.id) // Saturn
+  console.log(planet.id) // saturn
 })
 ```
 
@@ -60,7 +60,7 @@ the following chain of commands:
 1. Received Promise, `open` the action
 2. Promise finished loading:
    - Did it succeed? Mark the action as `done`
-   - Did it fail? Mark the action as 'failed'
+   - Did it fail? Mark the action as `failed`
 
 In all cases, **action types are automatically generated for
 you**. Domains (stores in old Flux) can subscribe to these unique
@@ -68,7 +68,7 @@ action states, granting fine grained control over the state of data.
 
 ### Domains: Stateless Stores
 
-A Microcosm domain fulfills the same role as stores in traditional
+A Microcosm domain fulfills a similar role to stores in traditional
 Flux, however they hold no state of their own. A domain is simply a
 set of operations for manipulating data as an action updates.
 
@@ -101,8 +101,9 @@ planet will be added to the list of known planets for the Microcosm.
 
 #### Pending, failed, and cancelled requests
 
-Requests for data can fail, and they can be in more than a pass/fail
-state. Microcosm makes it easy to handle these individual states:
+Requests are a story, not an end result. They are more than
+pass/fail. Microcosm makes it easy to handle pending, loading,
+cancelled, completed, and failed requests:
 
 ```javascript
 const PlanetsDomain = {
@@ -110,16 +111,19 @@ const PlanetsDomain = {
 
   register() {
     return {
-      [getPlanet.open]  : this.markLoading,
-      [getPlanet.done]  : this.addPlanet,
-      [getPlanet.error] : this.markError
+      [getPlanet.open]: this.markLoading,
+      [getPlanet.done]: this.addPlanet,
+      [getPlanet.error] this.markError,
+      [getPlanet.loading]: this.addPlanet,
+      [getPlanet.cancelled]: this.markCancelled
     }
   }
 }
 ```
 
-`open`, `done`, and `error` are action states. In our action creator, we can
-unlock a deeper level of control by returning a function:
+`open`, `loading`, `done`, `error` and `cancelled` are action
+states. In our action creator, we can unlock a deeper level of control
+by returning a function:
 
 ```javascript
 import request from 'superagent'
@@ -161,8 +165,8 @@ action.cancel()
 ```
 
 When `action.cancel()` is called, the action will move into a
-`cancelled` state. Since our domain doesn't handle that action state,
-no data operation will occur.
+`cancelled` state. If a domain doesn't handle a given state no data
+operation will occur.
 
 Visit [the API documentation for actions](./docs/api/actions.md) to
 read more.
@@ -188,12 +192,11 @@ let forever = new Microcosm({ maxHistory: Infinity })
 
 #### Optimistic updates
 
-But even more importantly, **Microcosm will never dispose an action
-that comes after an incomplete one**. When an action moves from `open`
-to `done`, or `cancelled`, the historical account of actions rolls back
-to the last state, rolling forward with the new action states. This
-makes optimistic updates a sync because action states are self
-cleaning:
+**Microcosm will never clean up an action that precedes incomplete
+work** When an action moves from `open` to `done`, or `cancelled`, the
+historical account of actions rolls back to the last state, rolling
+forward with the new action states. This makes optimistic updates a
+sync because action states are self cleaning:
 
 ```javascript
 import {send} from 'actions/chat'
@@ -227,17 +230,18 @@ const Messages = {
 
 In this example, as chat messages are sent, we optimistically update
 state with the pending message. At this point, the action is in an
-`open` state. The request has not finished. On completion, when the
-action moves into `error` or `done`, Microcosm recalculates state
-starting from the point _prior_ to the `open` state update. The
-message stops being in a loading state because, as far as Microcosm is
-now concerned, _it never occured_.
+`open` state. The request has not finished.
+
+On completion, when the action moves into `error` or `done`, Microcosm
+recalculates state starting from the point _prior_ to the `open` state
+update. The message stops being in a loading state because, as far as
+Microcosm is now concerned, _it never occured_.
 
 ### Forks: Global state, local concerns
 
 Global state management reduces the complexity of change propagation
 tremendously. However it can make application features such as
-pagination, sorting, and filtering difficult.
+pagination, sorting, and filtering cumbersome.
 
 How do we maintain the current page we are on while keeping in sync
 with the total pool of known records?
@@ -266,6 +270,8 @@ const PaginatedUsersDomain {
   addUsers(users, next) {
     let page = next.map(user => user.id)
 
+    // Reduce the user list down to only what was included
+    // in the current request
     return users.filter(user => page.contains(user.id))
   },
   register() {
@@ -281,8 +287,8 @@ let pagination = parent.fork()
 roster.addDomain('users', UsersDomain)
 pagination.addDomain('users', PaginatedUsersDomain)
 
-// Forks share the same history, so you could also push
-// from `pagination`
+// Forks share the same history, so you could also do
+// `pagination.push(getUsers, ...)`
 roster.push(getUsers, { page: 1 }) // 10 users
 roster.push(getUsers, { page: 2 }) // 10 users
 
@@ -301,10 +307,12 @@ total pool of records. Forks dispatch sequentially, so the child
 `pagination` repo is able to filter the data set down to only what it
 needs.
 
-This is useful when working with
-the [`Presenter` addon](./docs/api/presenter.md). A special React
-component that can build a view model around a given Microcosm state,
-sending it to child "passive view" components.
+### Networks of Microcosms with Presenters
+
+Fork is an important component of
+the [`Presenter` addon](./docs/api/presenter.md). Presenter is a
+special React component that can build a view model around a given
+Microcosm state, sending it to child "passive view" components.
 
 All Microcosms sent into a Presenter are forked, granting them a sandbox
 for data operations specific to a particular part of an application:
@@ -337,8 +345,8 @@ ReactDOM.render(<PaginatedUsers repo={repo} page="1" />, el)
 
 ## What is it trying to solve?
 
-1. **Batteries included**. Plugins and middleware should not be
-   required to immediately be productive.
+1. **Batteries included**. Install `microcosm`. Plugins and middleware
+   should not be required to immediately be productive.
 2. **Easy to use**. Complicated UIs warrant complicated
    workflows. Microcosm should make designing these experiences as
    easy as possible.
