@@ -345,7 +345,7 @@ ReactDOM.render(<PaginatedUsers repo={repo} page="1" />, el)
 
 ## What is it trying to solve?
 
-1. **Batteries included**. Install `microcosm`. Plugins and middleware
+1. **Batteries included**. Just install `microcosm`. Plugins and middleware
    should not be required to immediately be productive.
 2. **Easy to use**. Complicated UIs warrant complicated
    workflows. Microcosm should make designing these experiences as
