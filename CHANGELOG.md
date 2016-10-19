@@ -1,5 +1,13 @@
 # Changelog
 
+## 10.1.0 (Not released)
+
+- Completed actions can no longer change. For example, resolved
+  actions can not be cancelled. A cancelled action can not be
+  cancelled again.
+- Passing `true` as the second argument of `patch` and `reset` will
+  run deserialize on provided data.
+
 ## 10.0.0
 
 We made it! It's been a long road, but we're finally here.
