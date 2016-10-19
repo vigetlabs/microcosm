@@ -7,6 +7,8 @@
   cancelled again.
 - Passing `true` as the second argument of `patch` and `reset` will
   run deserialize on provided data.
+- Tag intents so that actions register the same in presenters and
+  repos.
 
 ## 10.0.0
 
