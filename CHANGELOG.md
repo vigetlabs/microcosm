@@ -1,6 +1,6 @@
 # Changelog
 
-## 10.1.0 (Not released)
+## 10.1.0
 
 - Completed actions can no longer change. For example, resolved
   actions can not be cancelled. A cancelled action can not be
