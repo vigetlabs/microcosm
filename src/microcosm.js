@@ -268,7 +268,7 @@ export default class Microcosm extends Emitter {
   }
 
   addStore () {
-    console.warn('repo.addStore has been deprecated. Please use repo.addDomain')
+    console.warn('Deprecation (10.0.0): Use repo.addDomain instead of repo.addStore.')
     return this.addDomain.apply(this, arguments)
   }
 
@@ -305,7 +305,7 @@ export default class Microcosm extends Emitter {
   }
 
   replace (state) {
-    console.warn('Microcosm::replace has been deprecated. Please use repo.patch(state, true).')
+    console.warn('Deprecation (10.0.0): Use repo.patch(state, true) instead of repo.replace(state).')
     return this.patch(state, true)
   }
 
