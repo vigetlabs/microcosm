@@ -460,3 +460,32 @@ test('teardown gets the last props', function () {
 
   expect(spy.mock.calls[0][1].test).toEqual('bar')
 })
+
+test('intents are tagged', function () {
+  const spy = jest.fn()
+
+  const a = function a () {}
+  const b = function a () {}
+
+  const TestView = React.createClass({
+    contextTypes: {
+      send: React.PropTypes.func.isRequired
+    },
+    render() {
+      return <button id="button" onClick={() => this.context.send(b, true)} />
+    }
+  })
+
+  class Test extends Presenter {
+    register() {
+      return { [a]: spy }
+    }
+    view() {
+      return <TestView />
+    }
+  }
+
+  mount(<Test />).find(TestView).simulate('click')
+
+  expect(spy).not.toHaveBeenCalled()
+})

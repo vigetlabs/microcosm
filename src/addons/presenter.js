@@ -1,6 +1,7 @@
 import React from 'react'
 import Microcosm from '../microcosm'
 import merge from '../merge'
+import tag from '../tag'
 import shallowEqual from '../shallow-equal'
 
 const EMPTY = {}
@@ -231,6 +232,10 @@ class PresenterContext extends React.Component {
    */
   send(intent, ...params) {
     const registry = this.props.presenter.register()
+
+    // Tag intents so that they register the same way in the Presenter
+    // and Microcosm instance
+    intent = tag(intent)
 
     // Does the presenter register to this intent?
     if (registry && registry.hasOwnProperty(intent)) {
