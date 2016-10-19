@@ -1,5 +1,3 @@
-var HappyPack = require('happypack')
-
 module.exports = {
   context: __dirname,
 
@@ -10,17 +8,6 @@ module.exports = {
     path     : process.cwd()
   },
 
-  plugins: [
-    new HappyPack({
-      id: 'examples'
-    }),
-    function Logger () {
-      this.plugin("done", function (stats) {
-        console.log("Built in %sms", stats.endTime - stats.startTime)
-      })
-    }
-  ],
-
   resolve: {
     extensions: [ '', '.js', '.jsx' ]
   },
@@ -29,8 +16,7 @@ module.exports = {
     loaders: [{
       test: /\.jsx*/,
       loader: 'babel',
-      exclude: [/node_modules/],
-      happy: { id: "examples" }
+      exclude: [/node_modules/]
     }]
   },
 
@@ -38,7 +24,6 @@ module.exports = {
     contentBase: process.cwd(),
     publicPath: '/',
     port: process.env.PORT || 4000,
-    noInfo: true,
     historyApiFallback: true
   }
 }
