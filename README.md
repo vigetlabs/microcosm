@@ -202,6 +202,8 @@ let forever = new Microcosm({ maxHistory: Infinity })
   <img style="display: block; margin: 0 auto;" src="https://github.com/vigetlabs/microcosm-debugger/raw/master/docs/chat-debugger.gif" alt="Microcosm Debugger" width="600" />
 </a>
 
+Taken from [the Chatbot example](https://github.com/vigetlabs/microcosm/tree/master/examples/chatbot).
+
 #### Optimistic updates
 
 **Microcosm will never clean up an action that precedes incomplete
