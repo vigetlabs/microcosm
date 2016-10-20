@@ -13,10 +13,10 @@ actions move through their lifecycle, Microcosm reconciles changes to
 actions in the order they were created. This makes optimistic updates,
 cancellation, and loading states much simpler. They self clean.
 
-This provides strong separation between actions and state. Microcosms
-can ["fork"](#forks-global-state-local-concerns) to accommodate
-specific use cases. Keep global state global, while easily supporting
-pagination, filtering, and other secondary data processing.
+It also provides strong separation between actions and
+state. Microcosms can ["fork"](#forks-global-state-local-concerns) to
+accommodate specific use cases. Keep global state global, while easily
+supporting pagination, filtering, and other secondary data processing.
 
 1. **Batteries included**. Just install `microcosm`. Plugins and middleware
    should not be required to immediately be productive.
