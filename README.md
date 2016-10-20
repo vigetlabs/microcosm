@@ -8,12 +8,10 @@
 Microcosm is [Flux](https://facebook.github.io/flux/) with first-class
 actions and state sandboxing.
 
-The source of truth in Microcosm is a ledger of outstanding
-actions. As they move through different states (`open`, `done`,
-`cancelled`, etc...), Microcosm reconciles changes by rolling back to
-a "head" state, dispatching "staged" actions in the order they were
-created. This makes optimistic updates, cancellation, progress, and
-failure states a breeze. They self clean.
+The source of truth in Microcosm is a historical record of actions. As
+actions move through their lifecycle (`open`, `done`, `cancelled`,
+etc.), they are reconciled by reverting state back a "head",
+dispatching "staged" actions in the order they were created.
 
 Microcosm also maintains strong separation between actions and data
 processing. It provides tools for keeping global application state
