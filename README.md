@@ -5,17 +5,18 @@
 [![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 [![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 
-Microcosm is a state management library for real-world JavaScript
-apps.
+Microcosm is [Flux](https://facebook.github.io/flux/) with actions at
+center stage.
 
-Drawing from [Flux](https://facebook.github.io/flux/) heritage, it
-places actions at center state. It keeps a historical account of all
-actions fired by your app. As they change, Microcosm rolls back to the
-last "incomplete" action, recalculating state by moving through a
-consistent history.
+By maintaining a historical account of all actions, Microcosm can
+predictably recalculate state as their statuses change. This makes
+optimistic updates, cancellation, progress, and failure states a
+breeze.
 
-This makes optimistic updates, cancellation, progress, and failure
-states a breeze.
+Microcosm also maintains strong separation between actions and data
+processing. It provides tools for keeping global application state
+global, while accommodating specific data modeling needs within
+components of an application (see [Forks](#forks-global-state-local-concerns)).
 
 1. **Batteries included**. Just install `microcosm`. Plugins and middleware
    should not be required to immediately be productive.
