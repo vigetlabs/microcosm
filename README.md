@@ -1,10 +1,5 @@
 # [![Microcosm](http://code.viget.com/microcosm/images/microcosm.svg)](http://code.viget.com/microcosm/)
 
-[![CircleCI](https://img.shields.io/circleci/project/vigetlabs/microcosm.svg?maxAge=2592000)](https://circleci.com/gh/vigetlabs/microcosm)
-[![Coveralls](https://img.shields.io/coveralls/vigetlabs/microcosm.svg?maxAge=2592000)](https://coveralls.io/github/vigetlabs/microcosm)
-[![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
-[![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
-
 Microcosm is [Flux](https://facebook.github.io/flux/) with first-class
 actions and state sandboxing.
 
@@ -17,6 +12,11 @@ This provides strong separation between actions and state. Microcosms
 can ["fork"](#forks-global-state-local-concerns) to accommodate
 specific use cases. Keep global state global, while easily supporting
 pagination, filtering, and other secondary data processing.
+
+[![CircleCI](https://img.shields.io/circleci/project/vigetlabs/microcosm.svg?maxAge=2592000)](https://circleci.com/gh/vigetlabs/microcosm)
+[![Coveralls](https://img.shields.io/coveralls/vigetlabs/microcosm.svg?maxAge=2592000)](https://coveralls.io/github/vigetlabs/microcosm)
+[![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
+[![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 
 1. **Batteries included**. Just install `microcosm`. Plugins and middleware
    should not be required to immediately be productive.
