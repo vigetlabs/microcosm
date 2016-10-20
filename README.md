@@ -23,7 +23,7 @@ supporting pagination, filtering, and other secondary data processing.
 2. **Easy to use**. Less boilerplate. More expressive. The Microcosm
    interface is easy to use, easy to understand, and easy to maintain.
 3. **Powerful:** Microcosm's transactional state management, action
-   statuses, and state sandboxing should provide exceptional tools for
+   statuses, and state sandboxing provide exceptional tools for
    building applications.
 
 ## Documentation
