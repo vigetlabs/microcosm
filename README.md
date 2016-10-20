@@ -9,9 +9,8 @@ Microcosm is [Flux](https://facebook.github.io/flux/) with actions at
 center stage.
 
 By maintaining a historical account of all actions, Microcosm can
-predictably recalculate state as their statuses change. This makes
-optimistic updates, cancellation, progress, and failure states a
-breeze.
+predictably recalculate state as actions change. This makes optimistic
+updates, cancellation, progress, and failure states a breeze.
 
 Microcosm also maintains strong separation between actions and data
 processing. It provides tools for keeping global application state
