@@ -1,22 +1,31 @@
 # [![Microcosm](http://code.viget.com/microcosm/images/microcosm.svg)](http://code.viget.com/microcosm/)
 
+Microcosm is a state management library for real-world JavaScript
+apps.
+
+Drawing from [Flux](https://facebook.github.io/flux/) heritage,
+Microcosm places actions at center state. It keeps a historical
+account of all actions fired by your app. As they change, Microcosm
+rolls back to the last "incomplete" action, recalculating state by
+rolling forward through history.
+
+Actions are a story, not a result. This makes optimistic updates,
+cancellation, progress, and failure states a breeze. Actions always
+execute in a consistent order, making it easier to reason about
+intricate sequences of operations.
+
+1. **Batteries included**. Just install `microcosm`. Plugins and middleware
+   should not be required to immediately be productive.
+2. **Easy to use**. Less boilerplate. More expressive. The Microcosm
+   interface is easy to use, easy to understand, and easy to maintain.
+3. **Powerful:** Microcosm's transactional state management, action
+   statuses, and state sandboxing should provide exceptional tools for
+   building applications.
+
 [![CircleCI](https://img.shields.io/circleci/project/vigetlabs/microcosm.svg?maxAge=2592000)](https://circleci.com/gh/vigetlabs/microcosm)
 [![Coveralls](https://img.shields.io/coveralls/vigetlabs/microcosm.svg?maxAge=2592000)](https://coveralls.io/github/vigetlabs/microcosm)
 [![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 [![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
-
-Microcosm is an evolution of [Flux](https://facebook.github.io/flux/)
-that makes it easy to manage complicated async workflows and unique
-data modeling requirements of complicated UIs.
-
-1. [Documentation](#documentation)
-2. [Overview](#overview)
-   1. [Actions](#actions-take-center-stage)
-   2. [Domains](#domains-stateless-stores)
-   3. [Historical State Management](#historical-account-of-everything-that-has-happened)
-   4. [Forks: Global State, Local Concerns](#forks-global-state-local-concerns)
-   5. [Networks of Microcosms](#networks-of-microcosms-with-presenters)
-3. [What is it trying to solve?](#what-is-it-trying-to-solve)
 
 ## Documentation
 
@@ -106,9 +115,8 @@ planet will be added to the list of known planets for the Microcosm.
 
 #### Pending, failed, and cancelled requests
 
-Requests are a story, not an end result. They are more than
-pass/fail. Microcosm makes it easy to handle pending, loading,
-cancelled, completed, and failed requests:
+Microcosm makes it easy to handle pending, loading, cancelled,
+completed, and failed requests:
 
 ```javascript
 const PlanetsDomain = {
@@ -346,20 +354,6 @@ repo.addDomain('users', UsersDomain)
 
 ReactDOM.render(<PaginatedUsers repo={repo} page="1" />, el)
 ```
-
-
-## What is it trying to solve?
-
-1. **Batteries included**. Just install `microcosm`. Plugins and middleware
-   should not be required to immediately be productive.
-2. **Easy to use**. Complicated UIs warrant complicated
-   workflows. Microcosm should make designing these experiences as
-   easy as possible.
-3. **Performant**. Ergonomics should not come at the cost of
-   performance.
-4. **Powerful:** Microcosm's transactional state management, action
-   statuses, and state sandboxing should provide exceptional tools for
-   building applications.
 
 ## Inspiration
 
