@@ -5,12 +5,15 @@
 [![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 [![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 
-Microcosm is [Flux](https://facebook.github.io/flux/) with actions at
-center stage.
+Microcosm is [Flux](https://facebook.github.io/flux/) with first-class
+actions and state sandboxing.
 
-By maintaining a historical account of all actions, Microcosm can
-predictably recalculate state as actions change. This makes optimistic
-updates, cancellation, progress, and failure states a breeze.
+The source of truth in Microcosm is a ledger of outstanding
+actions. As they move through different states (`open`, `done`,
+`cancelled`, etc...), Microcosm reconciles changes by rolling back to
+a "head" state, dispatching "staged" actions in the order they were
+created. This makes optimistic updates, cancellation, progress, and
+failure states a breeze. They self clean.
 
 Microcosm also maintains strong separation between actions and data
 processing. It provides tools for keeping global application state
