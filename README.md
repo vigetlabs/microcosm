@@ -8,16 +8,14 @@
 Microcosm is a state management library for real-world JavaScript
 apps.
 
-Drawing from [Flux](https://facebook.github.io/flux/) heritage,
-Microcosm places actions at center state. It keeps a historical
-account of all actions fired by your app. As they change, Microcosm
-rolls back to the last "incomplete" action, recalculating state by
-rolling forward through history.
+Drawing from [Flux](https://facebook.github.io/flux/) heritage, it
+places actions at center state. It keeps a historical account of all
+actions fired by your app. As they change, Microcosm rolls back to the
+last "incomplete" action, recalculating state by moving through a
+consistent history.
 
-Actions are a story, not a result. This makes optimistic updates,
-cancellation, progress, and failure states a breeze. Actions always
-execute in a consistent order, making it easier to reason about
-intricate sequences of operations.
+This makes optimistic updates, cancellation, progress, and failure
+states a breeze.
 
 1. **Batteries included**. Just install `microcosm`. Plugins and middleware
    should not be required to immediately be productive.
