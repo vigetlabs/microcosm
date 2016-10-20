@@ -9,14 +9,16 @@ Microcosm is [Flux](https://facebook.github.io/flux/) with first-class
 actions and state sandboxing.
 
 The source of truth in Microcosm is a historical record of actions. As
-actions move through their lifecycle (`open`, `done`, `cancelled`,
-etc.), they are reconciled by reverting state back a "head",
-dispatching "staged" actions in the order they were created.
+actions move through their lifecycle, Microcosm reverts to a head
+state, dispatching all outstanding actions in the order they were
+created. This makes optimistic updates, cancellation, and loading
+states much simpler. They self clean.
 
-Microcosm also maintains strong separation between actions and data
-processing. It provides tools for keeping global application state
-global, while accommodating specific data modeling needs within
-components of an application (see [Forks](#forks-global-state-local-concerns)).
+By maintaining a strong separation between actions and data
+processing, unique data processing needs can be sandboxed
+into [forks](#forks-global-state-local-concerns) of top level
+application state. Keep global concerns global, while easily
+accommodating specific use cases within your app.
 
 1. **Batteries included**. Just install `microcosm`. Plugins and middleware
    should not be required to immediately be productive.
