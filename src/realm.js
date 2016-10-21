@@ -31,7 +31,13 @@ export default class Realm {
       key = null
     }
 
-    let domain = typeof config === 'function' ? new config() : config
+    let domain = null
+
+    if (typeof config === 'function') {
+      domain = new config()
+    } else {
+      domain = merge({}, config)
+    }
 
     // Allow for simple classes and object primitives. Make sure
     // they implement the key Domain methods.

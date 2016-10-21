@@ -63,6 +63,20 @@ describe('Creation modes', function () {
     expect(repo.state.count).toBe(0)
   })
 
+  test('object - original primitive is not mutated', function () {
+    const repo = new Microcosm()
+
+    const MyDomain = {
+      getInitialState() {
+        return 0
+      }
+    }
+
+    repo.addDomain('count', MyDomain)
+
+    expect(MyDomain.setup).toBeUndefined()
+  })
+
   test('class - simple', function () {
     const repo = new Microcosm()
 
