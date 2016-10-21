@@ -24,13 +24,13 @@ const repo = new Microcosm()
 const increaseCount = n => n
 
 repo.addDomain('count', {
-  getInitialState() {
+  getInitialState () {
     return 0
   },
-  increase(count, amount) {
+  increase (count, amount) {
     return count + amount
   },
-  register() {
+  register () {
     return {
       [increaseCount] : this.increase
     }
@@ -39,7 +39,7 @@ repo.addDomain('count', {
 
 function StepperForm ({ count }) {
   return (
-    <Form intent="increaseCount">
+    <Form intent={increment}>
       <input type="hidden" name="amount" value="1" />
       <button>+ 1</button>
     </Form>
@@ -47,21 +47,18 @@ function StepperForm ({ count }) {
 }
 
 class CountPresenter extends Presenter {
-  viewModel() {
+  model () {
     return {
-      count: state => state.count
+      count : state => state.count
     }
   }
-  register() {
-    return {
-      increaseCount: this.increaseCount
-    }
-  }
-  increaseCount(repo, { amount }) {
+
+  increaseCount (repo, { amount }) {
     return repo.push(increment, amount)
   }
-  render() {
-    return <StepperForm count={ this.state.count } />
+
+  view ({ count }) {
+    return <StepperForm count={ count } />
   }
 }
 
@@ -85,24 +82,28 @@ The serialization function. By default this uses
 [`form-serialize`](https://github.com/defunctzombie/form-serialize). On
 submission, this function is given the associated form HTML element.
 
-### onSubmit
+### onSubmit(event, action)
 
 An event callback executed immediately after the form submits and the
 intent is broadcasted.
 
-### onDone(payload, form)
+### onDone(payload)
 
-After broadcasting, if the Presenter handler returns a Microcosm
-action, this callback will execute when the action resolves
-successfully.
+After broadcasting, if the dispatched intent returns a Microcosm
+action, this callback will execute if the action completes successfully.
 
-### onError(error, form)
+### onError(payload)
 
-After broadcasting, if the Presenter handler returns a Microcosm
-action, this callback will execute when the action fails.
+After broadcasting, if the dispatched intent returns a Microcosm
+action, this callback will execute if the action is rejected.
 
-### onUpdate(payload, form)
+### onCancel(payload)
 
-After broadcasting, if the Presenter handler returns a Microcosm
+After broadcasting, if the dispatched intent returns a Microcosm
+action, this callback will execute when the action is cancelled.
+
+### onUpdate(payload)
+
+After broadcasting, if the dispatched intent returns a Microcosm
 action, this callback will execute when the action emits a progress
 update.

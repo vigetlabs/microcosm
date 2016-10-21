@@ -154,7 +154,20 @@ invoke the method with the associated parameters.
 
 If a Presenter does not implement an intent, it will bubble up to any
 parent Presenters. If no Presenter implements the intent, an exception
-will raise.
+will raise. This is useful for broadcasting action intents. For
+example, we could replace the prior Form example with:
+
+```javascript
+function StepperForm ({ count }) {
+  return (
+    <Form intent={ increaseCount }>
+      <input type="hidden" name="amount" value="1" />
+      <p>The current count is { count }</p>
+      <button>+ 1</button>
+    </Form>
+  )
+}
+```
 
 ## API
 
