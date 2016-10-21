@@ -3,10 +3,10 @@ import lifecycle from './lifecycle'
 
 function format (string) {
   /*eslint-disable no-unused-vars*/
-  const [ _, action, state ] = `${ string }`.match(/(\w*)\_\d+\_(\w*)/, ' ') || []
+  const [ _, action, state = 'done' ] = `${ string }`.match(/(\w*)\_\d+[\_\w]*/) || []
   /*eslint-enable no-unused-vars*/
 
-  return action ? `the ${ action } action's ${ state } state` : string
+  return action ? action + '.' + state : string
 }
 
 function getHandler (key, domain, type) {
@@ -17,8 +17,8 @@ function getHandler (key, domain, type) {
 
     if (process.env.NODE_ENV !== 'production') {
       if (registrations.hasOwnProperty(type) && registrations[type] === undefined) {
-        console.warn('The handler for %s within a domain for "%s" is undefined. ' +
-                     'Check the register method for this domain.', format(type), key)
+        console.warn('A domain handler for "%s" registered an undefined handler for `%s`. ' +
+                     'Check the register method for this domain.', key, format(type))
       }
     }
 
