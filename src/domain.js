@@ -8,8 +8,18 @@ const EMPTY = {}
 
 export default class Domain {
 
-  constructor() {
-    this.setup()
+  /**
+   * Ensure that the given object supports the baseline requirements
+   * of Domains.
+   */
+  static ensure (obj) {
+
+    for (var key in Domain.prototype) {
+      if (Domain.prototype.hasOwnProperty(key) && (key in obj === false)) {
+        obj[key] = Domain.prototype[key]
+      }
+    }
+
   }
 
   /**

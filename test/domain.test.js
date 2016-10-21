@@ -2,91 +2,155 @@ import Microcosm from '../src/microcosm'
 import Domain from '../src/domain'
 import logger from './helpers/logger'
 
-test('domains can be objects with lifecycle methods', function () {
-  const repo = new Microcosm()
+describe('State management', function () {
 
-  repo.addDomain('key', {
-    getInitialState: () => true
-  })
+  test('shouldCommit - is given initial state at the start', function () {
+    const repo = new Microcosm()
+    const test = jest.fn(() => false)
 
-  expect(repo.state.key).toBe(true)
-})
-
-test('warns if a register handler is undefined', function () {
-  const repo = new Microcosm()
-  const action = n => n
-
-  logger.record()
-
-  repo.addDomain('key', {
-    register() {
-      return {
-        [action]: undefined
+    class Counter extends Domain {
+      getInitialState() {
+        return 0
+      }
+      get shouldCommit() {
+        return test
       }
     }
+
+    repo.addDomain('count', Counter)
+
+    expect(test).toHaveBeenCalledWith(0, 0)
   })
 
-  repo.push(action)
+  test('shouldCommit - prevents commiting if returns false', function () {
+    const repo = new Microcosm()
+    const add  = n => n
 
-  expect(logger.count('warn')).toEqual(1)
+    repo.addDomain('count', {
+      getInitialState() {
+        return 0
+      },
+      shouldCommit(next, previous) {
+        return Math.round(next) !== Math.round(previous)
+      },
+      register() {
+        return {
+          [add]: (a, b) => a + b
+        }
+      }
+    })
 
-  logger.restore()
+    let first = repo.state
+
+    return repo.push(add, 0.1).onDone(function() {
+      expect(repo.state.count).toBe(first.count)
+    })
+  })
+
 })
 
-test('can control if state should be committed', function () {
-  const repo = new Microcosm()
-  const add  = n => n
+describe('Creation modes', function () {
 
-  repo.addDomain('count', {
-    getInitialState() {
-      return 0
-    },
-    shouldCommit(next, previous) {
-      return Math.round(next) !== Math.round(previous)
-    },
-    register() {
-      return {
-        [add]: (a, b) => a + b
+  test('object - primitive', function () {
+    const repo = new Microcosm()
+
+    repo.addDomain('count', {
+      getInitialState() {
+        return 0
+      }
+    })
+
+    expect(repo.state.count).toBe(0)
+  })
+
+  test('class - simple', function () {
+    const repo = new Microcosm()
+
+    class Counter {
+      getInitialState() {
+        return 0
       }
     }
+
+    repo.addDomain('count', Counter)
+
+    expect(repo.state.count).toBe(0)
   })
 
-  let first = repo.state
+  test('class - extends domain', function () {
+    const repo = new Microcosm()
 
-  return repo.push(add, 0.1).onDone(function() {
-    expect(repo.state.count).toBe(first.count)
+    class Counter extends Domain{
+      getInitialState() {
+        return 0
+      }
+    }
+
+    repo.addDomain('count', Counter)
+
+    expect(repo.state.count).toBe(0)
   })
+
 })
 
-test('domain have a setup step', function () {
-  const repo = new Microcosm()
-  const test = jest.fn()
+describe('Lifecycle', function() {
 
-  class Counter extends Domain {
-    get setup() {
-      return test
+  test('setup - gets called with a reference to the repo', function () {
+    const repo = new Microcosm()
+    const test = jest.fn()
+
+    class Counter extends Domain {
+      get setup () {
+        return test
+      }
     }
-  }
 
-  repo.addDomain('count', Counter)
+    repo.addDomain('count', Counter)
 
-  expect(test).toHaveBeenCalled()
+    expect(test).toHaveBeenCalledWith(repo)
+  })
+
+  test('teardown - gets called with a reference to the repo', function () {
+    const repo = new Microcosm()
+    const test = jest.fn()
+
+    class Counter extends Domain {
+      get teardown () {
+        return test
+      }
+    }
+
+    repo.addDomain('count', Counter)
+
+    repo.teardown()
+
+    expect(test).toHaveBeenCalledWith(repo)
+  })
+
 })
 
-test('last state in shouldCommit starts as initial state', function () {
-  const repo = new Microcosm()
-  const test = jest.fn(() => false)
 
-  class Counter extends Domain {
-    getInitialState() {
-      return 0
-    }
-    get shouldCommit() {
-      return test
-    }
-  }
+describe('Action registration', function() {
 
-  repo.addDomain('count', Counter)
+  test('warns if a register handler is undefined', function () {
+    const repo = new Microcosm()
+    const action = n => n
 
-  expect(test).toHaveBeenCalledWith(0, 0)
+    logger.record()
+
+    repo.addDomain('key', {
+      register() {
+        return {
+          [action] : undefined
+        }
+      }
+    })
+
+    repo.push(action)
+
+    expect(logger.count('warn')).toEqual(1)
+
+    logger.restore()
+  })
+
 })

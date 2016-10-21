@@ -24,7 +24,7 @@ export default class Microcosm extends Emitter {
     super()
 
     this.history = history || new History(maxHistory)
-    this.realm = new Realm()
+    this.realm = new Realm(this)
 
     this.pure = pure
     this.parent = parent
@@ -74,7 +74,7 @@ export default class Microcosm extends Emitter {
    */
   teardown() {
     // Teardown all domains
-    this.realm.teardown()
+    this.realm.teardown(this)
 
     // Remove all listeners
     this.off()

@@ -8,7 +8,8 @@ import merge from './merge'
 
 export default class Realm {
 
-  constructor() {
+  constructor(repo) {
+    this.repo = repo
     this.domains = []
     this.registry = {}
   }
@@ -30,18 +31,18 @@ export default class Realm {
       key = null
     }
 
-    let domain = null
+    let domain = typeof config === 'function' ? new config() : config
 
-    if (typeof config === 'function') {
-      domain = new config()
-    } else {
-      domain = merge(new Domain(), config)
-    }
+    // Allow for simple classes and object primitives. Make sure
+    // they implement the key Domain methods.
+    Domain.ensure(domain)
 
     this.domains[this.domains.length] = [ key, domain ]
 
     // Reset the registry
     this.registry = {}
+
+    domain.setup(this.repo)
 
     return this
   }
@@ -56,9 +57,9 @@ export default class Realm {
     return state
   }
 
-  teardown() {
+  teardown () {
     for (var i = 0; i < this.domains.length; i++) {
-      this.domains[i][1].teardown()
+      this.domains[i][1].teardown(this.repo)
     }
   }
 
