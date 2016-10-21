@@ -20,6 +20,7 @@ export default class Domain {
       }
     }
 
+    return obj
   }
 
   /**
