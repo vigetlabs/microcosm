@@ -5,10 +5,13 @@
 
 ## Overview
 
-A tree-like data structure that keeps track of the execution order of
-actions that are pushed into it, sequentially folding them together to
-produce an object that can be rendered by a presentation library (such
-as [React](https://facebook.github.io/react/)).
+Microcosm is [Flux](https://facebook.github.io/flux/) with first-class
+actions and state sandboxing.
+
+The source of truth in Microcosm is a historical record of actions. As
+they move through a set lifecycle, Microcosm reconciles actions in the
+order they were created. This makes optimistic updates, cancellation,
+and loading states much simpler. They self clean.
 
 ## API
 
@@ -148,7 +151,7 @@ actions. Try setting `maxHistory` to a specific value, like `10` or `100`.
 
 ### `on(event, callback)`
 
-Adds an event listener to a Microcosm instance. Currently, this events
+Adds an event listener to a Microcosm instance. Currently, these events
 are:
 
 - `change`: The Microcosm instance updated state

@@ -17,9 +17,11 @@ within a component tree. It is designed specifically to extract and
 compute properties coming from a Microcosm instance and efficiently
 send them down as `props` to child "passive view" React components.
 
-Additionally Presenters may implement `intents`, allowing view
-components lower in the component tree to broadcast a message to be
-caught and handled by Presenters.
+Additionally, Presenters expose an "intent" API
+(see [`withIntent`](./with-intent.md) and [`<Form />`](./form.md)). Intents
+allow components deep within a component tree the ability to
+broadcast messages through Presenters, eventually passing straight
+into a Microcosm repo if no Presenter's `register` method intercepts it.
 
 We'll cover both of these features within this document
 
@@ -62,13 +64,13 @@ child component.
 
 ### Listening to all state changes
 
-While we do not recommend it for large projects, some times it's simply easier
+While we do not recommend it for large repos, some times it's simply easier
 to subscribe to all repo changes. `model` can also return a function, which
 will be called with state:
 
 ```javascript
 class PlanetsPresenter extends Presenter {
-  model ({ props }) {
+  model () {
     return state => state
   }
 
