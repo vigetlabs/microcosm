@@ -125,11 +125,7 @@ class PresenterContext extends React.Component {
 
     this.repo = this.getRepo()
     this.pure = this.getPurity()
-
-    this.updatePropMap(this.props)
-
-    this.state = this.getState()
-
+    this.state = {}
     this.repo.on('change', this.updateState, this)
   }
 
@@ -160,6 +156,9 @@ class PresenterContext extends React.Component {
 
   componentWillMount() {
     this.props.presenter.setup(this.repo, this.safeProps(this.props))
+
+    this.updatePropMap(this.props)
+    this.updateState()
   }
 
   componentWillUnmount() {

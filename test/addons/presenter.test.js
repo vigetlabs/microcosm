@@ -489,3 +489,23 @@ test('intents are tagged', function () {
 
   expect(spy).not.toHaveBeenCalled()
 })
+
+test('setup is called before the initial model', function () {
+  const spy = jest.fn()
+
+  class Test extends Presenter {
+    setup () {
+      spy('setup')
+    }
+
+    model () {
+      spy('model')
+      return {}
+    }
+  }
+
+  mount(<Test />)
+
+  expect(spy).toHaveBeenCalledTimes(2)
+  expect(spy).lastCalledWith('model')
+})
