@@ -211,6 +211,8 @@ class PlanetPresenter extends Presenter {
 If the Presenter is pure (passed in as either a prop or as an option to the
 associated repo), this will only update state if shallowly equal.
 
+When not implemented, model returns all repo state.
+
 ### `viewModel(props)`
 
 Alias for `model`.

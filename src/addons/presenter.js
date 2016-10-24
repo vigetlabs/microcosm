@@ -85,7 +85,7 @@ class Presenter extends React.Component {
    * @returns {Object} The properties to assign to state
    */
   viewModel (props) {
-    return EMPTY
+    return state => state
   }
 
   /**

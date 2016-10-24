@@ -1,5 +1,19 @@
 # Changelog
 
+## 10.2.0
+
+- Domains can now be simple classes.
+- Domain setup and teardown is now invoked with `repo` as the first
+  argument.
+- Presenters return the full repo state from model by default.
+
+## 10.1.1
+
+- Correct order of execution of model such that Presenter setup method
+  runs before model calculation. This prevents cases where a domain
+  may be added in the setup method, but it isn't represented in the
+  initial model.
+
 ## 10.1.1
 
 - Correct order of execution of model such that Presenter setup method
