@@ -4,8 +4,6 @@ import merge from '../merge'
 import tag from '../tag'
 import shallowEqual from '../shallow-equal'
 
-const EMPTY = {}
-
 function wrappedRender () {
   return (
     <PresenterContext {...this.props} presenter={this}>
@@ -21,8 +19,8 @@ function wrappedRender () {
  */
 class Presenter extends React.Component {
 
-  constructor() {
-    super(...arguments)
+  constructor(props, context) {
+    super(props, context)
 
     // Allow overriding render, generate the context wrapper
     // upon instantiation
@@ -120,13 +118,10 @@ class PresenterContext extends React.Component {
     send : React.PropTypes.func
   }
 
-  constructor() {
-    super(...arguments)
+  constructor (props, context) {
+    super(props, context)
 
     this.repo = this.getRepo()
-    this.pure = this.getPurity()
-    this.state = {}
-    this.repo.on('change', this.updateState, this)
   }
 
   getChildContext () {
@@ -136,53 +131,60 @@ class PresenterContext extends React.Component {
     }
   }
 
-  shouldComponentUpdate(props, state) {
-    if (!this.pure) {
+  shouldComponentUpdate (props, state) {
+    if (this.isImpure()) {
       return true
     }
 
     return !shallowEqual(props, this.props) || !shallowEqual(state, this.state)
   }
 
-  componentWillReceiveProps (next) {
-    if (this.pure === false || shallowEqual(next, this.props) === false) {
-      this.updatePropMap(next)
-
-      this.props.presenter.update(this.repo, this.safeProps(next))
-    }
-
-    this.updateState()
-  }
-
-  componentWillMount() {
+  componentWillMount () {
     this.props.presenter.setup(this.repo, this.safeProps(this.props))
 
     this.updatePropMap(this.props)
     this.updateState()
   }
 
-  componentWillUnmount() {
+  componentDidMount () {
+    this.repo.on('change', this.updateState, this)
+  }
+
+  componentWillUnmount () {
     this.props.presenter.teardown(this.repo, this.safeProps(this.props))
     this.repo.teardown()
   }
 
-  render() {
+  componentWillReceiveProps (next) {
+    if (this.isImpure() || !shallowEqual(next, this.props)) {
+      this.updatePropMap(next)
+      this.props.presenter.update(this.repo, this.safeProps(next))
+    }
+
+    this.updateState()
+  }
+
+  render () {
     const { presenter } = this.props
 
     return presenter.view(merge({}, presenter.props, this.state))
   }
 
-  getRepo() {
+  getRepo () {
     const repo = this.props.repo || this.context.repo
 
     return repo ? repo.fork() : new Microcosm()
   }
 
-  getPurity() {
-    return this.props.hasOwnProperty('pure') ? this.props.pure : this.repo.pure
+  isImpure () {
+    if (this.props.hasOwnProperty('pure')) {
+      return this.props.pure !== true
+    }
+
+    return this.repo.pure !== true
   }
 
-  safeProps(props) {
+  safeProps (props) {
     return props.presenter.props
   }
 
@@ -193,7 +195,7 @@ class PresenterContext extends React.Component {
   updateState () {
     const next = this.getState()
 
-    if (this.pure === false || shallowEqual(this.state, next) === false) {
+    if (this.isImpure() || shallowEqual(this.state, next) === false) {
       return this.setState(next)
     }
   }
@@ -229,7 +231,7 @@ class PresenterContext extends React.Component {
    * @param {string} intent - The name of a method the view wishes to invoke
    * @param {...any} params - Arguments to invoke the named method with
    */
-  send(intent, ...params) {
+  send (intent, ...params) {
     const registry = this.props.presenter.register()
 
     // Tag intents so that they register the same way in the Presenter

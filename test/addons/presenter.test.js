@@ -506,6 +506,7 @@ test('setup is called before the initial model', function () {
 
   mount(<Test />)
 
-  expect(spy).toHaveBeenCalledTimes(2)
-  expect(spy).lastCalledWith('model')
+  let sequence = spy.mock.calls.map(args => args[0])
+
+  expect(sequence).toEqual(['setup', 'model'])
 })
