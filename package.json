@@ -27,7 +27,8 @@
   "license": "MIT",
   "jest": {
     "testPathDirs": [
-      "<rootDir>/test"
+      "<rootDir>/test",
+      "<rootDir>/src"
     ]
   },
   "dependencies": {
