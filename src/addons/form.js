@@ -28,7 +28,7 @@ const Form = React.createClass({
   },
 
   render() {
-    const props = merge({}, this.props, { onSubmit: this.onSubmit })
+    const props = merge({}, this.props, { ref: 'form', onSubmit: this.onSubmit })
 
     // Remove invalid props to prevent React warnings
     delete props.intent
@@ -43,8 +43,11 @@ const Form = React.createClass({
 
   onSubmit(event) {
     event.preventDefault()
+    this.submit(event)
+  },
 
-    const form   = event.target
+  submit(event) {
+    const form   = this.refs.form
     const params = this.props.serializer(form)
     const action = this.context.send(this.props.intent, params)
 
