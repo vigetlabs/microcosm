@@ -43,7 +43,10 @@ const Form = React.createClass({
 
   onSubmit(event) {
     event.preventDefault()
+    this.submit(event)
+  },
 
+  submit() {
     const form   = event.target
     const params = this.props.serializer(form)
     const action = this.context.send(this.props.intent, params)
