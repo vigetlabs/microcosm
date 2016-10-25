@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.2.1
+
+- Use correct lifecycle for subscription to repo in Presenter
+
 ## 10.2.0
 
 - Domains can now be simple classes.
