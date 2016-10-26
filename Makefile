@@ -7,12 +7,12 @@ all: javascript docs package.json
 	@ echo [+] prepared v$(VERSION)
 
 javascript: $(SCRIPTS)
+	@ rsync -uraq tmp/src/ build/
 
 tmp/%.js: %.js
 	@ mkdir -p $(@D)
 	@ $(BABEL) -c -s inline $< > $@
 	@ echo [+] $(@F)
-	@ rsync -uraq tmp/src/ build/
 
 docs: LICENSE.md README.md
 	@ mkdir -p build
