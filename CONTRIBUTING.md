@@ -39,7 +39,7 @@ npm test
 For test coverage:
 
 ```bash
-npm run test:cov:html
+npm run test:cov
 open ./coverage/index.html
 ```
 
