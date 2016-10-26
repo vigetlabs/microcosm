@@ -48,6 +48,14 @@ touched.
 
 ## Deployment
 
+The following steps are required to push a new release:
+
+1. Update changelog
+2. `npm version minor`
+3. `git push --tags`
+4. `make release`
+
+
 Microcosm must first be compiled down to ES5 using Babel. The
 following command will perform that task and deploy to NPM:
 
