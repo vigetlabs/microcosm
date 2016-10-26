@@ -1,6 +1,6 @@
 # Changelog
 
-## 10.2.2
+## 10.3.0
 - The `<Form />` addon can now be submited directly. (#170, #171) 
 
 ## 10.2.1
