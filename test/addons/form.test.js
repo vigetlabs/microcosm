@@ -96,3 +96,18 @@ test('does not execute onUpdate if not given an action', function () {
 
   expect(onUpdate).not.toHaveBeenCalled()
 })
+
+
+test('submit can be called directly on the component instance', function () {
+  const onDone = jest.fn()
+
+  const form = mount(<Form intent="test" onDone={n => onDone(n)} />, {
+    context: {
+      send: () => new Action(n => n).resolve(true)
+    }
+  })
+
+  form.instance().submit()
+
+  expect(onDone).toHaveBeenCalledWith(true)
+})
