@@ -1,5 +1,8 @@
 # Changelog
 
+## 10.2.2
+- The `<Form />` addon can now be submited directly. (#170, #171) 
+
 ## 10.2.1
 
 - Use correct lifecycle for subscription to repo in Presenter
