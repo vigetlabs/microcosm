@@ -6,3 +6,4 @@ node_modules
 build
 tmp
 .happypack
+npm-debug.log
