@@ -172,7 +172,7 @@ export default class Action extends Emitter {
   }
 
   close () {
-    console.warn('Deprecation (10.0.0): Use action.close instead of action.resolve.')
+    console.warn('Deprecation (10.0.0): Use action.resolve instead of action.close.')
     return this.resolve.apply(this, arguments)
   }
 
