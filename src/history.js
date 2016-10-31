@@ -31,9 +31,19 @@ export default class History {
   }
 
   invoke(method, payload) {
-    for (var i = 0, len = this.repos.length; i < len; i++) {
-      this.repos[i][method](payload)
-    }
+    /**
+     * Important! For each enumerates over items sequentially. A
+     * release of a parent Microcosm might cause a fork to tear
+     * down. We can not cache the length of the repo list within a
+     * for-loop.
+     */
+    this.repos.forEach(function (repo) {
+      if (typeof repo[method] === 'function') {
+        repo[method](payload)
+      } else {
+        console.warn('%s does not implement %s', repo.constructor.name || 'Microcosm', method)
+      }
+    })
   }
 
   /**
