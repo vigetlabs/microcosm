@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.3.4
+
+- Fixed internal loop iteration bug where change emissions of a
+  Microcosm may cause forks to tear down, causing an error to be
+  thrown on an undefined object (a repo no longer in the list of
+  tracked repos).
+
 ## 10.3.3
 
 - Do not remove action event listeners on teardown. Otherwise
