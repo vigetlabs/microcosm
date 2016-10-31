@@ -39,4 +39,4 @@ clean:
 	@ rm -rf build/*
 	@ rm -rf tmp/*
 
-.PHONY: all clean bench package.json documentation release prerelease
+.PHONY: all clean bench package.json docs release prerelease
