@@ -208,3 +208,75 @@ test('forks continue to get updates from their parents when there is no archive'
   // rather than multiply 6 by 2
   expect(child.state.counter).toEqual(12)
 })
+
+test('forks handle async', () => {
+  const parent = new Microcosm()
+  const child = parent.fork()
+
+  const add = n => n
+
+  parent.addDomain('counter', {
+    getInitialState() {
+      return 0
+    },
+    register() {
+      return {
+        [add]: (a, b) => a + b
+      }
+    }
+  })
+
+  child.addDomain('counter', {
+    register() {
+      return {
+        [add](a) {
+          return a * 2
+        }
+      }
+    }
+  })
+
+  child.push(add, 2)
+  child.push(add, 4)
+
+  expect(parent.state.counter).toEqual(6)
+
+  // If this is 24, then multiplcation applied twice on 6,
+  // rather than multiply 6 by 2
+  expect(child.state.counter).toEqual(12)
+})
+
+test('forks properly archive after a patch', () => {
+  const parent = new Microcosm({ maxHistory: 0 })
+
+  parent.addDomain('one', {
+    register () {
+      return {
+        getInitialState : () => false,
+        one : (a, b) => b
+      }
+    }
+  })
+
+  parent.addDomain('two', {
+    register () {
+      return {
+        getInitialState : () => false,
+        two : (a, b) => b
+      }
+    }
+  })
+
+  parent.patch({ one: false, two: false })
+
+  const child = parent.fork()
+
+  const one = parent.append('one')
+  const two = parent.append('two')
+
+  two.resolve(true)
+  one.resolve(true)
+
+  expect(child.state.one).toBe(true)
+  expect(child.state.two).toBe(true)
+})
