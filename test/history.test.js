@@ -36,21 +36,6 @@ test('archive moves all the way up to the focal point', function () {
   expect(history.size).toEqual(0)
 })
 
-test('archive removes nodes until it returns false', function () {
-  const history = new History()
-
-  const one = history.append(action)
-  const two = history.append(action)
-
-  history.append(action)
-
-  history.checkout(two)
-  history.archive(() => false)
-
-  expect(history.head).toEqual(two)
-  expect(history.head.parent).toEqual(one)
-})
-
 test('only walks through the main timeline', function () {
   const history = new History()
 
@@ -169,6 +154,77 @@ test('does not lose children when checking out nodes on the right', function () 
   history.checkout(c)
 
   expect(b.children).toEqual([d, c])
+})
+
+describe('archival', function () {
+
+  test('will not archive a node if prior nodes are not complete', function () {
+    const history = new History()
+
+    const one = history.append(action)
+    const two = history.append(action)
+    const three = history.append(action)
+
+    three.resolve()
+
+    history.archive()
+
+    expect(history.size).toBe(3)
+  })
+
+  test('archives all completed actions', function () {
+    const history = new History()
+
+    const one = history.append(action)
+    const two = history.append(action)
+    const three = history.append(action)
+
+    two.resolve()
+    one.resolve()
+
+    history.archive()
+
+    expect(history.size).toBe(1)
+  })
+
+  test('archived nodes have no history', function () {
+    const history = new History()
+
+    const one = history.append(action).resolve()
+
+    history.archive()
+
+    expect(one.history).toBe(null)
+  })
+
+  test('archived nodes have no relations', function () {
+    const history = new History()
+
+    const one = history.append(action).resolve()
+    const two = history.append(action)
+
+    history.archive()
+
+    expect(one.parent).toBe(null)
+    expect(one.sibling).toBe(null)
+    expect(one.next).toBe(null)
+
+    expect(two.parent).toBe(null)
+  })
+
+  test('archiving the entire tree clears cursors', function () {
+    const history = new History()
+
+    const one = history.append(action).resolve()
+    const two = history.append(action).resolve()
+
+    history.archive()
+
+    expect(history.focus).toBe(null)
+    expect(history.root).toBe(null)
+    expect(history.head).toBe(null)
+  })
+
 })
 
 describe('toArray', function() {

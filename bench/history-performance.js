@@ -11,16 +11,18 @@ const SIZES = [
   10000,
   50000,
   100000,
-  200000
+  200000,
+  400000,
+  1000000
 ]
 
 console.log('\nConducting history benchmark...\n')
 
 const results = SIZES.map(function (SIZE) {
   /**
-   * Force garbage collection. This is exposed by invoking
-   * node with --expose-gc. This allows us to record heap usage
-   * before and after the test to check for memory leakage
+   * Force garbage collection. This is exposed by invoking node with
+   * --expose-gc. This allows us to record heap usage before and after the test
+   * to check for memory leakage
    */
   global.gc()
 
@@ -55,13 +57,15 @@ const results = SIZES.map(function (SIZE) {
   history.toArray()
   stats.toArray = (time.now() - now) / 1000
 
+  var memoryUsage = process.memoryUsage().heapUsed - memoryBefore
+
   /**
    * Measure time to dispose all nodes in the history. This also has
    * the side effect of helping to test memory leakage later.
    */
-  var memoryUsage = process.memoryUsage().heapUsed - memoryBefore
+  history.toArray().forEach(a => a.resolve())
   now = time.now()
-//  history.toArray().reverse().forEach(a => a.resolve())
+  history.archive()
   stats.prune = (time.now() - now) / 1000
 
   /**
@@ -71,16 +75,17 @@ const results = SIZES.map(function (SIZE) {
   global.gc()
 
   var memoryAfter = process.memoryUsage().heapUsed
-  stats.memory = ((memoryAfter - memoryBefore) / memoryBefore) * 100
+  var growth = (1 - (memoryBefore / memoryAfter)) * 100
+  stats.memory = (memoryAfter - memoryBefore) / 100000
 
   return {
     'Nodes': SIZE.toLocaleString(),
     '::append()': stats.build.toFixed(2) + 'ms',
-    '::toArray()': stats.toArray.toFixed(4) + 'ms',
+    '::toArray()': stats.toArray.toFixed(2) + 'ms',
     '::setSize()': stats.size.toFixed(2) + 'ms',
     '::prune()': stats.prune.toFixed(2) + 'ms',
-    'Memory': (memoryUsage / 1000000).toFixed(3) + 'mbs',
-    'Memory Growth': stats.memory.toFixed(3) + '%'
+    'Total Memory': (memoryUsage / 1000000).toFixed(2) + 'mbs',
+    'Memory Growth': stats.memory.toFixed(2) + 'mbs (' + growth.toFixed(2) + '%)'
   }
 })
 

@@ -308,14 +308,15 @@ export default class Action extends Emitter {
     // Remove all event listeners
     this.off()
 
-    // Disconnect the pointer to the parent so GC can clean up
-    // disposable actions
-    this.parent  = null
-
-    // Similarly, the base has no siblings
+    // Disconnect some pointers to help GC clean up
+    this.parent = null
     this.sibling = null
+    this.history = null
 
-    // Disconnect from forward link
+    if (this.next) {
+      this.next.parent = null
+    }
+
     this.next = null
   }
 
