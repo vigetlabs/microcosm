@@ -46,18 +46,6 @@ test('does not throw if given null', function () {
   expect(() => new Action(null)).toThrow()
 })
 
-test('removes all listeners when torn down', function () {
-  const action = new Action(identity)
-  const callback = jest.fn()
-
-  action.on('done', callback)
-
-  action.teardown()
-  action.resolve()
-
-  expect(callback).not.toHaveBeenCalled()
-})
-
 describe('open state', function () {
 
   test('exposes an open type when opened', function () {
@@ -391,6 +379,56 @@ describe('promise interop', function () {
     const payload = await action
 
     expect(payload).toBe('Test')
+  })
+
+})
+
+describe('teardown', function () {
+
+  test('does not lose an onDone subscription when it resolves', function (done) {
+    function test (action, method, payload) {
+      return function (action) {
+        Promise.resolve().then(() => action.resolve(true),
+                               () => action.reject(false))
+      }
+    }
+
+    const repo = new Microcosm()
+
+    const action = repo.push(test)
+
+    action.onDone(() => done())
+  })
+
+  test('does not lose an onError subscription when it fails', function (done) {
+    function test (action, method, payload) {
+      return function (action) {
+        Promise.reject().then(() => action.resolve(true),
+                               () => action.reject(false))
+      }
+    }
+
+    const repo = new Microcosm()
+
+    const action = repo.push(test)
+
+    action.onError(() => done())
+  })
+
+  test('does not lose an onCancel subscription when it cancels', function (done) {
+    function test (action, method, payload) {
+      return function (action) {
+        // intentionally blank
+      }
+    }
+
+    const repo = new Microcosm()
+
+    const action = repo.push(test)
+
+    action.onCancel(() => done())
+
+    action.cancel()
   })
 
 })

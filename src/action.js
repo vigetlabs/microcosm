@@ -305,9 +305,6 @@ export default class Action extends Emitter {
    * Cleanup an action that has been disconnected from its history
    */
   teardown() {
-    // Remove all event listeners
-    this.off()
-
     // Disconnect some pointers to help GC clean up
     this.parent = null
     this.sibling = null
