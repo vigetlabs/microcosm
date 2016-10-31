@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.3.3
+
+- Do not remove action event listeners on teardown. Otherwise
+  `onDone`, `onError`, and `onCancel` never fire.
+
 ## 10.3.2
 
 - Fix incorrect deprecation information for `action.close`
