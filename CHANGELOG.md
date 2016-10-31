@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.3.5
+
+- `this.props` within `Presenter::update` should be the old props.
+
 ## 10.3.4
 
 - Fixed internal loop iteration bug where change emissions of a

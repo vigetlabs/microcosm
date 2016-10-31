@@ -510,3 +510,21 @@ test('setup is called before the initial model', function () {
 
   expect(sequence).toEqual(['setup', 'model'])
 })
+
+describe('update', function() {
+
+  test('it has access to the old props when update is called', function () {
+    const callback = jest.fn()
+
+    class Test extends Presenter {
+      update (repo, { color }) {
+        callback(this.props.color, color)
+      }
+    }
+
+    mount(<Test color="red"><p>Hey</p></Test>).setProps({ color: 'blue' })
+
+    expect(callback).toHaveBeenCalledWith('red', 'blue')
+  })
+
+})

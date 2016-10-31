@@ -28,6 +28,19 @@ class Presenter extends React.Component {
     this.render = wrappedRender
   }
 
+  _setRepo (repo) {
+    this.repo = repo
+    this.setup(repo, this.props)
+  }
+
+  _isImpure () {
+    if (this.props.hasOwnProperty('pure')) {
+      return this.props.pure !== true
+    }
+
+    return this.repo.pure !== true
+  }
+
   /**
    * Called when a presenter is created, before it has calculated a view model.
    * Useful for fetching data and other prep-work.
@@ -49,6 +62,12 @@ class Presenter extends React.Component {
    */
   update (repo, props) {
     // NOOP
+  }
+
+  componentWillReceiveProps (next) {
+    if (this._isImpure() || !shallowEqual(next, this.props)) {
+      this.update(this.repo, next)
+    }
   }
 
   /**
@@ -140,7 +159,7 @@ class PresenterContext extends React.Component {
   }
 
   componentWillMount () {
-    this.props.presenter.setup(this.repo, this.safeProps(this.props))
+    this.props.presenter._setRepo(this.repo)
 
     this.updatePropMap(this.props)
     this.updateState()
@@ -158,7 +177,6 @@ class PresenterContext extends React.Component {
   componentWillReceiveProps (next) {
     if (this.isImpure() || !shallowEqual(next, this.props)) {
       this.updatePropMap(next)
-      this.props.presenter.update(this.repo, this.safeProps(next))
     }
 
     this.updateState()
@@ -177,11 +195,7 @@ class PresenterContext extends React.Component {
   }
 
   isImpure () {
-    if (this.props.hasOwnProperty('pure')) {
-      return this.props.pure !== true
-    }
-
-    return this.repo.pure !== true
+    return this.props.presenter._isImpure()
   }
 
   safeProps (props) {
