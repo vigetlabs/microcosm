@@ -19,18 +19,18 @@ test('adds listeners', function () {
   expect(calls).toEqual([ 'one', 1, 'two', 1, 'one', 2, 'two', 2 ])
 })
 
-test('adds a single-shot listener', function (done) {
+test('adds a single-shot listener', function () {
   const emitter = new Emitter
+  const callback = jest.fn()
 
-  emitter.once('foo', function (val) {
-    expect(val).toBe(1)
-    done()
-  })
+  emitter.once('foo', callback)
 
   emitter._emit('foo', 1)
   emitter._emit('foo', 2)
   emitter._emit('foo', 3)
   emitter._emit('bar', 1)
+
+  expect(callback).toHaveBeenCalledTimes(1)
 })
 
 test('should remove a listener', function () {

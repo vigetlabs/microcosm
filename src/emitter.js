@@ -1,41 +1,26 @@
 /**
- * EventEmitter
- *
- * This is a private event emitter based upon the component/emitter
- * implementation. It enforces a few constraints to ensure users of
- * Microcosm have a good time:
- *
- * - `emit` is private
- * - subscriptions can be prioritized (to improve rendering efficiency)
- *
- * component/emitter:
- * https://github.com/component/emitter
- *
- * @private
+ * An abstract event emitter class. Several modules extend from this class
+ * to utilize events.
+ * @abstract
  */
 
 export default class Emitter {
 
   /**
-   * Listen on the given `event` with `fn`.
-   *
-   * @param {String} event
-   * @param {Function} fn
-   * @return {Emitter}
+   * Add an event listener.
    */
-  on (event, fn, scope) {
-    this._listeners = this._listeners || {}
+  on (event, fn, scope=this, times=Infinity) {
+    const key = '$' + event
 
-    const callback = this._listeners['$' + event] = this._listeners['$' + event] || []
+    if (!this._listeners) {
+      this._listeners = {}
+    }
 
-    /**
-     * Reversing priority helps addons like 'Connect' and 'Presenter'
-     * work more efficiently. It allows changes to occur "top down"
-     * instead of "bottom up". This is because event subscription occurs
-     * within React lifecycle methods, which prioritize children before
-     * parents.
-     */
-    callback[callback.length] = [fn, scope || this]
+    if (this._hasListener(event) === false) {
+      this._listeners[key] = []
+    }
+
+    this._listeners[key].push({ fn, scope, times })
 
     return this
   }
@@ -43,50 +28,47 @@ export default class Emitter {
   /**
    * Adds an `event` listener that will be invoked a single time then
    * automatically removed.
-   *
-   * @param {String} event
-   * @param {Function} fn
-   * @return {Emitter}
    */
   once (event, fn, scope) {
-    function listener () {
-      this.off(event, listener)
-      fn.apply(this, arguments)
-    }
-
-    listener.fn = fn
-
-    this.on(event, listener, scope)
-
-    return this
+    return this.on(event, fn, scope, 0)
   }
 
   /**
-   * Remove the given callback for `event` or all
-   * registered callbacks.
-   *
-   * @param {String} event
-   * @param {Function} fn
-   * @return {Emitter}
+   * Determine if a listener has been subscribed to
+   * @private
    */
-  off (event, fn, scope) {
+  _hasListener(event) {
+    if (this._listeners == null || event == null)  {
+      return false
+    }
+
+    return this._listeners['$' + event] != null
+  }
+
+  /**
+   * Unsubscribe a callback. If no event is provided, removes all callbacks. If
+   * no callback is provided, removes all callbacks for the given type.
+   */
+  off (event, fn, scope=this) {
     // Remove all listeners
-    if (0 == arguments.length) {
+    if (event == null) {
       delete this._listeners
     }
 
-    if (!this._listeners || this._listeners.hasOwnProperty('$' + event) === false) {
+    if (this._hasListener(event) === false) {
+      return this
+    }
+
+    let key = '$' + event
+
+    // remove all handlers
+    if (fn == null) {
+      delete this._listeners[key]
       return this
     }
 
     // specific event
-    let callbacks = this._listeners['$' + event]
-
-    // remove all handlers
-    if (1 == arguments.length) {
-      delete this._listeners['$' + event]
-      return this
-    }
+    let callbacks = this._listeners[key]
 
     // Remove the specific handler, splice so that listeners removed
     // during another event broadcast are not invoked
@@ -94,7 +76,7 @@ export default class Emitter {
     while (i < callbacks.length) {
       let cb = callbacks[i]
 
-      if ((cb[0] === fn || cb[0].fn === fn) && cb[1] === (scope || this)) {
+      if (cb.fn === fn && cb.scope === scope) {
         callbacks.splice(i, 1)
       } else {
         i += 1
@@ -106,23 +88,26 @@ export default class Emitter {
 
   /**
    * Emit `event` with the given args.
-   *
-   *
-   * @param {String} event
-   * @param {Mixed} ...
-   * @return {Emitter}
    * @private
    */
   _emit (event, ...params) {
-    if (!this._listeners) {
+    if (this._hasListener(event) === false) {
       return this
     }
 
     let callbacks = this._listeners['$' + event]
 
-    if (callbacks) {
-      for (var i = 0; i < callbacks.length; i++) {
-        callbacks[i][0].apply(callbacks[i][1], params)
+    let i = 0;
+    while (i < callbacks.length) {
+      let callback:Listener = callbacks[i]
+
+      callback.fn.apply(callback.scope, params)
+      callback.times -= 1
+
+      if (callback.times <= 0) {
+        callbacks.splice(i, 1)
+      } else {
+        i += 1;
       }
     }
 
