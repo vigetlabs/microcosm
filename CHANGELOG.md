@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.3.6
+
+- Properly deploy documentation with build (hopefully this should sort out
+  deploy issues)
+
 ## 10.3.5
 
 - `this.props` within `Presenter::update` should be the old props.
