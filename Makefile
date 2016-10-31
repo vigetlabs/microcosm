@@ -1,6 +1,6 @@
 MAKEFLAGS ?= '-j 4'
 BABEL := node_modules/.bin/babel
-SCRIPTS := $(addprefix tmp/,$(shell find src src -name '*.js*'))
+SCRIPTS := $(addprefix tmp/,$(shell find src bench -name '*.js*'))
 VERSION := $$(node -p "require('./package').version")
 
 all: javascript docs package.json
