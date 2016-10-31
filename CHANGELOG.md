@@ -1,7 +1,19 @@
 # Changelog
 
+## 10.3.2
+
+- Fix incorrect deprecation information for `action.close`
+- Remove reference to history in action on teardown to improve GC
+
+## 10.3.1
+
+- Fix bad release
+
 ## 10.3.0
-- The `<Form />` addon can now be submited directly. (#170, #171) 
+
+**Important**: this was a bad release. Please use >= 10.3.1
+
+- The `<Form />` addon can now be submited directly. (#170, #171)
 
 ## 10.2.1
 
