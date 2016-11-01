@@ -19,54 +19,6 @@ function wrappedRender () {
  */
 class Presenter extends React.Component {
 
-  static contextTypes = {
-    send : React.PropTypes.func
-  }
-
-  static childContextTypes = {
-    send : React.PropTypes.func
-  }
-
-  getChildContext () {
-    return {
-      send : this.send.bind(this)
-    }
-  }
-
-  /**
-   * Provides a way for views to send messages back to the presenter
-   * in a way that does not require passing callbacks down through the
-   * view. This method is exposed by the Presenter via the React context
-   * API.
-   *
-   * Send bubbles. If the closest presenter does not implement the intent,
-   * it will check it's parent presenter. This repeats until there is no parent,
-   * in which case it throws an error.
-   *
-   * @param {string} intent - The name of a method the view wishes to invoke
-   * @param {...any} params - Arguments to invoke the named method with
-   */
-  send (intent, ...params) {
-    const registry = this.register()
-
-    // Tag intents so that they register the same way in the Presenter
-    // and Microcosm instance
-    intent = tag(intent)
-
-    // Does the presenter register to this intent?
-    if (registry && registry.hasOwnProperty(intent)) {
-      return registry[intent].apply(this, [ this.repo, ...params ])
-    }
-
-    // No: try the parent presenter
-    if (this.context.send) {
-      return this.context.send(intent, ...params)
-    }
-
-    // If we hit the top, push the intent into the Microcosm instance
-    return this.repo.push(intent, ...params)
-  }
-
   constructor(props, context) {
     super(props, context)
 
@@ -79,6 +31,10 @@ class Presenter extends React.Component {
   _setRepo (repo) {
     this.repo = repo
     this.setup(repo, this.props)
+  }
+
+  _connectSend (send) {
+    this.send = send
   }
 
   _isImpure () {
@@ -176,22 +132,27 @@ class PresenterContext extends React.Component {
   }
 
   static contextTypes = {
-    repo : React.PropTypes.object
+    repo : React.PropTypes.object,
+    send : React.PropTypes.func
   }
 
   static childContextTypes = {
-    repo : React.PropTypes.object
+    repo : React.PropTypes.object,
+    send : React.PropTypes.func
   }
 
   constructor (props, context) {
     super(props, context)
 
     this.repo = this.getRepo()
+
+    this.props.presenter._connectSend(this.send.bind(this))
   }
 
   getChildContext () {
     return {
-      repo : this.repo
+      repo : this.repo,
+      send : this.send.bind(this)
     }
   }
 
@@ -275,6 +236,40 @@ class PresenterContext extends React.Component {
     }
 
     return nextState
+  }
+
+  /**
+   * Provides a way for views to send messages back to the presenter
+   * in a way that does not require passing callbacks down through the
+   * view. This method is exposed by the Presenter via the React context
+   * API.
+   *
+   * Send bubbles. If the closest presenter does not implement the intent,
+   * it will check it's parent presenter. This repeats until there is no parent,
+   * in which case it throws an error.
+   *
+   * @param {string} intent - The name of a method the view wishes to invoke
+   * @param {...any} params - Arguments to invoke the named method with
+   */
+  send (intent, ...params) {
+    const registry = this.props.presenter.register()
+
+    // Tag intents so that they register the same way in the Presenter
+    // and Microcosm instance
+    intent = tag(intent)
+
+    // Does the presenter register to this intent?
+    if (registry && registry.hasOwnProperty(intent)) {
+      return registry[intent].apply(this.props.presenter, [ this.repo, ...params ])
+    }
+
+    // No: try the parent presenter
+    if (this.context.send) {
+      return this.context.send(intent, ...params)
+    }
+
+    // If we hit the top, push the intent into the Microcosm instance
+    return this.repo.push(intent, ...params)
   }
 }
 
