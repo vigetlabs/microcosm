@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.4.0
+
+- Expose `send` within a presenter. Presenters can now broadcast intents
+
 ## 10.3.6
 
 - Properly deploy documentation with build (hopefully this should sort out

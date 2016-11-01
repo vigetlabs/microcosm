@@ -563,6 +563,23 @@ describe('intents', function() {
     expect(spy).not.toHaveBeenCalled()
   })
 
+  test('send is available in setup', function () {
+    const test = jest.fn()
+
+    class Parent extends Presenter {
+      setup() {
+        this.send('test')
+      }
+      register() {
+        return { test }
+      }
+    }
+
+    mount(<Parent />)
+
+    expect(test).toHaveBeenCalled()
+  })
+
   test('send can be called directly from the Presenter', function () {
     const test = jest.fn()
 
