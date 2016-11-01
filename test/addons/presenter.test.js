@@ -563,4 +563,22 @@ describe('intents', function() {
     expect(spy).not.toHaveBeenCalled()
   })
 
+  test('send can be called directly from the Presenter', function (done) {
+    const test = jest.fn()
+
+    class Parent extends Presenter {
+      setup(repo) {
+        this.send('test')
+      }
+      register() {
+        return { test: (repo, props) => done() }
+      }
+      view () {
+        return <div />
+      }
+    }
+
+    mount(<Parent repo={ new Microcosm() } />).find(View).simulate('click')
+  })
+
 })
