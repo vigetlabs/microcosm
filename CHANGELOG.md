@@ -1,5 +1,13 @@
 # Changelog
 
+## 10.5.0
+
+- Commit is given staged state for the entire microcosm as a second argument. Since
+  commit is run on every change, this is useful for filtering data based upon some
+  other piece of state.
+- Made updates to the archival process that prevent unnecessary dispatches.
+- Commit always writes state the first time
+
 ## 10.4.0
 
 - Expose `send` within a presenter. Presenters can now broadcast intents
