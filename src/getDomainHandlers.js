@@ -1,4 +1,3 @@
-import update from './update'
 import lifecycle from './lifecycle'
 
 function format (string) {

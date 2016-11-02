@@ -298,7 +298,6 @@ describe('disposed state', function () {
 
   test('will not change states if already disposed', function () {
     const action = new Action(identity)
-    const callback = jest.fn()
 
     action.cancel()
     action.resolve()

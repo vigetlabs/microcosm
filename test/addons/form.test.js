@@ -48,23 +48,10 @@ test('executes onUpdate when that action sends an update', function () {
   expect(onUpdate).toHaveBeenCalledWith('loading')
 })
 
-const shouldNotCall = function (t, event, expected) {
-  const element = React.createElement(Form, {
-    intent: 'test',
-    [event]: () => t.fail()
-  })
-
-  mount(element, {
-    context: {
-      send: () => true
-    }
-  }).simulate('submit')
-}
-
 test('does not execute onDone if not given an action', function () {
   const onDone = jest.fn()
 
-  const element = mount(<Form intent="test" onDone={n => onDone(n)} />, {
+  mount(<Form intent="test" onDone={n => onDone(n)} />, {
     context: {
       send: () => true
     }
@@ -76,7 +63,7 @@ test('does not execute onDone if not given an action', function () {
 test('does not execute onDone if not given an action', function () {
   const onError = jest.fn()
 
-  const element = mount(<Form intent="test" onError={n => onError(n)} />, {
+  mount(<Form intent="test" onError={n => onError(n)} />, {
     context: {
       send: () => true
     }
@@ -88,7 +75,7 @@ test('does not execute onDone if not given an action', function () {
 test('does not execute onUpdate if not given an action', function () {
   const onUpdate = jest.fn()
 
-  const element = mount(<Form intent="test" onUpdate={n => onUpdate(n)} />, {
+  mount(<Form intent="test" onUpdate={n => onUpdate(n)} />, {
     context: {
       send: () => true
     }

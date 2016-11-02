@@ -424,7 +424,6 @@ describe('rendering efficiency', function() {
 
     expect(spy.mock.calls.length).toEqual(2)
   })
-
 })
 
 describe('rendering', function () {

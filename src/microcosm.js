@@ -8,10 +8,10 @@ import shallowEqual from './shallow-equal'
 import update       from './update'
 
 /**
- * A tree-like data structure that keeps track of the execution order
- * of actions that are pushed into it, sequentially folding them
- * together to produce an object that can be rendered by a
-n * presentation library (such as React).
+ * A tree-like data structure that keeps track of the execution order of
+ * actions that are pushed into it, sequentially folding them together to
+ * produce an object that can be rendered by a presentation library (such as
+ * React).
  *
  * @extends {Emitter}
  */

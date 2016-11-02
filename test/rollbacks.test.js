@@ -1,6 +1,6 @@
 import Microcosm from '../src/microcosm'
 
-test('does not roll forward the same actions twice', function () {
+test('does not rollforward the same actions twice', function () {
   const repo = new Microcosm({ maxHistory: Infinity })
   const send = n => n
 

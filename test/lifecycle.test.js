@@ -20,7 +20,7 @@ describe('Teardown', function() {
 
   test('removes all listeners', function () {
     const repo = new Microcosm()
-    const other = new Microcosm()
+
     const listener = jest.fn()
 
     repo.on('change', listener)

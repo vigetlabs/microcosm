@@ -22,7 +22,7 @@ test('archive moves all the way up to the focal point', function () {
   const two = history.append(action)
 
   // Three
-  const three = history.append(action)
+  history.append(action)
 
   history.checkout(two)
 
@@ -161,11 +161,14 @@ describe('archival', function () {
   test('will not archive a node if prior nodes are not complete', function () {
     const history = new History()
 
-    const one = history.append(action)
-    const two = history.append(action)
-    const three = history.append(action)
+    // one
+    history.append(action)
 
-    three.resolve()
+    // two
+    history.append(action)
+
+    // three
+    history.append(action).resolve()
 
     history.archive()
 
@@ -177,7 +180,9 @@ describe('archival', function () {
 
     const one = history.append(action)
     const two = history.append(action)
-    const three = history.append(action)
+
+    // three
+    history.append(action)
 
     two.resolve()
     one.resolve()
@@ -215,8 +220,10 @@ describe('archival', function () {
   test('archiving the entire tree clears cursors', function () {
     const history = new History()
 
-    const one = history.append(action).resolve()
-    const two = history.append(action).resolve()
+    // one
+    history.append(action).resolve()
+    // two
+    history.append(action).resolve()
 
     history.archive()
 

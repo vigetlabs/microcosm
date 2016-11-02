@@ -2,9 +2,9 @@ import Microcosm from '../src/microcosm'
 import Domain from '../src/domain'
 import logger from './helpers/logger'
 
-describe('State management', function () {
+describe('::shouldCommit', function () {
 
-  test('shouldCommit - is given initial state at the start', function () {
+  test('is given initial state at the start', function () {
     const repo = new Microcosm()
     const test = jest.fn(() => false)
 
@@ -22,7 +22,7 @@ describe('State management', function () {
     expect(test).toHaveBeenCalledWith(0, 0)
   })
 
-  test('shouldCommit - prevents commiting if returns false', function () {
+  test('prevents commiting if returns false', function () {
     const repo = new Microcosm()
     const add  = n => n
 
@@ -142,7 +142,6 @@ describe('Lifecycle', function() {
   })
 
 })
-
 
 describe('Action registration', function() {
 

@@ -99,7 +99,7 @@ export default class Emitter {
 
     let i = 0;
     while (i < callbacks.length) {
-      let callback:Listener = callbacks[i]
+      let callback = callbacks[i]
 
       callback.fn.apply(callback.scope, params)
       callback.times -= 1
