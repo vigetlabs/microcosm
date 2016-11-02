@@ -138,7 +138,7 @@ const Planets = {
 repo.push(Actions.add, { name: 'earth' }) // this will add Earth
 ```
 
-### `commit(next)`
+### `commit(next, staged)`
 
 How should a domain actually write to `repo.state`? This is useful for serializing a complex data structure, such as a `Map`, into form easier for public consumption:
 

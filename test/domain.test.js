@@ -18,6 +18,7 @@ describe('::shouldCommit', function () {
     }
 
     repo.addDomain('count', Counter)
+    repo.patch()
 
     expect(test).toHaveBeenCalledWith(0, 0)
   })
@@ -48,6 +49,26 @@ describe('::shouldCommit', function () {
   })
 
 })
+
+describe('::commit', function() {
+
+  test('always writes for the first time', function() {
+    let repo = new Microcosm()
+
+    repo.addDomain('test', {
+      getInitialState() {
+        return true
+      },
+      shouldCommit(next, last) {
+        return next !== last
+      }
+    })
+
+    expect(repo.state.test).toEqual(true)
+  })
+
+})
+
 
 describe('Creation modes', function () {
 

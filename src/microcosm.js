@@ -121,7 +121,7 @@ export default class Microcosm extends Emitter {
       const { key, domain, handler } = handlers[i]
 
       const last = update.get(state, key)
-      const next = handler.call(domain, last, payload)
+      const next = handler.call(domain, last, payload, state)
 
       state = update.set(state, key, domain.stage(last, next))
     }
@@ -191,8 +191,9 @@ export default class Microcosm extends Emitter {
     const last = update.get(this.cached, key)
     const next = update.get(state, key)
 
-    if (domain.shouldCommit(last, next)) {
-      return update.set(state, key, domain.commit(next))
+    // Only write state if we've never written it before or the domain says so
+    if (this.state.hasOwnProperty(key) === false || domain.shouldCommit(last, next)) {
+      return update.set(state, key, domain.commit(next, this.staged))
     }
 
     return update.set(state, key, update.get(this.state, key))

@@ -594,3 +594,43 @@ describe('intents', function() {
   })
 
 })
+
+describe('forking', function () {
+
+  test('nested presenters fork in the correct order', function () {
+    class Top extends Presenter {
+      setup(repo) {
+        repo.name = 'top'
+      }
+    }
+
+    class Middle extends Presenter {
+      setup(repo) {
+        repo.name = 'middle'
+      }
+    }
+
+    class Bottom extends Presenter {
+      setup(repo) {
+        repo.name = 'bottom'
+      }
+
+      view () {
+        let names = []
+        let repo = this.repo
+
+        while (repo) {
+          names.push(repo.name)
+          repo = repo.parent
+        }
+
+        return <p>{names.join(', ')}</p>
+      }
+    }
+
+    const text = mount(<Top><Middle><Bottom /></Middle></Top>).text()
+
+    expect(text).toEqual('bottom, middle, top')
+  })
+
+})
