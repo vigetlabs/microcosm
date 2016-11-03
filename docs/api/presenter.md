@@ -219,8 +219,7 @@ Alias for `model`.
 
 ### `view(model)`
 
-A special render method that is given the current result of
-`model`.
+A special render method that is given the current result of `model`.
 
 ```javascript
 class Greeter extends Presenter {
@@ -234,6 +233,25 @@ class Greeter extends Presenter {
   }
 }
 ```
+
+Views may also be assigned as getters, or as properties:
+
+```javascript
+class Example extends Presenter {
+  get view {
+    return MyView
+  }
+}
+
+// Or use newer class features:
+
+class Example extends Presenter {
+  view = MyView
+}
+```
+
+If a view is a React component, it will invoke it with the Presenter's
+model as props (including children).
 
 ### register()
 
