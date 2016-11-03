@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.5.1
+
+- **Important**: Fixed case where incomplete action at root of history could cause
+  cache to rollforward incorrectly, causing skipped action resolution.
+
 ## 10.5.0
 
 - Commit is given staged state for the entire microcosm as a second argument. Since

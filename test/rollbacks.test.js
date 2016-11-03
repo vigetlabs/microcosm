@@ -74,3 +74,60 @@ test('remembers the archive point', function () {
   repo.checkout(b)
   expect(repo.state.messages.map(m => m.id)).toEqual([1, 2])
 })
+
+test('properly rolls forward the cache', () => {
+  const top = new Microcosm({ maxHistory: 0 })
+
+  const all = n => n
+  const single = n => n
+
+  top.addDomain('items', {
+    getInitialState() {
+      return []
+    },
+
+    reset(_, items) {
+      return items
+    },
+
+    update (items, data) {
+      return items.map(function (item) {
+        if (item.id === data.id) {
+          return { ...item, ...data }
+        }
+        return item
+      })
+    },
+
+    setLoading (items, id) {
+      return items.map(function (item) {
+        if (item.id === id) {
+          return { ...item, loading: true }
+        }
+        return item
+      })
+    },
+
+    register () {
+      return {
+        [all.done] : this.reset,
+        [single.open] : this.setLoading,
+        [single.done] : this.update
+      }
+    }
+  })
+
+  const getAll = top.append(all)
+  const getOne = top.append(single)
+  const getTwo = top.append(single)
+
+  getAll.resolve([{ id: '1' }, { id: '2' }])
+
+  getOne.open('1')
+  getTwo.open('2')
+
+  getOne.resolve({ id: '1', done: true })
+  getTwo.resolve({ id: '2', done: true })
+
+  expect(top.state.items.map(i => i.done)).toEqual([true, true])
+})

@@ -118,31 +118,29 @@ export default class History {
     this.invoke('release')
   }
 
-  rollforward() {
+  rollforward () {
     let actions = this.toArray(this.focus)
+    let cacheable = true
 
-    for (var i = 0, count = actions.length; i < count; i++) {
-      this.invoke('reconcile', actions[i])
-      this.moveFocus()
+    for (var i = 0; i < actions.length; i++) {
+      let action = actions[i]
+
+      // Do not reconcile actions that are disabled. They behave
+      // as though nothing occured
+      if (action.is('disabled') === false) {
+        this.invoke('reconcile', action)
+      }
+
+      // Adjust the focus to the youngest disposable action. This makes it
+      // unncessary to rollforward through every single action all the
+      // time.
+      if (cacheable && action.is('disposable')) {
+        this.focus = action
+        this.invoke('cache')
+      } else {
+        cacheable = false
+      }
     }
-  }
-
-  /**
-   * Adjust the focus to the youngest disposable action. This makes it
-   * unncessary to rollforward through every single action all the
-   * time.
-   */
-  moveFocus() {
-    let start = this.focus ? this.focus.next : this.root
-
-    if (start && start.is('disposable')) {
-      this.focus = start
-      this.invoke('cache', start)
-
-      return true
-    }
-
-    return false
   }
 
   archive () {

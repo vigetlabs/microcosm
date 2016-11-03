@@ -134,7 +134,6 @@ export default class Microcosm extends Emitter {
    * permanently removes a node.
    */
   archive (action) {
-    // No need to dispatch an action if we don't have any history,
     // just set it to the cache
     if (this.history.limit <= 0) {
       this.archived = this.cached
@@ -147,7 +146,7 @@ export default class Microcosm extends Emitter {
    * Update the cache point, this is called when the history tree
    * moves forward the current cache point.
    */
-  cache (action) {
+  cache () {
     this.cached = merge({}, this.staged)
   }
 
