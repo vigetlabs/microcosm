@@ -76,12 +76,12 @@ test('remembers the archive point', function () {
 })
 
 test('properly rolls forward the cache', () => {
-  const top = new Microcosm({ maxHistory: 0 })
+  const repo = new Microcosm({ maxHistory: 0 })
 
   const all = n => n
   const single = n => n
 
-  top.addDomain('items', {
+  repo.addDomain('items', {
     getInitialState() {
       return []
     },
@@ -117,9 +117,9 @@ test('properly rolls forward the cache', () => {
     }
   })
 
-  const getAll = top.append(all)
-  const getOne = top.append(single)
-  const getTwo = top.append(single)
+  const getAll = repo.append(all)
+  const getOne = repo.append(single)
+  const getTwo = repo.append(single)
 
   getAll.resolve([{ id: '1' }, { id: '2' }])
 
@@ -129,5 +129,5 @@ test('properly rolls forward the cache', () => {
   getOne.resolve({ id: '1', done: true })
   getTwo.resolve({ id: '2', done: true })
 
-  expect(top.state.items.map(i => i.done)).toEqual([true, true])
+  expect(repo.state.items.map(i => i.done)).toEqual([true, true])
 })
