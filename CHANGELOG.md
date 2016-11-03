@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.6.0
+
+- Presenter views can be React components.
+
 ## 10.5.1
 
 - **Important**: Fixed case where incomplete action at root of history could cause

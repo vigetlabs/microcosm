@@ -287,6 +287,30 @@ describe('::teardown', function() {
 
 })
 
+describe('::view', function () {
+
+  test('views can be react components', function () {
+    class MyView extends React.Component {
+      render() {
+        return <p>{this.props.message}</p>
+      }
+    }
+
+    class MyPresenter extends Presenter {
+      view = MyView
+
+      model() {
+        return { message: 'hello' }
+      }
+    }
+
+    let text = mount(<MyPresenter />).text()
+
+    expect(text).toEqual('hello')
+  })
+
+})
+
 describe('purity', function() {
 
   test('inherits purity from repo', function () {

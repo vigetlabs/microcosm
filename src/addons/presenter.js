@@ -6,9 +6,7 @@ import shallowEqual from '../shallow-equal'
 
 function wrappedRender () {
   return (
-    <PresenterContext {...this.props} presenter={this}>
-      {this.view}
-    </PresenterContext>
+    <PresenterContext {...this.props} presenter={this} />
   )
 }
 
@@ -190,8 +188,13 @@ class PresenterContext extends React.Component {
 
   render () {
     const { presenter } = this.props
+    const model = merge({}, presenter.props, this.state)
 
-    return presenter.view(merge({}, presenter.props, this.state))
+    if (presenter.view.prototype.isReactComponent) {
+      return React.createElement(presenter.view, model)
+    }
+
+    return presenter.view(model)
   }
 
   getRepo () {
@@ -272,6 +275,5 @@ class PresenterContext extends React.Component {
     return this.repo.push(intent, ...params)
   }
 }
-
 
 export default Presenter
