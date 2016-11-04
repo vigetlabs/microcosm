@@ -1,5 +1,11 @@
 # Changelog
 
+## 10.6.1 (not released)
+
+- Made a few performance tweaks to achieve deeper v8 optimization
+- Never dispatch on archive. We don't need to. History will correctly
+  reconcile in all cases.
+
 ## 10.6.0
 
 - Presenter views can be React components.
