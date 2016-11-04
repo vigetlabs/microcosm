@@ -134,12 +134,7 @@ export default class Microcosm extends Emitter {
    * permanently removes a node.
    */
   archive (action) {
-    // just set it to the cache
-    if (this.history.limit <= 0) {
-      this.archived = this.cached
-    } else {
-      this.archived = this.dispatch(this.archived, action)
-    }
+    this.archived = this.cached
   }
 
   /**

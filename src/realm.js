@@ -15,7 +15,7 @@ export default class Realm {
   }
 
   register (type) {
-    if (this.registry.hasOwnProperty(type) === false) {
+    if (this.registry[type] == null) {
       this.registry[type] = getDomainHandlers(this.domains, type)
     }
 

@@ -221,7 +221,7 @@ describe('Efficiency', function() {
     expect(handler).toHaveBeenCalledTimes(1)
   })
 
-  test('actions are only dispatched twice with fixed size history', () => {
+  test('actions are only dispatched once with fixed size history', () => {
     const parent = new Microcosm({ maxHistory: 1 })
     const handler = jest.fn()
     const action = n => n
@@ -238,7 +238,29 @@ describe('Efficiency', function() {
     parent.push(action)
     parent.patch()
 
-    expect(handler).toHaveBeenCalledTimes(2)
+    expect(handler).toHaveBeenCalledTimes(1)
+  })
+
+  test('actions only dispatch duplicatively to address races', () => {
+    const repo = new Microcosm({ maxHistory: 1 })
+    const handler = jest.fn()
+    const action = n => n
+
+    repo.addDomain('one', {
+      register () {
+        return {
+          [action] : handler
+        }
+      }
+    })
+
+    const one = repo.append(action)
+    const two = repo.append(action)
+
+    two.resolve()
+    one.resolve()
+
+    expect(handler).toHaveBeenCalledTimes(3)
   })
 
 })

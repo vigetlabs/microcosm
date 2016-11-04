@@ -47,7 +47,7 @@ export function getType (action) {
   for (var i = 0, len = PRIORITY.length; i < len; i++) {
     let type = PRIORITY[i]
 
-    if (action.is(STATES[type])) {
+    if (action.is(type)) {
       return action.behavior[type] || null
     }
   }

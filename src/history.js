@@ -37,13 +37,15 @@ export default class History {
      * down. We can not cache the length of the repo list within a
      * for-loop.
      */
-    this.repos.forEach(function (repo) {
+    for (var i = 0; i < this.repos.length; i++) {
+      let repo = this.repos[i]
+
       if (typeof repo[method] === 'function') {
         repo[method](payload)
       } else {
-        console.warn('%s does not implement %s', repo.constructor.name || 'Microcosm', method)
+        console.warn('%s does not implement %s', repo.constructor.name, method)
       }
-    })
+    }
   }
 
   /**

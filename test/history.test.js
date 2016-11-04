@@ -1,5 +1,6 @@
 import History from '../src/history'
 import Microcosm from '../src/microcosm'
+import logger from './helpers/logger'
 
 const action = n => n
 
@@ -10,6 +11,29 @@ test('adjusts the focal point when adding a node', function () {
   history.append(action)
 
   expect(history.head.behavior).toEqual(action)
+})
+
+test('will not invoke methods on a repo that do not', function () {
+  const repo = new Microcosm()
+
+  logger.record()
+
+  repo.history.invoke('invalid')
+
+  expect(logger.count('warn')).toEqual(1)
+
+  logger.restore()
+})
+
+test('handles cases where a repo might be lost during a reconcilation', function () {
+  const parent = new Microcosm()
+  const child = parent.fork()
+
+  parent.on('change', function() {
+    child.teardown()
+  })
+
+  parent.patch({ test: true })
 })
 
 test('archive moves all the way up to the focal point', function () {

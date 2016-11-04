@@ -60,11 +60,9 @@ export default class Action extends Emitter {
    * @return {Boolean} does the action match the given types?
    */
   is (type) {
-    if (typeof type === 'string') {
-      type = States[type]
-    }
+    let code = States[type]
 
-    return (this.state & type) === type
+    return (this.state & code) === code
   }
 
   /**
@@ -105,7 +103,7 @@ export default class Action extends Emitter {
     // Ignore set if the action is already disposable. Rejected
     // actions can't be resolved. Resolved actions can't be
     // cancelled...
-    if (this.is(States.disposable)) {
+    if (this.is('disposable')) {
       return this
     }
 
@@ -217,7 +215,7 @@ export default class Action extends Emitter {
       return this
     }
 
-    if (this.is(States.error)) {
+    if (this.is('error')) {
       callback.call(scope, this.payload)
     } else {
       this.once('error', callback, scope)
@@ -257,7 +255,7 @@ export default class Action extends Emitter {
       return this
     }
 
-    if (this.is(States.done)) {
+    if (this.is('done')) {
       callback.call(scope, this.payload)
     } else {
       this.once('done', callback, scope)
@@ -280,7 +278,7 @@ export default class Action extends Emitter {
       return this
     }
 
-    if (this.is(States.cancelled)) {
+    if (this.is('cancelled')) {
       callback.call(scope, this.payload)
     } else {
       this.once('cancel', callback, scope)
