@@ -1,18 +1,15 @@
+import Databank from '../../../../src/addons/databank'
 import { addList, removeList } from '../actions/lists'
 
-const Lists = {
-
-  getInitialState() {
-    return []
-  },
+class Lists extends Databank {
 
   add (lists, params) {
-    return lists.concat({ name: 'Unspecified', ...params })
-  },
+    return ['put', params.id, params]
+  }
 
   remove (lists, unwanted) {
-    return lists.filter(i => i.id !== unwanted)
-  },
+    return ['destroy', unwanted]
+  }
 
   register() {
     return {

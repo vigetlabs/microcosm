@@ -1,23 +1,22 @@
+import Databank from '../../../../src/addons/databank'
+import { addItem, removeItem, } from '../actions/items'
 import { removeList } from '../actions/lists'
-import { addItem, removeItem } from '../actions/items'
 
-const Items = {
-
-  getInitialState() {
-    return []
-  },
+class Items extends Databank {
 
   add (items, params) {
-    return items.concat({ name: 'Unspecified', ...params })
-  },
+    return ['put', params.id, params]
+  }
 
   remove (item, unwanted) {
-    return item.filter(i => i.id !== unwanted)
-  },
+    return ['destroy', unwanted]
+  }
 
   removeByList(items, list) {
-    return items.filter(i => i.list !== list)
-  },
+    let unwanted = items.filter(i => i.list !== list).map(i => i.id)
+
+    return ['destroy', unwanted]
+  }
 
   register () {
     return {
@@ -26,6 +25,7 @@ const Items = {
       [removeList] : Items.removeByList
     }
   }
+
 }
 
 export default Items
