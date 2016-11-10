@@ -1,6 +1,6 @@
 # Changelog
 
-## 10.6.1 (not released)
+## 10.6.1
 
 - Made a few performance tweaks to achieve deeper v8 optimization
 - Never dispatch on archive. We don't need to. History will correctly
