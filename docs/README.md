@@ -22,6 +22,7 @@ start. Beyond that, check out [the example apps](../examples).
 1. [Microcosm](api/microcosm.md)
 2. [Domains](api/domains.md)
 3. [Actions](api/actions.md)
+4. [Effects](api/effects.md)
 
 ## Addons
 

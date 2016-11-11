@@ -109,7 +109,7 @@ export default class History {
     return this.size <= 0 || this.repos.length <= 0
   }
 
-  reconcile () {
+  reconcile (action) {
     if (this.isDormant()) {
       return false
     }
@@ -118,6 +118,11 @@ export default class History {
     this.rollforward()
     this.archive()
     this.invoke('release')
+
+    // Play effects after a release so that they can reference the new state
+    if (action) {
+      this.invoke('effect', action)
+    }
   }
 
   rollforward () {

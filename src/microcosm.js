@@ -2,6 +2,7 @@ import Emitter      from './emitter'
 import History      from './history'
 import MetaDomain   from './domains/meta'
 import Realm        from './realm'
+import Effects      from './effects'
 import lifecycle    from './lifecycle'
 import merge        from './merge'
 import shallowEqual from './shallow-equal'
@@ -25,6 +26,7 @@ export default class Microcosm extends Emitter {
 
     this.history = history || new History(maxHistory)
     this.realm = new Realm(this)
+    this.effects = new Effects(this)
 
     this.pure = pure
     this.parent = parent
@@ -75,6 +77,9 @@ export default class Microcosm extends Emitter {
   teardown() {
     // Teardown all domains
     this.realm.teardown(this)
+
+    // Teardown all effects
+    this.effects.teardown(this)
 
     // Remove all listeners
     this.off()
@@ -271,6 +276,27 @@ export default class Microcosm extends Emitter {
   addStore () {
     console.warn('Deprecation (10.0.0): Use repo.addDomain instead of repo.addStore.')
     return this.addDomain.apply(this, arguments)
+  }
+
+  /**
+   * An effect is a one-time handler that fires whenever an action changes. Callbacks
+   * will only ever fire once, and can not modify state.
+   *
+   * @param {Object} config - Configuration for the effect
+   * @param {Object} options - Options to pass to the effect
+   * @return {Microcosm} self
+   */
+  addEffect (effect, options) {
+    this.effects.add(effect, options)
+
+    return this
+  }
+
+  /**
+   * Trigger an effect
+   */
+  effect (action) {
+    this.effects.trigger(action)
   }
 
   /**

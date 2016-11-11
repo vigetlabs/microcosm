@@ -86,7 +86,7 @@ export default class Action extends Emitter {
    */
   reconcile() {
     if (this.history) {
-      this.history.reconcile()
+      this.history.reconcile(this)
     }
 
     return this
