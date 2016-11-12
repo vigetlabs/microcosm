@@ -12,7 +12,7 @@ const Form = React.createClass({
   propTypes: {
     intent     : PropTypes.oneOfType([ PropTypes.string, PropTypes.func]),
     serializer : PropTypes.func,
-    prepare  : PropTypes.func,
+    prepare    : PropTypes.func,
     onSubmit   : PropTypes.func,
     onDone     : PropTypes.func,
     onUpdate   : PropTypes.func,
@@ -34,6 +34,7 @@ const Form = React.createClass({
 
     // Remove invalid props to prevent React warnings
     delete props.intent
+    delete props.prepare
     delete props.serializer
     delete props.onDone
     delete props.onUpdate

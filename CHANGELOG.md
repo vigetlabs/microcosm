@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.7.1
+
+- Do not pass `prepare` prop to form element of Form addon
+
 ## 10.7.0
 
 - Added `prepare` method for processing form parameters after they
