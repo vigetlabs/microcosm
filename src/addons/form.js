@@ -12,6 +12,7 @@ const Form = React.createClass({
   propTypes: {
     intent     : PropTypes.oneOfType([ PropTypes.string, PropTypes.func]),
     serializer : PropTypes.func,
+    transform  : PropTypes.func,
     onSubmit   : PropTypes.func,
     onDone     : PropTypes.func,
     onUpdate   : PropTypes.func,
@@ -23,6 +24,7 @@ const Form = React.createClass({
     return {
       intent     : null,
       serializer : form => serialize(form, { hash: true, empty: true }),
+      transform  : n => n,
       onSubmit   : () => {}
     }
   },
@@ -48,7 +50,7 @@ const Form = React.createClass({
 
   submit(event) {
     const form   = this.refs.form
-    const params = this.props.serializer(form)
+    const params = this.props.transform(this.props.serializer(form))
     const action = this.context.send(this.props.intent, params)
 
     if (action && action instanceof Action) {

@@ -84,7 +84,6 @@ test('does not execute onUpdate if not given an action', function () {
   expect(onUpdate).not.toHaveBeenCalled()
 })
 
-
 test('submit can be called directly on the component instance', function () {
   const onDone = jest.fn()
 
@@ -97,4 +96,28 @@ test('submit can be called directly on the component instance', function () {
   form.instance().submit()
 
   expect(onDone).toHaveBeenCalledWith(true)
+})
+
+describe ('transform', function() {
+
+  test('can transform serialized data', function () {
+    const send = jest.fn()
+
+    const transform = function (params) {
+      params.name = "BILLY"
+
+      return params
+    }
+
+    const form = mount((
+      <Form intent="test" transform={transform}>
+        <input name="name" defaultValue="Billy"/>
+      </Form>
+    ), { context: { send } })
+
+    form.instance().submit()
+
+    expect(send).toHaveBeenCalledWith("test", { name: "BILLY" })
+  })
+
 })

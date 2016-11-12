@@ -76,11 +76,17 @@ A string value to send to Presenters. If a Presenter is registered to
 that string via its `register()` method, it will execute the
 associated callback.
 
-### serializer
+### serializer(form)
 
 The serialization function. By default this uses
 [`form-serialize`](https://github.com/defunctzombie/form-serialize). On
 submission, this function is given the associated form HTML element.
+
+### transform(params)
+
+Executed after serialization to allow for extra parameter
+manipulation. This is useful for ensuring proper date formats, or
+other data formats that may come directly from a form input.
 
 ### onSubmit(event, action)
 
