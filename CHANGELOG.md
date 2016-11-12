@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.7.0
+
+- Added `transform` method for processing form parameters after they
+  are serialized.
+
 ## 10.6.1
 
 - Made a few performance tweaks to achieve deeper v8 optimization
