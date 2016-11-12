@@ -2,7 +2,7 @@
 
 ## 10.7.0
 
-- Added `transform` method for processing form parameters after they
+- Added `prepare` method for processing form parameters after they
   are serialized.
 
 ## 10.6.1

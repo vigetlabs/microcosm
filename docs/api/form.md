@@ -82,11 +82,34 @@ The serialization function. By default this uses
 [`form-serialize`](https://github.com/defunctzombie/form-serialize). On
 submission, this function is given the associated form HTML element.
 
-### transform(params)
+### prepare(params)
 
 Executed after serialization to allow for extra parameter
 manipulation. This is useful for ensuring proper date formats, or
 other data formats that may come directly from a form input.
+
+```javascript
+class MyForm extends React.Component {
+  prepare (params) {
+    params.start = new Date(params.start).toISOString()
+    params.end = new Date(params.start).toISOString()
+
+    return params
+  }
+
+  render () {
+    return (
+      <Form intent={actions.create} prepare={this.prepare}>
+        <input name="name" />
+        <input name="start" type="datetime-local" />
+        <input name="end" type="datetime-local" />
+
+        <input type="submit" />
+      </Form>
+    )
+  }
+}
+```
 
 ### onSubmit(event, action)
 

@@ -98,19 +98,19 @@ test('submit can be called directly on the component instance', function () {
   expect(onDone).toHaveBeenCalledWith(true)
 })
 
-describe ('transform', function() {
+describe ('prepare', function() {
 
-  test('can transform serialized data', function () {
+  test('can prepare serialized data', function () {
     const send = jest.fn()
 
-    const transform = function (params) {
+    const prepare = function (params) {
       params.name = "BILLY"
 
       return params
     }
 
     const form = mount((
-      <Form intent="test" transform={transform}>
+      <Form intent="test" prepare={prepare}>
         <input name="name" defaultValue="Billy"/>
       </Form>
     ), { context: { send } })
