@@ -13,23 +13,6 @@ You can install dependencies with:
 npm install
 ```
 
-## Running
-
-A production build can be built by running:
-
-```bash
-npm run build
-```
-
-However most of the time developing with Microcosm, you will want
-to reference the example app:
-
-```bash
-npm start
-```
-
-This will host a web server with all examples at `http://localhost:4000`.
-
 ## Testing
 
 ```bash
@@ -51,7 +34,7 @@ touched.
 The following steps are required to push a new release:
 
 1. Update changelog
-2. `npm version minor`
+2. `npm version <major,minor,patch>`
 3. `git push --tags`
 4. `make release`
 
