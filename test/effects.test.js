@@ -20,6 +20,30 @@ test('invokes an effect when an action completes', function () {
   expect(Effect.handler).toHaveBeenCalledWith(repo, true)
 })
 
+test('invokes an effect within the scope of the effect', function () {
+  const repo = new Microcosm()
+  const test = n => n
+  const spy = jest.fn()
+
+  const Effect = {
+    test: true,
+    handler() {
+      spy(this.test)
+    },
+    register() {
+      return {
+        [test] : this.handler
+      }
+    }
+  }
+
+  repo.addEffect(Effect)
+
+  repo.push(test, true)
+
+  expect(spy).toHaveBeenCalledWith(true)
+})
+
 test('an effect is only called once  - at reconciliation', function () {
   const repo = new Microcosm()
   const test = n => n

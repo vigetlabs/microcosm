@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.8.0-alpha2
+
+- Effect callbacks should be envoked within the context of the effect
+
 ## 10.8.0-alpha
 
 - Added a formal method of side-effects: `Effect`. An effect runs

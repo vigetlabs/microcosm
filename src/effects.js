@@ -19,7 +19,7 @@ export default class Effects {
       let handlers = effect.register ? effect.register() : EMPTY
 
       if (handlers[action.type]) {
-        handlers[action.type](this.repo, action.payload)
+        handlers[action.type].call(effect, this.repo, action.payload)
       }
     }
   }
