@@ -1,5 +1,11 @@
 # Changelog
 
+## 10.8.0-alpha
+
+- Added a formal method of side-effects: `Effect`. An effect runs
+  once, whenever an action moves from one state to the next. See
+  [`./docs/api/effects.md`](./docs/api/effects.md)
+
 ## 10.7.1
 
 - Do not pass `prepare` prop to form element of Form addon
