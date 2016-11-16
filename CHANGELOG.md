@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.8.0-alpha3
+
+- Throw an error if Presenter::view is nully. This will inevitably
+  cause an error either way, and should make troubleshooting much easier.
+
 ## 10.8.0-alpha2
 
 - Effect callbacks should be envoked within the context of the effect

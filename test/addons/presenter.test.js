@@ -309,6 +309,14 @@ describe('::view', function () {
     expect(text).toEqual('hello')
   })
 
+  test('throws if a view is undefined', function () {
+    class MissingView extends Presenter {
+      view = undefined
+    }
+
+    expect(() => mount(<MissingView />)).toThrow(/MissingView\::view\(\) is undefined\./)
+  })
+
 })
 
 describe('purity', function() {

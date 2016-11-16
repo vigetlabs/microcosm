@@ -10,6 +10,10 @@ function wrappedRender () {
   )
 }
 
+function getName (presenter) {
+  return presenter.constructor.name || 'Presenter'
+}
+
 /**
  * A general component abstraction for high-responsibility React
  * components that interact with non-presentational logic so that the
@@ -189,6 +193,12 @@ class PresenterContext extends React.Component {
   render () {
     const { presenter } = this.props
     const model = merge({}, presenter.props, this.state)
+
+    // If the view is null, then it is probably incorrectly referenced
+    if (presenter.view == null) {
+      throw new TypeError(`${getName(presenter)}::view() is ` +
+                          `${typeof presenter.view}. Is it referenced correctly?`)
+    }
 
     if (presenter.view.prototype.isReactComponent) {
       return React.createElement(presenter.view, model)
