@@ -217,10 +217,11 @@ describe('resolved state', function () {
   })
 
   test('actions can not be resolved after rejected', function () {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
-    action.reject()
-    action.resolve()
+    action.reject(false)
+    action.resolve(true)
 
     expect(action.is('error')).toBe(true)
     expect(action.is('done')).toBe(false)
@@ -401,10 +402,7 @@ describe('teardown', function () {
 
   test('does not lose an onError subscription when it fails', function (done) {
     function test (action, method, payload) {
-      return function (action) {
-        Promise.reject().then(() => action.resolve(true),
-                               () => action.reject(false))
-      }
+      return Promise.reject()
     }
 
     const repo = new Microcosm()
