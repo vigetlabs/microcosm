@@ -53,10 +53,8 @@ export default class Microcosm extends Emitter {
     // is shallowly different (or always, if impure).
     this.state = parent ? parent.state : {}
 
-    // Only the root gets the meta domain
-    if (!parent) {
-      this.addDomain(MetaDomain)
-    }
+    // Setup a domain to handle patch and reset actions
+    this.addDomain(MetaDomain)
 
     // Microcosm is now ready. Call the setup lifecycle method
     this.setup()
@@ -312,7 +310,10 @@ export default class Microcosm extends Emitter {
       data = this.deserialize(data)
     }
 
-    return this.push(lifecycle._willReset, merge(this.getInitialState(), data))
+    return this.push(lifecycle._willReset, {
+      owner : this,
+      data  : merge(this.getInitialState(), data)
+    })
   }
 
   /**
@@ -328,7 +329,10 @@ export default class Microcosm extends Emitter {
       data = this.deserialize(data)
     }
 
-    return this.push(lifecycle._willPatch, data)
+    return this.push(lifecycle._willPatch, {
+      owner : this,
+      data  : data
+    })
   }
 
   replace (state) {

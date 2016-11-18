@@ -280,3 +280,57 @@ test('forks properly archive after a patch', () => {
   expect(child.state.one).toBe(true)
   expect(child.state.two).toBe(true)
 })
+
+test('patch does not cause forks to revert state', function () {
+  const parent = new Microcosm()
+  const child = parent.fork()
+
+  child.addDomain('count', {
+    register () {
+      return {
+        'add' : (a, b) => a + b
+      }
+    }
+  })
+
+  child.patch({ count: 2 })
+
+  child.push('add', 1)
+  child.push('add', 1)
+
+  // Forks inherit state. If a parent repo's state contains a key, it will
+  // pass the associated value down to a child. This allows state to flow
+  // downward through the repo network.
+  //
+  // Unfortunately, this causes an unexpected behavior with `patch` where
+  // consecutive actions always operate on the original patched value, and not
+  // the new state produced by a child.
+  expect(child.state.count).toEqual(4)
+})
+
+test('reset does not cause forks to revert state', function () {
+  const parent = new Microcosm()
+  const child = parent.fork()
+
+  child.addDomain('count', {
+    register () {
+      return {
+        'add' : (a, b) => a + b
+      }
+    }
+  })
+
+  child.reset({ count: 2 })
+
+  child.push('add', 1)
+  child.push('add', 1)
+
+  // Forks inherit state. If a parent repo's state contains a key, it will
+  // pass the associated value down to a child. This allows state to flow
+  // downward through the repo network.
+  //
+  // Unfortunately, this causes an unexpected behavior with `patch` where
+  // consecutive actions always operate on the original patched value, and not
+  // the new state produced by a child.
+  expect(child.state.count).toEqual(4)
+})

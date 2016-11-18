@@ -7,14 +7,27 @@
 import lifecycle from '../lifecycle'
 import merge from '../merge'
 
-export default {
+class MetaDomain {
 
-  [lifecycle._willReset](_old, next) {
-    return next
-  },
+  setup (repo) {
+    this.repo = repo
+  }
 
-  [lifecycle._willPatch](old, next) {
-    return merge({}, old, next)
+  reset (state, { owner, data }) {
+    return owner === this.repo ? data : state
+  }
+
+  patch (state, { owner, data }) {
+    return owner === this.repo ? merge({}, state, data) : state
+  }
+
+  register() {
+    return {
+      [lifecycle._willReset]: this.reset,
+      [lifecycle._willPatch]: this.patch
+    }
   }
 
 }
+
+export default MetaDomain
