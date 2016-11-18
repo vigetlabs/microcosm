@@ -1,6 +1,6 @@
 {
   "name": "microcosm",
-  "version": "10.8.0-alpha4",
+  "version": "10.8.0-rc",
   "private": true,
   "description": "Flux with first-class actions and state sandboxing.",
   "main": "src/microcosm.js",

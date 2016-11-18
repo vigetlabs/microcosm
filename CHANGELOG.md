@@ -1,24 +1,17 @@
 # Changelog
 
-## 10.8.0-alpha4
+## 10.8.0 (release candidate)
 
-- `patch` and `reset` only apply to the repo that invoked them (and thus their
-  children)
-
-## 10.8.0-alpha3
-
-- Throw an error if Presenter::view is nully. This will inevitably
-  cause an error either way, and should make troubleshooting much easier.
-
-## 10.8.0-alpha2
-
-- Effect callbacks should be envoked within the context of the effect
-
-## 10.8.0-alpha
+Available via `10.8.0-rc`
 
 - Added a formal method of side-effects: `Effect`. An effect runs
   once, whenever an action moves from one state to the next. See
   [`./docs/api/effects.md`](./docs/api/effects.md)
+- Effect callbacks should be envoked within the context of the effect
+- Throw an error if Presenter::view is nully. This will inevitably
+  cause an error either way, and should make troubleshooting much easier.
+- `patch` and `reset` only apply to the repo that invoked them (and thus their
+  children)
 
 ## 10.7.1
 
