@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.8.0-alpha4
+
+- `patch` and `reset` only apply to the repo that invoked them (and thus their
+  children)
+
 ## 10.8.0-alpha3
 
 - Throw an error if Presenter::view is nully. This will inevitably
