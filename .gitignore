@@ -5,5 +5,4 @@ node_modules
 *.cfg
 build
 tmp
-.happypack
 npm-debug.log

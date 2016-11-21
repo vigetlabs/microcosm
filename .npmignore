@@ -1,7 +1,6 @@
 coverage
 example
 src
-karma.conf.js
 CONTRIBUTING.md
 CHANGELOG.md
 webpack.config.js
