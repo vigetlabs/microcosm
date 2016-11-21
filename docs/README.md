@@ -9,14 +9,6 @@ start. Beyond that, check out [the example apps](../examples).
 2. [Domains](guides/02-domains.md)
 3. [Actions](guides/03-actions.md)
 
-## Recipes
-
-1. [React Router](recipes/react-router.md)
-2. [AJAX](recipes/ajax.md)
-3. [ImmutableJS](recipes/immutable-js.md)
-4. [Testing Domains](recipes/testing-domains.md)
-5. [Testing Intents](recipes/testing-intents.md)
-
 ## API
 
 1. [Microcosm](api/microcosm.md)
@@ -29,3 +21,11 @@ start. Beyond that, check out [the example apps](../examples).
 1. [Presenter](api/presenter.md)
 2. [Form](api/form.md)
 3. [withIntent](api/with-intent.md)
+
+## Recipes
+
+1. [React Router](recipes/react-router.md)
+2. [AJAX](recipes/ajax.md)
+3. [ImmutableJS](recipes/immutable-js.md)
+4. [Testing Domains](recipes/testing-domains.md)
+5. [Testing Intents](recipes/testing-intents.md)
