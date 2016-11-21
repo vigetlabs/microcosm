@@ -1,10 +1,10 @@
 # Examples
 
 1. [What's in here](whats-in-here)
-   a. [Chatbot](chatbot)
-   b. [Painter](painter)
-   c. [ReactRouter](reactrouter)
-   d. [SimpleSVG](simplesvg)
+   * [Chatbot](chatbot)
+   * [Painter](painter)
+   * [ReactRouter](reactrouter)
+   * [SimpleSVG](simplesvg)
 2. [Run the examples](run-the-examples)
 3. [Project Structure](project-structure)
 
