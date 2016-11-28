@@ -232,6 +232,3 @@ class Logger {
 Data flows downward, transformed by presenters into a form useful to the view layer.
 As users interact with the app, actions are dispatched to domains and effects
 to handle necessary state changes and side-effects.
-
-Following the Model-View-Presenter pattern has brought our client-side applications
-a degree of organization and testability that yields tremendous efficiency gains.
