@@ -1,7 +1,7 @@
 # withIntent(Component)
 
 1. [Overview](#overview)
-2. [API](#api)
+2. [Testing](#testing)
 
 ## Overview
 
