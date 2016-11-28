@@ -1,15 +1,12 @@
 # Architecture
 
-Before writing a Microcosm app, it's worth walking through the preferred
-architectural patterns that Microcosm and its associated add-ons prefer.
-
 In this guide, we'll walk through how Microcosm apps are organized, and how
 all of the pieces work together.
 
-## 10,000 Feet
+## Model-View-Presenter
 
-Microcosm apps follow the [Model-View-Presenter (MVP)](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter)
-pattern. In practice, this results in a file structure that looks like:
+We recommend following the [Model-View-Presenter (MVP)](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter)
+pattern. This influences the project folder structure:
 
 ```bash
 src/
@@ -22,8 +19,6 @@ src/
 ├── index.js
 └── routes.js
 ```
-
-If you just want to get started with a basic project structure, checkout [the Microcosm Quickstart](https://github.com/vigetlabs/microcosm-quickstart). Details follow.
 
 ## Routing
 
