@@ -5,9 +5,10 @@ start. Beyond that, check out [the example apps](../examples).
 
 ## Guides
 
-1. [Overview](guides/01-overview.md)
-2. [Domains](guides/02-domains.md)
-3. [Actions](guides/03-actions.md)
+### Getting Started
+
+1. [Quick Start](guides/quickstart.md)
+2. [Architecture](guides/architecture.md)
 
 ## API
 

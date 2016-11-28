@@ -31,7 +31,7 @@ supporting pagination, filtering, and other secondary data processing.
 Comprehensive documentation can be found in the [docs section of this repo](docs).
 
 If you'd rather look at working code, head over to
-the [example apps](examples) or checkout out the [quickstart guide](https://github.com/vigetlabs/microcosm-quickstart).
+the [example apps](examples) or checkout out the [quickstart guide](./docs/guides/quickstart.md).
 
 ### Installation
 
@@ -47,45 +47,28 @@ data modeling requirements of complicated UIs.
 
 ### Actions take center stage
 
-Microcosm is action-centric. Each action creator pushed into a
-Microcosm repo returns an action object to represent it:
+Microcosm organizes itself around a history of user actions. As those actions move through a set lifecycle,
+Microcosm reconciles them in the order they were created.
+
+Invoking `push()` appends to that history, and returns an `Action` object to represent it:
 
 ```javascript
-let repo = new Microcosm()
-
 function getPlanet (id) {
-  // Fetch returns a Promise. Microcosm automatically understands promises
+  // Fetch returns a Promise, handled out of the box
   return fetch('/planets/' + id).then(response => response.json())
 }
 
-let action = repo.push(getPlanet, 'saturn')
+let action = repo.push(getPlanet, 'venus')
 
-action.onDone(function(planet) {
-  console.log(planet.id) // saturn
+action.onDone(function (planet) {
+  console.log(planet.id) // venus
 })
 ```
 
-Actions move through several states, including: `open`, `loading`,
-`done`, `error`, and `cancelled`. In the example above, Microcosm sees
-that a Promise was returned from an action creator and went through
-the following chain of commands:
-
-1. Received Promise, `open` the action
-2. Promise finished loading:
-   - Did it succeed? Mark the action as `done`
-   - Did it fail? Mark the action as `failed`
-
-In all cases, **action types are automatically generated for
-you**. Domains (stores in old Flux) can subscribe to these unique
-action states, granting fine grained control over the state of data.
-
 ### Domains: Stateless Stores
 
-A Microcosm domain fulfills a similar role to stores in traditional
-Flux, however they hold no state of their own. A domain is simply a
-set of operations for manipulating data as an action updates.
-
-Old state comes in, new state comes out:
+A Domain is a collection of side-effect free operations for manipulating data. As actions update, Microcosm
+uses domains to determine how state should change. Old state comes in, new state comes out:
 
 ```javascript
 const PlanetsDomain = {
@@ -107,12 +90,10 @@ const PlanetsDomain = {
 repo.addDomain('planets', PlanetsDomain)
 ```
 
-By implementing a `register` method, domains can subscribe to
-actions. This works by assigning each action a unique string
-identifier. In this case, when `getPlanet` succeeds, the associated
-planet will be added to the list of known planets for the Microcosm.
+By implementing a register method, domains can subscribe to actions. Each action
+is assigned a unique string identifier. **Action type constants are generated automatically**.
 
-#### Pending, failed, and cancelled requests
+### Pending, failed, and cancelled requests
 
 Microcosm makes it easy to handle pending, loading, cancelled,
 completed, and failed requests:
@@ -156,7 +137,7 @@ function getPlanet (id) {
     })
 
     // Cancellation!
-    action.on('cancel', () => request.abort())
+    action.onCancel(request.abort)
   }
 }
 ```
@@ -165,9 +146,8 @@ First, the action becomes `open`. This state is useful when waiting
 for something to happen, such as loading. When the request finishes,
 if it fails, we reject the action, otherwise we resolve it.
 
-There's a final touch here: _cancellation_. Microcosm actions are
-cancellable, emitting the `cancel` event. This can be triggered by
-calling `cancel()` on an action. For example:
+**Microcosm actions are cancellable**. Invoking `action.cancel()` triggers a
+cancellation event:
 
 ```javascript
 let action = repo.push(getPlanet, 'Pluto')
