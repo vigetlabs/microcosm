@@ -1,9 +1,11 @@
 html {
+  background: #090931;
   box-sizing: border-box;
   font-size: 62.5%;
 }
 
 body {
+  background: white;
   color: #333;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",  "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   font-size: 1.55em;
@@ -61,8 +63,8 @@ code {
   display: flex;
   line-height: 16px;
   margin: 0 auto;
-  padding: 40px 24px;
-  width: 900px;
+  padding: 40px 16px;
+  max-width: 844px;
 }
 
 .header a {
@@ -99,7 +101,8 @@ code {
 
 .hero__inner {
   margin: 0 auto;
-  max-width: 680px;
+  max-width: 712px;
+  padding: 0 16px;
 }
 
 
@@ -139,7 +142,8 @@ code {
 
 .content {
   margin: 56px auto;
-  max-width: 680px;
+  max-width: 712px;
+  padding: 0 16px;
 }
 
 .content h2 {
