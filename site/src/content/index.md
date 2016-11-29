@@ -181,4 +181,4 @@ ReactDOM.render(<PaginatedUsers repo={repo} page="1" />, el)
 ## Learn more
 
 Checkout our [guide to architecture](./guides/architecture.html) or
-get going with the [quick start tutorial](./guides/quick-start.html).
+get going with the [quickstart tutorial](./guides/quickstart.html).
