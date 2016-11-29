@@ -1,7 +1,7 @@
 DOCS  := $(patsubst ../docs/%.md, public/%.html, $(shell find ../docs -name *.md))
 PAGES := $(patsubst src/content/%.md, public/%.html, $(shell find src/content -name *.md))
 
-BASE_URL ?= "http://code.viget.com/microcosm"
+BASE_URL ?= "//code.viget.com/microcosm/"
 
 MARKDOWN = pandoc -s --section-divs --smart --template=src/layouts/$(or $(3),default).html $(1) > $(2) --var=base_url:$(BASE_URL)
 
