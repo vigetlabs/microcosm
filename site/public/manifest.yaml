@@ -1,0 +1,19 @@
+---
+pages:
+ - src/content/api/actions.md 
+ - src/content/api/domains.md 
+ - src/content/api/effects.md 
+ - src/content/api/form.md 
+ - src/content/api/microcosm.md 
+ - src/content/api/presenter.md 
+ - src/content/api/with-intent.md 
+ - src/content/guides/architecture.md 
+ - src/content/guides/quickstart.md 
+ - src/content/index.md 
+ - src/content/recipes/ajax.md 
+ - src/content/recipes/immutable-js.md 
+ - src/content/recipes/react-router.md 
+ - src/content/recipes/testing-domains.md 
+ - src/content/recipes/testing-intents.md
+
+---

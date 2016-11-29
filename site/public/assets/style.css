@@ -1,0 +1,159 @@
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+
+body {
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",  "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-size: 1.55em;
+  font-weight: 300;
+  letter-spacing: .01em;
+  line-height: 1.6;
+  margin: 0;
+}
+
+*,
+*:after,
+*:before {
+  box-sizing: inherit;
+}
+
+h1, h2, h3 {
+  font-weight: 500;
+}
+
+b, strong {
+  font-weight: 500;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: 0.2s all;
+  border-bottom: 1px dotted;
+  cursor: pointer;
+}
+
+a:hover {
+  color: #ff6464;
+  transition: 0.1s all;
+}
+
+code {
+  font-family: Menlo, "DejaVu Sans Mono", "Bitstream Vera Sans Mono", Courier, monospace;
+}
+
+.header.--float {
+  color: white;
+  left: 0;
+  position: absolute;
+  top: 0px;
+  width: 100%;
+}
+
+.header__inner {
+  align-items: center;
+  display: flex;
+  line-height: 16px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  width: 900px;
+}
+
+.header a {
+  border: 0;
+  display: inline-block;
+}
+
+.header a img {
+  display: block;
+}
+
+.nav {
+  flex-grow: 1;
+  text-align: right;
+}
+
+.nav a {
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  padding: 8px;
+  text-transform: uppercase;
+}
+
+.hero {
+  background: radial-gradient(50% 60%, rgb(38, 48, 86), #090931), #090931;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  font-size: 18px;
+  justify-content: center;
+  padding: 140px 0 72px;
+  text-shadow: 0 2px 2px #001;
+}
+
+.hero__inner {
+  margin: 0 auto;
+  max-width: 680px;
+}
+
+
+.hero__inner h1 {
+  font-weight: 400;
+}
+
+.hero__callout {
+  border-radius: 6px;
+  border: 1px solid;
+  padding: 8px 14px;
+  margin-top: 16px;
+  display: inline-block;
+}
+
+.footer {
+  background: #090931;
+}
+
+.footer__inner {
+  color: white;
+  margin: 0 auto;
+  max-width: 680px;
+  padding: 24px;
+  text-align: center;
+}
+
+.footer__inner a {
+  border-bottom: 1px dotted;
+  color: white;
+  text-decoration: none;
+}
+
+/**
+ * Long form content
+ */
+
+.content {
+  margin: 56px auto;
+  max-width: 680px;
+}
+
+.content h2 {
+  margin-top: 48px;
+}
+
+.content h3 {
+  margin-top: 32px;
+}
+
+.content p code {
+  background-color: rgba(216, 216, 216, 0.45);
+  border-radius: 3px;
+  font-size: 0.85em;
+  padding: 0.2em 0.5em;
+  margin: 0 0.1em;
+}
