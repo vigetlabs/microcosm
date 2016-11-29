@@ -8,8 +8,8 @@ MARKDOWN = pandoc -s --section-divs --smart --from=markdown-implicit_figures --t
 all: $(DOCS) $(PAGES)
 
 server:
-	@ BASE_URL=http://localhost:3000 $(MAKE) clean all
-	@ BASE_URL=http://localhost:3000 ./scripts/serve
+	@ BASE_URL=/ $(MAKE) clean all
+	@ BASE_URL=/ ./scripts/serve
 
 publish: clean all
 	@ ./scripts/publish

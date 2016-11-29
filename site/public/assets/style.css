@@ -48,7 +48,7 @@ code {
   font-family: Menlo, "DejaVu Sans Mono", "Bitstream Vera Sans Mono", Courier, monospace;
 }
 
-.header.--float {
+.header.-float {
   color: white;
   left: 0;
   position: absolute;
