@@ -3,7 +3,7 @@
 cd ..
 git checkout -B gh-pages
 git add -f site/public
-git commit -am "Rebuild website"
+git commit -am "[skip ci] Rebuild website"
 git filter-branch -f --prune-empty --subdirectory-filter site/public
 git push -f origin gh-pages
 git checkout -
