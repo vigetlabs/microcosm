@@ -178,16 +178,7 @@ repo.addDomain('users', UsersDomain)
 ReactDOM.render(<PaginatedUsers repo={repo} page="1" />, el)
 ```
 
-## Why another Flux?
+## Learn more
 
-Excellent question! Microcosm draws its origins from
-[Flummox](https://github.com/acdlite/flummox), an early Flux focused on
-server-side rendering. However it would be impossible to avoid
-comparison to [Redux](https://github.com/reactjs/redux).
-
-Redux excels at extendability. Microcosm makes more decisions for you,
-delivering tighter integration across your app.
-
-Learn more within our [guide to
-architecture](./guides/architecture.html) or get going with the [quick
-start tutorial](./guides/quick-start.html).
+Checkout our [guide to architecture](./guides/architecture.html) or
+get going with the [quick start tutorial](./guides/quick-start.html).
