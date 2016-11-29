@@ -3,7 +3,7 @@ PAGES := $(patsubst src/content/%.md, public/%.html, $(shell find src/content -n
 
 BASE_URL ?= "http://code.viget.com/microcosm/"
 
-MARKDOWN = pandoc -s --section-divs --smart --template=src/layouts/$(or $(3),default).html $(1) > $(2) --var=base_url:$(BASE_URL)
+MARKDOWN = pandoc -s --section-divs --smart --from=markdown-implicit_figures --template=src/layouts/$(or $(3),default).html $(1) > $(2) --var=base_url:$(BASE_URL)
 
 all: $(DOCS) $(PAGES)
 
