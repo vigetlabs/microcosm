@@ -5,10 +5,10 @@ BASE_URL ?= "http://code.viget.com/microcosm/"
 
 MARKDOWN = pandoc -s --section-divs --smart --from=markdown-implicit_figures --template=src/layouts/$(3).html $(1) > $(2) --var=base_url:$(BASE_URL)
 
-all: $(DOCS) $(PAGES)
+all: $(DOCS) $(PAGES) public/changelog.html
 
-server:
-	@ BASE_URL=/ $(MAKE) clean all
+server: clean
+	@ BASE_URL=/ $(MAKE) all
 	@ BASE_URL=/ ./scripts/serve
 
 publish: clean all
@@ -16,6 +16,10 @@ publish: clean all
 
 clean:
 	@ rm -rf $(PAGES) $(DOCS)
+
+public/changelog.html: ../CHANGELOG.md src/layouts/default.html
+	@ $(call MARKDOWN,$<,$@,default)
+	@ echo [+] $@
 
 public/index.html: src/content/index.md src/layouts/home.html
 	@ $(call MARKDOWN,$<,$@,home)
