@@ -1,5 +1,10 @@
 # Changelog
 
+## Master
+
+- Replace class usage with functions to reduce build size
+- Remove `is-promise` dependency
+
 ## 10.8.0
 
 - Added a formal method of side-effects: `Effect`. An effect runs
