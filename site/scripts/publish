@@ -8,3 +8,8 @@ git filter-branch -f --prune-empty --subdirectory-filter site/public
 git push -f origin gh-pages
 git checkout -
 cd site
+
+echo ""
+echo "Published to:"
+echo "http://code.viget.com/microcosm/"
+echo ""
