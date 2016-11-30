@@ -35,7 +35,7 @@ url: http://my-planets-site.dev/planets/1
 
 +--------- [App] ----------+
 | +----- [Planets] ------+ |
-| | +-----+ +--[Show]--+ | |                       
+| | +-----+ +--[Show]--+ | |
 | | |     | |          | | |
 | | |     | |          | | |
 | | +-----+ +----------+ | |
@@ -50,7 +50,9 @@ This URL might map to the following:
 like a sidebar of all planets.
 3. **Planet specific layout.** A card with specific stats about a planet.
 
-Each Presenter is given the application's Repo instance. Since Presenters are sub-classes of `React.Component`, they are passed child routes as children (renderable by their view).
+Each Presenter is given the application's instance of Microcosm. We
+call it the `repo`. Since Presenters extend from `React.Component`,
+they receive nested routes as children (renderable by their view).
 
 ## Presenters
 
@@ -102,7 +104,7 @@ function PlanetsList ({ planets=[] }) {
     <ul>
       {planets.map(p => <li key={p.id}>{p.name}</li>)}
     </ul>
-  )  
+  )
 }
 ```
 
@@ -198,7 +200,7 @@ class Planets {
     return {
       [createPlanet]: this.append
     }
-  }    
+  }
 }
 ```
 
@@ -223,7 +225,7 @@ class Logger {
     return {
       [createPlanet.error]: this.trackError
     }
-  }    
+  }
 }
 ```
 

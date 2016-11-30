@@ -32,3 +32,4 @@ function make () {
 
 
 bs.watch('src/**/*').on('change', make)
+bs.watch('../docs/**/*').on('change', make)
