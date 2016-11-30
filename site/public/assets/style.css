@@ -154,7 +154,7 @@ code {
   margin-top: 32px;
 }
 
-.content p code {
+.content code {
   background-color: rgba(216, 216, 216, 0.45);
   border-radius: 3px;
   font-size: 0.85em;
