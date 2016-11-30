@@ -15,50 +15,46 @@ import update       from './update'
  * React).
  *
  * @extends {Emitter}
+ * @param {{maxHistory: Number, pure: Boolean, parent: Microcosm}} options - Instantiation options.
  */
-export default class Microcosm extends Emitter {
+export default function Microcosm ({ maxHistory, pure=true, history, parent=null } = {})  {
+  this.history = history || new History(maxHistory)
+  this.realm = new Realm(this)
+  this.effects = new Effects(this)
 
-  /**
-   * @param {{maxHistory: Number}} options - Instantiation options.
-   */
-  constructor ({ maxHistory, pure=true, history, parent=null } = {}) {
-    super()
+  this.pure = pure
+  this.parent = parent
 
-    this.history = history || new History(maxHistory)
-    this.realm = new Realm(this)
-    this.effects = new Effects(this)
+  this.history.addRepo(this)
 
-    this.pure = pure
-    this.parent = parent
+  // Long term storage. Keeps track of the root of the history tree
+  this.archived = parent ? parent.archived : {}
 
-    this.history.addRepo(this)
+  // Temporary storage. Keeps track of the focal point of the
+  // history tree
+  this.cached = parent ? parent.cached : {}
 
-    // Long term storage. Keeps track of the root of the history tree
-    this.archived = parent ? parent.archived : {}
+  // Staging. Domains can maintain their own internal representation of
+  // data. Staged keeps track of this so Domains can control what gets
+  // written to the head.
+  // Important: Children only ever get the head state of their parents.
+  this.staged = parent ? parent.head : {}
 
-    // Temporary storage. Keeps track of the focal point of the
-    // history tree
-    this.cached = parent ? parent.cached : {}
+  // Head state. Keeps track of the head of the tree
+  this.head = parent ? parent.head : {}
 
-    // Staging. Domains can maintain their own internal representation of
-    // data. Staged keeps track of this so Domains can control what gets
-    // written to the head.
-    // Important: Children only ever get the head state of their parents.
-    this.staged = parent ? parent.head : {}
+  // Publically available data. This gets updated whenever the head state
+  // is shallowly different (or always, if impure).
+  this.state = parent ? parent.state : {}
 
-    // Head state. Keeps track of the head of the tree
-    this.head = parent ? parent.head : {}
+  // Setup a domain to handle patch and reset actions
+  this.addDomain(MetaDomain)
 
-    // Publically available data. This gets updated whenever the head state
-    // is shallowly different (or always, if impure).
-    this.state = parent ? parent.state : {}
+  // Microcosm is now ready. Call the setup lifecycle method
+  this.setup()
+}
 
-    // Setup a domain to handle patch and reset actions
-    this.addDomain(MetaDomain)
-
-    // Microcosm is now ready. Call the setup lifecycle method
-    this.setup()
-  }
+Microcosm.prototype = merge({}, Emitter.prototype, {
 
   /**
    * Called whenever a Microcosm is instantiated. This provides a
@@ -67,7 +63,7 @@ export default class Microcosm extends Emitter {
    */
   setup () {
     // NOOP
-  }
+  },
 
   /**
    * Remove all subscriptions
@@ -84,7 +80,7 @@ export default class Microcosm extends Emitter {
 
     // Remove this repo from history
     this.history.removeRepo(this)
-  }
+  },
 
   /**
    * Generates the starting state for a Microcosm instance by asking every
@@ -94,7 +90,7 @@ export default class Microcosm extends Emitter {
    */
   getInitialState () {
     return this.dispatch({}, { type: lifecycle.getInitialState, payload: null })
-  }
+  },
 
   /**
    * Similarly to a domain (maybe we can reconcile these), get all handlers
@@ -103,7 +99,7 @@ export default class Microcosm extends Emitter {
    */
   register (type) {
     return this.realm.register(type)
-  }
+  },
 
   /**
    * Dispatch an action to a list of domains. This is used by state
@@ -130,7 +126,7 @@ export default class Microcosm extends Emitter {
     }
 
     return state
-  }
+  },
 
   /**
    * Update the archive, this is called when the history tree
@@ -138,7 +134,7 @@ export default class Microcosm extends Emitter {
    */
   archive (action) {
     this.archived = this.cached
-  }
+  },
 
   /**
    * Update the cache point, this is called when the history tree
@@ -146,7 +142,7 @@ export default class Microcosm extends Emitter {
    */
   cache () {
     this.cached = merge({}, this.staged)
-  }
+  },
 
   /**
    * Rollback to the lastest cache, cloning it while we're outside of
@@ -156,7 +152,7 @@ export default class Microcosm extends Emitter {
    */
   rollback () {
     this.staged = merge({}, this.cached)
-  }
+  },
 
   /**
    * Given an archive, get the next staged state.
@@ -170,7 +166,7 @@ export default class Microcosm extends Emitter {
     }
 
     this.staged = action != null ? this.dispatch(this.staged, action) : this.staged
-  }
+  },
 
   /**
    * Identify the last and next staged state, then ask the associated domain
@@ -179,7 +175,7 @@ export default class Microcosm extends Emitter {
    */
   commit () {
     this.head = this.realm.reduce(this.write, merge({}, this.staged), this)
-  }
+  },
 
   /**
    * Write state to the head
@@ -194,7 +190,7 @@ export default class Microcosm extends Emitter {
     }
 
     return update.set(state, key, update.get(this.state, key))
-  }
+  },
 
   /**
    * Run through the action history, dispatching their associated
@@ -209,7 +205,7 @@ export default class Microcosm extends Emitter {
     this.commit()
 
     return this
-  }
+  },
 
   release () {
     if (this.pure && shallowEqual(this.head, this.state)) {
@@ -221,7 +217,7 @@ export default class Microcosm extends Emitter {
     this._emit('change', this.state)
 
     return this
-  }
+  },
 
   /**
    * Append an action to history and return it. This is used by push,
@@ -232,7 +228,7 @@ export default class Microcosm extends Emitter {
    */
   append (behavior) {
     return this.history.append(behavior)
-  }
+  },
 
   /**
    * Push an action into Microcosm. This will trigger the lifecycle for updating
@@ -244,7 +240,7 @@ export default class Microcosm extends Emitter {
    */
   push (behavior, ...params) {
     return this.append(behavior).execute(params)
-  }
+  },
 
   /**
    * Partially apply push
@@ -254,7 +250,7 @@ export default class Microcosm extends Emitter {
    */
   prepare (...params) {
     return this.push.bind(this, ...params)
-  }
+  },
 
   /**
    * Adds a domain to the Microcosm instance. A domain informs the
@@ -269,12 +265,12 @@ export default class Microcosm extends Emitter {
     this.realm.add.apply(this.realm, arguments)
 
     return this.rebase()
-  }
+  },
 
   addStore () {
     console.warn('Deprecation (10.0.0): Use repo.addDomain instead of repo.addStore.')
     return this.addDomain.apply(this, arguments)
-  }
+  },
 
   /**
    * An effect is a one-time handler that fires whenever an action changes. Callbacks
@@ -288,14 +284,14 @@ export default class Microcosm extends Emitter {
     this.effects.add(effect, options)
 
     return this
-  }
+  },
 
   /**
    * Trigger an effect
    */
   effect (action) {
     this.effects.trigger(action)
-  }
+  },
 
   /**
    * Push an action to reset the state of the instance. This state is folded
@@ -314,7 +310,7 @@ export default class Microcosm extends Emitter {
       owner : this,
       data  : merge(this.getInitialState(), data)
     })
-  }
+  },
 
   /**
    * Deserialize a given state and reset the instance with that
@@ -333,12 +329,12 @@ export default class Microcosm extends Emitter {
       owner : this,
       data  : data
     })
-  }
+  },
 
   replace (state) {
     console.warn('Deprecation (10.0.0): Use repo.patch(state, true) instead of repo.replace(state).')
     return this.patch(state, true)
-  }
+  },
 
   /**
    * Deserialize a given payload by asking every domain how to it
@@ -353,7 +349,7 @@ export default class Microcosm extends Emitter {
     }
 
     return this.dispatch(payload, { type: lifecycle.deserialize, payload })
-  }
+  },
 
   /**
    * Serialize application state by asking every domain how to
@@ -364,7 +360,7 @@ export default class Microcosm extends Emitter {
    */
   serialize () {
     return this.dispatch(this.staged, { type: lifecycle.serialize, payload: null })
-  }
+  },
 
   /**
    * Alias serialize for JS interoperability.
@@ -372,7 +368,7 @@ export default class Microcosm extends Emitter {
    */
   toJSON () {
     return this.serialize()
-  }
+  },
 
   /**
    * Recalculate initial state by back-filling the cache object with
@@ -392,7 +388,7 @@ export default class Microcosm extends Emitter {
     this.release()
 
     return this
-  }
+  },
 
   /**
    * Change the focus of the history tree. This allows for features
@@ -407,7 +403,7 @@ export default class Microcosm extends Emitter {
     this.history.checkout(action)
 
     return this
-  }
+  },
 
   /**
    * Create a copy of this Microcosm, passing in the same history and
@@ -422,4 +418,4 @@ export default class Microcosm extends Emitter {
     })
   }
 
-}
+})

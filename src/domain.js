@@ -6,22 +6,23 @@
 
 const EMPTY = {}
 
-export default class Domain {
+export default function Domain () {}
 
-  /**
-   * Ensure that the given object supports the baseline requirements
-   * of Domains.
-   */
-  static ensure (obj) {
-
-    for (var key in Domain.prototype) {
-      if (Domain.prototype.hasOwnProperty(key) && (key in obj === false)) {
-        obj[key] = Domain.prototype[key]
-      }
+/**
+ * Ensure that the given object supports the baseline requirements
+ * of Domains.
+ */
+Domain.ensure = function (obj) {
+  for (var key in Domain.prototype) {
+    if (Domain.prototype.hasOwnProperty(key) && (key in obj === false)) {
+      obj[key] = Domain.prototype[key]
     }
-
-    return obj
   }
+
+  return obj
+}
+
+Domain.prototype = {
 
   /**
    * Setup runs right after a domain is added to a Microcosm, but before
@@ -30,7 +31,7 @@ export default class Domain {
    */
   setup () {
     // NOOP
-  }
+  },
 
   /**
    * Runs whenever `Microcosm::teardown` is invoked. Useful for
@@ -38,7 +39,7 @@ export default class Domain {
    */
   teardown () {
     // NOOP
-  }
+  },
 
   /**
    * A default register function that just returns an empty object. This helps
@@ -50,7 +51,7 @@ export default class Domain {
   register (type) {
     // NOOP
     return EMPTY
-  }
+  },
 
   /**
    * Given a next and previous state, should the value be committed
@@ -63,7 +64,7 @@ export default class Domain {
    */
   shouldCommit (last, next) {
     return true
-  }
+  },
 
   /**
   * This is the actual operation used to write state to a Microcosm.
@@ -77,7 +78,7 @@ export default class Domain {
   */
   stage (last, next) {
     return next
-  }
+  },
 
   /**
    * A middleware method for determining what exactly is assigned to

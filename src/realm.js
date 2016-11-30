@@ -6,13 +6,13 @@ import Domain from './domain'
 import getDomainHandlers from './getDomainHandlers'
 import merge from './merge'
 
-export default class Realm {
+export default function Realm (repo) {
+  this.repo = repo
+  this.domains = []
+  this.registry = {}
+}
 
-  constructor(repo) {
-    this.repo = repo
-    this.domains = []
-    this.registry = {}
-  }
+Realm.prototype = {
 
   register (type) {
     if (this.registry[type] == null) {
@@ -20,7 +20,7 @@ export default class Realm {
     }
 
     return this.registry[type]
-  }
+  },
 
   add (key, config) {
     if (arguments.length < 2) {
@@ -51,7 +51,7 @@ export default class Realm {
     domain.setup(this.repo)
 
     return this
-  }
+  },
 
   reduce (fn, state, scope) {
     for (var i = 0; i < this.domains.length; i++) {
@@ -61,7 +61,7 @@ export default class Realm {
     }
 
     return state
-  }
+  },
 
   teardown () {
     for (var i = 0; i < this.domains.length; i++) {

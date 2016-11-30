@@ -4,7 +4,9 @@
  * @abstract
  */
 
-export default class Emitter {
+export default function Emitter () {}
+
+Emitter.prototype = {
 
   /**
    * Add an event listener.
@@ -23,7 +25,7 @@ export default class Emitter {
     this._listeners[key].push({ fn, scope, times })
 
     return this
-  }
+  },
 
   /**
    * Adds an `event` listener that will be invoked a single time then
@@ -31,7 +33,7 @@ export default class Emitter {
    */
   once (event, fn, scope) {
     return this.on(event, fn, scope, 0)
-  }
+  },
 
   /**
    * Determine if a listener has been subscribed to
@@ -43,7 +45,7 @@ export default class Emitter {
     }
 
     return this._listeners['$' + event] != null
-  }
+  },
 
   /**
    * Unsubscribe a callback. If no event is provided, removes all callbacks. If
@@ -84,7 +86,7 @@ export default class Emitter {
     }
 
     return this
-  }
+  },
 
   /**
    * Emit `event` with the given args.

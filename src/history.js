@@ -4,23 +4,25 @@ import Action from './action'
  * The central tree data structure that is used to calculate state for
  * a Microcosm. Each node in the tree represents an action. Branches
  * are changes over time.
+ *
+ * @param {Number} limit - Depth of history before compression
  */
-export default class History {
+export default function History (limit = 0) {
+  this.size = 0
+  this.limit = limit
 
-  constructor (limit = 0) {
-    this.size = 0
-    this.limit = limit
+  this.root = null
+  this.focus = null
+  this.head = null
 
-    this.root = null
-    this.focus = null
-    this.head = null
+  this.repos = []
+}
 
-    this.repos = []
-  }
+History.prototype = {
 
   addRepo(repo) {
     this.repos.push(repo)
-  }
+  },
 
   removeRepo(repo) {
     const slot = this.repos.indexOf(repo)
@@ -28,7 +30,7 @@ export default class History {
     if (slot >= 0) {
       this.repos.splice(slot, 1)
     }
-  }
+  },
 
   invoke(method, payload) {
     /**
@@ -46,7 +48,7 @@ export default class History {
         console.warn('%s does not implement %s', repo.constructor.name, method)
       }
     }
-  }
+  },
 
   /**
    * Adjust the focus point to target a different node. This has the
@@ -68,7 +70,7 @@ export default class History {
     this.reconcile()
 
     return this
-  }
+  },
 
   /**
    * Create a new action and append it to the current focus,
@@ -90,7 +92,7 @@ export default class History {
     this.size += 1
 
     return this.head
-  }
+  },
 
   /**
    * Append an action to another, making that action its parent. This
@@ -103,11 +105,11 @@ export default class History {
     parent.next = child
 
     return this
-  }
+  },
 
   isDormant() {
     return this.size <= 0 || this.repos.length <= 0
-  }
+  },
 
   reconcile (action) {
     if (this.isDormant()) {
@@ -123,7 +125,7 @@ export default class History {
     if (action) {
       this.invoke('effect', action)
     }
-  }
+  },
 
   rollforward () {
     let actions = this.toArray(this.focus)
@@ -148,7 +150,7 @@ export default class History {
         cacheable = false
       }
     }
-  }
+  },
 
   archive () {
     // Is the cache pointed at the base? If so, that means we need
@@ -172,7 +174,7 @@ export default class History {
       this.head = null
       this.focus = null
     }
-  }
+  },
 
   /**
    * Get an array of the active branch
@@ -193,7 +195,7 @@ export default class History {
     }
 
     return items.reverse()
-  }
+  },
 
   reduce(fn, initial, scope) {
     let items = this.toArray()
@@ -203,7 +205,7 @@ export default class History {
     }
 
     return initial
-  }
+  },
 
   /**
    * Update the current size
@@ -219,4 +221,5 @@ export default class History {
 
     this.size = count
   }
+
 }

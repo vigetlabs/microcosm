@@ -7,9 +7,14 @@
  *    elsewhere in the dispatch execution process from being trapped.
  * 3. If the promise is rejected, reject the action
  * 4. Otherwise resolve the action with the returned body
+ *
+ * isPromise taken from:
+ * https://www.npmjs.com/package/is-promise
  */
 
-import isPromise from 'is-promise'
+function isPromise(obj) {
+  return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function'
+}
 
 export default {
 

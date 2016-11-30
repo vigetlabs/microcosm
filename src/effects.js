@@ -6,12 +6,12 @@ import merge from './merge'
 
 const EMPTY = {}
 
-export default class Effects {
+export default function Effects (repo ) {
+  this.repo = repo
+  this.effects = []
+}
 
-  constructor(repo) {
-    this.repo = repo
-    this.effects = []
-  }
+Effects.prototype = {
 
   trigger (action) {
     for (var i = 0; i < this.effects.length; i++) {
@@ -22,7 +22,7 @@ export default class Effects {
         handlers[action.type].call(effect, this.repo, action.payload)
       }
     }
-  }
+  },
 
   add (config, options) {
     let effect = null
@@ -40,7 +40,7 @@ export default class Effects {
     }
 
     return this
-  }
+  },
 
   teardown () {
     for (var i = 0; i < this.effects.length; i++) {

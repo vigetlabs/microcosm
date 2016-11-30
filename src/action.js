@@ -1,6 +1,7 @@
 import Emitter from './emitter'
 import States, {getType} from './action/states'
 import coroutine from './action/coroutine'
+import merge from './merge'
 import tag from './tag'
 
 /**
@@ -11,45 +12,23 @@ import tag from './tag'
  *
  * @extends {Emitter}
  */
-export default class Action extends Emitter {
-
-  constructor (behavior, history) {
-    super()
-
-    if (behavior && typeof behavior === 'object') {
-      throw new Error('Action expected string or function, instead got: ' +
-                      JSON.stringify(behavior))
-    }
-
-    this.type = null
-    this.behavior = tag(behavior)
-    this.state = States.disabled
-    this.payload = null
-
-    this.history = history
-    this.parent = null
-    this.sibling = null
+export default function Action (behavior, history) {
+  if (behavior && typeof behavior === 'object') {
+    throw new Error('Action expected string or function, instead got: ' +
+                    JSON.stringify(behavior))
   }
 
-  /**
-   * Get all child actions, those dispatched after this one within
-   * history. This is used by the Microcosm debugger to visualize
-   * action history as a DAG.
-   *
-   * @private
-   * @return {Array} children list of actions
-   */
-  get children () {
-    let start = this.next
-    let nodes = []
+  this.type = null
+  this.behavior = tag(behavior)
+  this.state = States.disabled
+  this.payload = null
 
-    while (start) {
-      nodes.push(start)
-      start = start.sibling
-    }
+  this.history = history
+  this.parent = null
+  this.sibling = null
+}
 
-    return nodes
-  }
+Action.prototype = merge({}, Emitter.prototype, {
 
   /**
    * Given a string or State constant, determine if the `state` bitmask for
@@ -63,7 +42,7 @@ export default class Action extends Emitter {
     let code = States[type]
 
     return (this.state & code) === code
-  }
+  },
 
   /**
    * Evaluate the action by invoking the action's behavior with
@@ -78,7 +57,7 @@ export default class Action extends Emitter {
     coroutine(this, this.behavior.apply(this, params))
 
     return this
-  }
+  },
 
   /**
    * Trigger history reconciliation if associated with a history
@@ -90,7 +69,7 @@ export default class Action extends Emitter {
     }
 
     return this
-  }
+  },
 
   /**
    * If defined, sets the payload for the action and triggers a
@@ -115,7 +94,7 @@ export default class Action extends Emitter {
     }
 
     return this.reconcile()
-  }
+  },
 
   /**
    * Set the action state to "open", then set a payload if
@@ -128,7 +107,7 @@ export default class Action extends Emitter {
     this._emit('open', this.payload)
 
     return this
-  }
+  },
 
   /**
    * Set the action state to "loading", then set a payload if
@@ -141,7 +120,7 @@ export default class Action extends Emitter {
     this._emit('update', payload)
 
     return this
-  }
+  },
 
   /**
    * Set the action state to "error" and marks the action for clean
@@ -154,7 +133,7 @@ export default class Action extends Emitter {
     this._emit('error', payload)
 
     return this
-  }
+  },
 
   /**
    * Set the action state to "done" and marks the action for clean
@@ -167,12 +146,12 @@ export default class Action extends Emitter {
     this._emit('done', this.payload)
 
     return this
-  }
+  },
 
   close () {
     console.warn('Deprecation (10.0.0): Use action.resolve instead of action.close.')
     return this.resolve.apply(this, arguments)
-  }
+  },
 
   /**
    * Set the action state to "cancelled" and marks the action for clean
@@ -186,7 +165,7 @@ export default class Action extends Emitter {
     this._emit('cancel', this.payload)
 
     return this
-  }
+  },
 
   /**
    * Toggles the disabled state, where the action will not
@@ -199,7 +178,7 @@ export default class Action extends Emitter {
     this.type = getType(this)
 
     return this.reconcile()
-  }
+  },
 
   /**
    * Listen to failure. If the action has already failed, it will
@@ -222,7 +201,7 @@ export default class Action extends Emitter {
     }
 
     return this
-  }
+  },
 
   /**
    * Listen to progress. Wait and trigger a provided callback on the "update" event.
@@ -239,7 +218,7 @@ export default class Action extends Emitter {
     this.on('update', callback, scope)
 
     return this
-  }
+  },
 
   /**
    * Listen for completion. If the action has already completed, it will
@@ -262,7 +241,7 @@ export default class Action extends Emitter {
     }
 
     return this
-  }
+  },
 
   /**
    * Listen for cancel. If the action has already cancelled, it will
@@ -285,7 +264,7 @@ export default class Action extends Emitter {
     }
 
     return this
-  }
+  },
 
   /**
    * For interop with promises. Returns a promise that
@@ -297,7 +276,7 @@ export default class Action extends Emitter {
       this.onDone(resolve)
       this.onError(reject)
     }).then(pass, fail)
-  }
+  },
 
   /**
    * Cleanup an action that has been disconnected from its history
@@ -315,4 +294,27 @@ export default class Action extends Emitter {
     this.next = null
   }
 
-}
+})
+
+/**
+ * Get all child actions, those dispatched after this one within
+ * history. This is used by the Microcosm debugger to visualize
+ * action history as a DAG.
+ *
+ * @private
+ * @return {Array} children list of actions
+ */
+
+Object.defineProperty(Action.prototype, 'children', {
+  get () {
+    let start = this.next
+    let nodes = []
+
+    while (start) {
+      nodes.push(start)
+      start = start.sibling
+    }
+
+    return nodes
+  }
+})

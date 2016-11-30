@@ -7,19 +7,21 @@
 import lifecycle from '../lifecycle'
 import merge from '../merge'
 
-class MetaDomain {
+export default function MetaDomain () {}
+
+MetaDomain.prototype = {
 
   setup (repo) {
     this.repo = repo
-  }
+  },
 
   reset (state, { owner, data }) {
     return owner === this.repo ? data : state
-  }
+  },
 
   patch (state, { owner, data }) {
     return owner === this.repo ? merge({}, state, data) : state
-  }
+  },
 
   register() {
     return {
@@ -29,5 +31,3 @@ class MetaDomain {
   }
 
 }
-
-export default MetaDomain

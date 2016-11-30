@@ -32,8 +32,7 @@
     ]
   },
   "dependencies": {
-    "form-serialize": "0.7.1",
-    "is-promise": "2.1.0"
+    "form-serialize": "0.7.1"
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",
