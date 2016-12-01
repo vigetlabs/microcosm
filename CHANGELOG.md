@@ -4,6 +4,9 @@
 
 - Replace class usage with functions to reduce build size
 - Remove `is-promise` dependency
+- Calling setState in a Presenter will result in a re-render. This was
+  a bug caused by a shouldComponentUpdate method implemented inside of
+  a wrapper used to maintain context for <= IE10.
 
 ## 10.8.0
 
