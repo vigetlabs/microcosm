@@ -158,14 +158,6 @@ class PresenterContext extends React.Component {
     }
   }
 
-  shouldComponentUpdate (props, state) {
-    if (this.isImpure()) {
-      return true
-    }
-
-    return !shallowEqual(props, this.props) || !shallowEqual(state, this.state)
-  }
-
   componentWillMount () {
     this.props.presenter._setRepo(this.repo)
 

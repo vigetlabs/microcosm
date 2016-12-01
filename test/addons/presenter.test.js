@@ -425,36 +425,29 @@ describe('unmounting', function () {
 
 describe('rendering efficiency', function() {
 
-  test('does not waste rendering on nested children', function () {
+  test('child view model is not recalculated when parents cause them to re-render', function () {
     const repo = new Microcosm()
-    const spy = jest.fn(function({ name }) {
-      return <p>{ name }</p>
+    const model = jest.fn(function({ name }) {
+      return { name }
     })
 
     class Child extends Presenter {
-      viewModel () {
-        return { name: state => state.name }
-      }
+      model = model
 
-      get view () {
-        return spy
+      view ({ name }) {
+        return <p>{ name}</p>
       }
     }
 
     class Parent extends Presenter {
-      viewModel () {
-        return { name: state => state.name }
-      }
-      view () {
-        return <Child />
-      }
+      view = Child
     }
 
     mount(<Parent repo={ repo } />)
 
     repo.patch({ name: 'Billy Booster' })
 
-    expect(spy.mock.calls.length).toEqual(2)
+    expect(model).toHaveBeenCalledTimes(2)
   })
 
   test('should re-render when state changes', function () {
