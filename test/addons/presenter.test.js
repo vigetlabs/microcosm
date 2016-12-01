@@ -456,6 +456,18 @@ describe('rendering efficiency', function() {
 
     expect(spy.mock.calls.length).toEqual(2)
   })
+
+  test('should re-render when state changes', function () {
+    const spy = jest.fn(() => null)
+
+    class Test extends Presenter {
+      view = spy
+    }
+
+    mount(<Test />).setState({ test: true })
+
+    expect(spy).toHaveBeenCalledTimes(2)
+  })
 })
 
 describe('rendering', function () {
