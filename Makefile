@@ -9,7 +9,7 @@ all: javascript docs package.json
 javascript: $(SCRIPTS)
 	@ rsync -uraq tmp/src/ build/
 
-tmp/%.js: %.js
+tmp/%.js: %.js .babelrc
 	@ mkdir -p $(@D)
 	@ $(BABEL) -c -s inline $< > $@
 	@ echo [+] $(@F)
