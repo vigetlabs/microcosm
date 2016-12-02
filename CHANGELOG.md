@@ -1,6 +1,6 @@
 # Changelog
 
-## 10.9.0 Release Candidate
+## 10.9.0
 
 - Replace class usage with functions to reduce build size
 - Remove `is-promise` dependency
