@@ -18,7 +18,7 @@ To address this issue, Microcosm provides an `append` method. `append`
 is different from `push` in that it adds a new action to history,
 however does not execute it the associated behavior.
 
-```
+```javascript
 let repo = new Microcosm()
 
 // this will send out an ajax request
@@ -34,7 +34,7 @@ repo.append(ajaxyThing)
 Using `append` makes it easy to write tests for domain handlers at
 precise moments within an action. Let's assume the following repo:
 
-```
+```javascript
 function getPlanets () {
   return ajax.get('/planets')
 }
