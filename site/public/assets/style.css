@@ -4,6 +4,12 @@ html {
   font-size: 62.5%;
 }
 
+*,
+*:after,
+*:before {
+  box-sizing: inherit;
+}
+
 body {
   background: #ffffff;
   color: #333;
@@ -13,12 +19,6 @@ body {
   letter-spacing: .01em;
   line-height: 1.6;
   margin: 0;
-}
-
-*,
-*:after,
-*:before {
-  box-sizing: inherit;
 }
 
 h1, h2, h3 {
@@ -57,7 +57,7 @@ code {
 .header.-float {
   left: 0;
   position: absolute;
-  top: 0px;
+  top: 0;
   width: 100%;
 }
 
@@ -66,8 +66,8 @@ code {
   display: flex;
   line-height: 16px;
   margin: 0 auto;
-  padding: 32px 16px;
   max-width: 844px;
+  padding: 32px 16px;
 }
 
 .header a {
@@ -111,7 +111,6 @@ code {
   max-width: 712px;
   padding: 0 16px;
 }
-
 
 .hero__inner h1 {
   font-weight: 400;
@@ -187,9 +186,9 @@ code {
 }
 
 .sidebar ul {
+  font-size: 14px;
   list-style: none;
   padding: 0;
-  font-size: 14px;
 }
 
 .sidebar ul li {
