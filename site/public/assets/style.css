@@ -130,25 +130,30 @@ code {
 }
 
 .main.-with-sidebar {
-  display: table;
   margin: 56px auto 0;
   max-width: 924px;
   padding: 0 16px;
   width: 100%;
-  table-layout: fixed;
 }
 
-.main.-with-sidebar .content {
-  display: table-cell;
-  padding-left: 48px;
-  padding-bottom: 48px;
-}
+@media all and (min-width: 600px) {
+  .main.-with-sidebar {
+    display: table;
+    table-layout: fixed;
+  }
 
-.sidebar {
-  border-right: 1px solid #eee;
-  display: table-cell;
-  width: 200px;
-  padding-right: 48px;
+  .main.-with-sidebar .content {
+    display: table-cell;
+    padding-left: 48px;
+    padding-bottom: 48px;
+  }
+
+  .sidebar {
+    border-right: 1px solid #eee;
+    display: table-cell;
+    width: 200px;
+    padding-right: 48px;
+  }
 }
 
 .sidebar__heading {
