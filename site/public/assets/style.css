@@ -125,10 +125,6 @@ code {
   display: inline-block;
 }
 
-.main a.active {
-  font-weight: bold;
-}
-
 .main.-with-sidebar {
   margin: 56px auto 0;
   max-width: 924px;
@@ -172,6 +168,23 @@ code {
 
 .sidebar a {
   border-bottom: 0;
+  position: relative;
+  padding: 0 12px;
+}
+
+.sidebar a.active {
+  color: #090931;
+  font-weight: 500;
+}
+
+.sidebar a.active:before {
+  background: #090931;
+  content: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 2px;
 }
 
 .sidebar ul {
@@ -182,11 +195,6 @@ code {
 
 .sidebar ul li {
   margin-bottom: 4px;
-}
-
-.sidebar a:hover,
-.sidebar a:focus {
-  border-bottom: 1px dotted;
 }
 
 .footer {
