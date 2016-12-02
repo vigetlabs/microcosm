@@ -16,10 +16,10 @@
     <link rel="stylesheet" href="assets/style.css" />
   </head>
   <body>
-    <header class="header">
+    <header class="header fill-bloom">
       <div class="header__inner">
         <a href="$base_url$">
-          <img src="assets/microcosm.svg" alt="Microcosm" height="24" width="207" />
+          <img src="assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
         </a>
 
         <nav class="nav">
@@ -29,7 +29,43 @@
       </div>
     </header>
 
-    <main id="main">
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">Introduction</h4>
+          <ul>
+            <li><a href="guides/quickstart.html">Quickstart</a></li>
+            <li><a href="guides/architecture.html">Architecture</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">Recipes</h4>
+          <ul>
+            <li><a href="recipes/ajax.html">AJAX</a></li>
+            <li><a href="recipes/immutable-js.html">ImmutableJS</a></li>
+            <li><a href="recipes/react-router.html">React Router</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">Testing</h4>
+          <ul>
+            <li><a href="recipes/testing-domains.html">Domains</a></li>
+            <li><a href="recipes/testing-intents.html">Intents</a></li>
+          </ul>
+        </section>
+          <h4 class="sidebar__heading">API</h4>
+          <ul>
+            <li><a href="api/actions.html">Actions</a></li>
+            <li><a href="api/domains.html">Domains</a></li>
+            <li><a href="api/effects.html">Effects</a></li>
+            <li><a href="api/microcosm.html">Microcosm</a></li>
+            <li><a href="api/presenter.html">Presenter</a></li>
+            <li><a href="api/with-intent.html">withIntent</a></li>
+            <li><a href="api/form.html">Form</a></li>
+          </ul>
+        </section>
+      </aside>
+
       <div class="content">$body$</div>
     </main>
 
@@ -47,5 +83,18 @@
         </div>
       </div>
     </footer>
+
+    <script>
+      // set active links
+      (function() {
+        var location = window.location.toString()
+
+        for (var i = 0; i < document.links.length; i++) {
+          if (document.links[i].href === location) {
+            document.links[i].classList.add('active')
+          }
+        }
+      }())
+    </script>
   </body>
 </html>

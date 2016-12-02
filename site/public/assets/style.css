@@ -46,12 +46,19 @@ a:hover {
   transition: 0.1s all;
 }
 
+a.active {
+  font-weight: bold;
+}
+
 code {
   font-family: Menlo, "DejaVu Sans Mono", "Bitstream Vera Sans Mono", Courier, monospace;
 }
 
-.header.-float {
+.header {
   color: white;
+}
+
+.header.-float {
   left: 0;
   position: absolute;
   top: 0px;
@@ -63,7 +70,7 @@ code {
   display: flex;
   line-height: 16px;
   margin: 0 auto;
-  padding: 40px 16px 32px;
+  padding: 32px 16px;
   max-width: 844px;
 }
 
@@ -88,15 +95,19 @@ code {
   text-transform: uppercase;
 }
 
-.hero {
-  background: radial-gradient(50% 60%, rgb(38, 48, 86), #090931), #090931;
+.fill-bloom {
+  background: radial-gradient(circle at 50% 60%, rgb(38, 48, 86), #090931), #090931;
+  box-shadow: inset 0 -1px 1px black;
   color: white;
+  text-shadow: 0 2px 2px #001;
+}
+
+.hero {
   display: flex;
   flex-direction: column;
   font-size: 18px;
   justify-content: center;
-  padding: 140px 0 72px;
-  text-shadow: 0 2px 2px #001;
+  padding: 132px 0 72px;
 }
 
 .hero__inner {
@@ -116,6 +127,61 @@ code {
   padding: 8px 14px;
   margin-top: 16px;
   display: inline-block;
+}
+
+.main.-with-sidebar {
+  display: table;
+  margin: 56px auto 0;
+  max-width: 924px;
+  padding: 0 16px;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.main.-with-sidebar .content {
+  display: table-cell;
+  padding-left: 48px;
+  padding-bottom: 48px;
+}
+
+.sidebar {
+  border-right: 1px solid #eee;
+  display: table-cell;
+  width: 200px;
+  padding-right: 48px;
+}
+
+.sidebar__heading {
+  color: #999;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.sidebar__group {
+  margin: 0 0 32px;
+}
+
+.sidebar a {
+  border-bottom: 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  font-size: 14px;
+}
+
+.sidebar ul li {
+  margin-bottom: 4px;
+}
+
+.sidebar a:hover,
+.sidebar a:focus {
+  border-bottom: 1px dotted;
 }
 
 .footer {
