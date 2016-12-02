@@ -1,4 +1,5 @@
-MAKEFLAGS ?= '-j 4'
+MAKEFLAGS += '-j 4'
+
 BABEL := node_modules/.bin/babel
 SCRIPTS := $(addprefix tmp/,$(shell find src bench -name '*.js*'))
 VERSION := $$(node -p "require('./package').version")
