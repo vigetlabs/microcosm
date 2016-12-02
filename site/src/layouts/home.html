@@ -7,19 +7,17 @@
 
     <title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>
 
-    <base href="$base_url$" />
-
     <meta property="og:title" content="Microcosm" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="$base_url$" />
 
-    <link rel="stylesheet" href="assets/style.css" />
+    <link rel="stylesheet" href="$base_url$/assets/style.css" />
   </head>
   <body>
     <header class="header -float">
       <div class="header__inner">
         <a href="$base_url$">
-          <img src="assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+          <img src="$base_url$/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
         </a>
 
         <nav class="nav">

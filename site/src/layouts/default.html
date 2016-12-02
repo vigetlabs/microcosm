@@ -7,19 +7,17 @@
 
     <title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>
 
-    <base href="$base_url$" />
-
     <meta property="og:title" content="Microcosm" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="$base_url$" />
 
-    <link rel="stylesheet" href="assets/style.css" />
+    <link rel="stylesheet" href="$base_url$/assets/style.css" />
   </head>
   <body>
     <header class="header fill-bloom">
       <div class="header__inner">
         <a href="$base_url$">
-          <img src="assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+          <img src="$base_url$/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
         </a>
 
         <nav class="nav">
@@ -34,40 +32,40 @@
         <section class="sidebar__group">
           <h4 class="sidebar__heading">Introduction</h4>
           <ul>
-            <li><a href="guides/quickstart.html">Quickstart</a></li>
-            <li><a href="guides/architecture.html">Architecture</a></li>
+            <li><a href="$base_url$/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="$base_url$/guides/architecture.html">Architecture</a></li>
           </ul>
         </section>
         <section class="sidebar__group">
           <h4 class="sidebar__heading">Recipes</h4>
           <ul>
-            <li><a href="recipes/ajax.html">AJAX</a></li>
-            <li><a href="recipes/immutable-js.html">ImmutableJS</a></li>
-            <li><a href="recipes/react-router.html">React Router</a></li>
+            <li><a href="$base_url$/recipes/ajax.html">AJAX</a></li>
+            <li><a href="$base_url$/recipes/immutable-js.html">ImmutableJS</a></li>
+            <li><a href="$base_url$/recipes/react-router.html">React Router</a></li>
           </ul>
         </section>
         <section class="sidebar__group">
           <h4 class="sidebar__heading">Testing</h4>
           <ul>
-            <li><a href="recipes/testing-domains.html">Domains</a></li>
-            <li><a href="recipes/testing-intents.html">Intents</a></li>
+            <li><a href="$base_url$/recipes/testing-domains.html">Domains</a></li>
+            <li><a href="$base_url$/recipes/testing-intents.html">Intents</a></li>
           </ul>
         </section>
         <section class="sidebar__group">
           <h4 class="sidebar__heading">API</h4>
           <ul>
-            <li><a href="api/actions.html">Actions</a></li>
-            <li><a href="api/domains.html">Domains</a></li>
-            <li><a href="api/effects.html">Effects</a></li>
-            <li><a href="api/microcosm.html">Microcosm</a></li>
+            <li><a href="$base_url$/api/actions.html">Actions</a></li>
+            <li><a href="$base_url$/api/domains.html">Domains</a></li>
+            <li><a href="$base_url$/api/effects.html">Effects</a></li>
+            <li><a href="$base_url$/api/microcosm.html">Microcosm</a></li>
           </ul>
         </section>
         <section class="sidebar__group">
           <h4 class="sidebar__heading">Addons</h4>
           <ul>
-            <li><a href="api/presenter.html">Presenter</a></li>
-            <li><a href="api/with-intent.html">withIntent</a></li>
-            <li><a href="api/form.html">Form</a></li>
+            <li><a href="$base_url$/api/presenter.html">Presenter</a></li>
+            <li><a href="$base_url$/api/with-intent.html">withIntent</a></li>
+            <li><a href="$base_url$/api/form.html">Form</a></li>
           </ul>
         </section>
       </aside>
