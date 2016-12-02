@@ -46,10 +46,6 @@ a:hover {
   transition: 0.1s all;
 }
 
-a.active {
-  font-weight: bold;
-}
-
 code {
   font-family: Menlo, "DejaVu Sans Mono", "Bitstream Vera Sans Mono", Courier, monospace;
 }
@@ -127,6 +123,10 @@ code {
   padding: 8px 14px;
   margin-top: 16px;
   display: inline-block;
+}
+
+.main a.active {
+  font-weight: bold;
 }
 
 .main.-with-sidebar {
