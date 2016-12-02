@@ -63,7 +63,7 @@ code {
   display: flex;
   line-height: 16px;
   margin: 0 auto;
-  padding: 40px 16px;
+  padding: 40px 16px 32px;
   max-width: 844px;
 }
 
