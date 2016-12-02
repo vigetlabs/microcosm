@@ -9,6 +9,10 @@
 
     <base href="$base_url$" />
 
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="$base_url$" />
+
     <link rel="stylesheet" href="assets/style.css" />
   </head>
   <body>
@@ -31,7 +35,16 @@
 
     <footer class="footer">
       <div class="footer__inner">
-        Built with patience and time by <a href="https://viget.com">Viget</a>
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
       </div>
     </footer>
   </body>

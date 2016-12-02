@@ -136,7 +136,7 @@ Debugger](https://github.com/vigetlabs/microcosm-debugger):
 const forever = new Microcosm({ maxHistory: Infinity })
 ```
 
-![Time Travel](https://github.com/vigetlabs/microcosm-debugger/raw/master/docs/chat-debugger.gif)
+![Time Travel](assets/chat-debugger.gif)
 
 ## Networks of Microcosms with Presenters
 
