@@ -2,7 +2,7 @@
   "name": "microcosm",
   "version": "10.9.0",
   "private": true,
-  "description": "Flux with first-class actions and state sandboxing.",
+  "description": "Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease.",
   "main": "src/microcosm.js",
   "scripts": {
     "build": "make all",
