@@ -191,7 +191,7 @@ might want to retry an request, cancel it, or just see what's happening.
 This burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution 
 for tracking outstanding requests and binding them to related action data. 
 
-While mangeable, we've found that this can cumbersome. That it can lead to interface-specific requirements 
+While manageable, we've found that this can cumbersome. That it can lead to interface-specific requirements 
 leaking into the data layer, resulting in unexpected bugs and complicated code.
 
 ### How Microcosm is different
