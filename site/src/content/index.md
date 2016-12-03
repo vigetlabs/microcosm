@@ -178,6 +178,33 @@ repo.addDomain('users', UsersDomain)
 ReactDOM.render(<PaginatedUsers repo={repo} page="1" />, el)
 ```
 
+## Why another Flux?
+
+Good question! Other popular implementations of Flux treat actions as static
+events. The result of calling a `dispatch` method or resolving some sort of
+data structure like a `Promise`.
+
+But what about everything before that point? A user might get tired of waiting 
+for a file to upload, or dip into a subway tunnel and lose connectivity. They
+might want to retry an request, cancel it, or just see what's happening.
+
+This burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution 
+for tracking outstanding requests and binding them to related action data. 
+
+While mangeable, we've found that this can cumbersome. That it can lead to interface-specific requirements 
+leaking into the data layer, resulting in unexpected bugs and complicated code.
+
+### How Microcosm is different
+
+Microcosm thinks of actions as **_stories_**. They go through different states as they
+move from start to completion. Actions have a common public interface, regardless of what data
+structures or asynchronous patterns are utilized. An interface that is easy to query from the 
+presentation layer in order to handle use-case specific display requirements.
+
+This makes it easier to handle complicated behaviors such as optimistic updates, 
+dialog windows, or long running processes.
+
+
 ## Learn more
 
 Get going with the [quickstart tutorial](./guides/quickstart.html), or
