@@ -188,7 +188,7 @@ But what about everything before that point? A user might get tired of waiting
 for a file to upload, or dip into a subway tunnel and lose connectivity. They
 might want to retry an request, cancel it, or just see what's happening.
 
-This burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution 
+The burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution 
 for tracking outstanding requests and binding them to related action data. 
 
 While manageable, we've found that this can cumbersome. That it can lead to interface-specific requirements 
