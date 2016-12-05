@@ -4,18 +4,11 @@
 
 import React from 'react'
 import merge from '../merge'
+import displayName from '../display-name'
 
 const danger = function (intent, params) {
   console.error('Unable to broadcast "%s" with parameters `%s`. withIntent did not receive context.',
                 intent, JSON.stringify(params))
-}
-
-const displayName = function (Component) {
-  if (typeof Component === 'function') {
-    return Component.name
-  }
-
-  return Component.constructor.name || Component.displayName
 }
 
 export default function withIntent (Component, intent) {

@@ -74,19 +74,4 @@ describe('When there is no context (called directly as a function)', function ()
     expect(logger.last('error')).toContain('withIntent(Button)')
   })
 
-  test('uses the component name in the debug message for class components', function () {
-    const Button = withIntent(class Button extends React.PureComponent {
-      render () {
-        var { send } = this.props
-        return (
-          <button type="button" onClick={() => send('intent')}>Click me</button>
-        )
-      }
-    })
-
-    Button()
-
-    expect(logger.last('error')).toContain('withIntent(Button)')
-  })
-
 })
