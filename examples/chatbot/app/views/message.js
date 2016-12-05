@@ -1,17 +1,14 @@
 import React from 'react'
 
-export default React.createClass({
+class Message extends React.PureComponent {
+  static defaultProps = {
+    user    : '',
+    message : '',
+    pending : false,
+    time    : new Date()
+  }
 
-  getDefaultProps() {
-    return {
-      user: '',
-      message: '',
-      pending: false,
-      time: new Date()
-    }
-  },
-
-  render() {
+  render () {
     const { user, time, message, error, pending } = this.props
 
     const status   = pending ? 'sending...' : error ? '✖' : '✔'
@@ -27,5 +24,6 @@ export default React.createClass({
       </li>
     )
   }
+}
 
-})
+export default Message
