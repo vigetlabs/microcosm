@@ -4,7 +4,7 @@
   "private": true,
   "description": "Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease.",
   "main": "src/microcosm.js",
-  "homepage": "http://code.viget.com/microcosm/",
+  "homepage": "http://code.viget.com/microcosm",
   "scripts": {
     "build": "make all",
     "lint": "eslint {src,test,examples}/**",
