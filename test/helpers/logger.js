@@ -2,6 +2,8 @@
  * In order to test warnings, record console output.
  */
 
+const util = require('util')
+
 const originals = {}
 const messages = {
   log: [],
@@ -14,12 +16,12 @@ export default {
   record() {
     for (let key in messages) {
       originals[key] = console[key]
-      console[key] = (...args) => messages[key].push([args.join(' ')])
+      console[key] = (...args) => messages[key].push(args)
     }
   },
 
   last(key) {
-    return messages[key][messages[key].length - 1]
+    return util.format.apply(util, messages[key].concat().pop())
   },
 
   count(key) {
