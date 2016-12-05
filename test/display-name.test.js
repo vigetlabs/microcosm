@@ -29,5 +29,8 @@ test('gets a createClass component name', function () {
 })
 
 test('uses "Component" when there is no name', function () {
-  expect(displayName(React.createClass({ render () {} }))).toBe('Component')
+  // eslint-disable-next-line react/display-name
+  expect(displayName(React.createClass({
+    render () { return <p>Hi</p> }
+  }))).toBe('Component')
 })

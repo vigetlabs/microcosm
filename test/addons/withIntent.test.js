@@ -57,7 +57,7 @@ describe('When there is no context (called directly as a function)', function ()
       )
     })
 
-    let component = mount(Button()).simulate('click')
+    mount(Button()).simulate('click')
 
     expect(logger.last('error')).toContain('Unable to broadcast "intent" with parameters `true`.')
   })
