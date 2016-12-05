@@ -1,5 +1,9 @@
 #!/bin/bash
 
+export BASE_URL=$(node -p 'require("../package").homepage')
+
+make clean all
+
 cd ..
 git checkout -B gh-pages
 git add -f site/public
@@ -11,5 +15,5 @@ cd site
 
 echo ""
 echo "Published to:"
-echo "http://code.viget.com/microcosm/"
+echo "$BASE_URL"
 echo ""
