@@ -42,9 +42,9 @@ repo.patch({ planets: [ 'Mercury', 'Venus', 'Earth' ]})
 
 class PlanetsPresenter extends Presenter {
 
-  model (props) {
+  model (props, state) {
     return {
-      planets: state => state.planets
+      planets: data => data.planets
     }
   }
 
@@ -71,7 +71,7 @@ will be called with state:
 ```javascript
 class PlanetsPresenter extends Presenter {
   model () {
-    return state => state
+    return data => data
   }
 
   view ({ planets }) {
@@ -127,7 +127,7 @@ function StepperForm ({ count }) {
 class CountPresenter extends Presenter {
   model () {
     return {
-      count: state => state.count
+      count: data => data.count
     }
   }
 
@@ -191,17 +191,17 @@ different.
 
 Runs when the presenter unmounts. Useful for tearing down subscriptions and other setup behavior.
 
-### `model(props)`
+### `model(props, state)`
 
-Builds a view model for the current props. This must return an object of key/value
-pairs. If the value is a function, it will be calculated by passing in the repo's
-current state:
+Builds a view model for the current props and state. This must return
+an object of key/value pairs. If the value is a function, it will be
+calculated by passing in the repo's current state:
 
 ```javascript
 class PlanetPresenter extends Presenter {
-  model (props) {
+  model (props, state) {
     return {
-      planet : state => state.planets.find(p => p.id === props.planetId)
+      planet : data => data.planets.find(p => p.id === props.planetId)
     }
   }
   // ...
@@ -213,7 +213,7 @@ associated repo), this will only update state if shallowly equal.
 
 When not implemented, model returns all repo state.
 
-### `viewModel(props)`
+### `viewModel(props, state)`
 
 Alias for `model`.
 
@@ -225,7 +225,7 @@ A special render method that is given the current result of `model`.
 class Greeter extends Presenter {
   model ({ greet })
     return {
-      message: state => "Hello, " + greet
+      message: "Hello, " + greet
     }
   }
   view ({ message }) {

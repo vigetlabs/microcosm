@@ -6,7 +6,7 @@ import shallowEqual from '../shallow-equal'
 
 function wrappedRender () {
   return (
-    <PresenterContext {...this.props} presenter={this} />
+    <PresenterContext parentProps={this.props} parentState={this.state} presenter={this} repo={this.props.repo} />
   )
 }
 
@@ -34,9 +34,15 @@ class Presenter extends React.Component {
     this.render = wrappedRender
   }
 
+  shouldComponentUpdate (props, state) {
+    return this._isImpure() ||
+           !shallowEqual(this.props, props) ||
+           !shallowEqual(this.state, state)
+  }
+
   _setRepo (repo) {
     this.repo = repo
-    this.setup(repo, this.props)
+    this.setup(repo, this.props, this.props.state)
   }
 
   _connectSend (send) {
@@ -57,8 +63,9 @@ class Presenter extends React.Component {
    *
    * @param {Microcosm} repo - The presenter's Microcosm instance
    * @param {Object} props - The presenter's props
+   * @param {Object} state - The presenter's state
    */
-  setup (repo, props) {
+  setup (repo, props, state) {
     // NOOP
   }
 
@@ -69,14 +76,15 @@ class Presenter extends React.Component {
    *
    * @param {Microcosm} repo - The presenter's Microcosm instance
    * @param {Object} props - The presenter's props
+   * @param {Object} state - The presenter's state
    */
-  update (repo, props) {
+  update (repo, props, state) {
     // NOOP
   }
 
   componentWillReceiveProps (next) {
     if (this._isImpure() || !shallowEqual(next, this.props)) {
-      this.update(this.repo, next)
+      this.update(this.repo, next, this.state)
     }
   }
 
@@ -85,8 +93,9 @@ class Presenter extends React.Component {
    *
    * @param {Microcosm} repo - The presenter's Microcosm instance
    * @param {Object} props - The presenter's props
+   * @param {Object} state - The presenter's state
    */
-  teardown (repo, props) {
+  teardown (repo, props, state) {
     // NOOP
   }
 
@@ -109,17 +118,18 @@ class Presenter extends React.Component {
    * If none of the keys have changed, `this.updateState` will not set a new state.
    *
    * @param {Object} props - The presenter's props, or new props entering a presenter.
+   * @param {Object} state - The presenter's state, or new state entering a presenter.
    * @returns {Object} The properties to assign to state
    */
-  viewModel (props) {
+  viewModel (props, state) {
     return state => state
   }
 
   /**
    * Alias for viewModel
    */
-  model(props) {
-    return this.viewModel(props)
+  model(props, state) {
+    return this.viewModel(props, state)
   }
 
   view (model) {
@@ -166,6 +176,7 @@ class PresenterContext extends React.Component {
     this.props.presenter._setRepo(this.repo)
 
     this.updatePropMap(this.props)
+
     this.updateState()
   }
 
@@ -174,12 +185,17 @@ class PresenterContext extends React.Component {
   }
 
   componentWillUnmount () {
-    this.props.presenter.teardown(this.repo, this.safeProps(this.props))
+    let { parentProps, parentState, presenter } = this.props
+
+    presenter.teardown(this.repo, parentProps, parentState)
+
     this.repo.teardown()
   }
 
   componentWillReceiveProps (next) {
-    if (this.isImpure() || !shallowEqual(next, this.props)) {
+    if (this.isImpure() ||
+        !shallowEqual(this.props.parentProps, next.parentProps) ||
+        !shallowEqual(this.props.parentState, next.parentState)) {
       this.updatePropMap(next)
     }
 
@@ -213,12 +229,8 @@ class PresenterContext extends React.Component {
     return this.props.presenter._isImpure()
   }
 
-  safeProps (props) {
-    return props.presenter.props
-  }
-
-  updatePropMap (props) {
-    this.propMap = this.props.presenter.model(this.safeProps(props))
+  updatePropMap ({ presenter, parentProps, parentState }) {
+    this.propMap = presenter.model.call(presenter, parentProps, parentState)
   }
 
   updateState () {
@@ -261,7 +273,9 @@ class PresenterContext extends React.Component {
    * @param {...any} params - Arguments to invoke the named method with
    */
   send (intent, ...params) {
-    const registry = this.props.presenter.register()
+    const { presenter } = this.props
+
+    const registry = presenter.register()
 
     // Tag intents so that they register the same way in the Presenter
     // and Microcosm instance
@@ -269,7 +283,7 @@ class PresenterContext extends React.Component {
 
     // Does the presenter register to this intent?
     if (registry && registry.hasOwnProperty(intent)) {
-      return registry[intent].apply(this.props.presenter, [ this.repo, ...params ])
+      return registry[intent].apply(presenter, [ this.repo, ...params ])
     }
 
     // No: try the parent presenter

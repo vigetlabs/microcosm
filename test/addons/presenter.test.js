@@ -87,44 +87,99 @@ describe('::model', function() {
     expect(el.text()).toEqual('red')
   })
 
-  test('recalculates the view model if the props are different', function () {
-    const repo = new Microcosm()
+  describe('when updating props', function () {
+    test('recalculates the view model if the props are different', function () {
+      const repo = new Microcosm()
 
-    repo.patch({ name: 'Kurtz' })
+      repo.patch({ name: 'Kurtz' })
 
-    class Namer extends Presenter {
-      model (props) {
-        return {
-          name: state => props.prefix + ' ' + state.name
+      class Namer extends Presenter {
+        model (props) {
+          return {
+            name: state => props.prefix + ' ' + state.name
+          }
+        }
+        view ({ name }) {
+          return (<p>{ name }</p>)
         }
       }
-      view ({ name }) {
-        return (<p>{ name }</p>)
+
+      const wrapper = mount(<Namer prefix="Colonel" repo={repo} />)
+
+      wrapper.setProps({ prefix: 'Captain' })
+
+      expect(wrapper.text()).toEqual('Captain Kurtz')
+    })
+
+    test('does not recalculate the view model if the props are the same', function () {
+      const repo = new Microcosm()
+      const spy = jest.fn()
+
+      class Namer extends Presenter {
+        get viewModel () {
+          return spy
+        }
       }
-    }
 
-    const wrapper = mount(<Namer prefix="Colonel" repo={repo} />)
+      const wrapper = mount(<Namer prefix="Colonel" repo={repo} />)
 
-    wrapper.setProps({ prefix: 'Captain' })
+      wrapper.setProps({ prefix: 'Colonel' })
 
-    expect(wrapper.text()).toEqual('Captain Kurtz')
+      expect(spy.mock.calls.length).toEqual(1)
+    })
   })
 
-  test('does not recalculate the view model if the props are the same', function () {
-    const repo = new Microcosm()
-    const spy = jest.fn()
-
+  describe('when updating state', function () {
     class Namer extends Presenter {
-      get viewModel () {
-        return spy
+      state = {
+        greeting: 'Hello'
+      }
+
+      model (props, state) {
+        return {
+          text: state.greeting + ', ' + props.name
+        }
+      }
+
+      view ({ text }) {
+        return <p>{text}</p>
       }
     }
 
-    const wrapper = mount(<Namer prefix="Colonel" repo={repo} />)
+    test('calculates the model with state', function () {
+      const wrapper = mount(<Namer name="Colonel" />)
 
-    wrapper.setProps({ prefix: 'Colonel' })
+      expect(wrapper.text()).toEqual('Hello, Colonel')
+    })
 
-    expect(spy.mock.calls.length).toEqual(1)
+    test('recalculates the model when state changes', function () {
+      const wrapper = mount(<Namer name="Colonel" />)
+
+      wrapper.setState({
+        "greeting": "Salutations"
+      })
+
+      expect(wrapper.text()).toEqual('Salutations, Colonel')
+    })
+
+    test('does not recalculate the model when state is the same', function () {
+      const spy = jest.fn(function() {
+        return <p>Test</p>
+      })
+
+      class TrackedNamer extends Namer {
+        view = spy
+      }
+
+      const wrapper = mount(<TrackedNamer name="Colonel" />)
+
+      wrapper.setState({
+        "greeting": "Hello"
+      })
+
+      expect(spy).toHaveBeenCalledTimes(1)
+    })
+
   })
 
 })
@@ -288,7 +343,7 @@ describe('::teardown', function() {
 
 })
 
-describe('::view', function () {
+describe('::view', function() {
 
   test('views can be react components', function () {
     class MyView extends React.Component {
