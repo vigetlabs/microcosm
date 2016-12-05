@@ -1,8 +1,8 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 import Items     from './domains/items'
 import Lists     from './domains/lists'
 
-export default class Todos extends Microcosm {
+export default class Repo extends Microcosm {
 
   setup() {
     // 1. Lists

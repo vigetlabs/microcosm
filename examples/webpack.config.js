@@ -1,3 +1,5 @@
+var path = require('path')
+
 module.exports = {
   context: __dirname,
 
@@ -9,7 +11,11 @@ module.exports = {
   },
 
   resolve: {
-    extensions: [ '', '.js', '.jsx' ]
+    extensions: [ '', '.js', '.jsx' ],
+    alias: {
+      'microcosm$': path.resolve(__dirname, '../src/microcosm.js'),
+      'microcosm': path.resolve(__dirname, '../src/')
+    }
   },
 
   module: {

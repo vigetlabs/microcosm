@@ -1,5 +1,5 @@
 import React from 'react'
-import Form  from '../../../../../../src/addons/form'
+import Form  from 'microcosm/addons/form'
 
 const ListForm = React.createClass({
 

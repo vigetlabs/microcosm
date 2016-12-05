@@ -1,4 +1,3 @@
-import React     from 'react'
 import Presenter from '../../../../src/addons/presenter'
 import Query     from '../../lib/query'
 import Index     from '../views/lists/index'
@@ -6,6 +5,8 @@ import Index     from '../views/lists/index'
 import { addList, removeList } from '../actions/lists'
 
 class ListIndex extends Presenter {
+  view = Index
+
   register () {
     return {
       addList    : (repo, params) => repo.push(addList, params),
@@ -18,10 +19,6 @@ class ListIndex extends Presenter {
       lists  : Query.all('lists'),
       counts : Query.count('lists', 'items', 'list')
     }
-  }
-
-  view ({ lists, counts }) {
-    return <Index lists={lists} counts={counts} />
   }
 }
 

@@ -1,8 +1,10 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 import Pixels    from './domains/pixels'
 
-export default class Painter extends Microcosm {
+export default class Repo extends Microcosm {
+
   setup () {
     this.addDomain('pixels', Pixels)
   }
+
 }

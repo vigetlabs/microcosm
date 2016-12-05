@@ -1,7 +1,7 @@
 import React     from 'react'
 import DOM       from 'react-dom'
 import Debugger  from 'microcosm-debugger'
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 import Messages  from './domains/messages'
 import Chat      from './presenters/chat'
 

@@ -1,5 +1,5 @@
 import React     from 'react'
-import Presenter from '../../../../src/addons/presenter'
+import Presenter from 'microcosm/addons/presenter'
 import Canvas    from '../views/canvas'
 import {paint}   from '../actions/pixels'
 

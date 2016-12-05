@@ -1,5 +1,5 @@
 import React from 'react'
-import withIntent from '../../../../src/addons/with-intent'
+import withIntent from 'microcosm/addons/with-intent'
 
 function Cell ({ x, y, active, onClick }) {
   const color = active ? 'black' : 'white'

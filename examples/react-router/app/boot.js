@@ -1,13 +1,13 @@
 import React     from 'react'
 import DOM       from 'react-dom'
-import Presenter from '../../../src/addons/presenter'
+import Presenter from 'microcosm/addons/presenter'
 import Debugger  from 'microcosm-debugger'
-import Todos     from './todos'
+import Repo      from './repo'
 import routes    from './routes'
 
 import { Router, browserHistory } from 'react-router'
 
-const repo = new Todos({ maxHistory: Infinity })
+const repo = new Repo({ maxHistory: Infinity })
 
 // Install the debugger
 Debugger(repo)
