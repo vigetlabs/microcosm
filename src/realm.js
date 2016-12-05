@@ -28,7 +28,7 @@ Realm.prototype = {
       // to support IE9, which has an odd way of referencing
       // arguments
       config = key
-      key = null
+      key = []
     }
 
     let domain = null
@@ -39,11 +39,15 @@ Realm.prototype = {
       domain = merge({}, config)
     }
 
+    // Assign the domain to a given realm and key to allow for nesting
+    domain._key   = [].concat(key)
+    domain._realm = this
+
     // Allow for simple classes and object primitives. Make sure
     // they implement the key Domain methods.
     Domain.ensure(domain)
 
-    this.domains[this.domains.length] = [ key, domain ]
+    this.domains[this.domains.length] = [ domain._key, domain ]
 
     // Reset the registry
     this.registry = {}

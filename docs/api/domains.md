@@ -178,3 +178,39 @@ const Planets = {
   }
 }
 ```
+
+### `addDomain(key, config)`
+
+Add a sub-domain that lives under the key of the parent domain. Sub-domains:
+
+1. Resolve actions after the parent
+2. Operate on a nested key
+
+In all other ways, they are identical to regular domains, and can have
+sub-domains for themselves.
+
+```javascript
+import Domain from 'microcosm/domain'
+
+class Nodes {
+  getInitialState() { return [] }
+}
+
+class Edges {
+  getInitialState() { return [] }
+}
+
+class Network extends Domain {
+  setup () {
+    this.addDomain('nodes', Nodes)
+    this.addDomain('edges', Edges)
+  }
+}
+
+const repo = new Microcosm()
+
+repo.addDomain('network', Network)
+
+console.log(repo.state.network.edges) // []
+console.log(repo.state.network.nodes) // []
+```

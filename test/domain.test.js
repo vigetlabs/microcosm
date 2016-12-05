@@ -69,7 +69,6 @@ describe('::commit', function() {
 
 })
 
-
 describe('Creation modes', function () {
 
   test('object - primitive', function () {
@@ -187,4 +186,66 @@ describe('Action registration', function() {
     logger.restore()
   })
 
+})
+
+describe('Sub-domains', function () {
+
+  test('a domain can add nested child domains within its setup method', function () {
+    class Node {
+      getInitialState() { return [] }
+    }
+
+    class Edge {
+      getInitialState() { return [] }
+    }
+
+    class Network {
+      setup (repo) {
+        this.addDomain('nodes', Node)
+        this.addDomain('edges', Edge)
+      }
+    }
+
+    const repo = new Microcosm()
+
+    repo.addDomain('network', Network)
+
+    expect(repo.state.network.edges).toEqual([])
+    expect(repo.state.network.nodes).toEqual([])
+  })
+
+  test('sub-domains respond to actions after their parents', function () {
+    let action = n => n
+
+    class Node {
+      getInitialState() {
+        return []
+      }
+
+      register () {
+        return {
+          [action] : () => true
+        }
+      }
+    }
+
+    class Network {
+      setup (repo) {
+        this.addDomain('nodes', Node)
+      }
+      register () {
+        return {
+          [action] : (a, b) => ({ ...a, parent: true })
+        }
+      }
+    }
+
+    const repo = new Microcosm()
+
+    repo.addDomain('network', Network)
+    repo.push(action)
+
+    expect(repo.state.network.parent).toEqual(true)
+    expect(repo.state.network.nodes).toEqual(true)
+  })
 })

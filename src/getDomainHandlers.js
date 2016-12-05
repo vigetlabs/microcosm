@@ -15,9 +15,12 @@ function getHandler (key, domain, type) {
     const registrations = domain.register(type)
 
     if (process.env.NODE_ENV !== 'production') {
-      if (registrations.hasOwnProperty(type) && registrations[type] === undefined) {
-        console.warn('A domain handler for "%s" registered an undefined handler for `%s`. ' +
-                     'Check the register method for this domain.', key, format(type))
+      if (registrations.hasOwnProperty(type) && typeof registrations[type] !== 'function') {
+        console.warn('Unable to register `%s` at domain path `["%s"]`. Handlers ' +
+                     'must be functions, instead got `%s`. Check the register ' +
+                     'method for this domain.',
+                     format(type), key.join('", "'), typeof registrations[type])
+        return null
       }
     }
 

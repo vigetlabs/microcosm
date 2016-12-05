@@ -91,4 +91,17 @@ Domain.prototype = {
     return next
   }
 
+
+  /**
+   * Add a sub-domain. This domain will be relative to the parent
+   *
+   * TODO: Could there be a time in the future when Domains are just
+   * Microcosms?
+   */
+   addDomain (key, config) {
+     this._realm.add([this._key].concat(key), config)
+
+     return this
+   }
+
 }
