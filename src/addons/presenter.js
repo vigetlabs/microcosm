@@ -26,6 +26,10 @@ class Presenter extends React.Component {
 
     // Allow overriding render, generate the context wrapper
     // upon instantiation
+    if (this.render !== Presenter.prototype.render) {
+      console.error('Presenter::render is a protected method. Instead of overriding it, please use Presenter::view.')
+    }
+
     this.originalRender = this.render
     this.render = wrappedRender
   }
