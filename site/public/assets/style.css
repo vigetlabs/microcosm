@@ -26,6 +26,10 @@ h1, h2, h3 {
   font-weight: 500;
 }
 
+h1 {
+  margin-bottom: 24px;
+}
+
 b, strong {
   font-weight: 500;
 }
@@ -49,6 +53,10 @@ a:hover {
 
 code {
   font-family: Menlo, "DejaVu Sans Mono", "Bitstream Vera Sans Mono", Courier, monospace;
+}
+
+p {
+  margin: 16px 0;
 }
 
 .header {
@@ -295,20 +303,24 @@ code {
   color: #90a9da;
 }
 
-pre.sourceCode {
+pre {
   background: #090931;
-  border-radius: 3px;
+  border-radius: 2px;
   color: #fff;
   display: block;
-  margin: 36px 0;
+  margin: 32px 0;
   overflow-x: auto;
-  padding: 20px;
+  padding: 16px;
 }
 
-pre.sourceCode code {
+pre code {
   background: transparent;
   border-radius: 3px;
   font-size: 13px;
   margin: initial;
   padding: initial;
+}
+
+pre.shell {
+  color: #f9f9f9;
 }
