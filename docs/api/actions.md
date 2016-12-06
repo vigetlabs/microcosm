@@ -167,6 +167,11 @@ repo.push(wait).onUpdate(function (payload) {
 An important note here is that `onUpdate` does not trigger when an
 action completes.
 
+### `onCancel(callback, [scope])`
+
+Add a one-time event subscription for when the action is cancelled. If
+the action has already been cancelled, it will immediately execute.
+
 ### `then(resolve, reject)`
 
 Return a promisified version of the action. This is useful for interop
