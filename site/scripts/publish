@@ -4,6 +4,9 @@ export BASE_URL=$(node -p 'require("../package").homepage')
 
 make clean all
 
+# Clean up pesky files
+rm -rf ./**/.DS_Store
+
 cd ..
 git checkout -B gh-pages
 git add -f site/public
