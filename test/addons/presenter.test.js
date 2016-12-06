@@ -541,34 +541,6 @@ describe('::render', function () {
     expect(logger.last('error')).toContain('Presenter::render is a protected method. Instead of overriding it, please use Presenter::view.')
   })
 
-  test('preserves context if render is extended', function () {
-    class Parent extends Presenter {
-      setup (repo) {
-        repo.addDomain('test', {
-          getInitialState() {
-            return true
-          }
-        })
-      }
-      render() {
-        return <div>{this.props.children}</div>
-      }
-    }
-
-    class Child extends Presenter {
-      setup(repo) {
-        this.test = repo.state.test
-      }
-      render() {
-        return <div>{this.test.toString()}</div>
-      }
-    }
-
-    let wrapper = mount(<Parent><Child /></Parent>)
-
-    expect(wrapper.text()).toEqual('true')
-  })
-
 })
 
 describe('intents', function() {

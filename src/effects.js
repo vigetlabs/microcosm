@@ -9,6 +9,9 @@ const EMPTY = {}
 export default function Effects (repo ) {
   this.repo = repo
   this.effects = []
+
+  // Teardown all effects when the repo tears down
+  this.repo.on('teardown', this.teardown, this)
 }
 
 Effects.prototype = {

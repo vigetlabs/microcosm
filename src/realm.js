@@ -10,6 +10,9 @@ export default function Realm (repo) {
   this.repo = repo
   this.domains = []
   this.registry = {}
+
+  // Teardown all domains when the repo tears down
+  this.repo.on('teardown', this.teardown, this)
 }
 
 Realm.prototype = {

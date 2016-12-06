@@ -4,12 +4,6 @@ import merge from '../merge'
 import tag from '../tag'
 import shallowEqual from '../shallow-equal'
 
-function wrappedRender () {
-  return (
-    <PresenterContext parentProps={this.props} parentState={this.state} presenter={this} repo={this.props.repo} />
-  )
-}
-
 function getName (presenter) {
   return presenter.constructor.name || 'Presenter'
 }
@@ -21,17 +15,14 @@ function getName (presenter) {
  */
 class Presenter extends React.Component {
 
-  constructor(props, context) {
-    super(props, context)
+  constructor () {
+    super(...arguments)
 
     // Allow overriding render, generate the context wrapper
     // upon instantiation
     if (this.render !== Presenter.prototype.render) {
       console.error('Presenter::render is a protected method. Instead of overriding it, please use Presenter::view.')
     }
-
-    this.originalRender = this.render
-    this.render = wrappedRender
   }
 
   shouldComponentUpdate (props, state) {
@@ -42,7 +33,10 @@ class Presenter extends React.Component {
 
   _setRepo (repo) {
     this.repo = repo
+
     this.setup(repo, this.props, this.props.state)
+
+    this.repo.on('teardown', () => this.teardown(repo, this.props, this.state))
   }
 
   _connectSend (send) {
@@ -60,10 +54,6 @@ class Presenter extends React.Component {
   /**
    * Called when a presenter is created, before it has calculated a view model.
    * Useful for fetching data and other prep-work.
-   *
-   * @param {Microcosm} repo - The presenter's Microcosm instance
-   * @param {Object} props - The presenter's props
-   * @param {Object} state - The presenter's state
    */
   setup (repo, props, state) {
     // NOOP
@@ -73,10 +63,6 @@ class Presenter extends React.Component {
    * Called when a presenter gets new props. This is useful for secondary
    * data fetching and other work that must happen when a Presenter receives
    * new information
-   *
-   * @param {Microcosm} repo - The presenter's Microcosm instance
-   * @param {Object} props - The presenter's props
-   * @param {Object} state - The presenter's state
    */
   update (repo, props, state) {
     // NOOP
@@ -90,10 +76,6 @@ class Presenter extends React.Component {
 
   /**
    * Opposite of setup. Useful for cleaning up side-effects.
-   *
-   * @param {Microcosm} repo - The presenter's Microcosm instance
-   * @param {Object} props - The presenter's props
-   * @param {Object} state - The presenter's state
    */
   teardown (repo, props, state) {
     // NOOP
@@ -103,8 +85,6 @@ class Presenter extends React.Component {
    * Expose "intent" subscriptions to child components. This is used with the <Form />
    * add-on to improve the ergonomics of presenter/view communication (though this only
    * occurs from the view to the presenter).
-   *
-   * @return {Object} A list of subscriptions
    */
   register () {
     // NOOP
@@ -116,10 +96,6 @@ class Presenter extends React.Component {
    * are given the repo state and can return a specific point in that state.
    *
    * If none of the keys have changed, `this.updateState` will not set a new state.
-   *
-   * @param {Object} props - The presenter's props, or new props entering a presenter.
-   * @param {Object} state - The presenter's state, or new state entering a presenter.
-   * @returns {Object} The properties to assign to state
    */
   viewModel (props, state) {
     return state => state
@@ -133,11 +109,23 @@ class Presenter extends React.Component {
   }
 
   view (model) {
-    return this.originalRender()
+    return this.props.children ? React.Children.only(this.props.children) : null
   }
 
   render() {
-    return this.props.children ? React.Children.only(this.props.children) : null
+    // If the view is null, then it is probably incorrectly referenced
+    if (this.view == null) {
+      throw new TypeError(`${getName(this)}::view() is ` +
+                          `${typeof this.view}. Is it referenced correctly?`)
+    }
+
+    return (
+      <PresenterContext parentProps={this.props}
+                        parentState={this.state}
+                        presenter={this}
+                        view={this.view}
+                        repo={this.props.repo} />
+    )
   }
 }
 
@@ -158,7 +146,7 @@ class PresenterContext extends React.Component {
   }
 
   constructor (props, context) {
-    super(props, context)
+    super(...arguments)
 
     this.repo = this.getRepo()
 
@@ -174,10 +162,7 @@ class PresenterContext extends React.Component {
 
   componentWillMount () {
     this.props.presenter._setRepo(this.repo)
-
-    this.updatePropMap(this.props)
-
-    this.updateState()
+    this.recalculate(this.props)
   }
 
   componentDidMount () {
@@ -185,34 +170,24 @@ class PresenterContext extends React.Component {
   }
 
   componentWillUnmount () {
-    let { parentProps, parentState, presenter } = this.props
-
-    presenter.teardown(this.repo, parentProps, parentState)
-
     this.repo.teardown()
   }
 
   componentWillReceiveProps (next) {
-    if (this.isImpure() ||
-        !shallowEqual(this.props.parentProps, next.parentProps) ||
-        !shallowEqual(this.props.parentState, next.parentState)) {
-      this.updatePropMap(next)
-    }
+    this.recalculate(next)
+  }
 
+  recalculate (props) {
+    this.updatePropMap(props)
     this.updateState()
   }
 
   render () {
-    const { presenter } = this.props
-    const model = merge({}, presenter.props, this.state)
+    const { presenter, parentProps } = this.props
 
-    // If the view is null, then it is probably incorrectly referenced
-    if (presenter.view == null) {
-      throw new TypeError(`${getName(presenter)}::view() is ` +
-                          `${typeof presenter.view}. Is it referenced correctly?`)
-    }
+    const model = merge({}, parentProps, this.state)
 
-    if (presenter.view.prototype.isReactComponent) {
+    if (presenter.view.contextTypes || presenter.view.prototype.isReactComponent) {
       return React.createElement(presenter.view, model)
     }
 

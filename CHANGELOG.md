@@ -5,6 +5,8 @@
 - Fix bug where Presenter given stateless view component as an inline
   prop would call it as a function instead of React.createElement.
 - Add warning when using `render()` directly in the Presenter.
+- Presenter.setState state will re-calculate the model. State is now
+  the second argument of `model()`.
 
 ## 10.9.0
 

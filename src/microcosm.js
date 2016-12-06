@@ -54,7 +54,7 @@ export default function Microcosm ({ maxHistory, pure=true, history, parent=null
   this.setup()
 }
 
-Microcosm.prototype = merge({}, Emitter.prototype, {
+merge(Microcosm.prototype, Emitter.prototype, {
 
   /**
    * Called whenever a Microcosm is instantiated. This provides a
@@ -69,17 +69,14 @@ Microcosm.prototype = merge({}, Emitter.prototype, {
    * Remove all subscriptions
    */
   teardown() {
-    // Teardown all domains
-    this.realm.teardown(this)
-
-    // Teardown all effects
-    this.effects.teardown(this)
-
-    // Remove all listeners
-    this.off()
+    // Trigger a teardown event before completely shutting down
+    this._emit('teardown')
 
     // Remove this repo from history
     this.history.removeRepo(this)
+
+    // Remove all listeners
+    this.off()
   },
 
   /**
