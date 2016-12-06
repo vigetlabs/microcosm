@@ -1,46 +1,55 @@
 # Effects
 
 1. [Overview](#overview)
-2. [Subscribing to different action states](#subscribing-to-different-action-states)
+2. [A quick example](#a-quick-example---query-strings)
 3. [API](#api)
 
 ## Overview
 
-Effects are one-time handlers that are invoked once, after the action
-moves into a different state. They are very similar to Domains,
-however their purposes is to handle side-effects. Domains are not the
-appropriate place to handle this sort of behavior, as they may
-dispatch the same handler several times during the reconciliation of
-asynchronous actions.
+Use effects to define side-effects. A side-effect may include
+persistence in localStorage, updating a page title, or some other
+mutative behavior.
+
+**Effect handlers are only called once per action state.** This is
+different than Domains, which may have to invoke the same handler
+multiple times during the reconciliation of asynchronous actions.
+
+## A quick example - query strings
+
+URL persistence is important for shareability and wayfinding. However,
+a full routing solution isn't always practical. On some projects we
+simply want to push search parameters or other meta data into a query
+string.
+
+This is a perfect use case for an effect:
 
 ```javascript
-// If an effect implements a setup method, it will receive options as
-// the second argument
-repo.addEffect(Effect, options)
-```
+import url from 'url'
+import {push} from '../actions/query'
 
-## Subscribing to different action states
+class Location {
 
-Just like Domains, effects can provide a `register` method to dictate
-what actions they listen to:
+  pushQuery (repo) {
+    const { origin, hash } = window.location
 
-```javascript
-const Effect = {
+    const location = url.format({
+      host  : origin,
+      query : repo.state.query,
+      hash  : hash
+    })
 
-  handler (repo, payload) {
-    // side-effect here
-  },
+    window.history.pushState(null, null, location)
+  }
 
-  register() {
+  register () {
     return {
-      [action] : this.handler
+      [push] : this.pushQuery
     }
   }
 }
-```
 
-`action` referenced directly, like `[action]: callback`, refer to the
-`done` state.
+export default Location
+```
 
 ## API
 

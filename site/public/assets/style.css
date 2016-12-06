@@ -2,6 +2,7 @@ html {
   background: #090931;
   box-sizing: border-box;
   font-size: 62.5%;
+
 }
 
 *,
@@ -125,7 +126,7 @@ code {
 }
 
 .main.-with-sidebar {
-  margin: 56px auto 0;
+  margin: 0 auto;
   max-width: 924px;
   padding: 0 16px;
   width: 100%;
@@ -141,6 +142,7 @@ code {
     display: table-cell;
     padding-left: 48px;
     padding-bottom: 48px;
+    padding-top: 24px;
   }
 
   .sidebar {
@@ -148,6 +150,7 @@ code {
     display: table-cell;
     width: 200px;
     padding-right: 48px;
+    padding-top: 56px;
   }
 }
 
@@ -235,13 +238,13 @@ code {
  */
 
 .content {
-  margin: 56px auto;
+  margin: 0 auto;
   max-width: 712px;
   padding: 0 16px;
 }
 
 .content h2 {
-  margin-top: 48px;
+  margin-top: 32px;
 }
 
 .content h3 {
@@ -297,9 +300,9 @@ pre.sourceCode {
   border-radius: 3px;
   color: #fff;
   display: block;
-  margin: 48px 0;
+  margin: 36px 0;
   overflow-x: auto;
-  padding: 24px;
+  padding: 20px;
 }
 
 pre.sourceCode code {

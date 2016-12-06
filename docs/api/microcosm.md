@@ -20,7 +20,7 @@ and loading states much simpler. They self clean.
 Called whenever a Microcosm is instantiated. This provides a general
 purpose hook for adding domains and other setup behavior.
 
-```javscript
+```javascript
 class SolarSystem extends Microcosm {
   setup() {
     this.addDomain('planets', Planets)
@@ -173,7 +173,7 @@ repo.off('change', callback)
 
 
 
-### fork()
+### `fork()`
 
 Instantiate a new Microcosm that shares the same action history as
 another. This is useful for producing "umbrellas" of Microcosms,
