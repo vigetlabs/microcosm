@@ -120,30 +120,18 @@ class Presenter extends React.Component {
     }
 
     return (
-      <PresenterContext parentProps={this.props}
-                        parentState={this.state}
-                        presenter={this}
-                        view={this.view}
-                        repo={this.props.repo} />
+      React.createElement(PresenterContext, {
+        parentProps : this.props,
+        parentState : this.state,
+        presenter   : this,
+        view        : this.view,
+        repo        : this.props.repo
+      })
     )
   }
 }
 
 class PresenterContext extends React.Component {
-
-  static propTypes = {
-    repo : React.PropTypes.object
-  }
-
-  static contextTypes = {
-    repo : React.PropTypes.object,
-    send : React.PropTypes.func
-  }
-
-  static childContextTypes = {
-    repo : React.PropTypes.object,
-    send : React.PropTypes.func
-  }
 
   constructor (props, context) {
     super(...arguments)
@@ -270,5 +258,20 @@ class PresenterContext extends React.Component {
     return this.repo.push(intent, ...params)
   }
 }
+
+PresenterContext.propTypes = {
+  repo : React.PropTypes.object
+}
+
+PresenterContext.contextTypes = {
+  repo : React.PropTypes.object,
+  send : React.PropTypes.func
+}
+
+PresenterContext.childContextTypes = {
+  repo : React.PropTypes.object,
+  send : React.PropTypes.func
+}
+
 
 export default Presenter
