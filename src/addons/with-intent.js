@@ -2,13 +2,17 @@
  * Connect a component to the presenter tree
  */
 
-import React from 'react'
+import {createElement, PropTypes} from 'react'
 import displayName from '../display-name'
 import { merge } from '../microcosm'
 
 const danger = function (intent, params) {
   console.error('Unable to broadcast "%s" with parameters `%s`. withIntent did not receive context.',
                 intent, JSON.stringify(params))
+}
+
+const TYPES = {
+  send: PropTypes.func
 }
 
 export default function withIntent (Component, intent) {
@@ -23,12 +27,10 @@ export default function withIntent (Component, intent) {
                     displayName(Component))
     }
 
-    return React.createElement(Component, merge({ send }, props))
+    return createElement(Component, merge({ send }, props))
   }
 
-  WithIntent.contextTypes = WithIntent.propTypes = {
-    send: React.PropTypes.func
-  }
+  WithIntent.contextTypes = WithIntent.propTypes = TYPES
 
   return WithIntent
 }

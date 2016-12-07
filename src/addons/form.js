@@ -1,8 +1,8 @@
-import React, { PropTypes } from 'react'
+import { createClass, createElement, PropTypes } from 'react'
 import serialize from 'form-serialize'
 import { Action, merge } from '../microcosm'
 
-const Form = React.createClass({
+const Form = createClass({
 
   contextTypes: {
     send : PropTypes.func.isRequired
@@ -40,7 +40,7 @@ const Form = React.createClass({
     delete props.onCancel
     delete props.onError
 
-    return React.createElement('form', props)
+    return createElement('form', props)
   },
 
   onSubmit(event) {

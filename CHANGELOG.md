@@ -7,6 +7,16 @@
 - Add warning when using `render()` directly in the Presenter.
 - Presenter.setState state will re-calculate the model. State is now
   the second argument of `model()`.
+- Removed deprecated methods:
+  - action.close()
+  - repo.replace()
+  - repo.addStore()
+- Domains mounted to the root must pass `null` as the first argument
+  to `addDomain`, like: `repo.addDomain(null, RootLevelDomain)`
+- `addDomain` accepts a third argument: `options`. These options will
+  be passed to domain constructors and to the setup method.
+- Microcosm ships as an ES6 module. If you are using CommonJS, import
+  Microcosm using `require('microcosm').Microcosm`
 
 ## 10.9.0
 

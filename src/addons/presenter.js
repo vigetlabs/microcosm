@@ -1,4 +1,4 @@
-import React from 'react'
+import { Children, PropTypes, Component, createElement } from 'react'
 import Microcosm, { merge, tag, shallowEqual } from '../microcosm'
 
 function getName (presenter) {
@@ -10,23 +10,24 @@ function getName (presenter) {
  * components that interact with non-presentational logic so that the
  * majority of view code does not have to.
  */
-class Presenter extends React.Component {
+function Presenter (props, context) {
+  Component.apply(this, arguments)
 
-  constructor () {
-    super(...arguments)
-
-    // Allow overriding render, generate the context wrapper
-    // upon instantiation
-    if (this.render !== Presenter.prototype.render) {
-      console.error('Presenter::render is a protected method. Instead of overriding it, please use Presenter::view.')
-    }
+  // Allow overriding render, generate the context wrapper
+  // upon instantiation
+  if (this.render !== Presenter.prototype.render) {
+    console.error('Presenter::render is a protected method. Instead of overriding it, please use Presenter::view.')
   }
+}
+
+merge(Presenter.prototype, Component.prototype, {
+  constructor: Presenter,
 
   shouldComponentUpdate (props, state) {
     return this._isImpure() ||
            !shallowEqual(this.props, props) ||
            !shallowEqual(this.state, state)
-  }
+  },
 
   _setRepo (repo) {
     this.repo = repo
@@ -34,11 +35,11 @@ class Presenter extends React.Component {
     this.setup(repo, this.props, this.props.state)
 
     this.repo.on('teardown', () => this.teardown(repo, this.props, this.state))
-  }
+  },
 
   _connectSend (send) {
     this.send = send
-  }
+  },
 
   _isImpure () {
     if (this.props.hasOwnProperty('pure')) {
@@ -46,7 +47,7 @@ class Presenter extends React.Component {
     }
 
     return this.repo.pure !== true
-  }
+  },
 
   /**
    * Called when a presenter is created, before it has calculated a view model.
@@ -54,7 +55,7 @@ class Presenter extends React.Component {
    */
   setup (repo, props, state) {
     // NOOP
-  }
+  },
 
   /**
    * Called when a presenter gets new props. This is useful for secondary
@@ -63,20 +64,20 @@ class Presenter extends React.Component {
    */
   update (repo, props, state) {
     // NOOP
-  }
+  },
 
   componentWillReceiveProps (next) {
     if (this._isImpure() || !shallowEqual(next, this.props)) {
       this.update(this.repo, next, this.state)
     }
-  }
+  },
 
   /**
    * Opposite of setup. Useful for cleaning up side-effects.
    */
   teardown (repo, props, state) {
     // NOOP
-  }
+  },
 
   /**
    * Expose "intent" subscriptions to child components. This is used with the <Form />
@@ -85,7 +86,7 @@ class Presenter extends React.Component {
    */
   register () {
     // NOOP
-  }
+  },
 
   /**
    * Used by the presenter to calculate it's internal state. This function must return
@@ -96,18 +97,18 @@ class Presenter extends React.Component {
    */
   viewModel (props, state) {
     return state => state
-  }
+  },
 
   /**
    * Alias for viewModel
    */
   model(props, state) {
     return this.viewModel(props, state)
-  }
+  },
 
   view (model) {
-    return this.props.children ? React.Children.only(this.props.children) : null
-  }
+    return this.props.children ? Children.only(this.props.children) : null
+  },
 
   render() {
     // If the view is null, then it is probably incorrectly referenced
@@ -117,7 +118,7 @@ class Presenter extends React.Component {
     }
 
     return (
-      React.createElement(PresenterContext, {
+      createElement(PresenterContext, {
         parentProps : this.props,
         parentState : this.state,
         presenter   : this,
@@ -126,46 +127,47 @@ class Presenter extends React.Component {
       })
     )
   }
+})
+
+function PresenterContext (props, context) {
+  Component.apply(this, arguments)
+
+  this.repo = this.getRepo()
+
+  props.presenter._connectSend(this.send.bind(this))
 }
 
-class PresenterContext extends React.Component {
-
-  constructor (props, context) {
-    super(...arguments)
-
-    this.repo = this.getRepo()
-
-    this.props.presenter._connectSend(this.send.bind(this))
-  }
+merge(PresenterContext.prototype, Component.prototype, {
+  constructor: PresenterContext,
 
   getChildContext () {
     return {
       repo : this.repo,
       send : this.send.bind(this)
     }
-  }
+  },
 
   componentWillMount () {
     this.props.presenter._setRepo(this.repo)
     this.recalculate(this.props)
-  }
+  },
 
   componentDidMount () {
     this.repo.on('change', this.updateState, this)
-  }
+  },
 
   componentWillUnmount () {
     this.repo.teardown()
-  }
+  },
 
   componentWillReceiveProps (next) {
     this.recalculate(next)
-  }
+  },
 
   recalculate (props) {
     this.updatePropMap(props)
     this.updateState()
-  }
+  },
 
   render () {
     const { presenter, parentProps } = this.props
@@ -173,25 +175,25 @@ class PresenterContext extends React.Component {
     const model = merge({}, parentProps, this.state)
 
     if (presenter.view.contextTypes || presenter.view.prototype.isReactComponent) {
-      return React.createElement(presenter.view, model)
+      return createElement(presenter.view, model)
     }
 
     return presenter.view(model)
-  }
+  },
 
   getRepo () {
     const repo = this.props.repo || this.context.repo
 
     return repo ? repo.fork() : new Microcosm()
-  }
+  },
 
   isImpure () {
     return this.props.presenter._isImpure()
-  }
+  },
 
   updatePropMap ({ presenter, parentProps, parentState }) {
     this.propMap = presenter.model.call(presenter, parentProps, parentState)
-  }
+  },
 
   updateState () {
     const next = this.getState()
@@ -199,7 +201,7 @@ class PresenterContext extends React.Component {
     if (this.isImpure() || shallowEqual(this.state, next) === false) {
       return this.setState(next)
     }
-  }
+  },
 
   getState () {
     const repoState = this.repo.state
@@ -217,7 +219,7 @@ class PresenterContext extends React.Component {
     }
 
     return nextState
-  }
+  },
 
   /**
    * Provides a way for views to send messages back to the presenter
@@ -254,20 +256,20 @@ class PresenterContext extends React.Component {
     // If we hit the top, push the intent into the Microcosm instance
     return this.repo.push(intent, ...params)
   }
-}
+})
 
 PresenterContext.propTypes = {
-  repo : React.PropTypes.object
+  repo : PropTypes.object
 }
 
 PresenterContext.contextTypes = {
-  repo : React.PropTypes.object,
-  send : React.PropTypes.func
+  repo : PropTypes.object,
+  send : PropTypes.func
 }
 
 PresenterContext.childContextTypes = {
-  repo : React.PropTypes.object,
-  send : React.PropTypes.func
+  repo : PropTypes.object,
+  send : PropTypes.func
 }
 
 
