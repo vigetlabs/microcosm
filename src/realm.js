@@ -25,12 +25,11 @@ Realm.prototype = {
   },
 
   add (key, config, options) {
-    let domain = null
+    console.assert(key == null || typeof key === 'string',
+                   'Domains must be mounted to a string key, or null for the root.',
+                   'Instead got:', key)
 
-    if (key != null && typeof key !== 'string') {
-      throw new Error('Domains must be mounted to a string key, or null for the root. ' +
-                      'Instead got: ' + key)
-    }
+    let domain = null
 
     if (typeof config === 'function') {
       domain = new config(options)

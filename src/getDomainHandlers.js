@@ -1,3 +1,4 @@
+import hasOwn from './has-own'
 import lifecycle from './lifecycle'
 
 function format (string) {
@@ -14,12 +15,10 @@ function getHandler (key, domain, type) {
   if (handler === undefined && domain.register) {
     const registrations = domain.register(type)
 
-    if (process.env.NODE_ENV !== 'production') {
-      if (registrations.hasOwnProperty(type) && registrations[type] === undefined) {
-        console.warn('A domain handler for "%s" registered an undefined handler for `%s`. ' +
-                     'Check the register method for this domain.', key, format(type))
-      }
-    }
+    console.assert(!hasOwn.call(registrations, type) || registrations[type] != undefined,
+                   'A domain handler for "' + key + '" registered an undefined',
+                   'handler for `' + format(type) + '`. Check the register',
+                   'method for this domain.')
 
     handler = registrations[type]
   }

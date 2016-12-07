@@ -9,7 +9,7 @@ test('it will not deserialize null', function () {
 test('throws an error if asked to push a non-function value', function () {
   const repo = new Microcosm()
 
-  expect(() => repo.push(null)).toThrow(TypeError)
+  expect(() => repo.push(null)).toThrow(/expected string or function/)
 })
 
 test('can manipulate how many transactions are merged', function () {

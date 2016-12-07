@@ -17,6 +17,7 @@
   be passed to domain constructors and to the setup method.
 - Microcosm ships as an ES6 module. If you are using CommonJS, import
   Microcosm using `require('microcosm').Microcosm`
+- Presenter:render is now protected. Instead, always use `view`
 
 ## 10.9.0
 

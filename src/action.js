@@ -13,10 +13,8 @@ import tag from './tag'
  * @extends {Emitter}
  */
 export default function Action (behavior, history) {
-  if (behavior && typeof behavior === 'object') {
-    throw new Error('Action expected string or function, instead got: ' +
-                    JSON.stringify(behavior))
-  }
+  console.assert(typeof behavior === 'string' || typeof behavior === 'function',
+                 'Action expected string or function, instead got: %s', behavior)
 
   this.type = null
   this.behavior = tag(behavior)

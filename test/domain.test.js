@@ -1,18 +1,4 @@
 import Microcosm from '../src/microcosm'
-import Domain from '../src/domain'
-import logger from './helpers/logger'
-
-test('it warns when extending from domain', function () {
-  class Test extends Domain {}
-
-  logger.record()
-
-  new Test()
-
-  expect(logger.last('warn')).toContain('Extending from Domain is deprecated')
-
-  logger.restore()
-})
 
 describe('::shouldCommit', function () {
 
@@ -182,8 +168,6 @@ describe('Action registration', function() {
     const repo = new Microcosm()
     const action = n => n
 
-    logger.record()
-
     repo.addDomain('key', {
       register() {
         return {
@@ -192,11 +176,7 @@ describe('Action registration', function() {
       }
     })
 
-    repo.push(action)
-
-    expect(logger.count('warn')).toEqual(1)
-
-    logger.restore()
+    expect(repo.prepare(action)).toThrow(/registered an undefined handler/)
   })
 
 })

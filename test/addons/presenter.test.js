@@ -2,7 +2,6 @@ import React from 'react'
 import Microcosm from '../../src/microcosm'
 import Presenter from '../../src/addons/presenter'
 import withIntent from '../../src/addons/with-intent'
-import logger from '../helpers/logger'
 import {mount} from 'enzyme'
 
 const View = withIntent(function ({ send }) {
@@ -520,8 +519,6 @@ describe('rendering efficiency', function() {
 })
 
 describe('::render', function () {
-  beforeEach(logger.record)
-  afterEach(logger.restore)
 
   test('the default render implementation passes children', function () {
     let wrapper = mount(<Presenter><p>Test</p></Presenter>)
@@ -529,16 +526,14 @@ describe('::render', function () {
     expect(wrapper.text()).toEqual('Test')
   })
 
-  test('warns when extending render', function () {
+  test('throws when extending render', function () {
     class Test extends Presenter {
       render() {
         return <p>Test</p>
       }
     }
 
-    mount(<Test />)
-
-    expect(logger.last('error')).toContain('Presenter::render is a protected method. Instead of overriding it, please use Presenter::view.')
+    expect(() => mount(<Test />)).toThrow('Presenter::render is a protected method.')
   })
 
 })

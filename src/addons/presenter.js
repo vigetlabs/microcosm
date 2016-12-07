@@ -13,15 +13,13 @@ function getName (presenter) {
 function Presenter (props, context) {
   Component.apply(this, arguments)
 
-  // Allow overriding render, generate the context wrapper
-  // upon instantiation
-  if (this.render !== Presenter.prototype.render) {
-    console.error('Presenter::render is a protected method. Instead of overriding it, please use Presenter::view.')
-  }
+  // Do not overriding render, generate the context wrapper upon instantiation
+  console.assert(this.render === Presenter.prototype.render,
+                 'Presenter::render is a protected method. Instead of overriding',
+                 'it, please use Presenter::view.')
 }
 
 merge(Presenter.prototype, Component.prototype, {
-  constructor: Presenter,
 
   shouldComponentUpdate (props, state) {
     return this._isImpure() ||
@@ -112,10 +110,9 @@ merge(Presenter.prototype, Component.prototype, {
 
   render() {
     // If the view is null, then it is probably incorrectly referenced
-    if (this.view == null) {
-      throw new TypeError(`${getName(this)}::view() is ` +
-                          `${typeof this.view}. Is it referenced correctly?`)
-    }
+    console.assert(this.view != null,
+                   `${getName(this)}::view() is`,
+                   `${typeof this.view}. Is it referenced correctly?`)
 
     return (
       createElement(PresenterContext, {
@@ -138,7 +135,6 @@ function PresenterContext (props, context) {
 }
 
 merge(PresenterContext.prototype, Component.prototype, {
-  constructor: PresenterContext,
 
   getChildContext () {
     return {
@@ -229,7 +225,7 @@ merge(PresenterContext.prototype, Component.prototype, {
    *
    * Send bubbles. If the closest presenter does not implement the intent,
    * it will check it's parent presenter. This repeats until there is no parent,
-   * in which case it throws an error.
+   * in which case it pushes to the repo.
    *
    * @param {string} intent - The name of a method the view wishes to invoke
    * @param {...any} params - Arguments to invoke the named method with
