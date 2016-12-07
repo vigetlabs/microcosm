@@ -3,8 +3,10 @@
  * Measures the performance of pushing a single action.
  */
 
-import Microcosm from '../src/microcosm'
-import time      from 'microtime'
+'use strict'
+
+const { Microcosm } = require('../build/microcosm')
+const time = require('microtime')
 
 const SIZES = [
   1000,

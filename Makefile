@@ -1,27 +1,29 @@
+ROLLUP := node_modules/.bin/rollup
 BABEL := node_modules/.bin/babel
-SCRIPTS := $(addprefix tmp/,$(shell find src bench -name '*.js*'))
-VERSION := $$(node -p "require('./package').version")
+SCRIPTS := $(shell find src -name '*.js*')
+MODULES = src/microcosm.js $(wildcard src/addons/*.js)
 
-all: javascript docs package.json
-	@ echo [+] prepared v$(VERSION)
+PROFILE = NODE_ENV=production node --expose-gc $(1)
 
-javascript: $(SCRIPTS)
-	@ rsync -uraq tmp/src/ build/
+all: javascript docs build/package.json
 
-tmp/%.js: %.js .babelrc
+javascript: $(patsubst src/%,build/%,$(MODULES))
+
+docs:
+	@ mkdir -p build
+	@ cp -r CHANGELOG.md README.md LICENSE.md docs build
+
+build/package.json: package.json
+	@ mkdir -p build
+	@ node -p 'p=require("./package");p.private=p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $@
+
+%.js: %.es6.js
 	@ mkdir -p $(@D)
-	@ $(BABEL) -c -s inline $< > $@
-	@ echo [+] $(@F)
+	@ $(BABEL) $< > $@
 
-docs: LICENSE.md README.md
-	@ mkdir -p build
-	@ cp $^ build/
-	@ echo [+] docs
-
-package.json:
-	@ mkdir -p build
-	@ node -p 'p=require("./package");p.main="microcosm.js";p.private=undefined;p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > build/package.json
-	@ echo [+] package.json
+build/%.es6.js: src/%.js $(SCRIPTS)
+	@ mkdir -p $(@D)
+	@ $(ROLLUP) -f cjs --external=$(realpath src/microcosm.js) $< > $@
 
 release: clean all
 	npm publish build
@@ -29,13 +31,12 @@ release: clean all
 prerelease: clean all
 	npm publish build --tag beta
 
-bench: javascript
-	@ node --expose-gc tmp/bench/history-performance
-	@ node --expose-gc tmp/bench/dispatch-performance
-	@ node --expose-gc tmp/bench/push-performance
+bench: all
+	@ $(call PROFILE, bench/history-performance)
+	@ $(call PROFILE, bench/dispatch-performance)
+	@ $(call PROFILE, bench/push-performance)
 
 clean:
 	@ rm -rf build/*
-	@ rm -rf tmp/*
 
-.PHONY: all clean bench package.json docs release prerelease
+.PHONY: clean bench release prerelease javascript all

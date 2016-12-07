@@ -2,9 +2,10 @@
  * History Performance Benchmark
  */
 
-import History from '../src/history'
-import merge from '../src/merge'
-import time from 'microtime'
+'use strict'
+
+const { History } = require('../build/microcosm')
+const time = require('microtime')
 
 const SIZES = [
   1000,

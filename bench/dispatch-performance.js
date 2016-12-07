@@ -7,10 +7,10 @@
  * gut check of "are we fast yet?"
  */
 
-import History   from '../src/history'
-import Microcosm from '../src/microcosm'
-import Action    from '../src/action'
-import time      from 'microtime'
+'use strict'
+
+const { Action, History, Microcosm } = require('../build/microcosm')
+const time = require('microtime')
 
 const SIZES   = [ 1000, 10000, 50000, 100000, 200000 ]
 

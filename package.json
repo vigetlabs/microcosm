@@ -3,7 +3,7 @@
   "version": "10.9.0",
   "private": true,
   "description": "Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease.",
-  "main": "src/microcosm.js",
+  "main": "microcosm.js",
   "homepage": "http://code.viget.com/microcosm",
   "scripts": {
     "build": "make all",
@@ -63,6 +63,7 @@
     "react-addons-test-utils": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-router": "^3.0.0",
+    "rollup": "^0.36.4",
     "sprout-data": "0.2.3",
     "uid": "0.0.2",
     "webpack": "~1.13.2",
