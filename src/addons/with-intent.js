@@ -3,8 +3,8 @@
  */
 
 import React from 'react'
-import merge from '../merge'
 import displayName from '../display-name'
+import { merge } from '../microcosm'
 
 const danger = function (intent, params) {
   console.error('Unable to broadcast "%s" with parameters `%s`. withIntent did not receive context.',

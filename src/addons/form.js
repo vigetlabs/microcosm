@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react'
-import Action from '../action'
 import serialize from 'form-serialize'
-import merge from '../merge'
+import { Action, merge } from '../microcosm'
 
 const Form = React.createClass({
 

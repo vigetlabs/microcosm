@@ -1,3 +1,4 @@
+import Action       from './action'
 import Emitter      from './emitter'
 import History      from './history'
 import MetaDomain   from './domains/meta'
@@ -7,6 +8,7 @@ import lifecycle    from './lifecycle'
 import merge        from './merge'
 import shallowEqual from './shallow-equal'
 import update       from './update'
+import tag          from './tag'
 
 /**
  * A tree-like data structure that keeps track of the execution order of
@@ -17,7 +19,7 @@ import update       from './update'
  * @extends {Emitter}
  * @param {{maxHistory: Number, pure: Boolean, parent: Microcosm}} options - Instantiation options.
  */
-export default function Microcosm ({ maxHistory, pure=true, history, parent=null } = {})  {
+function Microcosm ({ maxHistory, pure=true, history, parent=null } = {})  {
   this.history = history || new History(maxHistory)
   this.realm = new Realm(this)
   this.effects = new Effects(this)
@@ -416,3 +418,7 @@ merge(Microcosm.prototype, Emitter.prototype, {
   }
 
 })
+
+export default Microcosm
+
+export { Action, History, Microcosm, tag, shallowEqual, merge }

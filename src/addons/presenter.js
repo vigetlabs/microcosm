@@ -1,8 +1,5 @@
 import React from 'react'
-import Microcosm from '../microcosm'
-import merge from '../merge'
-import tag from '../tag'
-import shallowEqual from '../shallow-equal'
+import Microcosm, { merge, tag, shallowEqual } from '../microcosm'
 
 function getName (presenter) {
   return presenter.constructor.name || 'Presenter'
