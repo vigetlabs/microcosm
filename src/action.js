@@ -28,7 +28,7 @@ export default function Action (behavior, history) {
   this.sibling = null
 }
 
-Action.prototype = merge({}, Emitter.prototype, {
+merge(Action.prototype, Emitter.prototype, {
 
   /**
    * Given a string or State constant, determine if the `state` bitmask for
@@ -146,11 +146,6 @@ Action.prototype = merge({}, Emitter.prototype, {
     this._emit('done', this.payload)
 
     return this
-  },
-
-  close () {
-    console.warn('Deprecation (10.0.0): Use action.resolve instead of action.close.')
-    return this.resolve.apply(this, arguments)
   },
 
   /**
@@ -304,7 +299,6 @@ Action.prototype = merge({}, Emitter.prototype, {
  * @private
  * @return {Array} children list of actions
  */
-
 Object.defineProperty(Action.prototype, 'children', {
   get () {
     let start = this.next
