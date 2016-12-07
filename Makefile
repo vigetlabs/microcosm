@@ -39,4 +39,4 @@ bench: all
 clean:
 	@ rm -rf build/*
 
-.PHONY: clean bench release prerelease javascript all
+.PHONY: clean bench release prerelease all javascript docs
