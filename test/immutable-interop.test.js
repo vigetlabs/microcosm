@@ -1,4 +1,3 @@
-import Domain from '../src/domain'
 import Microcosm from '../src/microcosm'
 
 const create  = n => n
@@ -6,7 +5,7 @@ const destroy = n => n
 
 import Immutable from 'immutable'
 
-class TestDomain extends Domain {
+class TestDomain {
 
   getInitialState() {
     return Immutable.Map()

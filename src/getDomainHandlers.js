@@ -11,7 +11,7 @@ function format (string) {
 function getHandler (key, domain, type) {
   let handler = lifecycle.hasOwnProperty(type) ? domain[type] : undefined
 
-  if (handler === undefined) {
+  if (handler === undefined && domain.register) {
     const registrations = domain.register(type)
 
     if (process.env.NODE_ENV !== 'production') {

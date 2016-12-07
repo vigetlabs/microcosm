@@ -4,7 +4,7 @@ test('writes to repo state', function (done) {
   const action = function() {}
   const repo = new Microcosm()
 
-  repo.addDomain({
+  repo.addDomain(null, {
     getInitialState() {
       return { test: false }
     },

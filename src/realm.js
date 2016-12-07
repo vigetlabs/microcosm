@@ -2,7 +2,6 @@
  * A cluster of domains. Mostly for ergonomics
  */
 
-import Domain from './domain'
 import getDomainHandlers from './getDomainHandlers'
 import merge from './merge'
 
@@ -25,33 +24,28 @@ Realm.prototype = {
     return this.registry[type]
   },
 
-  add (key, config) {
-    if (arguments.length < 2) {
-      // Important! Assignment this way is important
-      // to support IE9, which has an odd way of referencing
-      // arguments
-      config = key
-      key = null
-    }
-
+  add (key, config, options) {
     let domain = null
 
+    if (key != null && typeof key !== 'string') {
+      throw new Error('Domains must be mounted to a string key, or null for the root. ' +
+                      'Instead got: ' + key)
+    }
+
     if (typeof config === 'function') {
-      domain = new config()
+      domain = new config(options)
     } else {
       domain = merge({}, config)
     }
-
-    // Allow for simple classes and object primitives. Make sure
-    // they implement the key Domain methods.
-    Domain.ensure(domain)
 
     this.domains[this.domains.length] = [ key, domain ]
 
     // Reset the registry
     this.registry = {}
 
-    domain.setup(this.repo)
+    if (domain.setup) {
+      domain.setup(this.repo, options)
+    }
 
     return this
   },
@@ -68,7 +62,11 @@ Realm.prototype = {
 
   teardown () {
     for (var i = 0; i < this.domains.length; i++) {
-      this.domains[i][1].teardown(this.repo)
+      let domain = this.domains[i][1]
+
+      if (domain.teardown) {
+        domain.teardown(this.repo)
+      }
     }
   }
 

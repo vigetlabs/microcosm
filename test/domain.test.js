@@ -2,13 +2,25 @@ import Microcosm from '../src/microcosm'
 import Domain from '../src/domain'
 import logger from './helpers/logger'
 
+test('it warns when extending from domain', function () {
+  class Test extends Domain {}
+
+  logger.record()
+
+  new Test()
+
+  expect(logger.last('warn')).toContain('Extending from Domain is deprecated')
+
+  logger.restore()
+})
+
 describe('::shouldCommit', function () {
 
   test('is given initial state at the start', function () {
     const repo = new Microcosm()
     const test = jest.fn(() => false)
 
-    class Counter extends Domain {
+    class Counter {
       getInitialState() {
         return 0
       }
@@ -115,7 +127,7 @@ describe('Creation modes', function () {
   test('class - extends domain', function () {
     const repo = new Microcosm()
 
-    class Counter extends Domain{
+    class Counter {
       getInitialState() {
         return 0
       }
@@ -130,32 +142,32 @@ describe('Creation modes', function () {
 
 describe('Lifecycle', function() {
 
-  test('setup - gets called with a reference to the repo', function () {
+  test('setup - gets called with a reference to the repo and options', function () {
     const repo = new Microcosm()
     const test = jest.fn()
 
-    class Counter extends Domain {
+    class Counter {
       get setup () {
         return test
       }
     }
 
-    repo.addDomain('count', Counter)
+    repo.addDomain('count', Counter, { test: true })
 
-    expect(test).toHaveBeenCalledWith(repo)
+    expect(test).toHaveBeenCalledWith(repo, { test: true })
   })
 
   test('teardown - gets called with a reference to the repo', function () {
     const repo = new Microcosm()
     const test = jest.fn()
 
-    class Counter extends Domain {
+    class Counter {
       get teardown () {
         return test
       }
     }
 
-    repo.addDomain('count', Counter)
+    repo.addDomain('count', Counter, { test: true })
 
     repo.teardown()
 

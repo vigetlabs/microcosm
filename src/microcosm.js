@@ -50,7 +50,7 @@ function Microcosm ({ maxHistory, pure=true, history, parent=null } = {})  {
   this.state = parent ? parent.state : {}
 
   // Setup a domain to handle patch and reset actions
-  this.addDomain(MetaDomain)
+  this.addDomain(null, MetaDomain)
 
   // Microcosm is now ready. Call the setup lifecycle method
   this.setup()
@@ -121,7 +121,7 @@ merge(Microcosm.prototype, Emitter.prototype, {
       const last = update.get(state, key)
       const next = handler.call(domain, last, payload)
 
-      state = update.set(state, key, domain.stage(last, next))
+      state = update.set(state, key, next)
     }
 
     return state
@@ -180,12 +180,23 @@ merge(Microcosm.prototype, Emitter.prototype, {
    * Write state to the head
    */
   write (state, key, domain) {
-    const last = update.get(this.cached, key)
-    const next = update.get(state, key)
+    let last = update.get(this.cached, key)
+    let next = update.get(state, key)
+
+    let forceCommit = domain.shouldCommit == null || this.state.hasOwnProperty(key) === false
 
     // Only write state if we've never written it before or the domain says so
-    if (this.state.hasOwnProperty(key) === false || domain.shouldCommit(last, next)) {
-      return update.set(state, key, domain.commit(next, state))
+    if (forceCommit || domain.shouldCommit(last, next)) {
+      /**
+       * A middleware method for determining what exactly is assigned to
+       * repo.state. This gives libraries such as ImmutableJS a chance to serialize
+       * into a primitive JavaScript form before being publically exposed.
+       */
+      if (domain.commit) {
+        next = domain.commit(next, state)
+      }
+
+      return update.set(state, key, next)
     }
 
     return update.set(state, key, update.get(this.state, key))
