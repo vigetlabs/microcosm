@@ -277,11 +277,6 @@ merge(Microcosm.prototype, Emitter.prototype, {
     return this.rebase()
   },
 
-  addStore () {
-    console.warn('Deprecation (10.0.0): Use repo.addDomain instead of repo.addStore.')
-    return this.addDomain.apply(this, arguments)
-  },
-
   /**
    * An effect is a one-time handler that fires whenever an action changes. Callbacks
    * will only ever fire once, and can not modify state.
@@ -339,11 +334,6 @@ merge(Microcosm.prototype, Emitter.prototype, {
       owner : this,
       data  : data
     })
-  },
-
-  replace (state) {
-    console.warn('Deprecation (10.0.0): Use repo.patch(state, true) instead of repo.replace(state).')
-    return this.patch(state, true)
   },
 
   /**
