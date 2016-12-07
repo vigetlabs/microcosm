@@ -1,3 +1,5 @@
+import hasOwn from './has-own'
+
 let uid = 0
 const FALLBACK = 'microcosm_action'
 
@@ -14,7 +16,7 @@ export default function tag (fn, name) {
                  'Unable to identify ' + fn + ' action. Did you push the',
                  'correct action?')
 
-  if (fn.hasOwnProperty('toString')) {
+  if (hasOwn.call(fn, 'toString')) {
     return fn
   }
 

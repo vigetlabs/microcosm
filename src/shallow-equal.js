@@ -1,4 +1,4 @@
-const hasOwn = Object.prototype.hasOwnProperty
+import hasOwn from './has-own'
 
 /**
  * @private

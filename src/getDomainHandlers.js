@@ -10,7 +10,7 @@ function format (string) {
 }
 
 function getHandler (key, domain, type) {
-  let handler = lifecycle.hasOwnProperty(type) ? domain[type] : undefined
+  let handler = hasOwn.call(lifecycle, type) ? domain[type] : undefined
 
   if (handler === undefined && domain.register) {
     const registrations = domain.register(type)

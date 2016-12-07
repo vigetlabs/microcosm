@@ -9,6 +9,7 @@ import merge        from './merge'
 import shallowEqual from './shallow-equal'
 import update       from './update'
 import tag          from './tag'
+import hasOwn       from './has-own'
 
 /**
  * A tree-like data structure that keeps track of the execution order of
@@ -183,7 +184,7 @@ merge(Microcosm.prototype, Emitter.prototype, {
     let last = update.get(this.cached, key)
     let next = update.get(state, key)
 
-    let forceCommit = domain.shouldCommit == null || this.state.hasOwnProperty(key) === false
+    let forceCommit = domain.shouldCommit == null || hasOwn.call(this.state, key) === false
 
     // Only write state if we've never written it before or the domain says so
     if (forceCommit || domain.shouldCommit(last, next)) {
