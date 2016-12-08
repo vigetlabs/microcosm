@@ -230,7 +230,7 @@ merge(PresenterContext.prototype, {
 
     // Does the presenter register to this intent?
     if (registry && registry.hasOwnProperty(intent)) {
-      return registry[intent].apply(presenter, [ this.repo, ...params ])
+      return registry[intent].call(presenter, this.repo, ...params)
     }
 
     // No: try the parent presenter
