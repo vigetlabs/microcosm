@@ -173,7 +173,7 @@ describe('::model', function() {
       const wrapper = mount(<TrackedNamer name="Colonel" />)
 
       wrapper.setState({
-        "greeting": "Hello"
+        "greeting": 'Hello'
       })
 
       expect(spy).toHaveBeenCalledTimes(1)
@@ -276,7 +276,7 @@ describe('::update', function() {
     expect(test).toHaveBeenCalledWith('bar')
   })
 
-  test('does not run an update function when it is pure and no props change', function () {
+  test('does not run an update function when no props change', function () {
     class MyPresenter extends Presenter {
       update(repo, props) {
         throw new Error('Presenter update method should not have been called')
@@ -286,22 +286,6 @@ describe('::update', function() {
     let wrapper = mount(<MyPresenter repo={ new Microcosm() } test="foo" />)
 
     wrapper.setProps({ test: "foo" })
-  })
-
-  test('always runs update when impure', function () {
-    const spy = jest.fn()
-
-    class MyPresenter extends Presenter {
-      get update() {
-        return spy
-      }
-    }
-
-    let wrapper = mount(<MyPresenter repo={ new Microcosm() } test="foo" pure={false} />)
-
-    wrapper.setProps({ test: "foo" })
-
-    expect(spy).toHaveBeenCalled()
   })
 
   test('it has access to the old props when update is called', function () {
@@ -376,24 +360,8 @@ describe('::view', function() {
 
 describe('purity', function() {
 
-  test('inherits purity from repo', function () {
-    const spy = jest.fn()
-
-    class MyPresenter extends Presenter {
-      get update() {
-        return spy
-      }
-    }
-
-    let wrapper = mount(<MyPresenter repo={ new Microcosm({ pure: false }) } test="foo" />)
-
-    wrapper.setProps({ test: "foo" })
-
-    expect(spy).toHaveBeenCalled()
-  })
-
-  test('does not cause a re-render when shallowly equal and pure', function () {
-    const repo = new Microcosm({ pure: true })
+  test('does not cause a re-render when shallowly equal', function () {
+    const repo = new Microcosm()
     const renders = jest.fn(() => <p>Test</p>)
 
     repo.patch({ name: 'Kurtz' })
@@ -413,29 +381,6 @@ describe('purity', function() {
     repo.patch({ name: 'Kurtz', unrelated: true })
 
     expect(renders.mock.calls.length).toEqual(1)
-  })
-
-  test('always re-renders impure repos', function () {
-    const repo = new Microcosm({ pure: false })
-    const renders = jest.fn(() => <p>Test</p>)
-
-    repo.patch({ name: 'Kurtz' })
-
-    class Namer extends Presenter {
-      model() {
-        return { name: state => state.name }
-      }
-
-      get view () {
-        return renders
-      }
-    }
-
-    mount(<Namer repo={ repo } />)
-
-    repo.patch({ name: 'Kurtz', unrelated: true })
-
-    expect(renders.mock.calls.length).toEqual(2)
   })
 
 })
@@ -466,7 +411,7 @@ describe('unmounting', function () {
       }
     }
 
-    let repo = new Microcosm({ pure: false })
+    let repo = new Microcosm()
     let wrapper = mount(<MyPresenter repo={repo} />)
 
     wrapper.unmount()

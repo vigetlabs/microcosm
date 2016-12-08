@@ -3,6 +3,7 @@ import States, {getType} from './action/states'
 import coroutine from './action/coroutine'
 import merge from './merge'
 import tag from './tag'
+import inherit from './inherit'
 
 /**
  * Actions encapsulate the course of resolving an action creator
@@ -26,7 +27,9 @@ export default function Action (behavior, history) {
   this.sibling = null
 }
 
-merge(Action.prototype, Emitter.prototype, {
+inherit(Action, Emitter)
+
+merge(Action.prototype, {
 
   /**
    * Given a string or State constant, determine if the `state` bitmask for

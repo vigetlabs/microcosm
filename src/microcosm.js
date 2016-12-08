@@ -10,6 +10,7 @@ import shallowEqual from './shallow-equal'
 import update       from './update'
 import tag          from './tag'
 import hasOwn       from './has-own'
+import inherit      from './inherit'
 
 /**
  * A tree-like data structure that keeps track of the execution order of
@@ -18,15 +19,14 @@ import hasOwn       from './has-own'
  * React).
  *
  * @extends {Emitter}
- * @param {{maxHistory: Number, pure: Boolean, parent: Microcosm}} options - Instantiation options.
+ * @param {{maxHistory: Number, parent: Microcosm}} options - Instantiation options.
  */
-function Microcosm ({ maxHistory, pure=true, history, parent=null } = {})  {
+function Microcosm ({ maxHistory, history, parent } = {})  {
   this.history = history || new History(maxHistory)
   this.realm = new Realm(this)
   this.effects = new Effects(this)
 
-  this.pure = pure
-  this.parent = parent
+  this.parent = parent || null
 
   this.history.addRepo(this)
 
@@ -47,7 +47,7 @@ function Microcosm ({ maxHistory, pure=true, history, parent=null } = {})  {
   this.head = parent ? parent.head : {}
 
   // Publically available data. This gets updated whenever the head state
-  // is shallowly different (or always, if impure).
+  // is shallowly different.
   this.state = parent ? parent.state : {}
 
   // Setup a domain to handle patch and reset actions
@@ -57,7 +57,9 @@ function Microcosm ({ maxHistory, pure=true, history, parent=null } = {})  {
   this.setup()
 }
 
-merge(Microcosm.prototype, Emitter.prototype, {
+inherit(Microcosm, Emitter)
+
+merge(Microcosm.prototype, {
 
   /**
    * Called whenever a Microcosm is instantiated. This provides a
@@ -219,7 +221,7 @@ merge(Microcosm.prototype, Emitter.prototype, {
   },
 
   release () {
-    if (this.pure && shallowEqual(this.head, this.state)) {
+    if (shallowEqual(this.head, this.state)) {
       return this
     }
 
@@ -414,7 +416,6 @@ merge(Microcosm.prototype, Emitter.prototype, {
   fork () {
     return new Microcosm({
       parent  : this,
-      pure    : this.pure,
       history : this.history
     })
   }
@@ -423,4 +424,4 @@ merge(Microcosm.prototype, Emitter.prototype, {
 
 export default Microcosm
 
-export { Action, History, Microcosm, tag, shallowEqual, merge }
+export { Action, History, Microcosm, tag, shallowEqual, merge, inherit }

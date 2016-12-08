@@ -1,9 +1,15 @@
-import { Children, PropTypes, Component, createElement } from 'react'
-import Microcosm, { merge, tag, shallowEqual } from '../microcosm'
+import { Children, PropTypes, Component, PureComponent, createElement } from 'react'
+import Microcosm, { merge, tag, shallowEqual, inherit } from '../microcosm'
 
 function getName (presenter) {
   return presenter.constructor.name || 'Presenter'
 }
+
+/**
+ * PureComponent was only added recently, so fallback to the regular component
+ * in cases where it doesn't exist
+ */
+const BaseComponent = PureComponent || Component
 
 /**
  * A general component abstraction for high-responsibility React
@@ -11,7 +17,7 @@ function getName (presenter) {
  * majority of view code does not have to.
  */
 function Presenter (props, context) {
-  Component.apply(this, arguments)
+  BaseComponent.apply(this, arguments)
 
   // Do not overriding render, generate the context wrapper upon instantiation
   console.assert(this.render === Presenter.prototype.render,
@@ -19,13 +25,10 @@ function Presenter (props, context) {
                  'it, please use Presenter::view.')
 }
 
-merge(Presenter.prototype, Component.prototype, {
+inherit(Presenter, BaseComponent)
 
-  shouldComponentUpdate (props, state) {
-    return this._isImpure() ||
-           !shallowEqual(this.props, props) ||
-           !shallowEqual(this.state, state)
-  },
+merge(Presenter.prototype, {
+  constructor: Presenter,
 
   _setRepo (repo) {
     this.repo = repo
@@ -37,14 +40,6 @@ merge(Presenter.prototype, Component.prototype, {
 
   _connectSend (send) {
     this.send = send
-  },
-
-  _isImpure () {
-    if (this.props.hasOwnProperty('pure')) {
-      return this.props.pure !== true
-    }
-
-    return this.repo.pure !== true
   },
 
   /**
@@ -65,7 +60,7 @@ merge(Presenter.prototype, Component.prototype, {
   },
 
   componentWillReceiveProps (next) {
-    if (this._isImpure() || !shallowEqual(next, this.props)) {
+    if (shallowEqual(next, this.props) === false) {
       this.update(this.repo, next, this.state)
     }
   },
@@ -127,14 +122,16 @@ merge(Presenter.prototype, Component.prototype, {
 })
 
 function PresenterContext (props, context) {
-  Component.apply(this, arguments)
+  BaseComponent.apply(this, arguments)
 
   this.repo = this.getRepo()
 
   props.presenter._connectSend(this.send.bind(this))
 }
 
-merge(PresenterContext.prototype, Component.prototype, {
+inherit(PresenterContext, BaseComponent)
+
+merge(PresenterContext.prototype, {
 
   getChildContext () {
     return {
@@ -183,20 +180,12 @@ merge(PresenterContext.prototype, Component.prototype, {
     return repo ? repo.fork() : new Microcosm()
   },
 
-  isImpure () {
-    return this.props.presenter._isImpure()
-  },
-
   updatePropMap ({ presenter, parentProps, parentState }) {
     this.propMap = presenter.model.call(presenter, parentProps, parentState)
   },
 
   updateState () {
-    const next = this.getState()
-
-    if (this.isImpure() || shallowEqual(this.state, next) === false) {
-      return this.setState(next)
-    }
+    return this.setState(this.getState())
   },
 
   getState () {
@@ -267,6 +256,5 @@ PresenterContext.childContextTypes = {
   repo : PropTypes.object,
   send : PropTypes.func
 }
-
 
 export default Presenter

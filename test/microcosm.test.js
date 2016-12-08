@@ -59,8 +59,8 @@ test('can checkout a prior state', function () {
   expect(repo.state.number).toEqual(1)
 })
 
-test('if pure, it will not emit a change if state is shallowly equal', function () {
-  const repo = new Microcosm({ pure: true })
+test('it will not emit a change if state is shallowly equal', function () {
+  const repo = new Microcosm()
   const identity = n => n
 
   repo.addDomain('test', {
@@ -79,8 +79,8 @@ test('if pure, it will not emit a change if state is shallowly equal', function 
   expect(first).toBe(repo.state)
 })
 
-test('if pure, it will emit a change if state is not shallowly equal', function () {
-  const repo = new Microcosm({ pure: true })
+test('it will emit a change if state is not shallowly equal', function () {
+  const repo = new Microcosm()
   const identity = n => n
 
   repo.addDomain('test', {

@@ -18,6 +18,9 @@
 - Microcosm ships as an ES6 module. If you are using CommonJS, import
   Microcosm using `require('microcosm').Microcosm`
 - Presenter:render is now protected. Instead, always use `view`
+- Removed concept of purity. Microcosm depends on side-effect free
+  updates, so it's not really viable.
+- Presenter extends from `React.PureComponent` when available.
 
 ## 10.9.0
 
