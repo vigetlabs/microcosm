@@ -1,6 +1,6 @@
 # Changelog
 
-## Master
+## 11.0.0 (beta)
 
 - Fix bug where Presenter given stateless view component as an inline
   prop would call it as a function instead of React.createElement.
