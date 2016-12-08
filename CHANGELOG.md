@@ -7,10 +7,11 @@
 - Add warning when using `render()` directly in the Presenter.
 - Presenter.setState state will re-calculate the model. State is now
   the second argument of `model()`.
-- Removed deprecated methods:
-  - action.close()
-  - repo.replace()
-  - repo.addStore()
+- Removed some deprecated methods and aliases:
+  - action.close() - Use action.resolve()
+  - repo.replace() - Use repo.patch(data, true)
+  - repo.addStore() - Use repo.addDomain
+  - Presenter::viewModel - Use Presenter::model
 - Domains mounted to the root must pass `null` as the first argument
   to `addDomain`, like: `repo.addDomain(null, RootLevelDomain)`
 - `addDomain` accepts a third argument: `options`. These options will
@@ -21,6 +22,9 @@
 - Removed concept of purity. Microcosm depends on side-effect free
   updates, so it's not really viable.
 - Presenter extends from `React.PureComponent` when available.
+- The Presenter model no longer returns all state by default. This is
+  nice for short examples, however it can quickly get out of hand for
+  non-trivial uses.
 
 ## 10.9.0
 

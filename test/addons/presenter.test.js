@@ -10,7 +10,7 @@ const View = withIntent(function ({ send }) {
 
 describe('::model', function() {
 
-  test('model is an alias for viewModel', function () {
+  test('model is an alias for model ', function () {
     class Hello extends Presenter {
       model ({ place }) {
         return {
@@ -30,7 +30,7 @@ describe('::model', function() {
 
   test('builds the view model into state', function () {
     class MyPresenter extends Presenter {
-      viewModel() {
+      model () {
         return {
           color: state => state.color
         }
@@ -52,7 +52,7 @@ describe('::model', function() {
 
   test('handles non-function view model bindings', function () {
     class MyPresenter extends Presenter {
-      viewModel({ name }) {
+      model ({ name }) {
         return {
           upper: name.toUpperCase()
         }
@@ -69,7 +69,7 @@ describe('::model', function() {
 
   test('allows functions to return from model', function () {
     class MyPresenter extends Presenter {
-      viewModel() {
+      model () {
         return state => state
       }
 
@@ -115,7 +115,7 @@ describe('::model', function() {
       const spy = jest.fn()
 
       class Namer extends Presenter {
-        get viewModel () {
+        get model () {
           return spy
         }
       }
@@ -406,7 +406,7 @@ describe('unmounting', function () {
 
     class MyPresenter extends Presenter {
       // This should only run once
-      get viewModel() {
+      get model() {
         return spy
       }
     }
@@ -427,8 +427,11 @@ describe('rendering efficiency', function() {
 
   test('child view model is not recalculated when parents cause them to re-render', function () {
     const repo = new Microcosm()
-    const model = jest.fn(function({ name }) {
-      return { name }
+
+    repo.patch({ name: 'Sally Fields' })
+
+    const model = jest.fn(function() {
+      return { name: state => state.name }
     })
 
     class Child extends Presenter {
@@ -443,11 +446,12 @@ describe('rendering efficiency', function() {
       view = Child
     }
 
-    mount(<Parent repo={ repo } />)
+    let wrapper = mount(<Parent repo={repo} />)
 
     repo.patch({ name: 'Billy Booster' })
 
-    expect(model).toHaveBeenCalledTimes(2)
+    expect(model).toHaveBeenCalledTimes(1)
+    expect(wrapper.text()).toEqual('Billy Booster')
   })
 
   test('should re-render when state changes', function () {

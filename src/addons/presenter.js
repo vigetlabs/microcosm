@@ -1,6 +1,8 @@
 import { Children, PropTypes, Component, PureComponent, createElement } from 'react'
 import Microcosm, { merge, tag, shallowEqual, inherit } from '../microcosm'
 
+const EMPTY = {}
+
 function getName (presenter) {
   return presenter.constructor.name || 'Presenter'
 }
@@ -88,22 +90,15 @@ merge(Presenter.prototype, {
    *
    * If none of the keys have changed, `this.updateState` will not set a new state.
    */
-  viewModel (props, state) {
-    return state => state
-  },
-
-  /**
-   * Alias for viewModel
-   */
-  model(props, state) {
-    return this.viewModel(props, state)
+  model (props, state) {
+    return EMPTY
   },
 
   view (model) {
     return this.props.children ? Children.only(this.props.children) : null
   },
 
-  render() {
+  render () {
     // If the view is null, then it is probably incorrectly referenced
     console.assert(this.view != null,
                    `${getName(this)}::view() is`,

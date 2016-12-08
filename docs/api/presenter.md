@@ -213,10 +213,6 @@ associated repo), this will only update state if shallowly equal.
 
 When not implemented, model returns all repo state.
 
-### `viewModel(props, state)`
-
-Alias for `model`.
-
 ### `view(model)`
 
 A special render method that is given the current result of `model`.
