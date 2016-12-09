@@ -136,7 +136,7 @@ p {
 .main.-with-sidebar {
   margin: 0 auto;
   max-width: 924px;
-  padding: 0 16px;
+  padding: 0;
   width: 100%;
 }
 
@@ -160,6 +160,11 @@ p {
     padding-right: 48px;
     padding-top: 56px;
   }
+}
+
+.sidebar {
+  padding-left: 16px;
+  margin: 24px 0;
 }
 
 .sidebar__heading {
@@ -208,6 +213,7 @@ p {
 
 .footer {
   background: #090931;
+  text-align: center;
 }
 
 .footer__inner {
@@ -220,11 +226,23 @@ p {
 }
 
 .footer__left {
-  float: left;
+  margin-bottom: 24px;
 }
 
 .footer__right {
-  float: right;
+  margin-bottom: 12px;
+}
+
+@media all and (min-width: 600px) {
+  .footer__left {
+    float: left;
+    margin: 0;
+  }
+
+  .footer__right {
+    float: right;
+    margin: 0;
+  }
 }
 
 .footer__left a {
