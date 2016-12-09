@@ -2,7 +2,8 @@
 
 export BASE_URL=$(node -p 'require("../package").homepage')
 
-make clean all
+make clean
+make all
 
 # Clean up pesky files
 rm -rf ./**/.DS_Store
