@@ -22,8 +22,7 @@
     "semi": 0
   },
   "plugins": [
-    "react",
-    "markdown"
+    "react"
   ],
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "rules": {

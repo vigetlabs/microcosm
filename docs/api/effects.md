@@ -25,11 +25,11 @@ This is a perfect use case for an effect:
 
 ```javascript
 import url from 'url'
-import {push} from '../actions/query'
+import {patch} from '../actions/query'
 
 class Location {
 
-  pushQuery (repo) {
+  updateQuery (repo) {
     const { origin, hash } = window.location
 
     const location = url.format({
@@ -43,7 +43,7 @@ class Location {
 
   register () {
     return {
-      [push] : this.pushQuery
+      [patchQuery] : this.updateQuery
     }
   }
 }

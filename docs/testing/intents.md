@@ -1,12 +1,6 @@
 # Testing Intents
 
-1. [Overview](#overview)
-2. [The Basic Mechanics](#the-basic-mechanics)
-3. [A Test Helper](#a-test-helper)
-
-## Overview
-
-Presenters have a powerful `intent` feature that allows view
+Microcosm Presenters have a powerful `intent` feature that allows view
 components to utilize the [Form](../api/form.md)
 or [withIntent](../api/with-intent.md) add-ons to communicate to a
 Presenter even if they are deep within a tree. This recipe walks
