@@ -9,8 +9,8 @@ sections touch on the individual pieces of Microcosm.
 Let's cover a couple of tools that we'll use throughout the guides.
 
 **These are not mandatory**. Examples should be easily translatable to
-your existing testing setup. However we've found these to be easy to
-work with and put them forth as recommendations.
+your existing testing setup. However we've found these tools to be
+easy to work with and put them forth as recommendations.
 
 ### Jest
 
