@@ -12,7 +12,7 @@ server: clean
 	@ $(MAKE) all
 	@ ./scripts/serve
 
-publish:
+publish: clean
 	@ ./scripts/publish
 
 clean:

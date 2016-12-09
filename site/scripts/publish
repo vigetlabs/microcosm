@@ -2,7 +2,6 @@
 
 export BASE_URL=$(node -p 'require("../package").homepage')
 
-make clean
 make all
 
 # Clean up pesky files
