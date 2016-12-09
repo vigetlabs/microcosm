@@ -78,8 +78,8 @@ for [jsdom](https://github.com/tmpvar/jsdom), a JavaScript
 implementation of the web
 browser's
 [Document Object Model (DOM)](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model). By
-using jsdom, we can write unit tests against an environment
-very similar to the browser without paying nearly the same cost.
+using jsdom, we can write unit tests against an environment very
+similar to the browser without paying in execution time.
 
 Chances are that you already have jsdom if you've set up Jest. All
 that's required is to tell Jest that you would like to use it:
