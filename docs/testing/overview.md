@@ -1,6 +1,6 @@
 # Testing Microcosm
 
-We've put a lot of careful planning in to making Microcosm easy to
+We've put a lot of careful planning into making Microcosm easy to
 test. In this section, we'll cover our basic testing setup. Additional
 sections touch on the individual pieces of Microcosm.
 
@@ -84,7 +84,7 @@ very similar to the browser without paying nearly the same cost.
 Chances are that you already have jsdom if you've set up Jest. All
 that's required is to tell Jest that you would like to use it:
 
-```
+```bash
 # Whenever you execute tests, add this flag:
 jest --env jsdom
 ```
