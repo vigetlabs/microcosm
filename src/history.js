@@ -103,6 +103,8 @@ History.prototype = {
       return false
     }
 
+    this.invoke('rollback')
+
     this.rollforward()
 
     this.invoke('release', action)

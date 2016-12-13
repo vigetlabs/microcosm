@@ -122,6 +122,14 @@ inherit(Microcosm, Emitter, {
     return current
   },
 
+
+  /**
+   * Rollback to the last cache
+   */
+  rollback () {
+    this.staged = this.cached
+  },
+
   /**
    * Update the cache point, this is called when the history tree
    * moves forward the current cache point.
@@ -182,12 +190,12 @@ inherit(Microcosm, Emitter, {
 
     // Update children with their parent's state
     if (this.parent) {
-      this.cached = merge(this.cached, this.parent.state)
+      this.staged = merge(this.staged, this.parent.state)
       this.state  = merge(this.state, this.parent.state)
     }
 
     if (this.realm.respondsTo(action)) {
-      this.staged = this.dispatch(this.cached, action)
+      this.staged = this.dispatch(this.staged, action)
       this.state = this.commit(this.staged)
     }
 

@@ -131,3 +131,54 @@ test('properly rolls forward the cache', () => {
 
   expect(repo.state.items.map(i => i.done)).toEqual([true, true])
 })
+
+test('processes multiple loading states', () => {
+  const repo = new Microcosm()
+
+  const all = n => n
+  const single = n => n
+
+  repo.addDomain('items', {
+    getInitialState() {
+      return []
+    },
+
+    reset(_, items) {
+      return items
+    },
+
+    update (items, data) {
+      return items.map(function (item) {
+        if (item.id === data.id) {
+          return { ...item, ...data }
+        }
+        return item
+      })
+    },
+
+    setLoading (items, id) {
+      return items.map(function (item) {
+        if (item.id === id) {
+          return { ...item, loading: true }
+        }
+        return item
+      })
+    },
+
+    register () {
+      return {
+        [all.done] : this.reset,
+        [single.open] : this.setLoading,
+        [single.done] : this.update
+      }
+    }
+  })
+
+  repo.push(all, [{ id: '1' }, { id: '2' }, { id: '3' }])
+
+  repo.append(single).open('1')
+  repo.append(single).open('2')
+  repo.append(single).open('3')
+
+  expect(repo.state.items.map(i => i.loading)).toEqual([true, true, true])
+})
