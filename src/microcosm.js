@@ -9,9 +9,7 @@ import tag        from './tag'
 
 import {
   merge,
-  shallowEqual,
   inherit,
-  hasOwn,
   get,
   set
 } from './utils'
@@ -406,4 +404,4 @@ inherit(Microcosm, Emitter, {
 
 export default Microcosm
 
-export { Microcosm, History, Action, tag, shallowEqual, merge, inherit, hasOwn }
+export { Microcosm, Action, History, tag, merge, inherit }

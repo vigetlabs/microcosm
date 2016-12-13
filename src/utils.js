@@ -1,11 +1,4 @@
-/**
- * A more resilient way to check for membership. A user may have an
- * object without a prototype, through Object.create(null).
- *
- * @example
- * let membership = hasOwn.call(obj, 'key')
- */
-export const hasOwn = Object.prototype.hasOwnProperty
+const hasOwn = Object.prototype.hasOwnProperty
 
 /**
  * Shallow copy an object
@@ -43,35 +36,6 @@ export function merge (subject) {
   }
 
   return copy
-}
-
-/**
- * Standard shallow equals check
- */
-export function shallowEqual(objA, objB) {
-  if (objA === objB) {
-    return true
-  }
-
-  if ((objA && !objB) || (!objA && objB)) {
-    return false
-  }
-
-  const keysA = Object.keys(objA)
-  const keysB = Object.keys(objB)
-
-  if (keysA.length !== keysB.length) {
-    return false
-  }
-
-  // Test for A's keys different from B.
-  for (let i = 0; i < keysA.length; i++) {
-    if (!hasOwn.call(objB, keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
-      return false
-    }
-  }
-
-  return true
 }
 
 /**

@@ -1,5 +1,3 @@
-import { hasOwn } from './utils'
-
 let uid = 0
 const FALLBACK = 'microcosm_action'
 
@@ -18,7 +16,7 @@ export default function tag (fn, name) {
                    'correct action?')
   }
 
-  if (hasOwn.call(fn, 'toString')) {
+  if (fn.hasOwnProperty('toString')) {
     return fn
   }
 

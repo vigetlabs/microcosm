@@ -1,5 +1,4 @@
 import lifecycle from './lifecycle'
-import { hasOwn } from './utils'
 
 function format (string) {
   /*eslint-disable no-unused-vars*/
@@ -10,13 +9,13 @@ function format (string) {
 }
 
 function getHandler (key, domain, type) {
-  let handler = hasOwn.call(lifecycle, type) ? domain[type] : undefined
+  let handler = lifecycle[type] ? domain[type] : undefined
 
   if (handler === undefined && domain.register) {
     const registrations = domain.register(type)
 
     if (process.env.NODE_ENV !== 'production') {
-      console.assert(!hasOwn.call(registrations, type) || registrations[type] != undefined,
+      console.assert(!registrations.hasOwnProperty(type) || registrations[type] != undefined,
                      'A domain handler for "' + key + '" registered an undefined',
                      'handler for `' + format(type) + '`. Check the register',
                      'method for this domain.')

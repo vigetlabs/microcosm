@@ -260,7 +260,7 @@ describe('::setup', function() {
 
 describe('::update', function() {
 
-  test('runs an update function when it gets new props', function () {
+  test.only('runs an update function when it gets new props', function () {
     const test = jest.fn()
 
     class MyPresenter extends Presenter {

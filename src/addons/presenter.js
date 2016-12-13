@@ -1,5 +1,5 @@
 import { Children, PropTypes, Component, PureComponent, createElement } from 'react'
-import Microcosm, { merge, tag, shallowEqual, inherit, hasOwn } from '../microcosm'
+import Microcosm, { merge, tag, inherit } from '../microcosm'
 
 const EMPTY = {}
 
@@ -61,10 +61,8 @@ inherit(Presenter, BaseComponent, {
     // NOOP
   },
 
-  componentWillReceiveProps (next) {
-    if (shallowEqual(next, this.props) === false) {
-      this.update(this.repo, next, this.state)
-    }
+  componentWillUpdate (next, state) {
+    this.update(this.repo, next, state)
   },
 
   /**
