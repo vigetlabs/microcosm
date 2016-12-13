@@ -27,6 +27,55 @@
   non-trivial uses.
 - Significantly improved performance across the board.
 
+### Upgrading
+
+We've successfully upgraded a few of our projects without requiring
+changes. However you may encounter a couple of issues.
+
+We removed several alias, which have been deprecated during the 10.x
+release. These are:
+
+- `action.close()`: Use `action.resolve()`
+- `repo.addStore`: Use `action.addDomain`
+- `repo.replace`: Use `repo.patch(data, true)`. `true` flags
+  deserialization.
+- `Presenter::viewModel`: Use `Presenter::model()`
+
+#### Modules
+
+Microcosm is now bundled as a single module. This reduces build size
+and start up times, but those using CommonJS will need to make a few
+changes:
+
+```javascript
+// old
+var Microcosm = require('microcosm')
+// new
+var Microcosm = require('microcosm').Microcosm
+```
+
+#### Domains
+
+The signature for `repo.addDomain` must always include a key. This key
+can be empty. If you using this functionality, make the following
+change:
+
+```javascript
+// old
+repo.addDomain(Domain)
+// new
+repo.addDomain(null, Domain)
+```
+
+
+#### Presenter
+
+`render` is now protected in the Presenter. Instead, use the `view`
+method. We believe that, in all cases, this should be as simple as
+renaming `render` to `view`.
+
+Presenter now extends from `PureComponent` when available.
+
 ## 10.9.0
 
 - Replace class usage with functions to reduce build size
