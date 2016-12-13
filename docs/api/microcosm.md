@@ -78,13 +78,24 @@ repo.patch({
 })
 ```
 
-### `addDomain(key, config)`
+### `addDomain(key, config, options)`
 
 Generates a domain based on the provided `config` and assigns it to
 manage the provided `key`. Whenever this domain responds to an action,
 it will be provided the current state for that particular key.
 
+`options` passed as the third argument are sent into a domain's
+`setup` method and, if using a class, the constructor.
+
 [See the documentation on domains](domains.md).
+
+### `addEffect(config, options)`
+
+Generates an effect based on the provided `config`. `options` passed
+as the second argument are sent into a effect's `setup` method and, if
+using a class, the constructor.
+
+[See the documentation on effects](effects.md).
 
 ```javascript
 repo.addDomain('planets', planetsConfig)
