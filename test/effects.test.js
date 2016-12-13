@@ -103,17 +103,45 @@ test('an effect is setup with options', function () {
   expect(spy).toHaveBeenCalledWith(repo, { test: true })
 })
 
-test('an effect is torn down with the repo', function () {
+test('does not need to register', function () {
   const repo = new Microcosm()
-  const spy = jest.fn()
+  repo.addEffect({})
+  repo.push(n => n)
+})
+
+test('does not respond to all handlers', function () {
+  const repo = new Microcosm()
 
   class Effect {
-    teardown = spy
+    register() {
+      return {}
+    }
   }
 
   repo.addEffect(Effect)
 
-  repo.teardown()
+  repo.push('missing', true)
+})
 
-  expect(spy).toHaveBeenCalledWith(repo)
+describe('teardown', function() {
+  test('an effect is torn down with the repo', function () {
+    const repo = new Microcosm()
+    const spy = jest.fn()
+
+    class Effect {
+      teardown = spy
+    }
+
+    repo.addEffect(Effect)
+
+    repo.teardown()
+
+    expect(spy).toHaveBeenCalledWith(repo)
+  })
+
+  test('does not need to implement teardown', function () {
+    const repo = new Microcosm()
+    repo.addEffect(class Effect {})
+    repo.teardown()
+  })
 })

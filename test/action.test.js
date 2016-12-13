@@ -76,6 +76,17 @@ describe('open state', function () {
     expect(action.is(States.open)).toBe(true)
   })
 
+  test('does not trigger an open event if it is disposable', function () {
+    const action = new Action(identity)
+    const spy = jest.fn()
+
+    action.on('open', spy)
+    action.resolve()
+    action.open()
+
+    expect(spy).not.toHaveBeenCalled()
+  })
+
 })
 
 describe('progress state', function () {
@@ -128,6 +139,16 @@ describe('progress state', function () {
     expect(callback).toHaveBeenCalledWith(3)
   })
 
+  test('does not trigger an update event if it is disposable', function () {
+    const action = new Action(identity)
+    const spy = jest.fn()
+
+    action.on('update', spy)
+    action.resolve()
+    action.send()
+
+    expect(spy).not.toHaveBeenCalled()
+  })
 })
 
 describe('disabled state', function () {
@@ -270,6 +291,16 @@ describe('rejected state', function () {
     expect(fn).toHaveBeenCalledWith(true)
   })
 
+  test('does not trigger an error event if it is disposable', function () {
+    const action = new Action(identity)
+    const spy = jest.fn()
+
+    action.on('error', spy)
+    action.resolve()
+    action.reject()
+
+    expect(spy).not.toHaveBeenCalled()
+  })
 })
 
 describe('disposed state', function () {

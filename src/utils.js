@@ -7,9 +7,7 @@ export function clone (a) {
   let copy = {}
 
   for (var key in a) {
-    if (hasOwn.call(a, key)) {
-      copy[key] = a[key]
-    }
+    copy[key] = a[key]
   }
 
   return copy
@@ -44,15 +42,11 @@ export function merge (subject) {
 export function inherit (Child, Ancestor, proto) {
   Child.__proto__ = Ancestor
 
-  Child.prototype = Object.create(Ancestor.prototype)
+  Child.prototype = merge(Object.create(Ancestor.prototype), {
+    constructor: Child
+  }, proto)
 
-  Child.prototype.constructor = Child
-
-  for (var key in proto) {
-    if (hasOwn.call(proto, key)) {
-      Child.prototype[key] = proto[key]
-    }
-  }
+  return Child
 }
 
 /**

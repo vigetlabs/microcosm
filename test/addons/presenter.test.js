@@ -86,6 +86,26 @@ describe('::model', function() {
     expect(el.text()).toEqual('red')
   })
 
+  test('does not update state if no key changes', function () {
+    let spy = jest.fn(() => <p>Test</p>)
+
+    class MyPresenter extends Presenter {
+      model () {
+        return { active: true }
+      }
+
+      view = spy
+    }
+
+    const repo = new Microcosm()
+    const el = mount(<MyPresenter repo={repo} />)
+
+    repo.patch({ test: true })
+    repo.patch({ test: false })
+
+    expect(spy).toHaveBeenCalledTimes(1)
+  })
+
   describe('when updating props', function () {
     test('recalculates the view model if the props are different', function () {
       const repo = new Microcosm()
@@ -260,7 +280,7 @@ describe('::setup', function() {
 
 describe('::update', function() {
 
-  test.only('runs an update function when it gets new props', function () {
+  test('runs an update function when it gets new props', function () {
     const test = jest.fn()
 
     class MyPresenter extends Presenter {
@@ -643,9 +663,5 @@ describe('forks', function () {
 
     expect(text).toEqual('bottom, middle, top')
   })
-
-})
-
-describe('::reduce', function () {
 
 })

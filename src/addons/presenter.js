@@ -3,10 +3,6 @@ import Microcosm, { merge, tag, inherit } from '../microcosm'
 
 const EMPTY = {}
 
-function getName (presenter) {
-  return presenter.constructor.name || 'Presenter'
-}
-
 /**
  * PureComponent was only added recently, so fallback to the regular component
  * in cases where it doesn't exist
@@ -99,7 +95,7 @@ inherit(Presenter, BaseComponent, {
   render () {
     // If the view is null, then it is probably incorrectly referenced
     console.assert(this.view != null,
-                   `${getName(this)}::view() is`,
+                   `${this.constructor.name}::view() is`,
                    `${typeof this.view}. Is it referenced correctly?`)
 
     return (
@@ -200,7 +196,7 @@ inherit(PresenterContext, BaseComponent, {
       var value = typeof entry === 'function' ? entry(repoState) : entry
 
       if (this.state[key] !== value) {
-        next = next == null ? {} : next
+        next = next || {}
         next[key] = value
       }
     }
