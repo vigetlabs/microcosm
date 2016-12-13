@@ -25,6 +25,7 @@
 - The Presenter model no longer returns all state by default. This is
   nice for short examples, however it can quickly get out of hand for
   non-trivial uses.
+- Significantly improved performance across the board.
 
 ## 10.9.0
 
