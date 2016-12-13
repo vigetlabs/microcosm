@@ -1,6 +1,5 @@
 import History from '../src/history'
 import Microcosm from '../src/microcosm'
-import logger from './helpers/logger'
 
 const action = n => n
 
@@ -13,18 +12,6 @@ test('adjusts the focal point when adding a node', function () {
   expect(history.head.behavior).toEqual(action)
 })
 
-test('will not invoke methods on a repo that do not', function () {
-  const repo = new Microcosm()
-
-  logger.record()
-
-  repo.history.invoke('invalid')
-
-  expect(logger.count('warn')).toEqual(1)
-
-  logger.restore()
-})
-
 test('handles cases where a repo might be lost during a reconcilation', function () {
   const parent = new Microcosm()
   const child = parent.fork()
@@ -34,30 +21,6 @@ test('handles cases where a repo might be lost during a reconcilation', function
   })
 
   parent.patch({ test: true })
-})
-
-test('archive moves all the way up to the focal point', function () {
-  const history = new History(-Infinity)
-
-  // One
-  const one = history.append(action)
-
-  // Two
-  const two = history.append(action)
-
-  // Three
-  history.append(action)
-
-  history.checkout(two)
-
-  // Mark for disposal
-  one.resolve()
-  two.resolve()
-
-  // Three should be ignored!
-  history.archive()
-
-  expect(history.size).toEqual(0)
 })
 
 test('only walks through the main timeline', function () {
@@ -182,6 +145,30 @@ test('does not lose children when checking out nodes on the right', function () 
 
 describe('archival', function () {
 
+  test('archive moves all the way up to the focal point', function () {
+    const history = new History(-Infinity)
+
+    // One
+    const one = history.append(action)
+
+    // Two
+    const two = history.append(action)
+
+    // Three
+    history.append(action)
+
+    history.checkout(two)
+
+    // Mark for disposal
+    one.resolve()
+    two.resolve()
+
+    // Three should be ignored!
+    history.rollforward()
+
+    expect(history.size).toEqual(0)
+  })
+
   test('will not archive a node if prior nodes are not complete', function () {
     const history = new History()
 
@@ -194,7 +181,7 @@ describe('archival', function () {
     // three
     history.append(action).resolve()
 
-    history.archive()
+    history.rollforward()
 
     expect(history.size).toBe(3)
   })
@@ -211,7 +198,7 @@ describe('archival', function () {
     two.resolve()
     one.resolve()
 
-    history.archive()
+    history.rollforward()
 
     expect(history.size).toBe(1)
   })
@@ -221,7 +208,7 @@ describe('archival', function () {
 
     const one = history.append(action).resolve()
 
-    history.archive()
+    history.rollforward()
 
     expect(one.history).toBe(null)
   })
@@ -232,11 +219,10 @@ describe('archival', function () {
     const one = history.append(action).resolve()
     const two = history.append(action)
 
-    history.archive()
+    history.rollforward()
 
     expect(one.parent).toBe(null)
     expect(one.sibling).toBe(null)
-    expect(one.next).toBe(null)
 
     expect(two.parent).toBe(null)
   })
@@ -249,7 +235,7 @@ describe('archival', function () {
     // two
     history.append(action).resolve()
 
-    history.archive()
+    history.rollforward()
 
     expect(history.focus).toBe(null)
     expect(history.root).toBe(null)
@@ -264,22 +250,6 @@ describe('toArray', function() {
     const history = new History()
 
     expect(history.toArray()).toEqual([])
-  })
-
-})
-
-describe('reduce', function() {
-
-  test('Reduces all nodes in the active branch', function() {
-    const history = new History()
-
-    const a = history.append(n => n)
-    const b = history.append(n => n)
-    const c = history.append(n => n)
-
-    const list = history.reduce((a, b) => a.concat(b), [])
-
-    expect(list).toEqual([a,b,c])
   })
 
 })

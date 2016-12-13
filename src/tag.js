@@ -1,4 +1,4 @@
-import hasOwn from './has-own'
+import { hasOwn } from './utils'
 
 let uid = 0
 const FALLBACK = 'microcosm_action'
@@ -12,9 +12,11 @@ const FALLBACK = 'microcosm_action'
  * @private
  */
 export default function tag (fn, name) {
-  console.assert(fn != null,
-                 'Unable to identify ' + fn + ' action. Did you push the',
-                 'correct action?')
+  if (process.env.NODE_ENV !== 'production') {
+    console.assert(fn != null,
+                   'Unable to identify ' + fn + ' action. Did you push the',
+                   'correct action?')
+  }
 
   if (hasOwn.call(fn, 'toString')) {
     return fn

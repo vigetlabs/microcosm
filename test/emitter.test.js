@@ -110,7 +110,7 @@ test('should remove all listeners', function () {
   emitter._emit('foo')
   emitter._emit('bar')
 
-  emitter.off()
+  emitter.removeAllListeners()
 
   emitter._emit('foo')
   emitter._emit('bar')

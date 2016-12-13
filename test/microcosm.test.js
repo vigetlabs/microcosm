@@ -50,11 +50,12 @@ test('can checkout a prior state', function () {
     }
   })
 
-  repo.push(action, 1)
+  let start = repo.push(action, 1)
+
   repo.push(action, 2)
   repo.push(action, 3)
 
-  repo.checkout(repo.history.root)
+  repo.checkout(start)
 
   expect(repo.state.number).toEqual(1)
 })
@@ -62,6 +63,7 @@ test('can checkout a prior state', function () {
 test('it will not emit a change if state is shallowly equal', function () {
   const repo = new Microcosm()
   const identity = n => n
+  const spy = jest.fn()
 
   repo.addDomain('test', {
     getInitialState() {
@@ -72,31 +74,32 @@ test('it will not emit a change if state is shallowly equal', function () {
     }
   })
 
-  const first = repo.state
+  repo.on('change', spy)
 
   repo.push(identity, 0)
 
-  expect(first).toBe(repo.state)
+  expect(spy).not.toHaveBeenCalled()
 })
 
 test('it will emit a change if state is not shallowly equal', function () {
   const repo = new Microcosm()
   const identity = n => n
+  const spy = jest.fn()
 
   repo.addDomain('test', {
     getInitialState() {
       return 0
     },
     register() {
-      return { [identity] : (state, next) => next }
+      return { [identity] : (_, next) => next }
     }
   })
 
-  const first = repo.state
+  repo.on('change', spy)
 
   repo.push(identity, 1)
 
-  expect(repo.state).not.toEqual(first)
+  expect(spy).toHaveBeenCalledTimes(1)
 })
 
 describe('patch', function () {
@@ -261,6 +264,19 @@ describe('Efficiency', function() {
     one.resolve()
 
     expect(handler).toHaveBeenCalledTimes(3)
+  })
+
+  test('pushing an action that nothing responds to will not result in an update', () => {
+    const repo = new Microcosm()
+    const spy = jest.fn()
+
+    repo.addDomain('test', {
+      commit: spy
+    })
+
+    repo.push('whatever')
+
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 
 })

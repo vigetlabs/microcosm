@@ -606,7 +606,7 @@ describe('intents', function() {
 
 })
 
-describe('forking', function () {
+describe('forks', function () {
 
   test('nested presenters fork in the correct order', function () {
     class Top extends Presenter {
@@ -643,5 +643,9 @@ describe('forking', function () {
 
     expect(text).toEqual('bottom, middle, top')
   })
+
+})
+
+describe('::reduce', function () {
 
 })

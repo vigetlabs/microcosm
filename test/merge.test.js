@@ -1,4 +1,4 @@
-import merge from '../src/merge'
+import { merge } from '../src/utils'
 
 test('will not merge a null value into an object', function () {
   const a = {}

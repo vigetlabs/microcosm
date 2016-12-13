@@ -6,34 +6,28 @@
  * `state` property is a bitmask of these state values.
  */
 
-const STATES = {
-  // nothing has happened yet, or we don't want anything to happen.
-  disabled : 2,
+// Ignore this action.
+export const disabled = 2
 
-  // execution has started, but there has been no update. for example,
-  // an xhr request has started but hasn't received an answer.
-  open : 4,
+// Execution has started, but there has been no update.
+export const open = 4
 
-  // progress. this state represents partial loading of an xhr
-  // request, or incomplete transfer from a stream, etc.
-  loading : 8,
+// Progress. This state represents partial loading of an xhr
+// request, or incomplete transfer from a stream, etc.
+export const loading = 8
 
-  // the action has resolved.
-  done : 16,
+// The action has resolved.
+export const done = 16
 
-  // the action has failed
-  error : 32,
+// The action has failed
+export const error = 32
 
-  // prevent the action from dispatching to domains. this is used by
-  // the microcosm debugger to toggle actions within the history tree.
-  cancelled : 64,
+// The action was cancelled. for example, you could use this state to
+// handle an aborted xhr request.
+export const cancelled = 64
 
-  // the action was cancelled. for example, you could use this state to
-  // handle an aborted xhr request.
-  disposable : 128
-}
-
-const PRIORITY = [ 'disabled', 'cancelled', 'error', 'done', 'loading', 'open' ]
+// The action is ready for clean up
+export const disposable = 128
 
 /**
  * Check the state of the action to determine what `type` should be
@@ -44,15 +38,31 @@ const PRIORITY = [ 'disabled', 'cancelled', 'error', 'done', 'loading', 'open' ]
  * @return {String|Null} The action type to dspatch.
  */
 export function getType (action) {
-  for (var i = 0, len = PRIORITY.length; i < len; i++) {
-    let type = PRIORITY[i]
+  let behavior = action.behavior
 
-    if (action.is(type)) {
-      return action.behavior[type] || null
-    }
+  if (action.is(disabled)) {
+    return null
+  }
+
+  if (action.is(cancelled)) {
+    return behavior.cancelled
+  }
+
+  if (action.is(error)) {
+    return behavior.error
+  }
+
+  if (action.is(done)) {
+    return behavior.done
+  }
+
+  if (action.is(loading)) {
+    return behavior.loading
+  }
+
+  if (action.is(open)) {
+    return behavior.open
   }
 
   return null
 }
-
-export default STATES

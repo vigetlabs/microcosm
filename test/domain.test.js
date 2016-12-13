@@ -13,10 +13,14 @@ describe('::shouldCommit', function () {
       get shouldCommit() {
         return test
       }
+
+      commit (next) {
+        return next
+      }
     }
 
     repo.addDomain('count', Counter)
-    repo.patch()
+    repo.patch({ count: 0 })
 
     expect(test).toHaveBeenCalledWith(0, 0)
   })
@@ -31,6 +35,9 @@ describe('::shouldCommit', function () {
       },
       shouldCommit(next, previous) {
         return Math.round(next) !== Math.round(previous)
+      },
+      commit (next, previous) {
+        return Math.round(next)
       },
       register() {
         return {

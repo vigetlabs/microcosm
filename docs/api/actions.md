@@ -8,10 +8,7 @@
 
 ## Overview
 
-Actions encapsulate the process of resolving an action creator. For
-most purposes, they should never be created on their own. Use `push()`
-within a Microcosm instance so that it can be tracked within its
-internal state:
+Actions encapsulate the process of resolving an action creator. Create an action using `Microcosm::push`:
 
 ```javascript
 const action = repo.push(createPlanet, { name: 'Venus' })

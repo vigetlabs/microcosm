@@ -3,7 +3,6 @@
  */
 
 import getDomainHandlers from './getDomainHandlers'
-import merge from './merge'
 
 export default function Realm (repo) {
   this.repo = repo
@@ -16,25 +15,33 @@ export default function Realm (repo) {
 
 Realm.prototype = {
 
+  respondsTo(action) {
+    return this.register(action.type).length > 0
+  },
+
   register (type) {
-    if (this.registry[type] == null) {
-      this.registry[type] = getDomainHandlers(this.domains, type)
+    let handlers = this.registry[type]
+
+    if (handlers == null) {
+      handlers = this.registry[type] = getDomainHandlers(this.domains, type)
     }
 
-    return this.registry[type]
+    return handlers
   },
 
   add (key, config, options) {
-    console.assert(key == null || typeof key === 'string',
-                   'Domains must be mounted to a string key, or null for the root.',
-                   'Instead got:', key)
+    if (process.env.NODE_ENV !== 'production') {
+      console.assert(key == null || typeof key === 'string',
+                     'Domains must be mounted to a string key, or null for the root.',
+                     'Instead got:', key)
+    }
 
     let domain = null
 
     if (typeof config === 'function') {
       domain = new config(options)
     } else {
-      domain = merge({}, config)
+      domain = Object.create(config)
     }
 
     this.domains[this.domains.length] = [ key, domain ]
@@ -46,7 +53,7 @@ Realm.prototype = {
       domain.setup(this.repo, options)
     }
 
-    return this
+    return domain
   },
 
   reduce (fn, state, scope) {

@@ -35,6 +35,7 @@ bench: all
 	@ $(call PROFILE, bench/history-performance)
 	@ $(call PROFILE, bench/dispatch-performance)
 	@ $(call PROFILE, bench/push-performance)
+	@ $(call PROFILE, bench/fork-performance)
 
 clean:
 	@ rm -rf build/*

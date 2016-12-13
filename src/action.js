@@ -1,21 +1,20 @@
 import Emitter from './emitter'
-import States, {getType} from './action/states'
 import coroutine from './action/coroutine'
-import merge from './merge'
 import tag from './tag'
-import inherit from './inherit'
+import * as States from './action/states'
+import { inherit } from './utils'
 
 /**
- * Actions encapsulate the course of resolving an action creator
- * (internally called behaviors). For most purposes, they should never
- * be created on their own. Use `push()` within a Microcosm instance
- * so that it can be tracked within its internal state.
- *
- * @extends {Emitter}
+ * Actions encapsulate the process of resolving an action creator. Create an
+ * action using `Microcosm::push`:
  */
 export default function Action (behavior, history) {
-  console.assert(typeof behavior === 'string' || typeof behavior === 'function',
-                 'Action expected string or function, instead got: %s', behavior)
+  Emitter.apply(this, arguments)
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.assert(typeof behavior === 'string' || typeof behavior === 'function',
+                   'Action expected string or function, instead got:', behavior)
+  }
 
   this.type = null
   this.behavior = tag(behavior)
@@ -27,32 +26,21 @@ export default function Action (behavior, history) {
   this.sibling = null
 }
 
-inherit(Action, Emitter)
-
-merge(Action.prototype, {
+inherit(Action, Emitter, {
 
   /**
    * Given a string or State constant, determine if the `state` bitmask for
    * the action includes the provided type.
-   *
    * @private
-   * @param {String|Number} type - Either a string key or numeric type
-   * @return {Boolean} does the action match the given types?
    */
-  is (type) {
-    let code = States[type]
-
+  is (code) {
     return (this.state & code) === code
   },
 
   /**
-   * Evaluate the action by invoking the action's behavior with
-   * provided parameters. Then pass that value into the `coroutine`
-   * function, which will update the state of the action as it
-   * processes.
-   *
-   * @private
-   * @return {Action} self
+   * Evaluate the action by invoking the action's behavior with provided
+   * parameters. Then pass that value into the `coroutine` function, which will
+   * update the state of the action as it processes.
    */
   execute (params) {
     coroutine(this, this.behavior.apply(this, params))
@@ -73,124 +61,109 @@ merge(Action.prototype, {
   },
 
   /**
-   * If defined, sets the payload for the action and triggers a
-   * "change" event.
-   *
-   * @api private
-   * @return {Action} self
+   * If defined, sets the payload for the action and triggers a "change" event.
    */
   set (state, payload) {
-    // Ignore set if the action is already disposable. Rejected
-    // actions can't be resolved. Resolved actions can't be
-    // cancelled...
-    if (this.is('disposable')) {
-      return this
+    // Ignore set if the action is already disposed.
+    if (this.is(States.disposable)) {
+      return false
     }
 
     this.state = state
-    this.type = getType(this)
+    this.type = States.getType(this)
 
     if (payload != undefined) {
       this.payload = payload
     }
 
-    return this.reconcile()
+    this.reconcile()
+
+    return true
   },
 
   /**
-   * Set the action state to "open", then set a payload if
-   * provided. Triggers the "open" event.
-   * @return {Action} self
+   * Set the action state to "open", then set a payload if provided. Triggers
+   * the "open" event.
    */
   open (payload) {
-    this.set(States.open, payload)
-
-    this._emit('open', this.payload)
+    if (this.set(States.open, payload)) {
+      this._emit('open', this.payload)
+    }
 
     return this
   },
 
   /**
-   * Set the action state to "loading", then set a payload if
-   * provided. Triggers the "update" event.
-   * @return {Action} self
+   * Set the action state to "loading", then set a payload if provided.
+   * Triggers the "update" event.
    */
   send (payload) {
-    this.set(States.loading, payload)
-
-    this._emit('update', payload)
+    if (this.set(States.loading, payload)) {
+      this._emit('update', payload)
+    }
 
     return this
   },
 
   /**
-   * Set the action state to "error" and marks the action for clean
-   * up, then set a payload if provided. Triggers the "error" event.
-   * @return {Action} self
+   * Set the action state to "error" and marks the action for clean up, then
+   * set a payload if provided. Triggers the "error" event.
    */
   reject (payload) {
-    this.set(States.error | States.disposable, payload)
-
-    this._emit('error', payload)
+    if (this.set(States.error | States.disposable, payload)) {
+      this._emit('error', payload)
+    }
 
     return this
   },
 
   /**
-   * Set the action state to "done" and marks the action for clean
-   * up, then set a payload if provided. Triggers the "done" event.
-   * @return {Action} self
+   * Set the action state to "done" and marks the action for clean up, then set
+   * a payload if provided. Triggers the "done" event.
    */
   resolve (payload) {
-    this.set(States.done | States.disposable, payload)
-
-    this._emit('done', this.payload)
+    if (this.set(States.done | States.disposable, payload)) {
+      this._emit('done', this.payload)
+    }
 
     return this
   },
 
   /**
-   * Set the action state to "cancelled" and marks the action for clean
-   * up, then set a payload if provided. Triggers the "cancel" event.
-   *
-   * @return {Action} self
+   * Set the action state to "cancelled" and marks the action for clean up,
+   * then set a payload if provided. Triggers the "cancel" event.
    */
   cancel () {
-    this.set(States.cancelled | States.disposable, null)
-
-    this._emit('cancel', this.payload)
+    if (this.set(States.cancelled | States.disposable, null)) {
+      this._emit('cancel', this.payload)
+    }
 
     return this
   },
 
   /**
-   * Toggles the disabled state, where the action will not
-   * dispatch. This is useful in the Microcosm debugger to quickly
-   * enable/disable actions. Triggers the "change" event.
-   * @private
+   * Toggles the disabled state, where the action will not dispatch. This is
+   * useful in the Microcosm debugger to quickly enable/disable actions.
+   * Triggers the "change" event.
    */
   toggle () {
     this.state ^= States.disabled
-    this.type = getType(this)
+    this.type = States.getType(this)
 
     return this.reconcile()
   },
 
   /**
-   * Listen to failure. If the action has already failed, it will
-   * execute the provided callback, otherwise it will wait and trigger
-   * upon the "error" event.
-   *
-   * @param {Function} callback
-   * @param {any} scope
-   * @return {Action} self
+   * Listen to failure. If the action has already failed, it will execute the
+   * provided callback, otherwise it will wait and trigger upon the "error"
+   * event.
    */
   onError (callback, scope) {
     if (typeof callback !== 'function') {
       return this
     }
 
-    if (this.is('error')) {
+    if (this.is(States.error)) {
       callback.call(scope, this.payload)
     } else {
       this.once('error', callback, scope)
@@ -201,10 +174,6 @@ merge(Action.prototype, {
 
   /**
    * Listen to progress. Wait and trigger a provided callback on the "update" event.
-   *
-   * @param {Function} callback
-   * @param {any} scope
-   * @return {Action} self
    */
   onUpdate (callback, scope) {
     if (typeof callback !== 'function') {
@@ -218,19 +187,15 @@ merge(Action.prototype, {
 
   /**
    * Listen for completion. If the action has already completed, it will
-   * execute the provided callback, otherwise it will wait and trigger
-   * upon the "done" event.
-   *
-   * @param {Function} callback
-   * @param {any} scope
-   * @return {Action} self
+   * execute the provided callback, otherwise it will wait and trigger upon the
+   * "done" event.
    */
   onDone (callback, scope) {
     if (typeof callback !== 'function') {
       return this
     }
 
-    if (this.is('done')) {
+    if (this.is(States.done)) {
       callback.call(scope, this.payload)
     } else {
       this.once('done', callback, scope)
@@ -240,20 +205,16 @@ merge(Action.prototype, {
   },
 
   /**
-   * Listen for cancel. If the action has already cancelled, it will
-   * execute the provided callback, otherwise it will wait and trigger
-   * upon the "cancel" event.
-   *
-   * @param {Function} callback
-   * @param {any} scope
-   * @return {Action} self
+   * Listen for cancel. If the action has already cancelled, it will execute
+   * the provided callback, otherwise it will wait and trigger upon the
+   * "cancel" event.
    */
   onCancel (callback, scope) {
     if (typeof callback !== 'function') {
       return this
     }
 
-    if (this.is('cancelled')) {
+    if (this.is(States.cancelled)) {
       callback.call(scope, this.payload)
     } else {
       this.once('cancel', callback, scope)
@@ -263,9 +224,8 @@ merge(Action.prototype, {
   },
 
   /**
-   * For interop with promises. Returns a promise that
-   * resolves or rejects based on the action's resolution.
-   * @return {Promise}
+   * For interop with promises. Returns a promise that resolves or rejects
+   * based on the action's resolution.
    */
   then (pass, fail) {
     return new Promise((resolve, reject) => {
@@ -286,19 +246,12 @@ merge(Action.prototype, {
     if (this.next) {
       this.next.parent = null
     }
-
-    this.next = null
   }
 
 })
 
 /**
- * Get all child actions, those dispatched after this one within
- * history. This is used by the Microcosm debugger to visualize
- * action history as a DAG.
- *
- * @private
- * @return {Array} children list of actions
+ * Get all child actions. Used by the Microcosm debugger to visualize history.
  */
 Object.defineProperty(Action.prototype, 'children', {
   get () {

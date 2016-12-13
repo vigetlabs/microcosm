@@ -1,5 +1,5 @@
 import { Children, PropTypes, Component, PureComponent, createElement } from 'react'
-import Microcosm, { merge, tag, shallowEqual, inherit } from '../microcosm'
+import Microcosm, { merge, tag, shallowEqual, inherit, hasOwn } from '../microcosm'
 
 const EMPTY = {}
 
@@ -19,17 +19,17 @@ const BaseComponent = PureComponent || Component
  * majority of view code does not have to.
  */
 function Presenter (props, context) {
-  BaseComponent.apply(this, arguments)
+  BaseComponent.call(this, props, context)
 
   // Do not overriding render, generate the context wrapper upon instantiation
-  console.assert(this.render === Presenter.prototype.render,
-                 'Presenter::render is a protected method. Instead of overriding',
-                 'it, please use Presenter::view.')
+  if (process.env.NODE_ENV !== 'production') {
+    console.assert(this.render === Presenter.prototype.render,
+                   'Presenter::render is a protected method. Instead of overriding',
+                   'it, please use Presenter::view.')
+  }
 }
 
-inherit(Presenter, BaseComponent)
-
-merge(Presenter.prototype, {
+inherit(Presenter, BaseComponent, {
   constructor: Presenter,
 
   _setRepo (repo) {
@@ -117,16 +117,15 @@ merge(Presenter.prototype, {
 })
 
 function PresenterContext (props, context) {
-  BaseComponent.apply(this, arguments)
+  BaseComponent.call(this, props, context)
 
   this.repo = this.getRepo()
+  this.state = {}
 
   props.presenter._connectSend(this.send.bind(this))
 }
 
-inherit(PresenterContext, BaseComponent)
-
-merge(PresenterContext.prototype, {
+inherit(PresenterContext, BaseComponent, {
 
   getChildContext () {
     return {
@@ -152,15 +151,10 @@ merge(PresenterContext.prototype, {
     this.recalculate(next)
   },
 
-  recalculate (props) {
-    this.updatePropMap(props)
-    this.updateState()
-  },
-
   render () {
     const { presenter, parentProps } = this.props
 
-    const model = merge({}, parentProps, this.state)
+    const model = merge(parentProps, this.state)
 
     if (presenter.view.contextTypes || presenter.view.prototype.isReactComponent) {
       return createElement(presenter.view, model)
@@ -176,29 +170,44 @@ merge(PresenterContext.prototype, {
   },
 
   updatePropMap ({ presenter, parentProps, parentState }) {
-    this.propMap = presenter.model.call(presenter, parentProps, parentState)
+    this.propMap = presenter.model(parentProps, parentState)
+    this.propMapKeys = Object.keys(this.propMap || EMPTY)
+  },
+
+  recalculate (props) {
+    this.updatePropMap(props)
+    this.updateState()
   },
 
   updateState () {
-    return this.setState(this.getState())
+    let next = this.getState()
+
+    if (next) {
+      this.setState(next)
+    }
   },
 
   getState () {
-    const repoState = this.repo.state
+    let repoState = this.repo.state
 
     if (typeof this.propMap === 'function') {
       return this.propMap(repoState)
     }
 
-    const nextState = {}
+    let next = null
 
-    for (let key in this.propMap) {
-      const entry = this.propMap[key]
+    for (var i = this.propMapKeys.length - 1; i >= 0; --i) {
+      var key = this.propMapKeys[i]
+      var entry = this.propMap[key]
+      var value = typeof entry === 'function' ? entry(repoState) : entry
 
-      nextState[key] = typeof entry === 'function' ? entry(repoState) : entry
+      if (this.state[key] !== value) {
+        next = next == null ? {} : next
+        next[key] = value
+      }
     }
 
-    return nextState
+    return next
   },
 
   /**

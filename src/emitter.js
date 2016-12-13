@@ -1,10 +1,10 @@
 /**
  * An abstract event emitter class. Several modules extend from this class
  * to utilize events.
- * @abstract
  */
-
-export default function Emitter () {}
+export default function Emitter () {
+  this._listeners = {}
+}
 
 Emitter.prototype = {
 
@@ -13,10 +13,6 @@ Emitter.prototype = {
    */
   on (event, fn, scope=this, times=Infinity) {
     const key = '$' + event
-
-    if (!this._listeners) {
-      this._listeners = {}
-    }
 
     if (this._hasListener(event) === false) {
       this._listeners[key] = []
@@ -40,11 +36,7 @@ Emitter.prototype = {
    * @private
    */
   _hasListener(event) {
-    if (this._listeners == null || event == null)  {
-      return false
-    }
-
-    return this._listeners['$' + event] != null
+    return !!event && this._listeners['$' + event] != null
   },
 
   /**
@@ -52,11 +44,6 @@ Emitter.prototype = {
    * no callback is provided, removes all callbacks for the given type.
    */
   off (event, fn, scope=this) {
-    // Remove all listeners
-    if (event == null) {
-      delete this._listeners
-    }
-
     if (this._hasListener(event) === false) {
       return this
     }
@@ -88,11 +75,15 @@ Emitter.prototype = {
     return this
   },
 
+  removeAllListeners () {
+    this._listeners = {}
+  },
+
   /**
    * Emit `event` with the given args.
    * @private
    */
-  _emit (event, ...params) {
+  _emit (event, payload) {
     if (this._hasListener(event) === false) {
       return this
     }
@@ -103,7 +94,7 @@ Emitter.prototype = {
     while (i < callbacks.length) {
       let callback = callbacks[i]
 
-      callback.fn.apply(callback.scope, params)
+      callback.fn.call(callback.scope, payload)
       callback.times -= 1
 
       if (callback.times <= 0) {
@@ -115,5 +106,4 @@ Emitter.prototype = {
 
     return this
   }
-
 }

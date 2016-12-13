@@ -1,4 +1,4 @@
-import shallowEqual from '../src/shallow-equal'
+import { shallowEqual } from '../src/utils'
 
 test('returns true when given the exact same object', function () {
   const sample = {}

@@ -1,28 +1,37 @@
-import Action       from './action'
-import Emitter      from './emitter'
-import History      from './history'
-import MetaDomain   from './domains/meta'
-import Realm        from './realm'
-import Effects      from './effects'
-import lifecycle    from './lifecycle'
-import merge        from './merge'
-import shallowEqual from './shallow-equal'
-import update       from './update'
-import tag          from './tag'
-import hasOwn       from './has-own'
-import inherit      from './inherit'
+import Action     from './action'
+import Emitter    from './emitter'
+import History    from './history'
+import MetaDomain from './domains/meta'
+import Realm      from './realm'
+import Effects    from './effects'
+import lifecycle  from './lifecycle'
+import tag        from './tag'
+
+import {
+  merge,
+  shallowEqual,
+  inherit,
+  hasOwn,
+  get,
+  set
+} from './utils'
+
+const GET_INITIAL_STATE = { type: lifecycle.getInitialState, payload: null }
+
+const DEFAULT_OPTIONS = { maxHistory: 0, history: null, parent: null }
 
 /**
  * A tree-like data structure that keeps track of the execution order of
  * actions that are pushed into it, sequentially folding them together to
  * produce an object that can be rendered by a presentation library (such as
  * React).
- *
  * @extends {Emitter}
- * @param {{maxHistory: Number, parent: Microcosm}} options - Instantiation options.
  */
-function Microcosm ({ maxHistory, history, parent } = {})  {
+function Microcosm ({ maxHistory, history, parent } = DEFAULT_OPTIONS)  {
+  Emitter.apply(this, arguments)
+
   this.history = history || new History(maxHistory)
+
   this.realm = new Realm(this)
   this.effects = new Effects(this)
 
@@ -30,25 +39,25 @@ function Microcosm ({ maxHistory, history, parent } = {})  {
 
   this.history.addRepo(this)
 
-  // Long term storage. Keeps track of the root of the history tree
+  // Keeps track of the root of the history tree
   this.archived = parent ? parent.archived : {}
 
-  // Temporary storage. Keeps track of the focal point of the
-  // history tree
-  this.cached = parent ? parent.cached : {}
+  // Keeps track of the focal point of the
+  this.cached = parent ? parent.cached : this.archived
 
-  // Staging. Domains can maintain their own internal representation of
-  // data. Staged keeps track of this so Domains can control what gets
-  // written to the head.
-  // Important: Children only ever get the head state of their parents.
-  this.staged = parent ? parent.head : {}
+  // Staging. Internal domain state
+  this.staged = parent ? parent.state : this.cached
 
-  // Head state. Keeps track of the head of the tree
-  this.head = parent ? parent.head : {}
+  // Publically available data.
+  this.state = parent ? parent.state : this.staged
 
-  // Publically available data. This gets updated whenever the head state
-  // is shallowly different.
-  this.state = parent ? parent.state : {}
+  // Mark children as "followers". Followers do not move through the entire
+  // lifecycle. They don't have to. This greatly improves fork performance.
+  this.follower = !!parent
+
+  // Track the current revision against the published version
+  this.revision = 0
+  this.published = 0
 
   // Setup a domain to handle patch and reset actions
   this.addDomain(null, MetaDomain)
@@ -57,14 +66,11 @@ function Microcosm ({ maxHistory, history, parent } = {})  {
   this.setup()
 }
 
-inherit(Microcosm, Emitter)
-
-merge(Microcosm.prototype, {
+inherit(Microcosm, Emitter, {
 
   /**
-   * Called whenever a Microcosm is instantiated. This provides a
-   * more intentional preparation phase that does not require
-   * tapping into the constructor
+   * Called whenever a Microcosm is instantiated. This allows for prep without
+   * using a constructor.
    */
   setup () {
     // NOOP
@@ -81,7 +87,7 @@ merge(Microcosm.prototype, {
     this.history.removeRepo(this)
 
     // Remove all listeners
-    this.off()
+    this.removeAllListeners()
   },
 
   /**
@@ -91,150 +97,123 @@ merge(Microcosm.prototype, {
    * @return {Object} State object representing the initial state.
    */
   getInitialState () {
-    return this.dispatch({}, { type: lifecycle.getInitialState, payload: null })
+    return this.dispatch({}, GET_INITIAL_STATE)
   },
 
   /**
-   * Similarly to a domain (maybe we can reconcile these), get all handlers
-   * registered for a type
-   * @private
-   */
-  register (type) {
-    return this.realm.register(type)
-  },
-
-  /**
-   * Dispatch an action to a list of domains. This is used by state
-   * management methods, like `rollforward` and `getInitialState` to
-   * compute state. Assuming there are no side-effects in domain
-   * handlers, this is pure. Calling this method will not update
-   * repo state.
-   *
-   * @private
-   * @param {Object} state - The starting state of a Microcosm
-   * @param {Action} action - The action do dispatch
-   * @return {Object} The new state
+   * Dispatch an action to a list of domains. This is used by state management
+   * methods, like `rollforward` and `getInitialState` to compute state.
+   * Assuming there are no side-effects in domain handlers, this is pure.
+   * Calling this method will not update repo state.
    */
   dispatch (state, { type, payload }) {
-    let handlers = this.register(type)
+    let handlers = this.realm.register(type)
+    let current = state
 
     for (var i = 0, len = handlers.length; i < len; i++) {
-      const { key, domain, handler } = handlers[i]
+      var { key, domain, handler } = handlers[i]
 
-      const last = update.get(state, key)
-      const next = handler.call(domain, last, payload)
+      var last = get(state, key)
+      var next = handler.call(domain, last, payload)
 
-      state = update.set(state, key, next)
+      if (next !== last) {
+        current = set(current, key, next)
+      }
     }
 
-    return state
-  },
-
-  /**
-   * Update the archive, this is called when the history tree
-   * permanently removes a node.
-   */
-  archive (action) {
-    this.archived = this.cached
+    return current
   },
 
   /**
    * Update the cache point, this is called when the history tree
    * moves forward the current cache point.
    */
-  cache () {
-    this.cached = merge({}, this.staged)
-  },
+  cache (archive) {
+    this.cached = this.staged
 
-  /**
-   * Rollback to the lastest cache, cloning it while we're outside of
-   * the rollforward loop.
-   *
-   * @param {Action} action - Action to archive
-   */
-  rollback () {
-    this.staged = merge({}, this.cached)
-  },
-
-  /**
-   * Given an archive, get the next staged state.
-   * @return {Object} staged state
-   */
-  stage (action) {
-    // If a parent, we need to update the child with their parent's
-    // latest head state
-    if (this.parent !== null) {
-      merge(this.staged, this.parent.head)
+    if (archive) {
+      this.archived = this.cached
     }
-
-    this.staged = action != null ? this.dispatch(this.staged, action) : this.staged
   },
 
   /**
    * Identify the last and next staged state, then ask the associated domain
    * if it should commit it. If so, roll state forward.
-   * @private
    */
-  commit () {
-    this.head = this.realm.reduce(this.write, merge({}, this.staged), this)
+  commit (staged) {
+    return this.realm.reduce(this.write, staged, this)
   },
 
   /**
-   * Write state to the head
+   * Write state
    */
   write (state, key, domain) {
-    let last = update.get(this.cached, key)
-    let next = update.get(state, key)
+    if (typeof domain.commit === 'function') {
+      let next = get(state, key)
 
-    let forceCommit = domain.shouldCommit == null || hasOwn.call(this.state, key) === false
+      // This gives libraries such as ImmutableJS a chance to serialize
+      // into a primitive JavaScript form before being publically exposed.
+      if (domain.shouldCommit) {
+        let last = get(this.cached, key)
 
-    // Only write state if we've never written it before or the domain says so
-    if (forceCommit || domain.shouldCommit(last, next)) {
-      /**
-       * A middleware method for determining what exactly is assigned to
-       * repo.state. This gives libraries such as ImmutableJS a chance to serialize
-       * into a primitive JavaScript form before being publically exposed.
-       */
-      if (domain.commit) {
-        next = domain.commit(next, state)
+        // Revert to the current public state if not committing
+        if (!domain.shouldCommit(last, next)) {
+          return set(state, key, get(this.state, key))
+        }
       }
 
-      return update.set(state, key, next)
+      return set(state, key, domain.commit(next, state))
     }
 
-    return update.set(state, key, update.get(this.state, key))
+    return state
   },
 
   /**
    * Run through the action history, dispatching their associated
    * types and payloads to domains for processing. Emits "change".
-   *
-   * @private
-   * @return {Microcosm} self
    */
   reconcile (action) {
-    this.stage(action)
+    if (this.follower && this.state !== this.parent.state) {
+      this.revision += 1
+      this.state = this.parent.state
 
-    this.commit()
+      return this
+    }
+
+    let original = this.state
+
+    // Update children with their parent's state
+    if (this.parent) {
+      this.cached = merge(this.cached, this.parent.state)
+      this.state  = merge(this.state, this.parent.state)
+    }
+
+    if (this.realm.respondsTo(action)) {
+      this.staged = this.dispatch(this.cached, action)
+      this.state = this.commit(this.staged)
+    }
+
+    if (this.state != original) {
+      this.revision += 1
+    }
 
     return this
   },
 
-  release () {
-    if (shallowEqual(this.head, this.state)) {
-      return this
+  release (action) {
+    if (action) {
+      this.effect(action)
     }
 
-    this.state = this.head
-
-    this._emit('change', this.state)
-
-    return this
+    if (this.revision > this.published) {
+      this.revision = this.published
+      this._emit('change', this.state)
+    }
   },
 
   /**
    * Append an action to history and return it. This is used by push,
-   * but also useful for testing action states
+   * but also useful for testing action states.
    *
    * @param {Function} behavior - An action function
    * @return {Action} action representation of the invoked function
@@ -274,10 +253,15 @@ merge(Microcosm.prototype, {
    * @param {Object|Function} config - Configuration options for the domain
    * @return {Microcosm} self
    */
-  addDomain () {
-    this.realm.add.apply(this.realm, arguments)
+  addDomain (key, domain, options) {
+    this.realm.add(key, domain, options)
 
-    return this.rebase()
+    if (domain !== MetaDomain) {
+      this.follower = false
+      this.rebase()
+    }
+
+    return this
   },
 
   /**
@@ -314,6 +298,8 @@ merge(Microcosm.prototype, {
       data = this.deserialize(data)
     }
 
+    this.follower === false
+
     return this.push(lifecycle._willReset, {
       owner : this,
       data  : merge(this.getInitialState(), data)
@@ -332,6 +318,8 @@ merge(Microcosm.prototype, {
     if (deserialize === true) {
       data = this.deserialize(data)
     }
+
+    this.follower === false
 
     return this.push(lifecycle._willPatch, {
       owner : this,
@@ -378,19 +366,13 @@ merge(Microcosm.prototype, {
    * the result of getInitialState(). This is used when a domain is
    * added to Microcosm to ensure the initial state of the domain is
    * respected. Emits a "change" event.
-   *
-   * @private
-   * @return {Microcosm} self
    */
   rebase () {
-    this.archived = merge(this.getInitialState(), this.archived)
-    this.cached = merge(this.getInitialState(), this.cached)
+    let data = this.getInitialState()
 
-    this.rollback()
-    this.reconcile()
-    this.release()
+    this.cached = merge(this.cached, data)
 
-    return this
+    this.push(lifecycle._willRebase, { data, owner: this })
   },
 
   /**
@@ -401,7 +383,7 @@ merge(Microcosm.prototype, {
    * @return {Microcosm} self
    */
   checkout (action) {
-    this.cached = merge({}, this.archived)
+    this.cached = this.archived
 
     this.history.checkout(action)
 
@@ -424,4 +406,4 @@ merge(Microcosm.prototype, {
 
 export default Microcosm
 
-export { Action, History, Microcosm, tag, shallowEqual, merge, inherit }
+export { Microcosm, History, Action, tag, shallowEqual, merge, inherit, hasOwn }

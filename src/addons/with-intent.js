@@ -2,11 +2,14 @@
  * Connect a component to the presenter tree
  */
 
-import {createElement, PropTypes} from 'react'
-import displayName from '../display-name'
+import { createElement, PropTypes } from 'react'
 import { merge } from '../microcosm'
 
-const danger = function (intent, params) {
+export function displayName (Component) {
+  return Component.displayName || Component.name || 'Component'
+}
+
+function danger (intent, params) {
   console.error('Unable to broadcast "%s" with parameters `%s`. withIntent did not receive context.',
                 intent, JSON.stringify(params))
 }

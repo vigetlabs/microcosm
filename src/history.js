@@ -1,3 +1,4 @@
+import * as States from './action/states'
 import Action from './action'
 
 /**
@@ -20,47 +21,33 @@ export default function History (limit = 0) {
 
 History.prototype = {
 
-  addRepo(repo) {
+  addRepo (repo) {
     this.repos.push(repo)
   },
 
-  removeRepo(repo) {
-    const slot = this.repos.indexOf(repo)
-
-    if (slot >= 0) {
-      this.repos.splice(slot, 1)
-    }
+  removeRepo (repo) {
+    this.repos = this.repos.filter(r => r != repo)
   },
 
-  invoke(method, payload) {
-    /**
-     * Important! For each enumerates over items sequentially. A
-     * release of a parent Microcosm might cause a fork to tear
-     * down. We can not cache the length of the repo list within a
-     * for-loop.
-     */
-    for (var i = 0; i < this.repos.length; i++) {
-      let repo = this.repos[i]
-
-      if (typeof repo[method] === 'function') {
-        repo[method](payload)
-      } else {
-        console.warn('%s does not implement %s', repo.constructor.name, method)
+  invoke (method, payload) {
+    for (var i = 0, len = this.repos.length; i < len; i++) {
+      // Repos might get lost along the way...
+      if (this.repos[i]) {
+        this.repos[i][method](payload)
       }
     }
   },
 
   /**
-   * Adjust the focus point to target a different node. This has the
-   * effect of creating undo/redo. This should not be called outside
-   * of Microcosm! Instead, use `Microcosm.prototype.checkout`.
+   * Adjust the focus point to target a different node. This has the effect of
+   * creating undo/redo. This should not be called outside of Microcosm!
+   * Instead, use `Microcosm.prototype.checkout`.
    */
   checkout (action) {
     this.head = action
 
     if (!this.head) {
-      this.root = null
-      this.head = null
+      this.root = this.head = null
     }
 
     // Clear the focus, we don't know if it was before the action or it
@@ -86,7 +73,7 @@ History.prototype = {
     this.head = action
 
     if (this.root == null) {
-      this.root = this.head
+      this.root = action
     }
 
     this.size += 1
@@ -116,36 +103,28 @@ History.prototype = {
       return false
     }
 
-    this.invoke('rollback')
     this.rollforward()
-    this.archive()
-    this.invoke('release')
 
-    // Play effects after a release so that they can reference the new state
-    if (action) {
-      this.invoke('effect', action)
-    }
+    this.invoke('release', action)
   },
 
   rollforward () {
     let actions = this.toArray(this.focus)
     let cacheable = true
 
-    for (var i = 0; i < actions.length; i++) {
+    for (var i = 0, len = actions.length; i < len; i++) {
       let action = actions[i]
 
-      // Do not reconcile actions that are disabled. They behave
-      // as though nothing occured
-      if (action.is('disabled') === false) {
+      // Ignore disabled actions
+      if (action.type) {
         this.invoke('reconcile', action)
       }
 
-      // Adjust the focus to the youngest disposable action. This makes it
-      // unncessary to rollforward through every single action all the
-      // time.
-      if (cacheable && action.is('disposable')) {
+      // Adjust the focus to the youngest disposable action. No need to
+      // rollforward through every single action all the time.
+      if (cacheable && action.is(States.disposable)) {
         this.focus = action
-        this.invoke('cache')
+        this.invoke('cache', this.archive())
       } else {
         cacheable = false
       }
@@ -153,27 +132,23 @@ History.prototype = {
   },
 
   archive () {
+    let shouldArchive = this.size > this.limit
+
     // Is the cache pointed at the base? If so, that means we need
     // to purge the base.
-    while (this.size > this.limit && this.root && this.root.is('disposable')) {
-      let root = this.root
+    if (shouldArchive) {
+      this.root.teardown()
+
+      this.root = this.root.next
 
       this.size -= 1
 
-      // Cue up all repos to adjust the archive
-      this.invoke('archive', root)
-
-      // Point the base to the next node
-      this.root = this.root.next
-
-      root.teardown()
+      if (this.size <= 0) {
+        this.root = this.head = this.focus = null
+      }
     }
 
-    if (this.size <= 0) {
-      this.root = null
-      this.head = null
-      this.focus = null
-    }
+    return shouldArchive
   },
 
   /**
@@ -195,16 +170,6 @@ History.prototype = {
     }
 
     return items.reverse()
-  },
-
-  reduce(fn, initial, scope) {
-    let items = this.toArray()
-
-    for (var i = 0; i < items.length; i++) {
-      initial = fn.call(scope, initial, items[i], i)
-    }
-
-    return initial
   },
 
   /**

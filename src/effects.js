@@ -1,11 +1,8 @@
+import { merge } from './utils'
+
 /**
  * A cluster of effects.
  */
-
-import merge from './merge'
-
-const EMPTY = {}
-
 export default function Effects (repo ) {
   this.repo = repo
   this.effects = []
@@ -19,7 +16,12 @@ Effects.prototype = {
   trigger (action) {
     for (var i = 0; i < this.effects.length; i++) {
       let effect = this.effects[i]
-      let handlers = effect.register ? effect.register() : EMPTY
+
+      if (effect.register == null) {
+        continue
+      }
+
+      let handlers = effect.register()
 
       if (handlers[action.type]) {
         handlers[action.type].call(effect, this.repo, action.payload)
