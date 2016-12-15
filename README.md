@@ -363,6 +363,7 @@ This makes it easier to handle complicated behaviors such as optimistic updates,
 - [Apache Kafka](http://kafka.apache.org/)
 - [LMAX Architecture](http://martinfowler.com/articles/lmax.html)
 - [Redux](https://github.com/reactjs/redux) (Provider/Connect and thunks)
+- [Retroactive Data Structures](https://en.wikipedia.org/wiki/Retroactive_data_structures)
 
 ---
 
