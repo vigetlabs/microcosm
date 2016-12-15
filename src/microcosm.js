@@ -237,7 +237,7 @@ inherit(Microcosm, Emitter, {
    * @return {Action} action representation of the invoked function
    */
   push (behavior, ...params) {
-    return this.append(behavior).execute(params)
+    return this.append(behavior).execute(params, this)
   },
 
   /**

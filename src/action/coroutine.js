@@ -7,7 +7,7 @@ function isPromise(obj, type) {
  * body of their associated behavior.
  * @private
  */
-export default function coroutine (action, body) {
+export default function coroutine (action, body, repo) {
   let type = typeof body
 
   /**
@@ -37,7 +37,7 @@ export default function coroutine (action, body) {
    * action as the first argument.
    */
   if (type === 'function') {
-    body(action)
+    body(action, repo)
 
     return action
   }

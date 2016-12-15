@@ -1,10 +1,9 @@
-import Action from '../../src/action'
+import Microcosm from '../../src/microcosm'
 
-test('returns a function that exposes the action', function () {
-  const spy = jest.fn()
-  const action = new Action(n => spy)
+test('passes the action and repo as arguments', function () {
+  let spy = jest.fn()
+  let repo = new Microcosm()
+  let action = repo.push(n => spy)
 
-  action.execute()
-
-  expect(spy).toHaveBeenCalledWith(action)
+  expect(spy).toHaveBeenCalledWith(action, repo)
 })

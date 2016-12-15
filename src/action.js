@@ -42,8 +42,8 @@ inherit(Action, Emitter, {
    * parameters. Then pass that value into the `coroutine` function, which will
    * update the state of the action as it processes.
    */
-  execute (params) {
-    coroutine(this, this.behavior.apply(this, params))
+  execute (params, repo) {
+    coroutine(this, this.behavior.apply(this, params), repo)
 
     return this
   },
