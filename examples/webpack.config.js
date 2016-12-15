@@ -11,7 +11,6 @@ module.exports = {
   },
 
   resolve: {
-    extensions: [ '', '.js', '.jsx' ],
     alias: {
       'microcosm$': path.resolve(__dirname, '../src/microcosm.js'),
       'microcosm': path.resolve(__dirname, '../src/')
