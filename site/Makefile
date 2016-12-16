@@ -1,7 +1,7 @@
 MAKEFLAGS += '-j 4'
 
 DOCS := $(patsubst ../docs/%.md, public/%.html, $(shell find ../docs -name "*.md"))
-PAGES := $(patsubst src/content/%.md, public/%.html, $(shell find src/content -name "*.md"))
+PAGES := $(patsubst src/pages/%.md, public/%.html, $(shell find src/pages -name "*.md"))
 
 OPTIONS = -s --smart --from=markdown-implicit_figures --var=base_url:$(BASE_URL)
 MARKDOWN = pandoc $(OPTIONS) --template=src/layouts/$(3).html $(1) > $(2)
@@ -22,7 +22,7 @@ public/changelog.html: ../CHANGELOG.md src/layouts/default.html
 	@ $(call MARKDOWN,$<,$@,default)
 	@ echo [+] $@
 
-public/index.html: src/content/index.md src/layouts/home.html
+public/index.html: src/pages/index.md src/layouts/home.html
 	@ $(call MARKDOWN,$<,$@,home)
 	@ echo [+] $@
 

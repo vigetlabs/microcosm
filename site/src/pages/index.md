@@ -1,7 +1,3 @@
----
-layout: home
----
-
 ## Actions
 
 Microcosm organizes itself around a history of user actions. As those
@@ -31,6 +27,8 @@ data. As actions update, Microcosm uses domains to determine how state
 should change. Old state comes in, new state comes out:
 
 ```javascript
+import { getPlanet } from './actions/planets'
+
 const PlanetsDomain = {
   getInitialState () {
     return []
@@ -60,6 +58,8 @@ Microcosm makes it easy to handle pending, loading, cancelled,
 completed, and failed requests:
 
 ```javascript
+import { getPlanet } from '../actions/planets'
+
 const PlanetsDomain = {
   // ...handlers
 
@@ -111,6 +111,8 @@ fails, we reject the action, otherwise we resolve it.
 triggers a cancellation event:
 
 ```javascript
+import { getPlanet } from './actions/planets'
+
 let action = repo.push(getPlanet, 'Pluto')
 
 // Wait, Pluto isn't a planet!
@@ -150,6 +152,7 @@ an application:
 
 ```javascript
 import Presenter from 'microcosm/addons/presenter'
+import { getUsers } from '../actions/users'
 
 class PaginatedUsers extends Presenter {
 
@@ -184,24 +187,24 @@ Good question! Other popular implementations of Flux treat actions as static
 events. The result of calling a `dispatch` method or resolving some sort of
 data structure like a `Promise`.
 
-But what about everything before that point? A user might get tired of waiting 
+But what about everything before that point? A user might get tired of waiting
 for a file to upload, or dip into a subway tunnel and lose connectivity. They
 might want to retry an request, cancel it, or just see what's happening.
 
-The burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution 
-for tracking outstanding requests and binding them to related action data. 
+The burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution
+for tracking outstanding requests and binding them to related action data.
 
-While manageable, we've found that this can be cumbersome. That it can lead to interface-specific requirements 
+While manageable, we've found that this can be cumbersome. That it can lead to interface-specific requirements
 leaking into the data layer, resulting in complicated code, and unexpected bugs as requirements change.
 
 ### How Microcosm is different
 
 Microcosm thinks of actions as **_stories_**. They go through different states as they
 move from start to completion. Actions have a common public interface, regardless of what data
-structures or asynchronous patterns are utilized. An interface that is easy to query from the 
+structures or asynchronous patterns are utilized. An interface that is easy to query from the
 presentation layer in order to handle use-case specific display requirements.
 
-This makes it easier to handle complicated behaviors such as optimistic updates, 
+This makes it easier to handle complicated behaviors such as optimistic updates,
 dialog windows, or long running processes.
 
 
