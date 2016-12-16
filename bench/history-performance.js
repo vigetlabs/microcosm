@@ -4,7 +4,7 @@
 
 'use strict'
 
-const { History } = require('../build/microcosm')
+const { History } = require('../build/microcosm.min')
 const time = require('microtime')
 
 const SIZES = [
