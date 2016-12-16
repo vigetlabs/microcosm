@@ -35,13 +35,13 @@ export default function tag (fn, name) {
    * Function.name lacks legacy support. For these browsers, fallback
    * to a consistent name:
    */
-  const symbol = name || (fn.name || FALLBACK) + '_' + uid
+  const symbol = name || (fn.name || FALLBACK) + '.' + uid
 
-  fn.open      = symbol + '_open'
-  fn.loading   = symbol + '_loading'
+  fn.open      = symbol + '.open'
+  fn.loading   = symbol + '.loading'
   fn.done      = symbol // intentional
-  fn.error     = symbol + '_error'
-  fn.cancelled = symbol + '_cancelled'
+  fn.error     = symbol + '.error'
+  fn.cancelled = symbol + '.cancelled'
 
   // The default state is done
   fn.toString = () => fn.done
