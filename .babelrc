@@ -1,7 +1,22 @@
 {
-  "presets" : [
-    ["es2015", {"loose": true}],
+  "presets": [
+    [
+      "es2015",
+      {
+        "loose": true
+      }
+    ],
     "stage-0",
     "react"
-  ]
+  ],
+  "env": {
+    "production": {
+      "presets": [
+        ["babili"]
+      ],
+      "plugins": [
+        "transform-node-env-inline"
+      ]
+    }
+  }
 }

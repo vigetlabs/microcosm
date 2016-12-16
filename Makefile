@@ -20,6 +20,7 @@ build/package.json: package.json
 %.js: %.es6.js
 	@ mkdir -p $(@D)
 	@ $(BABEL) $< > $@
+	@ NODE_ENV=production $(BABEL) --no-comments $< > $*.min.js
 
 build/%.es6.js: src/%.js $(SCRIPTS)
 	@ mkdir -p $(@D)
