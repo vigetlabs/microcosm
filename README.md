@@ -189,8 +189,8 @@ Taken from [the Chatbot example](https://github.com/vigetlabs/microcosm/tree/mas
 **Microcosm will never clean up an action that precedes incomplete
 work** When an action moves from `open` to `done`, or `cancelled`, the
 historical account of actions rolls back to the last state, rolling
-forward with the new action states. This makes optimistic updates a
-sync because action states are self cleaning:
+forward with the new action states. This makes optimistic updates simpler
+because action states are self cleaning:
 
 ```javascript
 import {send} from 'actions/chat'

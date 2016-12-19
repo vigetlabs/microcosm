@@ -18,7 +18,7 @@ const TYPES = {
   send: PropTypes.func
 }
 
-export default function withIntent (Component, intent) {
+export default function withIntent (Component) {
 
   function WithIntent (props, context) {
     let send = danger
