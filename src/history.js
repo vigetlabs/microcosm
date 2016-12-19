@@ -1,5 +1,5 @@
-import * as States from './action/states'
 import Action from './action'
+import { disposable } from './action/states'
 
 /**
  * The central tree data structure that is used to calculate state for
@@ -124,7 +124,7 @@ History.prototype = {
 
       // Adjust the focus to the youngest disposable action. No need to
       // rollforward through every single action all the time.
-      if (cacheable && action.is(States.disposable)) {
+      if (cacheable && action.is(disposable)) {
         this.focus = action
         this.invoke('cache', this.archive())
       } else {
