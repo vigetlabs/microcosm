@@ -28,3 +28,4 @@
 1. [React Router](recipes/react-router.md)
 2. [AJAX](recipes/ajax.md)
 3. [ImmutableJS](recipes/immutable-js.md)
+4. [Preact](recipes/preact.md)
