@@ -1,5 +1,3 @@
-const hasOwn = Object.prototype.hasOwnProperty
-
 /**
  * Shallow copy an object
  */
@@ -23,7 +21,7 @@ export function merge (subject) {
     var next = arguments[i]
 
     for (var key in next) {
-      if (hasOwn.call(next, key) && copy[key] !== next[key]) {
+      if (copy[key] !== next[key]) {
         if (copy === subject) {
           copy = clone(subject)
         }

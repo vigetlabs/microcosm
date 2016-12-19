@@ -1,6 +1,10 @@
 let uid = 0
 const FALLBACK = 'microcosm_action'
 
+const toString = function () {
+  return this.done
+}
+
 /**
  * Uniquely tag a function. This is used to identify actions.
  *
@@ -44,7 +48,7 @@ export default function tag (fn, name) {
   fn.cancelled = symbol + '.cancelled'
 
   // The default state is done
-  fn.toString = () => fn.done
+  fn.toString = toString
 
   return fn
 }

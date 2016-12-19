@@ -14,13 +14,6 @@ test('will not merge into null', function () {
   expect(merge(a, b)).toEqual(null)
 })
 
-test('will not merge a property it does not own', function () {
-  const proto = { red: true }
-  const child = Object.create(proto)
-
-  expect(merge({}, child)).toEqual({})
-})
-
 test('merges many arguments', function () {
   const a = { red: true }
   const b = { green: true }
