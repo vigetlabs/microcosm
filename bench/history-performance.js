@@ -62,7 +62,9 @@ const results = SIZES.map(function (SIZE) {
    * Measure time to dispose all nodes in the history. This also has
    * the side effect of helping to test memory leakage later.
    */
-  history.toArray().forEach(a => a.resolve())
+  for (let i = 0, items = history.toArray(); i < items.length; i++) {
+    items[i].resolve(true)
+  }
   now = time.now()
   history.rollforward()
   stats.rollforward = (time.now() - now) / 1000
