@@ -1,5 +1,5 @@
 let uid = 0
-const FALLBACK = 'microcosm_action'
+const FALLBACK = '_action'
 
 const toString = function () {
   return this.done
@@ -7,20 +7,16 @@ const toString = function () {
 
 /**
  * Uniquely tag a function. This is used to identify actions.
- *
- * @param {function} fn The target function to add action identifiers to.
- * @param {string} [name] An override to use instead of `fn.name`.
- * @return {function} The tagged function (same as `fn`).
- * @private
+ * @param {Function} fn The target function to add action identifiers to.
+ * @param {String} [name] An override to use instead of `fn.name`.
+ * @return {Function} The tagged function (same as `fn`).
  */
 export default function tag (fn, name) {
-  if (process.env.NODE_ENV !== 'production') {
-    console.assert(fn != null,
-                   'Unable to identify ' + fn + ' action. Did you push the',
-                   'correct action?')
+  if (fn == null) {
+    throw new Error(`Unable to identify ${fn} action`)
   }
 
-  if (fn.hasOwnProperty('toString')) {
+  if (fn.done) {
     return fn
   }
 

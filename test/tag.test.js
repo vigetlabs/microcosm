@@ -9,7 +9,7 @@ test('includes the function name', function () {
 test('assigns a default name', function () {
   const tagged = tag(n => n)
 
-  expect(`${tagged}`).toContain('microcosm_action')
+  expect(`${tagged}`).toContain('_action')
 })
 
 test('will not tag a null action', function () {
