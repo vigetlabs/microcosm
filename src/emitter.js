@@ -1,9 +1,11 @@
 /**
  * An abstract event emitter class. Several modules extend from this class
  * to utilize events.
+ * @constructor
  */
+
 export default function Emitter () {
-  this._listeners = {}
+  this._events = []
 }
 
 Emitter.prototype = {
@@ -11,15 +13,8 @@ Emitter.prototype = {
   /**
    * Add an event listener.
    */
-  on (event, fn, scope=this, times=Infinity) {
-    const key = '$' + event
-
-    if (this._hasListener(event) === false) {
-      this._listeners[key] = []
-    }
-
-    this._listeners[key].push({ fn, scope, times })
-
+  on (event, fn, scope, once) {
+    this._events.push({ event, fn, scope, once })
     return this
   },
 
@@ -28,80 +23,56 @@ Emitter.prototype = {
    * automatically removed.
    */
   once (event, fn, scope) {
-    return this.on(event, fn, scope, 0)
-  },
-
-  /**
-   * Determine if a listener has been subscribed to
-   * @private
-   */
-  _hasListener(event) {
-    return !!event && this._listeners['$' + event] != null
+    return this.on(event, fn, scope, true)
   },
 
   /**
    * Unsubscribe a callback. If no event is provided, removes all callbacks. If
    * no callback is provided, removes all callbacks for the given type.
    */
-  off (event, fn, scope=this) {
-    if (this._hasListener(event) === false) {
-      return this
-    }
+  off (event, fn, scope) {
+    var removeAll = fn == null
 
-    let key = '$' + event
+    let i = 0
+    while (i < this._events.length) {
+      var cb = this._events[i]
 
-    // remove all handlers
-    if (fn == null) {
-      delete this._listeners[key]
-      return this
-    }
-
-    // specific event
-    let callbacks = this._listeners[key]
-
-    // Remove the specific handler, splice so that listeners removed
-    // during another event broadcast are not invoked
-    let i = 0;
-    while (i < callbacks.length) {
-      let cb = callbacks[i]
-
-      if (cb.fn === fn && cb.scope === scope) {
-        callbacks.splice(i, 1)
-      } else {
-        i += 1
+      if (cb.event === event) {
+        if (removeAll || (cb.fn === fn && cb.scope === scope)) {
+          this._events.splice(i, 1)
+          continue
+        }
       }
+
+      i += 1
     }
 
     return this
   },
 
   removeAllListeners () {
-    this._listeners = {}
+    this._events.length = 0
   },
 
   /**
    * Emit `event` with the given args.
-   * @private
    */
   _emit (event, payload) {
-    if (this._hasListener(event) === false) {
-      return this
-    }
+    let i = 0
 
-    let callbacks = this._listeners['$' + event]
+    while (i < this._events.length) {
+      var cb = this._events[i]
 
-    let i = 0;
-    while (i < callbacks.length) {
-      let callback = callbacks[i]
+      if (cb.event === event) {
+        cb.fn.call(cb.scope || this, payload)
 
-      callback.fn.call(callback.scope, payload)
-      callback.times -= 1
-
-      if (callback.times <= 0) {
-        callbacks.splice(i, 1)
-      } else {
-        i += 1;
+        if (cb.once) {
+          this._events.splice(i, 1)
+          continue
+        }
       }
+
+      i += 1
     }
 
     return this
