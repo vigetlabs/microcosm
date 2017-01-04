@@ -4,8 +4,8 @@
  * for other domains.
  */
 
-import lifecycle from '../lifecycle'
-import { merge } from '../utils'
+import lifecycle from './lifecycle'
+import { merge } from './utils'
 
 export default function MetaDomain () {}
 

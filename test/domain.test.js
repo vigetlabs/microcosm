@@ -168,22 +168,3 @@ describe('Lifecycle', function() {
   })
 
 })
-
-describe('Action registration', function() {
-
-  test('warns if a register handler is undefined', function () {
-    const repo = new Microcosm()
-    const action = n => n
-
-    repo.addDomain('key', {
-      register() {
-        return {
-          [action] : undefined
-        }
-      }
-    })
-
-    expect(repo.prepare(action)).toThrow(/registered an undefined handler/)
-  })
-
-})
