@@ -1,5 +1,4 @@
 ROLLUP := node_modules/.bin/rollup
-BABEL := node_modules/.bin/babel
 SCRIPTS := $(shell find src -name '*.js*')
 MODULES = src/microcosm.js $(wildcard src/addons/*.js)
 
@@ -17,14 +16,10 @@ build/package.json: package.json
 	@ mkdir -p build
 	@ node -p 'p=require("./package");p.private=p.scripts=p.jest=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $@
 
-%.js: %.es6.js
+build/%.js: src/%.js $(SCRIPTS)
 	@ mkdir -p $(@D)
-	@ $(BABEL) $< > $@
-	@ NODE_ENV=production $(BABEL) --no-comments $< > $*.min.js
-
-build/%.es6.js: src/%.js $(SCRIPTS)
-	@ mkdir -p $(@D)
-	@ $(ROLLUP) -f cjs --external=$(realpath src/microcosm.js) $< > $@
+	@ $(ROLLUP) -c rollup.config.js $< --output $@
+	@ NODE_ENV=production $(ROLLUP) -c rollup.config.js $< --output build/$*.min.js
 
 release: clean all
 	npm publish build
@@ -32,7 +27,7 @@ release: clean all
 prerelease: clean all
 	npm publish build --tag beta
 
-bench: all
+bench: javascript
 	@ $(call PROFILE, bench/history-performance)
 	@ $(call PROFILE, bench/dispatch-performance)
 	@ $(call PROFILE, bench/push-performance)
