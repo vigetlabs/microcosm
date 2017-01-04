@@ -1,40 +1,50 @@
 import Action from './action'
-import { disposable } from './action/states'
 
 /**
  * The central tree data structure that is used to calculate state for
  * a Microcosm. Each node in the tree represents an action. Branches
  * are changes over time.
- *
- * @param {Number} limit - Depth of history before compression
+ * @constructor
+ * @param {number|null} limit - Depth of history before compression
  */
-export default function History (limit = 0) {
-  this.size = 0
-  this.limit = limit
+export default function History (limit=0) {
+  this.repos = []
 
+  this.limit = limit
+  this.size = 0
   this.root = null
   this.focus = null
   this.head = null
-
-  this.repos = []
 }
 
 History.prototype = {
 
+  /**
+   * Start tracking a repo
+   * @param {Microcosm} repo
+   */
   addRepo (repo) {
     this.repos.push(repo)
   },
 
+  /**
+   * Stop tracking a repo
+   * @param {Microcosm} repo
+   */
   removeRepo (repo) {
     this.repos = this.repos.filter(r => r != repo)
   },
 
+  /**
+   * Run a method on every repo, if it implements it.
+   * @param {string} method
+   * @param {any} payload
+   */
   invoke (method, payload) {
-    for (var i = 0, len = this.repos.length; i < len; i++) {
-      // Repos might get lost along the way...
-      if (this.repos[i]) {
-        this.repos[i][method](payload)
-      }
+    let repos = this.repos
+
+    for (var i = 0, len = repos.length; i < len; i++) {
+      repos[i][method](payload)
     }
   },
 
@@ -42,6 +52,7 @@ History.prototype = {
    * Adjust the focus point to target a different node. This has the effect of
    * creating undo/redo. This should not be called outside of Microcosm!
    * Instead, use `Microcosm.prototype.checkout`.
+   * @param {Action} action
    */
   checkout (action) {
     this.head = action
@@ -54,7 +65,7 @@ History.prototype = {
     this.focus = null
 
     this.setSize()
-    this.reconcile()
+    this.reconcile(null)
 
     return this
   },
@@ -62,9 +73,10 @@ History.prototype = {
   /**
    * Create a new action and append it to the current focus,
    * then adjust the focus to that of the newly created action.
+   * @param {Function|String} behavior
    */
   append (behavior) {
-    const action = new Action(behavior, this)
+    const action = new Action(behavior)
 
     if (this.head != null) {
       this.connect(this.head, action)
@@ -76,6 +88,8 @@ History.prototype = {
       this.root = action
     }
 
+    action.on('change', this.reconcile, this)
+
     this.size += 1
 
     return this.head
@@ -84,6 +98,8 @@ History.prototype = {
   /**
    * Append an action to another, making that action its parent. This
    * produces history.
+   * @param {Action} parent
+   * @param {Action} child
    */
   connect (parent, child) {
     child.parent  = parent
@@ -94,16 +110,19 @@ History.prototype = {
     return this
   },
 
-  isDormant() {
+  isDormant () {
     return this.size <= 0 || this.repos.length <= 0
   },
 
+  /**
+   * @param {Action} action
+   */
   reconcile (action) {
     if (this.isDormant()) {
       return false
     }
 
-    this.invoke('rollback')
+    this.invoke('rollback', null)
 
     this.rollforward()
 
@@ -118,13 +137,13 @@ History.prototype = {
       let action = actions[i]
 
       // Ignore disabled actions
-      if (action.type) {
+      if (!action.disabled) {
         this.invoke('reconcile', action)
       }
 
       // Adjust the focus to the youngest disposable action. No need to
       // rollforward through every single action all the time.
-      if (cacheable && action.is(disposable)) {
+      if (cacheable && action.disposable) {
         this.focus = action
         this.invoke('cache', this.archive())
       } else {
@@ -155,13 +174,14 @@ History.prototype = {
 
   /**
    * Get an array of the active branch
+   * @param {Action|null} base - The starting point for the branch
    * @return {Any} The result of reducing over state
    */
   toArray (base) {
     let items = new Array()
     let node  = this.head
 
-    while (node && node !== base) {
+    while (node != null && node !== base) {
       items.push(node)
 
       if (node === this.root) {

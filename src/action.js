@@ -1,40 +1,34 @@
 import Emitter from './emitter'
-import coroutine from './action/coroutine'
+import coroutine from './coroutine'
 import tag from './tag'
-import * as States from './action/states'
 import { inherit } from './utils'
 
 /**
  * Actions encapsulate the process of resolving an action creator. Create an
  * action using `Microcosm::push`:
+ * @constructor
+ * @extends {Emitter}
  */
-export default function Action (behavior, history) {
-  Emitter.apply(this, arguments)
-
-  if (process.env.NODE_ENV !== 'production') {
-    console.assert(typeof behavior === 'string' || typeof behavior === 'function',
-                   'Action expected string or function, instead got:', behavior)
-  }
-
-  this.type = null
+export default function Action (behavior) {
+  Emitter.call(this)
   this.behavior = tag(behavior)
-  this.state = States.disabled
-  this.payload = null
-
-  this.history = history
-  this.parent = null
-  this.sibling = null
 }
 
 inherit(Action, Emitter, {
+  type      : null,
+  payload   : null,
+  disabled  : false,
+  diposable : false,
+  parent    : null,
+  sibling   : null,
 
   /**
    * Given a string or State constant, determine if the `state` bitmask for
    * the action includes the provided type.
    * @private
    */
-  is (code) {
-    return (this.state & code) === code
+  is (type) {
+    return this.type === this.behavior[type]
   },
 
   /**
@@ -49,34 +43,22 @@ inherit(Action, Emitter, {
   },
 
   /**
-   * Trigger history reconciliation if associated with a history
-   * @private
-   */
-  reconcile() {
-    if (this.history) {
-      this.history.reconcile(this)
-    }
-
-    return this
-  },
-
-  /**
    * If defined, sets the payload for the action and triggers a "change" event.
    */
-  set (state, payload) {
+  set (type, payload, disposable) {
     // Ignore set if the action is already disposed.
-    if (this.is(States.disposable)) {
+    if (this.disposable) {
       return false
     }
 
-    this.state = state
-    this.type = States.getType(this)
+    this.type = this.behavior[type]
+    this.disposable = disposable
 
     if (payload != undefined) {
       this.payload = payload
     }
 
-    this.reconcile()
+    this._emit('change', this)
 
     return true
   },
@@ -86,7 +68,7 @@ inherit(Action, Emitter, {
    * the "open" event.
    */
   open (payload) {
-    if (this.set(States.open, payload)) {
+    if (this.set('open', payload, false)) {
       this._emit('open', this.payload)
     }
 
@@ -98,7 +80,7 @@ inherit(Action, Emitter, {
    * Triggers the "update" event.
    */
   send (payload) {
-    if (this.set(States.loading, payload)) {
+    if (this.set('loading', payload, false)) {
       this._emit('update', payload)
     }
 
@@ -110,7 +92,7 @@ inherit(Action, Emitter, {
    * set a payload if provided. Triggers the "error" event.
    */
   reject (payload) {
-    if (this.set(States.error | States.disposable, payload)) {
+    if (this.set('error', payload, true)) {
       this._emit('error', payload)
     }
 
@@ -122,7 +104,7 @@ inherit(Action, Emitter, {
    * a payload if provided. Triggers the "done" event.
    */
   resolve (payload) {
-    if (this.set(States.done | States.disposable, payload)) {
+    if (this.set('done', payload, true)) {
       this._emit('done', this.payload)
     }
 
@@ -133,8 +115,8 @@ inherit(Action, Emitter, {
    * Set the action state to "cancelled" and marks the action for clean up,
    * then set a payload if provided. Triggers the "cancel" event.
    */
-  cancel () {
-    if (this.set(States.cancelled | States.disposable, null)) {
+  cancel (payload) {
+    if (this.set('cancelled', payload, true)) {
       this._emit('cancel', this.payload)
     }
 
@@ -147,10 +129,9 @@ inherit(Action, Emitter, {
    * Triggers the "change" event.
    */
   toggle () {
-    this.state ^= States.disabled
-    this.type = States.getType(this)
+    this.disabled = !this.disabled
 
-    return this.reconcile()
+    return this._emit('change', this)
   },
 
   /**
@@ -159,11 +140,11 @@ inherit(Action, Emitter, {
    * event.
    */
   onError (callback, scope) {
-    if (typeof callback !== 'function') {
+    if (!callback) {
       return this
     }
 
-    if (this.is(States.error)) {
+    if (this.is('error')) {
       callback.call(scope, this.payload)
     } else {
       this.once('error', callback, scope)
@@ -176,7 +157,7 @@ inherit(Action, Emitter, {
    * Listen to progress. Wait and trigger a provided callback on the "update" event.
    */
   onUpdate (callback, scope) {
-    if (typeof callback !== 'function') {
+    if (!callback) {
       return this
     }
 
@@ -191,11 +172,11 @@ inherit(Action, Emitter, {
    * "done" event.
    */
   onDone (callback, scope) {
-    if (typeof callback !== 'function') {
+    if (!callback) {
       return this
     }
 
-    if (this.is(States.done)) {
+    if (this.is('done')) {
       callback.call(scope, this.payload)
     } else {
       this.once('done', callback, scope)
@@ -210,11 +191,11 @@ inherit(Action, Emitter, {
    * "cancel" event.
    */
   onCancel (callback, scope) {
-    if (typeof callback !== 'function') {
+    if (!callback) {
       return this
     }
 
-    if (this.is(States.cancelled)) {
+    if (this.is('cancelled')) {
       callback.call(scope, this.payload)
     } else {
       this.once('cancel', callback, scope)
@@ -235,17 +216,18 @@ inherit(Action, Emitter, {
   },
 
   /**
-   * Cleanup an action that has been disconnected from its history
+   * Cleanup an action that has been disconnected from its history.
    */
-  teardown() {
-    // Disconnect some pointers to help GC clean up
+  teardown () {
     this.parent = null
     this.sibling = null
-    this.history = null
 
     if (this.next) {
       this.next.parent = null
     }
+
+    // Remove generic change events to free from history reconciliation
+    this.off('change')
   }
 
 })

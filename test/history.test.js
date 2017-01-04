@@ -203,16 +203,6 @@ describe('archival', function () {
     expect(history.size).toBe(1)
   })
 
-  test('archived nodes have no history', function () {
-    const history = new History()
-
-    const one = history.append(action).resolve()
-
-    history.rollforward()
-
-    expect(one.history).toBe(null)
-  })
-
   test('archived nodes have no relations', function () {
     const history = new History()
 

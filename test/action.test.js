@@ -1,5 +1,4 @@
 import Action from '../src/action'
-import * as States from '../src/action/states'
 import Microcosm from '../src/microcosm'
 
 const identity = n => n
@@ -39,14 +38,6 @@ test('handles listeners with no callback', function () {
   action.onUpdate()
 })
 
-test('throws if given an object', function () {
-  expect(() => new Action({ id: 'foo' })).toThrow()
-})
-
-test('does not throw if given null', function () {
-  expect(() => new Action(null)).toThrow()
-})
-
 describe('open state', function () {
 
   test('exposes an open type when opened', function () {
@@ -72,8 +63,8 @@ describe('open state', function () {
 
     action.open(true)
 
-    expect(action.is(States.disabled)).toBe(false)
-    expect(action.is(States.open)).toBe(true)
+    expect(action.disabled).toBe(false)
+    expect(action.is('open')).toBe(true)
   })
 
   test('does not trigger an open event if it is disposable', function () {
@@ -125,8 +116,8 @@ describe('progress state', function () {
     action.open(true)
     action.send(true)
 
-    expect(action.is(States.open)).toBe(false)
-    expect(action.is(States.loading)).toBe(true)
+    expect(action.is('open')).toBe(false)
+    expect(action.is('loading')).toBe(true)
   })
 
   test('triggers an update event when it sends', function () {
@@ -153,38 +144,23 @@ describe('progress state', function () {
 
 describe('disabled state', function () {
 
-  test('actions are disabled when first created', function () {
-    const action = new Action(identity)
-
-    expect(action.is(States.disabled)).toBe(true)
-  })
-
-  test('actions return no type when disabled', function () {
-    const action = new Action(identity)
-
-    action.resolve()
-    action.toggle()
-
-    expect(action.type).toBe(null)
-  })
-
   test('preserves other states when disabled', function () {
     const action = new Action(identity)
 
     action.resolve()
     action.toggle()
 
-    expect(action.is(States.done)).toBe(true)
+    expect(action.is('done')).toBe(true)
   })
 
   test('is toggleable', function () {
     const action = new Action(identity)
 
     action.resolve()
-    expect(action.is(States.disabled)).toBe(false)
+    expect(action.disabled).toBe(false)
 
     action.toggle()
-    expect(action.is(States.disabled)).toBe(true)
+    expect(action.disabled).toBe(true)
   })
 
   test('returns no type when disabled', function () {
@@ -234,8 +210,8 @@ describe('resolved state', function () {
     action.send(true)
     action.resolve(true)
 
-    expect(action.is(States.loading)).toBe(false)
-    expect(action.is(States.done)).toBe(true)
+    expect(action.is('loading')).toBe(false)
+    expect(action.is('done')).toBe(true)
   })
 
   test('actions can not be resolved after rejected', function () {
@@ -245,8 +221,8 @@ describe('resolved state', function () {
     action.reject(false)
     action.resolve(true)
 
-    expect(action.is(States.error)).toBe(true)
-    expect(action.is(States.done)).toBe(false)
+    expect(action.is('error')).toBe(true)
+    expect(action.is('done')).toBe(false)
   })
 
 })
@@ -310,7 +286,7 @@ describe('disposed state', function () {
 
     action.resolve(true)
 
-    expect(action.is(States.disposable)).toBe(true)
+    expect(action.disposable).toBe(true)
   })
 
   test('actions are disposable when they cancel', function () {
@@ -318,7 +294,7 @@ describe('disposed state', function () {
 
     action.cancel(true)
 
-    expect(action.is(States.disposable)).toBe(true)
+    expect(action.disposable).toBe(true)
   })
 
   test('actions are disposable when they fail', function () {
@@ -326,7 +302,7 @@ describe('disposed state', function () {
 
     action.reject(true)
 
-    expect(action.is(States.disposable)).toBe(true)
+    expect(action.disposable).toBe(true)
   })
 
   test('will not change states if already disposed', function () {
@@ -335,8 +311,8 @@ describe('disposed state', function () {
     action.cancel()
     action.resolve()
 
-    expect(action.is(States.cancelled)).toBe(true)
-    expect(action.is(States.done)).toBe(false)
+    expect(action.is('cancelled')).toBe(true)
+    expect(action.is('done')).toBe(false)
   })
 
 })
@@ -358,7 +334,7 @@ describe('cancelled state', function () {
 
     action.cancel()
 
-    expect(action.is(States.disposable)).toBe(true)
+    expect(action.disposable).toBe(true)
   })
 
   test('exposes a cancelled type when cancelled', function () {

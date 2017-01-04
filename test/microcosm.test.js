@@ -6,12 +6,6 @@ test('it will not deserialize null', function () {
   expect(repo.deserialize(null)).toEqual({})
 })
 
-test('throws an error if asked to push a non-function value', function () {
-  const repo = new Microcosm()
-
-  expect(() => repo.push(null)).toThrow(/expected string or function/)
-})
-
 test('can manipulate how many transactions are merged', function () {
   const repo = new Microcosm({ maxHistory: 5 })
   const identity = n => n
