@@ -24,7 +24,7 @@ var Domain = {
   getInitialState: () => 0,
   register() {
     return {
-      [action]: (n) => n + 1
+      [action]: (a, b) => a + b
     }
   }
 }
