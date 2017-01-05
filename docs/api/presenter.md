@@ -276,3 +276,13 @@ class HelloWorldPresenter extends Presenter {
   }
 }
 ```
+
+### getRepo(repo, props)
+
+Runs before assigning a repo to a Presenter. This method is given the
+parent repo, either passed in via `props` or `context`. By default, it
+returns a fork of that repo, or a new Microcosm if no repo is
+provided.
+
+This provides an opportunity to customize the repo behavior for a
+particular Presenter.

@@ -27,6 +27,10 @@ function Presenter (props, context) {
 inherit(Presenter, BaseComponent, {
   constructor: Presenter,
 
+  getRepo (repo, props) {
+    return repo ? repo.fork() : new Microcosm()
+  },
+
   _setRepo (repo) {
     this.repo = repo
 
@@ -152,9 +156,9 @@ inherit(PresenterContext, BaseComponent, {
   },
 
   getRepo () {
-    const repo = this.props.repo || this.context.repo
+    const { presenter, parentProps, repo } = this.props
 
-    return repo ? repo.fork() : new Microcosm()
+    return presenter.getRepo(repo || this.context.repo, parentProps)
   },
 
   updatePropMap ({ presenter, parentProps, parentState }) {

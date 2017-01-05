@@ -521,6 +521,23 @@ describe('::render', function () {
 
 })
 
+describe('::getRepo', function () {
+
+  it('can circumvent forking behavior', function () {
+    class NoFork extends Presenter {
+      getRepo (repo) {
+        return repo
+      }
+    }
+
+    let repo = new Microcosm()
+    let wrapper = mount(<NoFork repo={repo} />)
+
+    expect(wrapper.instance().repo).toEqual(repo)
+  })
+
+})
+
 describe('intents', function() {
 
   test('receives intent events', function () {
