@@ -61,7 +61,7 @@ inherit(Action, Emitter, {
     this.type = this.behavior[type]
     this.disposable = DISPOSABLE.hasOwnProperty(type)
 
-    if (payload !== undefined) {
+    if (arguments.length > 1) {
       this.payload = payload
     }
 
@@ -74,8 +74,8 @@ inherit(Action, Emitter, {
    * Set the action state to "open", then set a payload if provided. Triggers
    * the "open" event.
    */
-  open (payload) {
-    if (this.set('open', payload)) {
+  open (...params) {
+    if (this.set('open', ...params)) {
       this._emit('open', this.payload)
     }
 
@@ -86,8 +86,8 @@ inherit(Action, Emitter, {
    * Set the action state to "loading", then set a payload if provided.
    * Triggers the "update" event.
    */
-  send (payload) {
-    if (this.set('loading', payload)) {
+  send (...params) {
+    if (this.set('loading', ...params)) {
       this._emit('update', this.payload)
     }
 
@@ -98,8 +98,8 @@ inherit(Action, Emitter, {
    * Set the action state to "error" and marks the action for clean up, then
    * set a payload if provided. Triggers the "error" event.
    */
-  reject (payload) {
-    if (this.set('error', payload)) {
+  reject (...params) {
+    if (this.set('error', ...params)) {
       this._emit('error', this.payload)
     }
 
@@ -110,8 +110,8 @@ inherit(Action, Emitter, {
    * Set the action state to "done" and marks the action for clean up, then set
    * a payload if provided. Triggers the "done" event.
    */
-  resolve (payload) {
-    if (this.set('done', payload)) {
+  resolve (...params) {
+    if (this.set('done', ...params)) {
       this._emit('done', this.payload)
     }
 
@@ -122,8 +122,8 @@ inherit(Action, Emitter, {
    * Set the action state to "cancelled" and marks the action for clean up,
    * then set a payload if provided. Triggers the "cancel" event.
    */
-  cancel (payload) {
-    if (this.set('cancelled', payload)) {
+  cancel (...params) {
+    if (this.set('cancelled', ...params)) {
       this._emit('cancel', this.payload)
     }
 

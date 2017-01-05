@@ -15,6 +15,15 @@ test('an action payload is undefined by default', function () {
   expect(action.payload).toBe(undefined)
 })
 
+test('an action can intentionally be set to undefined', function () {
+  const action = new Action('test')
+
+  action.open(true)
+  action.resolve(undefined)
+
+  expect(action.payload).toBe(undefined)
+})
+
 test('actions can be tested externally', function () {
   const repo = new Microcosm()
   const identity = n => n
