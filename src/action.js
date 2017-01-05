@@ -16,7 +16,7 @@ export default function Action (behavior) {
 
 inherit(Action, Emitter, {
   type      : null,
-  payload   : null,
+  payload   : undefined,
   disabled  : false,
   diposable : false,
   parent    : null,
