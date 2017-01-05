@@ -368,14 +368,6 @@ describe('::view', function() {
     expect(text).toEqual('hello')
   })
 
-  test('throws if a view is undefined', function () {
-    class MissingView extends Presenter {
-      view = undefined
-    }
-
-    expect(() => mount(<MissingView />)).toThrow(/MissingView\::view\(\) is undefined\./)
-  })
-
 })
 
 describe('purity', function() {
@@ -495,14 +487,36 @@ describe('::render', function () {
     expect(wrapper.text()).toEqual('Test')
   })
 
-  test('throws when extending render', function () {
+  test('handles overridden an overriden render method', function () {
     class Test extends Presenter {
       render() {
         return <p>Test</p>
       }
     }
 
-    expect(() => mount(<Test />)).toThrow('Presenter::render is a protected method.')
+    expect(mount(<Test />).text()).toEqual('Test')
+  })
+
+  test('overridden render passes context', function () {
+    expect.assertions(1)
+
+    function Child (props, context) {
+      expect(context.repo).toBeDefined()
+
+      return <p>Test</p>
+    }
+
+    Child.contextTypes = {
+      repo: React.PropTypes.any
+    }
+
+    class Test extends Presenter {
+      render() {
+        return <Child />
+      }
+    }
+
+    mount(<Test />)
   })
 
 })

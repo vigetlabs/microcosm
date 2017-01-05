@@ -4,8 +4,8 @@ import Microcosm, { merge, tag, inherit } from '../microcosm'
 const EMPTY = {}
 
 /**
- * PureComponent was only added recently, so fallback to the regular component
- * in cases where it doesn't exist
+ * PureComponent was only added recently, so fallback to the regular
+ * component in cases where it doesn't exist
  */
 const BaseComponent = PureComponent || Component
 
@@ -18,10 +18,9 @@ function Presenter (props, context) {
   BaseComponent.call(this, props, context)
 
   // Do not overriding render, generate the context wrapper upon instantiation
-  if (process.env.NODE_ENV !== 'production') {
-    console.assert(this.render === Presenter.prototype.render,
-                   'Presenter::render is a protected method. Instead of overriding',
-                   'it, please use Presenter::view.')
+  if (this.render !== Presenter.prototype.render) {
+    this.view = this.render
+    this.render = Presenter.prototype.render
   }
 }
 
@@ -93,11 +92,6 @@ inherit(Presenter, BaseComponent, {
   },
 
   render () {
-    // If the view is null, then it is probably incorrectly referenced
-    console.assert(this.view != null,
-                   `${this.constructor.name}::view() is`,
-                   `${typeof this.view}. Is it referenced correctly?`)
-
     return (
       createElement(PresenterContext, {
         parentProps : this.props,
