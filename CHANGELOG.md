@@ -1,5 +1,11 @@
 # Changelog
 
+## 11.1.0
+
+- Added getRepo method to presenters to allow greater control over
+  repo assignment
+- Actions may now, intentionally, be set to undefined
+
 ## 11.0.0
 
 - Fix bug where Presenter given stateless view component as an inline
