@@ -285,4 +285,13 @@ returns a fork of that repo, or a new Microcosm if no repo is
 provided.
 
 This provides an opportunity to customize the repo behavior for a
-particular Presenter.
+particular Presenter. For example, to circumvent the default Presenter
+forking behavior:
+
+```javascript
+class NoFork extends Presenter {
+  getRepo (repo) {
+    return repo
+  }
+}
+```
