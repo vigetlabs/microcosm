@@ -9,6 +9,12 @@ test('accommodates string actions', function () {
   expect(action.type).toBe('test')
 })
 
+test('an action payload is undefined by default', function () {
+  const action = new Action('test').resolve()
+
+  expect(action.payload).toBe(undefined)
+})
+
 test('actions can be tested externally', function () {
   const repo = new Microcosm()
   const identity = n => n

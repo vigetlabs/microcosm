@@ -3,6 +3,13 @@ import coroutine from './coroutine'
 import tag from './tag'
 import { inherit } from './utils'
 
+// What types are disposable?
+const DISPOSABLE = {
+  cancelled : true,
+  done      : true,
+  error     : true
+}
+
 /**
  * Actions encapsulate the process of resolving an action creator. Create an
  * action using `Microcosm::push`:
@@ -45,16 +52,16 @@ inherit(Action, Emitter, {
   /**
    * If defined, sets the payload for the action and triggers a "change" event.
    */
-  set (type, payload, disposable) {
+  set (type, payload) {
     // Ignore set if the action is already disposed.
     if (this.disposable) {
       return false
     }
 
     this.type = this.behavior[type]
-    this.disposable = disposable
+    this.disposable = DISPOSABLE.hasOwnProperty(type)
 
-    if (payload != undefined) {
+    if (payload !== undefined) {
       this.payload = payload
     }
 
@@ -68,7 +75,7 @@ inherit(Action, Emitter, {
    * the "open" event.
    */
   open (payload) {
-    if (this.set('open', payload, false)) {
+    if (this.set('open', payload)) {
       this._emit('open', this.payload)
     }
 
@@ -80,8 +87,8 @@ inherit(Action, Emitter, {
    * Triggers the "update" event.
    */
   send (payload) {
-    if (this.set('loading', payload, false)) {
-      this._emit('update', payload)
+    if (this.set('loading', payload)) {
+      this._emit('update', this.payload)
     }
 
     return this
@@ -92,8 +99,8 @@ inherit(Action, Emitter, {
    * set a payload if provided. Triggers the "error" event.
    */
   reject (payload) {
-    if (this.set('error', payload, true)) {
-      this._emit('error', payload)
+    if (this.set('error', payload)) {
+      this._emit('error', this.payload)
     }
 
     return this
@@ -104,7 +111,7 @@ inherit(Action, Emitter, {
    * a payload if provided. Triggers the "done" event.
    */
   resolve (payload) {
-    if (this.set('done', payload, true)) {
+    if (this.set('done', payload)) {
       this._emit('done', this.payload)
     }
 
@@ -116,7 +123,7 @@ inherit(Action, Emitter, {
    * then set a payload if provided. Triggers the "cancel" event.
    */
   cancel (payload) {
-    if (this.set('cancelled', payload, true)) {
+    if (this.set('cancelled', payload)) {
       this._emit('cancel', this.payload)
     }
 
