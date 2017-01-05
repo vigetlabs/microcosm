@@ -30,6 +30,9 @@
     "testPathDirs": [
       "<rootDir>/test",
       "<rootDir>/src"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{js,json}"
     ]
   },
   "dependencies": {

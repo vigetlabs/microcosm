@@ -6,6 +6,12 @@ test('it will not deserialize null', function () {
   expect(repo.deserialize(null)).toEqual({})
 })
 
+test('it can instantiate with a starting state', function () {
+  const repo = new Microcosm({}, { foo: 'bar' })
+
+  expect(repo.state.foo).toEqual('bar')
+})
+
 test('can manipulate how many transactions are merged', function () {
   const repo = new Microcosm({ maxHistory: 5 })
   const identity = n => n
