@@ -7,17 +7,20 @@ import Action from './action'
  * @constructor
  * @param {number|null} limit - Depth of history before compression
  */
-export default function History (limit=0) {
+export default function History (limit) {
   this.repos = []
 
-  this.limit = limit
-  this.size = 0
-  this.root = null
-  this.focus = null
-  this.head = null
+  if (limit != null) {
+    this.limit = limit
+  }
 }
 
 History.prototype = {
+  root  : null,
+  focus : null,
+  head  : null,
+  size  : 0,
+  limit : 0,
 
   /**
    * Start tracking a repo
