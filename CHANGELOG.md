@@ -5,6 +5,8 @@
 - Added getRepo method to presenters to allow greater control over
   repo assignment
 - Actions may now, intentionally, be set to undefined
+- Fixed case where `action.toggle()` would not effect history tree as
+  intended.
 
 ## 11.0.0
 

@@ -127,9 +127,15 @@ inherit(Microcosm, Emitter, {
     return current
   },
 
+  /**
+   * Roll back to the last archive
+   */
+  unarchive () {
+    this.cached = this.archived
+  },
 
   /**
-   * Rollback to the last cache
+   * Roll back to the last cache
    */
   rollback () {
     this.staged = this.cached

@@ -115,11 +115,26 @@ History.prototype = {
   },
 
   /**
+  * Handle a change to a node that happened prior to
+  * the cache point.
+   */
+  recache (action) {
+    if (this.focus && action.id <= this.focus.id) {
+      this.focus = null
+      this.invoke('unarchive', null)
+    }
+  },
+
+  /**
    * @param {Action} action
    */
   reconcile (action) {
     if (this.isDormant()) {
       return false
+    }
+
+    if (action) {
+      this.recache(action)
     }
 
     this.invoke('rollback', null)

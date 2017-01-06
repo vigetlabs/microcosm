@@ -10,6 +10,8 @@ const DISPOSABLE = {
   error     : true
 }
 
+let id = 0
+
 /**
  * Actions encapsulate the process of resolving an action creator. Create an
  * action using `Microcosm::push`:
@@ -18,6 +20,8 @@ const DISPOSABLE = {
  */
 export default function Action (behavior) {
   Emitter.call(this)
+
+  this.id = id++
   this.behavior = tag(behavior)
 }
 
@@ -138,7 +142,9 @@ inherit(Action, Emitter, {
   toggle () {
     this.disabled = !this.disabled
 
-    return this._emit('change', this)
+    this._emit('change', this)
+
+    return this
   },
 
   /**
