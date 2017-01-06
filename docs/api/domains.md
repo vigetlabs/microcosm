@@ -140,7 +140,9 @@ repo.push(Actions.add, { name: 'earth' }) // this will add Earth
 
 ### `commit(next, staged)`
 
-How should a domain actually write to `repo.state`? This is useful for serializing a complex data structure, such as a `Map`, into form easier for public consumption:
+Think of this as: How should a domin write to the "public" `repo.state` (to be consumed by your React components) when storing a different "private" representation of your data in your domain?
+
+For example: if you want to serialize a complex data structure, such as a `Map`, into a form easier for public consumption:
 
 ```javascript
 import Immutable from 'immutable'
