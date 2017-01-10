@@ -1,5 +1,11 @@
 # Changelog
 
+## 11.2.0
+
+- The `withIntent` add-on correctly sets its displayName property to
+  `"withIntent(ComponentName)")`. This makes it selectable by enzyme's
+  `find` function.
+
 ## 11.1.0
 
 - Added getRepo method to presenters to allow greater control over
