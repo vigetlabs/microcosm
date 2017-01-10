@@ -2,6 +2,22 @@ import History from '../src/history'
 import Microcosm from '../src/microcosm'
 
 const action = n => n
+const toArray = function (history) {
+  let items = new Array()
+  let node  = history.focus || history.root
+
+  while (node) {
+    items.push(node)
+
+    if (node === history.head) {
+      break
+    }
+
+    node = node.next
+  }
+
+  return items
+}
 
 test('adjusts the focal point when adding a node', function () {
   const history = new History()
@@ -34,7 +50,7 @@ test('only walks through the main timeline', function () {
 
   const third = history.append(action)
 
-  expect(history.toArray()).toEqual([ first, third ])
+  expect(toArray(history)).toEqual([ first, third ])
 })
 
 test('does not walk past the focal point', function () {
@@ -45,7 +61,7 @@ test('does not walk past the focal point', function () {
   history.append(action)
   history.checkout(one)
 
-  expect(history.toArray()).toEqual([ one ])
+  expect(toArray(history)).toEqual([ one ])
 })
 
 test('properly handles forks', function () {
@@ -60,11 +76,11 @@ test('properly handles forks', function () {
   let four = history.append(action)
   let five = history.append(action)
 
-  expect(history.toArray()).toEqual([ one, two, four, five ])
+  expect(toArray(history)).toEqual([ one, two, four, five ])
 
   history.checkout(three)
 
-  expect(history.toArray()).toEqual([ one, two, three ])
+  expect(toArray(history)).toEqual([ one, two, three ])
 })
 
 test('can get the previous node in the chain', function () {
@@ -99,48 +115,52 @@ test('can determine the root node', function () {
   expect(history.root).toEqual(a)
 })
 
-test('can determine children', function () {
-  const history = new History()
-  const a = history.append(action)
-  const b = history.append(action)
+describe('children', function () {
 
-  history.checkout(a)
+  test('can determine children', function () {
+    const history = new History()
+    const a = history.append(action)
+    const b = history.append(action)
 
-  const c = history.append(action)
+    history.checkout(a)
 
-  expect(a.children).toEqual([ c, b ])
-})
+    const c = history.append(action)
 
-test('does not lose children when checking out nodes on the left', function () {
-  const history = new History()
+    expect(a.children).toEqual([ c, b ])
+  })
 
-  history.append(action)
+  test('does not lose children when checking out nodes on the left', function () {
+    const history = new History()
 
-  const b = history.append(action)
-  const c = history.append(action)
+    history.append(action)
 
-  history.checkout(b)
+    const b = history.append(action)
+    const c = history.append(action)
 
-  const d = history.append(action)
+    history.checkout(b)
 
-  expect(b.children).toEqual([ d, c ])
-})
+    const d = history.append(action)
 
-test('does not lose children when checking out nodes on the right', function () {
-  const history = new History()
+    expect(b.children).toEqual([ d, c ])
+  })
 
-  history.append(action)
+  test('does not lose children when checking out nodes on the right', function () {
+    const history = new History()
 
-  const b = history.append(action)
-  const c = history.append(action)
+    history.append(action)
 
-  history.checkout(b)
+    const b = history.append(action)
+    const c = history.append(action)
 
-  const d = history.append(action)
+    history.checkout(b)
 
-  history.checkout(c)
+    const d = history.append(action)
 
-  expect(b.children).toEqual([d, c])
+    history.checkout(c)
+
+    expect(b.children).toEqual([ d, c ])
+  })
+
 })
 
 describe('archival', function () {
@@ -167,6 +187,7 @@ describe('archival', function () {
     history.rollforward()
 
     expect(history.size).toEqual(0)
+    expect(history.root).toEqual(null)
   })
 
   test('will not archive a node if prior nodes are not complete', function () {
@@ -212,8 +233,6 @@ describe('archival', function () {
     history.rollforward()
 
     expect(one.parent).toBe(null)
-    expect(one.sibling).toBe(null)
-
     expect(two.parent).toBe(null)
   })
 
@@ -230,16 +249,6 @@ describe('archival', function () {
     expect(history.focus).toBe(null)
     expect(history.root).toBe(null)
     expect(history.head).toBe(null)
-  })
-
-})
-
-describe('toArray', function() {
-
-  test('does not generate null nodes', function() {
-    const history = new History()
-
-    expect(history.toArray()).toEqual([])
   })
 
 })

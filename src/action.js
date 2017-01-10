@@ -1,16 +1,7 @@
 import Emitter from './emitter'
-import coroutine from './coroutine'
 import tag from './tag'
+import History from './history'
 import { inherit } from './utils'
-
-// What types are disposable?
-const DISPOSABLE = {
-  cancelled : true,
-  done      : true,
-  error     : true
-}
-
-let id = 0
 
 /**
  * Actions encapsulate the process of resolving an action creator. Create an
@@ -18,20 +9,22 @@ let id = 0
  * @constructor
  * @extends {Emitter}
  */
-export default function Action (behavior) {
+export default function Action (behavior, history) {
   Emitter.call(this)
 
-  this.id = id++
   this.behavior = tag(behavior)
+  this.history = history || new History()
 }
 
 inherit(Action, Emitter, {
-  type      : null,
-  payload   : undefined,
-  disabled  : false,
-  diposable : false,
-  parent    : null,
-  sibling   : null,
+  type       : null,
+  payload    : undefined,
+  disabled   : false,
+  disposable : false,
+  parent     : null,
+  first      : null,
+  next       : null,
+  sibling    : null,
 
   /**
    * Given a string or State constant, determine if the `state` bitmask for
@@ -43,43 +36,19 @@ inherit(Action, Emitter, {
   },
 
   /**
-   * Evaluate the action by invoking the action's behavior with provided
-   * parameters. Then pass that value into the `coroutine` function, which will
-   * update the state of the action as it processes.
-   */
-  execute (params, repo) {
-    coroutine(this, this.behavior.apply(this, params), repo)
-
-    return this
-  },
-
-  /**
-   * If defined, sets the payload for the action and triggers a "change" event.
-   */
-  set (type, payload) {
-    // Ignore set if the action is already disposed.
-    if (this.disposable) {
-      return false
-    }
-
-    this.type = this.behavior[type]
-    this.disposable = DISPOSABLE.hasOwnProperty(type)
-
-    if (arguments.length > 1) {
-      this.payload = payload
-    }
-
-    this._emit('change', this)
-
-    return true
-  },
-
-  /**
    * Set the action state to "open", then set a payload if provided. Triggers
    * the "open" event.
    */
-  open (...params) {
-    if (this.set('open', ...params)) {
+  open (payload) {
+    if (!this.disposable) {
+      this.type = this.behavior.open
+
+      if (arguments.length > 0) {
+        this.payload = payload
+      }
+
+      this.history.reconcile(this)
+
       this._emit('open', this.payload)
     }
 
@@ -90,8 +59,16 @@ inherit(Action, Emitter, {
    * Set the action state to "loading", then set a payload if provided.
    * Triggers the "update" event.
    */
-  send (...params) {
-    if (this.set('loading', ...params)) {
+  send (payload) {
+    if (!this.disposable) {
+      this.type = this.behavior.loading
+
+      if (arguments.length > 0) {
+        this.payload = payload
+      }
+
+      this.history.reconcile(this)
+
       this._emit('update', this.payload)
     }
 
@@ -102,8 +79,17 @@ inherit(Action, Emitter, {
    * Set the action state to "error" and marks the action for clean up, then
    * set a payload if provided. Triggers the "error" event.
    */
-  reject (...params) {
-    if (this.set('error', ...params)) {
+  reject (payload) {
+    if (!this.disposable) {
+      this.type = this.behavior.error
+      this.disposable = true
+
+      if (arguments.length > 0) {
+        this.payload = payload
+      }
+
+      this.history.reconcile(this)
+
       this._emit('error', this.payload)
     }
 
@@ -114,8 +100,17 @@ inherit(Action, Emitter, {
    * Set the action state to "done" and marks the action for clean up, then set
    * a payload if provided. Triggers the "done" event.
    */
-  resolve (...params) {
-    if (this.set('done', ...params)) {
+  resolve (payload) {
+    if (!this.disposable) {
+      this.type = this.behavior.done
+      this.disposable = true
+
+      if (arguments.length > 0) {
+        this.payload = payload
+      }
+
+      this.history.reconcile(this)
+
       this._emit('done', this.payload)
     }
 
@@ -126,8 +121,17 @@ inherit(Action, Emitter, {
    * Set the action state to "cancelled" and marks the action for clean up,
    * then set a payload if provided. Triggers the "cancel" event.
    */
-  cancel (...params) {
-    if (this.set('cancelled', ...params)) {
+  cancel (payload) {
+    if (!this.disposable) {
+      this.type = this.behavior.cancelled
+      this.disposable = true
+
+      if (arguments.length > 0) {
+        this.payload = payload
+      }
+
+      this.history.reconcile(this)
+
       this._emit('cancel', this.payload)
     }
 
@@ -142,7 +146,7 @@ inherit(Action, Emitter, {
   toggle () {
     this.disabled = !this.disabled
 
-    this._emit('change', this)
+    this.history.invalidate()
 
     return this
   },
@@ -226,21 +230,6 @@ inherit(Action, Emitter, {
       this.onDone(resolve)
       this.onError(reject)
     }).then(pass, fail)
-  },
-
-  /**
-   * Cleanup an action that has been disconnected from its history.
-   */
-  teardown () {
-    this.parent = null
-    this.sibling = null
-
-    if (this.next) {
-      this.next.parent = null
-    }
-
-    // Remove generic change events to free from history reconciliation
-    this.off('change')
   }
 
 })
@@ -250,14 +239,14 @@ inherit(Action, Emitter, {
  */
 Object.defineProperty(Action.prototype, 'children', {
   get () {
-    let start = this.next
-    let nodes = []
+    let children = []
+    let node = this.first
 
-    while (start) {
-      nodes.push(start)
-      start = start.sibling
+    while (node) {
+      children.unshift(node)
+      node = node.sibling
     }
 
-    return nodes
+    return children
   }
 })

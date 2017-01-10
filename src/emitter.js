@@ -5,16 +5,20 @@
  */
 
 export default function Emitter () {
-  this._events = []
+  this._events = null
 }
 
 Emitter.prototype = {
-
   /**
    * Add an event listener.
    */
   on (event, fn, scope, once) {
+    if (this._events == null) {
+      this._events = []
+    }
+
     this._events.push({ event, fn, scope, once })
+
     return this
   },
 
@@ -31,6 +35,10 @@ Emitter.prototype = {
    * no callback is provided, removes all callbacks for the given type.
    */
   off (event, fn, scope) {
+    if (this._events == null) {
+      return this
+    }
+
     var removeAll = fn == null
 
     let i = 0
@@ -51,15 +59,18 @@ Emitter.prototype = {
   },
 
   removeAllListeners () {
-    this._events.length = 0
+    this._events = null
   },
 
   /**
    * Emit `event` with the given args.
    */
   _emit (event, payload) {
-    let i = 0
+    if (this._events == null) {
+      return this
+    }
 
+    let i = 0
     while (i < this._events.length) {
       var cb = this._events[i]
 

@@ -26,7 +26,8 @@ test('can manipulate how many transactions are merged', function () {
   repo.push(identity, 6)
 
   expect(repo.history.size).toEqual(5)
-  expect(repo.history.toArray().map(a => a.payload)).toEqual([ 2, 3, 4, 5, 6 ])
+  expect(repo.history.root.payload).toEqual(2)
+  expect(repo.history.head.payload).toEqual(6)
 })
 
 test('can partially apply push', function () {

@@ -7,12 +7,9 @@ import Action from './action'
  * @constructor
  * @param {number|null} limit - Depth of history before compression
  */
-export default function History (limit) {
+export default function History (limit=0) {
   this.repos = []
-
-  if (limit != null) {
-    this.limit = limit
-  }
+  this.limit = limit
 }
 
 History.prototype = {
@@ -60,15 +57,14 @@ History.prototype = {
   checkout (action) {
     this.head = action
 
-    if (!this.head) {
+    if (!action) {
       this.root = this.head = null
+    } else if (action.parent) {
+      action.parent.next = action
     }
 
-    // Clear the focus, we don't know if it was before the action or it
-    this.focus = null
-
-    this.setSize()
-    this.reconcile(null)
+    this.adjustSize()
+    this.invalidate()
 
     return this
   },
@@ -79,65 +75,50 @@ History.prototype = {
    * @param {Function|String} behavior
    */
   append (behavior) {
-    const action = new Action(behavior)
+    const action = new Action(behavior, this)
 
-    if (this.head != null) {
-      this.connect(this.head, action)
-    }
+    if (this.head) {
+      action.parent = this.head
 
-    this.head = action
+      // To keep track of children, maintain a pointer
+      // to the first child ever produced. We might checkout
+      // another child later, so we can't use next
+      if (this.head.first) {
+        this.head.next.sibling = action
+      } else {
+        this.head.first = action
+      }
 
-    if (this.root == null) {
+      this.head.next = action
+    } else {
       this.root = action
     }
 
-    action.on('change', this.reconcile, this)
-
+    this.head = action
     this.size += 1
 
     return this.head
   },
 
   /**
-   * Append an action to another, making that action its parent. This
-   * produces history.
-   * @param {Action} parent
-   * @param {Action} child
-   */
-  connect (parent, child) {
-    child.parent  = parent
-    child.sibling = parent.next
-
-    parent.next = child
-
-    return this
-  },
-
-  isDormant () {
-    return this.size <= 0 || this.repos.length <= 0
-  },
-
-  /**
   * Handle a change to a node that happened prior to
   * the cache point.
    */
-  recache (action) {
-    if (this.focus && action.id <= this.focus.id) {
-      this.focus = null
-      this.invoke('unarchive', null)
-    }
+  invalidate () {
+    this.focus = null
+
+    this.invoke('unarchive', null)
+
+    this.reconcile()
   },
 
   /**
    * @param {Action} action
    */
   reconcile (action) {
-    if (this.isDormant()) {
+    // No need to run this function if there are no active repos
+    if (this.repos.length <= 0) {
       return false
-    }
-
-    if (action) {
-      this.recache(action)
     }
 
     this.invoke('rollback', null)
@@ -148,13 +129,10 @@ History.prototype = {
   },
 
   rollforward () {
-    let actions = this.toArray(this.focus)
+    let action = this.focus ? this.focus.next : this.root
     let cacheable = true
 
-    for (var i = 0, len = actions.length; i < len; i++) {
-      let action = actions[i]
-
-      // Ignore disabled actions
+    while (action && action.parent !== this.head) {
       if (!action.disabled) {
         this.invoke('reconcile', action)
       }
@@ -167,6 +145,8 @@ History.prototype = {
       } else {
         cacheable = false
       }
+
+      action = action.next
     }
   },
 
@@ -176,14 +156,13 @@ History.prototype = {
     // Is the cache pointed at the base? If so, that means we need
     // to purge the base.
     if (shouldArchive) {
-      this.root.teardown()
-
-      this.root = this.root.next
-
       this.size -= 1
 
       if (this.size <= 0) {
         this.root = this.head = this.focus = null
+      } else {
+        this.root = this.root.next
+        this.root.parent = null
       }
     }
 
@@ -191,40 +170,18 @@ History.prototype = {
   },
 
   /**
-   * Get an array of the active branch
-   * @param {Action|null} base - The starting point for the branch
-   * @return {Any} The result of reducing over state
+   * Update the current size and active branch path
    */
-  toArray (base) {
-    let items = new Array()
-    let node  = this.head
+  adjustSize () {
+    let action = this.head
+    let size = this.root ? 1 : 0
 
-    while (node != null && node !== base) {
-      items.push(node)
-
-      if (node === this.root) {
-        break;
-      }
-
-      node = node.parent
+    while (action && action.parent) {
+      action = action.parent
+      size += 1
     }
 
-    return items.reverse()
-  },
-
-  /**
-   * Update the current size
-   */
-  setSize () {
-    let count = this.root ? 1 : 0
-    let node  = this.head
-
-    while (node !== this.root) {
-      count += 1
-      node = node.parent
-    }
-
-    this.size = count
+    this.size = size
   }
 
 }

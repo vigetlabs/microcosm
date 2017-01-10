@@ -5,6 +5,7 @@ import Realm        from './realm'
 import createEffect from './create-effect'
 import lifecycle    from './lifecycle'
 import tag          from './tag'
+import coroutine    from './coroutine'
 
 import {
   merge,
@@ -261,7 +262,11 @@ inherit(Microcosm, Emitter, {
    * @return {Action} action representaftion of the invoked function
    */
   push (behavior, ...params) {
-    return this.append(behavior).execute(params, this)
+    let action = this.append(behavior)
+
+    coroutine(action, action.behavior.apply(null, params), this)
+
+    return action
   },
 
   /**
