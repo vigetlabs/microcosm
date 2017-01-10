@@ -33,6 +33,7 @@ export default function withIntent (Component) {
     return createElement(Component, merge({ send }, props))
   }
 
+  WithIntent.displayName = 'withIntent(' + displayName(Component) + ')'
   WithIntent.contextTypes = WithIntent.propTypes = TYPES
 
   return WithIntent
