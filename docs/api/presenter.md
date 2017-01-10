@@ -251,8 +251,8 @@ model as props (including children).
 
 ### register()
 
-Expose "intent" subscriptions to child components. This is used with the <Form />
-add-on to improve the ergonomics of presenter/view communication (though this only
+Expose "intent" subscriptions to child components. This is used with the `Form` or `withIntent`
+add-ons to improve the ergonomics of presenter/view communication (though this only
 occurs from the view to the presenter).
 
 ```javascript
