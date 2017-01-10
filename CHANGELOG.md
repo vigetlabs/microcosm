@@ -7,6 +7,7 @@
 - Actions may now, intentionally, be set to undefined
 - Fixed case where `action.toggle()` would not effect history tree as
   intended.
+- Fixed general performance improvements across the board.
 
 ## 11.0.0
 
