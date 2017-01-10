@@ -28,6 +28,25 @@ describe('::model', function() {
     expect(wrapper.text()).toEqual('Hello, world!')
   })
 
+  test('passes send within the model', function () {
+    let spy = jest.fn()
+
+    class Hello extends Presenter {
+      register () {
+        return {
+          'test': spy
+        }
+      }
+      view ({ send }) {
+        return <button onClick={() => send('test')} />
+      }
+    }
+
+    let wrapper = mount(<Hello place="world" />).simulate('click')
+
+    expect(spy).toHaveBeenCalled()
+  })
+
   test('builds the view model into state', function () {
     class MyPresenter extends Presenter {
       model () {

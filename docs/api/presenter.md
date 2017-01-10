@@ -249,6 +249,25 @@ class Example extends Presenter {
 If a view is a React component, it will invoke it with the Presenter's
 model as props (including children).
 
+Views are passed the `send` method on a Presenter. This provides the
+exact same behavior as `withIntent`:
+
+```javascript
+function Button ({ send }) {
+  return <button onClick={() => send('test')}>Click me!</button>
+}
+
+class Example extends Presenter {
+  view = Button
+
+  register () {
+    return {
+      'test': () => alert("This is a test!")
+    }
+  }
+}
+```
+
 ### register()
 
 Expose "intent" subscriptions to child components. This is used with the `Form` or `withIntent`

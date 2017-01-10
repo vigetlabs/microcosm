@@ -113,8 +113,9 @@ function PresenterContext (props, context) {
 
   this.repo = this.getRepo()
   this.state = {}
+  this.send = this.send.bind(this)
 
-  props.presenter._connectSend(this.send.bind(this))
+  props.presenter._connectSend(this.send)
 }
 
 inherit(PresenterContext, BaseComponent, {
@@ -122,7 +123,7 @@ inherit(PresenterContext, BaseComponent, {
   getChildContext () {
     return {
       repo : this.repo,
-      send : this.send.bind(this)
+      send : this.send
     }
   },
 
@@ -146,7 +147,7 @@ inherit(PresenterContext, BaseComponent, {
   render () {
     const { presenter, parentProps } = this.props
 
-    const model = merge(parentProps, this.state)
+    const model = merge(parentProps, { send: this.send }, this.state)
 
     if (presenter.view.contextTypes || presenter.view.prototype.isReactComponent) {
       return createElement(presenter.view, model)
