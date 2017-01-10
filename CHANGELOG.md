@@ -5,6 +5,7 @@
 - The `withIntent` add-on correctly sets its displayName property to
   `"withIntent(ComponentName)")`. This makes it selectable by enzyme's
   `find` function.
+- Pass `send` prop to Presenter children
 
 ## 11.1.0
 
