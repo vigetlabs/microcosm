@@ -5,7 +5,7 @@
 - Added getRepo method to presenters to allow greater control over
   repo assignment
 - Action payloads may now, intentionally, be set to undefined
-- Fixed case where `action.toggle()` would not effect history tree as
+- Fixed case where `action.toggle()` would not adjust history tree as
   intended.
 - Cut memory usage for action history by roughly 80%
 - Cut action resolution times by roughly 85%
