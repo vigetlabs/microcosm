@@ -23,6 +23,15 @@ const Button = withIntent(function ({ send }) {
 })
 ```
 
+```javascript
+// within a Presenter:
+register () {
+  return {
+    'hello-world': this.doSomething
+  }
+}
+```
+
 ## Testing
 
 `withIntent` relies on the context setup by a Presenter. When testing,
