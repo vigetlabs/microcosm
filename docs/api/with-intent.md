@@ -30,6 +30,8 @@ register () {
     'hello-world': this.doSomething
   }
 }
+
+doSomething (repo, params) {  }
 ```
 
 ## Testing
