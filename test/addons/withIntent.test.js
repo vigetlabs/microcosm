@@ -75,3 +75,29 @@ describe('When there is no context (called directly as a function)', function ()
   })
 
 })
+
+describe('Display name', function () {
+
+  test('sets the correct display name for stateless components', function () {
+    const Button = withIntent(function Button () {
+      return <button type="button" />
+    })
+
+    let wrapper = mount(<div><Button /></div>)
+
+    expect(wrapper.find('withIntent(Button)')).toHaveLength(1)
+  })
+
+  test('sets the correct display name for stateful components', function () {
+    const Button = withIntent(class Button extends React.Component {
+      render () {
+        return <button type="button" />
+      }
+    })
+
+    let wrapper = mount(<div><Button /></div>)
+
+    expect(wrapper.find('withIntent(Button)')).toHaveLength(1)
+  })
+
+})
