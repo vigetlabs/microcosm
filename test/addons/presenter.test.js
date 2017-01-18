@@ -47,6 +47,22 @@ describe('::model', function() {
     expect(spy).toHaveBeenCalled()
   })
 
+  test('references the forked repo', function () {
+    expect.assertions(1)
+
+    let repo = new Microcosm()
+
+    class Test extends Presenter {
+      view (model) {
+        expect(model.repo.parent).toBe(repo)
+
+        return <p>Test</p>
+      }
+    }
+
+    mount(<Test repo={repo} />)
+  })
+
   test('builds the view model into state', function () {
     class MyPresenter extends Presenter {
       model () {

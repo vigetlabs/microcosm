@@ -1,5 +1,10 @@
 # Changelog
 
+## 11.2.1
+
+- Properly teardown event listeners that are not forks
+- Send forked repo into view
+
 ## 11.2.0
 
 - The `withIntent` add-on correctly sets its displayName property to

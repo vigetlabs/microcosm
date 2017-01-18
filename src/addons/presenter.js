@@ -151,7 +151,7 @@ inherit(PresenterContext, BaseComponent, {
   render () {
     const { presenter, parentProps } = this.props
 
-    const model = merge(parentProps, { send: this.send }, this.state)
+    const model = merge(parentProps, { send: this.send, repo: this.repo }, this.state)
 
     if (presenter.hasOwnProperty('view') || presenter.view.prototype.isReactComponent) {
       return createElement(presenter.view, model)
