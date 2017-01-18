@@ -1,13 +1,21 @@
-var path = require('path')
+const path = require('path')
+const webpack = require('webpack')
+
+const PORT = process.env.PORT || 3000
 
 module.exports = {
-  context: __dirname,
+  devtool: 'cheap-module-source-map',
 
-  devtool: 'inline-source-map',
+  entry: [
+    'react-hot-loader/patch',
+    'webpack-dev-server/client?http://localhost:' + PORT,
+    'webpack/hot/only-dev-server',
+    path.resolve(process.cwd(), 'app/boot.js')
+  ],
 
   output: {
-    filename : 'application.js',
-    path     : process.cwd()
+    filename: 'application.js',
+    path: process.cwd()
   },
 
   resolve: {
@@ -20,15 +28,22 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.jsx*/,
-      loader: 'babel',
+      loader: 'babel-loader',
       exclude: [/node_modules/]
     }]
   },
 
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin()
+  ],
+
   devServer: {
+    hot: true,
     contentBase: process.cwd(),
     publicPath: '/',
-    port: process.env.PORT || 4000,
-    historyApiFallback: true
+    compress: true,
+    historyApiFallback: true,
+    port: PORT
   }
 }

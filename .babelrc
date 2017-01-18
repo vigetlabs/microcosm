@@ -8,5 +8,12 @@
     ],
     "stage-0",
     "react"
-  ]
+  ],
+  "env": {
+    "development": {
+      "plugins": [
+        "react-hot-loader/babel"
+      ]
+    }
+  }
 }

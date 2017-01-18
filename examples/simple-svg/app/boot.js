@@ -5,13 +5,14 @@ import Circle      from './domains/circle'
 import Logo        from './views/logo'
 import { animate } from './actions/animate'
 
-const repo = new Microcosm({ maxHistory: Infinity})
-const el  = document.getElementById('app')
+let repo = new Microcosm()
+let el = document.getElementById('app')
+let Badge = Logo
 
 repo.addDomain('circle', Circle)
 
 repo.on('change', function (state) {
-  DOM.render(<Logo { ...state } />, el)
+  DOM.render(<Badge { ...state } />, el)
 })
 
 function loop ({ time = Date.now() } = {}) {
@@ -19,3 +20,9 @@ function loop ({ time = Date.now() } = {}) {
 }
 
 loop()
+
+if (module.hot) {
+  module.hot.accept('./views/logo', () => {
+    Badge = require('./views/logo').default
+  })
+}
