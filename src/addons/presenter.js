@@ -35,8 +35,6 @@ inherit(Presenter, BaseComponent, {
     this.repo = repo
 
     this.setup(repo, this.props, this.props.state)
-
-    this.repo.on('teardown', () => this.teardown(repo, this.props, this.state))
   },
 
   _connectSend (send) {
@@ -137,7 +135,13 @@ inherit(PresenterContext, BaseComponent, {
   },
 
   componentWillUnmount () {
-    this.repo.teardown()
+    const { presenter, parentProps, parentState, repo } = this.props
+
+    presenter.teardown(this.repo, parentProps, parentState)
+
+    if (this.repo !== (repo || this.context.repo)) {
+      this.repo.teardown()
+    }
   },
 
   componentWillReceiveProps (next) {
@@ -149,7 +153,7 @@ inherit(PresenterContext, BaseComponent, {
 
     const model = merge(parentProps, { send: this.send }, this.state)
 
-    if (presenter.view.contextTypes || presenter.view.prototype.isReactComponent) {
+    if (presenter.hasOwnProperty('view') || presenter.view.prototype.isReactComponent) {
       return createElement(presenter.view, model)
     }
 

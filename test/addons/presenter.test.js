@@ -363,11 +363,48 @@ describe('::teardown', function() {
     expect(spy.mock.calls[0][1].test).toEqual('bar')
   })
 
+  test('eliminates the teardown subscription when overriding getRepo', function () {
+    const spy = jest.fn()
+
+    class Test extends Presenter {
+      teardown = spy
+
+      getRepo (repo) {
+        return repo
+      }
+    }
+
+    const repo = new Microcosm()
+    const wrapper = mount(<Test repo={repo}/>)
+
+    wrapper.unmount()
+    repo.teardown()
+
+    expect(spy).toHaveBeenCalledTimes(1)
+  })
+
+  test('does not teardown a repo that is not a fork', function () {
+    const spy = jest.fn()
+
+    class Test extends Presenter {
+      getRepo (repo) {
+        return repo
+      }
+    }
+
+    const repo = new Microcosm()
+
+    repo.on('teardown', spy)
+
+    mount(<Test repo={repo}/>).unmount()
+
+    expect(spy).toHaveBeenCalledTimes(0)
+  })
 })
 
 describe('::view', function() {
 
-  test('views can be react components', function () {
+  test('views can be stateful react components', function () {
     class MyView extends React.Component {
       render() {
         return <p>{this.props.message}</p>
@@ -387,6 +424,72 @@ describe('::view', function() {
     expect(text).toEqual('hello')
   })
 
+  test('views can be stateless components', function () {
+    function MyView ({ message }) {
+      return (<p>{message}</p>)
+    }
+
+    class MyPresenter extends Presenter {
+      view = MyView
+
+      model() {
+        return { message: 'hello' }
+      }
+    }
+
+    let text = mount(<MyPresenter />).text()
+
+    expect(text).toEqual('hello')
+  })
+
+  test('views can be functions', function () {
+    class MyPresenter extends Presenter {
+      view ({ message }) {
+        return <p>{message}</p>
+      }
+      model() {
+        return { message: 'hello' }
+      }
+    }
+
+    let text = mount(<MyPresenter />).text()
+
+    expect(text).toEqual('hello')
+  })
+
+  test('view functions preserve scope', function () {
+    expect.assertions(1)
+
+    class MyPresenter extends Presenter {
+      view () {
+        expect(this instanceof MyPresenter).toBe(true)
+        return <p>Test</p>
+      }
+    }
+
+    mount(<MyPresenter />)
+  })
+
+  test('views can be getters', function () {
+    class MyView extends React.Component {
+      render() {
+        return <p>{this.props.message}</p>
+      }
+    }
+
+    class MyPresenter extends Presenter {
+      get view () {
+        return MyView
+      }
+      model() {
+        return { message: 'hello' }
+      }
+    }
+
+    let text = mount(<MyPresenter />).text()
+
+    expect(text).toEqual('hello')
+  })
 })
 
 describe('purity', function() {
