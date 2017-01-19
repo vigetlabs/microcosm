@@ -5,39 +5,48 @@
 [![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 [![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 
-Microcosm is [Flux](https://facebook.github.io/flux/) with first-class
-actions and state sandboxing.
+Microcosm is an application state management tool designed for use
+with React (and similar libraries). It helps you keep track of user
+actions and requests for data in a centralized repository.
 
-The source of truth in Microcosm is a historical record of actions. As
-they move through a set lifecycle, Microcosm reconciles actions in the
-order they were created. This makes optimistic updates, cancellation,
-and loading states much simpler. They self clean.
+```javascript
+let repo = new Microcosm()
 
-It also provides strong separation between actions and
-state. Microcosms can ["fork"](#forks-global-state-local-concerns) to
-accommodate specific use cases. Keep global state global, while easily
-supporting pagination, filtering, and other secondary data processing.
+// An action is a simple function
+let step = (number) => number
 
-1. **Batteries included**. Just install `microcosm`. Plugins and middleware
-   should not be required to immediately be productive.
-2. **Easy to use**. Less boilerplate. More expressive. The Microcosm
-   interface is easy to use, easy to understand, and easy to maintain.
-3. **Powerful:** Microcosm's transactional state management, action
-   statuses, and state sandboxing provide exceptional tools for
-   building applications.
+// Domains define how a Microcosm should convert actions into
+// new state
+repo.addDomain('counter', {
+  getInitialState () {
+    return 0
+  },
+  register () {
+    return {
+      [step]: (count, amount) => count + amount
+    }
+  }
+})
 
-## Documentation
+// Push an action, a request to perform some kind of work
+repo.push(step, 2)
 
-Comprehensive documentation can be found in the [docs section of this repo](docs).
+console.log(repo.state.count) // 2
+```
 
-If you'd rather look at working code, head over to
-the [example apps](examples) or checkout out the [quickstart guide](./docs/guides/quickstart.md).
-
-### Installation
+## Installation
 
 ```
 npm install --save microcosm
 ```
+
+## Get started
+
+Check out our [quickstart guide](http://code.viget.com/microcosm/guides/quickstart.html).
+
+## Documentation
+
+Comprehensive documentation can be found in the [docs section of this repo](docs).
 
 ## Overview
 
@@ -336,9 +345,13 @@ repo.addDomain('users', UsersDomain)
 ReactDOM.render(<PaginatedUsers repo={repo} page="1" />, el)
 ```
 
-## Why another Flux?
+## Why?
 
-Good question! Other popular implementations of Flux treat actions as static events. The result of calling a dispatch method or resolving some sort of data structure like a Promise.
+Good question! Microcosm is an evolution of
+the [Flux](https://facebook.github.io/flux/) architecture. Other
+popular implementations of Flux treat actions as static events. The
+result of calling a dispatch method or resolving some sort of data
+structure like a Promise.
 
 But what about everything before that point? A user might get tired of waiting for a file to upload, or dip into a subway tunnel and lose connectivity. They might want to retry an request, cancel it, or just see what’s happening.
 
@@ -351,6 +364,7 @@ While manageable, we’ve found that this can be cumbersome. That it can lead to
 Microcosm thinks of actions as stories. They go through different states as they move from start to completion. Actions have a common public interface, regardless of what data structures or asynchronous patterns are utilized. An interface that is easy to query from the presentation layer in order to handle use-case specific display requirements.
 
 This makes it easier to handle complicated behaviors such as optimistic updates, dialog windows, or long running processes.
+
 
 ## Inspiration
 
