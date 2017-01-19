@@ -5,34 +5,61 @@
 [![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 [![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 
-Microcosm is an application state management tool designed for use
-with React (and similar libraries). It helps you keep track of user
-actions and requests for data in a centralized repository.
+Microcosm is an application state management tool designed for use with React (and similar libraries). It helps you keep track of user actions and requests for data in a centralized repository.
 
 ```javascript
 let repo = new Microcosm()
 
-// An action is a simple function
-let step = (number) => number
+function getUser (id) {
+  // This will return a promise. Microcosm automatically understands promises,
+  // see http://code.viget.com/microcosm/api/actions.html
+  return fetch(`/users/#{id}`).then(response => response.json())
+}
 
-// Domains define how a Microcosm should convert actions into
-// new state
+// Domains define how a Microcosm should turn actions into new state
 repo.addDomain('counter', {
   getInitialState () {
-    return 0
+    return {}
+  },
+  addUser (users, record) {
+    return { ...users, [record.id]: record }
   },
   register () {
     return {
-      [step]: (count, amount) => count + amount
+      [getUser.done]: this.addUser
     }
   }
 })
 
 // Push an action, a request to perform some kind of work
-repo.push(step, 2)
+let action = repo.push(getUser, 2)
 
-console.log(repo.state.count) // 2
+// You could also handle errors in a domain's register method
+// by hooking into `getUser.error`
+action.onError(function () {
+  alert("Something went terribly wrong!")
+})
 ```
+
+## Why?
+
+Other [Flux](https://facebook.github.io/flux/) implementations treat actions as static events; the result of calling a dispatch method or resolving some sort of data structure like a Promise.
+
+But what if a user gets tired of waiting for a file to upload, or switches pages before a GET request finishes? What if they dip into a subway tunnel and lose connectivity? They might want to retry an request, cancel it, or just see what’s happening.
+
+The burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution for tracking outstanding requests and binding them to related action data. This can lead to interface-specific requirements leaking into the data layer, resulting in complicated code, and unexpected bugs as requirements change.
+
+### How Microcosm is different
+
+Microcosm thinks of actions as stories. An action that has failed moves from an `open` to `error` state. Requests that are aborted may move into a `cancelled` state. As action states change, they are resolved within a greater history of every other action.
+
+This means that applications can make a lot of assumptions about user actions:
+
+- Actions resolve in a consistent, predictable order
+- Action types are automatically generated
+- Actions maintain the same public API, no matter what asynchronous pattern is utilized (or not)
+
+This reduces a lot of boilerplate, however it also makes it easier for the presentation layer to handle use-case specific display requirements, like displaying an error, performing an optimistic update, or tracking file upload progress.
 
 ## Installation
 
@@ -344,27 +371,6 @@ repo.addDomain('users', UsersDomain)
 
 ReactDOM.render(<PaginatedUsers repo={repo} page="1" />, el)
 ```
-
-## Why?
-
-Good question! Microcosm is an evolution of
-the [Flux](https://facebook.github.io/flux/) architecture. Other
-popular implementations of Flux treat actions as static events. The
-result of calling a dispatch method or resolving some sort of data
-structure like a Promise.
-
-But what about everything before that point? A user might get tired of waiting for a file to upload, or dip into a subway tunnel and lose connectivity. They might want to retry an request, cancel it, or just see what’s happening.
-
-The burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution for tracking outstanding requests and binding them to related action data.
-
-While manageable, we’ve found that this can be cumbersome. That it can lead to interface-specific requirements leaking into the data layer, resulting in complicated code, and unexpected bugs as requirements change.
-
-### How Microcosm is different
-
-Microcosm thinks of actions as stories. They go through different states as they move from start to completion. Actions have a common public interface, regardless of what data structures or asynchronous patterns are utilized. An interface that is easy to query from the presentation layer in order to handle use-case specific display requirements.
-
-This makes it easier to handle complicated behaviors such as optimistic updates, dialog windows, or long running processes.
-
 
 ## Inspiration
 
