@@ -49,7 +49,7 @@ Other [Flux](https://facebook.github.io/flux/) implementations treat actions as 
 
 But what if a user gets tired of waiting for a file to upload, or switches pages before a GET request finishes? What if they dip into a subway tunnel and lose connectivity? They might want to retry an request, cancel it, or just see what’s happening.
 
-The burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution for tracking outstanding requests and binding them to related action data. We've seen this result in UI requirements leaking into the data layer, resulting in complicated code, and unexpected bugs as those requirements change.
+The burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution for tracking outstanding requests and binding them to related action data. Presentation layer requirements leak into the data layer, making it harder to write tests, reuse code, and accommodate unexpected changes.
 
 ### How Microcosm is different
 
