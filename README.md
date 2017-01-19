@@ -5,7 +5,7 @@
 [![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 [![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 
-Microcosm is an application state management tool designed for use with React (and similar libraries). It helps you keep track of user actions and requests for data in a centralized repository.
+Microcosm is a state management tool for [React](https://github.com/facebook/react) (and similar libraries). Keep track of user actions, cancel requests, and perform optimistic updates with ease.
 
 ## At a glance
 
