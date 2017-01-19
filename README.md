@@ -47,13 +47,13 @@ action.onError(function () {
 
 Other [Flux](https://facebook.github.io/flux/) implementations treat actions as static events; the result of calling a dispatch method or resolving some sort of data structure like a Promise.
 
-But what if a user gets tired of waiting for a file to upload, or switches pages before a GET request finishes? What if they dip into a subway tunnel and lose connectivity? They might want to retry an request, cancel it, or just see what’s happening.
+But what if a user gets tired of waiting for a file to upload, or switches pages before a GET request finishes? What if they dip into a subway tunnel and lose connectivity? They might want to retry a request, cancel it, or just see what’s happening.
 
 The burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution for tracking outstanding requests and binding them to related action data. Presentation layer requirements leak into the data layer, making it harder to write tests, reuse code, and accommodate unexpected changes.
 
 ### How Microcosm is different
 
-Microcosm thinks of actions as stories. An action that has failed moves from an `open` to `error` state. Requests that are aborted may move into a `cancelled` state. As action states change, they are resolved within a greater history of every other action.
+Microcosm actions are first-class citizens. An action can move from an `open` to `error` state if a request fails. Requests that are aborted may move into a `cancelled` state. As they change, actions resolve within a greater history of every other action.
 
 This means that applications can make a lot of assumptions about user actions:
 
