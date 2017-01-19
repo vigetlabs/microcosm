@@ -7,6 +7,8 @@
 
 Microcosm is an application state management tool designed for use with React (and similar libraries). It helps you keep track of user actions and requests for data in a centralized repository.
 
+## At a glance
+
 ```javascript
 let repo = new Microcosm()
 
@@ -61,13 +63,11 @@ This means that applications can make a lot of assumptions about user actions:
 
 This reduces a lot of boilerplate, however it also makes it easier for the presentation layer to handle use-case specific display requirements, like displaying an error, performing an optimistic update, or tracking file upload progress.
 
-## Installation
+## Get started
 
 ```
 npm install --save microcosm
 ```
-
-## Get started
 
 Check out our [quickstart guide](http://code.viget.com/microcosm/guides/quickstart.html).
 
