@@ -1,5 +1,9 @@
 # Changelog
 
+## 11.2.2
+
+- Fix case where committing did not properly result in a change
+
 ## 11.2.1
 
 - Properly teardown event listeners that are not forks
