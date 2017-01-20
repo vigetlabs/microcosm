@@ -215,11 +215,10 @@ inherit(Microcosm, Emitter, {
       this.state  = merge(this.state, this.parent.state)
     }
 
-    let next = this.dispatch(this.staged, action.type, action.payload)
+    this.staged = this.dispatch(this.staged, action.type, action.payload)
 
-    if (this.staged !== next) {
-      this.staged = next
-      this.state = this.commit(next)
+    if (this.cached !== this.staged) {
+      this.state = this.commit(this.staged)
     }
 
     if (this.state != original) {
