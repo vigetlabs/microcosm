@@ -8,13 +8,24 @@ import routes    from './routes'
 import { Router, browserHistory } from 'react-router'
 
 const repo = new Repo({ maxHistory: Infinity })
+const el = document.getElementById('app')
 
 // Install the debugger
 Debugger(repo)
 
-// Render
-DOM.render((
-  <Presenter repo={ repo }>
-    <Router history={ browserHistory } routes={ routes } />
-  </Presenter>
-), document.getElementById('app'))
+function render (routes) {
+  DOM.render((
+    <Presenter repo={repo}>
+      <Router history={browserHistory} routes={routes} />
+    </Presenter>
+  ), el)
+}
+
+render(routes)
+
+if (module.hot) {
+  module.hot.accept('./routes', function () {
+    DOM.unmountComponentAtNode(el)
+    render(require('./routes').default)
+  })
+}

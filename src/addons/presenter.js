@@ -17,11 +17,12 @@ const BaseComponent = PureComponent || Component
 function Presenter (props, context) {
   BaseComponent.call(this, props, context)
 
-  // Do not overriding render, generate the context wrapper upon instantiation
-  if (this.render !== Presenter.prototype.render) {
+  // Do not overriding render, generate the context wrapper upon creation
+  if (this.view === Presenter.prototype.view &&
+      this.render !== Presenter.prototype.render) {
     this.view = this.render
     this.render = Presenter.prototype.render
-  }
+   }
 }
 
 inherit(Presenter, BaseComponent, {
