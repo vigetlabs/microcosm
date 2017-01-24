@@ -17,9 +17,16 @@ repo.addDomain('messages', Messages)
  */
 Debugger(repo)
 
-
 /**
  * When the repo starts, render the user interface to the
  * provided DOM location.
  */
-DOM.render(<Chat repo={ repo } />, document.getElementById('app'))
+function render () {
+  DOM.render(<Chat repo={repo} />, document.getElementById('app'))
+}
+
+render()
+
+if (module.hot) {
+  module.hot.accept('./presenters/chat', render)
+}

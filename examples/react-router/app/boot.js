@@ -13,7 +13,9 @@ const el = document.getElementById('app')
 // Install the debugger
 Debugger(repo)
 
-function render (routes) {
+function render () {
+  DOM.unmountComponentAtNode(el)
+
   DOM.render((
     <Presenter repo={repo}>
       <Router history={browserHistory} routes={routes} />
@@ -24,8 +26,5 @@ function render (routes) {
 render(routes)
 
 if (module.hot) {
-  module.hot.accept('./routes', function () {
-    DOM.unmountComponentAtNode(el)
-    render(require('./routes').default)
-  })
+  module.hot.accept('./routes', render)
 }

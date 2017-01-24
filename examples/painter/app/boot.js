@@ -5,7 +5,17 @@ import Repo      from './repo'
 import Workspace from './presenters/workspace'
 
 const repo = new Repo({ maxHistory: Infinity })
+const el = document.querySelector('#app')
 
 Debugger(repo)
 
-DOM.render(<Workspace repo={ repo } />, document.querySelector('#app'))
+function render () {
+  DOM.unmountComponentAtNode(el)
+  DOM.render(<Workspace repo={repo} />, el)
+}
+
+render()
+
+if (module.hot) {
+  module.hot.accept('./presenters/workspace', render)
+}

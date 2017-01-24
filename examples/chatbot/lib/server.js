@@ -3,7 +3,7 @@ var assets  = require('./assets')
 var Chat    = require('./chat')
 
 var app  = express()
-var port = process.env.PORT || 4000
+var port = process.env.PORT || 3000
 
 app.use(assets())
 app.use(express.static(__dirname + '/../public/'))

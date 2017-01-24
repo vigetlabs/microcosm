@@ -1,27 +1,35 @@
-const path = require('path')
+/**
+ * Follows
+ * https://webpack.js.org/guides/hmr-react/
+ */
+
 const webpack = require('webpack')
+const { resolve } = require('path')
 
 const PORT = process.env.PORT || 3000
 
 module.exports = {
-  devtool: 'cheap-module-source-map',
+  devtool: 'cheap-module-inline-source-map',
 
   entry: [
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:' + PORT,
     'webpack/hot/only-dev-server',
-    path.resolve(process.cwd(), 'app/boot.js')
+    resolve(process.cwd(), 'app/boot.js')
   ],
 
   output: {
     filename: 'application.js',
-    path: process.cwd()
+    path: process.cwd(),
+    publicPath: '/'
   },
+
+  context: resolve(process.cwd()),
 
   resolve: {
     alias: {
-      'microcosm$': path.resolve(__dirname, '../src/microcosm.js'),
-      'microcosm': path.resolve(__dirname, '../src/')
+      'microcosm$': resolve(__dirname, '../src/microcosm.js'),
+      'microcosm': resolve(__dirname, '../src/')
     }
   },
 
