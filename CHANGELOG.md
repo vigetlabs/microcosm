@@ -1,6 +1,6 @@
 # Changelog
 
-## Edge
+## 11.3.0
 
 - Presenters now support hot module replacement
 - Fixed case where checkout out a an action in history would not
