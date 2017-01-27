@@ -1,5 +1,11 @@
 # Changelog
 
+## Edge
+
+- Presenters now support hot module replacement
+- Fixed case where checkout out a an action in history would not
+  link up the correct active branch
+
 ## 11.2.2
 
 - Fix case where committing did not properly result in a change

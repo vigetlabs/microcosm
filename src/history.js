@@ -177,7 +177,12 @@ History.prototype = {
     let size = this.root ? 1 : 0
 
     while (action && action.parent) {
-      action = action.parent
+      let parent = action.parent
+
+      parent.next = action
+
+      action = parent
+
       size += 1
     }
 
