@@ -9,10 +9,10 @@ const time = require('microtime')
 
 const SIZES = [
   1000,
-  10000,
   50000,
   100000,
-  200000
+  500000,
+  1000000 // For fun, mostly
 ]
 
 console.log('\nConducting history benchmark...\n')
