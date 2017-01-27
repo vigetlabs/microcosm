@@ -6,7 +6,7 @@ import {
 } from '../actions/pixels'
 
 function Cell ({ x, y, active, onClick }) {
-  const color = active ? 'green' : 'white'
+  const color = active ? 'black' : 'white'
 
   return (
     <rect x={x} y={y} onClick={onClick} fill={color} width="1" height="1"/>
