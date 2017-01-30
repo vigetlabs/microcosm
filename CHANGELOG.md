@@ -2,7 +2,9 @@
 
 ## 11.4.0
 
-- Serializing a fork folds over parent serialization. This should be
+- Serializing a fork folds into parent serialization. This should be
+  consistent with standard action dispatching.
+- Deserializing a fork folds into parent deserialization. This should be
   consistent with standard action dispatching.
 
 
