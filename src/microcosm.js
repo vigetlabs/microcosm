@@ -351,11 +351,14 @@ inherit(Microcosm, Emitter, {
    * @return {Object} The deserialized version of the provided payload.
    */
   deserialize (payload) {
-    if (payload == null) {
-      return {}
+    let base = payload ? payload : {}
+
+    if (this.parent) {
+      base = this.parent.deserialize(base)
     }
 
-    return this.dispatch(payload, lifecycle.deserialize, payload)
+
+    return this.dispatch(base, lifecycle.deserialize, base)
   },
 
   /**
@@ -365,7 +368,13 @@ inherit(Microcosm, Emitter, {
    * @return {Object} The serialized version of repo state.
    */
   serialize () {
-    return this.dispatch(this.staged, lifecycle.serialize, null)
+    let base = this.staged
+
+    if (this.parent) {
+      base = merge(base, this.parent.serialize())
+    }
+
+    return this.dispatch(base, lifecycle.serialize, null)
   },
 
   /**

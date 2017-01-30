@@ -42,3 +42,74 @@ test('passes the raw data as the second argument of deserialize', function (done
 
   repo.deserialize({ fiz: 'buzz'})
 })
+
+describe('parents', function () {
+
+  test('serialize works from parents to children', function () {
+    const parent = new Microcosm()
+    const child = parent.fork()
+
+    parent.addDomain('fiz', {
+      getInitialState: () => 'fiz',
+      serialize: word => word.toUpperCase()
+    })
+
+    child.addDomain('buzz', {
+      getInitialState: () => 'buzz',
+      serialize: word => word.toUpperCase()
+    })
+
+    expect(child.serialize()).toEqual({ fiz: 'FIZ', buzz: 'BUZZ' })
+  })
+
+  test('serializing a child with the same key works from serialization', function () {
+    const parent = new Microcosm()
+    const child = parent.fork()
+
+    parent.addDomain('fiz', {
+      getInitialState: () => 'fiz',
+      serialize: word => word + '-first'
+    })
+
+    child.addDomain('fiz', {
+      serialize: word => word + '-second'
+    })
+
+    expect(child.serialize()).toEqual({ fiz: 'fiz-first-second' })
+  })
+
+  test('deserialize works from parents to children', function () {
+    const parent = new Microcosm()
+    const child = parent.fork()
+
+    parent.addDomain('fiz', {
+      deserialize: word => word.toLowerCase()
+    })
+
+    child.addDomain('buzz', {
+      deserialize: word => word.toLowerCase()
+    })
+
+    const data = child.deserialize({ fiz: 'FIZ', buzz: 'BUZZ' })
+
+    expect(data).toEqual({ fiz: 'fiz', buzz: 'buzz' })
+  })
+
+  test('deserializing a child with the same key works from serialization', function () {
+    const parent = new Microcosm()
+    const child = parent.fork()
+
+    parent.addDomain('fiz', {
+      deserialize: word => word + '-first'
+    })
+
+    child.addDomain('fiz', {
+      deserialize: word => word + '-second'
+    })
+
+    const data = child.deserialize({ fiz: 'fiz' })
+
+    expect(data).toEqual({ fiz: 'fiz-first-second' })
+  })
+
+})

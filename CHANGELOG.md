@@ -1,5 +1,11 @@
 # Changelog
 
+## 11.4.0
+
+- Serializing a fork folds over parent serialization. This should be
+  consistent with standard action dispatching.
+
+
 ## 11.3.0
 
 - Presenters now support hot module replacement
