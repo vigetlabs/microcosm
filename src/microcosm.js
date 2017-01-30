@@ -357,7 +357,6 @@ inherit(Microcosm, Emitter, {
       base = this.parent.deserialize(base)
     }
 
-
     return this.dispatch(base, lifecycle.deserialize, base)
   },
 
