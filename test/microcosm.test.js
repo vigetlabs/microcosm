@@ -146,10 +146,11 @@ describe('patch', function () {
     const repo = new Microcosm()
 
     // This is invalid
-    let action = repo.patch("{ test: deserialize }", true)
+    function badPatch () {
+      repo.patch("{ test: deserialize }", true)
+    }
 
-    expect(action.is('error')).toBe(true)
-    expect(action.payload.toString()).toContain('Unexpected token')
+    expect(badPatch).toThrow('Unexpected token')
   })
 
 })
@@ -198,14 +199,15 @@ describe('reset', function () {
     expect(repo.state.test).toBe('DESERIALIZE')
   })
 
-  test('rejects if there is a JSON parse error deserialization fails', function () {
+  test('raises if there is a JSON parse error deserialization fails', function () {
     const repo = new Microcosm()
 
     // This is invalid
-    let action = repo.reset("{ test: deserialize }", true)
+    function badReset () {
+      repo.reset("{ test: deserialize }", true)
+    }
 
-    expect(action.is('error')).toBe(true)
-    expect(action.payload.toString()).toContain('Unexpected token')
+    expect(badReset).toThrow('Unexpected token')
   })
 
 })

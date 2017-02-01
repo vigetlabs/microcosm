@@ -13,11 +13,7 @@ export default function MetaDomain () {
       let payload = data
 
       if (deserialize) {
-        try {
-          payload = repo.deserialize(data)
-        } catch (error) {
-          action.reject(error)
-        }
+        payload = repo.deserialize(data)
       }
 
       action.resolve(merge(initial, payload))
@@ -29,11 +25,7 @@ export default function MetaDomain () {
       let payload = data
 
       if (deserialize) {
-        try {
-          payload = merge(payload, repo.deserialize(payload))
-        } catch (error) {
-          action.reject(error)
-        }
+        payload = repo.deserialize(payload)
       }
 
       action.resolve(payload)

@@ -98,31 +98,3 @@ repo.serialize() // { planets: [] }
 
 JSON.stringify(repo) // "{ "planets": [] }"
 ```
-
-## Reset returns an action
-
-Whenever `repo.reset()` is invoked, it returns an action to represent
-the request. This is useful for handling errors during serialization,
-such as when passing a raw string of invalid JSON content into
-deserialization:
-
-```javascript
-import Microcosm from 'microcosm'
-
-let repo = new Microcosm()
-
-repo.addDomain('planets', {
-  getInitialState () {
-    return []
-  }
-})
-
-let action = repo.reset("{ invalid json string}", true)
-
-action.onError(function (error) {
-  console.log(error) // JSON Parse error
-})
-```
-
-Since the action was rejected, no data modification occurs. The
-original state is protected.

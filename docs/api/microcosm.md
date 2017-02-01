@@ -74,10 +74,6 @@ repo.reset({
 })
 ```
 
-This returns an action. If the deserialize option is provided and it
-fails (such as parsing a bad JSON string), the action will be
-rejected.
-
 ### `patch(data, deserialize?)`
 
 Merges a data payload into the existing state. If the second argument
@@ -88,10 +84,6 @@ repo.patch({
   planets: [{ name: 'Tatooine' }, { name: 'Dagobah' }]
 })
 ```
-
-This returns an action. If the deserialize option is provided and it
-fails (such as parsing a bad JSON string), the action will be
-rejected.
 
 ### `addDomain(key, config, options)`
 
