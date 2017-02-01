@@ -10,8 +10,8 @@ Microcosm ships with several utilities that make this easy.
 ## Resetting state
 
 The `reset` method wipes away existing state, replacing it with new
-data. Where domain keys are unspecified, values are replaced with the
-result of `getInitialState`:
+data. If this data object does not include a key managed by a domain,
+it will reset that value to the initial state of the domain.
 
 ```javascript
 import Microcosm from 'microcosm'
