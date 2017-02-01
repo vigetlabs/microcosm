@@ -286,9 +286,9 @@ inherit(Microcosm, Emitter, {
    * @return {Microcosm} self
    */
   addDomain (key, domain, options) {
-    this.realm.add(key, domain, options)
-
     this.follower = false
+
+    this.realm.add(key, domain, options)
     this.rebase()
 
     return this
@@ -315,16 +315,9 @@ inherit(Microcosm, Emitter, {
    * @return {Action} action - An action representing the reset operation.
    */
   reset (data, deserialize) {
-    if (deserialize === true) {
-      data = this.deserialize(data)
-    }
-
     this.follower = false
 
-    return this.push(lifecycle._willReset, {
-      owner : this,
-      data  : merge(this.getInitialState(), data)
-    })
+    return this.realm.reset(data, deserialize)
   },
 
   /**
@@ -335,13 +328,9 @@ inherit(Microcosm, Emitter, {
    * @return {Action} action - An action representing the patch operation.
    */
   patch (data, deserialize) {
-    if (deserialize === true) {
-      data = this.deserialize(data)
-    }
-
     this.follower = false
 
-    return this.push(lifecycle._willPatch, { data, owner: this })
+    return this.realm.patch(data, deserialize)
   },
 
   /**
@@ -352,6 +341,10 @@ inherit(Microcosm, Emitter, {
    */
   deserialize (payload) {
     let base = payload ? payload : {}
+
+    if (typeof base === 'string') {
+      base = JSON.parse(base)
+    }
 
     if (this.parent) {
       base = this.parent.deserialize(base)
@@ -391,11 +384,11 @@ inherit(Microcosm, Emitter, {
    * respected. Emits a "change" event.
    */
   rebase () {
-    let data = this.getInitialState()
+    let payload = this.getInitialState()
 
-    this.cached = merge(this.cached, data)
+    this.cached = merge(this.cached, payload)
 
-    this.push(lifecycle._willRebase, { data, owner: this })
+    return this.realm.rebase(payload)
   },
 
   /**

@@ -10,7 +10,7 @@ export default function Realm (repo) {
   this.registry = {}
 
   // All realms contain a meta domain for basic Microcosm operations
-  this.add(null, MetaDomain)
+  this.meta = this.add(null, MetaDomain)
 }
 
 Realm.prototype = {
@@ -46,6 +46,18 @@ Realm.prototype = {
     }
 
     return domain
+  },
+
+  reset (data, deserialize) {
+    return this.repo.push(this.meta.reset, data, deserialize)
+  },
+
+  patch (data, deserialize) {
+    return this.repo.push(this.meta.patch, data, deserialize)
+  },
+
+  rebase (data) {
+    return this.repo.push(this.meta.rebase, data)
   }
 
 }

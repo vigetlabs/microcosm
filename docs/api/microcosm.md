@@ -63,9 +63,20 @@ repo.push(createPlanet, { name: 'Merkur' })
 
 ### `reset(data, deserialize?)`
 
-Resets state to the result of `Microcosm::getInitialState()`. If the
-first argument is provided, it will merge into this value. If the second
-argument is true, Microcosm will call `deserialize` on the data.
+Resets state. The new state is the result of folding the provided data
+over `getInitialState()`. If no data is provided, the repo will revert
+to this initial value. If the second argument is true, Microcosm will
+call `deserialize` on the data.
+
+```javascript
+repo.reset({
+  planets: [{ name: 'Tatooine' }, { name: 'Dagobah' }]
+})
+```
+
+This returns an action. If the deserialize option is provided and it
+fails (such as parsing a bad JSON string), the action will be
+rejected.
 
 ### `patch(data, deserialize?)`
 
@@ -77,6 +88,10 @@ repo.patch({
   planets: [{ name: 'Tatooine' }, { name: 'Dagobah' }]
 })
 ```
+
+This returns an action. If the deserialize option is provided and it
+fails (such as parsing a bad JSON string), the action will be
+rejected.
 
 ### `addDomain(key, config, options)`
 
@@ -120,6 +135,14 @@ fold the deserialized data over the current repo state.
 
 ```javascript
 repo.deserialize(data) // => cleaned data
+```
+
+**Important**: If the provided data is a string, Microcosm will attempt to run
+JSON.parse on the value:
+
+```javascript
+let raw = '{ "planets" : [{ "name": "Earth" }]}'
+repo.deserialize(raw) // => { planets: [...] }
 ```
 
 ### `toJSON()`

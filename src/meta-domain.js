@@ -4,31 +4,68 @@
  * for other domains.
  */
 
-import lifecycle from './lifecycle'
 import { merge } from './utils'
 
-export default function MetaDomain () {}
+export default function MetaDomain () {
+  this.reset = function (data, deserialize) {
+    return function (action, repo) {
+      let initial = repo.getInitialState()
+      let payload = data
 
-MetaDomain.prototype.setup = function (repo) {
-  this.repo = repo
-}
+      if (deserialize) {
+        try {
+          payload = repo.deserialize(data)
+        } catch (error) {
+          action.reject(error)
+        }
+      }
 
-MetaDomain.prototype[lifecycle._willReset] = function (state, { owner, data }) {
-  return owner === this.repo ? data : state
-}
-
-MetaDomain.prototype[lifecycle._willPatch] = function (state, { owner, data }) {
-  if (owner !== this.repo) {
-    return state
+      action.resolve(merge(initial, payload))
+    }
   }
 
-  return merge(state, data)
-}
+  this.patch = function (data, deserialize) {
+    return function (action, repo) {
+      let payload = data
 
-MetaDomain.prototype[lifecycle._willRebase] = function (state, { owner, data }) {
-  if (owner !== this.repo) {
-    return state
+      if (deserialize) {
+        try {
+          payload = merge(payload, repo.deserialize(payload))
+        } catch (error) {
+          action.reject(error)
+        }
+      }
+
+      action.resolve(payload)
+    }
   }
 
-  return merge(data, state)
+  this.rebase = function (data) {
+    return data
+  }
+}
+
+MetaDomain.prototype = {
+  handleReset (state, data) {
+    return data
+  },
+
+  handlePatch (state, data) {
+    return merge(state, data)
+  },
+
+  handleRebase (state, data) {
+    return merge(data, state)
+  },
+
+  register () {
+    let registry = {}
+
+    // TODO: This is to work around a parse issue with Buble
+    registry[this.reset]  = this.handleReset
+    registry[this.patch]  = this.handlePatch
+    registry[this.rebase] = this.handleRebase
+
+    return registry
+  }
 }

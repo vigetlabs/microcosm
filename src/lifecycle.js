@@ -7,8 +7,5 @@
 export default {
   getInitialState : 'getInitialState',
   serialize       : 'serialize',
-  deserialize     : 'deserialize',
-  _willRebase     : '_willRebase',
-  _willReset      : '_willReset',
-  _willPatch      : '_willPatch'
+  deserialize     : 'deserialize'
 }

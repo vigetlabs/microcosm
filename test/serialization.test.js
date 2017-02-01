@@ -15,32 +15,50 @@ test('runs through serialize methods on domains', function () {
   expect(repo.toJSON()['serialize-test']).toBe('this is a test')
 })
 
-test('defaults to getInitialState when no deserialize method is provided', function () {
-  const repo = new Microcosm()
+describe('deserialize', function () {
 
-  repo.addDomain('fiz', {
-    getInitialState() {
-      return true
-    }
+  test('defaults to getInitialState when no deserialize method is provided', function () {
+    const repo = new Microcosm()
+
+    repo.addDomain('fiz', {
+      getInitialState() {
+        return true
+      }
+    })
+
+    return repo.patch({}).onDone(function() {
+      expect(repo.state).toEqual({ fiz: true })
+    })
   })
 
-  return repo.patch({}).onDone(function() {
-    expect(repo.state).toEqual({ fiz: true })
-  })
-})
+  test('passes the raw data as the second argument of deserialize', function (done) {
+    const repo = new Microcosm()
 
-test('passes the raw data as the second argument of deserialize', function (done) {
-  const repo = new Microcosm()
+    repo.addDomain('fiz', {
+      deserialize(subset, raw) {
+        expect(subset).toEqual('buzz')
+        expect(raw).toEqual({ fiz: 'buzz' })
+        done()
+      }
+    })
 
-  repo.addDomain('fiz', {
-    deserialize(subset, raw) {
-      expect(subset).toEqual('buzz')
-      expect(raw).toEqual({ fiz: 'buzz' })
-      done()
-    }
+    repo.deserialize({ fiz: 'buzz'})
   })
 
-  repo.deserialize({ fiz: 'buzz'})
+  test('can deserialize a string', function () {
+    const repo = new Microcosm()
+
+    repo.addDomain('fiz', {
+      deserialize (state) {
+        return state.toUpperCase()
+      }
+    })
+
+    let answer = repo.deserialize('{ "fiz": "buzz"}')
+
+    expect(answer).toEqual({ fiz: 'BUZZ' })
+  })
+
 })
 
 describe('parents', function () {
