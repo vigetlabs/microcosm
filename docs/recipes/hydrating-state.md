@@ -67,7 +67,7 @@ repo.addDomain('planets', {
   }
 })
 
-repo.reset({ planets: [{ name: "Earth" }]})
+repo.reset({ planets: [{ name: "Earth" }]}, true)
 
 // The repo now contains planets
 repo.state.planets // Immutable.List
@@ -117,7 +117,7 @@ repo.addDomain('planets', {
   }
 })
 
-let action = repo.replace("{ invalid json string}")
+let action = repo.reset("{ invalid json string}", true)
 
 action.onError(function (error) {
   console.log(error) // JSON Parse error
