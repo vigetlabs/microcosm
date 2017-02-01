@@ -1,22 +1,19 @@
 # Hydrating State
 
-Often times, your application will need to start with a specific initial
-state. For example, when conducting server side rendering, your
-application should awaken on the client with the same exact
-information.
+Often times your application will need to start in a specific
+state. For example: server rendered pages that need to be hydrated in
+a specific state, or applications that save data in `localStorage` for
+return visits.
 
-Microcosm ships with several utilities that makes this process
-simpler.
+Microcosm ships with several utilities that make this easy.
 
 ## Resetting state
 
-Microcosm provides a `reset` method for wiping away the existing repo
-state. This operation folds a data object over the result of calling
-`getInitialState` on all domains:
+The `reset` method wipes away an existing repo's state, falling back
+to its initial state where keys haven't been provided:
 
 ```javascript
 import Microcosm from 'microcosm'
-import Immutable from 'immutable'
 
 let repo = new Microcosm()
 
@@ -45,12 +42,13 @@ repo.state.planets // []
 
 ## Deserializing JSON into repo state
 
-The second argument of `reset` is a boolean flag that indicates if
-Microcosm should instruct domains to execute `deserialize` on the
-provided data.
+Data doesn't always ship in a form useable by a repo. By setting the
+second argument of `reset` to true, it tells the repo to execute
+`deserialize` on the provided data before entering it.
 
-The primary use case for this is to convert a raw JavaScript object
-into a complex data structure, such as an ImmutableJS data structure:
+This is primarily to accommodate complex data libraries such as
+ImmutableJS. When resetting, we can tell a domain to convert raw data
+using the ImmutableJS API:
 
 ```javascript
 import Microcosm from 'microcosm'
@@ -96,6 +94,8 @@ repo.addDomain('planets', {
 })
 
 repo.serialize() // { planets: [] }
+
+JSON.stringify(repo) // "{ "planets": [] }"
 ```
 
 ## Reset returns an action
