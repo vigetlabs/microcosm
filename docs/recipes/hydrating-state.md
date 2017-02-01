@@ -9,9 +9,9 @@ Microcosm ships with several utilities that make this easy.
 
 ## Resetting state
 
-The `reset` method wipes away an existing repo's state, replacing it
-with new data. Where domain keys are unspecified, values are replaced
-with the result of `getInitialState`:
+The `reset` method wipes away existing state, replacing it with new
+data. Where domain keys are unspecified, values are replaced with the
+result of `getInitialState`:
 
 ```javascript
 import Microcosm from 'microcosm'
