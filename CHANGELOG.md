@@ -6,7 +6,7 @@
   consistent with standard action dispatching.
 - Deserializing a fork folds into parent deserialization. This should be
   consistent with standard action dispatching.
-
+- Deserialize may now operate on a string.
 
 ## 11.3.0
 
