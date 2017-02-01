@@ -24,7 +24,7 @@ const DEFAULT_OPTIONS = { maxHistory: 0, history: null, parent: null }
  * @constructor
  * @extends {Emitter}
  */
-function Microcosm ({ maxHistory, history, parent } = DEFAULT_OPTIONS, state)  {
+function Microcosm ({ maxHistory, history, parent } = DEFAULT_OPTIONS, state, deserialize)  {
   Emitter.call(this)
 
   this.history = history || new History(maxHistory)
@@ -58,7 +58,7 @@ function Microcosm ({ maxHistory, history, parent } = DEFAULT_OPTIONS, state)  {
 
   // If given state, reset to that snapshot
   if (state) {
-    this.reset(state, true)
+    this.reset(state, deserialize)
   }
 }
 

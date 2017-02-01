@@ -12,6 +12,13 @@ test('it can instantiate with a starting state', function () {
   expect(repo.state.foo).toEqual('bar')
 })
 
+test('it can deserialize starting state', function () {
+  let raw = JSON.stringify({ foo: 'bar' })
+  const repo = new Microcosm({}, raw, true)
+
+  expect(repo.state.foo).toEqual('bar')
+})
+
 test('can manipulate how many transactions are merged', function () {
   const repo = new Microcosm({ maxHistory: 5 })
   const identity = n => n

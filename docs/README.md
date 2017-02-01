@@ -29,3 +29,4 @@
 2. [AJAX](recipes/ajax.md)
 3. [ImmutableJS](recipes/immutable-js.md)
 4. [Preact](recipes/preact.md)
+5. [Hydrating State](recipes/hydrating-state.md)
