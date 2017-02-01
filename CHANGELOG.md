@@ -7,6 +7,7 @@
 - Deserializing a fork folds into parent deserialization. This should be
   consistent with standard action dispatching.
 - Deserialize may now operate on a string.
+- Microcosm::setup receives instantiation options
 
 ## 11.3.0
 

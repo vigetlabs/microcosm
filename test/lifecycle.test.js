@@ -2,7 +2,7 @@ import Microcosm from '../src/microcosm'
 
 describe('Setup', function() {
 
-  test('runs when a Microcosm is instantiated', function () {
+  test('passes options from instantiation', function () {
     const test = jest.fn()
 
     class Repo extends Microcosm {
@@ -11,7 +11,7 @@ describe('Setup', function() {
       }
     }
 
-    expect(new Repo().setup).toHaveBeenCalled()
+    expect(new Repo({ foo: 'bar' }).setup).toHaveBeenCalledWith({ foo: 'bar' })
   })
 
 })

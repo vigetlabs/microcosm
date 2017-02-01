@@ -14,8 +14,6 @@ import {
   set
 } from './utils'
 
-const DEFAULT_OPTIONS = { maxHistory: 0, history: null, parent: null }
-
 /**
  * A tree-like data structure that keeps track of the execution order of
  * actions that are pushed into it, sequentially folding them together to
@@ -24,37 +22,38 @@ const DEFAULT_OPTIONS = { maxHistory: 0, history: null, parent: null }
  * @constructor
  * @extends {Emitter}
  */
-function Microcosm ({ maxHistory, history, parent } = DEFAULT_OPTIONS, state, deserialize)  {
+function Microcosm (options, state, deserialize)  {
   Emitter.call(this)
 
-  this.history = history || new History(maxHistory)
+  options = options || {}
+
+  this.parent = options.parent || null
+  this.history = this.parent ? this.parent.history : new History(options.maxHistory)
   this.history.addRepo(this)
 
   this.realm = new Realm(this)
 
-  this.parent = parent || null
-
   // Keeps track of the root of the history tree
-  this.archived = parent ? parent.archived : {}
+  this.archived = this.parent ? this.parent.archived : {}
 
   // Keeps track of the focal point of the
-  this.cached = parent ? parent.cached : this.archived
+  this.cached = this.parent ? this.parent.cached : this.archived
 
   // Staging. Internal domain state
-  this.staged = parent ? parent.state : this.cached
+  this.staged = this.parent ? this.parent.state : this.cached
 
   // Publically available data.
-  this.state = parent ? parent.state : this.staged
+  this.state = this.parent ? this.parent.state : this.staged
 
   // Mark children as "followers". Followers do not move through the entire
   // lifecycle. They don't have to. This greatly improves fork performance.
-  this.follower = !!parent
+  this.follower = !!this.parent
 
   // Track changes with a mutable flag
   this.dirty = false
 
   // Microcosm is now ready. Call the setup lifecycle method
-  this.setup()
+  this.setup(options)
 
   // If given state, reset to that snapshot
   if (state) {
@@ -412,8 +411,7 @@ inherit(Microcosm, Emitter, {
    */
   fork () {
     return new Microcosm({
-      parent  : this,
-      history : this.history
+      parent : this
     })
   }
 
