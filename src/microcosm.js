@@ -449,7 +449,7 @@ inherit(Microcosm, Emitter, {
   * invocations of a computation as state changes. Useful for use inside
   * of Presenters.
    */
-  query (...args) {
+  memo (...args) {
     return () => this.compute(...args)
   },
 
@@ -457,8 +457,8 @@ inherit(Microcosm, Emitter, {
    * Return a memoized version of extract. Optionally
    * add additional processing.
    */
-  memoize (query, ...processors) {
-    let keyPaths = compileKeyPaths(query)
+  query (fragment, ...processors) {
+    let keyPaths = compileKeyPaths(fragment)
 
     let subset = null
     let answer = null

@@ -56,17 +56,17 @@ describe('compute', function () {
 
 })
 
-describe('query', function () {
+describe('memo', function () {
 
   it('returns the same result if state has not changed', function () {
     let repo = new Microcosm({}, { styles: { color: 'red' } })
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
-    let query = repo.query('color', color => color.toUpperCase())
+    let query = repo.memo('color', color => color.toUpperCase())
 
-    let a = query()
-    let b = query()
+    let a = memo()
+    let b = memo()
 
     expect(a).toEqual('RED')
     expect(a).toBe(b)
@@ -77,7 +77,7 @@ describe('query', function () {
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
-    let query = repo.query('color', color => color.toUpperCase())
+    let query = repo.memo('color', color => color.toUpperCase())
 
     let a = query()
 
@@ -94,9 +94,9 @@ describe('query', function () {
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
-    let query = repo.query('color',
-                           color => color.toUpperCase(),
-                           color => color + ' - test')
+    let query = repo.memo('color',
+                          color => color.toUpperCase(),
+                          color => color + ' - test')
 
     expect(query()).toEqual('RED - test')
   })
