@@ -426,7 +426,7 @@ inherit(Microcosm, Emitter, {
    * state within Presenters.
    */
   index (name, ...args) {
-    this.indexes[name] = this.memoize(...args)
+    this.indexes[name] = this.query(...args)
 
     return this.indexes[name]
   },
@@ -439,9 +439,11 @@ inherit(Microcosm, Emitter, {
       throw new TypeError('Unable to compute missing index ' + index)
     }
 
+    let initial = this.indexes[index]()
+
     return processors.reduce((value, next) => {
       return next.call(this, value, this.state)
-    }, this.indexes[index]())
+    }, initial)
   },
 
   /**

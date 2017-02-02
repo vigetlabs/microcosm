@@ -65,8 +65,8 @@ describe('memo', function () {
 
     let query = repo.memo('color', color => color.toUpperCase())
 
-    let a = memo()
-    let b = memo()
+    let a = query()
+    let b = query()
 
     expect(a).toEqual('RED')
     expect(a).toBe(b)
