@@ -11,7 +11,9 @@ import {
   merge,
   inherit,
   get,
-  set
+  set,
+  extract,
+  compileKeyPaths
 } from './utils'
 
 /**
@@ -48,6 +50,8 @@ function Microcosm (options, state, deserialize)  {
   // Mark children as "followers". Followers do not move through the entire
   // lifecycle. They don't have to. This greatly improves fork performance.
   this.follower = !!this.parent
+
+  this.indexes = {}
 
   // Track changes with a mutable flag
   this.dirty = false
@@ -238,6 +242,7 @@ inherit(Microcosm, Emitter, {
 
     if (this.dirty) {
       this.dirty = false
+
       this._emit('change', this.state)
     }
   },
@@ -413,10 +418,68 @@ inherit(Microcosm, Emitter, {
     return new Microcosm({
       parent : this
     })
+  },
+
+  /**
+   * Memoize a computation of a fragment of application state.
+   * This may be referenced when computing properties or querying
+   * state within Presenters.
+   */
+  index (name, ...args) {
+    this.indexes[name] = this.memoize(...args)
+
+    return this.indexes[name]
+  },
+
+  /**
+   * Invoke an index, optionally adding additional processing.
+   */
+  compute (index, ...processors) {
+    if (this.indexes.hasOwnProperty(index) === false) {
+      throw new TypeError('Unable to compute missing index ' + index)
+    }
+
+    return processors.reduce((value, next) => {
+      return next.call(this, value, this.state)
+    }, this.indexes[index]())
+  },
+
+  /**
+  * Return a memoized compute function. This is useful for repeated
+  * invocations of a computation as state changes. Useful for use inside
+  * of Presenters.
+   */
+  query (...args) {
+    return () => this.compute(...args)
+  },
+
+  /**
+   * Return a memoized version of extract. Optionally
+   * add additional processing.
+   */
+  memoize (query, ...processors) {
+    let keyPaths = compileKeyPaths(query)
+
+    let subset = null
+    let answer = null
+
+    return () => {
+      let next = extract(this.state, keyPaths, subset)
+
+      if (next !== subset) {
+        subset = next
+
+        answer = processors.reduce((value, fn) => {
+          return fn.call(this, value, this.state)
+        }, subset)
+      }
+
+      return answer
+    }
   }
 
 })
 
 export default Microcosm
 
-export { Microcosm, Action, History, tag, merge, inherit }
+export { Microcosm, Action, History, tag, get, set, merge, inherit }

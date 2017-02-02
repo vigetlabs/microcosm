@@ -86,7 +86,7 @@ inherit(Presenter, BaseComponent, {
    *
    * If none of the keys have changed, `this.updateState` will not set a new state.
    */
-  model (props, state) {
+  model (props, state, repo) {
     return EMPTY
   },
 
@@ -168,7 +168,7 @@ inherit(PresenterContext, BaseComponent, {
   },
 
   updatePropMap ({ presenter, parentProps, parentState }) {
-    this.propMap = presenter.model(parentProps, parentState)
+    this.propMap = presenter.model(parentProps, parentState, this.repo)
     this.propMapKeys = Object.keys(this.propMap || EMPTY)
   },
 
@@ -197,6 +197,7 @@ inherit(PresenterContext, BaseComponent, {
     for (var i = this.propMapKeys.length - 1; i >= 0; --i) {
       var key = this.propMapKeys[i]
       var entry = this.propMap[key]
+
       var value = typeof entry === 'function' ? entry(repoState) : entry
 
       if (this.state[key] !== value) {

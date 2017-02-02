@@ -74,7 +74,7 @@
     "uglifyjs": "^2.4.10",
     "uid": "0.0.2",
     "webpack": "^2.2.0",
-    "webpack-dev-middleware": "^1.9.0",
+    "webpack-dev-middleware": "^1.10.0",
     "webpack-dev-server": "^2.2.0"
   }
 }
