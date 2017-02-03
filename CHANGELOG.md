@@ -8,6 +8,10 @@
   consistent with standard action dispatching.
 - Deserialize may now operate on a string.
 - Microcosm::setup receives instantiation options
+- Added some private APIs for memoized computed properties over
+  fragments of state (more to come)
+- Exposed and added documentation for `get`, `set`, and `merge` data
+  helpers.
 
 ## 11.3.0
 

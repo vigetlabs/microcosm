@@ -1,3 +1,5 @@
+const hasOwn = Object.prototype.hasOwnProperty
+
 /**
  * Shallow copy an object
  */
@@ -51,24 +53,32 @@ export function inherit (Child, Ancestor, proto) {
  * Retrieve a value from an object. If no key is provided, just
  * return the object.
  */
-export function get (object, key) {
-  if (Array.isArray(key)) {
-    return getIn(object, key)
+export function get (object, key, fallback) {
+  if (key == null) {
+    return object
+  } else if (object == null) {
+    return fallback
   }
 
-  return key == null ? object : object[key]
+  if (Array.isArray(key)) {
+    return getIn(object, key, fallback)
+  }
+
+  return hasOwn.call(object, key) ? object[key] : fallback
 }
 
 /**
  * Retrieve a value deeply within an object given an array of sequential
  * keys.
  */
-export function getIn (object, keys) {
-  let key = keys[0]
-  let rest = keys.slice(1)
+export function getIn (object, keys, fallback) {
+  let value = object
 
-  let isDeep = get(object, key) && rest.length > 0
-  return isDeep ? getIn(object[key], rest) : get(object, key)
+  for (var i = 0, len = keys.length; i < len; i++) {
+    value = get(value, keys[i], fallback)
+  }
+
+  return value
 }
 
 /**
@@ -122,10 +132,14 @@ export function setIn (object, keys, value) {
 /**
  * Compile a key path list for indexes
  */
-export function compileKeyPaths (string) {
-  let items = string.split(/\s*\,\s*/g)
+function splitKeyPath (string) {
+  return string.split(/\./)
+}
 
-  return items.map(q => q.split(/\./g))
+export function compileKeyPaths (string) {
+  let items = string.split(/\s*\,\s*/)
+
+  return items.map(splitKeyPath)
 }
 
 /**

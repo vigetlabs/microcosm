@@ -425,25 +425,55 @@ inherit(Microcosm, Emitter, {
    * This may be referenced when computing properties or querying
    * state within Presenters.
    */
-  index (name, ...args) {
-    this.indexes[name] = this.query(...args)
+  index (name, fragment, ...processors) {
+    let keyPaths = compileKeyPaths(fragment)
 
-    return this.indexes[name]
+    let state  = null
+    let subset = null
+    let answer = null
+
+    var query = this.indexes[name] = (...extra) => {
+      if (this.state !== state) {
+        state = this.state
+
+        let next = extract(state, keyPaths, subset)
+
+        if (next !== subset) {
+          subset = next
+
+          answer = processors.reduce((value, fn) => {
+            return fn.call(this, value, state)
+          }, subset)
+        }
+      }
+
+      return extra.reduce((value, fn) => {
+        return fn.call(this, value, state)
+      }, answer)
+    }
+
+    return query
+  },
+
+  lookup (name) {
+    let index = this.indexes[name]
+
+    if (index == null) {
+      if (this.parent) {
+        return this.parent.lookup(name)
+      } else {
+        throw new TypeError('Unable to find missing index ' + name)
+      }
+    }
+
+    return index
   },
 
   /**
    * Invoke an index, optionally adding additional processing.
    */
-  compute (index, ...processors) {
-    if (this.indexes.hasOwnProperty(index) === false) {
-      throw new TypeError('Unable to compute missing index ' + index)
-    }
-
-    let initial = this.indexes[index]()
-
-    return processors.reduce((value, next) => {
-      return next.call(this, value, this.state)
-    }, initial)
+  compute (name, ...processors) {
+    return this.lookup(name)(...processors)
   },
 
   /**
@@ -451,29 +481,18 @@ inherit(Microcosm, Emitter, {
   * invocations of a computation as state changes. Useful for use inside
   * of Presenters.
    */
-  memo (...args) {
-    return () => this.compute(...args)
-  },
+  memo (name, ...processors) {
+    let index = this.lookup(name)
 
-  /**
-   * Return a memoized version of extract. Optionally
-   * add additional processing.
-   */
-  query (fragment, ...processors) {
-    let keyPaths = compileKeyPaths(fragment)
-
-    let subset = null
+    let last = null
     let answer = null
 
     return () => {
-      let next = extract(this.state, keyPaths, subset)
+      let next = index()
 
-      if (next !== subset) {
-        subset = next
-
-        answer = processors.reduce((value, fn) => {
-          return fn.call(this, value, this.state)
-        }, subset)
+      if (next !== last) {
+        last = next
+        answer = index(...processors)
       }
 
       return answer

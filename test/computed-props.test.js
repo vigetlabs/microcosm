@@ -22,6 +22,7 @@ describe('indexing', function () {
     let a = repo.compute('color')
     let b = repo.compute('color')
 
+    expect(a).toEqual({ styles: { color: 'red' } })
     expect(a).toBe(b)
   })
 
@@ -40,6 +41,19 @@ describe('indexing', function () {
     expect(b).toEqual('blue')
   })
 
+  test('forks inherit indexes from parents', function () {
+    let repo = new Microcosm({}, { styles: { color: 'red' } })
+    
+    repo.index('styles', 'styles')
+
+    let child = repo.fork()
+
+    let a = repo.compute('styles')
+    let b = child.compute('styles')
+
+    expect(a).toBe(b)
+  })
+
 })
 
 describe('compute', function () {
@@ -54,6 +68,14 @@ describe('compute', function () {
     expect(value).toEqual('RED')
   })
 
+  it('raises an exception if an index is missing', function () {
+    let repo = new Microcosm()
+
+    expect(function () {
+      repo.compute('missing')
+    }).toThrow('Unable to find missing index missing')
+  })
+
 })
 
 describe('memo', function () {
@@ -63,13 +85,27 @@ describe('memo', function () {
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
-    let query = repo.memo('color', color => color.toUpperCase())
+    let query = repo.memo('color', value => value.toUpperCase())
 
     let a = query()
     let b = query()
 
     expect(a).toEqual('RED')
     expect(a).toBe(b)
+  })
+
+  it('does not recalculate processors if the index has not changed', function () {
+    let repo = new Microcosm({}, { styles: { color: 'red' } })
+    let toUpperCase = jest.fn(value => value.toUpperCase())
+
+    repo.index('color', 'styles.color', state => state.styles.color)
+
+    let query = repo.memo('color', toUpperCase)
+
+    let a = query()
+    let b = query()
+
+    expect(toUpperCase).toHaveBeenCalledTimes(1)
   })
 
   it('returns a new result if state has changed', function () {
@@ -100,4 +136,19 @@ describe('memo', function () {
 
     expect(query()).toEqual('RED - test')
   })
+
+  it('the result of processing one memo does not effect another', function () {
+    let repo = new Microcosm()
+    
+    repo.patch({ color: 'blue' })
+
+    repo.index('color', 'color', state => state.color)
+
+    let one = repo.memo('color', n => null)
+    let two = repo.memo('color', n => n.toUpperCase())
+    
+    expect(one()).toEqual(null)
+    expect(two()).toEqual('BLUE')
+  })
+
 })
