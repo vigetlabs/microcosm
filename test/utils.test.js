@@ -1,9 +1,22 @@
 import {
+  clone,
   get,
   set,
   compileKeyPaths,
   extract
 } from '../src/utils'
+
+describe('clone', function () {
+
+  it('can shallow copy an array', function () {
+    let original = [{ id: '1' }]
+    let copy = clone(original)
+
+    expect(Array.isArray(copy)).toBe(true)
+    expect(copy).not.toBe(original)
+  })
+
+})
 
 describe('get', function () {
   const subject = {

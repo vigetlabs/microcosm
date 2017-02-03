@@ -43,7 +43,7 @@ describe('indexing', function () {
 
   test('forks inherit indexes from parents', function () {
     let repo = new Microcosm({}, { styles: { color: 'red' } })
-    
+
     repo.index('styles', 'styles')
 
     let child = repo.fork()
@@ -102,8 +102,8 @@ describe('memo', function () {
 
     let query = repo.memo('color', toUpperCase)
 
-    let a = query()
-    let b = query()
+    query()
+    query()
 
     expect(toUpperCase).toHaveBeenCalledTimes(1)
   })
@@ -118,7 +118,7 @@ describe('memo', function () {
     let a = query()
 
     repo.patch({ styles: { color: 'blue' }})
-    
+
     let b = query()
 
     expect(a).toEqual('RED')
@@ -139,14 +139,14 @@ describe('memo', function () {
 
   it('the result of processing one memo does not effect another', function () {
     let repo = new Microcosm()
-    
+
     repo.patch({ color: 'blue' })
 
     repo.index('color', 'color', state => state.color)
 
     let one = repo.memo('color', n => null)
     let two = repo.memo('color', n => n.toUpperCase())
-    
+
     expect(one()).toEqual(null)
     expect(two()).toEqual('BLUE')
   })

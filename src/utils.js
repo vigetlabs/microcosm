@@ -4,6 +4,10 @@ const hasOwn = Object.prototype.hasOwnProperty
  * Shallow copy an object
  */
 export function clone (a) {
+  if (Array.isArray(a)) {
+    return a.concat()
+  }
+
   let copy = {}
 
   for (var key in a) {
