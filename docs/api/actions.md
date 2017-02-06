@@ -8,15 +8,42 @@
 
 ## Overview
 
-Actions encapsulate the process of resolving an action creator. Create an action using `Microcosm::push`:
+Microcosm uses actions to queue up some task and track its
+progress. Actions are ultimately dispatched to domains and effects for
+additional processing. Use actions to send requests to a server, or
+dispatch a global notification that some user action has occurred.
+
+Create an action by executing `Microcosm::push` with a function that
+performs some type of work. We call this function an _action creator_.
 
 ```javascript
+const repo = new Microcosm()
+
+function createPlanet (data) {
+  let request = fetch('/planets', { method: 'POST', data })
+
+  // This will return a promise, which Microcosm automatically
+  // understands. Read further for more details.
+  return request.then(response => response.json())
+}
+
 const action = repo.push(createPlanet, { name: 'Venus' })
 
 action.onDone(function () {
   // All done!
 })
 ```
+
+An action moves through several states:
+
+1. `open`: Indicates work has started.
+2. `loading`: Used for progress updates.
+3. `done`: The action has completed successfully.
+4. `error`: The action has failed.
+5. `cancelled`: Useful tracking aborted XHR requests or closed dialog modals.
+
+You can access these states with varying degrees of control depending
+on how you author action creators.
 
 ## Writing Action Creators
 
@@ -36,13 +63,6 @@ repo.push(addPlanet, { name: 'Saturn' })
 ```
 
 ### Return a promise
-
-Action creators that return a promise move through several states:
-
-1. `open`: The action is opened immediately. This allows domains to
-   handle a loading state.
-2. `done`: The action completes when the Promise resolves
-3. `error`: The action fails when the Promise is rejected
 
 ```javascript
 function readPlanets () {
