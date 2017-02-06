@@ -5,7 +5,7 @@ const hasOwn = Object.prototype.hasOwnProperty
  */
 export function clone (a) {
   if (Array.isArray(a)) {
-    return a.concat()
+    return a.slice(0)
   }
 
   let copy = {}
@@ -58,10 +58,10 @@ export function inherit (Child, Ancestor, proto) {
  * return the object.
  */
 export function get (object, key, fallback) {
-  if (key == null) {
-    return object
-  } else if (object == null) {
+  if (object == null) {
     return fallback
+  } else if (key == null) {
+    return object
   }
 
   if (Array.isArray(key)) {

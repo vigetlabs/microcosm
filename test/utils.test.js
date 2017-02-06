@@ -8,11 +8,28 @@ import {
 
 describe('clone', function () {
 
+  it('can shallow copy an object', function () {
+    let original = { id: '1' }
+    let copy = clone(original)
+
+    // It should match the original
+    expect(copy).toEqual(original)
+
+    // But it should not be the original
+    expect(copy).not.toBe(original)
+  })
+
   it('can shallow copy an array', function () {
     let original = [{ id: '1' }]
     let copy = clone(original)
 
+    // It should not get coerced into an object
     expect(Array.isArray(copy)).toBe(true)
+
+    // It should match the original
+    expect(copy).toEqual(original)
+
+    // It should not be the original
     expect(copy).not.toBe(original)
   })
 
@@ -42,6 +59,18 @@ describe('get', function () {
     let padding = get(subject, ['styles', 'padding'], 10)
 
     expect(padding).toEqual(10)
+  })
+
+  it('returns the fallback if the object is null', function () {
+    let fallback = get(null, ['missing'], true)
+
+    expect(fallback).toBe(true)
+  })
+
+  it('returns the fallback if the key and fallback are null', function () {
+    let fallback = get(null, null, true)
+
+    expect(fallback).toBe(true)
   })
 
 })
@@ -85,6 +114,13 @@ describe('set', function () {
     expect(next).toBe(subject)
   })
 
+  it('can operate on arrays', function () {
+    let list = ['a', 'b', 'c']
+    let next = set(list, 3, 'd')
+
+    expect(Array.isArray(next)).toBe(true)
+    expect(next[3]).toBe('d')
+  })
 })
 
 describe('compileKeyPaths', function () {
