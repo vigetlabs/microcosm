@@ -215,14 +215,11 @@ inherit(Microcosm, Emitter, {
     // Update children with their parent's state
     if (this.parent) {
       this.staged = merge(this.staged, this.parent.state)
-      this.state  = merge(this.state, this.parent.state)
+      this.state = merge(this.state, this.parent.state)
     }
 
     this.staged = this.dispatch(this.staged, action.type, action.payload)
-
-    if (this.cached !== this.staged) {
-      this.state = this.commit(this.staged)
-    }
+    this.state = this.commit(this.staged)
 
     if (this.state != original) {
       this.dirty = true

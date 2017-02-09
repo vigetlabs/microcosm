@@ -2,22 +2,6 @@ import History from '../src/history'
 import Microcosm from '../src/microcosm'
 
 const action = n => n
-const toArray = function (history) {
-  let items = new Array()
-  let node  = history.focus || history.root
-
-  while (node) {
-    items.push(node)
-
-    if (node === history.head) {
-      break
-    }
-
-    node = node.next
-  }
-
-  return items
-}
 
 test('adjusts the focal point when adding a node', function () {
   const history = new History()
@@ -50,7 +34,7 @@ test('only walks through the main timeline', function () {
 
   const third = history.append(action)
 
-  expect(toArray(history)).toEqual([ first, third ])
+  expect(history.toArray()).toEqual([ first, third ])
 })
 
 test('does not walk past the focal point', function () {
@@ -61,7 +45,7 @@ test('does not walk past the focal point', function () {
   history.append(action)
   history.checkout(one)
 
-  expect(toArray(history)).toEqual([ one ])
+  expect(history.toArray()).toEqual([ one ])
 })
 
 test('properly handles forks', function () {
@@ -76,11 +60,11 @@ test('properly handles forks', function () {
   let four = history.append(action)
   let five = history.append(action)
 
-  expect(toArray(history)).toEqual([ one, two, four, five ])
+  expect(history.toArray()).toEqual([ one, two, four, five ])
 
   history.checkout(three)
 
-  expect(toArray(history)).toEqual([ one, two, three ])
+     expect(history.toArray()).toEqual([ one, two, three ])
 })
 
 test('can get the previous node in the chain', function () {

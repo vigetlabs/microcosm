@@ -296,17 +296,16 @@ describe('Efficiency', function() {
     expect(handler).toHaveBeenCalledTimes(3)
   })
 
-  test('pushing an action that nothing responds to will not result in an update', () => {
+  test('pushing an action that nothing responds to will not result a change event', () => {
     const repo = new Microcosm()
     const spy = jest.fn()
 
-    repo.addDomain('test', {
-      commit: spy
-    })
+    repo.addDomain('test', {})
+    repo.on('change', spy)
 
     repo.push('whatever')
 
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledTimes(0)
   })
 
 })

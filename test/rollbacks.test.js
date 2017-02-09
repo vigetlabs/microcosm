@@ -1,4 +1,4 @@
-import Microcosm from '../src/microcosm'
+import Microcosm, { merge } from '../src/microcosm'
 
 test('does not rollforward the same actions twice', function () {
   const repo = new Microcosm({ maxHistory: Infinity })
@@ -181,4 +181,37 @@ test('processes multiple loading states', () => {
   repo.append(single).open('3')
 
   expect(repo.state.items.map(i => i.loading)).toEqual([true, true, true])
+})
+
+test('handles cancelling back to a former state', () => {
+  const repo = new Microcosm()
+
+  const foldIn = n => n
+
+  repo.addDomain('styles', {
+    getInitialState() {
+      return { color: 'blue' }
+    },
+
+    merge (state, rules) {
+      return merge(state, rules)
+    },
+
+    register () {
+      return {
+        [foldIn.open] : this.merge,
+        [foldIn.done] : this.merge
+      }
+    }
+  })
+
+  let action = repo.append(foldIn)
+
+  action.open({ color: 'red' })
+
+  expect(repo.state.styles.color).toEqual('red')
+
+  action.cancel()
+
+  expect(repo.state.styles.color).toEqual('blue')
 })

@@ -7,21 +7,16 @@
 
 ## Overview
 
-When working on larger applications, we observed substantial benefits
-from creating a separation between "passive view" React components,
-and those that interacted directly with Microcosm (and other
-non-presentational entities).
-
 The Presenter add-on makes it easier to keep application logic high
 within a component tree. It is designed specifically to extract and
 compute properties coming from a Microcosm instance and efficiently
 send them down as `props` to child "passive view" React components.
 
-Additionally, Presenters expose an "intent" API
-(see [`withIntent`](./with-intent.md) and [`<Form />`](./form.md)). Intents
-allow components deep within a component tree the ability to
-broadcast messages through Presenters, eventually passing straight
-into a Microcosm repo if no Presenter's `register` method intercepts it.
+Presenters also make it easy for components deep within a component
+tree to communicate without passing a long chain of props. The
+`withIntent` and `<Form />` may be used to broadcast messages called
+"intents" to parent Presenter components, or straight to a Microcosm
+repo itself if no Presenter intercepts the message.
 
 We'll cover both of these features within this document
 

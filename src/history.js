@@ -187,6 +187,34 @@ History.prototype = {
     }
 
     this.size = size
+  },
+
+  forEach (fn, scope) {
+    let action = this.focus || this.root
+
+    while (action) {
+      fn.call(scope, action)
+
+      if (action === this.head) {
+        break
+      }
+
+      action = action.next
+    }
+  },
+
+  map (fn, scope) {
+    let items = []
+
+    this.forEach(action => {
+      items.push(fn.call(scope, action))
+    })
+
+    return items
+  },
+
+  toArray () {
+    return this.map(n => n)
   }
 
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## 11.5.0
+
+- Fix case where cancelling an action would return to a prior state,
+  however not fire a change event because the state was the same as
+  the cache.
+- This is because `domain.commit` was too lazily executed, for those
+  using `commit`, be sure to implement a `shouldCommit` method
+  mitigate extra calls.
+- Added some internal enumeration helpers for history.
+
 ## 11.4.0
 
 - Serializing a fork folds into parent serialization. This should be
