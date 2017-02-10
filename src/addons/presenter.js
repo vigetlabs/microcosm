@@ -15,18 +15,17 @@ const BaseComponent = PureComponent || Component
  * majority of view code does not have to.
  */
 function Presenter (props, context) {
-  BaseComponent.call(this, props, context)
+  BaseComponent.apply(this, arguments)
 
   // Do not overriding render, generate the context wrapper upon creation
   if (this.view === Presenter.prototype.view &&
       this.render !== Presenter.prototype.render) {
-    this.view = this.render
-    this.render = Presenter.prototype.render
-   }
+    this.view = this.render.bind(this)
+    this.render = Presenter.prototype.render.bind(this)
+  }
 }
 
 inherit(Presenter, BaseComponent, {
-  constructor: Presenter,
 
   getRepo (repo, props) {
     return repo ? repo.fork() : new Microcosm()
@@ -108,7 +107,7 @@ inherit(Presenter, BaseComponent, {
 })
 
 function PresenterContext (props, context) {
-  BaseComponent.call(this, props, context)
+  BaseComponent.apply(this, arguments)
 
   this.repo = this.getRepo()
   this.state = {}
@@ -133,6 +132,11 @@ inherit(PresenterContext, BaseComponent, {
 
   componentDidMount () {
     this.repo.on('change', this.updateState, this)
+    this.props.presenter.refs = this.refs
+  },
+
+  componentDidUpdate () {
+    this.props.presenter.refs = this.refs
   },
 
   componentWillUnmount () {

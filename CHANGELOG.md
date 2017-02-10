@@ -1,5 +1,9 @@
 # Changelog
 
+## 11.5.1
+
+- Fix case where `this` was undefined in render method of Presenters
+
 ## 11.5.0
 
 - Fix case where cancelling an action would return to a prior state,

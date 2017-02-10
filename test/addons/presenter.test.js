@@ -8,6 +8,40 @@ const View = withIntent(function ({ send }) {
   return <button id="button" onClick={() => send('test', true)} />
 })
 
+describe('refs', function () {
+
+  it('should support string refs', function() {
+    class MyPresenter extends Presenter {
+      view () {
+        return <p ref="container">Test</p>
+      }
+    }
+
+    let wrapper = mount(<MyPresenter />)
+
+    expect(wrapper.ref('container').length).toEqual(1)
+  })
+
+  it('should support dynamic refs', function() {
+    var count = 0
+
+    class MyPresenter extends Presenter {
+      view () {
+        return <p ref={() => this.foo = count++}>Test</p>
+      }
+    }
+
+    let wrapper = mount(<MyPresenter />)
+
+    expect(wrapper.get(0).foo).toEqual(0)
+
+    wrapper.unmount()
+
+    expect(wrapper.get(0).foo).toEqual(1)
+  })
+
+})
+
 describe('::model', function() {
 
   test('model is an alias for model ', function () {
@@ -633,6 +667,20 @@ describe('::render', function () {
     }
 
     expect(mount(<Test />).text()).toEqual('Test')
+  })
+
+  test('scope of render should be the presenter', function () {
+    expect.assertions(1)
+
+    class Test extends Presenter {
+      render () {
+        expect(this).toBeInstanceOf(Test)
+
+        return <p>Test</p>
+      }
+    }
+
+    mount(<Test />)
   })
 
   test('overridden render passes context', function () {
