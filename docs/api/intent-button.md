@@ -51,7 +51,7 @@ class CountPresenter extends Presenter {
   }
 }
 
-DOM.render(<CountPresenter repo={ repo } />, document.getElementById('container'))
+DOM.render(<CountPresenter repo={repo} />, document.getElementById('container'))
 ```
 
 When clicked, the IntentButton will invoke an intent, passing in the

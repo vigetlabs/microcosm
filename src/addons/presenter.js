@@ -1,5 +1,5 @@
 import { Children, PropTypes, Component, PureComponent, createElement } from 'react'
-import Microcosm, { merge, tag, inherit } from '../microcosm'
+import Microcosm, { merge, get, tag, inherit } from '../microcosm'
 
 const EMPTY = {}
 
@@ -242,11 +242,14 @@ inherit(PresenterContext, BaseComponent, {
 
     // No: try the parent presenter
     if (this.context.send) {
-      return this.context.send(intent, ...params)
+      // Do not allow transfer across repos
+      if (get(this.repo, 'history') === get(this.context, ['repo', 'history'])) {
+        return this.context.send.apply(null, arguments)
+      }
     }
 
     // If we hit the top, push the intent into the Microcosm instance
-    return this.repo.push(intent, ...params)
+    return this.repo.push.apply(this.repo, arguments)
   }
 })
 

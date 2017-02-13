@@ -12,6 +12,8 @@
 - `Form` addon now inherits from `React.Component` instead of using
   `createClass`.
 - Added `IntentButton` addon. This is similar to the `Form`.
+- Fix bug where intents would bubble up across repos with different
+  histories.
 
 ### Upgrading
 

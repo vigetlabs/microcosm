@@ -882,3 +882,58 @@ describe('forks', function () {
   })
 
 })
+
+describe('sending across applications', function () {
+
+  test('intents do not bubble to different repos if history is different', function () {
+    const test = jest.fn()
+
+    class Child extends Presenter {
+      view = View
+    }
+
+    class Parent extends Presenter {
+      getRepo (repo) {
+        return repo
+      }
+      render () {
+        return <div>{this.props.children}</div>
+      }
+    }
+
+    let top = new Microcosm({ maxHistory: Infinity })
+    let bottom = new Microcosm({ maxHistory: Infinity })
+
+    let wrapper = mount(<Parent repo={top}><Child repo={bottom} /></Parent>)
+
+    wrapper.find(View).simulate('click')
+
+    expect(top.history.size).toBe(0)
+    expect(bottom.history.size).toBe(1)
+  })
+
+  test('intents bubble if history is the same', function () {
+    const test = jest.fn()
+
+    class Child extends Presenter {
+      view = View
+    }
+
+    class Parent extends Presenter {
+      render () {
+        return <div>{this.props.children}</div>
+      }
+    }
+
+    let top = new Microcosm({ maxHistory: Infinity })
+    let bottom = top.fork()
+
+    let wrapper = mount(<Parent repo={top}><Child repo={bottom} /></Parent>)
+
+    wrapper.find(View).simulate('click')
+
+    expect(top.history.size).toBe(1)
+    expect(bottom.history.size).toBe(1)
+  })
+
+})
