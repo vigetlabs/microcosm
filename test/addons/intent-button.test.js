@@ -3,6 +3,23 @@ import IntentButton from '../../src/addons/intent-button'
 import Action from '../../src/action'
 import {mount} from 'enzyme'
 
+describe('intents', function () {
+
+  it('passes the value property as paramters into the intent', function () {
+    let button = mount(<IntentButton intent="test" value={true} />, {
+      context: {
+        send: (intent, params) => new Action(intent).resolve(params)
+      }
+    })
+
+    let action = button.instance().click()
+
+    expect(action.type).toBe('test')
+    expect(action.payload).toBe(true)
+  })
+
+})
+
 describe('callbacks', function () {
 
   it('executes onDone when that action completes', function () {

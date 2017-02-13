@@ -19,7 +19,7 @@ IntentButton.defaultProps = {
 inherit(IntentButton, Component, {
 
   click (event) {
-    let action = this.send(this.props.intent, this.props.params)
+    let action = this.send(this.props.intent, this.props.value)
 
     if (action && action instanceof Action) {
       action.onDone(this.props.onDone)
@@ -40,7 +40,7 @@ inherit(IntentButton, Component, {
 
     delete props.tag
     delete props.intent
-    delete props.params
+    delete props.value
     delete props.onDone
     delete props.onUpdate
     delete props.onCancel

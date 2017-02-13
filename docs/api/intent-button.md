@@ -44,7 +44,7 @@ class CountPresenter extends Presenter {
 
   view ({ count }) {
     return (
-      <IntentButton intent={increment} params={1}>
+      <IntentButton intent={increment} value={1}>
         {count}
       </IntentButton>
     )
@@ -61,10 +61,20 @@ provided `params` prop.
 
 ### intent
 
-A string or action to send to Presenters. If a Presenter is registered to
-that string via its `register()` method, it will execute the
+A string or action to send to Presenters. If a Presenter is registered
+to that string via its `register()` method, it will execute the
 associated callback. Otherwise, it gets passed up the tree of
-Presenters, eventually dispatching to the associated Microcosm instance.
+Presenters, eventually dispatching to the associated Microcosm
+instance.
+
+### tag
+
+Defaults to `"button"`. Indicates the HTML element `IntentButton`
+should render with.
+
+### value
+
+The parameters that should be passed when broadcasting the provided intent.
 
 ### onClick(event, action)
 
