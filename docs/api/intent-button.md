@@ -44,7 +44,7 @@ class CountPresenter extends Presenter {
 
   view ({ count }) {
     return (
-      <IntentButton intent={increment} value={1}>
+      <IntentButton intent={increaseCount} value={1}>
         {count}
       </IntentButton>
     )
