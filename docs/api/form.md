@@ -7,7 +7,7 @@
 ## Overview
 
 Form is a wrapper around a standard `form` tag that provides a method
-of broadcasting an intent to associated Presenters (see
+of broadcasting an action to associated Presenters (see
 [`./presenter.md`](./presenter.md)). This attempts to more closely
 model the way forms traditionally work, however within the context of
 a JavaScript application.
@@ -39,7 +39,7 @@ repo.addDomain('count', {
 
 function StepperForm ({ count }) {
   return (
-    <Form intent={increment}>
+    <Form action={increment}>
       <input type="hidden" name="amount" value="1" />
       <button>+ 1</button>
     </Form>
@@ -70,7 +70,7 @@ Form inputs are serialized to JSON upon submission using
 
 ## Props
 
-### intent
+### action
 
 A string value to send to Presenters. If a Presenter is registered to
 that string via its `register()` method, it will execute the
@@ -99,7 +99,7 @@ class MyForm extends React.Component {
 
   render () {
     return (
-      <Form intent={actions.create} prepare={this.prepare}>
+      <Form action={actions.create} prepare={this.prepare}>
         <input name="name" />
         <input name="start" type="datetime-local" />
         <input name="end" type="datetime-local" />
@@ -114,25 +114,25 @@ class MyForm extends React.Component {
 ### onSubmit(event, action)
 
 An event callback executed immediately after the form submits and the
-intent is broadcasted.
+action is broadcasted.
 
 ### onDone(payload)
 
-After broadcasting, if the dispatched intent returns a Microcosm
+After broadcasting, if the dispatched action returns a Microcosm
 action, this callback will execute if the action completes successfully.
 
 ### onError(payload)
 
-After broadcasting, if the dispatched intent returns a Microcosm
+After broadcasting, if the dispatched action returns a Microcosm
 action, this callback will execute if the action is rejected.
 
 ### onCancel(payload)
 
-After broadcasting, if the dispatched intent returns a Microcosm
+After broadcasting, if the dispatched action returns a Microcosm
 action, this callback will execute when the action is cancelled.
 
 ### onUpdate(payload)
 
-After broadcasting, if the dispatched intent returns a Microcosm
+After broadcasting, if the dispatched action returns a Microcosm
 action, this callback will execute when the action emits a progress
 update.

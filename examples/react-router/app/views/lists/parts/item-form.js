@@ -21,7 +21,7 @@ const ItemForm = React.createClass({
     const { name } = this.state
 
     return (
-      <Form intent="addItem" onSubmit={ this.reset }>
+      <Form action="addItem" onSubmit={ this.reset }>
         <input type="hidden" name="list" value={ this.props.list } />
 
         <div className="textfield">

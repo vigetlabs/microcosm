@@ -1,14 +1,14 @@
 import React from 'react'
-import IntentButton from '../../src/addons/intent-button'
+import ActionButton from '../../src/addons/action-button'
 import Action from '../../src/action'
 import {mount} from 'enzyme'
 
-describe('intents', function () {
+describe('actions', function () {
 
-  it('passes the value property as paramters into the intent', function () {
-    let button = mount(<IntentButton intent="test" value={true} />, {
+  it('passes the value property as paramters into the action', function () {
+    let button = mount(<ActionButton action="test" value={true} />, {
       context: {
-        send: (intent, params) => new Action(intent).resolve(params)
+        send: (action, params) => new Action(action).resolve(params)
       }
     })
 
@@ -25,7 +25,7 @@ describe('callbacks', function () {
   it('executes onDone when that action completes', function () {
     let onDone = jest.fn()
 
-    let button = mount(<IntentButton intent="test" onDone={n => onDone(n)} />, {
+    let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
         send: () => new Action(n => n).resolve(true)
       }
@@ -39,7 +39,7 @@ describe('callbacks', function () {
   it('executes onError when that action completes', function () {
     let onError = jest.fn()
 
-    let button = mount(<IntentButton intent="test" onError={n => onError(n)} />, {
+    let button = mount(<ActionButton action="test" onError={n => onError(n)} />, {
       context: {
         send: () => new Action(n => n).reject('bad')
       }
@@ -54,7 +54,7 @@ describe('callbacks', function () {
     let onUpdate = jest.fn()
     let action = new Action(n => n)
 
-    let button = mount(<IntentButton intent="test" onUpdate={n => onUpdate(n)} />, {
+    let button = mount(<ActionButton action="test" onUpdate={n => onUpdate(n)} />, {
       context: {
         send: () => action
       }
@@ -70,7 +70,7 @@ describe('callbacks', function () {
   it('does not execute onDone if not given an action', function () {
     let onDone = jest.fn()
 
-    mount(<IntentButton intent="test" onDone={n => onDone(n)} />, {
+    mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
         send: () => true
       }
@@ -82,7 +82,7 @@ describe('callbacks', function () {
   it('does not execute onDone if not given an action', function () {
     let onError = jest.fn()
 
-    mount(<IntentButton intent="test" onError={n => onError(n)} />, {
+    mount(<ActionButton action="test" onError={n => onError(n)} />, {
       context: {
         send: () => true
       }
@@ -94,7 +94,7 @@ describe('callbacks', function () {
   it('does not execute onUpdate if not given an action', function () {
     let onUpdate = jest.fn()
 
-    mount(<IntentButton intent="test" onUpdate={n => onUpdate(n)} />, {
+    mount(<ActionButton action="test" onUpdate={n => onUpdate(n)} />, {
       context: {
         send: () => true
       }
@@ -106,7 +106,7 @@ describe('callbacks', function () {
   it('passes along onClick', function () {
     let handler = jest.fn()
 
-    let wrapper = mount(<IntentButton onClick={handler} />, {
+    let wrapper = mount(<ActionButton onClick={handler} />, {
       context: {
         send: () => {}
       }
@@ -124,7 +124,7 @@ describe('manual operation', function () {
   it('click can be called directly on the component instance', function () {
     let onDone = jest.fn()
 
-    let button = mount(<IntentButton intent="test" onDone={n => onDone(n)} />, {
+    let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
         send: () => new Action(n => n).resolve(true)
       }
@@ -137,7 +137,7 @@ describe('manual operation', function () {
 
   it('can pass in send manually', function () {
     const send = jest.fn()
-    const button = mount(<IntentButton send={send} />)
+    const button = mount(<ActionButton send={send} />)
 
     button.simulate('click')
 
@@ -149,7 +149,7 @@ describe('manual operation', function () {
 describe('rendering', function () {
 
   it('can render with another tag name', function () {
-    let wrapper = mount(<IntentButton tag="a" intent="wut" />)
+    let wrapper = mount(<ActionButton tag="a" action="wut" />)
 
     expect(wrapper.getDOMNode().tagName).toBe('A')
   })

@@ -7,7 +7,7 @@ const onSubmit = (event) => event.target.reset()
 export default function Prompt () {
 
   return (
-    <Form intent={send} onSubmit={onSubmit}>
+    <Form action={send} onSubmit={onSubmit}>
       <label className="audible" htmlFor="message">Respond:</label>
       <input id="message" name="message" type="text" autoComplete="off" />
       <input type="submit" value="Reply" />

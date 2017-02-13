@@ -2,7 +2,7 @@
 
 1. [Overview](#overview)
 2. [Computed Properties](#computed-properties)
-3. [Receiving Intents](#receiving-intents)
+3. [Receiving Actions](#receiving-actions)
 4. [API](#api)
 
 ## Overview
@@ -14,8 +14,8 @@ send them down as `props` to child "passive view" React components.
 
 Presenters also make it easy for components deep within a component
 tree to communicate without passing a long chain of props. The
-`withIntent` and `<Form />` may be used to broadcast messages called
-"intents" to parent Presenter components, or straight to a Microcosm
+`withAction` and `<Form />` may be used to broadcast messages called
+"actions" to parent Presenter components, or straight to a Microcosm
 repo itself if no Presenter intercepts the message.
 
 We'll cover both of these features within this document
@@ -75,14 +75,14 @@ class PlanetsPresenter extends Presenter {
 }
 ```
 
-## Receiving Intents
+## Receiving Actions
 
 Though explicit, passing event callbacks down through a deep component
 hierarchy can be cumbersome and brittle. Presenters expose a method on
-`context` that enable child components to declare `intents` receivable
+`context` that enable child components to declare `actions` receivable
 by Presenters.
 
-The Form add-on can be used to broadcast intents to Presenters:
+The Form add-on can be used to broadcast actions to Presenters:
 
 ```javascript
 import React from 'react'
@@ -111,7 +111,7 @@ repo.addDomain('count', {
 
 function StepperForm ({ count }) {
   return (
-    <Form intent="increaseCount">
+    <Form action="increaseCount">
       <input type="hidden" name="amount" value="1" />
       <p>The current count is { count }</p>
       <button>+ 1</button>
@@ -144,20 +144,20 @@ class CountPresenter extends Presenter {
 DOM.render(<CountPresenter repo={ repo } />, document.getElementById('container'))
 ```
 
-Whenever the form is submitted, an `increaseCount` intent will bubble
+Whenever the form is submitted, an `increaseCount` action will bubble
 up to the associated Presenter including the serialized parameters of
 the form. Since this Presenter's register method includes `increaseCount`, it will
 invoke the method with the associated parameters.
 
-If a Presenter does not implement an intent, it will bubble up to any
-parent Presenters. If no Presenter implements the intent, an exception
-will raise. This is useful for broadcasting action intents. For
+If a Presenter does not implement an action, it will bubble up to any
+parent Presenters. If no Presenter implements the action, an exception
+will raise. This is useful for broadcasting action actions. For
 example, we could replace the prior Form example with:
 
 ```javascript
 function StepperForm ({ count }) {
   return (
-    <Form intent={ increaseCount }>
+    <Form action={ increaseCount }>
       <input type="hidden" name="amount" value="1" />
       <p>The current count is { count }</p>
       <button>+ 1</button>
@@ -245,7 +245,7 @@ If a view is a React component, it will invoke it with the Presenter's
 model as props (including children).
 
 Views are passed the `send` method on a Presenter. This provides the
-exact same behavior as `withIntent`:
+exact same behavior as `withAction`:
 
 ```javascript
 function Button ({ send }) {
@@ -265,7 +265,7 @@ class Example extends Presenter {
 
 ### register()
 
-Expose "intent" subscriptions to child components. This is used with the `Form` or `withIntent`
+Expose "action" subscriptions to child components. This is used with the `Form` or `withAction`
 add-ons to improve the ergonomics of presenter/view communication (though this only
 occurs from the view to the presenter).
 
@@ -283,7 +283,7 @@ class HelloWorldPresenter extends Presenter {
   }
   view () {
     return (
-      <Form intent="greet">
+      <Form action="greet">
         <button>Greet</button>
       </Form>
     )

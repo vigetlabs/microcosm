@@ -1,25 +1,25 @@
 import { Action, merge, inherit } from '../microcosm'
 import { createElement, Component, PropTypes } from 'react'
 
-export default function IntentButton (props, context) {
+export default function ActionButton (props, context) {
   Component.apply(this, arguments)
 
   this.send = this.props.send || this.context.send
   this.click = this.click.bind(this)
 }
 
-IntentButton.contextTypes = IntentButton.propTypes = {
+ActionButton.contextTypes = ActionButton.propTypes = {
   send: PropTypes.func
 }
 
-IntentButton.defaultProps = {
+ActionButton.defaultProps = {
   tag: 'button'
 }
 
-inherit(IntentButton, Component, {
+inherit(ActionButton, Component, {
 
   click (event) {
-    let action = this.send(this.props.intent, this.props.value)
+    let action = this.send(this.props.action, this.props.value)
 
     if (action && action instanceof Action) {
       action.onDone(this.props.onDone)
@@ -39,7 +39,7 @@ inherit(IntentButton, Component, {
     const props = merge({}, this.props, { onClick: this.click })
 
     delete props.tag
-    delete props.intent
+    delete props.action
     delete props.value
     delete props.onDone
     delete props.onUpdate

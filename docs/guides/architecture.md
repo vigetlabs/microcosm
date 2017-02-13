@@ -109,23 +109,23 @@ function PlanetsList ({ planets=[] }) {
 ```
 
 However they can also communicate user actions back to the application using
-_Intents_.
+_Actions_.
 
-### Intents
+### Actions
 
-Intents provide a way for views to report on user behavior in a way that does
+Actions provide a way for views to report on user behavior in a way that does
 not couple them to specific implementation details within a Presenter. A View
 can simply broadcast that something has happened, allowing a Presenter (or a
 test) to pick on on that behavior.
 
-By wrapping a View with the `withIntent` add-on, Views receive a `send` prop
-that allows them to broadcast Intents.
+By wrapping a View with the `withAction` add-on, Views receive a `send` prop
+that allows them to broadcast Actions.
 
 ```javascript
 import React from 'react'
-import withIntent from 'microcosm/addons/with-intent'
+import withAction from 'microcosm/addons/with-action'
 
-export default withIntent(function DeleteButton ({ send, id }) {
+export default withAction(function DeleteButton ({ send, id }) {
   return (
     <button onClick={() => send('delete', id)}>Delete</button>
   )
@@ -133,7 +133,7 @@ export default withIntent(function DeleteButton ({ send, id }) {
 ```
 
 By implementing a `register` method, a Presenter can subscribe to these
-intents, adding intermediary processing or just push an action:
+actions, adding intermediary processing or just push an action:
 
 ```javascript
 class PlanetsShow extends Presenter {
@@ -145,14 +145,14 @@ class PlanetsShow extends Presenter {
 }
 ```
 
-Or, Intents can also take the form of Actions:
+Or, Actions can also take the form of Actions:
 
 ```javascript
 import React from 'react'
-import withIntent from 'microcosm/addons/with-intent'
+import withAction from 'microcosm/addons/with-action'
 import {deletePlanet} from 'actions/planets'
 
-export default withIntent(function DeleteButton ({ send, id }) {
+export default withAction(function DeleteButton ({ send, id }) {
   return (
     <button onClick={() => send(deletePlanet, id)}>Delete</button>
   )
@@ -160,7 +160,7 @@ export default withIntent(function DeleteButton ({ send, id }) {
 ```
 
 In this case, there's no need for the Presenter to intercept the event. If no
-Presenter registers to a given intent, it will get passed along to the Repo.
+Presenter registers to a given action, it will get passed along to the Repo.
 
 ## Actions
 

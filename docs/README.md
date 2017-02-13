@@ -15,15 +15,15 @@
 
 1. [Presenter](api/presenter.md)
 2. [Form](api/form.md)
-3. [IntentButton](api/intent-button.md)
-4. [withIntent](api/with-intent.md)
+3. [ActionButton](api/action-button.md)
+4. [withAction](api/with-action.md)
 
 ## Testing
 
 1. [Overview](testing/overview.md)
 2. [Domains](testing/domains.md)
 3. [Effects](testing/effects.md)
-4. [Intents](testing/intents.md)
+4. [Actions](testing/actions.md)
 
 ## Recipes
 

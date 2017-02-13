@@ -1,4 +1,4 @@
-# IntentButton
+# ActionButton
 
 1. [Overview](#overview)
 2. [Usage](#usage)
@@ -6,15 +6,15 @@
 
 ## Overview
 
-IntentButton is a wrapper around a standard `button` tag that provides
-a method of broadcasting an intent to associated Presenters
+ActionButton is a wrapper around a standard `button` tag that provides
+a method of broadcasting an action to associated Presenters
 (see [`./presenter.md`](./presenter.md)).
 
 ```javascript
 import React from 'react'
 import DOM from 'react-dom'
 import Presenter from 'microcosm/addons/presenter'
-import IntentButton from 'microcosm/addons/intent-button'
+import ActionButton from 'microcosm/addons/action-button'
 import Microcosm from 'microcosm'
 
 const repo = new Microcosm()
@@ -44,9 +44,9 @@ class CountPresenter extends Presenter {
 
   view ({ count }) {
     return (
-      <IntentButton intent={increaseCount} value={1}>
+      <ActionButton action={increaseCount} value={1}>
         {count}
-      </IntentButton>
+      </ActionButton>
     )
   }
 }
@@ -54,12 +54,12 @@ class CountPresenter extends Presenter {
 DOM.render(<CountPresenter repo={repo} />, document.getElementById('container'))
 ```
 
-When clicked, the IntentButton will invoke an intent, passing in the
+When clicked, the ActionButton will invoke an action, passing in the
 provided `value` prop.
 
 ## Props
 
-### intent
+### action
 
 A string or action to send to Presenters. If a Presenter is registered
 to that string via its `register()` method, it will execute the
@@ -69,35 +69,35 @@ instance.
 
 ### tag
 
-Defaults to `"button"`. Indicates the HTML element `IntentButton`
+Defaults to `"button"`. Indicates the HTML element `ActionButton`
 should render with.
 
 ### value
 
-The parameters that should be passed when broadcasting the provided intent.
+The parameters that should be passed when broadcasting the provided action.
 
 ### onClick(event, action)
 
 An event callback executed immediately after the button clicks and the
-intent is broadcasted.
+action is broadcasted.
 
 ### onDone(payload)
 
-After broadcasting, if the dispatched intent returns a Microcosm
+After broadcasting, if the dispatched action returns a Microcosm
 action, this callback will execute if the action completes successfully.
 
 ### onError(payload)
 
-After broadcasting, if the dispatched intent returns a Microcosm
+After broadcasting, if the dispatched action returns a Microcosm
 action, this callback will execute if the action is rejected.
 
 ### onCancel(payload)
 
-After broadcasting, if the dispatched intent returns a Microcosm
+After broadcasting, if the dispatched action returns a Microcosm
 action, this callback will execute when the action is cancelled.
 
 ### onUpdate(payload)
 
-After broadcasting, if the dispatched intent returns a Microcosm
+After broadcasting, if the dispatched action returns a Microcosm
 action, this callback will execute when the action emits a progress
 update.

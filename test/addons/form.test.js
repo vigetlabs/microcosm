@@ -7,7 +7,7 @@ describe('callbacks', function () {
   it('executes onDone when that action completes', function () {
     const onDone = jest.fn()
 
-    const form = mount(<Form intent="test" onDone={n => onDone(n)} />, {
+    const form = mount(<Form action="test" onDone={n => onDone(n)} />, {
       context: {
         send: () => new Action(n => n).resolve(true)
       }
@@ -21,7 +21,7 @@ describe('callbacks', function () {
   it('executes onError when that action completes', function () {
     const onError = jest.fn()
 
-    const form = mount(<Form intent="test" onError={n => onError(n)} />, {
+    const form = mount(<Form action="test" onError={n => onError(n)} />, {
       context: {
         send: () => new Action(n => n).reject('bad')
       }
@@ -36,7 +36,7 @@ describe('callbacks', function () {
     const onUpdate = jest.fn()
     const action = new Action(n => n)
 
-    const form = mount(<Form intent="test" onUpdate={n => onUpdate(n)} />, {
+    const form = mount(<Form action="test" onUpdate={n => onUpdate(n)} />, {
       context: {
         send: () => action
       }
@@ -52,7 +52,7 @@ describe('callbacks', function () {
   it('does not execute onDone if not given an action', function () {
     const onDone = jest.fn()
 
-    mount(<Form intent="test" onDone={n => onDone(n)} />, {
+    mount(<Form action="test" onDone={n => onDone(n)} />, {
       context: {
         send: () => true
       }
@@ -64,7 +64,7 @@ describe('callbacks', function () {
   it('does not execute onDone if not given an action', function () {
     const onError = jest.fn()
 
-    mount(<Form intent="test" onError={n => onError(n)} />, {
+    mount(<Form action="test" onError={n => onError(n)} />, {
       context: {
         send: () => true
       }
@@ -76,7 +76,7 @@ describe('callbacks', function () {
   it('does not execute onUpdate if not given an action', function () {
     const onUpdate = jest.fn()
 
-    mount(<Form intent="test" onUpdate={n => onUpdate(n)} />, {
+    mount(<Form action="test" onUpdate={n => onUpdate(n)} />, {
       context: {
         send: () => true
       }
@@ -91,7 +91,7 @@ describe('manual operation', function () {
   it('submit can be called directly on the component instance', function () {
     const onDone = jest.fn()
 
-    const form = mount(<Form intent="test" onDone={n => onDone(n)} />, {
+    const form = mount(<Form action="test" onDone={n => onDone(n)} />, {
       context: {
         send: () => new Action(n => n).resolve(true)
       }
@@ -125,7 +125,7 @@ describe ('prepare', function() {
     }
 
     const form = mount((
-        <Form intent="test" prepare={prepare}>
+        <Form action="test" prepare={prepare}>
         <input name="name" defaultValue="Billy"/>
         </Form>
     ), { context: { send } })

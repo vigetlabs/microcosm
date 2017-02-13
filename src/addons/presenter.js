@@ -70,7 +70,7 @@ inherit(Presenter, BaseComponent, {
   },
 
   /**
-   * Expose "intent" subscriptions to child components. This is used with the <Form />
+   * Expose "action" subscriptions to child components. This is used with the <Form />
    * add-on to improve the ergonomics of presenter/view communication (though this only
    * occurs from the view to the presenter).
    */
@@ -219,25 +219,25 @@ inherit(PresenterContext, BaseComponent, {
    * view. This method is exposed by the Presenter via the React context
    * API.
    *
-   * Send bubbles. If the closest presenter does not implement the intent,
+   * Send bubbles. If the closest presenter does not implement the action,
    * it will check it's parent presenter. This repeats until there is no parent,
    * in which case it pushes to the repo.
    *
-   * @param {string} intent - The name of a method the view wishes to invoke
+   * @param {string} action - The name of a method the view wishes to invoke
    * @param {...any} params - Arguments to invoke the named method with
    */
-  send (intent, ...params) {
+  send (action, ...params) {
     const { presenter } = this.props
 
     const registry = presenter.register()
 
-    // Tag intents so that they register the same way in the Presenter
+    // Tag actions so that they register the same way in the Presenter
     // and Microcosm instance
-    intent = tag(intent)
+    action = tag(action)
 
-    // Does the presenter register to this intent?
-    if (registry && registry.hasOwnProperty(intent)) {
-      return registry[intent].call(presenter, this.repo, ...params)
+    // Does the presenter register to this action?
+    if (registry && registry.hasOwnProperty(action)) {
+      return registry[action].call(presenter, this.repo, ...params)
     }
 
     // No: try the parent presenter
@@ -248,7 +248,7 @@ inherit(PresenterContext, BaseComponent, {
       }
     }
 
-    // If we hit the top, push the intent into the Microcosm instance
+    // If we hit the top, push the action into the Microcosm instance
     return this.repo.push.apply(this.repo, arguments)
   }
 })

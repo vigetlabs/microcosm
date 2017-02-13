@@ -14,7 +14,7 @@ Form.contextTypes = {
 }
 
 Form.defaultProps = {
-  intent     : null,
+  action     : null,
   serializer : form => serialize(form, { hash: true, empty: true }),
   prepare    : n => n,
   onSubmit   : n => n
@@ -26,7 +26,7 @@ inherit(Form, Component, {
     let props = merge({}, this.props, { ref: 'form', onSubmit: this.onSubmit })
 
     // Remove invalid props to prevent React warnings
-    delete props.intent
+    delete props.action
     delete props.prepare
     delete props.serializer
     delete props.onDone
@@ -46,7 +46,7 @@ inherit(Form, Component, {
   submit (event) {
     let form   = this.refs.form
     let params = this.props.prepare(this.props.serializer(form))
-    let action = this.send(this.props.intent, params)
+    let action = this.send(this.props.action, params)
 
     if (action && action instanceof Action) {
       action.onDone(this.props.onDone)

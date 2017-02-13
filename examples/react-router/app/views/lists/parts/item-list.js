@@ -6,7 +6,7 @@ function Item ({ id, name }) {
   return (
     <li key={ id }>
       { name }
-      <Destroy intent="removeItem" id={ id } />
+      <Destroy action="removeItem" id={ id } />
     </li>
   )
 }

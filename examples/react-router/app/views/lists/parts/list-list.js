@@ -7,7 +7,7 @@ function List ({ id, name, count }) {
   return (
     <li key={ id }>
       <Link to={ `/lists/${ id }` }>{ name } ({ count })</Link>
-      <Destroy intent="removeList" id={ id } />
+      <Destroy action="removeList" id={ id } />
     </li>
   )
 }

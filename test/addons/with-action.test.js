@@ -1,12 +1,12 @@
 import React from 'react'
-import withIntent from '../../src/addons/with-intent'
+import withAction from '../../src/addons/with-action'
 import logger from '../helpers/logger'
 import {mount} from 'enzyme'
 
 test('extracts send from context', function () {
-  const Button = withIntent(function ({ send }) {
+  const Button = withAction(function ({ send }) {
     return (
-      <button type="button" onClick={() => send('intent')}>Click me</button>
+      <button type="button" onClick={() => send('action')}>Click me</button>
     )
   })
 
@@ -21,15 +21,15 @@ test('extracts send from context', function () {
 
   component.simulate('click')
 
-  expect(send).toHaveBeenCalledWith('intent')
+  expect(send).toHaveBeenCalledWith('action')
 })
 
 test('allows send to be overridden by a prop', function () {
   const send = jest.fn()
 
-  const Button = withIntent(function ({ send }) {
+  const Button = withAction(function ({ send }) {
     return (
-      <button type="button" onClick={() => send('intent')}>
+      <button type="button" onClick={() => send('action')}>
         Click me
       </button>
     )
@@ -37,7 +37,7 @@ test('allows send to be overridden by a prop', function () {
 
   mount(<Button send={send}/>).simulate('click')
 
-  expect(send).toHaveBeenCalledWith('intent')
+  expect(send).toHaveBeenCalledWith('action')
 })
 
 describe('When there is no context (called directly as a function)', function () {
@@ -51,27 +51,27 @@ describe('When there is no context (called directly as a function)', function ()
   })
 
   test('safely degrades to an error reporting message', function () {
-    const Button = withIntent(function Button ({ send }) {
+    const Button = withAction(function Button ({ send }) {
       return (
-        <button type="button" onClick={() => send('intent', true)}>Click me</button>
+        <button type="button" onClick={() => send('action', true)}>Click me</button>
       )
     })
 
     mount(Button()).simulate('click')
 
-    expect(logger.last('error')).toContain('Unable to broadcast "intent" with parameters `true`.')
+    expect(logger.last('error')).toContain('Unable to broadcast "action" with parameters `true`.')
   })
 
   test('uses the component name in the debug message for stateless components', function () {
-    const Button = withIntent(function Button ({ send }) {
+    const Button = withAction(function Button ({ send }) {
       return (
-        <button type="button" onClick={() => send('intent')}>Click me</button>
+        <button type="button" onClick={() => send('action')}>Click me</button>
       )
     })
 
     Button()
 
-    expect(logger.last('error')).toContain('withIntent(Button)')
+    expect(logger.last('error')).toContain('withAction(Button)')
   })
 
 })
@@ -79,17 +79,17 @@ describe('When there is no context (called directly as a function)', function ()
 describe('Display name', function () {
 
   test('sets the correct display name for stateless components', function () {
-    const Button = withIntent(function Button () {
+    const Button = withAction(function Button () {
       return <button type="button" />
     })
 
     let wrapper = mount(<div><Button /></div>)
 
-    expect(wrapper.find('withIntent(Button)')).toHaveLength(1)
+    expect(wrapper.find('withAction(Button)')).toHaveLength(1)
   })
 
   test('sets the correct display name for stateful components', function () {
-    const Button = withIntent(class Button extends React.Component {
+    const Button = withAction(class Button extends React.Component {
       render () {
         return <button type="button" />
       }
@@ -97,7 +97,7 @@ describe('Display name', function () {
 
     let wrapper = mount(<div><Button /></div>)
 
-    expect(wrapper.find('withIntent(Button)')).toHaveLength(1)
+    expect(wrapper.find('withAction(Button)')).toHaveLength(1)
   })
 
 })

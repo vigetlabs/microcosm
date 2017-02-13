@@ -1,10 +1,10 @@
 import React from 'react'
 import Microcosm from '../../src/microcosm'
 import Presenter from '../../src/addons/presenter'
-import withIntent from '../../src/addons/with-intent'
+import withAction from '../../src/addons/with-action'
 import {mount} from 'enzyme'
 
-const View = withIntent(function ({ send }) {
+const View = withAction(function ({ send }) {
   return <button id="button" onClick={() => send('test', true)} />
 })
 
@@ -724,9 +724,9 @@ describe('::getRepo', function () {
 
 })
 
-describe('intents', function() {
+describe('actions', function() {
 
-  test('receives intent events', function () {
+  test('receives action events', function () {
     const test = jest.fn()
 
     class MyPresenter extends Presenter {
@@ -744,7 +744,7 @@ describe('intents', function() {
     expect(test.mock.calls[0][1]).toEqual(true)
   })
 
-  test('forwards intents to the repo as actions', function () {
+  test('forwards actions to the repo as actions', function () {
     class MyPresenter extends Presenter {
       view() {
         return <View />
@@ -781,7 +781,7 @@ describe('intents', function() {
     expect(test).toHaveBeenCalledWith(true)
   })
 
-  test('intents are tagged', function () {
+  test('actions are tagged', function () {
     const spy = jest.fn()
 
     const a = function a () {}
@@ -885,7 +885,7 @@ describe('forks', function () {
 
 describe('sending across applications', function () {
 
-  test('intents do not bubble to different repos if history is different', function () {
+  test('actions do not bubble to different repos if history is different', function () {
     const test = jest.fn()
 
     class Child extends Presenter {
@@ -912,7 +912,7 @@ describe('sending across applications', function () {
     expect(bottom.history.size).toBe(1)
   })
 
-  test('intents bubble if history is the same', function () {
+  test('actions bubble if history is the same', function () {
     const test = jest.fn()
 
     class Child extends Presenter {

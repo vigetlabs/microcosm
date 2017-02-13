@@ -1,5 +1,5 @@
 import React from 'react'
-import { displayName } from '../src/addons/with-intent'
+import { displayName } from '../src/addons/with-action'
 
 test('gets a stateless component name', function () {
   const name = displayName(function Button () {})
@@ -18,7 +18,7 @@ test('gets a createClass component name', function () {
     render () {
       var { send } = this.props
       return (
-        <button type="button" onClick={() => send('intent')}>Click me</button>
+        <button type="button" onClick={() => send('action')}>Click me</button>
       )
     }
   })
