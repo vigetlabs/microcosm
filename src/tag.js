@@ -37,11 +37,19 @@ export default function tag (fn, name) {
    */
   const symbol = name || (fn.name || FALLBACK) + '.' + uid
 
-  fn.open      = symbol + '.open'
-  fn.loading   = symbol + '.loading'
-  fn.done      = symbol // intentional
-  fn.error     = symbol + '.error'
+  fn.open = symbol + '.open'
+
+  fn.loading = symbol + '.loading'
+  fn.update = fn.loading
+
+  fn.done = symbol // intentional
+  fn.resolve = fn.done
+
+  fn.error = symbol + '.error'
+  fn.reject = fn.error
+
   fn.cancelled = symbol + '.cancelled'
+  fn.cancel = fn.cancelled
 
   // The default state is done
   fn.toString = toString

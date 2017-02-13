@@ -26,6 +26,24 @@ describe('indexing', function () {
     expect(a).toBe(b)
   })
 
+  test('computing an index from the same state fragment returns the same value', function () {
+    let repo = new Microcosm({}, {
+      styles: { color: 'red' },
+      another: true
+    })
+
+    repo.index('color', 'styles.color')
+
+    let a = repo.compute('color')
+
+    repo.patch({ another: false })
+
+    let b = repo.compute('color')
+
+    expect(a).toEqual({ styles: { color: 'red' } })
+    expect(a).toBe(b)
+  })
+
   test('updates if state changes', function () {
     let repo = new Microcosm({}, { styles: { color: 'red' } })
 

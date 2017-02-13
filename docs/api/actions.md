@@ -169,9 +169,9 @@ function wait () {
 
   return function (action) {
     action.open()
-    setTimeout(() => action.send(25), 500)
-    setTimeout(() => action.send(50), 1000)
-    setTimeout(() => action.send(75), 1500)
+    setTimeout(() => action.update(25), 500)
+    setTimeout(() => action.update(50), 1000)
+    setTimeout(() => action.update(75), 1500)
     setTimeout(() => action.resolve(100), 1000)
   }
 }
@@ -208,7 +208,7 @@ Elevate an action into the `open` state and optional update the
 payload. Domains registered to `action.open` will pick up on an action
 within this state.
 
-### `send([payload])`
+### `update([payload])`
 
 Send a progress update. This will move an action into the `loading`
 state and optional update the payload. Domains registered to

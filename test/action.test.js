@@ -3,19 +3,19 @@ import Microcosm from '../src/microcosm'
 
 const identity = n => n
 
-test('accommodates string actions', function () {
+it('accommodates string actions', function () {
   const action = new Action('test').resolve()
 
   expect(action.type).toBe('test')
 })
 
-test('an action payload is undefined by default', function () {
+it('an action payload is undefined by default', function () {
   const action = new Action('test').resolve()
 
   expect(action.payload).toBe(undefined)
 })
 
-test('an action can intentionally be set to undefined', function () {
+it('an action can intentionally be set to undefined', function () {
   const action = new Action('test')
 
   action.open(true)
@@ -24,7 +24,7 @@ test('an action can intentionally be set to undefined', function () {
   expect(action.payload).toBe(undefined)
 })
 
-test('actions can be tested externally', function () {
+it('actions can be tested externally', function () {
   const repo = new Microcosm()
   const identity = n => n
 
@@ -44,7 +44,7 @@ test('actions can be tested externally', function () {
   expect(repo.state.test).toBe('done')
 })
 
-test('handles listeners with no callback', function () {
+it('handles listeners with no callback', function () {
   const action = new Action(n => n)
 
   action.onDone()
@@ -55,7 +55,7 @@ test('handles listeners with no callback', function () {
 
 describe('open state', function () {
 
-  test('exposes an open type when opened', function () {
+  it('exposes an open type when opened', function () {
     const action = new Action(identity)
 
     action.open()
@@ -63,7 +63,7 @@ describe('open state', function () {
     expect(action.type).toBe(identity.open)
   })
 
-  test('triggers an open event when it opens', function () {
+  it('triggers an open event when it opens', function () {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -73,7 +73,7 @@ describe('open state', function () {
     expect(callback).toHaveBeenCalledWith(3)
   })
 
-  test('actions are no longer disabled when opened', function () {
+  it('actions are no longer disabled when opened', function () {
     const action = new Action(identity)
 
     action.open(true)
@@ -82,7 +82,7 @@ describe('open state', function () {
     expect(action.is('open')).toBe(true)
   })
 
-  test('does not trigger an open event if it is disposable', function () {
+  it('does not trigger an open event if it is disposable', function () {
     const action = new Action(identity)
     const spy = jest.fn()
 
@@ -95,71 +95,79 @@ describe('open state', function () {
 
 })
 
-describe('progress state', function () {
+describe('update state', function () {
 
-  test('exposes a loading type when in progress', function () {
+  it('exposes a loading type when in progress', function () {
     const action = new Action(identity)
 
-    action.send()
+    action.update()
 
     expect(action.type).toBe(identity.loading)
   })
 
-  test('listens to progress updates', function () {
+  it('listens to progress updates', function () {
     const action = new Action(identity)
     const fn = jest.fn()
 
     action.onUpdate(fn)
-    action.send(true)
+    action.update(true)
 
     expect(fn).toHaveBeenCalledWith(true)
   })
 
-  test('does not trigger onUpdate if in progress', function () {
+  it('does not trigger onUpdate if in progress', function () {
     const action = new Action(identity)
     const fn = jest.fn()
 
-    action.send(true)
+    action.update(true)
     action.onUpdate(fn)
 
     expect(fn).not.toHaveBeenCalled()
   })
 
-  test('actions are no longer open when in progress', function () {
+  it('actions are no longer open when in progress', function () {
     const action = new Action(identity)
 
     action.open(true)
-    action.send(true)
+    action.update(true)
 
     expect(action.is('open')).toBe(false)
     expect(action.is('loading')).toBe(true)
   })
 
-  test('triggers an update event when it sends', function () {
+  it('triggers an update event when it sends', function () {
     const action = new Action(identity)
     const callback = jest.fn()
 
     action.once('update', callback)
-    action.send(3)
+    action.update(3)
 
     expect(callback).toHaveBeenCalledWith(3)
   })
 
-  test('does not trigger an update event if it is disposable', function () {
+  it('does not trigger an update event if it is disposable', function () {
     const action = new Action(identity)
     const spy = jest.fn()
 
     action.on('update', spy)
     action.resolve()
-    action.send()
+    action.update()
 
     expect(spy).not.toHaveBeenCalled()
+  })
+
+  it('aliases the loading type with update', function () {
+    const action = new Action(identity)
+
+    action.update()
+
+    expect(action.type).toBe(identity.update)
   })
 })
 
 describe('disabled state', function () {
 
-  test('preserves other states when disabled', function () {
+  it('preserves other states when disabled', function () {
     const action = new Action(identity)
 
     action.resolve()
@@ -168,7 +176,7 @@ describe('disabled state', function () {
     expect(action.is('done')).toBe(true)
   })
 
-  test('is toggleable', function () {
+  it('is toggleable', function () {
     const action = new Action(identity)
 
     action.resolve()
@@ -178,7 +186,7 @@ describe('disabled state', function () {
     expect(action.disabled).toBe(true)
   })
 
-  test('returns no type when disabled', function () {
+  it('returns no type when disabled', function () {
     const action = new Action(identity)
 
     action.toggle()
@@ -190,7 +198,7 @@ describe('disabled state', function () {
 
 describe('resolved state', function () {
 
-  test('exposes a done type when completed', function () {
+  it('exposes a done type when completed', function () {
     const action = new Action(identity)
 
     action.resolve()
@@ -198,7 +206,7 @@ describe('resolved state', function () {
     expect(action.type).toBe(identity.done)
   })
 
-  test('triggers a done event when it resolves', function () {
+  it('triggers a done event when it resolves', function () {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -208,7 +216,7 @@ describe('resolved state', function () {
     expect(callback).toHaveBeenCalledWith(3)
   })
 
-  test('immediately invokes onDone if the action already closed', function () {
+  it('immediately invokes onDone if the action already closed', function () {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -218,18 +226,18 @@ describe('resolved state', function () {
     expect(callback).toHaveBeenCalledWith(true)
   })
 
-  test('actions are no longer open when they complete', function () {
+  it('actions are no longer open when they complete', function () {
     const action = new Action(identity)
 
     action.open(true)
-    action.send(true)
+    action.update(true)
     action.resolve(true)
 
     expect(action.is('loading')).toBe(false)
     expect(action.is('done')).toBe(true)
   })
 
-  test('actions can not be resolved after rejected', function () {
+  it('actions can not be resolved after rejected', function () {
     const repo = new Microcosm()
     const action = repo.append(identity)
 
@@ -240,11 +248,18 @@ describe('resolved state', function () {
     expect(action.is('done')).toBe(false)
   })
 
+  it('aliases the done type with resolved', function () {
+    const action = new Action(identity)
+
+    action.resolve()
+
+    expect(action.type).toBe(identity.resolve)
+  })
 })
 
 describe('rejected state', function () {
 
-  test('exposes a error type when rejected', function () {
+  it('exposes a error type when rejected', function () {
     const action = new Action(identity)
 
     action.reject()
@@ -252,7 +267,7 @@ describe('rejected state', function () {
     expect(action.type).toBe(identity.error)
   })
 
-  test('triggers a error event when it is rejected', function () {
+  it('triggers a error event when it is rejected', function () {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -262,7 +277,7 @@ describe('rejected state', function () {
     expect(callback).toHaveBeenCalledWith(404)
   })
 
-  test('listens to failures', function () {
+  it('listens to failures', function () {
     const action = new Action(identity)
     const fn = jest.fn()
 
@@ -272,7 +287,7 @@ describe('rejected state', function () {
     expect(fn).toHaveBeenCalledWith(true)
   })
 
-  test('immediately invokes onError if the action already failed', function () {
+  it('immediately invokes onError if the action already failed', function () {
     const action = new Action(identity)
     const fn = jest.fn()
 
@@ -282,7 +297,7 @@ describe('rejected state', function () {
     expect(fn).toHaveBeenCalledWith(true)
   })
 
-  test('does not trigger an error event if it is disposable', function () {
+  it('does not trigger an error event if it is disposable', function () {
     const action = new Action(identity)
     const spy = jest.fn()
 
@@ -292,11 +307,19 @@ describe('rejected state', function () {
 
     expect(spy).not.toHaveBeenCalled()
   })
+
+  it('aliases the done type with reject', function () {
+    const action = new Action(identity)
+
+    action.reject()
+
+    expect(action.type).toBe(identity.reject)
+  })
 })
 
 describe('disposed state', function () {
 
-  test('actions are disposable when they resolve', function () {
+  it('actions are disposable when they resolve', function () {
     const action = new Action(identity)
 
     action.resolve(true)
@@ -304,7 +327,7 @@ describe('disposed state', function () {
     expect(action.disposable).toBe(true)
   })
 
-  test('actions are disposable when they cancel', function () {
+  it('actions are disposable when they cancel', function () {
     const action = new Action(identity)
 
     action.cancel(true)
@@ -312,7 +335,7 @@ describe('disposed state', function () {
     expect(action.disposable).toBe(true)
   })
 
-  test('actions are disposable when they fail', function () {
+  it('actions are disposable when they fail', function () {
     const action = new Action(identity)
 
     action.reject(true)
@@ -320,7 +343,7 @@ describe('disposed state', function () {
     expect(action.disposable).toBe(true)
   })
 
-  test('will not change states if already disposed', function () {
+  it('will not change states if already disposed', function () {
     const action = new Action(identity)
 
     action.cancel()
@@ -334,7 +357,7 @@ describe('disposed state', function () {
 
 describe('cancelled state', function () {
 
-  test('triggers a cancel event when it is cancelled', function () {
+  it('triggers a cancel event when it is cancelled', function () {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -344,7 +367,7 @@ describe('cancelled state', function () {
     expect(callback).toHaveBeenCalled()
   })
 
-  test('becomes disposable when cancelled', function () {
+  it('becomes disposable when cancelled', function () {
     const action = new Action(identity)
 
     action.cancel()
@@ -352,7 +375,7 @@ describe('cancelled state', function () {
     expect(action.disposable).toBe(true)
   })
 
-  test('exposes a cancelled type when cancelled', function () {
+  it('exposes a cancelled type when cancelled', function () {
     const action = new Action(identity)
 
     action.cancel()
@@ -360,7 +383,7 @@ describe('cancelled state', function () {
     expect(action.type).toBe(identity.cancelled)
   })
 
-  test('onCancel is a one time binding', function () {
+  it('onCancel is a one time binding', function () {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -372,7 +395,7 @@ describe('cancelled state', function () {
     expect(callback).toHaveBeenCalledTimes(1)
   })
 
-  test('executes onCancel if the action is already cancelled', function () {
+  it('executes onCancel if the action is already cancelled', function () {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -382,11 +405,18 @@ describe('cancelled state', function () {
     expect(callback).toHaveBeenCalled()
   })
 
+  it('aliases the cancelled type with cancel', function () {
+    const action = new Action(identity)
+
+    action.cancel()
+
+    expect(action.type).toBe(identity.cancel)
+  })
 })
 
 describe('promise interop', function () {
 
-  test('actions interop with promises', function () {
+  it('actions interop with promises', function () {
     const action = new Action(identity)
 
     action.resolve('Test')
@@ -394,7 +424,7 @@ describe('promise interop', function () {
     return action.then(result => expect(result).toBe('Test'))
   })
 
-  test('actions interop with async/await', async function () {
+  it('actions interop with async/await', async function () {
     const action = new Action(identity)
 
     action.resolve('Test')
@@ -408,7 +438,7 @@ describe('promise interop', function () {
 
 describe('teardown', function () {
 
-  test('does not lose an onDone subscription when it resolves', function (done) {
+  it('does not lose an onDone subscription when it resolves', function (done) {
     function test (action, method, payload) {
       return function (action) {
         Promise.resolve().then(() => action.resolve(true),
@@ -423,7 +453,7 @@ describe('teardown', function () {
     action.onDone(() => done())
   })
 
-  test('does not lose an onError subscription when it fails', function (done) {
+  it('does not lose an onError subscription when it fails', function (done) {
     function test (action, method, payload) {
       return Promise.reject()
     }
@@ -435,7 +465,7 @@ describe('teardown', function () {
     action.onError(() => done())
   })
 
-  test('does not lose an onCancel subscription when it cancels', function (done) {
+  it('does not lose an onCancel subscription when it cancels', function (done) {
     function test (action, method, payload) {
       return function (action) {
         // intentionally blank
@@ -455,7 +485,7 @@ describe('teardown', function () {
 
 describe('::toggle', function() {
 
-  test('it will not dispatch an action disabled at the head', function () {
+  it('it will not dispatch an action disabled at the head', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
 
     repo.addDomain('count', {
@@ -475,7 +505,7 @@ describe('::toggle', function() {
     expect(repo.state.count).toEqual(2)
   })
 
-  test('it will not dispatch an action disabled in the middle', function () {
+  it('it will not dispatch an action disabled in the middle', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
 
     repo.addDomain('count', {

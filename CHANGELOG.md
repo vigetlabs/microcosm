@@ -1,5 +1,22 @@
 # Changelog
 
+## 11.6.0
+
+- Added deprecation warning for `action.send()`. Future versions of
+  Microcosm will use `action.update()`. This is more consistent with
+  other nomenclature.
+- Added `update` alias for action `loading` status
+- Added `resolve` alias for action `done` status
+- Added `reject` alias for action `error` status
+- Added `cancel` alias for action `cancelled` status
+- Form addon now inherits from `React.Component` instead of using
+  `createClass`.
+
+### Upgrading
+
+This should be a pretty simple upgrade. Just replace calls to
+`action.send()` with `action.update()`.
+
 ## 11.5.1
 
 - Fix case where `this` was undefined in render method of Presenters

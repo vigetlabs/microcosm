@@ -66,10 +66,29 @@ describe('::commit', function() {
       },
       shouldCommit(next, last) {
         return next !== last
+      },
+      commit (state) {
+        return state
       }
     })
 
     expect(repo.state.test).toEqual(true)
+  })
+
+  test('always executes if shouldCommit is not implemented', function() {
+    let repo = new Microcosm()
+    let handler = jest.fn(state => state)
+
+    repo.addDomain('test', {
+      getInitialState() {
+        return true
+      },
+      commit: handler
+    })
+
+    repo.patch({ test: true })
+
+    expect(handler).toHaveBeenCalledTimes(2)
   })
 
 })

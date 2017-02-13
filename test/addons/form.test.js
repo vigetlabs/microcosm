@@ -3,104 +3,119 @@ import Form from '../../src/addons/form'
 import Action from '../../src/action'
 import {mount} from 'enzyme'
 
-test('executes onDone when that action completes', function () {
-  const onDone = jest.fn()
+describe('callbacks', function () {
+  it('executes onDone when that action completes', function () {
+    const onDone = jest.fn()
 
-  const form = mount(<Form intent="test" onDone={n => onDone(n)} />, {
-    context: {
-      send: () => new Action(n => n).resolve(true)
-    }
+    const form = mount(<Form intent="test" onDone={n => onDone(n)} />, {
+      context: {
+        send: () => new Action(n => n).resolve(true)
+      }
+    })
+
+    form.simulate('submit')
+
+    expect(onDone).toHaveBeenCalledWith(true)
   })
 
-  form.simulate('submit')
+  it('executes onError when that action completes', function () {
+    const onError = jest.fn()
 
-  expect(onDone).toHaveBeenCalledWith(true)
-})
+    const form = mount(<Form intent="test" onError={n => onError(n)} />, {
+      context: {
+        send: () => new Action(n => n).reject('bad')
+      }
+    })
 
-test('executes onError when that action completes', function () {
-  const onError = jest.fn()
+    form.simulate('submit')
 
-  const form = mount(<Form intent="test" onError={n => onError(n)} />, {
-    context: {
-      send: () => new Action(n => n).reject('bad')
-    }
+    expect(onError).toHaveBeenCalledWith('bad')
   })
 
-  form.simulate('submit')
+  it('executes onUpdate when that action sends an update', function () {
+    const onUpdate = jest.fn()
+    const action = new Action(n => n)
 
-  expect(onError).toHaveBeenCalledWith('bad')
-})
+    const form = mount(<Form intent="test" onUpdate={n => onUpdate(n)} />, {
+      context: {
+        send: () => action
+      }
+    })
 
-test('executes onUpdate when that action sends an update', function () {
-  const onUpdate = jest.fn()
-  const action = new Action(n => n)
+    form.simulate('submit')
 
-  const form = mount(<Form intent="test" onUpdate={n => onUpdate(n)} />, {
-    context: {
-      send: () => action
-    }
+    action.update('loading')
+
+    expect(onUpdate).toHaveBeenCalledWith('loading')
   })
 
-  form.simulate('submit')
+  it('does not execute onDone if not given an action', function () {
+    const onDone = jest.fn()
 
-  action.send('loading')
+    mount(<Form intent="test" onDone={n => onDone(n)} />, {
+      context: {
+        send: () => true
+      }
+    }).simulate('submit')
 
-  expect(onUpdate).toHaveBeenCalledWith('loading')
-})
-
-test('does not execute onDone if not given an action', function () {
-  const onDone = jest.fn()
-
-  mount(<Form intent="test" onDone={n => onDone(n)} />, {
-    context: {
-      send: () => true
-    }
-  }).simulate('submit')
-
-  expect(onDone).not.toHaveBeenCalled()
-})
-
-test('does not execute onDone if not given an action', function () {
-  const onError = jest.fn()
-
-  mount(<Form intent="test" onError={n => onError(n)} />, {
-    context: {
-      send: () => true
-    }
-  }).simulate('submit')
-
-  expect(onError).not.toHaveBeenCalled()
-})
-
-test('does not execute onUpdate if not given an action', function () {
-  const onUpdate = jest.fn()
-
-  mount(<Form intent="test" onUpdate={n => onUpdate(n)} />, {
-    context: {
-      send: () => true
-    }
-  }).simulate('submit')
-
-  expect(onUpdate).not.toHaveBeenCalled()
-})
-
-test('submit can be called directly on the component instance', function () {
-  const onDone = jest.fn()
-
-  const form = mount(<Form intent="test" onDone={n => onDone(n)} />, {
-    context: {
-      send: () => new Action(n => n).resolve(true)
-    }
+    expect(onDone).not.toHaveBeenCalled()
   })
 
-  form.instance().submit()
+  it('does not execute onDone if not given an action', function () {
+    const onError = jest.fn()
 
-  expect(onDone).toHaveBeenCalledWith(true)
+    mount(<Form intent="test" onError={n => onError(n)} />, {
+      context: {
+        send: () => true
+      }
+    }).simulate('submit')
+
+    expect(onError).not.toHaveBeenCalled()
+  })
+
+  it('does not execute onUpdate if not given an action', function () {
+    const onUpdate = jest.fn()
+
+    mount(<Form intent="test" onUpdate={n => onUpdate(n)} />, {
+      context: {
+        send: () => true
+      }
+    }).simulate('submit')
+
+    expect(onUpdate).not.toHaveBeenCalled()
+  })
+})
+
+describe('manual operation', function () {
+
+  it('submit can be called directly on the component instance', function () {
+    const onDone = jest.fn()
+
+    const form = mount(<Form intent="test" onDone={n => onDone(n)} />, {
+      context: {
+        send: () => new Action(n => n).resolve(true)
+      }
+    })
+
+    form.instance().submit()
+
+    expect(onDone).toHaveBeenCalledWith(true)
+  })
+
+  it('can pass in send manually', function () {
+    const send = jest.fn()
+    const form = mount(<Form send={send} />)
+
+    form.simulate('submit')
+
+    expect(send).toHaveBeenCalled()
+  })
+
 })
 
 describe ('prepare', function() {
 
-  test('can prepare serialized data', function () {
+  it('can prepare serialized data', function () {
     const send = jest.fn()
 
     const prepare = function (params) {
@@ -110,9 +125,9 @@ describe ('prepare', function() {
     }
 
     const form = mount((
-      <Form intent="test" prepare={prepare}>
+        <Form intent="test" prepare={prepare}>
         <input name="name" defaultValue="Billy"/>
-      </Form>
+        </Form>
     ), { context: { send } })
 
     form.instance().submit()

@@ -1,35 +1,29 @@
-import { createClass, createElement, PropTypes } from 'react'
+import { createElement, PropTypes, Component } from 'react'
+import { Action, merge, inherit } from '../microcosm'
 import serialize from 'form-serialize'
-import { Action, merge } from '../microcosm'
 
-const Form = createClass({
+function Form () {
+  Component.apply(this, arguments)
 
-  contextTypes: {
-    send : PropTypes.func.isRequired
-  },
+  this.send = this.props.send || this.context.send
+  this.onSubmit = this.onSubmit.bind(this)
+}
 
-  propTypes: {
-    intent     : PropTypes.oneOfType([ PropTypes.string, PropTypes.func]),
-    serializer : PropTypes.func,
-    prepare    : PropTypes.func,
-    onSubmit   : PropTypes.func,
-    onDone     : PropTypes.func,
-    onUpdate   : PropTypes.func,
-    onError    : PropTypes.func,
-    onCancel   : PropTypes.func
-  },
+Form.contextTypes = {
+  send : PropTypes.func
+}
 
-  getDefaultProps() {
-    return {
-      intent     : null,
-      serializer : form => serialize(form, { hash: true, empty: true }),
-      prepare  : n => n,
-      onSubmit   : () => {}
-    }
-  },
+Form.defaultProps = {
+  intent     : null,
+  serializer : form => serialize(form, { hash: true, empty: true }),
+  prepare    : n => n,
+  onSubmit   : n => n
+}
+
+inherit(Form, Component, {
 
   render() {
-    const props = merge({}, this.props, { ref: 'form', onSubmit: this.onSubmit })
+    let props = merge({}, this.props, { ref: 'form', onSubmit: this.onSubmit })
 
     // Remove invalid props to prevent React warnings
     delete props.intent
@@ -39,19 +33,20 @@ const Form = createClass({
     delete props.onUpdate
     delete props.onCancel
     delete props.onError
+    delete props.send
 
     return createElement('form', props)
   },
 
-  onSubmit(event) {
+  onSubmit (event) {
     event.preventDefault()
     this.submit(event)
   },
 
-  submit(event) {
-    const form   = this.refs.form
-    const params = this.props.prepare(this.props.serializer(form))
-    const action = this.context.send(this.props.intent, params)
+  submit (event) {
+    let form   = this.refs.form
+    let params = this.props.prepare(this.props.serializer(form))
+    let action = this.send(this.props.intent, params)
 
     if (action && action instanceof Action) {
       action.onDone(this.props.onDone)

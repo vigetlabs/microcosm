@@ -59,7 +59,7 @@ inherit(Action, Emitter, {
    * Set the action state to "loading", then set a payload if provided.
    * Triggers the "update" event.
    */
-  send (payload) {
+  update (payload) {
     if (!this.disposable) {
       this.type = this.behavior.loading
 
@@ -73,6 +73,16 @@ inherit(Action, Emitter, {
     }
 
     return this
+  },
+
+  send () {
+    if (typeof console !== 'undefined') {
+      console.warn('`send` was deprecated in 11.6.0.',
+                   'Please use `update` instead.',
+                   '`send` will be removed in 12.0.0.')
+    }
+
+    return this.update.apply(this, arguments)
   },
 
   /**
