@@ -15,7 +15,8 @@
 
 1. [Presenter](api/presenter.md)
 2. [Form](api/form.md)
-3. [withIntent](api/with-intent.md)
+3. [IntentButton](api/intent-button.md)
+4. [withIntent](api/with-intent.md)
 
 ## Testing
 

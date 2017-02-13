@@ -9,8 +9,9 @@
 - Added `resolve` alias for action `done` status
 - Added `reject` alias for action `error` status
 - Added `cancel` alias for action `cancelled` status
-- Form addon now inherits from `React.Component` instead of using
+- `Form` addon now inherits from `React.Component` instead of using
   `createClass`.
+- Added `IntentButton` addon. This is similar to the `Form`.
 
 ### Upgrading
 
