@@ -1,4 +1,4 @@
-import Microcosm, { merge, tag, inherit } from '../microcosm'
+import Microcosm, { merge, get, tag, inherit } from '../microcosm'
 import { Children, PropTypes, Component, PureComponent, createElement } from 'react'
 
 const EMPTY = {}
@@ -226,9 +226,8 @@ inherit(PresenterContext, BaseComponent, {
     // No: try the parent presenter
     if (this.context.send) {
       // Do not allow transfer across repos
-      if (this.repo.parent === this.context.repo ||
-          this.repo === this.context.repo) {
-        return this.context.send(...arguments)
+      if (get(this.repo, 'history') === get(this.context, ['repo', 'history'])) {
+        return this.context.send.apply(null, arguments)
       }
     }
 
