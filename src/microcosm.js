@@ -1,10 +1,11 @@
-import Action       from './action'
-import Emitter      from './emitter'
-import History      from './history'
-import Realm        from './realm'
-import createEffect from './create-effect'
-import tag          from './tag'
-import coroutine    from './coroutine'
+import Action          from './action'
+import Emitter         from './emitter'
+import History         from './history'
+import Realm           from './realm'
+import createEffect    from './create-effect'
+import tag             from './tag'
+import coroutine       from './coroutine'
+import getRegistration from './get-registration'
 
 import {
   RESET,
@@ -228,7 +229,6 @@ inherit(Microcosm, Emitter, {
 
   /**
    * Publish a release if anything changed
-   * @param {Action} action
    */
   release (action) {
     if (action) {
@@ -245,8 +245,6 @@ inherit(Microcosm, Emitter, {
   /**
    * Append an action to history and return it. This is used by push,
    * but also useful for testing action states.
-   * @param {Function} behavior - An action function
-   * @return {Action} action representation of the invoked function
    */
   append (behavior) {
     return this.history.append(behavior)
@@ -255,9 +253,6 @@ inherit(Microcosm, Emitter, {
   /**
    * Push an action into Microcosm. This will trigger the lifecycle for updating
    * state.
-   * @param {Function} behavior - An action function
-   * @param {...Any} params - Parameters to invoke the type with
-   * @return {Action} action representaftion of the invoked function
    */
   push (behavior/*, ... params */) {
     let action = this.append(behavior)
@@ -270,8 +265,6 @@ inherit(Microcosm, Emitter, {
 
   /**
    * Partially apply push
-   * @param {...Any} params - Parameters to invoke the type with
-   * @return {Function} A partially applied push function
    */
   prepare (/*... params */) {
     let params = toArray(arguments)
@@ -286,32 +279,25 @@ inherit(Microcosm, Emitter, {
 
   /**
    * Adds a domain to the Microcosm instance. A domain informs the
-   * microcosm how to process various action types. If no key
-   * is given, the domain will operate on all application state.
-   * @param {String|null} key - The namespace within application state for the domain.
-   * @param {Object|Function} domain  Configuration options to create a domain
-   * @return {Microcosm} self
+   * Microcosm how to process various action types. If no key is
+   * given, the domain will operate on all application state.
    */
-  addDomain (key, domain, options) {
+  addDomain (key, config, options) {
     this.follower = false
 
-    this.realm.add(key, domain, options)
+    let domain = this.realm.add(key, config, options)
+
     this.rebase(key)
 
-    return this
+    return domain
   },
 
   /**
    * An effect is a one-time handler that fires whenever an action changes. Callbacks
    * will only ever fire once, and can not modify state.
-   * @param {Object|Function} effect - Configuration options to create an effect
-   * @param {Object} options - Options to pass to the effect
-   * @return {Microcosm} self
    */
-  addEffect (effect, options) {
-    createEffect(this, effect, options)
-
-    return this
+  addEffect (config, options) {
+    return createEffect(this, config, options)
   },
 
   /**
@@ -350,7 +336,6 @@ inherit(Microcosm, Emitter, {
 
   /**
    * Alias serialize for JS interoperability.
-   * @return {Object} result of `serialize`.
    */
   toJSON () {
     return this.serialize()
@@ -473,4 +458,4 @@ inherit(Microcosm, Emitter, {
 
 export default Microcosm
 
-export { Microcosm, Action, History, tag, get, set, merge, inherit }
+export { Microcosm, Action, History, tag, get, set, merge, inherit, getRegistration }
