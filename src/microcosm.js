@@ -191,7 +191,7 @@ inherit(Microcosm, Emitter, {
         }
       }
 
-      return set(state, key, domain.commit(next, state))
+      return set(state, key, domain.commit(next))
     }
 
     return state
