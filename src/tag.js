@@ -42,14 +42,14 @@ export default function tag (fn, name) {
   fn.loading = symbol + '.loading'
   fn.update = fn.loading
 
-  fn.done = symbol // intentional
+  fn.done = symbol // intentional for string actions
   fn.resolve = fn.done
 
   fn.error = symbol + '.error'
   fn.reject = fn.error
 
-  fn.cancelled = symbol + '.cancelled'
-  fn.cancel = fn.cancelled
+  fn.cancel = symbol + '.cancel'
+  fn.cancelled = fn.cancel
 
   // The default state is done
   fn.toString = toString

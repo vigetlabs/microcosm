@@ -44,7 +44,7 @@ describe('refs', function () {
 
 describe('::model', function() {
 
-  test('model is an alias for model ', function () {
+  it('model is an alias for model ', function () {
     class Hello extends Presenter {
       model ({ place }) {
         return {
@@ -62,7 +62,7 @@ describe('::model', function() {
     expect(wrapper.text()).toEqual('Hello, world!')
   })
 
-  test('passes send within the model', function () {
+  it('passes send within the model', function () {
     let spy = jest.fn()
 
     class Hello extends Presenter {
@@ -81,7 +81,7 @@ describe('::model', function() {
     expect(spy).toHaveBeenCalled()
   })
 
-  test('references the forked repo', function () {
+  it('references the forked repo', function () {
     expect.assertions(1)
 
     let repo = new Microcosm()
@@ -97,7 +97,7 @@ describe('::model', function() {
     mount(<Test repo={repo} />)
   })
 
-  test('builds the view model into state', function () {
+  it('builds the view model into state', function () {
     class MyPresenter extends Presenter {
       model () {
         return {
@@ -112,14 +112,14 @@ describe('::model', function() {
     const repo = new Microcosm()
     const presenter = mount(<MyPresenter repo={repo} />)
 
-    repo.patch({ color: 'red' })
+    repo.addDomain('color', {
+      getInitialState: () => 'red'
+    })
 
-    const text = presenter.text()
-
-    expect(text).toEqual('red')
+    expect(presenter.text()).toEqual('red')
   })
 
-  test('handles non-function view model bindings', function () {
+  it('handles non-function view model bindings', function () {
     class MyPresenter extends Presenter {
       model ({ name }) {
         return {
@@ -136,7 +136,7 @@ describe('::model', function() {
     expect(presenter.text()).toEqual('PHIL')
   })
 
-  test('allows functions to return from model', function () {
+  it('allows functions to return from model', function () {
     class MyPresenter extends Presenter {
       model () {
         return state => state
@@ -150,12 +150,14 @@ describe('::model', function() {
     const repo = new Microcosm()
     const el = mount(<MyPresenter repo={repo} />)
 
-    repo.patch({ color: 'red' })
+    repo.addDomain('color', {
+      getInitialState: () => 'red'
+    })
 
     expect(el.text()).toEqual('red')
   })
 
-  test('does not update state if no key changes', function () {
+  it('does not update state if no key changes', function () {
     let spy = jest.fn(() => <p>Test</p>)
 
     class MyPresenter extends Presenter {
@@ -176,10 +178,12 @@ describe('::model', function() {
   })
 
   describe('when updating props', function () {
-    test('recalculates the view model if the props are different', function () {
+    it('recalculates the view model if the props are different', function () {
       const repo = new Microcosm()
 
-      repo.patch({ name: 'Kurtz' })
+      repo.addDomain('name', {
+        getInitialState: () => 'Kurtz'
+      })
 
       class Namer extends Presenter {
         model (props) {
@@ -199,7 +203,7 @@ describe('::model', function() {
       expect(wrapper.text()).toEqual('Captain Kurtz')
     })
 
-    test('does not recalculate the view model if the props are the same', function () {
+    it('does not recalculate the view model if the props are the same', function () {
       const repo = new Microcosm()
       const spy = jest.fn()
 
@@ -234,13 +238,13 @@ describe('::model', function() {
       }
     }
 
-    test('calculates the model with state', function () {
+    it('calculates the model with state', function () {
       const wrapper = mount(<Namer name="Colonel" />)
 
       expect(wrapper.text()).toEqual('Hello, Colonel')
     })
 
-    test('recalculates the model when state changes', function () {
+    it('recalculates the model when state changes', function () {
       const wrapper = mount(<Namer name="Colonel" />)
 
       wrapper.setState({
@@ -250,7 +254,7 @@ describe('::model', function() {
       expect(wrapper.text()).toEqual('Salutations, Colonel')
     })
 
-    test('does not recalculate the model when state is the same', function () {
+    it('does not recalculate the model when state is the same', function () {
       const spy = jest.fn(function() {
         return <p>Test</p>
       })
@@ -274,7 +278,7 @@ describe('::model', function() {
 
 describe('::setup', function() {
 
-  test('runs a setup function when created', function () {
+  it('runs a setup function when created', function () {
     const test = jest.fn()
 
     class MyPresenter extends Presenter {
@@ -288,7 +292,7 @@ describe('::setup', function() {
     expect(test).toHaveBeenCalled()
   })
 
-  test('domains added in setup show up in the view model', function () {
+  it('domains added in setup show up in the view model', function () {
     class MyPresenter extends Presenter {
       setup (repo) {
         repo.addDomain('prop', {
@@ -314,7 +318,7 @@ describe('::setup', function() {
     expect(prop).toEqual('test')
   })
 
-  test('calling setState in setup does not raise a warning', function () {
+  it('calling setState in setup does not raise a warning', function () {
     class MyPresenter extends Presenter {
       setup() {
         this.setState({ foo: 'bar' })
@@ -324,7 +328,7 @@ describe('::setup', function() {
     mount(<MyPresenter repo={ new Microcosm() } />)
   })
 
-  test('setup is called before the initial model', function () {
+  it('setup is called before the initial model', function () {
     const spy = jest.fn()
 
     class Test extends Presenter {
@@ -349,7 +353,7 @@ describe('::setup', function() {
 
 describe('::update', function() {
 
-  test('runs an update function when it gets new props', function () {
+  it('runs an update function when it gets new props', function () {
     const test = jest.fn()
 
     class MyPresenter extends Presenter {
@@ -365,7 +369,7 @@ describe('::update', function() {
     expect(test).toHaveBeenCalledWith('bar')
   })
 
-  test('does not run an update function when no props change', function () {
+  it('does not run an update function when no props change', function () {
     class MyPresenter extends Presenter {
       update(repo, props) {
         throw new Error('Presenter update method should not have been called')
@@ -612,6 +616,8 @@ describe('rendering efficiency', function() {
   test('child view model is not recalculated when parents cause them to re-render', function () {
     const repo = new Microcosm()
 
+    repo.addDomain('name', {})
+
     repo.patch({ name: 'Sally Fields' })
 
     const model = jest.fn(function() {
@@ -755,7 +761,7 @@ describe('actions', function() {
 
     mount(<MyPresenter repo={repo} />).find(View).simulate('click')
 
-    expect(repo.history.head.type).toEqual('test')
+    expect(repo.history.size).toEqual(1)
   })
 
   test('send bubbles up to parent presenters', function () {

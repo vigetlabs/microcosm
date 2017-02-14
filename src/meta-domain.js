@@ -1,63 +1,27 @@
-/**
- * Meta Domain
- * A domain for managing lifecycle methods and other default behavior
- * for other domains.
- */
+import {
+  RESET,
+  PATCH
+} from './lifecycle'
 
-import { merge } from './utils'
-
-export default function MetaDomain () {
-  this.reset = function (data, deserialize) {
-    return function (action, repo) {
-      let initial = repo.getInitialState()
-      let payload = data
-
-      if (deserialize) {
-        payload = repo.deserialize(data)
-      }
-
-      action.resolve(merge(initial, payload))
-    }
-  }
-
-  this.patch = function (data, deserialize) {
-    return function (action, repo) {
-      let payload = data
-
-      if (deserialize) {
-        payload = repo.deserialize(payload)
-      }
-
-      action.resolve(payload)
-    }
-  }
-
-  this.rebase = function (data) {
-    return data
-  }
+export default function MetaDomain (_, repo) {
+  this.repo = repo
 }
 
 MetaDomain.prototype = {
-  handleReset (state, data) {
-    return data
+
+  reset (state, data) {
+    return this.patch(this.repo.getInitialState(), data)
   },
 
-  handlePatch (state, data) {
-    return merge(state, data)
-  },
-
-  handleRebase (state, data) {
-    return merge(data, state)
+  patch (state, data) {
+    return this.repo.realm.prune(state, data)
   },
 
   register () {
-    let registry = {}
-
-    // TODO: This is to work around a parse issue with Buble
-    registry[this.reset]  = this.handleReset
-    registry[this.patch]  = this.handlePatch
-    registry[this.rebase] = this.handleRebase
-
-    return registry
+    return {
+      [RESET] : this.reset,
+      [PATCH] : this.patch
+    }
   }
+
 }

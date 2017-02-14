@@ -16,8 +16,9 @@ export default function Action (behavior, history) {
 }
 
 inherit(Action, Emitter, {
+  type       : null,
   status     : 'inactive',
-  payload    : null,
+  payload    : undefined,
   disabled   : false,
   disposable : false,
   parent     : null,
@@ -49,9 +50,7 @@ inherit(Action, Emitter, {
 /**
  * Generate action methods for each action state
  */
-
-for (var i = 0, len = ACTION_STATES.length; i < len; i++) {
-  let { key, disposable, once, listener } = ACTION_STATES[i]
+ACTION_STATES.forEach(function ({ key, disposable, once, listener }) {
 
   /**
    * Create a method to update the action status. For example:
@@ -68,7 +67,7 @@ for (var i = 0, len = ACTION_STATES.length; i < len; i++) {
 
       this.history.reconcile(this)
 
-      this.emit(key, this.payload)
+      this._emit(key, this.payload)
     }
 
     return this
@@ -89,7 +88,7 @@ for (var i = 0, len = ACTION_STATES.length; i < len; i++) {
 
     return this
   }
-}
+})
 
 /**
  * Get all child actions. Used by the Microcosm debugger to visualize history.

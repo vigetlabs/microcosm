@@ -1,6 +1,6 @@
 import Microcosm from '../src/microcosm'
 
-test('does not mutate base state on prior dispatches', function () {
+it('does not mutate base state on prior dispatches', function () {
   const repo = new Microcosm()
   const mutation = () => true
 

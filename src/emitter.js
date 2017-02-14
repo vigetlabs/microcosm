@@ -1,8 +1,9 @@
 /**
  * An abstract event emitter class. Several modules extend from this class
  * to utilize events.
- * @constructor
  */
+
+import { merge } from './utils'
 
 export default function Emitter () {
   this._events = null

@@ -3,12 +3,6 @@ import Microcosm from '../src/microcosm'
 
 const identity = n => n
 
-it('accommodates string actions', function () {
-  const action = new Action('test').resolve()
-
-  expect(action.type).toBe('test')
-})
-
 it('an action payload is undefined by default', function () {
   const action = new Action('test').resolve()
 
@@ -60,7 +54,7 @@ describe('open state', function () {
 
     action.open()
 
-    expect(action.type).toBe(identity.open)
+    expect(action.is('open')).toBe(true)
   })
 
   it('triggers an open event when it opens', function () {
@@ -102,7 +96,7 @@ describe('update state', function () {
 
     action.update()
 
-    expect(action.type).toBe(identity.loading)
+    expect(action).toHaveStatus('loading')
   })
 
   it('listens to progress updates', function () {
@@ -131,8 +125,8 @@ describe('update state', function () {
     action.open(true)
     action.update(true)
 
-    expect(action.is('open')).toBe(false)
-    expect(action.is('loading')).toBe(true)
+    expect(action).not.toHaveStatus('open')
+    expect(action).toHaveStatus('loading')
   })
 
   it('triggers an update event when it sends', function () {
@@ -161,7 +155,7 @@ describe('update state', function () {
 
     action.update()
 
-    expect(action.type).toBe(identity.update)
+    expect(action).toHaveStatus('update')
   })
 })
 
@@ -173,7 +167,7 @@ describe('disabled state', function () {
     action.resolve()
     action.toggle()
 
-    expect(action.is('done')).toBe(true)
+    expect(action).toHaveStatus('done')
   })
 
   it('is toggleable', function () {
@@ -186,14 +180,6 @@ describe('disabled state', function () {
     expect(action.disabled).toBe(true)
   })
 
-  it('returns no type when disabled', function () {
-    const action = new Action(identity)
-
-    action.toggle()
-
-    expect(action.type).toBe(null)
-  })
-
 })
 
 describe('resolved state', function () {
@@ -203,14 +189,14 @@ describe('resolved state', function () {
 
     action.resolve()
 
-    expect(action.type).toBe(identity.done)
+    expect(action).toHaveStatus('done')
   })
 
   it('triggers a done event when it resolves', function () {
     const action = new Action(identity)
     const callback = jest.fn()
 
-    action.once('done', callback)
+    action.once('resolve', callback)
     action.resolve(3)
 
     expect(callback).toHaveBeenCalledWith(3)
@@ -233,8 +219,8 @@ describe('resolved state', function () {
     action.update(true)
     action.resolve(true)
 
-    expect(action.is('loading')).toBe(false)
-    expect(action.is('done')).toBe(true)
+    expect(action).not.toHaveStatus('loading')
+    expect(action).toHaveStatus('done')
   })
 
   it('actions can not be resolved after rejected', function () {
@@ -244,16 +230,16 @@ describe('resolved state', function () {
     action.reject(false)
     action.resolve(true)
 
-    expect(action.is('error')).toBe(true)
-    expect(action.is('done')).toBe(false)
+    expect(action).toHaveStatus('error')
+    expect(action).not.toHaveStatus('done')
   })
 
-  it('aliases the done type with resolved', function () {
+  it('aliases the done type with resolve', function () {
     const action = new Action(identity)
 
     action.resolve()
 
-    expect(action.type).toBe(identity.resolve)
+    expect(action).toHaveStatus('resolve')
   })
 })
 
@@ -264,14 +250,14 @@ describe('rejected state', function () {
 
     action.reject()
 
-    expect(action.type).toBe(identity.error)
+    expect(action).toHaveStatus('error')
   })
 
   it('triggers a error event when it is rejected', function () {
     const action = new Action(identity)
     const callback = jest.fn()
 
-    action.once('error', callback)
+    action.once('reject', callback)
     action.reject(404)
 
     expect(callback).toHaveBeenCalledWith(404)
@@ -313,7 +299,7 @@ describe('rejected state', function () {
 
     action.reject()
 
-    expect(action.type).toBe(identity.reject)
+    expect(action).toHaveStatus('error')
   })
 })
 
@@ -380,7 +366,7 @@ describe('cancelled state', function () {
 
     action.cancel()
 
-    expect(action.type).toBe(identity.cancelled)
+    expect(action).toHaveStatus('cancel')
   })
 
   it('onCancel is a one time binding', function () {
@@ -410,7 +396,7 @@ describe('cancelled state', function () {
 
     action.cancel()
 
-    expect(action.type).toBe(identity.cancel)
+    expect(action).toHaveStatus('cancel')
   })
 })
 

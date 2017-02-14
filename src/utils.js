@@ -154,3 +154,28 @@ export function extract (object, keyPaths, seed) {
     return set(memo, keyPath, get(object, keyPath))
   }, seed || {})
 }
+
+/**
+ * Squentially apply a list of functions to a value
+ */
+export function pipeline (state, processors, extra) {
+  let next = state
+
+  for (var i = 0, len = processors.length; i < len; i++) {
+    next = processors[i](next, extra)
+  }
+
+  return next
+}
+
+export function toArray (list, offset) {
+  let start = offset || 0
+  let len = list.length
+  let params = Array(len > start ? len - start : 0)
+
+  for (var i = start; i < len; i++) {
+    params[i - start] = list[i]
+  }
+
+  return params
+}

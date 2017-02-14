@@ -2,10 +2,12 @@ import Microcosm from '../src/microcosm'
 
 describe('indexing', function () {
 
-  test('can save an index for later', function() {
-    let repo = new Microcosm(null, { styles: { color: 'red' } })
+  it('can save an index for later', function() {
+    let repo = new Microcosm()
 
-    repo.reset({ styles: { color: 'red' } })
+    repo.addDomain('styles', {
+      getInitialState: () => ({ color: 'red' })
+    })
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
@@ -14,8 +16,12 @@ describe('indexing', function () {
     expect(color).toEqual('red')
   })
 
-  test('computing an index twice returns the same value', function () {
-    let repo = new Microcosm({}, { styles: { color: 'red' } })
+  it('computing an index twice returns the same value', function () {
+    let repo = new Microcosm()
+
+    repo.addDomain('styles', {
+      getInitialState: () => ({ color: 'red' })
+    })
 
     repo.index('color', 'styles.color')
 
@@ -26,10 +32,15 @@ describe('indexing', function () {
     expect(a).toBe(b)
   })
 
-  test('computing an index from the same state fragment returns the same value', function () {
-    let repo = new Microcosm({}, {
-      styles: { color: 'red' },
-      another: true
+  it('computing an index from the same state fragment returns the same value', function () {
+    let repo = new Microcosm()
+
+    repo.addDomain('styles', {
+      getInitialState: () => ({ color: 'red' })
+    })
+
+    repo.addDomain('another', {
+      getInitialState: () => true
     })
 
     repo.index('color', 'styles.color')
@@ -44,8 +55,12 @@ describe('indexing', function () {
     expect(a).toBe(b)
   })
 
-  test('updates if state changes', function () {
-    let repo = new Microcosm({}, { styles: { color: 'red' } })
+  it('updates if state changes', function () {
+    let repo = new Microcosm()
+
+    repo.addDomain('styles', {
+      getInitialState: () => ({ color: 'red' })
+    })
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
@@ -59,8 +74,12 @@ describe('indexing', function () {
     expect(b).toEqual('blue')
   })
 
-  test('forks inherit indexes from parents', function () {
-    let repo = new Microcosm({}, { styles: { color: 'red' } })
+  it('forks inherit indexes from parents', function () {
+    let repo = new Microcosm()
+
+    repo.addDomain('styles', {
+      getInitialState: () => ({ color: 'red' })
+    })
 
     repo.index('styles', 'styles')
 
@@ -77,7 +96,11 @@ describe('indexing', function () {
 describe('compute', function () {
 
   it('can perform additional data processing on indexes', function () {
-    let repo = new Microcosm({}, { styles: { color: 'red' } })
+    let repo = new Microcosm()
+
+    repo.addDomain('styles', {
+      getInitialState: () => ({ color: 'red' })
+    })
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
@@ -99,7 +122,11 @@ describe('compute', function () {
 describe('memo', function () {
 
   it('returns the same result if state has not changed', function () {
-    let repo = new Microcosm({}, { styles: { color: 'red' } })
+    let repo = new Microcosm()
+
+    repo.addDomain('styles', {
+      getInitialState: () => ({ color: 'red' })
+    })
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
@@ -113,7 +140,12 @@ describe('memo', function () {
   })
 
   it('does not recalculate processors if the index has not changed', function () {
-    let repo = new Microcosm({}, { styles: { color: 'red' } })
+    let repo = new Microcosm()
+
+    repo.addDomain('styles', {
+      getInitialState: () => ({ color: 'red' })
+    })
+
     let toUpperCase = jest.fn(value => value.toUpperCase())
 
     repo.index('color', 'styles.color', state => state.styles.color)
@@ -127,7 +159,11 @@ describe('memo', function () {
   })
 
   it('returns a new result if state has changed', function () {
-    let repo = new Microcosm({}, { styles: { color: 'red' } })
+    let repo = new Microcosm()
+
+    repo.addDomain('styles', {
+      getInitialState: () => ({ color: 'red' })
+    })
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
@@ -144,7 +180,11 @@ describe('memo', function () {
   })
 
   it('queries may run multiple processors', function () {
-    let repo = new Microcosm({}, { styles: { color: 'red' } })
+    let repo = new Microcosm()
+
+    repo.addDomain('styles', {
+      getInitialState: () => ({ color: 'red' })
+    })
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
@@ -158,7 +198,9 @@ describe('memo', function () {
   it('the result of processing one memo does not effect another', function () {
     let repo = new Microcosm()
 
-    repo.patch({ color: 'blue' })
+    repo.addDomain('color', {
+      getInitialState: () => 'blue'
+    })
 
     repo.index('color', 'color', state => state.color)
 

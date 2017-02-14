@@ -1,25 +1,48 @@
 import Microcosm from '../src/microcosm'
 
-test('it will not deserialize null', function () {
+it('it can instantiate with a starting state', function () {
+  class Repo extends Microcosm {
+    setup () {
+      this.addDomain('foo', {})
+    }
+  }
+
+  const repo = new Repo({}, { foo: 'bar' })
+
+  expect(repo.state.foo).toEqual('bar')
+})
+
+it('it can deserialize starting state', function () {
+  class Repo extends Microcosm {
+    setup () {
+      this.addDomain('foo', {})
+    }
+  }
+
+  let raw = JSON.stringify({ foo: 'bar' })
+
+  let repo = new Repo({}, raw, true)
+
+  expect(repo.state.foo).toEqual('bar')
+})
+
+it('reset returns to initial state', function () {
   const repo = new Microcosm()
 
-  expect(repo.deserialize(null)).toEqual({})
+  repo.addDomain('test', {
+    getInitialState: () => false
+  })
+
+  repo.patch({ test: true })
+
+  expect(repo.state.test).toBe(true)
+
+  repo.reset()
+
+  expect(repo.state.test).toBe(false)
 })
 
-test('it can instantiate with a starting state', function () {
-  const repo = new Microcosm({}, { foo: 'bar' })
-
-  expect(repo.state.foo).toEqual('bar')
-})
-
-test('it can deserialize starting state', function () {
-  let raw = JSON.stringify({ foo: 'bar' })
-  const repo = new Microcosm({}, raw, true)
-
-  expect(repo.state.foo).toEqual('bar')
-})
-
-test('can manipulate how many transactions are merged', function () {
+it('can manipulate how many transactions are merged', function () {
   const repo = new Microcosm({ maxHistory: 5 })
   const identity = n => n
 
@@ -37,7 +60,7 @@ test('can manipulate how many transactions are merged', function () {
   expect(repo.history.head.payload).toEqual(6)
 })
 
-test('can partially apply push', function () {
+it('can partially apply push', function () {
   const repo = new Microcosm()
   const action = jest.fn()
 
@@ -46,7 +69,7 @@ test('can partially apply push', function () {
   expect(action).toBeCalledWith(1,2,3)
 })
 
-test('can checkout a prior state', function () {
+it('can checkout a prior state', function () {
   const repo = new Microcosm({ maxHistory: Infinity })
   const action = n => n
 
@@ -68,7 +91,7 @@ test('can checkout a prior state', function () {
   expect(repo.state.number).toEqual(1)
 })
 
-test('it will not emit a change if state is shallowly equal', function () {
+it('it will not emit a change if state is shallowly equal', function () {
   const repo = new Microcosm()
   const identity = n => n
   const spy = jest.fn()
@@ -89,7 +112,7 @@ test('it will not emit a change if state is shallowly equal', function () {
   expect(spy).not.toHaveBeenCalled()
 })
 
-test('it will emit a change if state is not shallowly equal', function () {
+it('it will emit a change if state is not shallowly equal', function () {
   const repo = new Microcosm()
   const identity = n => n
   const spy = jest.fn()
@@ -110,111 +133,9 @@ test('it will emit a change if state is not shallowly equal', function () {
   expect(spy).toHaveBeenCalledTimes(1)
 })
 
-describe('patch', function () {
-
-  test('patch partially updates state', function () {
-    const repo = new Microcosm()
-
-    repo.addDomain('a', {
-      getInitialState: n => true
-    })
-
-    repo.addDomain('b', {
-      getInitialState: n => true
-    })
-
-    repo.patch({ a: false })
-
-    expect(repo.state.a).toBe(false)
-    expect(repo.state.b).toBe(true)
-  })
-
-  test('patch can deserialize the provided data', function () {
-    const repo = new Microcosm()
-
-    repo.addDomain('test', {
-      getInitialState: n => '',
-      deserialize: n => n.toUpperCase()
-    })
-
-    repo.patch({ test: 'deserialize' }, true)
-
-    expect(repo.state.test).toBe('DESERIALIZE')
-  })
-
-  test('rejects if there is a JSON parse error deserialization fails', function () {
-    const repo = new Microcosm()
-
-    // This is invalid
-    function badPatch () {
-      repo.patch("{ test: deserialize }", true)
-    }
-
-    expect(badPatch).toThrow('Unexpected token')
-  })
-
-})
-
-describe('reset', function () {
-
-  test('reverts to the initial state', function () {
-    const repo = new Microcosm()
-
-    repo.addDomain('test', {
-      getInitialState: n => true
-    })
-
-    repo.patch({ test: false })
-
-    expect(repo.state.test).toBe(false)
-
-    repo.reset()
-
-    expect(repo.state.test).toBe(true)
-  })
-
-  test('can fold in a data parameter', function () {
-    const repo = new Microcosm()
-
-    repo.addDomain('first', {
-      getInitialState: n => true
-    })
-
-    repo.reset({ second: true })
-
-    expect(repo.state.first).toBe(true)
-    expect(repo.state.second).toBe(true)
-  })
-
-  test('can deserialized the data parameter', function () {
-    const repo = new Microcosm()
-
-    repo.addDomain('test', {
-      getInitialState: n => '',
-      deserialize: n => n.toUpperCase()
-    })
-
-    repo.reset({ test: 'deserialize' }, true)
-
-    expect(repo.state.test).toBe('DESERIALIZE')
-  })
-
-  test('raises if there is a JSON parse error deserialization fails', function () {
-    const repo = new Microcosm()
-
-    // This is invalid
-    function badReset () {
-      repo.reset("{ test: deserialize }", true)
-    }
-
-    expect(badReset).toThrow('Unexpected token')
-  })
-
-})
-
 describe('Efficiency', function() {
 
-  test('actions are not dispatched twice with 0 history', () => {
+  it('actions are not dispatched twice with 0 history', () => {
     const parent = new Microcosm({ maxHistory: 0 })
     const handler = jest.fn()
     const action = n => n
@@ -234,7 +155,7 @@ describe('Efficiency', function() {
     expect(handler).toHaveBeenCalledTimes(1)
   })
 
-  test('actions are only dispatched once with infinite history', () => {
+  it('actions are only dispatched once with infinite history', () => {
     const parent = new Microcosm({ maxHistory: Infinity })
     const handler = jest.fn()
     const action = n => n
@@ -254,7 +175,7 @@ describe('Efficiency', function() {
     expect(handler).toHaveBeenCalledTimes(1)
   })
 
-  test('actions are only dispatched once with fixed size history', () => {
+  it('actions are only dispatched once with fixed size history', () => {
     const parent = new Microcosm({ maxHistory: 1 })
     const handler = jest.fn()
     const action = n => n
@@ -274,7 +195,7 @@ describe('Efficiency', function() {
     expect(handler).toHaveBeenCalledTimes(1)
   })
 
-  test('actions only dispatch duplicatively to address races', () => {
+  it('actions only dispatch duplicatively to address races', () => {
     const repo = new Microcosm({ maxHistory: 1 })
     const handler = jest.fn()
     const action = n => n
@@ -296,7 +217,7 @@ describe('Efficiency', function() {
     expect(handler).toHaveBeenCalledTimes(3)
   })
 
-  test('pushing an action that nothing responds to will not result a change event', () => {
+  it('pushing an action that nothing responds to will not result a change event', () => {
     const repo = new Microcosm()
     const spy = jest.fn()
 

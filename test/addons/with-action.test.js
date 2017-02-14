@@ -3,7 +3,7 @@ import withAction from '../../src/addons/with-action'
 import logger from '../helpers/logger'
 import {mount} from 'enzyme'
 
-test('extracts send from context', function () {
+it('extracts send from context', function () {
   const Button = withAction(function ({ send }) {
     return (
       <button type="button" onClick={() => send('action')}>Click me</button>
@@ -24,7 +24,7 @@ test('extracts send from context', function () {
   expect(send).toHaveBeenCalledWith('action')
 })
 
-test('allows send to be overridden by a prop', function () {
+it('allows send to be overridden by a prop', function () {
   const send = jest.fn()
 
   const Button = withAction(function ({ send }) {
@@ -50,7 +50,7 @@ describe('When there is no context (called directly as a function)', function ()
     logger.restore()
   })
 
-  test('safely degrades to an error reporting message', function () {
+  it('safely degrades to an error reporting message', function () {
     const Button = withAction(function Button ({ send }) {
       return (
         <button type="button" onClick={() => send('action', true)}>Click me</button>
@@ -62,7 +62,7 @@ describe('When there is no context (called directly as a function)', function ()
     expect(logger.last('error')).toContain('Unable to broadcast "action" with parameters `true`.')
   })
 
-  test('uses the component name in the debug message for stateless components', function () {
+  it('uses the component name in the debug message for stateless components', function () {
     const Button = withAction(function Button ({ send }) {
       return (
         <button type="button" onClick={() => send('action')}>Click me</button>
@@ -78,7 +78,7 @@ describe('When there is no context (called directly as a function)', function ()
 
 describe('Display name', function () {
 
-  test('sets the correct display name for stateless components', function () {
+  it('sets the correct display name for stateless components', function () {
     const Button = withAction(function Button () {
       return <button type="button" />
     })
@@ -88,7 +88,7 @@ describe('Display name', function () {
     expect(wrapper.find('withAction(Button)')).toHaveLength(1)
   })
 
-  test('sets the correct display name for stateful components', function () {
+  it('sets the correct display name for stateful components', function () {
     const Button = withAction(class Button extends React.Component {
       render () {
         return <button type="button" />

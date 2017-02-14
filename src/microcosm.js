@@ -3,9 +3,14 @@ import Emitter      from './emitter'
 import History      from './history'
 import Realm        from './realm'
 import createEffect from './create-effect'
-import lifecycle    from './lifecycle'
 import tag          from './tag'
 import coroutine    from './coroutine'
+
+import {
+  RESET,
+  PATCH,
+  ADD_DOMAIN
+} from './lifecycle'
 
 import {
   merge,
@@ -13,17 +18,11 @@ import {
   get,
   set,
   extract,
+  pipeline,
+  toArray,
   compileKeyPaths
 } from './utils'
 
-/**
- * A tree-like data structure that keeps track of the execution order of
- * actions that are pushed into it, sequentially folding them together to
- * produce an object that can be rendered by a presentation library (such as
- * React).
- * @constructor
- * @extends {Emitter}
- */
 function Microcosm (options, state, deserialize)  {
   Emitter.call(this)
 
@@ -92,10 +91,9 @@ inherit(Microcosm, Emitter, {
   /**
    * Generates the starting state for a Microcosm instance by asking every
    * domain that subscribes to `getInitialState`.
-   * @return {Object} State object representing the initial state.
    */
   getInitialState () {
-    return this.dispatch({}, lifecycle.getInitialState, null)
+    return this.realm.invoke('getInitialState', {})
   },
 
   /**
@@ -104,8 +102,8 @@ inherit(Microcosm, Emitter, {
    * Assuming there are no side-effects in domain handlers, this is pure.
    * Calling this method will not update repo state.
    */
-  dispatch (state, type, payload) {
-    let handlers = this.realm.register(type)
+  dispatch (state, action) {
+    let handlers = this.realm.register(action)
     let current = state
 
     for (var i = 0, len = handlers.length; i < len; i++) {
@@ -122,7 +120,7 @@ inherit(Microcosm, Emitter, {
           break;
         case 2:
         default:
-          next = handler.call(domain, get(state, key), payload)
+          next = handler.call(domain, get(state, key), action.payload)
       }
 
       current = set(current, key, next)
@@ -218,7 +216,7 @@ inherit(Microcosm, Emitter, {
       this.state = merge(this.state, this.parent.state)
     }
 
-    this.staged = this.dispatch(this.staged, action.type, action.payload)
+    this.staged = this.dispatch(this.staged, action)
     this.state = this.commit(this.staged)
 
     if (this.state != original) {
@@ -261,8 +259,9 @@ inherit(Microcosm, Emitter, {
    * @param {...Any} params - Parameters to invoke the type with
    * @return {Action} action representaftion of the invoked function
    */
-  push (behavior, ...params) {
+  push (behavior/*, ... params */) {
     let action = this.append(behavior)
+    let params = toArray(arguments, 1)
 
     coroutine(action, action.behavior.apply(null, params), this)
 
@@ -274,8 +273,15 @@ inherit(Microcosm, Emitter, {
    * @param {...Any} params - Parameters to invoke the type with
    * @return {Function} A partially applied push function
    */
-  prepare (...params) {
-    return this.push.bind(this, ...params)
+  prepare (/*... params */) {
+    let params = toArray(arguments)
+    let repo = this
+
+    return function () {
+      let extra = toArray(arguments)
+
+      repo.push.apply(repo, params.concat(extra))
+    }
   },
 
   /**
@@ -290,7 +296,7 @@ inherit(Microcosm, Emitter, {
     this.follower = false
 
     this.realm.add(key, domain, options)
-    this.rebase()
+    this.rebase(key)
 
     return this
   },
@@ -311,63 +317,35 @@ inherit(Microcosm, Emitter, {
   /**
    * Push an action to reset the state of the instance. This state is folded
    * on to the result of `getInitialState()`.
-   * @param {Object} data - A new state object to apply to the instance
-   * @param {Boolean} deserialize - Should the data be deserialized?
-   * @return {Action} action - An action representing the reset operation.
    */
   reset (data, deserialize) {
-    this.follower = false
-
-    return this.realm.reset(data, deserialize)
+    return this.push(RESET, data, deserialize)
   },
 
   /**
    * Deserialize a given state and reset the instance with that
    * processed state object.
-   * @param {Object} data - A raw state object to deserialize and apply to the instance
-   * @param {Object} deserialize - Should the data be deserialized?
-   * @return {Action} action - An action representing the patch operation.
    */
   patch (data, deserialize) {
-    this.follower = false
-
-    return this.realm.patch(data, deserialize)
+    return this.push(PATCH, data, deserialize)
   },
 
-  /**
-   * Deserialize a given payload by asking every domain how to it
-   * should process it (via the deserialize domain function).
-   * @param {Object} payload - A raw object to deserialize.
-   * @return {Object} The deserialized version of the provided payload.
-   */
   deserialize (payload) {
-    let base = payload ? payload : {}
+    let base = payload
 
-    if (typeof base === 'string') {
+    if (this.parent) {
+      base = this.parent.deserialize(payload)
+    } else if (typeof base === 'string') {
       base = JSON.parse(base)
     }
 
-    if (this.parent) {
-      base = this.parent.deserialize(base)
-    }
-
-    return this.dispatch(base, lifecycle.deserialize, base)
+    return this.realm.invoke('deserialize', base, base)
   },
 
-  /**
-   * Serialize application state by asking every domain how to
-   * serialize the state they manage (via the serialize domain
-   * function).
-   * @return {Object} The serialized version of repo state.
-   */
   serialize () {
-    let base = this.staged
+    let base = this.parent ? this.parent.serialize() : {}
 
-    if (this.parent) {
-      base = merge(base, this.parent.serialize())
-    }
-
-    return this.dispatch(base, lifecycle.serialize, null)
+    return this.realm.invoke('serialize', this.staged, base)
   },
 
   /**
@@ -384,19 +362,16 @@ inherit(Microcosm, Emitter, {
    * added to Microcosm to ensure the initial state of the domain is
    * respected. Emits a "change" event.
    */
-  rebase () {
-    let payload = this.getInitialState()
+  rebase (key) {
+    this.archived = merge(this.getInitialState(), this.archived)
+    this.cached = merge(this.archived, this.cached)
 
-    this.cached = merge(this.cached, payload)
-
-    return this.realm.rebase(payload)
+    return this.push(ADD_DOMAIN, key)
   },
 
   /**
    * Change the focus of the history tree. This allows for features
    * like undo and redo.
-   * @param {Action} action to checkout
-   * @return {Microcosm} self
    */
   checkout (action) {
     this.cached = this.archived
@@ -422,14 +397,15 @@ inherit(Microcosm, Emitter, {
    * This may be referenced when computing properties or querying
    * state within Presenters.
    */
-  index (name, fragment, ...processors) {
+  index (name, fragment /*, ...processors*/) {
     let keyPaths = compileKeyPaths(fragment)
+    let processors = toArray(arguments, 2)
 
     let state  = null
     let subset = null
     let answer = null
 
-    var query = this.indexes[name] = (...extra) => {
+    var query = this.indexes[name] = () => {
       if (this.state !== state) {
         state = this.state
 
@@ -437,16 +413,11 @@ inherit(Microcosm, Emitter, {
 
         if (next !== subset) {
           subset = next
-
-          answer = processors.reduce((value, fn) => {
-            return fn.call(this, value, state)
-          }, subset)
+          answer = pipeline(subset, processors, state)
         }
       }
 
-      return extra.reduce((value, fn) => {
-        return fn.call(this, value, state)
-      }, answer)
+      return answer
     }
 
     return query
@@ -469,8 +440,10 @@ inherit(Microcosm, Emitter, {
   /**
    * Invoke an index, optionally adding additional processing.
    */
-  compute (name, ...processors) {
-    return this.lookup(name)(...processors)
+  compute (name /*, ...processors */) {
+    let processors = toArray(arguments, 1)
+
+    return pipeline(this.lookup(name)(), processors, this.state)
   },
 
   /**
@@ -478,9 +451,9 @@ inherit(Microcosm, Emitter, {
   * invocations of a computation as state changes. Useful for use inside
   * of Presenters.
    */
-  memo (name, ...processors) {
+  memo (name /*, ...processors */) {
     let index = this.lookup(name)
-
+    let processors = toArray(arguments, 1)
     let last = null
     let answer = null
 
@@ -489,7 +462,7 @@ inherit(Microcosm, Emitter, {
 
       if (next !== last) {
         last = next
-        answer = index(...processors)
+        answer = pipeline(index(), processors, this.state)
       }
 
       return answer

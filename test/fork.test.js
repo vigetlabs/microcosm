@@ -4,6 +4,8 @@ test('forks inherit state', function () {
   const parent = new Microcosm()
   const child = parent.fork()
 
+  parent.addDomain('foo', {})
+
   parent.reset({ foo: 'bar' })
 
   expect(child.state.foo).toEqual('bar')
@@ -112,7 +114,9 @@ test('forks from the same parent propagate', function () {
 
 test('tearing down eliminates parent subscriptions', function () {
   const parent = new Microcosm()
-  const child =  parent.fork()
+  const child = parent.fork()
+
+  parent.addDomain('color', {})
 
   parent.patch({ color: 'red' })
 
@@ -130,6 +134,8 @@ test('tearing down eliminates parent subscriptions', function () {
 
 test('it deeply inherits state', function () {
   const tree = new Microcosm({ maxHistory: Infinity })
+
+  tree.addDomain('color', {})
 
   tree.patch({ color: 'red' })
 
@@ -310,7 +316,7 @@ describe('patch', function () {
   })
 })
 
-describe('patch', function () {
+describe('reset', function () {
   test('reset does not cause forks to revert state', function () {
   const parent = new Microcosm()
   const child = parent.fork()

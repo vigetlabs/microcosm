@@ -14,7 +14,7 @@ describe('actions', function () {
 
     let action = button.instance().click()
 
-    expect(action.type).toBe('test')
+    expect(action.behavior.toString()).toEqual('test')
     expect(action.payload).toBe(true)
   })
 

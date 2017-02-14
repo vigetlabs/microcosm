@@ -1,6 +1,11 @@
 import MetaDomain from './meta-domain'
 import getDomainHandlers from './get-domain-handlers'
 
+import {
+  get,
+  set
+} from './utils'
+
 /**
  * A cluster of domains. Mostly for ergonomics
  */
@@ -15,9 +20,11 @@ export default function Realm (repo) {
 
 Realm.prototype = {
 
-  register (type) {
+  register (action) {
+    let type = action.behavior[action.status]
+
     if (this.registry[type] == null) {
-      this.registry[type] = getDomainHandlers(this.domains, type)
+      this.registry[type] = getDomainHandlers(this.domains, action)
     }
 
     return this.registry[type]
@@ -27,7 +34,7 @@ Realm.prototype = {
     let domain = null
 
     if (typeof config === 'function') {
-      domain = new config(options)
+      domain = new config(options, this.repo)
     } else {
       domain = Object.create(config)
     }
@@ -48,16 +55,33 @@ Realm.prototype = {
     return domain
   },
 
-  reset (data, deserialize) {
-    return this.repo.push(this.meta.reset, data, deserialize)
+  reduce (fn, state, scope) {
+    let next = state
+
+    // Important: start at 1 to avoid the meta domain
+    for (var i = 1, len = this.domains.length; i < len; i++) {
+      let [ key, domain ] = this.domains[i]
+
+      next = fn.call(scope, next, key, domain)
+    }
+
+    return next
   },
 
-  patch (data, deserialize) {
-    return this.repo.push(this.meta.patch, data, deserialize)
+  invoke (method, state, seed) {
+    return this.reduce(function (memo, key, domain) {
+      if (domain[method]) {
+        return set(memo, key, domain[method](get(state, key)))
+      }
+
+      return memo
+    }, seed || {})
   },
 
-  rebase (data) {
-    return this.repo.push(this.meta.rebase, data)
+  prune (state, data) {
+    return this.reduce(function (next, key) {
+      return set(next, key, get(data, key))
+    }, state)
   }
 
 }

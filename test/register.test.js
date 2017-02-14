@@ -1,5 +1,4 @@
 import Microcosm from '../src/microcosm'
-import lifecycle from '../src/lifecycle'
 
 const action = a => a
 
@@ -34,18 +33,4 @@ test('returns the same state if a handler is not provided', function () {
   return repo.push(action).onDone(function() {
     expect(repo.state.test).toEqual('test')
   })
-})
-
-test('allows lifecycle methods as registered actions', function () {
-  const repo = new Microcosm()
-
-  repo.addDomain('test', {
-    register() {
-      return {
-        [lifecycle.getInitialState]: () => 'test'
-      }
-    }
-  })
-
-  expect(repo.state.test).toEqual('test')
 })
