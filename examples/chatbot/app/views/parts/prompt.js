@@ -1,6 +1,9 @@
 import React from 'react'
 import Form from 'microcosm/addons/form'
-import {send} from '../actions/messages'
+
+import {
+  send
+} from '../../actions/messages'
 
 const onSubmit = (event) => event.target.reset()
 

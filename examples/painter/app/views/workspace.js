@@ -1,14 +1,19 @@
+import React from 'react'
 import Presenter from 'microcosm/addons/presenter'
-import Canvas    from '../views/canvas'
+import Canvas from './canvas'
 
 class Workspace extends Presenter {
-  view = Canvas
 
-  model () {
+  getModel () {
     return {
       pixels : state => state.pixels
     }
   }
+
+  render () {
+    return <Canvas pixels={this.model.pixels} />
+  }
+
 }
 
 export default Workspace

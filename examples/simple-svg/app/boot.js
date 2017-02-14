@@ -21,5 +21,5 @@ function loop ({ time = Date.now() } = {}) {
 loop()
 
 if (module.hot) {
-  module.hot.accept('./views/logo')
+  module.hot.accept()
 }

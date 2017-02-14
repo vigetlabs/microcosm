@@ -1,12 +1,18 @@
-import React   from 'react'
-import Destroy from './destroy'
+import React from 'react'
+import ActionButton from 'microcosm/addons/action-button'
+
+import {
+  removeItem
+} from '../../../actions/items'
 
 function Item ({ id, name }) {
 
   return (
     <li key={ id }>
       { name }
-      <Destroy action="removeItem" id={ id } />
+      <ActionButton className="btn" action={removeItem} params={id}>
+        Delete
+      </ActionButton>
     </li>
   )
 }

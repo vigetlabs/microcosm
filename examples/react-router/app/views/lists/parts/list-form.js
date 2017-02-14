@@ -1,36 +1,38 @@
 import React from 'react'
 import Form  from 'microcosm/addons/form'
 
-const ListForm = React.createClass({
+import {
+  addList
+} from '../../../actions/lists'
 
-  getInitialState() {
-    return {
-      name : ''
-    }
-  },
+class ListForm extends React.PureComponent {
 
-  reset() {
+  state = {
+    name: ''
+  }
+
+  reset = () => {
     this.setState({ name: '' })
-  },
+  }
 
-  setName(e) {
+  setName = (e) => {
     this.setState({ name : e.target.value })
-  },
+  }
 
-  render() {
+  render () {
     const { name } = this.state
 
     return (
-      <Form action="addList" onSubmit={ this.reset }>
+      <Form action={addList} onSubmit={this.reset}>
         <div className="textfield">
           <label htmlFor="list-name">Name</label>
-          <input id="list-name" name="name" onChange={ this.setName } value={ name } required />
+          <input id="list-name" name="name" onChange={this.setName} value={name} required />
         </div>
 
         <button className="btn">Create List</button>
       </Form>
     )
   }
-})
+}
 
 export default ListForm

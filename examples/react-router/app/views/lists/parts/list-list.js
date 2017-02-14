@@ -1,13 +1,19 @@
-import React   from 'react'
-import Destroy from './destroy'
-import {Link}  from 'react-router'
+import React from 'react'
+import ActionButton from 'microcosm/addons/action-button'
+import Link from 'react-router-dom/Link'
+
+import {
+  removeList
+} from '../../../actions/lists'
 
 function List ({ id, name, count }) {
 
   return (
     <li key={ id }>
       <Link to={ `/lists/${ id }` }>{ name } ({ count })</Link>
-      <Destroy action="removeList" id={ id } />
+      <ActionButton className="btn" action={removeList} params={id}>
+        Delete
+      </ActionButton>
     </li>
   )
 }

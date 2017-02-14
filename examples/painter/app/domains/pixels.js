@@ -1,4 +1,4 @@
-import { set } from 'sprout-data'
+import { set } from 'microcosm'
 import { paint }  from '../actions/pixels'
 
 const Pixels = {

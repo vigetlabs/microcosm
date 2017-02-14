@@ -1,5 +1,5 @@
+import Microcosm, { merge, tag, inherit } from '../microcosm'
 import { Children, PropTypes, Component, PureComponent, createElement } from 'react'
-import Microcosm, { merge, get, tag, inherit } from '../microcosm'
 
 const EMPTY = {}
 
@@ -9,17 +9,11 @@ const EMPTY = {}
  */
 const BaseComponent = PureComponent || Component
 
-/**
- * A general component abstraction for high-responsibility React
- * components that interact with non-presentational logic so that the
- * majority of view code does not have to.
- */
 function Presenter (props, context) {
   BaseComponent.apply(this, arguments)
 
   // Do not overriding render, generate the context wrapper upon creation
-  if (this.view === Presenter.prototype.view &&
-      this.render !== Presenter.prototype.render) {
+  if (this.view === Presenter.prototype.view && this.render !== Presenter.prototype.render) {
     this.view = this.render.bind(this)
     this.render = Presenter.prototype.render.bind(this)
   }
@@ -70,7 +64,7 @@ inherit(Presenter, BaseComponent, {
   },
 
   /**
-   * Expose "action" subscriptions to child components. This is used with the <Form />
+   * Expose "intent" subscriptions to child components. This is used with the <Form />
    * add-on to improve the ergonomics of presenter/view communication (though this only
    * occurs from the view to the presenter).
    */
@@ -85,7 +79,7 @@ inherit(Presenter, BaseComponent, {
    *
    * If none of the keys have changed, `this.updateState` will not set a new state.
    */
-  model (props, state, repo) {
+  getModel (props, state, repo) {
     return EMPTY
   },
 
@@ -172,7 +166,7 @@ inherit(PresenterContext, BaseComponent, {
   },
 
   updatePropMap ({ presenter, parentProps, parentState }) {
-    this.propMap = presenter.model(parentProps, parentState, this.repo)
+    this.propMap = presenter.getModel(this.repo, parentProps, parentState)
     this.propMapKeys = Object.keys(this.propMap || EMPTY)
   },
 
@@ -184,7 +178,9 @@ inherit(PresenterContext, BaseComponent, {
   updateState () {
     let next = this.getState()
 
+
     if (next) {
+      this.props.presenter.model = merge(this.state, next)
       this.setState(next)
     }
   },
@@ -213,43 +209,31 @@ inherit(PresenterContext, BaseComponent, {
     return next
   },
 
-  /**
-   * Provides a way for views to send messages back to the presenter
-   * in a way that does not require passing callbacks down through the
-   * view. This method is exposed by the Presenter via the React context
-   * API.
-   *
-   * Send bubbles. If the closest presenter does not implement the action,
-   * it will check it's parent presenter. This repeats until there is no parent,
-   * in which case it pushes to the repo.
-   *
-   * @param {string} action - The name of a method the view wishes to invoke
-   * @param {...any} params - Arguments to invoke the named method with
-   */
-  send (action, ...params) {
+  send (intent, ...params) {
     const { presenter } = this.props
 
     const registry = presenter.register()
 
-    // Tag actions so that they register the same way in the Presenter
+    // Tag intents so that they register the same way in the Presenter
     // and Microcosm instance
-    action = tag(action)
+    intent = tag(intent)
 
-    // Does the presenter register to this action?
-    if (registry && registry.hasOwnProperty(action)) {
-      return registry[action].call(presenter, this.repo, ...params)
+    // Does the presenter register to this intent?
+    if (registry && registry.hasOwnProperty(intent)) {
+      return registry[intent].call(presenter, this.repo, ...params)
     }
 
     // No: try the parent presenter
     if (this.context.send) {
       // Do not allow transfer across repos
-      if (get(this.repo, 'history') === get(this.context, ['repo', 'history'])) {
-        return this.context.send.apply(null, arguments)
+      if (this.repo.parent === this.context.repo ||
+          this.repo === this.context.repo) {
+        return this.context.send(...arguments)
       }
     }
 
-    // If we hit the top, push the action into the Microcosm instance
-    return this.repo.push.apply(this.repo, arguments)
+    // If we hit the top, push the intent into the Microcosm instance
+    return this.repo.push(...arguments)
   }
 })
 

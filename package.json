@@ -37,7 +37,8 @@
     ]
   },
   "dependencies": {
-    "form-serialize": "0.7.1"
+    "form-serialize": "0.7.1",
+    "react-router-dom": "next"
   },
   "devDependencies": {
     "babel-core": "^6.17.0",
@@ -57,6 +58,7 @@
     "enzyme": "^2.7.0",
     "eslint": "^3.15.0",
     "express": "^4.14.0",
+    "html-webpack-plugin": "^2.28.0",
     "immutable": "^3.8.1",
     "jest": "^18.0.0",
     "microcosm-debugger": "^2.0.0",
@@ -65,7 +67,6 @@
     "react-addons-test-utils": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-hot-loader": "next",
-    "react-router": "^3.0.0",
     "rollup": "^0.41.0",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-uglify": "^1.0.1",

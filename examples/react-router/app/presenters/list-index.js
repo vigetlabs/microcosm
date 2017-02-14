@@ -17,7 +17,7 @@ class ListIndex extends Presenter {
     }
   }
 
-  model () {
+  getModel () {
     return {
       lists  : Query.all('lists'),
       counts : Query.count('lists', 'items', 'list')

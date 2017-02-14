@@ -22,7 +22,7 @@ class ListShow extends Presenter {
     return repo.push(removeItem, params.id)
   }
 
-  model ({ params }) {
+  getModel ({ params }) {
     return {
       list  : Query.get('lists', params.id),
       items : Query.where('items', 'list', params.id)
