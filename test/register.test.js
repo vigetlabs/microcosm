@@ -1,5 +1,4 @@
 import Microcosm from '../src/microcosm'
-import lifecycle from '../src/lifecycle'
 
 let action = a => a
 

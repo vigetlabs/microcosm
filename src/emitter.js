@@ -3,8 +3,6 @@
  * to utilize events.
  */
 
-import { merge } from './utils'
-
 export default function Emitter () {
   this._events = null
 }

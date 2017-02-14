@@ -4,12 +4,10 @@
 
 var webpack    = require('webpack')
 var webpackDev = require('webpack-dev-middleware')
-var config     = require('../../webpack.config')
+var config     = require('../../webpack.config')('development')
 
-module.exports = function() {
+module.exports = function () {
   var compiler = webpack(config)
 
-  return webpackDev(compiler, {
-    noInfo : true
-  })
+  return webpackDev(compiler)
 }
