@@ -39,7 +39,8 @@ module.exports = {
       loader: 'babel-loader',
       exclude: [/node_modules/],
       options: {
-        cacheDirectory: '.babel-cache'
+        cacheDirectory: '.babel-cache',
+        plugins: ["react-hot-loader/babel"]
       }
     }]
   },

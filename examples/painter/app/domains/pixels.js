@@ -1,5 +1,5 @@
+import { set } from 'sprout-data'
 import { paint }  from '../actions/pixels'
-import { update } from 'sprout-data'
 
 const Pixels = {
 
@@ -20,7 +20,7 @@ const Pixels = {
   },
 
   flipBit(pixels, { x, y }) {
-    return update(pixels, [y, x], val => val ? 0 :  1)
+    return set(pixels, [y, x], val => val ? 0 : 1)
   },
 
   register() {

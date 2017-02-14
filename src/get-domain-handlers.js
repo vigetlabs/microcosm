@@ -1,19 +1,12 @@
-import lifecycle from './lifecycle'
+import getRegistration from './get-registration'
 
-export default function getDomainHandlers (domains, type) {
+export default function getDomainHandlers (domains, { behavior, status }) {
   let handlers = []
-  let isLifecycle = lifecycle[type] != null
 
   for (var i = 0, len = domains.length; i < len; i++) {
     var [key, domain] = domains[i]
 
-    var handler = null
-
-    if (isLifecycle && domain[type] != null) {
-      handler = domain[type]
-    } else if (domain.register != null) {
-      handler = domain.register()[type]
-    }
+    var handler = getRegistration(domain, behavior, status)
 
     if (handler) {
       handlers.push({ key, domain, handler, length: handler.length })

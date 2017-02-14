@@ -1,13 +1,15 @@
 {
   "presets": [
-    ["es2015", {"modules": false}],
+    ["es2015", {"loose": true, "modules": false}],
     "stage-2",
     "react"
   ],
-  "plugins": [
-    "react-hot-loader/babel"
-  ],
   "env": {
+    "production": {
+      "presets": [
+        "babili"
+      ]
+    },
     "test": {
       "presets": [
         "es2015",

@@ -21,12 +21,8 @@
   "rules": {
     "semi": 0
   },
-  "plugins": [
-    "react"
-  ],
-  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "extends": ["eslint:recommended"],
   "rules": {
-    "react/prop-types" : 0,
     "no-console": 0,
     "no-unused-vars" : [2, { "args": "none" }]
   }

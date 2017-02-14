@@ -1,13 +1,12 @@
 import Emitter from './emitter'
-import tag from './tag'
 import History from './history'
+import tag from './tag'
+import { ACTION_STATES } from './constants'
 import { inherit } from './utils'
 
 /**
  * Actions encapsulate the process of resolving an action creator. Create an
  * action using `Microcosm::push`:
- * @constructor
- * @extends {Emitter}
  */
 export default function Action (behavior, history) {
   Emitter.call(this)
@@ -17,8 +16,8 @@ export default function Action (behavior, history) {
 }
 
 inherit(Action, Emitter, {
-  type       : null,
-  payload    : undefined,
+  status     : 'inactive',
+  payload    : null,
   disabled   : false,
   disposable : false,
   parent     : null,
@@ -26,133 +25,10 @@ inherit(Action, Emitter, {
   next       : null,
   sibling    : null,
 
-  /**
-   * Given a string or State constant, determine if the `state` bitmask for
-   * the action includes the provided type.
-   * @private
-   */
   is (type) {
-    return this.type === this.behavior[type]
+    return this.behavior[this.status] === this.behavior[type]
   },
 
-  /**
-   * Set the action state to "open", then set a payload if provided. Triggers
-   * the "open" event.
-   */
-  open (payload) {
-    if (!this.disposable) {
-      this.type = this.behavior.open
-
-      if (arguments.length > 0) {
-        this.payload = payload
-      }
-
-      this.history.reconcile(this)
-
-      this._emit('open', this.payload)
-    }
-
-    return this
-  },
-
-  /**
-   * Set the action state to "loading", then set a payload if provided.
-   * Triggers the "update" event.
-   */
-  update (payload) {
-    if (!this.disposable) {
-      this.type = this.behavior.loading
-
-      if (arguments.length > 0) {
-        this.payload = payload
-      }
-
-      this.history.reconcile(this)
-
-      this._emit('update', this.payload)
-    }
-
-    return this
-  },
-
-  send () {
-    if (typeof console !== 'undefined') {
-      console.warn('`send` was deprecated in 11.6.0.',
-                   'Please use `update` instead.',
-                   '`send` will be removed in 12.0.0.')
-    }
-
-    return this.update.apply(this, arguments)
-  },
-
-  /**
-   * Set the action state to "error" and marks the action for clean up, then
-   * set a payload if provided. Triggers the "error" event.
-   */
-  reject (payload) {
-    if (!this.disposable) {
-      this.type = this.behavior.error
-      this.disposable = true
-
-      if (arguments.length > 0) {
-        this.payload = payload
-      }
-
-      this.history.reconcile(this)
-
-      this._emit('error', this.payload)
-    }
-
-    return this
-  },
-
-  /**
-   * Set the action state to "done" and marks the action for clean up, then set
-   * a payload if provided. Triggers the "done" event.
-   */
-  resolve (payload) {
-    if (!this.disposable) {
-      this.type = this.behavior.done
-      this.disposable = true
-
-      if (arguments.length > 0) {
-        this.payload = payload
-      }
-
-      this.history.reconcile(this)
-
-      this._emit('done', this.payload)
-    }
-
-    return this
-  },
-
-  /**
-   * Set the action state to "cancelled" and marks the action for clean up,
-   * then set a payload if provided. Triggers the "cancel" event.
-   */
-  cancel (payload) {
-    if (!this.disposable) {
-      this.type = this.behavior.cancelled
-      this.disposable = true
-
-      if (arguments.length > 0) {
-        this.payload = payload
-      }
-
-      this.history.reconcile(this)
-
-      this._emit('cancel', this.payload)
-    }
-
-    return this
-  },
-
-  /**
-   * Toggles the disabled state, where the action will not dispatch. This is
-   * useful in the Microcosm debugger to quickly enable/disable actions.
-   * Triggers the "change" event.
-   */
   toggle () {
     this.disabled = !this.disabled
 
@@ -161,80 +37,6 @@ inherit(Action, Emitter, {
     return this
   },
 
-  /**
-   * Listen to failure. If the action has already failed, it will execute the
-   * provided callback, otherwise it will wait and trigger upon the "error"
-   * event.
-   */
-  onError (callback, scope) {
-    if (!callback) {
-      return this
-    }
-
-    if (this.is('error')) {
-      callback.call(scope, this.payload)
-    } else {
-      this.once('error', callback, scope)
-    }
-
-    return this
-  },
-
-  /**
-   * Listen to progress. Wait and trigger a provided callback on the "update" event.
-   */
-  onUpdate (callback, scope) {
-    if (!callback) {
-      return this
-    }
-
-    this.on('update', callback, scope)
-
-    return this
-  },
-
-  /**
-   * Listen for completion. If the action has already completed, it will
-   * execute the provided callback, otherwise it will wait and trigger upon the
-   * "done" event.
-   */
-  onDone (callback, scope) {
-    if (!callback) {
-      return this
-    }
-
-    if (this.is('done')) {
-      callback.call(scope, this.payload)
-    } else {
-      this.once('done', callback, scope)
-    }
-
-    return this
-  },
-
-  /**
-   * Listen for cancel. If the action has already cancelled, it will execute
-   * the provided callback, otherwise it will wait and trigger upon the
-   * "cancel" event.
-   */
-  onCancel (callback, scope) {
-    if (!callback) {
-      return this
-    }
-
-    if (this.is('cancelled')) {
-      callback.call(scope, this.payload)
-    } else {
-      this.once('cancel', callback, scope)
-    }
-
-    return this
-  },
-
-  /**
-   * For interop with promises. Returns a promise that resolves or rejects
-   * based on the action's resolution.
-   */
   then (pass, fail) {
     return new Promise((resolve, reject) => {
       this.onDone(resolve)
@@ -243,6 +45,51 @@ inherit(Action, Emitter, {
   }
 
 })
+
+/**
+ * Generate action methods for each action state
+ */
+
+for (var i = 0, len = ACTION_STATES.length; i < len; i++) {
+  let { key, disposable, once, listener } = ACTION_STATES[i]
+
+  /**
+   * Create a method to update the action status. For example:
+   * action.done({ id: 'earth' })
+   */
+  Action.prototype[key] = function (payload) {
+    if (!this.disposable) {
+      this.status = key
+      this.disposable = disposable
+
+      if (arguments.length) {
+        this.payload = payload
+      }
+
+      this.history.reconcile(this)
+
+      this.emit(key, this.payload)
+    }
+
+    return this
+  }
+
+  /**
+   * Create a method to subscribe to a status. For example:
+   * action.onDone({ id: 'earth' })
+   */
+  Action.prototype[listener] = function (callback, scope) {
+    if (callback) {
+      if (once && this.is(key)) {
+        callback.call(scope, this.payload)
+      } else {
+        this.once(key, callback, scope)
+      }
+    }
+
+    return this
+  }
+}
 
 /**
  * Get all child actions. Used by the Microcosm debugger to visualize history.

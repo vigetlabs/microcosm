@@ -1,22 +1,22 @@
+import getRegistration from './get-registration'
+
+import {
+  createOrCopy
+} from './utils'
+
 function createHook (repo, effect) {
 
-  return function (action) {
-    let handler = effect.register()[action.type]
+  return function ({ behavior, status, payload }) {
+    let handler = getRegistration(effect, behavior, status)
 
     if (handler) {
-      handler.call(effect, repo, action.payload)
+      handler.call(effect, repo, payload)
     }
   }
 }
 
 export default function createEffect (repo, config, options) {
-  let effect = null
-
-  if (typeof config === 'function') {
-    effect = new config(repo, options)
-  } else {
-    effect = Object.create(config)
-  }
+  let effect = createOrCopy(config, repo, options)
 
   if (effect.setup) {
     effect.setup(repo, options)
@@ -29,4 +29,6 @@ export default function createEffect (repo, config, options) {
   if (effect.teardown) {
     repo.on('teardown', effect.teardown, effect)
   }
+
+  return effect
 }
