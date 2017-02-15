@@ -57,8 +57,9 @@ describe('::shouldCommit', function () {
 
 describe('::commit', function() {
 
-  it('always writes for the first time', function() {
+  it('always writes for the first time', function () {
     let repo = new Microcosm()
+    let handler = jest.fn()
 
     repo.addDomain('test', {
       getInitialState() {
@@ -67,15 +68,13 @@ describe('::commit', function() {
       shouldCommit(next, last) {
         return next !== last
       },
-      commit (state) {
-        return state
-      }
+      commit: handler
     })
 
-    expect(repo.state.test).toEqual(true)
+    expect(handler).toHaveBeenCalled()
   })
 
-  it('always executes if shouldCommit is not implemented', function() {
+  it('does not commit state if nothing changed', function () {
     let repo = new Microcosm()
     let handler = jest.fn(state => state)
 
@@ -88,6 +87,24 @@ describe('::commit', function() {
 
     repo.patch({ test: true })
 
+    // Once for getInitialState
+    expect(handler).toHaveBeenCalledTimes(1)
+  })
+
+  it('only commits if state is different', function () {
+    let repo = new Microcosm()
+    let handler = jest.fn(state => state)
+
+    repo.addDomain('test', {
+      getInitialState() {
+        return true
+      },
+      commit: handler
+    })
+
+    repo.patch({ test: false })
+
+    // Once for getInitialState, another for patch
     expect(handler).toHaveBeenCalledTimes(2)
   })
 

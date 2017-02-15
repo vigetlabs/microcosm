@@ -177,21 +177,22 @@ inherit(Microcosm, Emitter, {
    * Write state
    */
   write (state, key, domain) {
-    if (domain.commit != null) {
+    if (domain.commit) {
       let next = get(state, key)
+      let last = get(this.cached, key)
+      let old  = get(this.state, key)
 
       // This gives libraries such as ImmutableJS a chance to serialize
       // into a primitive JavaScript form before being publically exposed.
-      if (domain.shouldCommit != null) {
-        let last = get(this.cached, key)
-
-        // Revert to the current public state if not committing
-        if (!domain.shouldCommit(last, next)) {
-          return set(state, key, get(this.state, key))
+      if (old != null && domain.shouldCommit) {
+        if (domain.shouldCommit && domain.shouldCommit(last, next)) {
+          return set(state, key, domain.commit(next))
+        } else {
+          return set(state, key, old)
         }
+      } else if (old == null || last !== next) {
+        return set(state, key, domain.commit(next))
       }
-
-      return set(state, key, domain.commit(next))
     }
 
     return state

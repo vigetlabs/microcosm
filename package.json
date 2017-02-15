@@ -33,7 +33,8 @@
       "<rootDir>/src"
     ],
     "collectCoverageFrom": [
-      "src/**/*.{js,json}"
+      "src/**/*.{js,json}",
+      "!src/addons/jest-matchers.js"
     ]
   },
   "dependencies": {

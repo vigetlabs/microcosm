@@ -7,27 +7,27 @@ import Immutable from 'immutable'
 
 class TestDomain {
 
-  getInitialState() {
+  getInitialState () {
     return Immutable.Map()
   }
 
-  shouldCommit(next, previous) {
+  shouldCommit (next, previous) {
     return Immutable.is(next, previous) === false
   }
 
-  add(state, record) {
+  add (state, record) {
     return state.set(record.id, record)
   }
 
-  remove(state, id) {
+  remove (state, id) {
     return state.remove(id)
   }
 
-  commit(state) {
+  commit (state) {
     return Array.from(state.values())
   }
 
-  register() {
+  register () {
     return {
       [create]  : this.add,
       [destroy] : this.remove
@@ -76,5 +76,5 @@ it('does not generate a new array if no state changes', function () {
   repo.push(destroy, 1)
   var b = repo.state
 
-  expect(a.users).toEqual(b.users)
+  expect(a.users).toBe(b.users)
 })
