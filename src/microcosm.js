@@ -53,9 +53,6 @@ function Microcosm (options, state, deserialize)  {
 
   this.indexes = {}
 
-  // Track changes with a mutable flag
-  this.dirty = false
-
   // Microcosm is now ready. Call the setup lifecycle method
   this.setup(options)
 
@@ -156,74 +153,22 @@ inherit(Microcosm, Emitter, {
     }
   },
 
-  /**
-   * Identify the last and next staged state, then ask the associated domain
-   * if it should commit it. If so, roll state forward.
-   */
-  commit (staged) {
-    let domains = this.realm.domains
-    let next = staged
-
-    for (var i = 0, len = domains.length; i < len; i++) {
-      var [key, domain] = domains[i]
-
-      next = this.write(next, key, domain)
-    }
-
-    return next
-  },
-
-  /**
-   * Write state
-   */
-  write (state, key, domain) {
-    if (domain.commit) {
-      let next = get(state, key)
-      let last = get(this.cached, key)
-      let old  = get(this.state, key)
-
-      // This gives libraries such as ImmutableJS a chance to serialize
-      // into a primitive JavaScript form before being publically exposed.
-      if (old != null && domain.shouldCommit) {
-        if (domain.shouldCommit && domain.shouldCommit(last, next)) {
-          return set(state, key, domain.commit(next))
-        } else {
-          return set(state, key, old)
-        }
-      } else if (old == null || last !== next) {
-        return set(state, key, domain.commit(next))
-      }
-    }
-
-    return state
-  },
-
-  /**
+  /*
    * Run through the action history, dispatching their associated
    * types and payloads to domains for processing. Emits "change".
    */
   reconcile (action) {
     if (this.follower) {
-      this.state = this.parent.state
-      this.dirty = this.parent.dirty
+      this.staged = this.parent.staged
 
       return this
     }
 
-    let original = this.state
-
-    // Update children with their parent's state
     if (this.parent) {
-      this.staged = merge(this.staged, this.parent.state)
-      this.state = merge(this.state, this.parent.state)
+      this.staged = merge(this.staged, this.parent.staged)
     }
 
     this.staged = this.dispatch(this.staged, action)
-    this.state = this.commit(this.staged)
-
-    if (this.state != original) {
-      this.dirty = true
-    }
 
     return this
   },
@@ -232,13 +177,15 @@ inherit(Microcosm, Emitter, {
    * Publish a release if anything changed
    */
   release (action) {
+    let dirty = this.staged !== this.state
+
+    this.state = this.staged
+
     if (action) {
       this._emit('effect', action)
     }
 
-    if (this.dirty) {
-      this.dirty = false
-
+    if (dirty) {
       this._emit('change', this.state)
     }
   },

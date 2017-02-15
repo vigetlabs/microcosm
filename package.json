@@ -60,7 +60,6 @@
     "eslint": "^3.15.0",
     "express": "^4.14.0",
     "html-webpack-plugin": "^2.28.0",
-    "immutable": "^3.8.1",
     "jest": "^18.0.0",
     "microcosm-debugger": "^2.0.0",
     "microtime": "^2.1.2",

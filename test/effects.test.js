@@ -123,6 +123,43 @@ it('does not respond to all handlers', function () {
   repo.push('missing', true)
 })
 
+describe('state', function () {
+
+  it('repo state should be up to date by the time of effect dispatch', function () {
+    expect.assertions(1)
+
+    const repo = new Microcosm()
+    const test = n => n
+
+    repo.addDomain('test', {
+      getInitialState () {
+        return false
+      },
+      register () {
+        return {
+          [test]: (a, b) => b
+        }
+      }
+    })
+
+    const Effect = {
+      handler (repo) {
+        expect(repo.state.test).toBe(true)
+      },
+      register() {
+        return {
+          [test] : this.handler
+        }
+      }
+    }
+
+    repo.addEffect(Effect)
+
+    repo.push(test, true)
+  })
+
+})
+
 describe('teardown', function() {
   it('an effect is torn down with the repo', function () {
     const repo = new Microcosm()

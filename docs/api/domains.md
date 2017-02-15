@@ -33,7 +33,7 @@ const Domain = {
 
   // ... Other domain methods
 
-  register() {
+  register () {
     return {
       [action.open]      : this.setLoading,
       [action.loading]   : this.setProgress,
@@ -58,7 +58,7 @@ it is started.
 
 ```javascript
 var Planets = {
-  getInitialState() {
+  getInitialState () {
     return []
   }
 }
@@ -86,10 +86,10 @@ look like:
 
 ```javascript
 const Planets = {
-  getInitialState() {
+  getInitialState () {
     return Immutable.List()
   },
-  serialize(planets) {
+  serialize (planets) {
     return planets.toJSON()
   }
 }
@@ -103,13 +103,13 @@ the example in `serialize`:
 
 ```javascript
 const Planets = {
-  getInitialState() {
+  getInitialState () {
     return Immutable.List()
   },
-  serialize(planets) {
+  serialize (planets) {
     return planets.toJSON()
   },
-  deserialize(raw) {
+  deserialize (raw) {
     return Immutable.List(raw)
   }
 }
@@ -125,58 +125,15 @@ import { addPlanet } from '../actions/planets'
 
 const Planets = {
   //...
-  register() {
+  register () {
     return {
       [addPlanet]: this.append
     }
   },
-  append(planets, params) {
+  append (planets, params) {
     return planets.concat(params)
   }
 }
 
 repo.push(Actions.add, { name: 'earth' }) // this will add Earth
-```
-
-### `commit(next, staged)`
-
-Think of this as: How should a domin write to the "public" `repo.state` (to be consumed by your React components) when storing a different "private" representation of your data in your domain?
-
-For example: if you want to serialize a complex data structure, such as a `Map`, into a form easier for public consumption:
-
-```javascript
-import Immutable from 'immutable'
-
-const Planets = {
-  getInitialState() {
-    return Immutable.Map()
-  },
-
-  commit(next) {
-    return Array.from(next.values())
-  }
-}
-```
-
-### `shouldCommit(last, next)`
-
-Based on the next and last state, should `commit` be called? Useful for
-custom change management behavior.
-
-```javascript
-import Immutable from 'immutable'
-
-const Planets = {
-  getInitialState() {
-    return Immutable.Map()
-  },
-
-  shouldCommit(last, next) {
-    return Immutable.is(last, next)
-  }
-
-  commit(next) {
-    return Array.from(next.values())
-  }
-}
 ```
