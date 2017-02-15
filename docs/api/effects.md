@@ -24,8 +24,10 @@ string.
 This is a perfect use case for an effect:
 
 ```javascript
+// /src/effects/location.js
+
 import url from 'url'
-import {patch} from '../actions/query'
+import {patchQuery} from '../actions/query'
 
 class Location {
 
@@ -69,6 +71,8 @@ Returns an object mapping actions to methods on the effect. This is the
 communication point between a effect and the rest of the system.
 
 ```javascript
+// /src/effects/planets.js
+
 import { addPlanet } from '../actions/planets'
 
 class Planets {
@@ -84,5 +88,6 @@ class Planets {
   }
 }
 
-repo.push(Actions.add, { name: 'earth' }) // this will add Earth
+repo.addEffect(Planets)
+repo.push(addPlanet, { name: 'earth' }) // this will add Earth
 ```
