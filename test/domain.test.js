@@ -2,7 +2,7 @@ import Microcosm from '../src/microcosm'
 
 describe('::shouldCommit', function () {
 
-  test('is given initial state at the start', function () {
+  it('is given initial state at the start', function () {
     const repo = new Microcosm()
     const test = jest.fn(() => false)
 
@@ -25,7 +25,7 @@ describe('::shouldCommit', function () {
     expect(test).toHaveBeenCalledWith(0, 0)
   })
 
-  test('prevents commiting if returns false', function () {
+  it('prevents commiting if returns false', function () {
     const repo = new Microcosm()
     const add  = n => n
 
@@ -57,7 +57,7 @@ describe('::shouldCommit', function () {
 
 describe('::commit', function() {
 
-  test('always writes for the first time', function() {
+  it('always writes for the first time', function() {
     let repo = new Microcosm()
 
     repo.addDomain('test', {
@@ -75,7 +75,7 @@ describe('::commit', function() {
     expect(repo.state.test).toEqual(true)
   })
 
-  test('always executes if shouldCommit is not implemented', function() {
+  it('always executes if shouldCommit is not implemented', function() {
     let repo = new Microcosm()
     let handler = jest.fn(state => state)
 
@@ -96,7 +96,7 @@ describe('::commit', function() {
 
 describe('Creation modes', function () {
 
-  test('object - primitive', function () {
+  it('object - primitive', function () {
     const repo = new Microcosm()
 
     repo.addDomain('count', {
@@ -108,7 +108,7 @@ describe('Creation modes', function () {
     expect(repo.state.count).toBe(0)
   })
 
-  test('object - original primitive is not mutated', function () {
+  it('object - original primitive is not mutated', function () {
     const repo = new Microcosm()
 
     const MyDomain = {
@@ -122,7 +122,7 @@ describe('Creation modes', function () {
     expect(MyDomain.setup).toBeUndefined()
   })
 
-  test('class - simple', function () {
+  it('class - simple', function () {
     const repo = new Microcosm()
 
     class Counter {
@@ -136,7 +136,7 @@ describe('Creation modes', function () {
     expect(repo.state.count).toBe(0)
   })
 
-  test('class - extends domain', function () {
+  it('class - extends domain', function () {
     const repo = new Microcosm()
 
     class Counter {
@@ -154,7 +154,7 @@ describe('Creation modes', function () {
 
 describe('Lifecycle', function() {
 
-  test('setup - gets called with a reference to the repo and options', function () {
+  it('setup - gets called with a reference to the repo and options', function () {
     const repo = new Microcosm()
     const test = jest.fn()
 
@@ -169,7 +169,7 @@ describe('Lifecycle', function() {
     expect(test).toHaveBeenCalledWith(repo, { test: true })
   })
 
-  test('teardown - gets called with a reference to the repo', function () {
+  it('teardown - gets called with a reference to the repo', function () {
     const repo = new Microcosm()
     const test = jest.fn()
 

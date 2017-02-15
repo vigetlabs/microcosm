@@ -1,19 +1,19 @@
 import React from 'react'
 import { displayName } from '../src/addons/with-action'
 
-test('gets a stateless component name', function () {
+it('gets a stateless component name', function () {
   const name = displayName(function Button () {})
 
   expect(name).toBe('Button')
 })
 
-test('gets a class component name', function () {
+it('gets a class component name', function () {
   const name = displayName(class Button extends React.PureComponent {})
 
   expect(name).toBe('Button')
 })
 
-test('gets a createClass component name', function () {
+it('gets a createClass component name', function () {
   const Button = React.createClass({
     render () {
       var { send } = this.props
@@ -28,7 +28,7 @@ test('gets a createClass component name', function () {
   expect(name).toBe('Button')
 })
 
-test('uses "Component" when there is no name', function () {
+it('uses "Component" when there is no name', function () {
   // eslint-disable-next-line react/display-name
   expect(displayName(React.createClass({
     render () { return <p>Hi</p> }

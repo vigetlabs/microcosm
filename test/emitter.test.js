@@ -1,6 +1,6 @@
 import Emitter from '../src/emitter'
 
-test('adds listeners', function () {
+it('adds listeners', function () {
   const emitter = new Emitter
   const calls = []
 
@@ -19,7 +19,7 @@ test('adds listeners', function () {
   expect(calls).toEqual([ 'one', 1, 'two', 1, 'one', 2, 'two', 2 ])
 })
 
-test('adds a single-shot listener', function () {
+it('adds a single-shot listener', function () {
   const emitter = new Emitter
   const callback = jest.fn()
 
@@ -33,7 +33,7 @@ test('adds a single-shot listener', function () {
   expect(callback).toHaveBeenCalledTimes(1)
 })
 
-test('does not call listeners removed when another is emitted', function (done) {
+it('does not call listeners removed when another is emitted', function (done) {
   const emitter = new Emitter
 
   function two () {
@@ -51,7 +51,7 @@ test('does not call listeners removed when another is emitted', function (done) 
 })
 
 describe('removal', function() {
-  test('should remove a listener', function () {
+  it('should remove a listener', function () {
     var emitter = new Emitter
     var calls = []
 
@@ -67,13 +67,13 @@ describe('removal', function() {
     expect(calls).toEqual(['one'])
   })
 
-  test('gracefully handles removing listeners not set', function () {
+  it('gracefully handles removing listeners not set', function () {
     const emitter = new Emitter()
 
     emitter.off('foo')
   })
 
-  test('should remove all listeners for an event', function () {
+  it('should remove all listeners for an event', function () {
     const emitter = new Emitter
     const calls = []
 
@@ -90,7 +90,7 @@ describe('removal', function() {
     expect(calls.length).toBe(0)
   })
 
-  test('should remove all listeners', function () {
+  it('should remove all listeners', function () {
     const emitter = new Emitter
     const calls = []
 
@@ -111,7 +111,7 @@ describe('removal', function() {
     expect(calls).toEqual(['one', 'two'])
   })
 
-  test('off removes once subscriptions', function () {
+  it('off removes once subscriptions', function () {
     const emitter = new Emitter()
 
     function one () {

@@ -2,7 +2,7 @@ import Microcosm from '../src/microcosm'
 
 describe('Setup', function() {
 
-  test('passes options from instantiation', function () {
+  it('passes options from instantiation', function () {
     const test = jest.fn()
 
     class Repo extends Microcosm {
@@ -18,7 +18,7 @@ describe('Setup', function() {
 
 describe('Teardown', function() {
 
-  test('removes all listeners', function () {
+  it('removes all listeners', function () {
     const repo = new Microcosm()
 
     const listener = jest.fn()
@@ -32,7 +32,7 @@ describe('Teardown', function() {
     expect(listener).not.toHaveBeenCalled()
   })
 
-  test('calls teardown on domains', function () {
+  it('calls teardown on domains', function () {
     const repo = new Microcosm()
     const teardown = jest.fn()
 
@@ -42,7 +42,7 @@ describe('Teardown', function() {
     expect(teardown).toHaveBeenCalled()
   })
 
-  test('removes the microcosm from its history', function () {
+  it('removes the microcosm from its history', function () {
     const repo = new Microcosm()
     const child = repo.fork()
 

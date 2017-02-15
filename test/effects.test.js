@@ -1,6 +1,6 @@
 import Microcosm from '../src/microcosm'
 
-test('invokes an effect when an action completes', function () {
+it('invokes an effect when an action completes', function () {
   const repo = new Microcosm()
   const test = n => n
 
@@ -20,7 +20,7 @@ test('invokes an effect when an action completes', function () {
   expect(Effect.handler).toHaveBeenCalledWith(repo, true)
 })
 
-test('invokes an effect within the scope of the effect', function () {
+it('invokes an effect within the scope of the effect', function () {
   const repo = new Microcosm()
   const test = n => n
   const spy = jest.fn()
@@ -44,7 +44,7 @@ test('invokes an effect within the scope of the effect', function () {
   expect(spy).toHaveBeenCalledWith(true)
 })
 
-test('an effect is only called once  - at reconciliation', function () {
+it('an effect is only called once  - at reconciliation', function () {
   const repo = new Microcosm()
   const test = n => n
 
@@ -68,7 +68,7 @@ test('an effect is only called once  - at reconciliation', function () {
   expect(Effect.handler).toHaveBeenCalledTimes(2)
 })
 
-test('an effect may be a class', function () {
+it('an effect may be a class', function () {
   const repo = new Microcosm()
   const test = n => n
   const spy  = jest.fn()
@@ -90,7 +90,7 @@ test('an effect may be a class', function () {
   expect(spy).toHaveBeenCalledWith(repo, true)
 })
 
-test('an effect is setup with options', function () {
+it('an effect is setup with options', function () {
   const repo = new Microcosm()
   const spy = jest.fn()
 
@@ -103,13 +103,13 @@ test('an effect is setup with options', function () {
   expect(spy).toHaveBeenCalledWith(repo, { test: true })
 })
 
-test('does not need to register', function () {
+it('does not need to register', function () {
   const repo = new Microcosm()
   repo.addEffect({})
   repo.push(n => n)
 })
 
-test('does not respond to all handlers', function () {
+it('does not respond to all handlers', function () {
   const repo = new Microcosm()
 
   class Effect {
@@ -124,7 +124,7 @@ test('does not respond to all handlers', function () {
 })
 
 describe('teardown', function() {
-  test('an effect is torn down with the repo', function () {
+  it('an effect is torn down with the repo', function () {
     const repo = new Microcosm()
     const spy = jest.fn()
 
@@ -139,7 +139,7 @@ describe('teardown', function() {
     expect(spy).toHaveBeenCalledWith(repo)
   })
 
-  test('does not need to implement teardown', function () {
+  it('does not need to implement teardown', function () {
     const repo = new Microcosm()
     repo.addEffect(class Effect {})
     repo.teardown()

@@ -35,7 +35,7 @@ class TestDomain {
   }
 }
 
-test('adds records', function () {
+it('adds records', function () {
   var repo = new Microcosm()
 
   repo.addDomain('users', TestDomain)
@@ -45,7 +45,7 @@ test('adds records', function () {
   expect(repo.state.users[0].name).toEqual('Bill')
 })
 
-test('removes records', function () {
+it('removes records', function () {
   var repo = new Microcosm()
 
   repo.addDomain('users', TestDomain)
@@ -56,7 +56,7 @@ test('removes records', function () {
   expect(repo.state.users.length).toEqual(0)
 })
 
-test('staged does not get modified', function () {
+it('staged does not get modified', function () {
   var repo = new Microcosm()
 
   repo.addDomain('users', TestDomain)
@@ -64,7 +64,7 @@ test('staged does not get modified', function () {
   expect(repo.staged.users instanceof Immutable.Map).toBe(true)
 })
 
-test('does not generate a new array if no state changes', function () {
+it('does not generate a new array if no state changes', function () {
   var repo = new Microcosm()
 
   repo.addDomain('users', TestDomain)

@@ -1,6 +1,6 @@
 import Microcosm from '../src/microcosm'
 
-test('forks inherit state', function () {
+it('forks inherit state', function () {
   const parent = new Microcosm()
   const child = parent.fork()
 
@@ -11,7 +11,7 @@ test('forks inherit state', function () {
   expect(child.state.foo).toEqual('bar')
 })
 
-test('pushing actions on the child float up to the parent', function () {
+it('pushing actions on the child float up to the parent', function () {
   const parent = new Microcosm()
   const child = parent.fork()
 
@@ -50,7 +50,7 @@ test('pushing actions on the child float up to the parent', function () {
   expect(child.state.shape).toEqual('square')
 })
 
-test('pushing actions on the parent sink down to children', function () {
+it('pushing actions on the parent sink down to children', function () {
   const parent = new Microcosm()
   const child = parent.fork()
 
@@ -89,7 +89,7 @@ test('pushing actions on the parent sink down to children', function () {
   expect(child.state.shape).toEqual('square')
 })
 
-test('forks from the same parent propagate', function () {
+it('forks from the same parent propagate', function () {
   const parent = new Microcosm()
   const left = parent.fork()
   const right = parent.fork()
@@ -112,7 +112,7 @@ test('forks from the same parent propagate', function () {
   expect(left.state.color).toEqual('blue')
 })
 
-test('tearing down eliminates parent subscriptions', function () {
+it('tearing down eliminates parent subscriptions', function () {
   const parent = new Microcosm()
   const child = parent.fork()
 
@@ -132,7 +132,7 @@ test('tearing down eliminates parent subscriptions', function () {
   expect(child.state.color).toEqual('red')
 })
 
-test('it deeply inherits state', function () {
+it('it deeply inherits state', function () {
   const tree = new Microcosm({ maxHistory: Infinity })
 
   tree.addDomain('color', {})
@@ -147,7 +147,7 @@ test('it deeply inherits state', function () {
   expect(leaf.state.color).toEqual('red')
 })
 
-test('forks do not own state of parents', () => {
+it('forks do not own state of parents', () => {
   const parent = new Microcosm()
   const child = parent.fork()
 
@@ -178,7 +178,7 @@ test('forks do not own state of parents', () => {
   expect(child.state.counter).toEqual(4)
 })
 
-test('forks continue to get updates from their parents when there is no archive', () => {
+it('forks continue to get updates from their parents when there is no archive', () => {
   const parent = new Microcosm({ maxHistory: Infinity })
   const child = parent.fork()
 
@@ -215,7 +215,7 @@ test('forks continue to get updates from their parents when there is no archive'
   expect(child.state.counter).toEqual(12)
 })
 
-test('forks handle async', () => {
+it('forks handle async', () => {
   const parent = new Microcosm()
   const child = parent.fork()
 
@@ -253,7 +253,7 @@ test('forks handle async', () => {
 })
 
 describe('patch', function () {
-  test('forks properly archive after a patch', () => {
+  it('forks properly archive after a patch', () => {
     const parent = new Microcosm({ maxHistory: 0 })
 
     parent.addDomain('one', {
@@ -288,7 +288,7 @@ describe('patch', function () {
     expect(child.state.two).toBe(true)
   })
 
-  test('patch does not cause forks to revert state', function () {
+  it('patch does not cause forks to revert state', function () {
     const parent = new Microcosm()
     const child = parent.fork()
 
@@ -317,30 +317,30 @@ describe('patch', function () {
 })
 
 describe('reset', function () {
-  test('reset does not cause forks to revert state', function () {
-  const parent = new Microcosm()
-  const child = parent.fork()
+  it('reset does not cause forks to revert state', function () {
+    const parent = new Microcosm()
+    const child = parent.fork()
 
-  child.addDomain('count', {
-    register () {
-      return {
-        'add' : (a, b) => a + b
+    child.addDomain('count', {
+      register () {
+        return {
+          'add' : (a, b) => a + b
+        }
       }
-    }
+    })
+
+    child.reset({ count: 2 })
+
+    child.push('add', 1)
+    child.push('add', 1)
+
+    // Forks inherit state. If a parent repo's state contains a key, it will
+    // pass the associated value down to a child. This allows state to flow
+    // downward through the repo network.
+    //
+    // Unfortunately, this causes an unexpected behavior with `patch` where
+    // consecutive actions always operate on the original patched value, and not
+    // the new state produced by a child.
+    expect(child.state.count).toEqual(4)
   })
-
-  child.reset({ count: 2 })
-
-  child.push('add', 1)
-  child.push('add', 1)
-
-  // Forks inherit state. If a parent repo's state contains a key, it will
-  // pass the associated value down to a child. This allows state to flow
-  // downward through the repo network.
-  //
-  // Unfortunately, this causes an unexpected behavior with `patch` where
-  // consecutive actions always operate on the original patched value, and not
-  // the new state produced by a child.
-  expect(child.state.count).toEqual(4)
-})
 })

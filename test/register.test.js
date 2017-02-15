@@ -2,7 +2,7 @@ import Microcosm from '../src/microcosm'
 
 let action = a => a
 
-test('sends actions in the context of the domain', function () {
+it('sends actions in the context of the domain', function () {
   expect.assertions(1)
 
   let repo = new Microcosm()
@@ -22,7 +22,7 @@ test('sends actions in the context of the domain', function () {
   repo.push(action)
 })
 
-test('returns the same state if a handler is not provided', function () {
+it('returns the same state if a handler is not provided', function () {
   let repo = new Microcosm()
 
   repo.addDomain('test', {
@@ -38,7 +38,7 @@ test('returns the same state if a handler is not provided', function () {
 
 describe('nesting', function () {
 
-  test('allows domains nested registration methods', function () {
+  it('allows domains nested registration methods', function () {
     let repo = new Microcosm()
     let handler = jest.fn()
 
@@ -63,7 +63,7 @@ describe('nesting', function () {
     expect(domain).toRegister(action, 'cancel')
   })
 
-  test('allows domains nested registration methods', function () {
+  it('allows domains nested registration methods', function () {
     let repo = new Microcosm()
     let handler = jest.fn()
 

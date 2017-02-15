@@ -1,6 +1,6 @@
 import Microcosm from '../src/microcosm'
 
-test('writes to repo state', function (done) {
+it('writes to repo state', function (done) {
   const action = function() {}
   const repo = new Microcosm()
 

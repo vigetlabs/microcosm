@@ -46,13 +46,17 @@ import test from 'ava'
 import {mount} from 'enzyme'
 import Button from 'prior-example'
 
-test('it emits an action when clicked', assert => {
-  assert.plan(1)
+describe('Button test', function () {
 
-  function assertion (action) {
-    assert.is(action, 'hello-world')
-  }
+  it('it emits an action when clicked', assert => {
+    assert.plan(1)
 
-  mount(<Button send={assertion}) />
+    function assertion (action) {
+      assert.is(action, 'hello-world')
+    }
+
+    mount(<Button send={assertion}) />
+  })
+
 })
 ```

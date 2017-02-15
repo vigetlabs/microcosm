@@ -1,6 +1,6 @@
 import Microcosm, { merge } from '../src/microcosm'
 
-test('does not rollforward the same actions twice', function () {
+it('does not rollforward the same actions twice', function () {
   const repo = new Microcosm({ maxHistory: Infinity })
   const send = n => n
 
@@ -43,7 +43,7 @@ test('does not rollforward the same actions twice', function () {
   expect(repo.state.messages.length).toEqual(3)
 })
 
-test('remembers the archive point', function () {
+it('remembers the archive point', function () {
   const repo = new Microcosm({ maxHistory: Infinity })
   const send = n => n
 
@@ -75,7 +75,7 @@ test('remembers the archive point', function () {
   expect(repo.state.messages.map(m => m.id)).toEqual([1, 2])
 })
 
-test('properly rolls forward the cache', () => {
+it('properly rolls forward the cache', () => {
   const repo = new Microcosm({ maxHistory: 0 })
 
   const all = n => n
@@ -132,7 +132,7 @@ test('properly rolls forward the cache', () => {
   expect(repo.state.items.map(i => i.done)).toEqual([true, true])
 })
 
-test('processes multiple loading states', () => {
+it('processes multiple loading states', () => {
   const repo = new Microcosm()
 
   const all = n => n
@@ -183,7 +183,7 @@ test('processes multiple loading states', () => {
   expect(repo.state.items.map(i => i.loading)).toEqual([true, true, true])
 })
 
-test('handles cancelling back to a former state', () => {
+it('handles cancelling back to a former state', () => {
   const repo = new Microcosm()
 
   const foldIn = n => n

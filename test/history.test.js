@@ -3,7 +3,7 @@ import Microcosm from '../src/microcosm'
 
 const action = n => n
 
-test('adjusts the focal point when adding a node', function () {
+it('adjusts the focal point when adding a node', function () {
   const history = new History()
 
   history.append(action)
@@ -12,7 +12,7 @@ test('adjusts the focal point when adding a node', function () {
   expect(history.head.behavior).toEqual(action)
 })
 
-test('handles cases where a repo might be lost during a reconcilation', function () {
+it('handles cases where a repo might be lost during a reconcilation', function () {
   const parent = new Microcosm()
   const child = parent.fork()
 
@@ -23,7 +23,7 @@ test('handles cases where a repo might be lost during a reconcilation', function
   parent.patch({ test: true })
 })
 
-test('only walks through the main timeline', function () {
+it('only walks through the main timeline', function () {
   const history = new History()
 
   const first = history.append(action)
@@ -37,7 +37,7 @@ test('only walks through the main timeline', function () {
   expect(history.toArray()).toEqual([ first, third ])
 })
 
-test('does not walk past the focal point', function () {
+it('does not walk past the focal point', function () {
   const history = new History()
 
   let one = history.append(action)
@@ -48,7 +48,7 @@ test('does not walk past the focal point', function () {
   expect(history.toArray()).toEqual([ one ])
 })
 
-test('properly handles forks', function () {
+it('properly handles forks', function () {
   let history = new History()
 
   let one   = history.append(action)
@@ -67,7 +67,7 @@ test('properly handles forks', function () {
      expect(history.toArray()).toEqual([ one, two, three ])
 })
 
-test('can get the previous node in the chain', function () {
+it('can get the previous node in the chain', function () {
   const history = new History()
 
   const one = history.append(action)
@@ -78,7 +78,7 @@ test('can get the previous node in the chain', function () {
   expect(three.parent).toEqual(two)
 })
 
-test('sets the root to null if checking out a null node', function () {
+it('sets the root to null if checking out a null node', function () {
   const history  = new History()
   history.append(action)
 
@@ -88,7 +88,7 @@ test('sets the root to null if checking out a null node', function () {
   expect(history.head).toEqual(null)
 })
 
-test('can determine the root node', function () {
+it('can determine the root node', function () {
   const history = new History()
 
   const a = history.append(action)
@@ -101,7 +101,7 @@ test('can determine the root node', function () {
 
 describe('children', function () {
 
-  test('can determine children', function () {
+  it('can determine children', function () {
     const history = new History()
     const a = history.append(action)
     const b = history.append(action)
@@ -113,7 +113,7 @@ describe('children', function () {
     expect(a.children).toEqual([ c, b ])
   })
 
-  test('does not lose children when checking out nodes on the left', function () {
+  it('does not lose children when checking out nodes on the left', function () {
     const history = new History()
 
     history.append(action)
@@ -128,7 +128,7 @@ describe('children', function () {
     expect(b.children).toEqual([ d, c ])
   })
 
-  test('does not lose children when checking out nodes on the right', function () {
+  it('does not lose children when checking out nodes on the right', function () {
     const history = new History()
 
     history.append(action)
@@ -149,7 +149,7 @@ describe('children', function () {
 
 describe('archival', function () {
 
-  test('archive moves all the way up to the focal point', function () {
+  it('archive moves all the way up to the focal point', function () {
     const history = new History(-Infinity)
 
     // One
@@ -174,7 +174,7 @@ describe('archival', function () {
     expect(history.root).toEqual(null)
   })
 
-  test('will not archive a node if prior nodes are not complete', function () {
+  it('will not archive a node if prior nodes are not complete', function () {
     const history = new History()
 
     // one
@@ -191,7 +191,7 @@ describe('archival', function () {
     expect(history.size).toBe(3)
   })
 
-  test('archives all completed actions', function () {
+  it('archives all completed actions', function () {
     const history = new History()
 
     const one = history.append(action)
@@ -208,7 +208,7 @@ describe('archival', function () {
     expect(history.size).toBe(1)
   })
 
-  test('archived nodes have no relations', function () {
+  it('archived nodes have no relations', function () {
     const history = new History()
 
     const one = history.append(action).resolve()
@@ -220,7 +220,7 @@ describe('archival', function () {
     expect(two.parent).toBe(null)
   })
 
-  test('archiving the entire tree clears cursors', function () {
+  it('archiving the entire tree clears cursors', function () {
     const history = new History()
 
     // one
@@ -239,7 +239,7 @@ describe('archival', function () {
 
 describe('repo management', function() {
 
-  test('Does not remove a repo outside of the tracked repo', function() {
+  it('Does not remove a repo outside of the tracked repo', function() {
     const history = new History()
     const repo = new Microcosm()
 
@@ -260,7 +260,7 @@ describe('checkout', function () {
    * <1>-|
    *     +-<3>
    */
-  test('updates the next values of nodes to follow the current branch', function () {
+  it('updates the next values of nodes to follow the current branch', function () {
     const history = new History()
 
     history.append(action)

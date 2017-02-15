@@ -130,7 +130,7 @@ new information.
 From here, we can write succinct tests for each behavior.
 
 ```javascript
-test('it sets a loading state when pushing getPlanets', assert => {
+it('it sets a loading state when pushing getPlanets', assert => {
   const repo = new SolarSystem()
 
   const action = repo.append(getPlanets)
@@ -140,7 +140,7 @@ test('it sets a loading state when pushing getPlanets', assert => {
   assert.equal(repo.state.planets.loading, true)
 })
 
-test('it sets a loading state when pushing getPlanets', assert => {
+it('it sets a loading state when pushing getPlanets', assert => {
   const repo = new SolarSystem()
 
   const action = repo.append(getPlanets)
