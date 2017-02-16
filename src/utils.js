@@ -20,10 +20,14 @@ export function clone (a) {
 /**
  * Merge any number of objects into a provided object.
  */
-export function merge (subject) {
-  let copy = subject
+export function merge () {
+  let copy = null
+  let subject = null
 
-  for (var i = 1, len = arguments.length; i < len; i++) {
+  for (var i = 0, len = arguments.length; i < len; i++) {
+    copy = copy || arguments[i]
+    subject = subject || copy
+
     var next = arguments[i]
 
     for (var key in next) {
