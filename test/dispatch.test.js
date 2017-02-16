@@ -23,13 +23,13 @@ it('does not mutate base state on prior dispatches', function () {
 
   repo.push(mutation)
   expect(repo.history.size).toEqual(0)
-  expect(repo.state.toggled).toEqual(true)
+  expect(repo).toHaveState('toggled', true)
 
   repo.push(mutation)
   expect(repo.history.size).toEqual(0)
-  expect(repo.state.toggled).toEqual(false)
+  expect(repo).toHaveState('toggled', false)
 
   repo.push(mutation)
   expect(repo.history.size).toEqual(0)
-  expect(repo.state.toggled).toEqual(true)
+  expect(repo).toHaveState('toggled', true)
 })

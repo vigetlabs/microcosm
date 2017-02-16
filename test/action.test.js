@@ -32,10 +32,10 @@ it('actions can be tested externally', function () {
   })
 
   repo.append(identity).open()
-  expect(repo.state.test).toBe('open')
+  expect(repo).toHaveState('test', 'open')
 
   repo.append(identity).resolve()
-  expect(repo.state.test).toBe('done')
+  expect(repo).toHaveState('test', 'done')
 })
 
 it('handles listeners with no callback', function () {
@@ -488,7 +488,7 @@ describe('::toggle', function() {
     repo.push('action', 2)
     repo.push('action', 1).toggle()
 
-    expect(repo.state.count).toEqual(2)
+    expect(repo).toHaveState('count', 2)
   })
 
   it('it will not dispatch an action disabled in the middle', function () {
@@ -511,7 +511,7 @@ describe('::toggle', function() {
 
     second.toggle()
 
-    expect(repo.state.count).toEqual(4)
+    expect(repo).toHaveState('count', 4)
   })
 
 })

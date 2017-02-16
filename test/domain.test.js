@@ -11,7 +11,7 @@ describe('Creation modes', function () {
       }
     })
 
-    expect(repo.state.count).toBe(0)
+    expect(repo).toHaveState('count', 0)
   })
 
   it('object - original primitive is not mutated', function () {
@@ -39,7 +39,7 @@ describe('Creation modes', function () {
 
     repo.addDomain('count', Counter)
 
-    expect(repo.state.count).toBe(0)
+    expect(repo).toHaveState('count', 0)
   })
 
   it('class - extends domain', function () {
@@ -53,7 +53,7 @@ describe('Creation modes', function () {
 
     repo.addDomain('count', Counter)
 
-    expect(repo.state.count).toBe(0)
+    expect(repo).toHaveState('count', 0)
   })
 
 })

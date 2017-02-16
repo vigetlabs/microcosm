@@ -19,7 +19,7 @@ it('writes to repo state', function (done) {
   })
 
   repo.push(action, true).onDone(() => {
-    expect(repo.state.test).toBe(true)
+    expect(repo).toHaveState('test', true)
     done()
   })
 })

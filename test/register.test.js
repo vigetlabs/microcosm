@@ -32,7 +32,7 @@ it('returns the same state if a handler is not provided', function () {
   })
 
   return repo.push(action).onDone(function() {
-    expect(repo.state.test).toEqual('test')
+    expect(repo).toHaveState('test', 'test')
   })
 })
 

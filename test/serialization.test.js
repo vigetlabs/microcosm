@@ -54,8 +54,8 @@ describe('deserialize', function () {
       }
     })
 
-    return repo.patch({}).onDone(function() {
-      expect(repo.state).toEqual({ fiz: true })
+    return repo.patch({}, true).onDone(function() {
+      expect(repo).toHaveState('fiz', true)
     })
   })
 
@@ -71,17 +71,6 @@ describe('deserialize', function () {
     let answer = repo.deserialize('{ "fiz": "buzz"}')
 
     expect(answer).toEqual({ fiz: 'BUZZ' })
-  })
-
-  it('rejects if there is a JSON parse error deserialization fails', function () {
-    const repo = new Microcosm()
-
-    // This is invalid
-    function badPatch () {
-      repo.patch("{ test: deserialize }", true)
-    }
-
-    expect(badPatch).toThrow('Unexpected token')
   })
 
 })

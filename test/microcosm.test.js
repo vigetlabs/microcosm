@@ -1,46 +1,92 @@
 import Microcosm from '../src/microcosm'
 
-it('it can instantiate with a starting state', function () {
-  class Repo extends Microcosm {
-    setup () {
-      this.addDomain('foo', {})
+describe('construction', function () {
+
+  it('it can instantiate with a starting state', function () {
+    class Repo extends Microcosm {
+      setup () {
+        this.addDomain('foo', {})
+      }
     }
-  }
 
-  const repo = new Repo({}, { foo: 'bar' })
+    const repo = new Repo({}, { foo: 'bar' })
 
-  expect(repo.state.foo).toEqual('bar')
-})
-
-it('it can deserialize starting state', function () {
-  class Repo extends Microcosm {
-    setup () {
-      this.addDomain('foo', {})
-    }
-  }
-
-  let raw = JSON.stringify({ foo: 'bar' })
-
-  let repo = new Repo({}, raw, true)
-
-  expect(repo.state.foo).toEqual('bar')
-})
-
-it('reset returns to initial state', function () {
-  const repo = new Microcosm()
-
-  repo.addDomain('test', {
-    getInitialState: () => false
+    expect(repo).toHaveState('foo', 'bar')
   })
 
-  repo.patch({ test: true })
+  it('it can deserialize starting state', function () {
+    class Repo extends Microcosm {
+      setup () {
+        this.addDomain('foo', {})
+      }
+    }
 
-  expect(repo.state.test).toBe(true)
+    let raw = JSON.stringify({ foo: 'bar' })
 
-  repo.reset()
+    let repo = new Repo({}, raw, true)
 
-  expect(repo.state.test).toBe(false)
+    expect(repo).toHaveState('foo', 'bar')
+  })
+
 })
+
+describe('::reset', function () {
+
+  it('reset returns to initial state', function () {
+    const repo = new Microcosm()
+
+    repo.addDomain('test', {
+      getInitialState: () => false
+    })
+
+    repo.patch({ test: true })
+
+    expect(repo).toHaveState('test', true)
+
+    repo.reset()
+
+    expect(repo).toHaveState('test', false)
+  })
+
+  it('rejects if there is a JSON parse error deserialization fails', function () {
+    const repo = new Microcosm()
+
+    // This is invalid
+    let badPatch = repo.reset("{ test: deserialize }", true)
+
+    expect(badPatch).toHaveStatus('error')
+  })
+
+  it('preserves state if reset fails', function () {
+    const repo = new Microcosm()
+
+    repo.addDomain('test', {
+      getInitialState: () => true
+    })
+
+    repo.patch({ test: false })
+
+    // This is invalid
+    repo.reset("{ test: deserialize }", true)
+
+    expect(repo).toHaveState('test', false)
+  })
+
+})
+
+describe('::patch', function () {
+
+  it('rejects if there is a JSON parse error deserialization fails', function () {
+    const repo = new Microcosm()
+
+    // This is invalid
+    let badPatch = repo.patch("{ test: deserialize }", true)
+
+    expect(badPatch).toHaveStatus('error')
+  })
+
+})
+
 
 it('can manipulate how many transactions are merged', function () {
   const repo = new Microcosm({ maxHistory: 5 })
@@ -88,7 +134,7 @@ it('can checkout a prior state', function () {
 
   repo.checkout(start)
 
-  expect(repo.state.number).toEqual(1)
+  expect(repo).toHaveState('number', 1)
 })
 
 it('it will not emit a change if state is shallowly equal', function () {

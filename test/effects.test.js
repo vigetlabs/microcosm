@@ -144,7 +144,7 @@ describe('state', function () {
 
     const Effect = {
       handler (repo) {
-        expect(repo.state.test).toBe(true)
+        expect(repo).toHaveState('test', true)
       },
       register() {
         return {

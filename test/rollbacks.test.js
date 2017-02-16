@@ -36,11 +36,11 @@ it('does not rollforward the same actions twice', function () {
   b.resolve({ id: 2 })
   c.resolve({ id: 3 })
 
-  expect(repo.state.messages[0].pending).not.toBeDefined()
-  expect(repo.state.messages[1].pending).not.toBeDefined()
-  expect(repo.state.messages[2].pending).not.toBeDefined()
+  expect(repo).toHaveState(['messages', 0, 'pending'], undefined)
+  expect(repo).toHaveState(['messages', 1, 'pending'], undefined)
+  expect(repo).toHaveState(['messages', 2, 'pending'], undefined)
 
-  expect(repo.state.messages.length).toEqual(3)
+  expect(repo).toHaveState(['messages', 'length'], 3)
 })
 
 it('remembers the archive point', function () {
