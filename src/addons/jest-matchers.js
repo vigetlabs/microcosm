@@ -20,7 +20,7 @@ expect.extend({
   toHaveStatus (action, status) {
     if (action instanceof Action === false) {
       throw new TypeError("toHaveStatus expects an Action. Received " +
-                          (action ? "a " + action.constructor.name : action) + ".")
+                          (action != null ? "a " + action.constructor.name : action) + ".")
     }
 
     let operator = this.isNot ? 'not to' : 'to'
@@ -37,7 +37,7 @@ expect.extend({
   toHaveState (repo, key, value) {
     if (repo instanceof Microcosm === false) {
       throw new TypeError("toHaveState expects a Microcosm. Received " +
-                           (repo ? "a " + repo.constructor.name : repo) + ".")
+                           (repo != null ? "a " + repo.constructor.name : repo) + ".")
     }
 
     let operator = this.isNot ? 'not to' : 'to'
