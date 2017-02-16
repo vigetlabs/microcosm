@@ -45,6 +45,13 @@ describe('merge', function () {
     expect(merge(a, b)).toBe(a)
   })
 
+  it('will not merge a undefined into an object', function () {
+    const a = {}
+    const b = undefined
+
+    expect(merge(a, b)).toBe(a)
+  })
+
   it('works from the left most non-null value', function () {
     const a = null
     const b = {}
@@ -89,6 +96,16 @@ describe('merge', function () {
     const a = { foo: 'bar' }
     const b = { foo: 'baz' }
     const c = merge(null, null, a, b)
+
+    expect(c).not.toBe(a)
+    expect(c).not.toBe(b)
+    expect(c).toEqual(b)
+  })
+
+  it('handles mixtures of undefined and null', function () {
+    const a = { foo: 'bar' }
+    const b = { foo: 'baz' }
+    const c = merge(a, null, b, undefined)
 
     expect(c).not.toBe(a)
     expect(c).not.toBe(b)
