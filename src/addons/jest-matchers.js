@@ -50,10 +50,13 @@ expect.extend({
       pass = actual !== undefined
     }
 
+    // Display friendly key path
+    let path = [].concat(key).join('.')
+
     return {
       pass: pass,
       message: () => {
-        return `Expected repo state at "${key}" ${operator} be ${value}. Found ${actual}.`
+        return `Expected repo state at "${path}" ${operator} be ${value}. Found ${actual}.`
       }
     }
   }

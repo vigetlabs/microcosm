@@ -36,11 +36,11 @@ it('does not rollforward the same actions twice', function () {
   b.resolve({ id: 2 })
   c.resolve({ id: 3 })
 
-  expect(repo).toHaveState(['messages', 0, 'pending'], undefined)
-  expect(repo).toHaveState(['messages', 1, 'pending'], undefined)
-  expect(repo).toHaveState(['messages', 2, 'pending'], undefined)
+  expect(repo).not.toHaveState('messages.0.pending')
+  expect(repo).not.toHaveState('messages.1.pending')
+  expect(repo).not.toHaveState('messages.2.pending')
 
-  expect(repo).toHaveState(['messages', 'length'], 3)
+  expect(repo.state.messages).toHaveLength(3)
 })
 
 it('remembers the archive point', function () {
@@ -209,9 +209,9 @@ it('handles cancelling back to a former state', () => {
 
   action.open({ color: 'red' })
 
-  expect(repo.state.styles.color).toEqual('red')
+  expect(repo).toHaveState('styles.color', 'red')
 
   action.cancel()
 
-  expect(repo.state.styles.color).toEqual('blue')
+  expect(repo).toHaveState('styles.color', 'blue')
 })

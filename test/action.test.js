@@ -54,7 +54,7 @@ describe('open state', function () {
 
     action.open()
 
-    expect(action.is('open')).toBe(true)
+    expect(action).toHaveStatus('open')
   })
 
   it('triggers an open event when it opens', function () {
@@ -73,7 +73,7 @@ describe('open state', function () {
     action.open(true)
 
     expect(action.disabled).toBe(false)
-    expect(action.is('open')).toBe(true)
+    expect(action).toHaveStatus('open')
   })
 
   it('does not trigger an open event if it is disposable', function () {
@@ -96,7 +96,7 @@ describe('update state', function () {
 
     action.update()
 
-    expect(action).toHaveStatus('loading')
+    expect(action).toHaveStatus('update')
   })
 
   it('listens to progress updates', function () {
@@ -129,7 +129,7 @@ describe('update state', function () {
     expect(action).toHaveStatus('loading')
   })
 
-  it('triggers an update event when it sends', function () {
+  it('triggers an update event when it updates', function () {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -156,6 +156,39 @@ describe('update state', function () {
     action.update()
 
     expect(action).toHaveStatus('update')
+  })
+
+  it('updates repo state with the latest progress', function () {
+    const repo = new Microcosm()
+    const test = n => n
+    const handler = jest.fn(n => n)
+
+    repo.addDomain('progress', {
+      getInitalState() {
+        return 0
+      },
+      register () {
+        return {
+          [test]: {
+            update: (a, b) => handler(b)
+          }
+        }
+      }
+    })
+
+    const action = repo.append(test)
+
+    action.update(1)
+    expect(handler).toHaveBeenCalledWith(1)
+    expect(repo).toHaveState('progress', 1)
+
+    action.update(2)
+    expect(handler).toHaveBeenCalledWith(2)
+    expect(repo).toHaveState('progress', 2)
+
+    action.update(3)
+    expect(handler).toHaveBeenCalledWith(3)
+    expect(repo).toHaveState('progress', 3)
   })
 })
 
