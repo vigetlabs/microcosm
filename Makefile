@@ -20,6 +20,10 @@ build/%.js: src/%.js $(SCRIPTS)
 	@ mkdir -p $(@D)
 	@ $(ROLLUP) -c rollup.config.js $< --output $@
 	@ NODE_ENV=production $(ROLLUP) -c rollup.config.js $< --output build/$*.min.js
+	@ echo $@
+	@ gzip -c build/$*.min.js | wc -c | tr -d '[:space:]'
+	@ echo
+
 
 release: clean all
 	npm publish build
