@@ -1,33 +1,49 @@
+import Databank from '../../../../src/addons/databank'
 import Message from '../records/message'
 import { send } from '../actions/messages'
 
-const Messages = {
+class Messages extends Databank {
 
-  getInitialState() {
-    return [ Message({ user: 'Eliza', message: "What's new with you?" }) ]
-  },
+  getInitialState () {
+    const initial = Message({
+      user: 'Eliza',
+      message: "What's new with you?"
+    })
 
-  add(state, items) {
-    const messages = [].concat(items).map(Message)
+    return [ 'put', initial.id, initial ]
+  }
 
-    return state.concat(messages)
-  },
+  add (state, items) {
+    return [].concat(items)
+             .map(item => ['put', item.id, Message(item)])
+  }
 
-  addLoading(state, params) {
-    return Messages.add(state, { ...params, pending: true })
-  },
+  addLoading (state, params) {
+    return [
+      this.add(state, params),
+      ['patch', params.id, 'loading', true],
+    ]
+  }
 
-  addError(state, params) {
-    return Messages.add(state, { ...params, error: true })
-  },
+  addError (state, params) {
+    return [
+      this.add(state, params),
+      ['patch', params.id, 'error', true],
+    ]
+  }
+
+  comparator (a, b) {
+    return a.time > b.time ? 1 : -1
+  }
 
   register() {
     return {
-      [send.open]  : Messages.addLoading,
-      [send.done]  : Messages.add,
-      [send.error] : Messages.addError
+      [send.open]  : this.addLoading,
+      [send.done]  : this.add,
+      [send.error] : this.addError
     }
   }
+
 }
 
 export default Messages

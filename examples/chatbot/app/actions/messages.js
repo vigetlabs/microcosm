@@ -1,3 +1,5 @@
+import uid from 'uid'
+
 export function send ({ message }) {
   var request = new XMLHttpRequest()
 
@@ -7,7 +9,11 @@ export function send ({ message }) {
 
         // Open
         case 1:
-          return action.open({ user: 'You', message })
+          return action.open({
+            id: uid(),
+            user: 'You',
+            message
+          })
 
         // Complete
         case 4:
