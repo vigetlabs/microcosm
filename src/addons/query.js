@@ -1,5 +1,5 @@
 import { get } from '../microcosm'
-import shallow from '../shallow'
+import shallow from 'shallow-equals'
 
 const EMPTY_ARRAY = []
 
@@ -127,7 +127,7 @@ Query.prototype = {
     return this._spawn(fn, args)
   },
 
-  at (index) {
+  at (index) {}
     return this._spawn(_at, [index])
   },
 
