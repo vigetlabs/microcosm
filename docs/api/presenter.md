@@ -8,9 +8,11 @@
 ## Overview
 
 The Presenter add-on makes it easier to keep application logic high
-within a component tree. It is designed specifically to extract and
-compute properties coming from a Microcosm instance and efficiently
-send them down as `props` to child "passive view" React components.
+within a component tree. It subscribes to state changes via a
+`getModel` method, designed specifically to extract and compute
+properties coming from a Microcosm instance. When state changes, model
+keys are efficiently sent down as props to child “passive view” React
+components.
 
 Presenters also make it easy for components deep within a component
 tree to communicate without passing a long chain of props. The
