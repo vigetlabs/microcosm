@@ -1,7 +1,11 @@
-import Microcosm, { merge, get, tag, inherit } from '../microcosm'
+import Microcosm, { get, merge, tag, inherit, getRegistration } from '../microcosm'
 import { Children, PropTypes, Component, PureComponent, createElement } from 'react'
 
 const EMPTY = {}
+
+function passChildren () {
+  return this.props.children ? Children.only(this.props.children) : null
+}
 
 /**
  * PureComponent was only added recently, so fallback to the regular
@@ -12,105 +16,103 @@ const BaseComponent = PureComponent || Component
 function Presenter (props, context) {
   BaseComponent.apply(this, arguments)
 
-  // Do not overriding render, generate the context wrapper upon creation
-  if (this.view === Presenter.prototype.view && this.render !== Presenter.prototype.render) {
-    this.view = this.render.bind(this)
-    this.render = Presenter.prototype.render.bind(this)
+  if (this.render !== Presenter.prototype.render) {
+    this.defaultRender = this.render
+    this.render = Presenter.prototype.render
+  } else {
+    this.defaultRender = passChildren
   }
 }
 
 inherit(Presenter, BaseComponent, {
 
-  getRepo (repo, props) {
-    return repo ? repo.fork() : new Microcosm()
+  _beginSetup (mediator) {
+    this.repo = mediator.repo
+    this.mediator = mediator
+
+    this.setup(this.repo, this.props, this.state)
+
+    this.model = this._prepareModel()
+
+    this.ready(this.repo, this.props, this.state)
   },
 
-  _setRepo (repo) {
-    this.repo = repo
-
-    this.setup(repo, this.props, this.props.state)
+  _beginTeardown () {
+    this.teardown(this.repo, this.props, this.state)
   },
 
-  _connectSend (send) {
-    this.send = send
+  _requestRepo (contextRepo) {
+    let givenRepo = this.props.repo || contextRepo
+    let workingRepo = this.getRepo(givenRepo, this.props, this.state)
+
+    this.didFork = workingRepo !== givenRepo
+
+    return workingRepo
   },
 
-  /**
-   * Called when a presenter is created, before it has calculated a view model.
-   * Useful for fetching data and other prep-work.
-   */
+  _prepareModel (props = this.props, state = this.state) {
+    return this.mediator.updateModel(props, state)
+  },
+
   setup (repo, props, state) {
     // NOOP
   },
 
-  /**
-   * Called when a presenter gets new props. This is useful for secondary
-   * data fetching and other work that must happen when a Presenter receives
-   * new information
-   */
+  ready (repo, props, state) {
+    // NOOP
+  },
+
   update (repo, props, state) {
     // NOOP
   },
 
-  componentWillUpdate (next, state) {
-    this.update(this.repo, next, state)
-  },
-
-  /**
-   * Opposite of setup. Useful for cleaning up side-effects.
-   */
   teardown (repo, props, state) {
     // NOOP
   },
 
-  /**
-   * Expose "intent" subscriptions to child components. This is used with the <Form />
-   * add-on to improve the ergonomics of presenter/view communication (though this only
-   * occurs from the view to the presenter).
-   */
   register () {
-    // NOOP
-  },
-
-  /**
-   * Used by the presenter to calculate it's internal state. This function must return
-   * an object who's keys will be assigned to state, and who's values are functions that
-   * are given the repo state and can return a specific point in that state.
-   *
-   * If none of the keys have changed, `this.updateState` will not set a new state.
-   */
-  getModel (props, state, repo) {
     return EMPTY
   },
 
-  view (model) {
-    return this.props.children ? Children.only(this.props.children) : null
+  componentWillUpdate (props, state) {
+    this.model = this._prepareModel(props, state)
+    this.update(this.repo, props, state)
+  },
+
+  getRepo (repo, props) {
+    return repo ? repo.fork() : new Microcosm()
+  },
+
+  send () {
+    return this.mediator.send(...arguments)
+  },
+
+  getModel (repo, props, state) {
+    return EMPTY
   },
 
   render () {
     return (
-      createElement(PresenterContext, {
-        parentProps : this.props,
-        parentState : this.state,
+      createElement(PresenterMediator, {
         presenter   : this,
-        view        : this.view,
-        repo        : this.props.repo
+        parentState : this.state
       })
     )
   }
+
 })
 
-function PresenterContext (props, context) {
+function PresenterMediator (props, context) {
   BaseComponent.apply(this, arguments)
 
-  this.repo = this.getRepo()
-  this.state = {}
-  this.send = this.send.bind(this)
+  this.presenter = props.presenter
 
-  props.presenter._connectSend(this.send)
+  this.repo = this.presenter._requestRepo(context.repo)
+  this.send = this.send.bind(this)
+  this.state = { repo: this.repo, send: this.send }
 }
 
-inherit(PresenterContext, BaseComponent, {
+inherit(PresenterMediator, BaseComponent, {
 
   getChildContext () {
     return {
@@ -120,132 +122,123 @@ inherit(PresenterContext, BaseComponent, {
   },
 
   componentWillMount () {
-    this.props.presenter._setRepo(this.repo)
-    this.recalculate(this.props)
+    if (this.presenter.getModel !== Presenter.prototype.getModel) {
+      this.repo.on('change', this.setModel, this)
+    }
+
+    this.presenter._beginSetup(this)
   },
 
   componentDidMount () {
-    this.repo.on('change', this.updateState, this)
-    this.props.presenter.refs = this.refs
-  },
-
-  componentDidUpdate () {
-    this.props.presenter.refs = this.refs
+    this.presenter.refs = this.refs
   },
 
   componentWillUnmount () {
-    const { presenter, parentProps, parentState, repo } = this.props
+    this.presenter.refs = this.refs
 
-    presenter.teardown(this.repo, parentProps, parentState)
+    this.repo.off('change', this.setModel, this)
 
-    if (this.repo !== (repo || this.context.repo)) {
+    if (this.presenter.didFork) {
       this.repo.teardown()
     }
-  },
 
-  componentWillReceiveProps (next) {
-    this.recalculate(next)
+    this.presenter._beginTeardown()
   },
 
   render () {
-    const { presenter, parentProps } = this.props
+    // setState might have been called before the model
+    // can get assigned
+    this.presenter.model = this.state
 
-    const model = merge(parentProps, { send: this.send, repo: this.repo }, this.state)
+    // Views can be getters, so pluck it out so that it is only evaluated once
+    const view = this.presenter.view
 
-    if (presenter.hasOwnProperty('view') || presenter.view.prototype.isReactComponent) {
-      return createElement(presenter.view, model)
+    if (view != null) {
+      return createElement(view, merge(this.presenter.props, this.state))
     }
 
-    return presenter.view(model)
+    return this.presenter.defaultRender()
   },
 
-  getRepo () {
-    const { presenter, parentProps, repo } = this.props
+  updateModel (props, state) {
+    let model = this.presenter.getModel(props, state)
+    let data = this.repo.state
+    let next = {}
 
-    return presenter.getRepo(repo || this.context.repo, parentProps)
-  },
+    this.propMap = {}
 
-  updatePropMap ({ presenter, parentProps, parentState }) {
-    this.propMap = presenter.getModel(this.repo, parentProps, parentState)
-    this.propMapKeys = Object.keys(this.propMap || EMPTY)
-  },
+    for (var key in model) {
+      var entry = model[key]
 
-  recalculate (props) {
-    this.updatePropMap(props)
-    this.updateState()
-  },
-
-  updateState () {
-    let next = this.getState()
-
-
-    if (next) {
-      this.props.presenter.model = merge(this.state, next)
-      this.setState(next)
-    }
-  },
-
-  getState () {
-    let repoState = this.repo.state
-
-    if (typeof this.propMap === 'function') {
-      return this.propMap(repoState)
+      if (typeof entry === 'function') {
+        this.propMap[key] = entry
+        next[key] = entry(data)
+      } else {
+        next[key] = entry
+      }
     }
 
+    this.setState(next)
+
+    return merge(this.state, next)
+  },
+
+  setModel (state) {
+    let last = this.state
     let next = null
 
-    for (var i = this.propMapKeys.length - 1; i >= 0; --i) {
-      var key = this.propMapKeys[i]
-      var entry = this.propMap[key]
+    for (var key in this.propMap) {
+      var value = this.propMap[key](state)
 
-      var value = typeof entry === 'function' ? entry(repoState) : entry
-
-      if (this.state[key] !== value) {
+      if (last[key] !== value) {
         next = next || {}
         next[key] = value
       }
     }
 
-    return next
+    if (next !== null) {
+      this.setState(next)
+    }
+  },
+
+  hasParent () {
+    // Do not allow transfer across repos. Check to for inheritence by comparing
+    // the common history object shared between repos
+    return get(this.repo, 'history') === get(this.context, ['repo', 'history'])
   },
 
   send (intent, ...params) {
     const { presenter } = this.props
 
-    const registry = presenter.register()
-
-    // Tag intents so that they register the same way in the Presenter
-    // and Microcosm instance
-    intent = tag(intent)
+    // A presenter's register goes through the same registration steps
+    let handler = getRegistration(presenter, tag(intent))
 
     // Does the presenter register to this intent?
-    if (registry && registry.hasOwnProperty(intent)) {
-      return registry[intent].call(presenter, this.repo, ...params)
+    if (handler) {
+      return handler.call(presenter, this.repo, ...params)
     }
 
     // No: try the parent presenter
-    if (this.context.send) {
-      // Do not allow transfer across repos
-      if (get(this.repo, 'history') === get(this.context, ['repo', 'history'])) {
-        return this.context.send.apply(null, arguments)
-      }
+    if (this.hasParent()) {
+      return this.context.send.apply(null, arguments)
     }
 
     // If we hit the top, push the intent into the Microcosm instance
-    return this.repo.push(...arguments)
+    return this.repo.push.apply(this.repo, arguments)
   }
+
 })
 
-PresenterContext.propTypes = {
+PresenterMediator.propTypes = {
   repo : PropTypes.object
 }
 
-PresenterContext.contextTypes = {
+PresenterMediator.contextTypes = {
   repo : PropTypes.object,
   send : PropTypes.func
 }
 
-PresenterContext.childContextTypes = {
+PresenterMediator.childContextTypes = {
   repo : PropTypes.object,
   send : PropTypes.func
 }
