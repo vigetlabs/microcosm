@@ -146,7 +146,7 @@ import Presenter from 'microcosm/addons/presenter'
 
 class Planets extends Presenter {
 
-  view () {
+  render () {
     return (
       <ul>
         <li>Mercury</li>
@@ -207,7 +207,7 @@ import PlanetList from '../views/planet-list'
 
 class Planets extends Presenter {
 
-  view () {
+  render () {
     return <PlanetList />
   }
 
@@ -217,13 +217,12 @@ export default Planets
 
 ```
 
-Awesome. Well, not _really_. Now the `PlanetList` view components knows
+Awesome. Well, not _really_. Now the `PlanetList` component knows
 all about the data. It shouldn't care whether or not Pluto's a _real_
 planet. Let's fix that.
 
-We need to prepare data in the presenter to send down into the
-view. Presenters can implement a `model` method that to do just
-that:
+We need to prepare data in the presenter to send down into the `PlanetList`
+view. Presenters can implement a `getModel` method that to do just that:
 
 ```javascript
 // src/presenters/planets
@@ -233,13 +232,15 @@ import PlanetList from '../views/planet-list'
 
 class Planets extends Presenter {
 
-  model () {
+  getModel () {
     return {
       planets: () => ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto']
     }
   }
 
-  view ({ planets }) {
+  render () {
+    const { planets } = this.model
+
     return <PlanetList planets={planets} />
   }
 
@@ -322,14 +323,16 @@ import PlanetList from '../views/planet-list'
 
 class Planets extends Presenter {
 
-  model () {
+  getModel () {
     return {
       // I'm new. Pull planets out of the repo's state
       planets: state => state.planets
     }
   }
 
-  view ({ planets }) {
+  render () {
+    const { planets } = this.model
+
     return <PlanetList planets={planets} />
   }
 
@@ -377,16 +380,16 @@ function:
 import {getPlanets} from '../actions/planets'
 
 const Planets = {
-  getInitialState() {
+  getInitialState () {
     // Remember, we put the planets data into the action
     return []
   },
 
-  append(planets, data) {
+  append (planets, data) {
     return planets.concat(data)
   },
 
-  register() {
+  register () {
     return {
       // Curious? This works because Microcosm assigns a unique
       // toString() method to each action pushed into it. That means
@@ -415,17 +418,19 @@ import {getPlanets} from '../actions/planets'
 
 class Planets extends Presenter {
 
-  setup(repo) {
+  setup (repo) {
     repo.push(getPlanets)
   }
 
-  model () {
+  getModel () {
     return {
       planets: state => state.planets
     }
   }
 
-  view ({ planets }) {
+  render () {
+    const { planets } = this.model
+
     return <PlanetList planets={planets} />
   }
 
