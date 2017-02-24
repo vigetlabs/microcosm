@@ -37,14 +37,16 @@ repo.patch({ planets: [ 'Mercury', 'Venus', 'Earth' ]})
 
 class PlanetsPresenter extends Presenter {
 
-  model (props, state) {
+  getModel (props, state) {
     return {
       planets: data => data.planets
     }
   }
 
-  view ({ planets }) {
-    return <p>{ planets.join(', ') }</p>
+  render () {
+    const { planets } = this.model
+
+    return <p>{planets.join(', ')}</p>
   }
 
 }
@@ -56,24 +58,6 @@ In the example above, the `PlanetsPresenter` will extract a list of
 planets from the Microcosm instance provided to it via the `repo`
 prop. This is available as state, which the Presenter can send into a
 child component.
-
-### Listening to all state changes
-
-While we do not recommend it for large repos, some times it's simply easier
-to subscribe to all repo changes. `model` can also return a function, which
-will be called with state:
-
-```javascript
-class PlanetsPresenter extends Presenter {
-  model () {
-    return data => data
-  }
-
-  view ({ planets }) {
-    return <p>{ planets.join(', ') }</p>
-  }
-}
-```
 
 ## Receiving Actions
 
@@ -120,7 +104,7 @@ function StepperForm ({ count }) {
 }
 
 class CountPresenter extends Presenter {
-  model () {
+  getModel () {
     return {
       count: data => data.count
     }
@@ -136,8 +120,10 @@ class CountPresenter extends Presenter {
     return repo.push(increment, amount)
   }
 
-  view ({ count }) {
-    return <StepperForm count={ count } />
+  render () {
+    const { count } = this.model
+
+    return <StepperForm count={count} />
   }
 }
 
@@ -168,33 +154,34 @@ function StepperForm ({ count }) {
 
 ## API
 
-### `setup(repo, props)`
+### `setup(repo, props, state)`
 
-Called when a presenter is created, useful for initial data fetching and other
-prep work.
+Called when a presenter is created, useful any prep work. `setup` runs before the first `getModel` invocation.
 
-### `update(repo, props)`
+### `ready(repo, props, state)`
+
+Called after the presenter has run `setup` and executed the first `getModel`. This hook is useful for fetching initial data and other start tasks that need access to the model data.
+
+### `update(repo, props, state)`
 
 Called when a presenter gets new props. This is useful for secondary
 data fetching and other work that must happen when a Presenter receives
 new information.
 
-If pure (by default) this will only get called if properties are shallowly
-different.
+`update` is always executed after the latest model has been calculated.
 
-### `teardown(repo, props)`
+### `teardown(repo, props, state)`
 
 Runs when the presenter unmounts. Useful for tearing down subscriptions and other setup behavior.
 
-### `model(props, state)`
+### `getModel(props, state)`
 
 Builds a view model for the current props and state. This must return
-an object of key/value pairs. If the value is a function, it will be
-calculated by passing in the repo's current state:
+an object of key/value pairs.
 
 ```javascript
 class PlanetPresenter extends Presenter {
-  model (props, state) {
+  getModel (props, state) {
     return {
       planet : data => data.planets.find(p => p.id === props.planetId)
     }
@@ -203,46 +190,45 @@ class PlanetPresenter extends Presenter {
 }
 ```
 
-If the Presenter is pure (passed in as either a prop or as an option to the
-associated repo), this will only update state if shallowly equal.
+`getModel` assigns a `model` property to the presenter, similarly to `props` or
+`state`. It is recalculated whenever the Presenter's `props` or `state`
+changes, and functions returned from model keys are invoked every time the repo
+changes.
 
-When not implemented, model returns all repo state.
+### `view`
 
-### `view(model)`
-
-A special render method that is given the current result of `model`.
+If a Presenter has a `view` property, it create the associated component instead of calling `render`. The `view` component is given the latest model data:
 
 ```javascript
+function Message ({ message }) {
+  return <p>{message}</p>
+}
+
 class Greeter extends Presenter {
-  model ({ greet })
+  view = Message
+
+  getModel ({ greet })
     return {
       message: "Hello, " + greet
     }
   }
-  view ({ message }) {
-    return <p>{message}</p>
-  }
 }
 ```
 
-Views may also be assigned as getters, or as properties:
+Views may also be assigned as a getter:
 
 ```javascript
-class Example extends Presenter {
+class ShowPlanet extends Presenter {
+  getModel (props) {
+    return {
+      planet: state => state.planets.find(p => p.id === props.id)
+    }
+  }
   get view {
-    return MyView
+    return this.model.planet ? PlanetView : MissingView
   }
 }
-
-// Or use newer class features:
-
-class Example extends Presenter {
-  view = MyView
-}
 ```
-
-If a view is a React component, it will invoke it with the Presenter's
-model as props (including children).
 
 Views are passed the `send` method on a Presenter. This provides the
 exact same behavior as `withAction`:
@@ -273,15 +259,15 @@ occurs from the view to the presenter).
 import Form from 'microcosm/addons/form'
 
 class HelloWorldPresenter extends Presenter {
-  register() {
+  register () {
     return {
       'greet': this.greet
     }
   }
-  greet() {
+  greet () {
     alert("hello world!")
   }
-  view () {
+  render () {
     return (
       <Form action="greet">
         <button>Greet</button>
