@@ -2,9 +2,7 @@ import {
   merge,
   clone,
   get,
-  set,
-  compileKeyPaths,
-  extract
+  set
 } from '../src/utils'
 
 describe('clone', function () {
@@ -112,9 +110,27 @@ describe('merge', function () {
     expect(c).toEqual(b)
   })
 
+  describe('arrays', function () {
+    it('merges arrays', function () {
+      let answer = merge(['a'], ['b', 'c'])
+
+      expect(answer).toEqual(['b', 'c'])
+      expect(answer).toBeInstanceOf(Array)
+    })
+
+    it('does not copy arrays if it does not', function () {
+      let first = ['a', 'b']
+      let second = ['a']
+      let answer = merge(first, second)
+
+      expect(answer).toEqual(['a', 'b'])
+      expect(answer).toBe(first)
+    })
+  })
+
 })
 
-describe('get', function () {
+describe.only('get', function () {
   const subject = {
     styles: {
       color: 'blue',
@@ -128,8 +144,32 @@ describe('get', function () {
     expect(styles).toEqual(subject.styles)
   })
 
-  it('can retrieve a deep key path', function () {
+  it('fetches the root node when given null', function () {
+    let styles = get(subject, null)
+
+    expect(styles).toEqual(styles)
+  })
+
+  it('fetches the root node when given an empty string', function () {
+    let styles = get(subject, '')
+
+    expect(styles).toEqual(styles)
+  })
+
+  it('fetches the root node when given an empty array', function () {
+    let styles = get(subject, [])
+
+    expect(styles).toEqual(styles)
+  })
+
+  it('can retrieve a deep key path using an array', function () {
     let color = get(subject, ['styles', 'color'])
+
+    expect(color).toEqual(subject.styles.color)
+  })
+
+  it('can retrieve a deep key path using dot notation', function () {
+    let color = get(subject, 'styles.color')
 
     expect(color).toEqual(subject.styles.color)
   })
@@ -174,8 +214,14 @@ describe('set', function () {
     expect(next.styles.color).toEqual('red')
   })
 
-  it('can set new keys deeply', function () {
+  it('can set new keys deeply using an array', function () {
     let next = set(subject, ['styles', 'padding', 'top'], 10)
+
+    expect(next.styles.padding.top).toEqual(10)
+  })
+
+  it('can set new keys deeply using dot notation', function () {
+    let next = set(subject, 'styles.padding.top', 10)
 
     expect(next.styles.padding.top).toEqual(10)
   })
@@ -194,73 +240,11 @@ describe('set', function () {
   })
 
   it('can operate on arrays', function () {
-    let list = ['a', 'b', 'c']
-    let next = set(list, 3, 'd')
+    let list = { pixels: [[0,0,0],[0,0,0],[0,0,0]]}
+    let next = set(list, ['pixels',2,2], 1)
 
-    expect(Array.isArray(next)).toBe(true)
-    expect(next[3]).toBe('d')
-  })
-})
-
-describe('compileKeyPaths', function () {
-
-  it('trims leading whitespaces', function () {
-    let keyPaths = compileKeyPaths('foo.bar ,bip')
-
-    expect(keyPaths).toEqual([
-      ['foo', 'bar'],
-      ['bip']
-    ])
-  })
-
-  it('trims following whitespaces', function () {
-    let keyPaths = compileKeyPaths('foo.bar, bip')
-
-    expect(keyPaths).toEqual([
-      ['foo', 'bar'],
-      ['bip']
-    ])
-  })
-
-})
-
-describe('extract', function () {
-  const subject = {
-    styles: {
-      color: 'blue',
-      font: 'Helvetica, sans-serif'
-    }
-  }
-
-  it('plucks a fragment of state', function () {
-    let fragment = extract(subject, [['styles','color']])
-
-    expect(fragment).toEqual({
-      styles: {
-        color: 'blue'
-      }
-    })
-  })
-
-  it('can seed another object', function () {
-    let seed = { test: true }
-    let fragment = extract(subject, [['styles','color']], seed)
-
-    expect(fragment).toEqual({
-      test: true,
-      styles: {
-        color: 'blue'
-      }
-    })
-
-    expect(seed.styles).toBeUndefined()
-  })
-
-  it('seeding the result returns the same', function () {
-    let seed = { test: true }
-    let one = extract(subject, [['styles','color']], seed)
-    let two = extract(subject, [['styles','color']], one)
-
-    expect(one).toBe(two)
+    expect(Array.isArray(next.pixels)).toBe(true)
+    expect(Array.isArray(next.pixels[2])).toBe(true)
+    expect(next.pixels[2][2]).toBe(1)
   })
 })

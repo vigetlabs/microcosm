@@ -1,4 +1,14 @@
-const hasOwn = Object.prototype.hasOwnProperty
+const EMPTY_ARRAY = []
+
+function castPath (value) {
+  if (Array.isArray(value)) {
+    return value
+  } else if (value == null) {
+    return EMPTY_ARRAY
+  }
+
+  return typeof value === 'string' ? value.split('.') : [value]
+}
 
 /**
  * Shallow copy an object
@@ -61,32 +71,28 @@ export function inherit (Child, Ancestor, proto) {
  * Retrieve a value from an object. If no key is provided, just
  * return the object.
  */
-export function get (object, key, fallback) {
+export function get (object, path, fallback) {
   if (object == null) {
     return fallback
-  } else if (key == null) {
-    return object
   }
 
-  if (Array.isArray(key)) {
-    return getIn(object, key, fallback)
+  path = castPath(path)
+
+  let index = -1
+  let length = path.length
+
+  while (++index < length) {
+    let value = object == null ? undefined : object[path[index]]
+
+    if (value === undefined) {
+      index = length
+      value = fallback
+    }
+
+    object = value
   }
 
-  return hasOwn.call(object, key) ? object[key] : fallback
-}
-
-/**
- * Retrieve a value deeply within an object given an array of sequential
- * keys.
- */
-export function getIn (object, keys, fallback) {
-  let value = object
-
-  for (var i = 0, len = keys.length; i < len; i++) {
-    value = get(value, keys[i], fallback)
-  }
-
-  return value
+  return object
 }
 
 /**
@@ -94,24 +100,24 @@ export function getIn (object, keys, fallback) {
  * the value is the same, don't do anything. Otherwise return a new
  * object.
  */
-export function set (object, key, value) {
-  if (Array.isArray(key)) {
-    return setIn(object, key, value)
-  }
-
-  // If the key path is null, there's no need to traverse the
-  // object. Just return the value.
-  if (key == null) {
-    return value
-  }
-
-  if (value === undefined || get(object, key) === value) {
+export function set (object, path, value) {
+  if (value === undefined || get(object, path) === value) {
     return object
+  }
+
+  path = castPath(path)
+
+  let length = path.length
+
+  if (length <= 0) {
+    return value
+  } else if (length > 1) {
+    return setIn(object, path, value)
   }
 
   let copy = clone(object)
 
-  copy[key] = value
+  copy[path[0]] = value
 
   return copy
 }
@@ -120,7 +126,7 @@ export function set (object, key, value) {
  * Deeply assign a value given a path of sequential keys.
  */
 export function setIn (object, keys, value) {
-  if (getIn(object, keys) === value) {
+  if (get(object, keys) === value) {
     return object
   }
 
@@ -129,7 +135,7 @@ export function setIn (object, keys, value) {
   let copy = clone(object)
 
   if (rest.length) {
-    copy[key] = (key in copy) ? setIn(copy[key], rest, value) : setIn({}, rest, value)
+    copy[key] = (key in copy) ? setIn(copy[key], rest, value) : setIn(Array.isArray(copy) ? [] : {}, rest, value)
   } else {
     copy[key] = value
   }

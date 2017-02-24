@@ -17,11 +17,7 @@ import {
   merge,
   inherit,
   get,
-  set,
-  extract,
-  pipeline,
-  toArray,
-  compileKeyPaths
+  set
 } from './utils'
 
 function Microcosm (options, state, deserialize)  {
@@ -177,16 +173,13 @@ inherit(Microcosm, Emitter, {
    * Publish a release if anything changed
    */
   release (action) {
-    let dirty = this.staged !== this.state
-
-    this.state = this.staged
+    if (this.staged !== this.state) {
+      this.state = this.staged
+      this._emit('change', this.state)
+    }
 
     if (action) {
       this._emit('effect', action)
-    }
-
-    if (dirty) {
-      this._emit('change', this.state)
     }
   },
 
@@ -202,9 +195,8 @@ inherit(Microcosm, Emitter, {
    * Push an action into Microcosm. This will trigger the lifecycle for updating
    * state.
    */
-  push (behavior/*, ... params */) {
+  push (behavior, ...params) {
     let action = this.append(behavior)
-    let params = toArray(arguments, 1)
 
     coroutine(action, action.behavior.apply(null, params), this)
 
@@ -214,15 +206,8 @@ inherit(Microcosm, Emitter, {
   /**
    * Partially apply push
    */
-  prepare (/*... params */) {
-    let params = toArray(arguments)
-    let repo = this
-
-    return function () {
-      let extra = toArray(arguments)
-
-      repo.push.apply(repo, params.concat(extra))
-    }
+  prepare (...params) {
+    return (...extra) => this.push(...params, ...extra)
   },
 
   /**
@@ -316,90 +301,13 @@ inherit(Microcosm, Emitter, {
 
   /**
    * Create a copy of this Microcosm, passing in the same history and
-   * a reference to itself. As actions are pushed into the shared history,
-   * each Microcosm will resolve differently.
+   * a reference to itself. As actions are pushed into the shared
+   * history, each Microcosm will resolve differently.
    */
   fork () {
     return new Microcosm({
       parent : this
     })
-  },
-
-  /**
-   * Memoize a computation of a fragment of application state.
-   * This may be referenced when computing properties or querying
-   * state within Presenters.
-   */
-  index (name, fragment /*, ...processors*/) {
-    let keyPaths = compileKeyPaths(fragment)
-    let processors = toArray(arguments, 2)
-
-    let state  = null
-    let subset = null
-    let answer = null
-
-    var query = this.indexes[name] = () => {
-      if (this.state !== state) {
-        state = this.state
-
-        let next = extract(state, keyPaths, subset)
-
-        if (next !== subset) {
-          subset = next
-          answer = pipeline(subset, processors, state)
-        }
-      }
-
-      return answer
-    }
-
-    return query
-  },
-
-  lookup (name) {
-    let index = this.indexes[name]
-
-    if (index == null) {
-      if (this.parent) {
-        return this.parent.lookup(name)
-      } else {
-        throw new TypeError('Unable to find missing index ' + name)
-      }
-    }
-
-    return index
-  },
-
-  /**
-   * Invoke an index, optionally adding additional processing.
-   */
-  compute (name /*, ...processors */) {
-    let processors = toArray(arguments, 1)
-
-    return pipeline(this.lookup(name)(), processors, this.state)
-  },
-
-  /**
-  * Return a memoized compute function. This is useful for repeated
-  * invocations of a computation as state changes. Useful for use inside
-  * of Presenters.
-   */
-  memo (name /*, ...processors */) {
-    let index = this.lookup(name)
-    let processors = toArray(arguments, 1)
-    let last = null
-    let answer = null
-
-    return () => {
-      let next = index()
-
-      if (next !== last) {
-        last = next
-        answer = pipeline(index(), processors, this.state)
-      }
-
-      return answer
-    }
   }
 
 })
