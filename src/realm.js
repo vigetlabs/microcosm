@@ -1,3 +1,4 @@
+import MetaDomain from './meta-domain'
 import getDomainHandlers from './get-domain-handlers'
 
 import {
@@ -74,7 +75,9 @@ Realm.prototype = {
 
   prune (state, data) {
     return this.reduce(function (next, key) {
-      return set(next, key, get(data, key))
+      let value = get(data, key)
+
+      return value === undefined ? next : set(next, key, value)
     }, state)
   }
 

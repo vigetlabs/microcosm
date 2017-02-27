@@ -65,6 +65,33 @@ let next = set(state, ['planets', 'earth', 'color'], blue)
 console.log(next === subject) // true
 ```
 
+## update(target, key, value, processor, fallback)
+
+Extract a value from a keypath, then call a function on that value and assign
+the result at the same point. This is useful for modifying values in-place:
+
+```javascript
+import { update } from 'microcosm'
+
+let votes = { yay: 0, nay: 0 }
+let next = update(votes, 'yay', n => n + 1)
+
+console.log(next) // { yay: 1, nay: 0 }
+```
+
+`update` also excepts a fallback value. If the provided target is missing,
+the keypath is missing, the processor function will be called with the fallback
+value:
+
+```javascript
+import { update } from 'microcosm'
+
+let votes = { yay: 0, nay: 0 }
+let next = update(votes, 'undecided', n => n + 1, 0)
+
+console.log(next) // { yay: 0, nay: 0, undecided: 1 }
+```
+
 ## merge(...objects)
 
 Non-destructively merge together the keys of any number of objects,

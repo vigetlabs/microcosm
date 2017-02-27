@@ -1,6 +1,6 @@
 const EMPTY_ARRAY = []
 
-function castPath (value) {
+export function castPath (value) {
   if (Array.isArray(value)) {
     return value
   } else if (value == null) {
@@ -13,15 +13,17 @@ function castPath (value) {
 /**
  * Shallow copy an object
  */
-export function clone (a) {
-  if (Array.isArray(a)) {
-    return a.slice(0)
+export function clone (target) {
+  if (Array.isArray(target)) {
+    return target.slice(0)
+  } else if (isObject(target) === false) {
+    return target
   }
 
   let copy = {}
 
-  for (var key in a) {
-    copy[key] = a[key]
+  for (var key in target) {
+    copy[key] = target[key]
   }
 
   return copy
@@ -68,8 +70,8 @@ export function inherit (Child, Ancestor, proto) {
 }
 
 /**
- * Retrieve a value from an object. If no key is provided, just
- * return the object.
+ * Retrieve a value from an object. If no key is provided, just return the
+ * object.
  */
 export function get (object, path, fallback) {
   if (object == null) {
@@ -78,14 +80,11 @@ export function get (object, path, fallback) {
 
   path = castPath(path)
 
-  let index = -1
-  let length = path.length
-
-  while (++index < length) {
-    let value = object == null ? undefined : object[path[index]]
+  for (var i = 0, len = path.length; i < len; i++) {
+    let value = object == null ? undefined : object[path[i]]
 
     if (value === undefined) {
-      index = length
+      i = len
       value = fallback
     }
 
@@ -96,51 +95,50 @@ export function get (object, path, fallback) {
 }
 
 /**
- * Immutabily assign a value to a provided object at a given key. If
- * the value is the same, don't do anything. Otherwise return a new
- * object.
+ * Non-destructively assign a value to a provided object at a given key. If the
+ * value is the same, don't do anything. Otherwise return a new object.
  */
-export function set (object, path, value) {
-  if (value === undefined || get(object, path) === value) {
-    return object
-  }
-
+export function set (object, path, goal) {
+  // Ensure we're working with a key path, like: ['a', 'b', 'c']
   path = castPath(path)
 
-  let length = path.length
+  let len  = path.length
 
-  if (length <= 0) {
-    return value
-  } else if (length > 1) {
-    return setIn(object, path, value)
+  if (len <= 0) {
+    return goal
   }
 
-  let copy = clone(object)
-
-  copy[path[0]] = value
-
-  return copy
-}
-
-/**
- * Deeply assign a value given a path of sequential keys.
- */
-export function setIn (object, keys, value) {
-  if (get(object, keys) === value) {
+  if (get(object, path) === goal) {
     return object
   }
 
-  let key = keys[0]
-  let rest = keys.slice(1)
-  let copy = clone(object)
+  let root = clone(object)
+  let node = root
 
-  if (rest.length) {
-    copy[key] = (key in copy) ? setIn(copy[key], rest, value) : setIn(Array.isArray(copy) ? [] : {}, rest, value)
-  } else {
-    copy[key] = value
+  // For each key in the path...
+  for (var i = 0; i < len; i++) {
+    let key = path[i]
+    let value = goal
+
+    // Are we at the end?
+    if (i < len - 1) {
+      // No: Check to see if the key is already assigned,
+      if (key in node) {
+        // If yes, clone that value
+        value = clone(node[key])
+      } else {
+        // Otherwise assign an object so that we can keep drilling down
+        value = {}
+      }
+    }
+
+    // Assign the value, then continue on to the next iteration of the loop
+    // using the next step down
+    node[key] = value
+    node = node[key]
   }
 
-  return copy
+  return root
 }
 
 export function isPromise(obj) {
@@ -149,7 +147,7 @@ export function isPromise(obj) {
 }
 
 export function isObject (target) {
-  return target && typeof target === 'object'
+  return !!target && typeof target === 'object'
 }
 
 export function createOrClone (target, options, repo) {
@@ -158,4 +156,15 @@ export function createOrClone (target, options, repo) {
   }
 
   return Object.create(target)
+}
+
+
+/**
+ * A helper combination of get and set
+ */
+export function update (state, path, fn, fallback) {
+  let last = get(state, path, fallback)
+  let next = fn(last)
+
+  return set(state, path, next)
 }

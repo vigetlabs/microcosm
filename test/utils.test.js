@@ -1,8 +1,10 @@
 import {
+  castPath,
   merge,
   clone,
   get,
-  set
+  set,
+  update
 } from '../src/utils'
 
 describe('clone', function () {
@@ -32,6 +34,25 @@ describe('clone', function () {
     expect(copy).not.toBe(original)
   })
 
+  it('does not clone strings', function () {
+    expect(clone('a')).toBe('a')
+  })
+
+  it('does not clone numbers', function () {
+    expect(clone(1)).toBe(1)
+  })
+
+  it('does not clone booleans', function () {
+    expect(clone(true)).toBe(true)
+  })
+
+  it('does not clone null', function () {
+    expect(clone(null)).toBe(null)
+  })
+
+  it('does not undefined null', function () {
+    expect(clone(undefined)).toBe(undefined)
+  })
 })
 
 describe('merge', function () {
@@ -110,22 +131,39 @@ describe('merge', function () {
     expect(c).toEqual(b)
   })
 
-  describe('arrays', function () {
-    it('merges arrays', function () {
-      let answer = merge(['a'], ['b', 'c'])
+})
 
-      expect(answer).toEqual(['b', 'c'])
-      expect(answer).toBeInstanceOf(Array)
-    })
+describe('castPath', function () {
 
-    it('does not copy arrays if it does not', function () {
-      let first = ['a', 'b']
-      let second = ['a']
-      let answer = merge(first, second)
+  it('returns the same array if given an array', function () {
+    let path = [1,2,3]
+    let next = castPath(path)
 
-      expect(answer).toEqual(['a', 'b'])
-      expect(answer).toBe(first)
-    })
+    expect(next).toBe(path)
+  })
+
+  it('returns an empty array if given an null', function () {
+    let next = castPath(null)
+
+    expect(next).toEqual([])
+  })
+
+  it('returns an empty array if given an undefined', function () {
+    let next = castPath(null)
+
+    expect(next).toEqual([])
+  })
+
+  it('splits strings by dots', function () {
+    let next = castPath('a.b.c')
+
+    expect(next).toEqual(['a', 'b', 'c'])
+  })
+
+  it('handles numbers', function () {
+    let next = castPath(1)
+
+    expect(next).toEqual([1])
   })
 
 })
@@ -144,32 +182,8 @@ describe('get', function () {
     expect(styles).toEqual(subject.styles)
   })
 
-  it('fetches the root node when given null', function () {
-    let styles = get(subject, null)
-
-    expect(styles).toEqual(styles)
-  })
-
-  it('fetches the root node when given an empty string', function () {
-    let styles = get(subject, '')
-
-    expect(styles).toEqual(styles)
-  })
-
-  it('fetches the root node when given an empty array', function () {
-    let styles = get(subject, [])
-
-    expect(styles).toEqual(styles)
-  })
-
-  it('can retrieve a deep key path using an array', function () {
+  it('can retrieve a deep key path', function () {
     let color = get(subject, ['styles', 'color'])
-
-    expect(color).toEqual(subject.styles.color)
-  })
-
-  it('can retrieve a deep key path using dot notation', function () {
-    let color = get(subject, 'styles.color')
 
     expect(color).toEqual(subject.styles.color)
   })
@@ -208,20 +222,32 @@ describe('set', function () {
     expect(next.styles).toEqual(false)
   })
 
+  it('can assign an empty path', function () {
+    let value = set(subject, [], false)
+
+    expect(value).toBe(false)
+  })
+
+  it('assigns undefined', function () {
+    let next = set(subject, 'styles', undefined)
+
+    expect(next.styles).toEqual(undefined)
+  })
+
   it('can set a deep key', function () {
     let next = set(subject, ['styles', 'color'], 'red')
 
     expect(next.styles.color).toEqual('red')
   })
 
-  it('can set new keys deeply using an array', function () {
-    let next = set(subject, ['styles', 'padding', 'top'], 10)
+  it('can set a deep key using dot notation', function () {
+    let next = set(subject, 'styles.color', 'red')
 
-    expect(next.styles.padding.top).toEqual(10)
+    expect(next.styles.color).toEqual('red')
   })
 
-  it('can set new keys deeply using dot notation', function () {
-    let next = set(subject, 'styles.padding.top', 10)
+  it('can set new keys deeply', function () {
+    let next = set(subject, ['styles', 'padding', 'top'], 10)
 
     expect(next.styles.padding.top).toEqual(10)
   })
@@ -231,20 +257,70 @@ describe('set', function () {
 
     expect(next).not.toBe(subject)
     expect(next.styles).not.toBe(subject.styles)
+    expect(next.styles.padding).not.toBe(subject.styles.padding)
   })
 
   it('does not duplicate objects when the value is the same', function () {
     let next = set(subject, ['styles', 'color'], 'blue')
 
     expect(next).toBe(subject)
+    expect(next.styles).toBe(subject.styles)
   })
 
-  it('can operate on arrays', function () {
-    let list = { pixels: [[0,0,0],[0,0,0],[0,0,0]]}
-    let next = set(list, ['pixels',2,2], 1)
+  it('does modify the original value', function () {
+    let next = set(subject, ['styles', 'color'], 'red')
 
-    expect(Array.isArray(next.pixels)).toBe(true)
-    expect(Array.isArray(next.pixels[2])).toBe(true)
-    expect(next.pixels[2][2]).toBe(1)
+    expect(subject.styles.color).toBe('blue')
+    expect(next.styles.color).toBe('red')
+  })
+
+  describe('arrays', function () {
+
+    it('can operate on arrays', function () {
+      let list = ['a', 'b', 'c']
+      let next = set(list, 3, 'd')
+
+      expect(Array.isArray(next)).toBe(true)
+      expect(next[3]).toBe('d')
+    })
+
+
+    it('properly assigns nested arrays', function () {
+      let list = { 'a': ['b', 'c'] }
+      let next = set(list, ['a', 1], 'd')
+
+      expect(next).toEqual({ 'a' : ['b', 'd'] })
+      expect(next['a']).toBeInstanceOf(Array)
+    })
+
+    it('properly assigns nested arrays where keys are missing', function () {
+      let space = { 'planets': [] }
+      let next = set(space, ['planets', 0, 'color'], 'red')
+
+      expect(next).toEqual({ planets: [{ color: 'red' }] })
+      expect(next['planets']).toBeInstanceOf(Array)
+      expect(next['planets'][0]).toEqual({ color: 'red'})
+    })
+  })
+})
+
+describe('update', function () {
+  const subject = {
+    styles: {
+      color: 'blue',
+      font: 'Helvetica, sans-serif'
+    }
+  }
+
+  it('updates a value in-place', function () {
+    let next = update(subject, 'styles.color', color => color.toUpperCase())
+
+    expect(next.styles.color).toEqual('BLUE')
+  })
+
+  it('can work from a fallback if a key is missing', function () {
+    let next = update(subject, 'styles.padding', padding => padding += 10, 0)
+
+    expect(next.styles.padding).toEqual(10)
   })
 })
