@@ -9,7 +9,7 @@
     "build": "make all",
     "lint": "eslint {src,test,examples}/**.js",
     "test": "npm run lint && NODE_ENV=test jest --maxWorkers 2",
-    "test:cov": "NODE_ENV=test jest --coverage --no-cache",
+    "test:cov": "NODE_ENV=test jest --coverage --no-cache --maxWorkers 2",
     "report-coverage": "cat coverage/lcov.info | coveralls",
     "release": "make release"
   },
