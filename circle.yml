@@ -3,12 +3,28 @@ general:
     ignore:
       - gh-pages
 machine:
+  environment:
+    YARN_VERSION: 0.18.1
+    PATH: "${PATH}:${HOME}/.yarn/bin:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin" # needed for yarn cache
   node:
-    version: 6.3.0
+    version: 6.9.4
   environment:
     COVERALLS_REPO_TOKEN: $COVERALLS_REPO_TOKEN
     COVERALLS_SERVICE_JOB_ID: "${CIRCLE_BUILD_NUM}"
     COVERALLS_SERVICE_NAME: CircleCI
+dependencies:
+  pre:
+    - |
+      if [[ ! -e ~/.yarn/bin/yarn || $(yarn --version) != "${YARN_VERSION}" ]]; then
+        curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version $YARN_VERSION
+      else
+        echo "The correct version of Yarn is already installed."
+      fi
+  override:
+    - yarn install
+  cache_directories:
+    - ~/.yarn
+    - ~/.cache/yarn
 test:
   override:
     - npm run test:cov
