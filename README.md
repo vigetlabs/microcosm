@@ -10,6 +10,8 @@ Microcosm is a state management tool for [React](https://github.com/facebook/rea
 ## At a glance
 
 ```javascript
+import Microcosm, { get, set } from 'microcosm'
+
 let repo = new Microcosm()
 
 function getUser (id) {
@@ -24,7 +26,8 @@ repo.addDomain('counter', {
     return {}
   },
   addUser (users, record) {
-    return { ...users, [record.id]: record }
+    // The set helper non-destructively assigns keys to an object
+    return set(users, record.id, record)
   },
   register () {
     return {
@@ -35,6 +38,12 @@ repo.addDomain('counter', {
 
 // Push an action, a request to perform some kind of work
 let action = repo.push(getUser, 2)
+
+action.onDone(function () {
+  let user = get(repo.state, ['users', '2'])
+
+  console.log(user) // { id: 2, name: "Bob" }
+})
 
 // You could also handle errors in a domain's register method
 // by hooking into `getUser.error`
@@ -229,7 +238,7 @@ forward with the new action states. This makes optimistic updates simpler
 because action states are self cleaning:
 
 ```javascript
-import {send} from 'actions/chat'
+import { send } from 'actions/chat'
 
 const Messages = {
   getInitialState () {
@@ -355,13 +364,15 @@ class PaginatedUsers extends Presenter {
     repo.push(getUsers, page)
   }
 
-  model () {
+  getModel () {
     return {
       page: state => state.users
     }
   }
 
-  view ({ page }) {
+  render () {
+    const { page } = this.model
+
     return <UsersTable users={page} />
   }
 }
