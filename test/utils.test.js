@@ -50,7 +50,7 @@ describe('clone', function () {
     expect(clone(null)).toBe(null)
   })
 
-  it('does not undefined null', function () {
+  it('does not clone undefined', function () {
     expect(clone(undefined)).toBe(undefined)
   })
 })

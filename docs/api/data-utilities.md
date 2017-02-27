@@ -79,9 +79,8 @@ let next = update(votes, 'yay', n => n + 1)
 console.log(next) // { yay: 1, nay: 0 }
 ```
 
-`update` also excepts a fallback value. If the provided target is missing,
-the keypath is missing, the processor function will be called with the fallback
-value:
+`update` also accepts a fallback value. If the provided keypath is missing, the
+processor function will be called with the fallback value:
 
 ```javascript
 import { update } from 'microcosm'

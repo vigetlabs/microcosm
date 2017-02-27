@@ -98,17 +98,17 @@ export function get (object, path, fallback) {
  * Non-destructively assign a value to a provided object at a given key. If the
  * value is the same, don't do anything. Otherwise return a new object.
  */
-export function set (object, path, goal) {
+export function set (object, path, value) {
   // Ensure we're working with a key path, like: ['a', 'b', 'c']
   path = castPath(path)
 
   let len  = path.length
 
   if (len <= 0) {
-    return goal
+    return value
   }
 
-  if (get(object, path) === goal) {
+  if (get(object, path) === value) {
     return object
   }
 
@@ -118,23 +118,23 @@ export function set (object, path, goal) {
   // For each key in the path...
   for (var i = 0; i < len; i++) {
     let key = path[i]
-    let value = goal
+    let next = value
 
     // Are we at the end?
     if (i < len - 1) {
       // No: Check to see if the key is already assigned,
       if (key in node) {
         // If yes, clone that value
-        value = clone(node[key])
+        next = clone(node[key])
       } else {
         // Otherwise assign an object so that we can keep drilling down
-        value = {}
+        next = {}
       }
     }
 
     // Assign the value, then continue on to the next iteration of the loop
     // using the next step down
-    node[key] = value
+    node[key] = next
     node = node[key]
   }
 
