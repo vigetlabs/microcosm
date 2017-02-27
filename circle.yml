@@ -8,8 +8,6 @@ machine:
     COVERALLS_REPO_TOKEN: $COVERALLS_REPO_TOKEN
     COVERALLS_SERVICE_JOB_ID: "${CIRCLE_BUILD_NUM}"
     COVERALLS_SERVICE_NAME: CircleCI
-  node:
-    version: 6.9.4
 dependencies:
   override:
     - yarn
