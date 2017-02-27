@@ -199,7 +199,9 @@ changes.
 
 ### `view`
 
-If a Presenter has a `view` property, it create the associated component instead of calling `render`. The `view` component is given the latest model data:
+If a Presenter has a `view` property, it creates the associated component
+instead of calling `render`. The `view` component is given the latest model
+data:
 
 ```javascript
 function Message ({ message }) {
