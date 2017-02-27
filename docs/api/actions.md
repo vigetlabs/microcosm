@@ -76,7 +76,7 @@ repo.push(readPlanets)
 ### Return a function
 
 Action creators that return functions grant full access to the action
-that represents it. If we were to a vanilla version of the Promise
+that represents it. If we were to write a lower level version of the Promise
 example earlier:
 
 ```javascript
