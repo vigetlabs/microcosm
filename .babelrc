@@ -5,11 +5,6 @@
     "react"
   ],
   "env": {
-    "production": {
-      "presets": [
-        "babili"
-      ]
-    },
     "test": {
       "presets": [
         "es2015",
