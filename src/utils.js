@@ -158,11 +158,14 @@ export function createOrClone (target, options, repo) {
   return Object.create(target)
 }
 
-
 /**
  * A helper combination of get and set
  */
 export function update (state, path, fn, fallback) {
+  if (typeof fn !== 'function') {
+    return set(state, path, fn)
+  }
+
   let last = get(state, path, fallback)
   let next = fn(last)
 

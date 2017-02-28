@@ -323,4 +323,11 @@ describe('update', function () {
 
     expect(next.styles.padding).toEqual(10)
   })
+
+  it('can set a non-function value, proxying set', function () {
+    let next = update(subject, 'styles.padding', 10)
+
+    expect(next.styles.padding).toEqual(10)
+  })
+
 })
