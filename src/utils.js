@@ -142,3 +142,20 @@ export function setIn (object, keys, value) {
 
   return copy
 }
+
+export function isPromise(obj) {
+  let type = typeof obj
+  return !!obj && (type === 'object' || type === 'function') && typeof obj.then === 'function'
+}
+
+export function isObject (target) {
+  return target && typeof target === 'object'
+}
+
+export function createOrClone (target, options, repo) {
+  if (typeof target === 'function') {
+    return new target(options, repo)
+  }
+
+  return Object.create(target)
+}

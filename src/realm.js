@@ -1,9 +1,9 @@
-import MetaDomain from './meta-domain'
 import getDomainHandlers from './get-domain-handlers'
 
 import {
   get,
-  set
+  set,
+  createOrClone
 } from './utils'
 
 /**
@@ -31,13 +31,7 @@ Realm.prototype = {
   },
 
   add (key, config, options) {
-    let domain = null
-
-    if (typeof config === 'function') {
-      domain = new config(options, this.repo)
-    } else {
-      domain = Object.create(config)
-    }
+    let domain = createOrClone(config, options, this.repo)
 
     this.domains.push([key, domain])
 

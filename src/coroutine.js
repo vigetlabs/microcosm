@@ -1,15 +1,10 @@
-function isPromise(obj, type) {
-  return !!obj && (type === 'object' || type === 'function') && typeof obj.then === 'function'
-}
+import { isPromise } from './utils'
 
 /**
  * Coroutine is used by an action to determine how it should resolve the
  * body of their associated behavior.
- * @private
  */
 export default function coroutine (action, body, repo) {
-  let type = typeof body
-
   /**
    * Provide support for Promises:
    *
@@ -19,7 +14,7 @@ export default function coroutine (action, body, repo) {
    * 3. If the promise is rejected, reject the action
    * 4. Otherwise resolve the action with the returned body
    */
-  if (isPromise(body, type)) {
+  if (isPromise(body)) {
     action.open()
 
     body.then(
@@ -36,7 +31,7 @@ export default function coroutine (action, body, repo) {
    * behavior. This middleware will execute that function with the
    * action as the first argument.
    */
-  if (type === 'function') {
+  if (typeof body === 'function') {
     body(action, repo)
 
     return action

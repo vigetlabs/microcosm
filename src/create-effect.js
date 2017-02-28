@@ -1,5 +1,9 @@
 import getRegistration from './get-registration'
 
+import {
+  createOrClone
+} from './utils'
+
 function createHook (repo, effect) {
 
   return function ({ behavior, status, payload }) {
@@ -12,13 +16,7 @@ function createHook (repo, effect) {
 }
 
 export default function createEffect (repo, config, options) {
-  let effect = null
-
-  if (typeof config === 'function') {
-    effect = new config(options, repo)
-  } else {
-    effect = Object.create(config)
-  }
+  let effect = createOrClone(config, options, repo)
 
   if (effect.setup) {
     effect.setup(repo, options)

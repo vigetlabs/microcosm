@@ -130,7 +130,7 @@ describe('merge', function () {
 
 })
 
-describe.only('get', function () {
+describe('get', function () {
   const subject = {
     styles: {
       color: 'blue',
