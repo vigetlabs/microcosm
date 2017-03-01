@@ -17,9 +17,9 @@ let user = { id: 'Billy', facts: { height: 72, age: 23 } }
 let next = {...user, facts: {...facts, age: 24 } }
 ```
 
-Spreading can quickly get out of hand, and always copies records even if the
-data hasn't changed. Alternatively, we could use the immutability helpers that
-ship with Microcosm:
+Spreading can quickly get out of hand, and always copies data even if it hasn't 
+changed. Alternatively, we could use the immutability helpers that ship with 
+Microcosm:
 
 ```javascript
 import { set } from 'microcosm'
