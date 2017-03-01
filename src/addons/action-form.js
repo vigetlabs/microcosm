@@ -35,11 +35,10 @@ inherit(ActionForm, PureComponent, {
     delete props.onError
     delete props.send
 
-    return createElement('form', )
+    return createElement('form', props)
   },
 
   onSubmit (event) {
-    console.log('send')
     event.preventDefault()
     this.submit(event)
   },

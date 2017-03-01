@@ -12,7 +12,7 @@ describe('callbacks', function () {
     const form = mount(<ActionForm action="test" onDone={n => onDone(n)} />,
                        context)
 
-    form.instance().submit()
+    form.simulate('submit')
 
     expect(onDone).toHaveBeenCalledWith(true)
   })
@@ -24,7 +24,7 @@ describe('callbacks', function () {
     const form = mount(<ActionForm action="test" onError={n => onError(n)} />,
                        context)
 
-    form.instance().submit()
+    form.simulate('submit')
 
     expect(onError).toHaveBeenCalledWith('bad')
   })
@@ -37,7 +37,7 @@ describe('callbacks', function () {
     const form = mount(<ActionForm action="test" onUpdate={n => onUpdate(n)} />,
                        context)
 
-    form.instance().submit()
+    form.simulate('submit')
 
     action.update('loading')
 
@@ -50,7 +50,7 @@ describe('callbacks', function () {
 
     const form = mount(<ActionForm action="test" onDone={n => onDone(n)} />, context)
 
-    form.instance().submit()
+    form.simulate('submit')
 
     expect(onDone).not.toHaveBeenCalled()
   })
@@ -61,7 +61,7 @@ describe('callbacks', function () {
 
     const form = mount(<ActionForm action="test" onError={n => onError(n)} />, context)
 
-    form.instance().submit()
+    form.simulate('submit')
 
     expect(onError).not.toHaveBeenCalled()
   })
@@ -72,7 +72,7 @@ describe('callbacks', function () {
 
     const form = mount(<ActionForm action="test" onUpdate={n => onUpdate(n)} />, context)
 
-    form.instance().submit()
+    form.simulate('submit')
 
     expect(onUpdate).not.toHaveBeenCalled()
   })
@@ -118,7 +118,7 @@ describe ('prepare', function() {
       </ActionForm>
     ), send)
 
-    form.instance().submit()
+    form.simulate('submit')
 
     expect(send).toHaveBeenCalledWith("test", { name: "BILLY" })
   })
