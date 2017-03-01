@@ -88,7 +88,7 @@ We frequently found ourselves wanting to access the latest model inside of our
 presenter. What if we wanted to fetch extra data from records pulled out of a
 model, or render differently if the record was missing?
 
-Presenters now have a `model` method, which can be accessed after `setup` has
+Presenters now have a `model` property, which can be accessed after `setup` has
 completed:
 
 ```javascript
