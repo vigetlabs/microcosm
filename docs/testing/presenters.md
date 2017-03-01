@@ -1,19 +1,17 @@
-# Testing Actions
+# Testing Presenters
 
-Microcosm Presenters have a powerful `action` feature that allows view
-components to utilize the [Form](../api/form.md)
-or [withAction](../api/with-action.md) add-ons to communicate to a
-Presenter even if they are deep within a tree. This recipe walks
-through testing that functionality.
+Microcosm Presenters, using the `ActionButton`, `Form`, and `withAction`
+add-ons, can listen to messages sent from child components deep within a
+component tree. This recipe walks through testing that functionality.
 
 ## The Basic Mechanics
 
-Actions rely
-on [context](https://facebook.github.io/react/docs/context.html),
-which can add some complexity when testing. Fortunately, setting up
-context with the [`enzyme`](https://github.com/airbnb/enzyme) testing
-library makes this painless. We use the following helper when testing
-actions to make this process easy:
+The communication process relies on
+[context](https://facebook.github.io/react/docs/context.html), which can add
+some complexity when testing. Fortunately, setting up context with the
+[`enzyme`](https://github.com/airbnb/enzyme) testing library makes this
+painless. We use the following helper when testing actions to make this process
+easy:
 
 ```javascript
 import React from 'react'
@@ -46,11 +44,10 @@ keep this in a test helper to reduce boilerplate:
 ```javascript
 import React from 'react'
 
-export default function makeAction () {
   // Any spy library should do, we're using Jest
-  const send = jest.fn()
-
+export default function mockSend (send = jest.fn()) {
   send.context = { send }
+
   send.childContextTypes = {
     send: React.PropTypes.func
   }
@@ -64,11 +61,11 @@ Then include the helper when testing:
 ```javascript
 import React from 'react'
 import MyForm from 'somewhere'
-import makeAction from '../helpers/make-action'
+import mockSend from '../helpers/mock-send'
 import {mount} from 'enzyme'
 
 it('broadcasts an action when submitted', function () {
-  const send = makeAction()
+  const send = mockSend()
 
   const wrapper = mount(<MyForm />, send)
 

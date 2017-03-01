@@ -70,7 +70,7 @@ inherit(Presenter, BaseComponent, {
     // NOOP
   },
 
-  register () {
+  intercept () {
     return EMPTY
   },
 
@@ -208,14 +208,14 @@ inherit(PresenterMediator, BaseComponent, {
   },
 
   send (intent, ...params) {
-    const { presenter } = this.props
+    let interceptors = this.presenter.intercept()
 
     // A presenter's register goes through the same registration steps
-    let handler = getRegistration(presenter, tag(intent))
+    let handler = getRegistration(interceptors, tag(intent))
 
     // Does the presenter register to this intent?
     if (handler) {
-      return handler.call(presenter, this.repo, ...params)
+      return handler.call(this.presenter, this.repo, ...params)
     }
 
     // No: try the parent presenter

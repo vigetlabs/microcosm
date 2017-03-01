@@ -1,28 +1,30 @@
-import { createElement, PropTypes, Component } from 'react'
+import { createElement, PropTypes, Component, PureComponent } from 'react'
 import { Action, merge, inherit } from '../microcosm'
 import serialize from 'form-serialize'
 
-function Form () {
-  Component.apply(this, arguments)
+const BaseComponent = PureComponent || Component
+
+function ActionForm () {
+  BaseComponent.apply(this, arguments)
 
   this.send = this.props.send || this.context.send
   this.onSubmit = this.onSubmit.bind(this)
 }
 
-Form.contextTypes = {
+ActionForm.contextTypes = {
   send : PropTypes.func
 }
 
-Form.defaultProps = {
+ActionForm.defaultProps = {
   action     : null,
   serializer : form => serialize(form, { hash: true, empty: true }),
   prepare    : n => n,
   onSubmit   : n => n
 }
 
-inherit(Form, Component, {
+inherit(ActionForm, BaseComponent, {
 
-  render() {
+  render () {
     let props = merge({}, this.props, { ref: 'form', onSubmit: this.onSubmit })
 
     // Remove invalid props to prevent React warnings
@@ -35,10 +37,11 @@ inherit(Form, Component, {
     delete props.onError
     delete props.send
 
-    return createElement('form', props)
+    return createElement('form', )
   },
 
   onSubmit (event) {
+    console.log('send')
     event.preventDefault()
     this.submit(event)
   },
@@ -60,4 +63,4 @@ inherit(Form, Component, {
 
 })
 
-export default Form
+export default ActionForm

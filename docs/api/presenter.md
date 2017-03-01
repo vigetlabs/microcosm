@@ -88,7 +88,7 @@ repo.addDomain('count', {
   increase(count, amount) {
     return count + amount
   },
-  register() {
+  intercept() {
     return {
       [increaseCount] : this.increase
     }
@@ -112,7 +112,7 @@ class CountPresenter extends Presenter {
     }
   }
 
-  register () {
+  intercept () {
     return {
       increaseCount: this.increaseCount
     }
@@ -134,13 +134,11 @@ DOM.render(<CountPresenter repo={ repo } />, document.getElementById('container'
 
 Whenever the form is submitted, an `increaseCount` action will bubble
 up to the associated Presenter including the serialized parameters of
-the form. Since this Presenter's register method includes `increaseCount`, it will
+the form. Since this Presenter's intercept method includes `increaseCount`, it will
 invoke the method with the associated parameters.
 
-If a Presenter does not implement an action, it will bubble up to any
-parent Presenters. If no Presenter implements the action, an exception
-will raise. This is useful for broadcasting action actions. For
-example, we could replace the prior Form example with:
+If a Presenter does not intercept an action, it will bubble up to any
+parent Presenters. If no Presenter intercepts the action, it will dispatch the action to the repo.
 
 ```javascript
 function StepperForm ({ count }) {
@@ -245,7 +243,7 @@ function Button ({ send }) {
 class Example extends Presenter {
   view = Button
 
-  register () {
+  intercept () {
     return {
       'test': () => alert("This is a test!")
     }
@@ -253,17 +251,17 @@ class Example extends Presenter {
 }
 ```
 
-### register()
+### intercept()
 
-Expose "action" subscriptions to child components. This is used with the `Form` or `withAction`
-add-ons to improve the ergonomics of presenter/view communication (though this only
-occurs from the view to the presenter).
+Catch an action emitted from a child view, using an add-on `Form`,
+`ActionButton`, or `withAction`. These add-ons are designed to improve the
+ergonomics of presenter/view communication. Data down, actions up.
 
 ```javascript
 import Form from 'microcosm/addons/form'
 
 class HelloWorldPresenter extends Presenter {
-  register () {
+  intercept () {
     return {
       'greet': this.greet
     }

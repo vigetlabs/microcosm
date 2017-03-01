@@ -75,7 +75,7 @@ describe('::getModel', function() {
     let spy = jest.fn()
 
     class Hello extends Presenter {
-      register () {
+      intercept () {
         return {
           'test': spy
         }
@@ -856,18 +856,16 @@ describe('::getRepo', function () {
 
 })
 
-describe('intents', function() {
+describe('intercepting actions', function() {
 
   it('receives intent events', function () {
     const test = jest.fn()
 
     class MyPresenter extends Presenter {
-      register() {
-        return { test }
-      }
+      view = View
 
-      view() {
-        return <View />
+      intercept () {
+        return { test }
       }
     }
 
@@ -929,7 +927,7 @@ describe('intents', function() {
 
   it('forwards intents to the repo as actions', function () {
     class MyPresenter extends Presenter {
-      view() {
+      view () {
         return <View />
       }
     }
@@ -945,13 +943,13 @@ describe('intents', function() {
     const test = jest.fn()
 
     class Child extends Presenter {
-      view() {
+      view () {
         return <View />
       }
     }
 
     class Parent extends Presenter {
-      register() {
+      intercept () {
         return { test: (repo, props) => test(props) }
       }
       view () {
@@ -980,10 +978,10 @@ describe('intents', function() {
     })
 
     class Test extends Presenter {
-      register() {
+      intercept () {
         return { [a]: spy }
       }
-      view() {
+      view () {
         return <TestView />
       }
     }
@@ -1000,7 +998,7 @@ describe('intents', function() {
       setup() {
         this.send('test')
       }
-      register() {
+      intercept () {
         return { test }
       }
     }
@@ -1014,7 +1012,7 @@ describe('intents', function() {
     const test = jest.fn()
 
     class Parent extends Presenter {
-      register() {
+      intercept () {
         return { test }
       }
     }

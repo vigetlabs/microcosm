@@ -9,7 +9,7 @@ const action = tag(n => n)
 
 describe('getRegistration', function () {
 
-  it('returns null when no register method exists', function () {
+  it('returns null when no registrations method exists', function () {
     let answer = getRegistration({})
 
     expect(answer).toEqual(null)
@@ -18,11 +18,7 @@ describe('getRegistration', function () {
   it('returns a registration for done when there is no status', function () {
     let success = n => n
     let answer = getRegistration({
-      register () {
-        return {
-          [action]: success
-        }
-      }
+      [action]: success
     }, action)
 
     expect(answer).toBe(success)
@@ -31,12 +27,8 @@ describe('getRegistration', function () {
   it('returns the done registration for a nested object when there is no status', function () {
     let success = n => n
     let answer = getRegistration({
-      register () {
-        return {
-          [action]: {
-            done: success
-          }
-        }
+      [action]: {
+        done: success
       }
     }, action)
 
@@ -46,12 +38,8 @@ describe('getRegistration', function () {
   it('can use nested objects to return specific statuses', function () {
     let success = n => n
     let answer = getRegistration({
-      register () {
-        return {
-          [action]: {
-            reject: success
-          }
-        }
+      [action]: {
+        reject: success
       }
     }, action, 'reject')
 
@@ -60,11 +48,7 @@ describe('getRegistration', function () {
 
   it('throws if given an invalid status', function () {
     let fail = function () {
-      getRegistration({
-        register () {
-          return {}
-        }
-      }, action ,'totally-missing')
+      getRegistration({}, action ,'totally-missing')
     }
 
     expect(fail).toThrow('Invalid action status totally-missing')
@@ -77,12 +61,8 @@ describe('getRegistration', function () {
       it(`can inspect the ${status} status`, function () {
         let success = n => n
         let answer = getRegistration({
-          register () {
-            return {
-              [action]: {
-                [status]: success
-              }
-            }
+          [action]: {
+            [status]: success
           }
         }, action, ACTION_ALIASES[status])
 
@@ -92,12 +72,8 @@ describe('getRegistration', function () {
       it(`can register the ${alias} alias`, function () {
         let success = n => n
         let answer = getRegistration({
-          register () {
-            return {
-              [action]: {
-                [alias]: success
-              }
-            }
+          [action]: {
+            [alias]: success
           }
         }, action, status)
 

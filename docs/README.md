@@ -14,7 +14,7 @@
 ## Addons
 
 1. [Presenter](api/presenter.md)
-2. [Form](api/form.md)
+2. [ActionForm](api/action-form.md)
 3. [ActionButton](api/action-button.md)
 4. [withAction](api/with-action.md)
 
@@ -23,7 +23,7 @@
 1. [Overview](testing/overview.md)
 2. [Domains](testing/domains.md)
 3. [Effects](testing/effects.md)
-4. [Actions](testing/actions.md)
+4. [Presenters](testing/presenters.md)
 
 ## Recipes
 

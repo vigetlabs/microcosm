@@ -1,5 +1,175 @@
 # Changelog
 
+## 12.0.0
+
+- `merge` helper skips over nully values. For example, `merge(null, {})` will
+  start with the second argument
+- Renamed `Presenter::model` to `Presenter::getModel`.
+- Renamed `Presenter::register` to `Presenter::intercept`
+- Added `Presenter::ready`, which fires after `::setup`
+- Added a `model` property to Presenters. This behaves similarly to `props` or
+  `state`, and is available after `setup` executes
+- `Presenter::render` is now the primary rendering method for Presenters
+- `Presenter::view` always gets called with `React.createElement`
+- Removed deprecated `Action::send`
+- Added nested action registrations in domains. See the Domains component of
+  the upgrading section later.
+- `Microcosm:toJSON` only serializes domains that implement `::serialize`
+- `Microcosm::reset` only operate on keys managed by the specific Microcosm.
+  `reset` effects the entire tree of forks.
+- `Microcosm::patch` only operate on keys managed by the specific Microcosm.
+  `patch` effects the entire tree of forks.
+- Removed `Domain::commit`, which consistently added needless complexity to our
+  applications.
+- All instances of `intent` have been replaced with `action`. They are the
+  exact same thing under the hood, and it is a common source of confusion.
+- Renamed `IntentButton` to `ActionButton`
+- Renamed `Form` to `ActionForm`
+- Renamed `withIntent` to `withAction`
+- Added `update` data utility, which calls `set` on the result of a function that
+  is passed the result of `get`.
+
+### Upgrading
+
+#### Microcosm
+
+`deserialize`, `serialize`, `reset`, and `patch` only operate on keys managed
+by a particular Microcosm. Verify that, where you are using these methods, your
+application is not relying on them to inject arbitrary application state.
+
+These methods now return the merged result of calling all the way up the
+hierarchy of Microcosm forks. In practice, this means that Microcosms only have
+to deal with the keys for domains they were assigned, which is more in line with
+the behavior we expect from forks.
+
+#### Actions
+
+With the exception of removing `send`, which was replaced with `update`,
+actions have not changed. If you have removed all deprecated `action.send`
+calls after upgrading to 11.6.0, there should be no further change required.
+
+#### Domains
+
+#### No more commit
+
+Domains no longer support `commit()`, and subsequently `shouldCommit()`. We
+found, while useful for serializing libraries such as ImmutableJS, that it our
+usage of `commit` turned into a convenience method for always writing state in a
+specific way. This created an awkwardness with serializing data, and could be
+a source of performance problems as they continually write new object references
+from things like `filter` or `slice`.
+
+So we removed it. We recommend moving this sort of behavior to `getModel` in
+the Presenter add-on.
+
+#### Nested action registrations
+
+Domains may now nest action statuses as an object:
+
+```javascript
+class Domain {
+  register () {
+    return {
+      [action]: {
+        open  : this.setLoading,
+        error : this.setError,
+        done  : this.setDone
+      }
+    }
+  }
+}
+```
+
+### Presenters
+
+#### `getModel` is the new `model`
+
+We frequently found ourselves wanting to access the latest model inside of our
+presenter. What if we wanted to fetch extra data from records pulled out of a
+model, or render differently if the record was missing?
+
+Presenters now have a `model` method, which can be accessed after `setup` has
+completed:
+
+```javascript
+class MyPresenter extends Presenter {
+  getModel () {
+    return { count: state => state.count }
+  }
+
+  render () {
+    return (
+      <ActionButton action={step} value={1}>
+        {this.model.count}
+      </ActionButton>
+    )
+  }
+}
+```
+
+#### `ready`
+
+`setup` can not have access to `this.model` because repo specific setup
+behavior might cause the model to be recalculated excessively. So we've added a
+`ready` method. Both `ready` and `update` have access to the last calculated
+model, which makes them ideal for performing some work based on it:
+
+```javascript
+class MyPresenter extends Presenter {
+  getModel (props) {
+    return {
+      user: data => data.users.find(u => u.id === props.id)
+    }
+  }
+  ready (repo, props)
+    if (this.model.user == null) {
+      repo.push(this.fetchUser, props.id)
+    }
+  }
+}
+```
+
+You can still do this sort of fetching inside of `setup`, there just won't be a
+model to access. Not much of a change from `11.6.0`, where `this.model` was not
+available.
+
+#### `render` is the new `view`
+
+We (Nate) got this wrong. By not using render, too much distance was created
+between the underlying React Component behavior and the "special treatment"
+received by `view`.
+
+`render` now works just like `React.Component::render`, as it should be. Still,
+we haven't gotten rid of `view`, which is useful in a couple of places, like as
+a getter to switch over some piece of model state:
+
+```javascript
+class MyPresenter extends Presenter {
+  getModel (props) {
+    return {
+      user: data => data.users.find(u => u.id === props.id)
+    }
+  }
+
+  get view () {
+    return this.model.user ? MyUserView : My404View
+  }
+}
+```
+
+`view` is always invoked with `React.createElement`. `render` is always called
+in the context of the Presenter. It is a plain-old React render method (for
+great justice).
+
+#### `intercept` is the new `register`
+
+`Presenter::register` was a confusing name for the what it did.
+`Presenter::register` allows you to catch messages sent from child view
+components. Catch is a reserved word, so we've renamed it `intercept`.
+
+In the future, `Presenter::register` might behave more like an Effect, which is
+what several users have mistaken it for.
+
 ## 11.6.0
 
 - Added deprecation warning for `action.send()`. Future versions of

@@ -6,10 +6,12 @@ export default function getDomainHandlers (domains, { behavior, status }) {
   for (var i = 0, len = domains.length; i < len; i++) {
     var [key, domain] = domains[i]
 
-    var handler = getRegistration(domain, behavior, status)
+    if (domain.register) {
+      var handler = getRegistration(domain.register(), behavior, status)
 
-    if (handler) {
-      handlers.push({ key, domain, handler, length: handler.length })
+      if (handler) {
+        handlers.push({ key, domain, handler, length: handler.length })
+      }
     }
   }
 

@@ -7,7 +7,13 @@ expect.extend({
     let name = behavior.name || tagged.toString()
 
     let operator = this.isNot ? 'not to' : 'to'
-    let pass = getRegistration(entity, behavior, status) != null
+    let pass = false
+
+    if (entity.register) {
+      pass = getRegistration(entity.register(), behavior, status) != null
+    } else {
+      throw new TypeError(`${entity.constructor.name} has no register method`)
+    }
 
     return {
       pass: pass,

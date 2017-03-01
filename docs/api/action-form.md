@@ -1,4 +1,4 @@
-# Form
+# ActionForm
 
 1. [Overview](#overview)
 2. [Usage](#usage)
@@ -6,17 +6,17 @@
 
 ## Overview
 
-Form is a wrapper around a standard `form` tag that provides a method
-of broadcasting an action to associated Presenters (see
-[`./presenter.md`](./presenter.md)). This attempts to more closely
-model the way forms traditionally work, however within the context of
-a JavaScript application.
+ActionForm is a wrapper around a standard `form` tag that provides a method of
+broadcasting an action to associated Presenters (see
+[`./presenter.md`](./presenter.md)). This attempts to more closely model the
+way forms traditionally work, however within the context of a JavaScript
+application.
 
 ```javascript
 import React from 'react'
 import DOM from 'react-dom'
 import Presenter from 'microcosm/addons/presenter'
-import Form from 'microcosm/addons/form'
+import ActionForm from 'microcosm/addons/action-form'
 import Microcosm from 'microcosm'
 
 const repo = new Microcosm()
@@ -39,10 +39,10 @@ repo.addDomain('count', {
 
 function StepperForm ({ count }) {
   return (
-    <Form action={increment}>
+    <ActionForm action={increment}>
       <input type="hidden" name="amount" value="1" />
       <button>+ 1</button>
-    </Form>
+    </ActionForm>
   )
 }
 
@@ -65,7 +65,7 @@ class CountPresenter extends Presenter {
 DOM.render(<CountPresenter repo={ repo } />, document.getElementById('container'))
 ```
 
-Form inputs are serialized to JSON upon submission using
+ActionForm inputs are serialized to JSON upon submission using
 [`form-serialize`](https://github.com/defunctzombie/form-serialize).
 
 ## Props
@@ -99,13 +99,13 @@ class MyForm extends React.Component {
 
   render () {
     return (
-      <Form action={actions.create} prepare={this.prepare}>
+      <ActionForm action={actions.create} prepare={this.prepare}>
         <input name="name" />
         <input name="start" type="datetime-local" />
         <input name="end" type="datetime-local" />
 
         <input type="submit" />
-      </Form>
+      </ActionForm>
     )
   }
 }
