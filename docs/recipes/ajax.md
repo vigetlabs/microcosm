@@ -26,9 +26,11 @@ function getSite () {
 
 repo.addDomain('site', function () {
   return {
-    [getSite.open]  : () => 'loading',
-    [getSite.error] : () => 'error',
-    [getSite.done]  : () => 'done'
+    [getSite]: {
+      open  : () => 'loading',
+      error : () => 'error',
+      done  : () => 'done'
+    }
   }
 })
 
@@ -114,9 +116,11 @@ function getSite () {
 
 repo.addDomain('site', function () {
   return {
-    [getSite.open]  : () => 'loading',
-    [getSite.error] : () => 'error',
-    [getSite.done]  : () => 'done'
+    [getSite]: {
+      open  : () => 'loading',
+      error : () => 'error',
+      done  : () => 'done'
+    }
   }
 })
 

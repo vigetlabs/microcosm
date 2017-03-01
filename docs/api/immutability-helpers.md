@@ -1,11 +1,47 @@
-# Data Utilities
+# Immutability Helpers
 
-**Microcosm requires non-destructive management of data.** There are
-many benefits to this approach, however it can sometimes feel
-cumbersome. Microcosm ships with a few utilities that help to
-alleviate this.
+1. [Overview](#overview)
+2. [API](#API)
 
-## get(object, keypath, fallback?)
+## Overview
+
+Microcosm requires immutable updates. This makes it easier to track changes,
+support Microcosm's action history, and keep things fast. However the
+ergonomics and details of this can be a frustrating. Let's say we want to
+update a nested key:
+
+```javascript
+let user = { id: 'Billy', facts: { height: 72, age: 23 } }
+
+// Update the user's age
+let next = {...user, facts: {...facts, age: 24 } }
+```
+
+Spreading can quickly get out of hand, and always copies records even if the
+data hasn't changed. Alternatively, we could use the immutability helpers that
+ship with Microcosm:
+
+```javascript
+import { set } from 'microcosm'
+
+let user = { id: 'Billy', facts: { height: 72, age: 23 } }
+
+let next = set(user, 'facts.age', 24)
+```
+
+Additionally, `set` will not perform an update if no value requires changing.
+
+Microcosm uses these utilities internally. Pulling them into your application
+allows you to reuse that code, or figure out which library to pull in for
+immutable updates.
+
+If you are evaluating alternatives, we recommend [immutability-helper](https://github.com/kolodny/immutability-helper).
+
+---
+
+## API
+
+### get(object, keypath, fallback?)
 
 Safely retrieve a value from an object. If that value is not defined,
 optionally return a fallback value:
@@ -33,7 +69,7 @@ let color = get(state, ['planets', 'venus', 'color'], 'black')
 console.log(color) // 'black'
 ```
 
-## set(object, keypath, value)
+### set(object, keypath, value)
 
 Safely assign a property to an object. If the keypath provided is not
 defined within the object, it will produce new objects until it
@@ -65,7 +101,7 @@ let next = set(state, ['planets', 'earth', 'color'], blue)
 console.log(next === subject) // true
 ```
 
-## update(target, key, value, processor, fallback)
+### update(target, key, processor, fallback?)
 
 Extract a value from a keypath, then call a function on that value and assign
 the result at the same point. This is useful for modifying values in-place:
@@ -91,7 +127,7 @@ let next = update(votes, 'undecided', n => n + 1, 0)
 console.log(next) // { yay: 0, nay: 0, undecided: 1 }
 ```
 
-## merge(...objects)
+### merge(...objects)
 
 Non-destructively merge together the keys of any number of objects,
 starting from left to right. Returns a new object if any of the keys

@@ -157,7 +157,7 @@ p {
     border-right: 1px solid #eee;
     display: table-cell;
     width: 200px;
-    padding-right: 48px;
+    padding-right: 20px;
     padding-top: 56px;
   }
 }
@@ -276,6 +276,16 @@ p {
 
 .content h3 {
   margin-top: 32px;
+}
+
+hr {
+  border: 0;
+  border-bottom: 1px solid #d9d9d9;
+  margin: 40px 0;
+}
+
+.sourceCode + hr {
+  margin-top: 48px;
 }
 
 code {
