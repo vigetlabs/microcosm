@@ -32,7 +32,7 @@ let next = set(user, 'facts.age', 24)
 Additionally, `set` will not perform an update if no value requires changing.
 
 Microcosm uses these utilities internally. Pulling them into your application
-allows you to reuse that code, however f you are evaluating alternatives, we 
+allows you to reuse that code. However if you are evaluating alternatives, we 
 recommend [immutability-helper](https://github.com/kolodny/immutability-helper).
 
 ---
