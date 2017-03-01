@@ -1,5 +1,5 @@
 import React from 'react'
-import { displayName } from '../src/addons/with-action'
+import { displayName } from '../src/addons/with-send'
 
 it('gets a stateless component name', function () {
   const name = displayName(function Button () {})
