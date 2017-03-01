@@ -717,7 +717,7 @@ describe('Efficiency', function() {
     jest.spyOn(repo, 'on')
 
     class Parent extends Presenter {
-      model () {
+      getModel () {
         return {
           foo: 'bar'
         }

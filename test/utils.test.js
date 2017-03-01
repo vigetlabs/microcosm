@@ -206,6 +206,12 @@ describe('get', function () {
     expect(fallback).toBe(true)
   })
 
+  it('returns the fallback if a mid-way key is null', function () {
+    let fallback = get({ a: { b: null }}, 'a.b.c', true)
+
+    expect(fallback).toBe(true)
+  })
+
 })
 
 describe('set', function () {
