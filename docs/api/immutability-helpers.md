@@ -7,7 +7,7 @@
 
 Microcosm requires immutable updates. This makes it easier to track changes,
 support Microcosm's action history, and keep things fast. However the
-ergonomics and details of this can be a frustrating. Let's say we want to
+ergonomics and details of this can be a bit frustrating. Let's say we want to
 update a nested key:
 
 ```javascript
