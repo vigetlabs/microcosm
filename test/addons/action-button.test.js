@@ -154,4 +154,16 @@ describe('rendering', function () {
     expect(wrapper.getDOMNode().tagName).toBe('A')
   })
 
+  it('uses the button type when set as a button', function () {
+    let wrapper = mount(<ActionButton action="wut" />)
+
+    expect(wrapper.getDOMNode().type).toBe('button')
+  })
+
+  it('does not pass the type attribute for non-buttons', function () {
+    let wrapper = mount(<ActionButton tag="a" action="wut" />)
+
+    expect(wrapper.getDOMNode().getAttribute('type')).toBe(null)
+  })
+
 })

@@ -47,6 +47,10 @@ inherit(ActionButton, PureComponent, {
     delete props.onError
     delete props.send
 
+    if (this.props.tag === 'button' && props.type == null) {
+      props.type = 'button'
+    }
+
     return createElement(this.props.tag, props)
   }
 
