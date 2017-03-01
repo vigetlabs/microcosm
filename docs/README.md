@@ -16,7 +16,7 @@
 1. [Presenter](api/presenter.md)
 2. [ActionForm](api/action-form.md)
 3. [ActionButton](api/action-button.md)
-4. [withAction](api/with-action.md)
+4. [withSend](api/with-send.md)
 
 ## Testing
 

@@ -10,7 +10,7 @@ export function displayName (Component) {
 }
 
 function danger (action, params) {
-  console.error('Unable to broadcast "%s" with parameters `%s`. withAction did not receive context.',
+  console.error('Unable to broadcast "%s" with parameters `%s`. withSend did not receive context.',
                 action, JSON.stringify(params))
 }
 
@@ -18,23 +18,23 @@ const TYPES = {
   send: PropTypes.func
 }
 
-export default function withAction (Component) {
+export default function withSend (Component) {
 
-  function WithAction (props, context) {
+  function withSend (props, context) {
     let send = danger
 
     if (context) {
       send = props.send || context.send
     } else {
-      console.error('withAction(%s) did not receive context, was it called as a function instead of with React.createElement?',
+      console.error('withSend(%s) did not receive context, was it called as a function instead of with React.createElement?',
                     displayName(Component))
     }
 
     return createElement(Component, merge({ send }, props))
   }
 
-  WithAction.displayName = 'withAction(' + displayName(Component) + ')'
-  WithAction.contextTypes = WithAction.propTypes = TYPES
+  withSend.displayName = 'withSend(' + displayName(Component) + ')'
+  withSend.contextTypes = withSend.propTypes = TYPES
 
-  return WithAction
+  return withSend
 }

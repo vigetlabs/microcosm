@@ -1,10 +1,10 @@
 import React from 'react'
 import Microcosm from '../../src/microcosm'
 import Presenter from '../../src/addons/presenter'
-import withAction from '../../src/addons/with-action'
+import withSend from '../../src/addons/with-send'
 import {mount} from 'enzyme'
 
-const View = withAction(function ({ send }) {
+const View = withSend(function ({ send }) {
   return <button id="button" onClick={() => send('test', true)} />
 })
 

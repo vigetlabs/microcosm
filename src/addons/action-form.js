@@ -1,11 +1,9 @@
-import { createElement, PropTypes, Component, PureComponent } from 'react'
+import { createElement, PropTypes, PureComponent } from 'react'
 import { Action, merge, inherit } from '../microcosm'
 import serialize from 'form-serialize'
 
-const BaseComponent = PureComponent || Component
-
 function ActionForm () {
-  BaseComponent.apply(this, arguments)
+  PureComponent.apply(this, arguments)
 
   this.send = this.props.send || this.context.send
   this.onSubmit = this.onSubmit.bind(this)
@@ -22,7 +20,7 @@ ActionForm.defaultProps = {
   onSubmit   : n => n
 }
 
-inherit(ActionForm, BaseComponent, {
+inherit(ActionForm, PureComponent, {
 
   render () {
     let props = merge({}, this.props, { ref: 'form', onSubmit: this.onSubmit })

@@ -1,8 +1,8 @@
 import { Action, merge, inherit } from '../microcosm'
-import { createElement, Component, PropTypes } from 'react'
+import { createElement, PureComponent, PropTypes } from 'react'
 
 export default function ActionButton (props, context) {
-  Component.apply(this, arguments)
+  PureComponent.apply(this, arguments)
 
   this.send = this.props.send || this.context.send
   this.click = this.click.bind(this)
@@ -16,7 +16,7 @@ ActionButton.defaultProps = {
   tag: 'button'
 }
 
-inherit(ActionButton, Component, {
+inherit(ActionButton, PureComponent, {
 
   click (event) {
     let action = this.send(this.props.action, this.props.value)

@@ -16,7 +16,7 @@ components.
 
 Presenters also make it easy for components deep within a component
 tree to communicate without passing a long chain of props. The
-`withAction` and `<Form />` may be used to broadcast messages called
+`withSend` and `<Form />` may be used to broadcast messages called
 "actions" to parent Presenter components, or straight to a Microcosm
 repo itself if no Presenter intercepts the message.
 
@@ -233,7 +233,7 @@ class ShowPlanet extends Presenter {
 ```
 
 Views are passed the `send` method on a Presenter. This provides the
-exact same behavior as `withAction`:
+exact same behavior as `withSend`:
 
 ```javascript
 function Button ({ send }) {
@@ -254,7 +254,7 @@ class Example extends Presenter {
 ### intercept()
 
 Catch an action emitted from a child view, using an add-on `Form`,
-`ActionButton`, or `withAction`. These add-ons are designed to improve the
+`ActionButton`, or `withSend`. These add-ons are designed to improve the
 ergonomics of presenter/view communication. Data down, actions up.
 
 ```javascript

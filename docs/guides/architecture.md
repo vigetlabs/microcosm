@@ -118,14 +118,14 @@ not couple them to specific implementation details within a Presenter. A View
 can simply broadcast that something has happened, allowing a Presenter (or a
 test) to pick on on that behavior.
 
-By wrapping a View with the `withAction` add-on, Views receive a `send` prop
+By wrapping a View with the `withSend` add-on, Views receive a `send` prop
 that allows them to broadcast Actions.
 
 ```javascript
 import React from 'react'
-import withAction from 'microcosm/addons/with-action'
+import withSend from 'microcosm/addons/with-send'
 
-export default withAction(function DeleteButton ({ send, id }) {
+export default withSend(function DeleteButton ({ send, id }) {
   return (
     <button onClick={() => send('delete', id)}>Delete</button>
   )
@@ -149,10 +149,10 @@ Or, Actions can also take the form of Actions:
 
 ```javascript
 import React from 'react'
-import withAction from 'microcosm/addons/with-action'
+import withSend from 'microcosm/addons/with-send'
 import {deletePlanet} from 'actions/planets'
 
-export default withAction(function DeleteButton ({ send, id }) {
+export default withSend(function DeleteButton ({ send, id }) {
   return (
     <button onClick={() => send(deletePlanet, id)}>Delete</button>
   )

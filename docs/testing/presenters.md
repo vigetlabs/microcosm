@@ -1,6 +1,6 @@
 # Testing Presenters
 
-Microcosm Presenters, using the `ActionButton`, `Form`, and `withAction`
+Microcosm Presenters, using the `ActionButton`, `Form`, and `withSend`
 add-ons, can listen to messages sent from child components deep within a
 component tree. This recipe walks through testing that functionality.
 

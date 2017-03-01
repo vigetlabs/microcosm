@@ -1,4 +1,4 @@
-# withAction(Component)
+# withSend(Component)
 
 1. [Overview](#overview)
 2. [Testing](#testing)
@@ -12,9 +12,9 @@ props may otherwise be exhaustive.
 
 ```javascript
 import React from 'react'
-import withAction from 'microcosm/addons/with-action'
+import withSend from 'microcosm/addons/with-send'
 
-const Button = withAction(function ({ send }) {
+const Button = withSend(function ({ send }) {
   return (
     <button onClick={() => send('hello-world')}>
       Say hello!
@@ -36,9 +36,9 @@ doSomething (repo, params) {  }
 
 ## Testing
 
-`withAction` relies on the context setup by a Presenter. When testing,
+`withSend` relies on the context setup by a Presenter. When testing,
 this isn't always available. To work around this, Components wrapped
-in `withAction` can accept `send` as a prop:
+in `withSend` can accept `send` as a prop:
 
 ```javascript
 import React from 'react'

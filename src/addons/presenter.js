@@ -1,5 +1,5 @@
 import Microcosm, { get, merge, tag, inherit, getRegistration } from '../microcosm'
-import { Children, PropTypes, Component, PureComponent, createElement } from 'react'
+import { Children, PropTypes, PureComponent, createElement } from 'react'
 
 const EMPTY = {}
 
@@ -7,14 +7,8 @@ function passChildren () {
   return this.props.children ? Children.only(this.props.children) : null
 }
 
-/**
- * PureComponent was only added recently, so fallback to the regular
- * component in cases where it doesn't exist
- */
-const BaseComponent = PureComponent || Component
-
 function Presenter (props, context) {
-  BaseComponent.apply(this, arguments)
+  PureComponent.apply(this, arguments)
 
   if (this.render !== Presenter.prototype.render) {
     this.defaultRender = this.render
@@ -24,7 +18,7 @@ function Presenter (props, context) {
   }
 }
 
-inherit(Presenter, BaseComponent, {
+inherit(Presenter, PureComponent, {
 
   _beginSetup (mediator) {
     this.repo = mediator.repo
@@ -103,7 +97,7 @@ inherit(Presenter, BaseComponent, {
 })
 
 function PresenterMediator (props, context) {
-  BaseComponent.apply(this, arguments)
+  PureComponent.apply(this, arguments)
 
   this.presenter = props.presenter
 
@@ -112,7 +106,7 @@ function PresenterMediator (props, context) {
   this.state = { repo: this.repo, send: this.send }
 }
 
-inherit(PresenterMediator, BaseComponent, {
+inherit(PresenterMediator, PureComponent, {
 
   getChildContext () {
     return {

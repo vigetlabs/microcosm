@@ -23,9 +23,9 @@
   applications.
 - All instances of `intent` have been replaced with `action`. They are the
   exact same thing under the hood, and it is a common source of confusion.
-- Renamed `IntentButton` to `ActionButton`
-- Renamed `Form` to `ActionForm`
-- Renamed `withIntent` to `withAction`
+- Renamed `IntentButton` to `ActionButton`. Import from `microcosm/addons/action-button`
+- Renamed `Form` to `ActionForm` Import from `microcosm/addons/action-form`
+- Renamed `withIntent` to `withSend`. Import from `microcosm/addons/with-send`
 - Added `update` data utility, which calls `set` on the result of a function that
   is passed the result of `get`.
 

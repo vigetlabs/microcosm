@@ -1,10 +1,10 @@
 import React from 'react'
-import withAction from '../../src/addons/with-action'
+import withSend from '../../src/addons/with-send'
 import logger from '../helpers/logger'
 import {mount} from 'enzyme'
 
 it('extracts send from context', function () {
-  const Button = withAction(function ({ send }) {
+  const Button = withSend(function ({ send }) {
     return (
       <button type="button" onClick={() => send('action')}>Click me</button>
     )
@@ -27,7 +27,7 @@ it('extracts send from context', function () {
 it('allows send to be overridden by a prop', function () {
   const send = jest.fn()
 
-  const Button = withAction(function ({ send }) {
+  const Button = withSend(function ({ send }) {
     return (
       <button type="button" onClick={() => send('action')}>
         Click me
@@ -51,7 +51,7 @@ describe('When there is no context (called directly as a function)', function ()
   })
 
   it('safely degrades to an error reporting message', function () {
-    const Button = withAction(function Button ({ send }) {
+    const Button = withSend(function Button ({ send }) {
       return (
         <button type="button" onClick={() => send('action', true)}>Click me</button>
       )
@@ -63,7 +63,7 @@ describe('When there is no context (called directly as a function)', function ()
   })
 
   it('uses the component name in the debug message for stateless components', function () {
-    const Button = withAction(function Button ({ send }) {
+    const Button = withSend(function Button ({ send }) {
       return (
         <button type="button" onClick={() => send('action')}>Click me</button>
       )
@@ -71,7 +71,7 @@ describe('When there is no context (called directly as a function)', function ()
 
     Button()
 
-    expect(logger.last('error')).toContain('withAction(Button)')
+    expect(logger.last('error')).toContain('withSend(Button)')
   })
 
 })
@@ -79,17 +79,17 @@ describe('When there is no context (called directly as a function)', function ()
 describe('Display name', function () {
 
   it('sets the correct display name for stateless components', function () {
-    const Button = withAction(function Button () {
+    const Button = withSend(function Button () {
       return <button type="button" />
     })
 
     let wrapper = mount(<div><Button /></div>)
 
-    expect(wrapper.find('withAction(Button)')).toHaveLength(1)
+    expect(wrapper.find('withSend(Button)')).toHaveLength(1)
   })
 
   it('sets the correct display name for stateful components', function () {
-    const Button = withAction(class Button extends React.Component {
+    const Button = withSend(class Button extends React.Component {
       render () {
         return <button type="button" />
       }
@@ -97,7 +97,7 @@ describe('Display name', function () {
 
     let wrapper = mount(<div><Button /></div>)
 
-    expect(wrapper.find('withAction(Button)')).toHaveLength(1)
+    expect(wrapper.find('withSend(Button)')).toHaveLength(1)
   })
 
 })
