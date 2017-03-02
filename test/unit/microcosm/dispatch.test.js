@@ -24,15 +24,15 @@ describe('Microcosm::dispatch', function () {
     })
 
     repo.push(mutation)
-    expect(repo.history.size).toEqual(0)
+    expect(repo.history.size).toEqual(1)
     expect(repo).toHaveState('toggled', true)
 
     repo.push(mutation)
-    expect(repo.history.size).toEqual(0)
+    expect(repo.history.size).toEqual(1)
     expect(repo).toHaveState('toggled', false)
 
     repo.push(mutation)
-    expect(repo.history.size).toEqual(0)
+    expect(repo.history.size).toEqual(1)
     expect(repo).toHaveState('toggled', true)
   })
 

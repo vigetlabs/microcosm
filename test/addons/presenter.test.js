@@ -894,8 +894,8 @@ describe('intercepting actions', function() {
 
     wrapper.find(View).simulate('click')
 
-    expect(top.history.size).toBe(0)
-    expect(bottom.history.size).toBe(1)
+    expect(top.history.size).toBe(1)
+    expect(bottom.history.size).toBe(2)
   })
 
   it('intents do not bubble to different repo types even if not forking', function () {
@@ -921,8 +921,8 @@ describe('intercepting actions', function() {
 
     wrapper.find(View).simulate('click')
 
-    expect(top.history.size).toBe(0)
-    expect(bottom.history.size).toBe(1)
+    expect(top.history.size).toBe(1)
+    expect(bottom.history.size).toBe(2)
   })
 
   it('forwards intents to the repo as actions', function () {

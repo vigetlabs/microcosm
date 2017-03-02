@@ -62,7 +62,8 @@ expect.extend({
     return {
       pass: pass,
       message: () => {
-        return `Expected repo state at "${path}" ${operator} be ${value}. Found ${actual}.`
+        return `Expected "${path}" in repo.state ${operator} be ${JSON.stringify(value)} ` +
+               `but it is ${actual}.`
       }
     }
   }

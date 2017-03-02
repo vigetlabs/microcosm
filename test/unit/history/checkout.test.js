@@ -41,6 +41,14 @@ describe('History::checkout', function () {
     expect(top.next).toEqual(null)
   })
 
+  it('raises an exception if checking out a null action', function () {
+    const history = new History()
+
+    history.append(action)
+
+    expect(() => history.checkout()).toThrow()
+  })
+
   it('properly handles forked branches', function () {
     let history = new History()
 
@@ -54,11 +62,11 @@ describe('History::checkout', function () {
     let four = history.append(action)
     let five = history.append(action)
 
-    expect(history.toArray()).toEqual([ two, four, five ])
+    expect(history.toArray()).toEqual([ one, two, four, five ])
 
     history.checkout(three)
 
-    expect(history.toArray()).toEqual([ two, three ])
+    expect(history.toArray()).toEqual([ one, two, three ])
   })
 
 })

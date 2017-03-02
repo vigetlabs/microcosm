@@ -1,13 +1,12 @@
-const EMPTY_ARRAY = []
-
+const SPLITTER = '.'
 export function castPath (value) {
-  if (Array.isArray(value)) {
+  if (value == null) {
+    return []
+  } else if (Array.isArray(value)) {
     return value
-  } else if (value == null) {
-    return EMPTY_ARRAY
   }
 
-  return typeof value === 'string' ? value.split('.') : [value]
+  return typeof value === 'string' ? value.split(SPLITTER) : [value]
 }
 
 /**
@@ -56,6 +55,26 @@ export function merge () {
   return copy
 }
 
+export function backfill (subject, properties) {
+  if (subject == null) {
+    return properties
+  }
+
+  let copy = subject
+
+  for (var key in properties) {
+    if (copy.hasOwnProperty(key) === false) {
+      if (copy === subject) {
+        copy = clone(subject)
+      }
+
+      copy[key] = properties[key]
+    }
+  }
+
+  return copy
+}
+
 /**
  * Basic prototypal inheritence
  */
@@ -73,12 +92,12 @@ export function inherit (Child, Ancestor, proto) {
  * Retrieve a value from an object. If no key is provided, just return the
  * object.
  */
-export function get (object, path, fallback) {
+export function get (object, key, fallback) {
   if (object == null) {
     return fallback
   }
 
-  path = castPath(path)
+  let path = castPath(key)
 
   for (var i = 0, len = path.length; i < len; i++) {
     let value = object == null ? undefined : object[path[i]]
@@ -98,9 +117,9 @@ export function get (object, path, fallback) {
  * Non-destructively assign a value to a provided object at a given key. If the
  * value is the same, don't do anything. Otherwise return a new object.
  */
-export function set (object, path, value) {
+export function set (object, key, value) {
   // Ensure we're working with a key path, like: ['a', 'b', 'c']
-  path = castPath(path)
+  let path = castPath(key)
 
   let len  = path.length
 

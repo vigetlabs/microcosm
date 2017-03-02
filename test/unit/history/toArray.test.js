@@ -7,9 +7,12 @@ describe('History::toArray', function () {
     const history = new History()
 
     let one = history.append(action)
+
     history.append(action)
     history.append(action)
     history.checkout(one)
+
+    history.archive()
 
     expect(history.toArray()).toEqual([ one ])
   })
@@ -25,7 +28,11 @@ describe('History::toArray', function () {
 
     const third = history.append(action)
 
-    expect(history.toArray()).toEqual([ first, third ])
+    history.archive()
+
+    const ids = history.map(n => n.id)
+
+    expect(ids).toEqual([ first.id, third.id ])
   })
 
 })

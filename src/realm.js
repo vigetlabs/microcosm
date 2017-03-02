@@ -4,6 +4,7 @@ import getDomainHandlers from './get-domain-handlers'
 import {
   get,
   set,
+  castPath,
   createOrClone
 } from './utils'
 
@@ -21,7 +22,7 @@ Realm.prototype = {
   register (action) {
     let type = action.command[action.status]
 
-    if (this.registry[type] == null) {
+    if (typeof this.registry[type] === 'undefined') {
       this.registry[type] = getDomainHandlers(this.domains, action)
     }
 
@@ -31,7 +32,7 @@ Realm.prototype = {
   add (key, config, options) {
     let domain = createOrClone(config, options, this.repo)
 
-    this.domains.push([key, domain])
+    this.domains.push([castPath(key), domain])
 
     // Reset the registry
     this.registry = {}
@@ -67,7 +68,7 @@ Realm.prototype = {
       }
 
       return memo
-    }, seed || {})
+    }, seed)
   },
 
   prune (state, data) {

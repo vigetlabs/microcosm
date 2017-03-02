@@ -23,12 +23,12 @@ describe('History::archive', function () {
     two.resolve()
 
     // Three should be ignored!
-    history.rollforward()
+    history.archive()
 
-    expect(history.size).toEqual(0)
-    expect(history.root).toBe(null)
+    expect(history.size).toEqual(1)
+    expect(history.root).toBe(two)
     // This is two because we checked out two early
-    expect(history.head).toBe(null)
+    expect(history.head).toBe(two)
   })
 
   it('will not archive a node if prior nodes are not complete', function () {
@@ -45,7 +45,7 @@ describe('History::archive', function () {
 
     history.archive()
 
-    expect(history.size).toBe(2)
+    expect(history.size).toBe(3)
   })
 
   it('archives all completed actions', function () {
@@ -63,7 +63,7 @@ describe('History::archive', function () {
     history.archive()
 
     // 1 because we have an unresolved action remaining
-    expect(history.size).toBe(2)
+    expect(history.size).toBe(1)
   })
 
   it('archived nodes have no relations', function () {
@@ -101,9 +101,9 @@ describe('History::archive', function () {
     history.append(action)
     history.append(action)
 
-    history.rollforward()
+    history.archive()
 
     expect(history.root).toEqual(a)
   })
-
+  
 })

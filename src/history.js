@@ -1,28 +1,36 @@
-import Action from './action'
-
 /**
  * The central tree data structure that is used to calculate state for
  * a Microcosm. Each node in the tree represents an action. Branches
  * are changes over time.
  */
-export default function History (limit=0) {
+
+import Action from './action'
+
+export default function History (limit) {
+  this.ids = 0
+  this.size = 0
+  this.limit = Math.max(1, limit || 1)
   this.repos = []
-  this.limit = limit
+
+  this.append('_root').resolve()
 }
 
 History.prototype = {
-  root  : null,
-  focus : null,
-  head  : null,
-  size  : 0,
-  limit : 0,
+
+  getId () {
+    return ++this.ids
+  },
 
   addRepo (repo) {
     this.repos.push(repo)
   },
 
   removeRepo (repo) {
-    this.repos = this.repos.filter(r => r != repo)
+    let index = this.repos.indexOf(repo)
+
+    if (~index) {
+      this.repos.splice(index, 1)
+    }
   },
 
   invoke (method, payload) {
@@ -34,29 +42,28 @@ History.prototype = {
   },
 
   checkout (action) {
-    this.head = action
-
-    if (!action) {
-      this.root = this.head = null
-    } else if (action.parent) {
-      action.parent.next = action
+    if (action == null) {
+      throw new TypeError('Unable to checkout ' + action + ' action')
     }
 
-    this.adjustSize()
-    this.invalidate()
+    this.head = action
+
+    this.setActiveBranch()
+
+    this.reconcile(action)
 
     return this
   },
 
-  append (command) {
-    const action = new Action(command, this)
+  append (command, status) {
+    const action = new Action(command, this, status)
 
-    if (this.head) {
+    if (this.size > 0) {
       action.parent = this.head
 
-      // To keep track of children, maintain a pointer
-      // to the first child ever produced. We might checkout
-      // another child later, so we can't use next
+      // To keep track of children, maintain a pointer to the first
+      // child ever produced. We might checkout another child later,
+      // so we can't use next
       if (this.head.first) {
         this.head.next.sibling = action
       } else {
@@ -74,76 +81,46 @@ History.prototype = {
     return this.head
   },
 
-  invalidate () {
-    this.focus = null
-
-    this.invoke('unarchive', null)
-
-    this.reconcile()
-  },
-
   reconcile (action) {
-    // No need to run this function if there are no active repos
-    if (this.repos.length <= 0) {
-      return false
+    let focus = action
+
+    while (focus) {
+      this.invoke('reconcile', focus)
+
+      if (focus === this.head) {
+        break
+      } else {
+        focus = focus.next
+      }
     }
 
-    this.invoke('rollback', null)
-
-    this.rollforward()
+    this.archive()
 
     this.invoke('release', action)
   },
 
-  rollforward () {
-    let action = this.focus ? this.focus.next : this.root
-    let cacheable = true
+  archive () {
+    let action = this.root
 
-    while (action && action.parent !== this.head) {
-      if (!action.disabled) {
-        this.invoke('reconcile', action)
-      }
+    while (this.size > this.limit && action.disposable) {
+      this.size -= 1
 
-      // Adjust the focus to the youngest disposable action. No need to
-      // rollforward through every single action all the time.
-      if (cacheable && action.disposable) {
-        this.focus = action
-        this.invoke('cache', this.archive())
-      } else {
-        cacheable = false
+      if (action.parent) {
+        this.invoke('clean', action.parent)
+        action.parent = null
       }
 
       action = action.next
     }
+
+    this.root = action
   },
 
-  archive () {
-    let shouldArchive = this.size > this.limit
-
-    // Is the cache pointed at the base? If so, that means we need
-    // to purge the base.
-    if (shouldArchive) {
-      this.size -= 1
-
-      if (this.size <= 0) {
-        this.root = this.head = this.focus = null
-      } else {
-        this.root = this.root.next
-        this.root.parent = null
-      }
-    }
-
-    return shouldArchive
-  },
-
-  /**
-   * Update the current size and active branch path
-   */
-  adjustSize () {
+  setActiveBranch () {
     let action = this.head
-    let size = this.root ? 1 : 0
+    let size = 1
 
-    while (action && action.parent) {
+    while (action !== this.root) {
       let parent = action.parent
 
       parent.next = action
@@ -156,26 +133,15 @@ History.prototype = {
     this.size = size
   },
 
-  forEach (fn, scope) {
-    let action = this.focus || this.root
-
-    while (action) {
-      fn.call(scope, action)
-
-      if (action === this.head) {
-        break
-      }
-
-      action = action.next
-    }
-  },
-
   map (fn, scope) {
-    let items = []
+    let size = this.size
+    let items = Array(size)
+    let action = this.head
 
-    this.forEach(action => {
-      items.push(fn.call(scope, action))
-    })
+    while (size--) {
+      items[size] = fn.call(scope, action)
+      action = action.parent
+    }
 
     return items
   },

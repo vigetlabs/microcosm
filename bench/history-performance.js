@@ -34,7 +34,7 @@ const results = SIZES.map(function (SIZE) {
    */
   var now = time.now()
   for (var k = SIZE; k >= 0; k--) {
-    history.append(action)
+    history.append(action, 'done')
   }
   stats.build = ((time.now() - now) / 1000)
 
@@ -43,8 +43,8 @@ const results = SIZES.map(function (SIZE) {
    * the current branch.
    */
   now = time.now()
-  history.adjustSize()
-  stats.adjustSize = (time.now() - now) / 1000
+  history.setActiveBranch()
+  stats.setActiveBranch = (time.now() - now) / 1000
 
   var memoryUsage = process.memoryUsage().heapUsed - memoryBefore
 
@@ -52,13 +52,8 @@ const results = SIZES.map(function (SIZE) {
    * Measure time to dispose all nodes in the history. This also has
    * the side effect of helping to test memory leakage later.
    */
-   let node = history.root
-   while (node) {
-     node.resolve(true)
-     node = node.next
-   }
   now = time.now()
-  history.rollforward()
+  history.reconcile(history.root)
   stats.rollforward = (time.now() - now) / 1000
 
   /**
@@ -74,7 +69,7 @@ const results = SIZES.map(function (SIZE) {
   return {
     'Nodes': SIZE.toLocaleString(),
     '::append()': stats.build.toFixed(2) + 'ms',
-    '::adjustSize()': stats.adjustSize.toFixed(2) + 'ms',
+    '::setActiveBranch()': stats.setActiveBranch.toFixed(2) + 'ms',
     '::rollforward()': stats.rollforward.toFixed(2) + 'ms',
     'Total Memory': (memoryUsage / 1000000).toFixed(2) + 'mbs',
     'Memory Growth': stats.memory.toFixed(2) + 'mbs (' + growth.toFixed(2) + '%)'

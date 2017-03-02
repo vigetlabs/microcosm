@@ -5,18 +5,20 @@ import { ACTION_STATES } from './constants'
 import { inherit } from './utils'
 
 /**
- * Actions encapsulate the process of resolving an action creator. Create an
- * action using `Microcosm::push`:
+ * Actions encapsulate the process of resolving an action
+ * creator. Create an action using `Microcosm::push`:
  */
-export default function Action (command, history) {
+export default function Action (command, history, status) {
   Emitter.call(this)
 
-  this.command = tag(command)
   this.history = history || new History()
+
+  this.id = this.history.getId()
+  this.command = tag(command)
+  this.status = status || 'inactive'
 }
 
 inherit(Action, Emitter, {
-  type       : null,
   status     : 'inactive',
   payload    : undefined,
   disabled   : false,
@@ -33,7 +35,7 @@ inherit(Action, Emitter, {
   toggle () {
     this.disabled = !this.disabled
 
-    this.history.invalidate()
+    this.history.reconcile(this)
 
     return this
   },
@@ -44,7 +46,6 @@ inherit(Action, Emitter, {
       this.onError(reject)
     }).then(pass, fail)
   }
-
 })
 
 /**
