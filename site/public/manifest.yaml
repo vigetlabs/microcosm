@@ -6,7 +6,7 @@ pages:
  - src/content/api/form.md
  - src/content/api/microcosm.md
  - src/content/api/presenter.md
- - src/content/api/with-action.md
+ - src/content/api/with-send.md
  - src/content/guides/architecture.md
  - src/content/guides/quickstart.md
  - src/content/index.md
