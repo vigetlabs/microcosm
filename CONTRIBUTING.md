@@ -79,7 +79,6 @@ Microcosm uses ES6 Javascript (compiled using [Babel](babeljs.io)). As
 for style:
 
 - No semicolons (enforced by `.eslintrc.json`)
-- Commas last, (enforced by `.eslintrc.json`)
 - 2 spaces for indentation (no tabs) (enforced by `.editorconfig`)
 - Prefer ' over ", use string interpolation (enforced by `.eslintrc.json`)
 - 80 character line length (enforced by `.editorconfig`)
