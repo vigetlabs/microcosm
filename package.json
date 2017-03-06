@@ -27,6 +27,7 @@
   ],
   "license": "MIT",
   "jest": {
+    "coverageReporters": ["lcov", "text", "html"],
     "setupTestFrameworkScriptFile": "./test/helpers/setup.js",
     "roots": [
       "<rootDir>/test",

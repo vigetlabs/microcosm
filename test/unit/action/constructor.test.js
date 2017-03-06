@@ -11,4 +11,12 @@ describe('Action constructor', function () {
     expect(action.payload).toBe(undefined)
   })
 
+  it('an action can be set to a specific status', function () {
+    let repo = new Microcosm()
+
+    let action = repo.append('test', 'resolved')
+
+    expect(action.is('resolved')).toBe(true)
+  })
+
 })
