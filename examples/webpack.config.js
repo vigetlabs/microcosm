@@ -78,8 +78,8 @@ module.exports = function (env) {
       console: false,
       process: false,
       Buffer: false,
-      __filename: "mock",
-      __dirname: "mock",
+      __filename: 'mock',
+      __dirname: 'mock',
       setImmediate: false
     },
 
