@@ -22,7 +22,6 @@
   "rules": {
     "semi": [2, "never"],
     "quotes": [2, "single"],
-    "comma-dangle": [2, "always-multiline"],
     "no-console": 0,
     "no-unused-vars" : [2, { "args": "none" }]
   }
