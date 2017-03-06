@@ -1,0 +1,51 @@
+import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
+
+describe('History node children', function () {
+  const action = n => n
+
+  it('can determine children', function () {
+    const history = new History()
+    const a = history.append(action)
+    const b = history.append(action)
+
+    history.checkout(a)
+
+    const c = history.append(action)
+
+    expect(a.children).toEqual([ c, b ])
+  })
+
+  it('does not lose children when checking out nodes on the left', function () {
+    const history = new History()
+
+    history.append(action)
+
+    const b = history.append(action)
+    const c = history.append(action)
+
+    history.checkout(b)
+
+    const d = history.append(action)
+
+    expect(b.children).toEqual([ d, c ])
+  })
+
+  it('does not lose children when checking out nodes on the right', function () {
+    const history = new History()
+
+    history.append(action)
+
+    const b = history.append(action)
+    const c = history.append(action)
+
+    history.checkout(b)
+
+    const d = history.append(action)
+
+    history.checkout(c)
+
+    expect(b.children).toEqual([ d, c ])
+  })
+
+})

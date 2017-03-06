@@ -874,7 +874,7 @@ describe('intercepting actions', function() {
     expect(test.mock.calls[0][1]).toEqual(true)
   })
 
-  it('intents do not bubble to different repo types', function () {
+  it('actions do not bubble to different repo types', function () {
     const test = jest.fn()
 
     class Child extends Presenter {

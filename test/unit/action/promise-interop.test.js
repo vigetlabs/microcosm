@@ -1,0 +1,26 @@
+import Action from '../../../src/action'
+import Microcosm from '../../../src/microcosm'
+
+const identity = n => n
+
+describe('Action promise interop', function () {
+
+  it('actions interop with promises', function () {
+    const action = new Action(identity)
+
+    action.resolve('Test')
+
+    return action.then(result => expect(result).toBe('Test'))
+  })
+
+  it('actions interop with async/await', async function () {
+    const action = new Action(identity)
+
+    action.resolve('Test')
+
+    const payload = await action
+
+    expect(payload).toBe('Test')
+  })
+
+})

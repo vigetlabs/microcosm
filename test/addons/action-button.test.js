@@ -5,10 +5,10 @@ import {mount} from 'enzyme'
 
 describe('actions', function () {
 
-  it('passes the value property as paramters into the action', function () {
+  it('passes the value property as parameters into the action', function () {
     let button = mount(<ActionButton action="test" value={true} />, {
       context: {
-        send: (action, params) => new Action(action).resolve(params)
+        send: (type, params) => new Action(type).resolve(params)
       }
     })
 
