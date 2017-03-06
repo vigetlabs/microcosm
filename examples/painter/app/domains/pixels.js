@@ -1,4 +1,4 @@
-import { set } from 'microcosm'
+import { update } from 'microcosm'
 import { paint }  from '../actions/pixels'
 
 const Pixels = {
@@ -19,13 +19,13 @@ const Pixels = {
     return matrix
   },
 
-  flipBit(pixels, { x, y }) {
-    return set(pixels, [y, x], val => val ? 0 : 1)
+  flip (pixels, { x, y }) {
+    return update(pixels, [y, x], val => val ? 0 : 1, 0)
   },
 
   register() {
     return {
-      [paint] : Pixels.flipBit
+      [paint] : this.flip
     }
   }
 

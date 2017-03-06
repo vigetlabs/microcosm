@@ -1,14 +1,23 @@
 import React from 'react'
 import Presenter from 'microcosm/addons/presenter'
+import { set } from 'microcosm/'
 import ListForm from './parts/list-form'
 import ListList from './parts/list-list'
 
 class ListIndex extends Presenter {
 
-  getModel (repo) {
+  getModel () {
     return {
-      lists : repo.memo('lists-with-counts')
+      lists : this.getListsWithCounts
     }
+  }
+
+  getListsWithCounts ({ lists, items }) {
+    return lists.map(function (list) {
+      let count = items.filter(i => i.list === list.id).length
+
+      return set(list, 'count', count)
+    })
   }
 
   render () {

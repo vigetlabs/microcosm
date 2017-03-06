@@ -11,7 +11,7 @@ function List ({ id, name, count }) {
   return (
     <li key={ id }>
       <Link to={ `/lists/${ id }` }>{ name } ({ count })</Link>
-      <ActionButton className="btn" action={removeList} params={id}>
+      <ActionButton className="btn" action={removeList} value={id}>
         Delete
       </ActionButton>
     </li>

@@ -7,7 +7,7 @@ import Link from 'react-router-dom/Link'
 
 class ListShow extends Presenter {
 
-  getModel (repo, { match }) {
+  getModel ({ match }) {
     let { id } = match.params
 
     return {

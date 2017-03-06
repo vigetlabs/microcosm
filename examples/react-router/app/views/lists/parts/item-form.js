@@ -1,5 +1,5 @@
 import React from 'react'
-import Form from 'microcosm/addons/form'
+import ActionForm from 'microcosm/addons/action-form'
 
 import {
   addItem
@@ -23,7 +23,7 @@ class ItemForm extends React.PureComponent {
     const { name } = this.state
 
     return (
-      <Form action={addItem} onSubmit={this.reset}>
+      <ActionForm action={addItem} onSubmit={this.reset}>
         <input type="hidden" name="list" value={this.props.list} />
 
         <div className="textfield">
@@ -32,7 +32,7 @@ class ItemForm extends React.PureComponent {
         </div>
 
         <button className="btn">Add Item</button>
-      </Form>
+      </ActionForm>
     )
   }
 }

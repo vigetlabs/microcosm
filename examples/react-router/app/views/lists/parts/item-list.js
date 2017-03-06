@@ -10,7 +10,7 @@ function Item ({ id, name }) {
   return (
     <li key={ id }>
       { name }
-      <ActionButton className="btn" action={removeItem} params={id}>
+      <ActionButton className="btn" action={removeItem} value={id}>
         Delete
       </ActionButton>
     </li>

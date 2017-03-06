@@ -21,7 +21,7 @@ module.exports = function (env) {
     devtool: 'source-map',
 
     entry: {
-      'application': './app/boot.js'
+      'application': ['./app/boot.js']
     },
 
     output: {
@@ -96,8 +96,9 @@ module.exports = function (env) {
   if (isDev) {
     config.devtool = 'cheap-module-inline-source-map'
 
+    config.entry['application'].unshift('react-hot-loader/patch')
+
     config.entry['dev'] = [
-      'react-hot-loader/patch',
       'webpack-dev-server/client?http://localhost:' + PORT,
       'webpack/hot/only-dev-server'
     ]
