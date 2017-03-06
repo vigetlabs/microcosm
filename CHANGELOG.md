@@ -3,6 +3,7 @@
 ## Edge
 
 - Add `onOpen` callback props to `ActionForm` and `ActionButton`
+- Replaced internal references of `behavior` with `command`
 
 ## 12.0.0
 
