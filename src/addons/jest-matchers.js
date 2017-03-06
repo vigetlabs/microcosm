@@ -2,15 +2,15 @@ import Microcosm, { Action, tag, get, getRegistration } from '../microcosm'
 
 expect.extend({
 
-  toRegister (entity, behavior, status = 'done') {
-    let tagged = tag(behavior)
-    let name = behavior.name || tagged.toString()
+  toRegister (entity, command, status = 'done') {
+    let tagged = tag(command)
+    let name = command.name || tagged.toString()
 
     let operator = this.isNot ? 'not to' : 'to'
     let pass = false
 
     if (entity.register) {
-      pass = getRegistration(entity.register(), behavior, status) != null
+      pass = getRegistration(entity.register(), command, status) != null
     } else {
       throw new TypeError(`${entity.constructor.name} has no register method`)
     }

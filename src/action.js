@@ -8,10 +8,10 @@ import { inherit } from './utils'
  * Actions encapsulate the process of resolving an action creator. Create an
  * action using `Microcosm::push`:
  */
-export default function Action (behavior, history) {
+export default function Action (command, history) {
   Emitter.call(this)
 
-  this.behavior = tag(behavior)
+  this.command = tag(command)
   this.history = history || new History()
 }
 
@@ -27,7 +27,7 @@ inherit(Action, Emitter, {
   sibling    : null,
 
   is (type) {
-    return this.behavior[this.status] === this.behavior[type]
+    return this.command[this.status] === this.command[type]
   },
 
   toggle () {

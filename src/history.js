@@ -4,8 +4,6 @@ import Action from './action'
  * The central tree data structure that is used to calculate state for
  * a Microcosm. Each node in the tree represents an action. Branches
  * are changes over time.
- * @constructor
- * @param {number|null} limit - Depth of history before compression
  */
 export default function History (limit=0) {
   this.repos = []
@@ -19,27 +17,14 @@ History.prototype = {
   size  : 0,
   limit : 0,
 
-  /**
-   * Start tracking a repo
-   * @param {Microcosm} repo
-   */
   addRepo (repo) {
     this.repos.push(repo)
   },
 
-  /**
-   * Stop tracking a repo
-   * @param {Microcosm} repo
-   */
   removeRepo (repo) {
     this.repos = this.repos.filter(r => r != repo)
   },
 
-  /**
-   * Run a method on every repo, if it implements it.
-   * @param {string} method
-   * @param {any} payload
-   */
   invoke (method, payload) {
     let repos = this.repos
 
@@ -48,12 +33,6 @@ History.prototype = {
     }
   },
 
-  /**
-   * Adjust the focus point to target a different node. This has the effect of
-   * creating undo/redo. This should not be called outside of Microcosm!
-   * Instead, use `Microcosm.prototype.checkout`.
-   * @param {Action} action
-   */
   checkout (action) {
     this.head = action
 
@@ -69,13 +48,8 @@ History.prototype = {
     return this
   },
 
-  /**
-   * Create a new action and append it to the current focus,
-   * then adjust the focus to that of the newly created action.
-   * @param {Function|String} behavior
-   */
-  append (behavior) {
-    const action = new Action(behavior, this)
+  append (command) {
+    const action = new Action(command, this)
 
     if (this.head) {
       action.parent = this.head
@@ -100,10 +74,6 @@ History.prototype = {
     return this.head
   },
 
-  /**
-  * Handle a change to a node that happened prior to
-  * the cache point.
-   */
   invalidate () {
     this.focus = null
 
@@ -112,9 +82,6 @@ History.prototype = {
     this.reconcile()
   },
 
-  /**
-   * @param {Action} action
-   */
   reconcile (action) {
     // No need to run this function if there are no active repos
     if (this.repos.length <= 0) {

@@ -1,8 +1,8 @@
 import { isPromise } from './utils'
 
 /**
- * Coroutine is used by an action to determine how it should resolve the
- * body of their associated behavior.
+ * Coroutine is used by an action to determine how it should resolve
+ * the body of their associated command.
  */
 export default function coroutine (action, body, repo) {
   /**
@@ -28,7 +28,7 @@ export default function coroutine (action, body, repo) {
   /**
    * Check for thunks. An escape hatch to direction work with an
    * action. It is triggered by returning a function from a
-   * behavior. This middleware will execute that function with the
+   * command. This middleware will execute that function with the
    * action as the first argument.
    */
   if (typeof body === 'function') {

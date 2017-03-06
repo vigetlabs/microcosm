@@ -187,18 +187,18 @@ inherit(Microcosm, Emitter, {
    * Append an action to history and return it. This is used by push,
    * but also useful for testing action states.
    */
-  append (behavior) {
-    return this.history.append(behavior)
+  append (command) {
+    return this.history.append(command)
   },
 
   /**
    * Push an action into Microcosm. This will trigger the lifecycle for updating
    * state.
    */
-  push (behavior, ...params) {
-    let action = this.append(behavior)
+  push (command, ...params) {
+    let action = this.append(command)
 
-    coroutine(action, action.behavior.apply(null, params), this)
+    coroutine(action, action.command.apply(null, params), this)
 
     return action
   },

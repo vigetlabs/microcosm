@@ -841,7 +841,7 @@ describe('::render', function () {
 
 describe('::getRepo', function () {
 
-  it('can circumvent forking behavior', function () {
+  it('can circumvent forking command', function () {
     class NoFork extends Presenter {
       getRepo (repo) {
         return repo
@@ -936,7 +936,7 @@ describe('intercepting actions', function() {
 
     mount(<MyPresenter repo={repo} />).find(View).simulate('click')
 
-    expect(repo.history.head.behavior.toString()).toEqual('test')
+    expect(repo.history.head.command.toString()).toEqual('test')
   })
 
   it('send bubbles up to parent presenters', function () {

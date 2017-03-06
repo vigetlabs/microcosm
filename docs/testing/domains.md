@@ -63,7 +63,7 @@ Some times we just want to test the specific handler for a
 given action state.
 
 We could use `repo.push()`, however that will immediately execute any
-behavior we pass into it. For example, an AJAX request to a server
+command we pass into it. For example, an AJAX request to a server
 that simply does not exist in a unit testing environment.
 
 To accommodate this, Microcosm provides an `append` method.
@@ -71,7 +71,7 @@ To accommodate this, Microcosm provides an `append` method.
 ## Using append()
 
 `append` is different from `push` in that it adds a new action to
-history, however does not execute it the associated behavior.
+history, however does not execute it the associated command.
 
 ```javascript
 let repo = new Microcosm()

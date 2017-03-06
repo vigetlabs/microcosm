@@ -7,9 +7,6 @@ import {
   createOrClone
 } from './utils'
 
-/**
- * A cluster of domains. Mostly for ergonomics
- */
 export default function Realm (repo) {
   this.repo = repo
   this.domains = []
@@ -22,7 +19,7 @@ export default function Realm (repo) {
 Realm.prototype = {
 
   register (action) {
-    let type = action.behavior[action.status]
+    let type = action.command[action.status]
 
     if (this.registry[type] == null) {
       this.registry[type] = getDomainHandlers(this.domains, action)

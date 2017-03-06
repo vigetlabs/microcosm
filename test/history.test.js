@@ -9,7 +9,7 @@ it('adjusts the focal point when adding a node', function () {
   history.append(action)
   history.append(action)
 
-  expect(history.head.behavior).toEqual(action)
+  expect(history.head.command).toEqual(action)
 })
 
 it('handles cases where a repo might be lost during a reconcilation', function () {
