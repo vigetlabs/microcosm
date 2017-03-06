@@ -2,7 +2,7 @@
 
 Thanks you for considering a contribution to Microcosm!
 
-### Before Starting
+## Before Starting
 
 Microcosm is built using tools written for
 [nodejs](http://nodejs.org). We recommend installing Node with
@@ -17,7 +17,7 @@ nvm use
 
 > You may need to run `nvm install` if you haven't installed the node version on `.nvmrc`
 
-### Getting Started
+## Getting Started
 
 All commands should be run using yarn. If you haven't switched to [yarn](https://yarnpkg.com/en/) yet, now's a great time!
 
