@@ -4,15 +4,13 @@
 
 'use strict'
 
-const { History } = require('../build/microcosm.min')
+const { History } = require('../build/microcosm')
 const time = require('microtime')
 
 const SIZES = [
   1000,
   50000,
-  100000,
-  500000,
-  1000000 // For fun, mostly
+  100000
 ]
 
 console.log('\nConducting history benchmark...\n')

@@ -6,15 +6,10 @@
 
 'use strict'
 
-const { Microcosm } = require('../build/microcosm.min')
+const { Microcosm } = require('../build/microcosm')
 const time = require('microtime')
 
-const SIZES = [
-  100,
-  5000,
-  15000,
-  30000
-]
+const SIZES = [ 1000, 10000, 50000, 100000 ]
 
 console.log('\nConducting fork benchmark...\n')
 

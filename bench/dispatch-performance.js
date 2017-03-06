@@ -9,10 +9,10 @@
 
 'use strict'
 
-const { Microcosm } = require('../build/microcosm.min')
+const { Microcosm } = require('../build/microcosm')
 const time = require('microtime')
 
-const SIZES   = [ 1000, 10000, 50000, 100000, 200000 ]
+const SIZES   = [ 1000, 10000, 50000, 100000 ]
 
 console.log('\nConducting dispatch benchmark...\n')
 
