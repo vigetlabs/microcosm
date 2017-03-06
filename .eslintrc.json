@@ -18,11 +18,10 @@
       "jsx": true
     }
   },
-  "rules": {
-    "semi": 0
-  },
   "extends": ["eslint:recommended"],
   "rules": {
+    "semi": [2, "never"],
+    "quotes": [2, "single"],
     "no-console": 0,
     "no-unused-vars" : [2, { "args": "none" }]
   }
