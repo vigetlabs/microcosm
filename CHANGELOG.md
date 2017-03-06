@@ -1,5 +1,9 @@
 # Changelog
 
+## Edge
+
+- Add `onOpen` callback props to `ActionForm` and `ActionButton`
+
 ## 12.0.0
 
 - `merge` helper skips over nully values. For example, `merge(null, {})` will

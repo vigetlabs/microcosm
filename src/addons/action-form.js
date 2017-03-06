@@ -29,6 +29,7 @@ inherit(ActionForm, PureComponent, {
     delete props.action
     delete props.prepare
     delete props.serializer
+    delete props.onOpen
     delete props.onDone
     delete props.onUpdate
     delete props.onCancel
@@ -49,9 +50,10 @@ inherit(ActionForm, PureComponent, {
     let action = this.send(this.props.action, params)
 
     if (action && action instanceof Action) {
-      action.onDone(this.props.onDone)
+      action.onOpen(this.props.onOpen)
             .onUpdate(this.props.onUpdate)
             .onCancel(this.props.onCancel)
+            .onDone(this.props.onDone)
             .onError(this.props.onError)
     }
 

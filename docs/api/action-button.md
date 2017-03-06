@@ -81,6 +81,11 @@ The parameters that should be passed when broadcasting the provided action.
 An event callback executed immediately after the button clicks and the
 action is broadcasted.
 
+### onOpen(payload)
+
+After broadcasting, if the dispatched action returns a Microcosm
+action, this callback will execute when the action opens.
+
 ### onDone(payload)
 
 After broadcasting, if the dispatched action returns a Microcosm

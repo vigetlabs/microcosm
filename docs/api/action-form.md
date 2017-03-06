@@ -116,6 +116,11 @@ class MyForm extends React.Component {
 An event callback executed immediately after the form submits and the
 action is broadcasted.
 
+### onOpen(payload)
+
+After broadcasting, if the dispatched action returns a Microcosm
+action, this callback will execute when the action opens.
+
 ### onDone(payload)
 
 After broadcasting, if the dispatched action returns a Microcosm

@@ -29,6 +29,21 @@ describe('callbacks', function () {
     expect(onError).toHaveBeenCalledWith('bad')
   })
 
+  it('executes onOpen when that action opens', function () {
+    const onOpen = jest.fn()
+    const action = new Action(n => n)
+    const context = mockSend(n => action)
+
+    const form = mount(<ActionForm action="test" onOpen={n => onOpen(n)} />,
+                       context)
+
+    form.simulate('submit')
+
+    action.open('open')
+
+    expect(onOpen).toHaveBeenCalledWith('open')
+  })
+
   it('executes onUpdate when that action sends an update', function () {
     const onUpdate = jest.fn()
     const action = new Action(n => n)

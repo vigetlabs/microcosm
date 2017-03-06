@@ -22,6 +22,20 @@ describe('actions', function () {
 
 describe('callbacks', function () {
 
+  it('executes onOpen when that action completes', function () {
+    let onOpen = jest.fn()
+
+    let button = mount(<ActionButton action="test" onOpen={n => onOpen(n)} />, {
+      context: {
+        send: () => new Action(n => n).open(true)
+      }
+    })
+
+    button.simulate('click')
+
+    expect(onOpen).toHaveBeenCalledWith(true)
+  })
+
   it('executes onDone when that action completes', function () {
     let onDone = jest.fn()
 
