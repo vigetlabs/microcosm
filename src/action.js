@@ -15,7 +15,10 @@ export default function Action (command, history, status) {
 
   this.id = this.history.getId()
   this.command = tag(command)
-  this.status = status || 'inactive'
+
+  if (status) {
+    this.status = status
+  }
 }
 
 inherit(Action, Emitter, {
