@@ -149,11 +149,13 @@ const PlanetsDomain = {
 
   register() {
     return {
-      [getPlanet.open]      : this.setPending,
-      [getPlanet.done]      : this.addPlanet,
-      [getPlanet.error]     : this.setError,
-      [getPlanet.loading]   : this.setProgress,
-      [getPlanet.cancelled] : this.setCancelled
+      [getPlanet] : {
+        open   : this.setPending,
+        update : this.setProgress,
+        done   : this.addPlanet,
+        error  : this.setError,
+        cancel : this.setCancelled
+      }
     }
   }
 }
