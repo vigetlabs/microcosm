@@ -42,10 +42,12 @@ inherit(Action, Emitter, {
     return this.command[this.status] === this.command[type]
   },
 
-  toggle () {
+  toggle (silent) {
     this.disabled = !this.disabled
 
-    this.history.reconcile(this)
+    if (!silent) {
+      this.history.reconcile(this)
+    }
 
     return this
   },

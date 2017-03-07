@@ -140,6 +140,15 @@ History.prototype = {
     this.size = size
   },
 
+  // Toggle actions in bulk, then reconcile from the first action
+  toggle (actions) {
+    let list = [].concat(actions)
+
+    list.forEach(action => action.toggle('silently'))
+
+    this.reconcile(list[0])
+  },
+
   map (fn, scope) {
     let size = this.size
     let items = Array(size)
