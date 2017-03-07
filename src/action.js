@@ -1,14 +1,20 @@
 import Emitter from './emitter'
 import History from './history'
 import tag from './tag'
-import { ACTION_STATES } from './constants'
-import { inherit } from './utils'
+
+import {
+  inherit
+} from './utils'
+
+import {
+  ACTION_STATES
+} from './constants'
 
 /**
- * Actions encapsulate the process of resolving an action
- * creator. Create an action using `Microcosm::push`:
+ * Actions encapsulate the process of resolving an action creator. Create an
+ * action using `Microcosm::push`:
  */
-export default function Action (command, history, status) {
+export default function Action (command, status, history) {
   Emitter.call(this)
 
   this.history = history || new History()
@@ -17,7 +23,7 @@ export default function Action (command, history, status) {
   this.command = tag(command)
 
   if (status) {
-    this.status = status
+    this.setStatus(status)
   }
 }
 
@@ -48,13 +54,27 @@ inherit(Action, Emitter, {
       this.onDone(resolve)
       this.onError(reject)
     }).then(pass, fail)
+  },
+
+  setStatus (status) {
+    console.assert(ACTION_STATES[status], 'Invalid action status "' + status + '"')
+
+    this.status = status
+    this.disposable = ACTION_STATES[status].disposable
+  },
+
+  prune () {
+    console.assert(this.parent, 'Expected action to have parent')
+    this.parent.parent = null
   }
+
 })
 
 /**
  * Generate action methods for each action state
  */
-ACTION_STATES.forEach(function ({ key, disposable, once, listener }) {
+Object.keys(ACTION_STATES).forEach(function (key) {
+  const { once, listener } = ACTION_STATES[key]
 
   /**
    * Create a method to update the action status. For example:
@@ -62,8 +82,7 @@ ACTION_STATES.forEach(function ({ key, disposable, once, listener }) {
    */
   Action.prototype[key] = function (payload) {
     if (!this.disposable) {
-      this.status = key
-      this.disposable = disposable
+      this.setStatus(key)
 
       if (arguments.length) {
         this.payload = payload
@@ -92,6 +111,7 @@ ACTION_STATES.forEach(function ({ key, disposable, once, listener }) {
 
     return this
   }
+
 })
 
 /**

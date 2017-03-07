@@ -10,8 +10,7 @@ import getRegistration from './get-registration'
 
 import {
   RESET,
-  PATCH,
-  ADD_DOMAIN
+  PATCH
 } from './lifecycle'
 
 import {
@@ -161,8 +160,9 @@ inherit(Microcosm, Emitter, {
 
     if (domain.getInitialState) {
       this.initial = set(this.initial, key, domain.getInitialState())
-      this.push(ADD_DOMAIN, domain, key)
     }
+
+    this.history.checkout()
 
     return domain
   },

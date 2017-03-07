@@ -3,13 +3,14 @@
  * controls how they should behave.
  */
 
-export const ACTION_STATES = [
-  { key: 'open', disposable: false, once: true, listener: 'onOpen' },
-  { key: 'update', disposable: false, once: false, listener: 'onUpdate' },
-  { key: 'resolve', disposable: true, once: true, listener: 'onDone' },
-  { key: 'reject', disposable: true, once: true, listener: 'onError' },
-  { key: 'cancel',  disposable: true, once: true, listener: 'onCancel' }
-]
+export const ACTION_STATES = {
+  inactive : { disposable: false, once: true,  listener: 'onInactive' },
+  open     : { disposable: false, once: true,  listener: 'onOpen' },
+  update   : { disposable: false, once: false, listener: 'onUpdate' },
+  resolve  : { disposable: true,  once: true,  listener: 'onDone' },
+  reject   : { disposable: true,  once: true,  listener: 'onError' },
+  cancel   : { disposable: true,  once: true,  listener: 'onCancel' }
+}
 
 // For nested registrations, track our aliases
 export const ACTION_ALIASES = {

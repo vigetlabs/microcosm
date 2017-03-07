@@ -18,10 +18,12 @@ function sandbox (data, deserialize) {
 
 export const RESET = tag(function reset (data, deserialize) {
   return sandbox(data, deserialize)
-}, 'reset')
+}, '$reset')
 
 export const PATCH = tag(function patch (data, deserialize) {
   return sandbox(data, deserialize)
-}, 'patch')
+}, '$patch')
 
-export const ADD_DOMAIN = 'addDomain'
+export const BIRTH = '$birth'
+
+export const START = '$start'

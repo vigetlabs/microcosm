@@ -34,7 +34,7 @@ const results = SIZES.map(function (SIZE) {
    */
   var now = time.now()
   for (var k = SIZE; k >= 0; k--) {
-    history.append(action, 'done')
+    history.append(action, 'resolve')
   }
   stats.build = ((time.now() - now) / 1000)
 

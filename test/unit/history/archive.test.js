@@ -75,7 +75,7 @@ describe('History::archive', function () {
 
     history.archive()
 
-    expect(one.parent).toBe(null)
+    expect(history.root.parent.parent).toBe(null)
   })
 
   it('archiving the entire tree clears cursors', function () {
@@ -105,5 +105,5 @@ describe('History::archive', function () {
 
     expect(history.root).toEqual(a)
   })
-  
+
 })

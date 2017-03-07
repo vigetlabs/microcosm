@@ -5,6 +5,16 @@
     "react"
   ],
   "env": {
+    "development": {
+      "plugins": [
+        "babel-plugin-unassert"
+      ]
+    },
+    "production": {
+      "plugins": [
+        "babel-plugin-unassert"
+      ]
+    },
     "test": {
       "presets": [
         "es2015",

@@ -41,12 +41,14 @@ describe('History::checkout', function () {
     expect(top.next).toEqual(null)
   })
 
-  it('raises an exception if checking out a null action', function () {
+  it('checks out the head if no action is specified', function () {
     const history = new History()
 
-    history.append(action)
+    jest.spyOn(history, 'reconcile')
 
-    expect(() => history.checkout()).toThrow()
+    history.checkout()
+
+    expect(history.reconcile).toHaveBeenCalledWith(history.head)
   })
 
   it('properly handles forked branches', function () {

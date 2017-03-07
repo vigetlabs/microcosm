@@ -2,9 +2,16 @@
  * The central tree data structure that is used to calculate state for
  * a Microcosm. Each node in the tree represents an action. Branches
  * are changes over time.
+ *
+ * @flow
  */
 
 import Action from './action'
+
+import {
+  BIRTH,
+  START
+} from './lifecycle'
 
 export default function History (limit) {
   this.ids = 0
@@ -12,7 +19,9 @@ export default function History (limit) {
   this.limit = Math.max(1, limit || 1)
   this.repos = []
 
-  this.append('_root').resolve()
+  this.genesis = new Action(BIRTH, 'resolve', this)
+
+  this.append(START, 'resolve')
 }
 
 History.prototype = {
@@ -42,25 +51,21 @@ History.prototype = {
   },
 
   checkout (action) {
-    if (action == null) {
-      throw new TypeError('Unable to checkout ' + action + ' action')
-    }
-
-    this.head = action
+    this.head = action || this.head
 
     this.setActiveBranch()
 
-    this.reconcile(action)
+    this.reconcile(this.head)
 
     return this
   },
 
   append (command, status) {
-    const action = new Action(command, this, status)
+    const action = new Action(command, status, this)
+
+    action.parent = this.size ? this.head : this.genesis
 
     if (this.size > 0) {
-      action.parent = this.head
-
       // To keep track of children, maintain a pointer to the first
       // child ever produced. We might checkout another child later,
       // so we can't use next
@@ -82,6 +87,9 @@ History.prototype = {
   },
 
   reconcile (action) {
+    console.assert(this.head, 'History should always have a head node')
+    console.assert(action, 'History should never reconcile ' + action)
+
     let focus = action
 
     while (focus) {
@@ -100,20 +108,19 @@ History.prototype = {
   },
 
   archive () {
-    let action = this.root
+    let size = this.size
+    let root = this.root
 
-    while (this.size > this.limit && action.disposable) {
-      this.size -= 1
-
-      if (action.parent) {
-        this.invoke('clean', action.parent)
-        action.parent = null
-      }
-
-      action = action.next
+    while (size > this.limit && root.disposable) {
+      size -= 1
+      this.invoke('clean', root.parent)
+      root = root.next
     }
 
-    this.root = action
+    root.prune()
+
+    this.root = root
+    this.size = size
   },
 
   setActiveBranch () {
