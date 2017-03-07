@@ -21,7 +21,7 @@ function getUser (id) {
 }
 
 // Domains define how a Microcosm should turn actions into new state
-repo.addDomain('counter', {
+repo.addDomain('users', {
   getInitialState () {
     return {}
   },
