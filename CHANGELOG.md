@@ -4,6 +4,7 @@
 
 - Add `onOpen` callback props to `ActionForm` and `ActionButton`
 - Replaced internal references of `behavior` with `command`
+- Cleaned up some internal operations they no longer expose actions in history
 
 ## 12.0.0
 
