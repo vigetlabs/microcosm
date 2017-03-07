@@ -21,6 +21,7 @@ export default function Action (command, status, history) {
 
   this.id = this.history.getId()
   this.command = tag(command)
+  this.timestamp = Date.now()
 
   if (status) {
     this.setStatus(status)
