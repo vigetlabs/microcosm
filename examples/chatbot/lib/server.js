@@ -1,24 +1,17 @@
-var express = require('express')
-var assets  = require('./assets')
-var Chat    = require('./chat')
+const Chat = require('./chat')
+const bodyParser = require('body-parser')
 
-var app  = express()
-var port = process.env.PORT || 3000
+module.exports = function (app) {
+  let bot = Chat.start()
 
-app.use(assets())
-app.use(express.static(__dirname + '/../public/'))
-app.use(require('body-parser').json())
+  app.use(bodyParser.json())
 
-var bot = Chat.start()
+  app.post('/message', function (req, res) {
 
-app.post('/message', function (req, res) {
 
-  // Simulate latency
-  setTimeout(function() {
-    res.send(Chat.parse(bot, req.body.message))
-  }, 500 + Math.random() * 500)
-})
-
-app.listen(port, function () {
-  console.log('ChatBot listening at http://localhost:%s', port)
-})
+    // Simulate latency
+    setTimeout(function() {
+      res.send(Chat.parse(bot, req.body.message))
+    }, 500 + Math.random() * 500)
+  })
+}
