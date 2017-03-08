@@ -8,8 +8,8 @@
   "scripts": {
     "build": "make all",
     "lint": "eslint {src,test,examples}/**.js",
-    "test": "npm run lint && NODE_ENV=test jest",
-    "test:cov": "NODE_ENV=test jest --coverage",
+    "test": "npm run lint && NODE_ENV=test jest --maxWorkers=2",
+    "test:cov": "NODE_ENV=test jest --coverage --maxWorkers=2",
     "report-coverage": "codecov",
     "release": "make release"
   },
