@@ -5,6 +5,7 @@ general:
 machine:
   environment:
     PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
+    CODE_COV_TOKEN: $CODE_COV_TOKEN
   node:
     version: 6.10.0
 dependencies:
@@ -15,3 +16,5 @@ dependencies:
 test:
   override:
     - yarn test:cov
+  post:
+    - yarn report-coverage

@@ -10,7 +10,7 @@
     "lint": "eslint {src,test,examples}/**.js",
     "test": "npm run lint && NODE_ENV=test jest",
     "test:cov": "NODE_ENV=test jest --coverage --no-cache",
-    "report-coverage": "cat coverage/lcov.info | coveralls",
+    "report-coverage": "codecov",
     "release": "make release"
   },
   "repository": {
@@ -57,8 +57,8 @@
     "babel-register": "^6.16.3",
     "body-parser": "^1.17.0",
     "browser-sync": "^2.18.8",
+    "codecov": "^1.0.1",
     "console.table": "0.8.0",
-    "coveralls": "^2.11.15",
     "elizabot": "^0.0.2",
     "enzyme": "^2.7.0",
     "eslint": "^3.17.0",
