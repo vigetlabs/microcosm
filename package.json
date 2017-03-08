@@ -9,7 +9,7 @@
     "build": "make all",
     "lint": "eslint {src,test,examples}/**.js",
     "test": "npm run lint && NODE_ENV=test jest",
-    "test:cov": "NODE_ENV=test jest --coverage --no-cache",
+    "test:cov": "NODE_ENV=test jest --coverage",
     "report-coverage": "codecov",
     "release": "make release"
   },
