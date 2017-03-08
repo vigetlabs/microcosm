@@ -6,7 +6,6 @@
 'use strict'
 
 const { Microcosm } = require('../build/microcosm')
-const time = require('microtime')
 
 const SIZES = [ 1000, 10000, 50000, 100000 ]
 
@@ -38,7 +37,7 @@ var results = SIZES.map(function (SIZE) {
   repo.addDomain('four',  Domain)
   repo.addDomain('five',  Domain)
 
-  var then = time.now()
+  var then = process.hrtime()
 
   /**
    * Append a given number of actions into history. We use this method
@@ -52,7 +51,7 @@ var results = SIZES.map(function (SIZE) {
   }
   var endMemory = process.memoryUsage().heapUsed
 
-  var total   = (time.now() - then) / 1000
+  var total   = process.hrtime(then)[1] / 1000000
   var average = total / SIZE
 
   return {

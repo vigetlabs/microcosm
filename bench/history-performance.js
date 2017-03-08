@@ -5,7 +5,6 @@
 'use strict'
 
 const { History } = require('../build/microcosm')
-const time = require('microtime')
 
 const SIZES = [
   1000,
@@ -32,19 +31,21 @@ const results = SIZES.map(function (SIZE) {
   /**
    * Measure the average append time.
    */
-  var now = time.now()
+  var now = process.hrtime()
   for (var k = SIZE; k >= 0; k--) {
     history.append(action, 'resolve')
   }
-  stats.build = ((time.now() - now) / 1000)
+  var end = process.hrtime(now)[1]
+  stats.build = (end / 1000000)
 
   /**
    * Measure the time it takes to determine the size of
    * the current branch.
    */
-  now = time.now()
+  var now = process.hrtime()
   history.setActiveBranch()
-  stats.setActiveBranch = (time.now() - now) / 1000
+  var end = process.hrtime(now)[1]
+  stats.setActiveBranch = (end / 1000000)
 
   var memoryUsage = process.memoryUsage().heapUsed - memoryBefore
 
@@ -52,9 +53,10 @@ const results = SIZES.map(function (SIZE) {
    * Measure time to dispose all nodes in the history. This also has
    * the side effect of helping to test memory leakage later.
    */
-  now = time.now()
+  var now = process.hrtime()
   history.reconcile(history.root)
-  stats.rollforward = (time.now() - now) / 1000
+  var end = process.hrtime(now)[1]
+  stats.rollforward = (end / 1000000)
 
   /**
    * Now that the history has been pruned, force garbage collection

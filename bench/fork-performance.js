@@ -7,7 +7,6 @@
 'use strict'
 
 const { Microcosm } = require('../build/microcosm')
-const time = require('microtime')
 
 const SIZES = [ 1000, 10000, 50000, 100000 ]
 
@@ -29,16 +28,16 @@ var results = SIZES.map(function (SIZE) {
 
   repo.addDomain('one', Domain)
 
-  var then = time.now()
+  var then = process.hrtime()
   for (var i = 0; i < SIZE; i++) {
     repo.fork().on('change', () => {})
   }
 
-  var setup = (time.now() - then) / 1000
+  var setup = process.hrtime(then)[1] / 1000000
 
-  then = time.now()
+  then = process.hrtime()
   repo.push(action, 1)
-  var push = (time.now() - then) / 1000
+  var push = process.hrtime(then)[1] / 1000000
 
   return {
     'Count'  : SIZE.toLocaleString(),

@@ -10,7 +10,6 @@
 'use strict'
 
 const { Microcosm } = require('../build/microcosm')
-const time = require('microtime')
 
 const SIZES   = [ 1000, 10000, 50000, 100000 ]
 
@@ -53,9 +52,9 @@ var results = SIZES.map(function (SIZE) {
   var max = -Infinity
 
   for (var q = 0; q < SIZE; q++) {
-    var then = time.now()
+    var then = process.hrtime()
     repo.push(action)
-    var pass = (time.now() - then) / 1000
+    var pass = process.hrtime(then)[1] / 1000000
 
     min = Math.min(min, pass)
     max = Math.max(max, pass)
