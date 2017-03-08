@@ -10,7 +10,7 @@
     "lint": "eslint {src,test,examples}/**.js",
     "test": "npm run lint && NODE_ENV=test jest --maxWorkers=2",
     "test:cov": "NODE_ENV=test jest --coverage --maxWorkers=2",
-    "report-coverage": "codecov",
+    "report-coverage": "codecov coverage/lcov.info",
     "release": "make release"
   },
   "repository": {
