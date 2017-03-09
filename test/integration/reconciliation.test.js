@@ -78,11 +78,11 @@ describe('Reconciliation', function() {
     one.resolve()
 
     // Should be gone
-    expect(repo.archive.has(one)).toBe(false)
+    expect(repo.recall(one)).toBe(null)
     // We need two for rolling forward changes from three
-    expect(repo.archive.has(two)).toBe(true)
+    expect(repo.recall(two)).toBeDefined()
     // We need three because it is the root
-    expect(repo.archive.has(three)).toBe(true)
+    expect(repo.recall(three)).toBeDefined()
   })
 
   it('pushing actions while the root is "open" does not result in extra invocations', function() {

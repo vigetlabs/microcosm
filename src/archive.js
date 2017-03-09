@@ -1,36 +1,44 @@
 /**
  * Keep track of prior action states according to an action's id
+ * @constructor
+ * @property {Object} pool An object mapping of action ids to snapshots
  */
-
- import {
-   BIRTH
- } from './lifecycle'
-
 export default function Archive () {
   this.pool = {}
 }
 
 Archive.prototype = {
-  get (action) {
-    console.assert(action, 'Unable to get ' + action + ' action')
-    return this.pool[action.id]
+  /**
+   * Access a prior snapshot for a given action
+   * @param {string} key Identifier for snapshot
+   */
+  get (key) {
+    return this.has(key) ? this.pool[key] : null
   },
 
-  has (action) {
-    return this.pool.hasOwnProperty(action.id)
+  /**
+   * Determine if an archive has a snapshot for an action
+   * @param {string} key Identifier for snapshot
+   * @return {boolean}
+   */
+  has (key) {
+    return this.pool.hasOwnProperty(key)
   },
 
-  set (action, state) {
-    console.assert(action, 'Unable to set ' + action + ' action.')
-    console.assert(action.command !== BIRTH, 'Birth action should never be set.')
-
-    this.pool[action.id] = state
+  /**
+   * Assign a new snapshot for an action
+   * @param {string} key Identifier for snapshot
+   * @param {Object} snapshot
+   */
+  set (key, snapshot) {
+    this.pool[key] = snapshot
   },
 
-  remove (action) {
-    console.assert(action, 'Unable to remove ' + action + ' action.')
-    console.assert(action.command !== BIRTH, 'Birth action should never be removed.')
-
-    delete this.pool[action.id]
+  /**
+   * Remove a snapshot for an action.
+   * @param {string} key Identifier for snapshot
+   */
+  remove (key) {
+    delete this.pool[key]
   }
 }

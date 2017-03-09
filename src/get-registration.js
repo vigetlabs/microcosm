@@ -1,5 +1,5 @@
 import { isObject } from './utils'
-import { ACTION_ALIASES } from './constants'
+import { ALIASES } from './constants'
 
 /**
  * Gets any registrations that match a given command and status.
@@ -11,7 +11,7 @@ import { ACTION_ALIASES } from './constants'
  */
 export default function getRegistration (pool, command, status) {
   let answer = null
-  let alias = ACTION_ALIASES[status]
+  let alias = ALIASES[status]
 
   console.assert(alias, 'Invalid action status ' + status)
 

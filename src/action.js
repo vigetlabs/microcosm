@@ -7,7 +7,7 @@ import {
 } from './utils'
 
 import {
-  ACTION_STATES
+  STATES
 } from './constants'
 
 /**
@@ -60,10 +60,10 @@ inherit(Action, Emitter, {
   },
 
   setStatus (status) {
-    console.assert(ACTION_STATES[status], 'Invalid action status "' + status + '"')
+    console.assert(STATES[status], 'Invalid action status "' + status + '"')
 
     this.status = status
-    this.disposable = ACTION_STATES[status].disposable
+    this.disposable = STATES[status].disposable
   },
 
   prune () {
@@ -76,8 +76,8 @@ inherit(Action, Emitter, {
 /**
  * Generate action methods for each action state
  */
-Object.keys(ACTION_STATES).forEach(function (key) {
-  const { once, listener } = ACTION_STATES[key]
+Object.keys(STATES).forEach(function (key) {
+  const { once, listener } = STATES[key]
 
   /**
    * Create a method to update the action status. For example:

@@ -10,7 +10,8 @@ import getRegistration from './get-registration'
 
 import {
   RESET,
-  PATCH
+  PATCH,
+  BIRTH
 } from './lifecycle'
 
 import {
@@ -71,15 +72,22 @@ inherit(Microcosm, Emitter, {
   },
 
   recall (action) {
-    return this.archive.get(action)
+    console.assert(action, 'Unable to get ' + typeof action + ' action')
+    return this.archive.get(action.id)
   },
 
   save (action, state) {
-    return this.archive.set(action, state)
+    console.assert(action, 'Unable to set ' + typeof action + ' action.')
+    console.assert(action.command !== BIRTH, 'Birth action should never be set.')
+
+    return this.archive.set(action.id, state)
   },
 
   clean (action) {
-    this.archive.remove(action)
+    console.assert(action, 'Unable to remove ' + typeof action + ' action.')
+    console.assert(action.command !== BIRTH, 'Birth action should never be removed.')
+
+    this.archive.remove(action.id)
   },
 
   dispatch (state, action) {
