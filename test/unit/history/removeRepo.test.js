@@ -1,7 +1,7 @@
 import History from '../../../src/history'
 import Microcosm from '../../../src/microcosm'
 
-describe('History::addRepo', function() {
+describe('History::removeRepo', function() {
 
   it('Does not remove a repo outside of the tracked repo', function() {
     const history = new History()
