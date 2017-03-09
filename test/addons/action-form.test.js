@@ -123,7 +123,7 @@ describe ('prepare', function() {
     const send = mockSend()
 
     const prepare = function (params) {
-      params.name = "BILLY"
+      params.name = 'BILLY'
       return params
     }
 
@@ -135,7 +135,7 @@ describe ('prepare', function() {
 
     form.simulate('submit')
 
-    expect(send).toHaveBeenCalledWith("test", { name: "BILLY" })
+    expect(send).toHaveBeenCalledWith('test', { name: 'BILLY' })
   })
 
 })

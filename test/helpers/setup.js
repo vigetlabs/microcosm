@@ -1,1 +1,1 @@
-import "../../src/addons/jest-matchers"
+import '../../src/addons/jest-matchers'

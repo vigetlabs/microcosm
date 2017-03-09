@@ -1,21 +1,26 @@
 import { isObject } from './utils'
 import { ACTION_ALIASES } from './constants'
 
-const DONE = 'done'
+/**
+ * Gets any registrations that match a given command and status.
+ *
+ * @param {Object} pool
+ * @param {Function|string} command
+ * @param {string} status
+ * @return {Function|null} Registration for command if it exists within the pool.
+ */
 export default function getRegistration (pool, command, status) {
   let answer = null
-  let alias = status ? ACTION_ALIASES[status] : DONE
+  let alias = ACTION_ALIASES[status]
 
-  if (alias == null) {
-    throw new ReferenceError('Invalid action status ' + status)
-  }
+  console.assert(alias, 'Invalid action status ' + status)
 
-  if (pool && command) {
-    if (isObject(pool[command])) {
-      answer = pool[command][alias] || pool[command][status]
-    } else {
-      answer = pool[command[alias]]
-    }
+  let nest = pool[command]
+
+  if (isObject(nest)) {
+    answer = nest[alias] || nest[status]
+  } else {
+    answer = pool[command[alias]]
   }
 
   return answer

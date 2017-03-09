@@ -9,32 +9,6 @@ const action = tag(n => n)
 
 describe('getRegistration', function () {
 
-  it('returns null when no registrations method exists', function () {
-    let answer = getRegistration({})
-
-    expect(answer).toEqual(null)
-  })
-
-  it('returns a registration for done when there is no status', function () {
-    let success = n => n
-    let answer = getRegistration({
-      [action]: success
-    }, action)
-
-    expect(answer).toBe(success)
-  })
-
-  it('returns the done registration for a nested object when there is no status', function () {
-    let success = n => n
-    let answer = getRegistration({
-      [action]: {
-        done: success
-      }
-    }, action)
-
-    expect(answer).toBe(success)
-  })
-
   it('can use nested objects to return specific statuses', function () {
     let success = n => n
     let answer = getRegistration({

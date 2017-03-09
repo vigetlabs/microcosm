@@ -222,8 +222,6 @@ describe('rollbacks', function () {
   it('can checkout the root', () => {
     const repo = new Microcosm()
 
-    const foldIn = n => n
-
     repo.addDomain('test', {
       getInitialState() {
         return true
@@ -232,13 +230,11 @@ describe('rollbacks', function () {
 
     repo.checkout(repo.history.root)
 
-    expect(repo.state.test).toEqual(true)
+    expect(repo).toHaveState('test', true)
   })
 
   it('can checkout the root after a reconciliation', () => {
     const repo = new Microcosm()
-
-    const foldIn = n => n
 
     repo.addDomain('test', {
       getInitialState() {
@@ -250,6 +246,6 @@ describe('rollbacks', function () {
 
     repo.checkout(repo.history.root)
 
-    expect(repo.state.test).toEqual(false)
+    expect(repo).toHaveState('test', false)
   })
 })

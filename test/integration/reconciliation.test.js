@@ -98,8 +98,7 @@ describe('Reconciliation', function() {
       }
     })
 
-    let one = repo.append(action)
-
+    repo.append(action)
     repo.append(action).resolve(1)
     repo.append(action).resolve(2)
     repo.append(action).resolve(3)

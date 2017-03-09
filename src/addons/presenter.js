@@ -205,7 +205,7 @@ inherit(PresenterMediator, PureComponent, {
     let interceptors = this.presenter.intercept()
 
     // A presenter's register goes through the same registration steps
-    let handler = getRegistration(interceptors, tag(intent))
+    let handler = getRegistration(interceptors, tag(intent), 'resolve')
 
     // Does the presenter register to this intent?
     if (handler) {

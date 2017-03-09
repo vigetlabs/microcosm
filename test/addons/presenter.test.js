@@ -57,7 +57,7 @@ describe('::getModel', function() {
     class Hello extends Presenter {
       getModel ({ place }) {
         return {
-          greeting: "Hello, " + place + "!"
+          greeting: 'Hello, ' + place + '!'
         }
       }
 
@@ -85,7 +85,7 @@ describe('::getModel', function() {
       }
     }
 
-    let wrapper = mount(<Hello place="world" />).simulate('click')
+    mount(<Hello place="world" />).simulate('click')
 
     expect(spy).toHaveBeenCalled()
   })
@@ -157,7 +157,8 @@ describe('::getModel', function() {
     }
 
     const repo = new Repo()
-    const el = mount(<MyPresenter repo={repo} />)
+
+    mount(<MyPresenter repo={repo} />)
 
     repo.patch({ color: 'green' })
     repo.patch({ color: 'turquoise' })
@@ -237,7 +238,7 @@ describe('::getModel', function() {
       const wrapper = mount(<Namer name="Colonel" />)
 
       wrapper.setState({
-        "greeting": "Salutations"
+        greeting: 'Salutations'
       })
 
       expect(wrapper.text()).toEqual('Salutations, Colonel')
@@ -255,7 +256,7 @@ describe('::getModel', function() {
       const wrapper = mount(<TrackedNamer name="Colonel" />)
 
       wrapper.setState({
-        "greeting": 'Hello'
+        greeting: 'Hello'
       })
 
       expect(spy).toHaveBeenCalledTimes(1)
@@ -393,7 +394,7 @@ describe('::update', function() {
 
     let wrapper = mount(<MyPresenter test="foo" />)
 
-    wrapper.setProps({ test: "bar" })
+    wrapper.setProps({ test: 'bar' })
 
     expect(test).toHaveBeenCalledTimes(1)
     expect(test).toHaveBeenCalledWith('bar')
@@ -403,7 +404,7 @@ describe('::update', function() {
     let wrapper = mount(<Presenter test="foo" />)
     let spy = jest.spyOn(wrapper.instance(), 'update')
 
-    wrapper.setProps({ test: "foo" })
+    wrapper.setProps({ test: 'foo' })
 
     expect(spy).not.toHaveBeenCalled()
   })
@@ -438,7 +439,7 @@ describe('::update', function() {
 
     let wrapper = mount(<MyPresenter test="foo" />)
 
-    wrapper.setProps({ test: "bar" })
+    wrapper.setProps({ test: 'bar' })
 
     expect(test).toHaveBeenCalledTimes(1)
     expect(test).toHaveBeenCalledWith('bar')
@@ -875,8 +876,6 @@ describe('intercepting actions', function() {
   })
 
   it('actions do not bubble to different repo types', function () {
-    const test = jest.fn()
-
     class Child extends Presenter {
       view = View
     }
@@ -899,8 +898,6 @@ describe('intercepting actions', function() {
   })
 
   it('intents do not bubble to different repo types even if not forking', function () {
-    const test = jest.fn()
-
     class Child extends Presenter {
       view = View
     }

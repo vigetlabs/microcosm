@@ -37,19 +37,18 @@ describe('Emitter', function () {
 
   it('does not call listeners removed when another is emitted', function (done) {
     const emitter = new Emitter
-
-    function two () {
-      throw new Error("should not have been called")
-    }
+    const handler = jest.fn()
 
     emitter.on('foo', function() {
-      emitter.off('foo', two)
+      emitter.off('foo', handler)
       done()
     })
 
-    emitter.on('foo', two)
+    emitter.on('foo', handler)
 
     emitter._emit('foo')
+
+    expect(handler).not.toHaveBeenCalled()
   })
 
   describe('removal', function() {
@@ -115,16 +114,15 @@ describe('Emitter', function () {
 
     it('off removes once subscriptions', function () {
       const emitter = new Emitter()
+      const handler = jest.fn()
 
-      function one () {
-        throw new Error("Should not have been called")
-      }
-
-      emitter.once('foo', one)
-      emitter.once('fee', one)
-      emitter.off('foo', one)
+      emitter.once('foo', handler)
+      emitter.once('fee', handler)
+      emitter.off('foo', handler)
 
       emitter._emit('foo')
+
+      expect(handler).not.toHaveBeenCalled()
     })
 
   })

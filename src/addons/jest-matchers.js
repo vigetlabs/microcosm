@@ -18,15 +18,15 @@ expect.extend({
     return {
       pass: pass,
       message: () => {
-        return `Expected entity ${operator} register to the "${status}" state of ${name}.`
+        return `Expected entity ${operator} register to the '${status}' state of ${name}.`
       }
     }
   },
 
   toHaveStatus (action, status) {
     if (action instanceof Action === false) {
-      throw new TypeError("toHaveStatus expects an Action. Received " +
-                          (action != null ? "a " + action.constructor.name : action) + ".")
+      throw new TypeError('toHaveStatus expects an Action. Received ' +
+                          (action != null ? 'a ' + action.constructor.name : action) + '.')
     }
 
     let operator = this.isNot ? 'not to' : 'to'
@@ -35,15 +35,15 @@ expect.extend({
     return {
       pass: pass,
       message: () => {
-        return `Expected action ${operator} to be"${status}".`
+        return `Expected action ${operator} to be'${status}'.`
       }
     }
   },
 
   toHaveState (repo, key, value) {
     if (repo instanceof Microcosm === false) {
-      throw new TypeError("toHaveState expects a Microcosm. Received " +
-                           (repo != null ? "a " + repo.constructor.name : repo) + ".")
+      throw new TypeError('toHaveState expects a Microcosm. Received ' +
+                           (repo != null ? 'a ' + repo.constructor.name : repo) + '.')
     }
 
     let operator = this.isNot ? 'not to' : 'to'
@@ -62,7 +62,7 @@ expect.extend({
     return {
       pass: pass,
       message: () => {
-        return `Expected "${path}" in repo.state ${operator} be ${JSON.stringify(value)} ` +
+        return `Expected '${path}' in repo.state ${operator} be ${JSON.stringify(value)} ` +
                `but it is ${actual}.`
       }
     }
