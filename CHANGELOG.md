@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.1.1
+
+- Fixed length caching issue where history would still try to publish
+  changes to an untracked repo.
+
 ## 12.1.0
 
 - Add `onOpen` callback props to `ActionForm` and `ActionButton`
