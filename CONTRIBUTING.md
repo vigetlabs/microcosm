@@ -29,6 +29,20 @@ You can install dependencies with:
 yarn install
 ```
 
+### Examples
+
+The [examples section](examples) showcase Microcosm features. These may be helpful as you develop new features or improve existing ones. Check out the [examples section of this repo](examples) to get started running the examples.
+
+### Docs
+
+Documentation found on the [Microcosm site](http://code.viget.com/microcosm) is generated from markdown files in the [docs section](docs).
+
+> We would love your help in improving documentation. Get involved by creating a pull request addressing an issue with the label `documentation`, by creating a documentation issue, or contributing to the conversation on existing [issues](https://github.com/vigetlabs/microcosm/issues?q=is%3Aissue+is%3Aopen+label%3Adocumentation).
+
+### Site
+
+You may want to run what you see on [code.viget.com/microcosm](http://code.viget.com/microcosm) locally. To do so head over the [site section of this repo](site).
+
 ## Testing
 
 ```bash
