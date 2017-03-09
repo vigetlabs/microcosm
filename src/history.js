@@ -45,7 +45,8 @@ History.prototype = {
   invoke (method, payload) {
     let repos = this.repos
 
-    for (var i = 0, len = repos.length; i < len; i++) {
+    for (var i = 0; i < repos.length; i++) {
+      console.assert(repos[i], `No repo. Was it removed before invoke could run ${method}?`)
       repos[i][method](payload)
     }
   },
