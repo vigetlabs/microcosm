@@ -17,6 +17,9 @@ export default function getRegistration (pool, command, status) {
 
   let nest = pool[command]
 
+  /**
+   * Support nesting, like:
+   */
   if (isObject(nest)) {
     answer = nest[alias] || nest[status]
   } else {

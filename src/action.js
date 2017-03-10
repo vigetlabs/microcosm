@@ -66,9 +66,75 @@ inherit(Action, Emitter, {
     this.disposable = STATES[status].disposable
   },
 
+  /**
+   * Remove the grandparent of this action, cutting off history.
+   */
   prune () {
     console.assert(this.parent, 'Expected action to have parent')
     this.parent.parent = null
+  },
+
+  /**
+   * Set the next action after this one in the historical tree of
+   * actions.
+   * @param {Action} child Action to follow this one
+   */
+  lead (child) {
+    this.next = child
+  },
+
+  /**
+   * Set the next action after this one in the historical tree of
+   * actions.
+   * @param {Action} child Action to follow this one
+   */
+  follow (parent) {
+    this.parent = parent
+  },
+
+  /**
+   * Connect the parent node to the next node. Removing this action
+   * from history.
+   */
+  remove () {
+    /**
+     * If an action the oldest child of a parent, pass on the lead
+     * role to the next child.
+     */
+    if (this.parent.next === this) {
+      this.parent.lead(this.next)
+    }
+
+    /**
+     * If an action is a parent, give the next child to the parent of
+     * this action.
+     */
+    if (this.next) {
+      this.next.follow(this.parent)
+    }
+
+    if (this.left) {
+      this.left.right = this.right
+    }
+
+    if (this.right) {
+      this.right.left = this.left
+    }
+
+    // Remove all relations
+    this.parent = null
+    this.next = null
+    this.right = null
+    this.left = null
+  },
+
+  /**
+   * Indicates if an action is currently connected within
+   * a history.
+   * @returns {Boolean} Is the action connected to a parent?
+   */
+  isDisconnected () {
+    return this.parent == null
   }
 
 })
@@ -123,11 +189,22 @@ Object.keys(STATES).forEach(function (key) {
 Object.defineProperty(Action.prototype, 'children', {
   get () {
     let children = []
-    let node = this.first
+    let next = this.next
 
-    while (node) {
-      children.unshift(node)
-      node = node.sibling
+    if (next) {
+      // Slide to the left..
+      let node = next
+      while (node) {
+        children.unshift(node)
+        node = node.left
+      }
+
+      // Slide to the right...
+      node = next.right
+      while (node) {
+        children.push(node)
+        node = node.right
+      }
     }
 
     return children

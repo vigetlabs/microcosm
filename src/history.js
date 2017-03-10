@@ -1,11 +1,3 @@
-/**
- * The central tree data structure that is used to calculate state for
- * a Microcosm. Each node in the tree represents an action. Branches
- * are changes over time.
- *
- * @flow
- */
-
 import Action from './action'
 
 import {
@@ -13,18 +5,31 @@ import {
   START
 } from './lifecycle'
 
+/**
+ * The central tree data structure that is used to calculate state for
+ * a Microcosm. Each node in the tree is an action. Branches are
+ * changes over time.
+ * @constructor
+ */
 export default function History (limit) {
   this.ids = 0
   this.size = 0
   this.limit = Math.max(1, limit || 1)
   this.repos = []
 
-  this.genesis = new Action(BIRTH, 'resolve', this)
-
-  this.append(START, 'resolve')
+  this.begin()
 }
 
 History.prototype = {
+
+  /**
+   * Setup the head and root action for a history. This effectively
+   * starts or restarts history.
+   */
+  begin () {
+    this.head = this.root = null
+    this.append(START, 'resolve')
+  },
 
   getId () {
     return ++this.ids
@@ -64,20 +69,19 @@ History.prototype = {
   append (command, status) {
     const action = new Action(command, status, this)
 
-    action.parent = this.size ? this.head : this.genesis
-
     if (this.size > 0) {
-      // To keep track of children, maintain a pointer to the first
-      // child ever produced. We might checkout another child later,
-      // so we can't use next
-      if (this.head.first) {
-        this.head.next.sibling = action
-      } else {
-        this.head.first = action
+      action.follow(this.head)
+
+      if (this.head.next) {
+        this.head.next.right = action
+        action.left = this.head.next
       }
 
-      this.head.next = action
+      this.head.lead(action)
     } else {
+      // Always have a parent node, no matter what
+      action.follow(new Action(BIRTH, 'resolve', this))
+
       this.root = action
     }
 
@@ -87,6 +91,47 @@ History.prototype = {
     this.invoke('createInitialSnapshot', action)
 
     return this.head
+  },
+
+  /**
+   * Remove an action from history, connecting adjacent actions
+   * together to bridge the gap.
+   * @param {Action} action - Action to remove from history
+   */
+  remove (action) {
+    if (action.isDisconnected()) {
+      return
+    }
+
+    let next = action.next
+    let parent = action.parent
+
+    this.clean(action)
+
+    if (this.size <= 0) {
+      this.begin()
+      return
+    } else if (!next) {
+      next = this.head = parent
+    } else if (action === this.root) {
+      this.root = next
+    }
+
+    if (action.disabled === false) {
+      this.reconcile(next)
+    }
+  },
+
+  /**
+   * The actual clean up operation that purges an action from both
+   * history, and removes all snapshots within tracking repos.
+   * @param {Action} action - Action to clean up
+   */
+  clean (action) {
+    this.size -= 1
+    this.invoke('clean', action)
+
+    action.remove()
   },
 
   reconcile (action) {
@@ -145,7 +190,10 @@ History.prototype = {
     this.size = size
   },
 
-  // Toggle actions in bulk, then reconcile from the first action
+  /**
+   * Toggle actions in bulk, then reconcile from the first action
+   * @param {Action[]} - A list of actions to toggle
+   */
   toggle (actions) {
     let list = [].concat(actions)
 
