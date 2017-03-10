@@ -104,7 +104,8 @@ manage the provided `key`. Whenever this domain responds to an action,
 it will be provided the current state for that particular key.
 
 `options` passed as the third argument are sent into a domain's
-`setup` method and, if using a class, the constructor.
+`setup` method and, if using a class, the constructor is instantiated
+with the provided options and associated repo.
 
 [See the documentation on domains](domains.md).
 
@@ -112,7 +113,8 @@ it will be provided the current state for that particular key.
 
 Generates an effect based on the provided `config`. `options` passed
 as the second argument are sent into a effect's `setup` method and, if
-using a class, the constructor.
+using a class, the constructor is instantiated with the provided
+options and associated repo.
 
 [See the documentation on effects](effects.md).
 
