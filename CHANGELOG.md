@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.1.2
+
+- Fixed issue where parent repos would send out changes before
+  children could reconcile.
+
 ## 12.1.1
 
 - Fixed length caching issue where history would still try to publish
