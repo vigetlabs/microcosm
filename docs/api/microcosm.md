@@ -117,7 +117,23 @@ using a class, the constructor.
 [See the documentation on effects](effects.md).
 
 ```javascript
-repo.addDomain('planets', planetsConfig)
+class Effect {
+  setup (repo, options) {
+    // run starting behavior
+  }
+  teardown (repo) {
+    // clean up
+  }
+  handleAction (repo, payload) {
+    // respond once to an action changing states
+  }
+  register () {
+    return {
+      [action] : this.handleAction
+    }
+  }
+}
+repo.addEffect(Effect)
 ```
 
 ### `serialize()`
