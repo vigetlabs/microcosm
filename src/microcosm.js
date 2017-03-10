@@ -44,6 +44,11 @@ function Microcosm (options, state, deserialize)  {
   // Microcosm is now ready. Call the setup lifecycle method
   this.setup(options)
 
+  // Track a dirty flag, this is useful so that we can reconcile
+  // all Microcosm repos, then release their new state changes
+  // progressively
+  this.dirty = false
+
   // If given state, reset to that snapshot
   if (state) {
     this.reset(state, deserialize)
@@ -126,12 +131,17 @@ inherit(Microcosm, Emitter, {
     return this
   },
 
-  release (action) {
+  update () {
     let next = this.follower ? this.parent.state : this.recall(this.history.head)
 
-    if (next !== this.state) {
-      this.state = next
-      this._emit('change', next)
+    this.dirty = next !== this.state
+    this.state = next
+  },
+
+  release (action) {
+    if (this.dirty) {
+      this.dirty = false
+      this._emit('change', this.state)
     }
 
     this._emit('effect', action)

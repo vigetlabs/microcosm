@@ -105,6 +105,8 @@ History.prototype = {
 
     this.archive()
 
+    this.invoke('update')
+
     this.invoke('release', action)
   },
 

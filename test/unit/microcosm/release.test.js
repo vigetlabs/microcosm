@@ -44,4 +44,27 @@ describe('Microcosm::release', function () {
     expect(spy).toHaveBeenCalledTimes(1)
   })
 
+  it('children have the latest state when their parents change', function() {
+    expect.assertions(2)
+
+    let step = n => n
+    let repo = new Microcosm({ maxHistory: Infinity })
+    let fork = repo.fork()
+
+    repo.addDomain('count', {
+      getInitialState() {
+        return 0
+      },
+      register () {
+        return { [step]: (a,b) => a + b }
+      }
+    })
+
+    repo.on('change', function () {
+      expect(repo.state.count).toBe(1)
+      expect(fork.state.count).toBe(repo.state.count)
+    })
+
+    repo.push(step, 1)
+  })
 })
