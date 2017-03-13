@@ -13,7 +13,7 @@ Archive.prototype = {
    * @param {string} key Identifier for snapshot
    */
   get (key, fallback) {
-    return this.has(key) ? this.pool[key] : fallback
+    return this.has(key) ? this.pool[key] : null
   },
 
   /**

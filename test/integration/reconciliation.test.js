@@ -78,7 +78,7 @@ describe('Reconciliation', function() {
     one.resolve()
 
     // Should be gone
-    expect(repo.recall(one)).not.toBeDefined()
+    expect(repo.recall(one)).toBe(null)
     // We need two for rolling forward changes from three
     expect(repo.recall(two)).toBeDefined()
     // We need three because it is the root
