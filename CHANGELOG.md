@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.1.3
+
+- Fix issue where pushing actions inside of other actions would cause
+  a rollback to initial state.
+
 ## 12.1.2
 
 - Fixed issue where parent repos would send out changes before
