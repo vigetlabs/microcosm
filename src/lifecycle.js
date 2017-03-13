@@ -16,14 +16,18 @@ function sandbox (data, deserialize) {
   }
 }
 
-export const RESET = tag(function reset (data, deserialize) {
+export const RESET = tag(function $reset (data, deserialize) {
   return sandbox(data, deserialize)
 }, '$reset')
 
-export const PATCH = tag(function patch (data, deserialize) {
+export const PATCH = tag(function $patch (data, deserialize) {
   return sandbox(data, deserialize)
 }, '$patch')
 
-export const BIRTH = '$birth'
+export const BIRTH = function $birth () {
+  console.assert(false, 'Birth lifecycle method should never be invoked directly.')
+}
 
-export const START = '$start'
+export const START = function $start () {
+  console.assert(false, 'Start lifecycle method should never be invoked directly.')
+}

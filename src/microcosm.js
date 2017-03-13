@@ -78,19 +78,36 @@ inherit(Microcosm, Emitter, {
 
   recall (action) {
     console.assert(action, 'Unable to get ' + typeof action + ' action')
+
     return this.archive.get(action.id)
   },
 
-  save (action, state) {
-    console.assert(action, 'Unable to set ' + typeof action + ' action.')
-    console.assert(action.command !== BIRTH, 'Birth action should never be set.')
+  /**
+   * Create the initial state snapshot for an action. This is
+   * important so that, when rolling back to this action, it always
+   * has a state value.
+   * @param {Action} action - The action to generate a snapshot for
+   */
+  createInitialSnapshot (action) {
+    let state = this.recall(action.parent)
 
-    return this.archive.set(action.id, state)
+    this.updateSnapshot(action, state)
   },
 
-  clean (action) {
+  /**
+   * Update the state snapshot for a given action
+   * @param {Action} action - The action to update the snapshot for
+   */
+  updateSnapshot (action, state) {
+    this.archive.set(action.id, state)
+  },
+
+  /**
+   * Remove the snapshot for a given action
+   * @param {Action} action - The action to remove the snapshot for
+   */
+  removeSnapshot (action) {
     console.assert(action, 'Unable to remove ' + typeof action + ' action.')
-    console.assert(action.command !== BIRTH, 'Birth action should never be removed.')
 
     this.archive.remove(action.id)
   },
@@ -126,12 +143,12 @@ inherit(Microcosm, Emitter, {
       next = this.dispatch(next, action)
     }
 
-    this.save(action, next)
+    this.updateSnapshot(action, next)
 
     return this
   },
 
-  update () {
+  prepareRelease () {
     let next = this.follower ? this.parent.state : this.recall(this.history.head)
 
     this.dirty = next !== this.state

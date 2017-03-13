@@ -84,6 +84,8 @@ History.prototype = {
     this.head = action
     this.size += 1
 
+    this.invoke('createInitialSnapshot', action)
+
     return this.head
   },
 
@@ -105,7 +107,7 @@ History.prototype = {
 
     this.archive()
 
-    this.invoke('update')
+    this.invoke('prepareRelease')
 
     this.invoke('release', action)
   },
@@ -116,7 +118,7 @@ History.prototype = {
 
     while (size > this.limit && root.disposable) {
       size -= 1
-      this.invoke('clean', root.parent)
+      this.invoke('removeSnapshot', root.parent)
       root = root.next
     }
 
