@@ -29,6 +29,26 @@ describe('History::remove', function() {
     expect(history.clean).not.toHaveBeenCalled()
   })
 
+  describe('reconciliation', function () {
+
+    it('does not call reconciliation when removing a disabled child', function () {
+      let history = new History()
+
+      history.append('one')
+
+      let action = history.append('two')
+
+      action.toggle()
+
+      jest.spyOn(history, 'reconcile')
+
+      history.remove(action)
+
+      expect(history.reconcile).not.toHaveBeenCalled()
+    })
+
+  })
+
   describe('removing the head', function () {
 
     it('adjusts the head to the prior node', function() {
@@ -141,6 +161,38 @@ describe('History::remove', function() {
       history.remove(two)
 
       expect(one.children.map(i => i.command.name)).toEqual(['three'])
+    })
+
+    it('maintains children on the left when the next action is removed', function() {
+      let history = new History({ maxHistory: Infinity })
+
+      let one = history.append(function one () {}, 'resolve')
+      let two = history.append(function two () {}, 'resolve')
+
+      history.checkout(one)
+
+      let three = history.append(function three () {}, 'resolve')
+
+      history.remove(three)
+
+      expect(one.children.map(i => i.command.name)).toEqual(['two'])
+    })
+
+    it('allows having children, but no next value', function() {
+      let history = new History({ maxHistory: Infinity })
+
+      let one = history.append(function one () {}, 'resolve')
+
+      history.append(function two () {}, 'resolve')
+
+      history.checkout(one)
+
+      let three = history.append(function three () {}, 'resolve')
+
+      history.remove(three)
+
+      expect(history.head).toEqual(one)
+      expect(history.head.next).toEqual(null)
     })
 
   })

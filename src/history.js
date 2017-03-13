@@ -67,20 +67,14 @@ History.prototype = {
   },
 
   append (command, status) {
-    const action = new Action(command, status, this)
+    let action = new Action(command, status, this)
 
     if (this.size > 0) {
-      action.follow(this.head)
-
-      if (this.head.next) {
-        this.head.next.right = action
-        action.left = this.head.next
-      }
-
       this.head.lead(action)
     } else {
       // Always have a parent node, no matter what
-      action.follow(new Action(BIRTH, 'resolve', this))
+      let birth = new Action(BIRTH, 'resolve', this)
+      birth.adopt(action)
 
       this.root = action
     }
@@ -117,7 +111,7 @@ History.prototype = {
       this.root = next
     }
 
-    if (action.disabled === false) {
+    if (!action.disabled) {
       this.reconcile(next)
     }
   },

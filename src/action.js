@@ -22,6 +22,7 @@ export default function Action (command, status, history) {
   this.id = this.history.getId()
   this.command = tag(command)
   this.timestamp = Date.now()
+  this.children = []
 
   if (status) {
     this.setStatus(status)
@@ -77,19 +78,41 @@ inherit(Action, Emitter, {
   /**
    * Set the next action after this one in the historical tree of
    * actions.
-   * @param {Action} child Action to follow this one
+   * @param {?Action} child Action to follow this one
    */
   lead (child) {
     this.next = child
+
+    if (child) {
+      this.adopt(child)
+    }
   },
 
   /**
-   * Set the next action after this one in the historical tree of
-   * actions.
-   * @param {Action} child Action to follow this one
+   * Add an action to the list of children
+   * @param {Action} child Action to include in child list
    */
-  follow (parent) {
-    this.parent = parent
+  adopt (child) {
+    let index = this.children.indexOf(child)
+
+    if (index < 0) {
+      this.children.push(child)
+    }
+
+    child.parent = this
+  },
+
+  /**
+   * Remove a child action
+   * @param {Action} child Action to remove
+   */
+  abandon (child) {
+    let index = this.children.indexOf(child)
+
+    if (index >= 0) {
+      this.children.splice(index, 1)
+      child.parent = null
+    }
   },
 
   /**
@@ -105,27 +128,10 @@ inherit(Action, Emitter, {
       this.parent.lead(this.next)
     }
 
-    /**
-     * If an action is a parent, give the next child to the parent of
-     * this action.
-     */
-    if (this.next) {
-      this.next.follow(this.parent)
-    }
-
-    if (this.left) {
-      this.left.right = this.right
-    }
-
-    if (this.right) {
-      this.right.left = this.left
-    }
+    this.parent.abandon(this)
 
     // Remove all relations
-    this.parent = null
     this.next = null
-    this.right = null
-    this.left = null
   },
 
   /**
@@ -181,32 +187,4 @@ Object.keys(STATES).forEach(function (key) {
     return this
   }
 
-})
-
-/**
- * Get all child actions. Used by the Microcosm debugger to visualize history.
- */
-Object.defineProperty(Action.prototype, 'children', {
-  get () {
-    let children = []
-    let next = this.next
-
-    if (next) {
-      // Slide to the left..
-      let node = next
-      while (node) {
-        children.unshift(node)
-        node = node.left
-      }
-
-      // Slide to the right...
-      node = next.right
-      while (node) {
-        children.push(node)
-        node = node.right
-      }
-    }
-
-    return children
-  }
 })
