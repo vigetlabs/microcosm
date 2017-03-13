@@ -12,7 +12,7 @@ Archive.prototype = {
    * Access a prior snapshot for a given action
    * @param {string} key Identifier for snapshot
    */
-  get (key, fallback) {
+  get (key) {
     return this.has(key) ? this.pool[key] : null
   },
 
