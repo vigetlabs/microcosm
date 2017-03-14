@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.2.0 (Beta)
+
+- Added method for removing actions from history, history `append`
+  event.
+
 ## 12.1.3
 
 - Fix issue where pushing actions inside of other actions would cause
