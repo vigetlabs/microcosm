@@ -1,4 +1,9 @@
 import Action from './action'
+import Emitter from './emitter'
+
+import {
+  inherit
+} from './utils'
 
 import {
   BIRTH,
@@ -12,6 +17,8 @@ import {
  * @constructor
  */
 export default function History (limit) {
+  Emitter.call(this)
+
   this.ids = 0
   this.size = 0
   this.limit = Math.max(1, limit || 1)
@@ -20,7 +27,7 @@ export default function History (limit) {
   this.begin()
 }
 
-History.prototype = {
+inherit(History, Emitter, {
 
   /**
    * Setup the head and root action for a history. This effectively
@@ -83,6 +90,8 @@ History.prototype = {
     this.size += 1
 
     this.invoke('createInitialSnapshot', action)
+
+    this._emit('append', action)
 
     return this.head
   },
@@ -213,4 +222,4 @@ History.prototype = {
     return this.map(n => n)
   }
 
-}
+})

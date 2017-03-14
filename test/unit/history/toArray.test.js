@@ -3,7 +3,7 @@ import History from '../../../src/history'
 describe('History::toArray', function () {
   const action = n => n
 
-  it('does not walk past the focal point', function () {
+  it('does not walk past the head', function () {
     const history = new History()
 
     let one = history.append(action)
