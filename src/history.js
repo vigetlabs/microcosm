@@ -132,7 +132,7 @@ inherit(History, Emitter, {
    */
   clean (action) {
     this.size -= 1
-    this.invoke('clean', action)
+    this.invoke('removeSnapshot', action)
 
     action.remove()
   },
