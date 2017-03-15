@@ -31,8 +31,8 @@ The site is generated using the markdown files in `./src/pages` and the html tem
 
 A [Makefile](https://en.wikipedia.org/wiki/Makefile) provides a few easy commands for building, serving, and publishing the site. To keep things simple there are two main ones you will most likely need:
 
-- `make server` which lets you run the site locally on `localhost:4000`
-- `make publish` which bundles the site, puts the files on the `gh-pages` branch, and pushes them to Github
+- `make server` runs the site locally on `localhost:4000`
+- `make publish` bundles the site, puts the files on the `gh-pages` branch, and pushes them to Github
 
 ## Setup
 
