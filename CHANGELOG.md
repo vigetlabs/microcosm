@@ -1,6 +1,6 @@
 # Changelog
 
-## 12.2.0 (Beta)
+## 12.2.0
 
 - Added method for removing actions from history, history `append`
   event.
