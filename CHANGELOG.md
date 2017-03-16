@@ -1,5 +1,12 @@
 # Changelog
 
+## 12.2.1 (alpha)
+
+- adding domains does not reset state
+- patching parents with keys owned by children does not patch children
+- patch does not reset state in forks
+- new children props re-render presenters
+
 ## 12.2.0
 
 - Added method for removing actions from history, history `append`
