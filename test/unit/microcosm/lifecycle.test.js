@@ -2,7 +2,8 @@ import Microcosm from '../../../src/microcosm'
 
 import {
   BIRTH,
-  START
+  START,
+  ADD_DOMAIN
 } from '../../../src/lifecycle'
 
 describe('Lifecycle', function () {

@@ -1060,3 +1060,55 @@ describe('forks', function () {
   })
 
 })
+
+describe('::send', function () {
+
+  it('autobinds send', function () {
+    expect.assertions(2)
+
+    class Test extends Presenter {
+      prop = true
+
+      intercept () {
+        return {
+          test: () => {
+            expect(this).toBeInstanceOf(Test)
+            expect(this.prop).toBe(true)
+          }
+        }
+      }
+
+      view = function ({ send }) {
+        return <button onClick={() => send('test')}>Click me</button>
+      }
+    }
+
+    mount(<Test />).find('button').simulate('click')
+  })
+
+})
+
+describe('::children', function () {
+
+  it('re-renders when it gets new children', function () {
+    let wrapper = mount(<Presenter><span>1</span></Presenter>)
+
+    wrapper.setProps({ children: <span>2</span>})
+
+    expect(wrapper.text()).toEqual('2')
+  })
+
+  it('does not re-render when children are the same', function () {
+    let children = (<span>1</span>)
+    let wrapper = mount(<Presenter>{children}</Presenter>)
+
+    let presenter = wrapper.instance()
+
+    jest.spyOn(presenter, 'render')
+
+    wrapper.setProps({ children })
+
+    expect(presenter.render).not.toHaveBeenCalled()
+  })
+
+})

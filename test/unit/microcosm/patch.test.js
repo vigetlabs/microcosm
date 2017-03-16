@@ -98,6 +98,72 @@ describe('Microcosm::patch', function () {
       // the new state produced by a child.
       expect(child.state.count).toEqual(4)
     })
+
+    it('does not strip away parent inherited state', function () {
+      const parent = new Microcosm()
+      const child = parent.fork()
+
+      parent.addDomain('top', {
+        getInitialState() {
+          return false
+        }
+      })
+
+      child.addDomain('bottom', {
+        getInitialState() {
+          return false
+        }
+      })
+
+      child.patch({ bottom: true })
+
+      expect(child).toHaveState('top', false)
+      expect(child).toHaveState('bottom', true)
+    })
+
+    it('does not strip away parent inherited state when the parent patches', function () {
+      const parent = new Microcosm()
+      const child = parent.fork()
+
+      parent.addDomain('top', {
+        getInitialState() {
+          return false
+        }
+      })
+
+      child.addDomain('bottom', {
+        getInitialState() {
+          return false
+        }
+      })
+
+      parent.patch({ top: true })
+
+      expect(parent).toHaveState('top', true)
+      expect(child).toHaveState('top', true)
+    })
+
+    it('patching on a parent does not reset state of children', function () {
+      const parent = new Microcosm()
+      const child = parent.fork()
+
+      parent.addDomain('top', {
+        getInitialState() {
+          return false
+        }
+      })
+
+      child.addDomain('bottom', {
+        getInitialState() {
+          return false
+        }
+      })
+
+      parent.patch({ bottom: true })
+
+      expect(parent).not.toHaveState('bottom')
+      expect(child).toHaveState('bottom', false)
+    })
   })
 
 })

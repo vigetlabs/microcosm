@@ -11,7 +11,8 @@ import getRegistration from './get-registration'
 import {
   RESET,
   PATCH,
-  BIRTH
+  BIRTH,
+  ADD_DOMAIN
 } from './lifecycle'
 
 import {
@@ -38,8 +39,6 @@ function Microcosm (options, state, deserialize)  {
 
   this.initial = this.parent ? this.parent.initial : {}
   this.state = this.parent ? this.parent.state : this.initial
-
-  this.follower = !!this.parent
 
   // Microcosm is now ready. Call the setup lifecycle method
   this.setup(options)
@@ -129,10 +128,6 @@ inherit(Microcosm, Emitter, {
   },
 
   reconcile (action) {
-    if (this.follower) {
-      return this
-    }
-
     let next = backfill(this.recall(action.parent), this.initial)
 
     if (this.parent) {
@@ -143,13 +138,17 @@ inherit(Microcosm, Emitter, {
       next = this.dispatch(next, action)
     }
 
+    if (this.parent) {
+      next = backfill(next, this.parent.recall(action))
+    }
+
     this.updateSnapshot(action, next)
 
     return this
   },
 
   prepareRelease () {
-    let next = this.follower ? this.parent.state : this.recall(this.history.head)
+    let next = this.recall(this.history.head)
 
     this.dirty = next !== this.state
     this.state = next
@@ -191,13 +190,11 @@ inherit(Microcosm, Emitter, {
   addDomain (key, config, options) {
     let domain = this.realm.add(key, config, options)
 
-    this.follower = false
-
     if (domain.getInitialState) {
       this.initial = set(this.initial, key, domain.getInitialState())
     }
 
-    this.history.checkout()
+    this.push(ADD_DOMAIN, domain)
 
     return domain
   },

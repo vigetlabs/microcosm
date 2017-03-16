@@ -16,6 +16,9 @@ function Presenter (props, context) {
   } else {
     this.defaultRender = passChildren
   }
+
+  // Autobind send so that context is maintained when passing send to children
+  this.send = this.send.bind(this)
 }
 
 inherit(Presenter, PureComponent, {
@@ -89,7 +92,8 @@ inherit(Presenter, PureComponent, {
     return (
       createElement(PresenterMediator, {
         presenter   : this,
-        parentState : this.state
+        parentState : this.state,
+        parentProps : this.props
       })
     )
   }

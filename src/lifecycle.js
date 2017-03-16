@@ -12,7 +12,12 @@ function sandbox (data, deserialize) {
       }
     }
 
-    action.resolve(payload)
+    // Strip out keys not managed by this repo. This prevents
+    // children from accidentally having their keys reset by
+    // parents.
+    let sanitary = repo.realm.prune({}, payload)
+
+    action.resolve(sanitary)
   }
 }
 
@@ -30,4 +35,8 @@ export const BIRTH = function $birth () {
 
 export const START = function $start () {
   console.assert(false, 'Start lifecycle method should never be invoked directly.')
+}
+
+export const ADD_DOMAIN = function $addDomain (domain) {
+  return domain
 }
