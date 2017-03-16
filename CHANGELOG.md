@@ -6,6 +6,7 @@
 - patching parents with keys owned by children does not patch children
 - patch does not reset state in forks
 - new children props re-render presenters
+- presenter.send method is autobound, allowing it work when passed to children
 
 ## 12.2.0
 
