@@ -5,21 +5,19 @@
  * @property {Object[]} _events A pool of event listeners
  */
 export default function Emitter () {
-  this._events = null
+  this._events = []
 }
 
 Emitter.prototype = {
+
   /**
    * Add an event listener.
    * @param {string} event Type of event
    * @param {Function} fn Event callback
    * @param {*} [scope] Optional scope to invoke callback with
-   * @param {boolean} [once] Optional setting to only invoke callback once
    */
-  on (event, fn, scope, once) {
-    this._events = this._events || []
-
-    this._events.push({ event, fn, scope, once })
+  on (event, fn, scope) {
+    this._events.push({ event, fn, scope, once: false })
 
     return this
   },
@@ -32,7 +30,9 @@ Emitter.prototype = {
    * @param {*} [scope] Optional scope to invoke callback with
    */
   once (event, fn, scope) {
-    return this.on(event, fn, scope, true)
+    this._events.push({ event, fn, scope, once: true })
+
+    return this
   },
 
   /**
@@ -43,10 +43,6 @@ Emitter.prototype = {
    * @param {*} [scope] Optional scope to invoke callback with
    */
   off (event, fn, scope) {
-    if (this._events == null) {
-      return this
-    }
-
     var removeAll = fn == null
 
     let i = 0
@@ -70,7 +66,7 @@ Emitter.prototype = {
    * Purge all event listeners
    */
   removeAllListeners () {
-    this._events = null
+    this._events.length = 0
   },
 
   /**
@@ -79,10 +75,6 @@ Emitter.prototype = {
    * @param {*} payload Value to send with callback
    */
   _emit (event, payload) {
-    if (this._events == null) {
-      return this
-    }
-
     let i = 0
     while (i < this._events.length) {
       var cb = this._events[i]

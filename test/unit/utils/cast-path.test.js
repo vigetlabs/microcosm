@@ -4,6 +4,12 @@ import {
 
 describe('Utils.castPath', function () {
 
+  it('returns an empty array if given a blank string', function () {
+    let path = castPath('')
+
+    expect(path).toEqual([])
+  })
+
   it('returns the same array if given an array', function () {
     let path = [1,2,3]
     let next = castPath(path)

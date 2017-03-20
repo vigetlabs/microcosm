@@ -64,31 +64,6 @@ describe('Domain::register', function () {
       expect(domain).toRegister(action, 'cancel')
     })
 
-    it('allows domains nested registration methods', function () {
-      let repo = new Microcosm()
-      let handler = jest.fn()
-
-      let effect = repo.addEffect({
-        register () {
-          return {
-            [action]: {
-              open    : handler,
-              update  : handler,
-              reject  : handler,
-              resolve : handler,
-              cancel  : handler
-            }
-          }
-        }
-      })
-
-      expect(effect).toRegister(action, 'open')
-      expect(effect).toRegister(action, 'update')
-      expect(effect).toRegister(action, 'reject')
-      expect(effect).toRegister(action, 'resolve')
-      expect(effect).toRegister(action, 'cancel')
-    })
-
   })
 
 })

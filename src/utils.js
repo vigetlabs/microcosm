@@ -1,9 +1,12 @@
+const hasOwn = Object.prototype.hasOwnProperty
+
+const EMPTY = []
 const SPLITTER = '.'
 export function castPath (value) {
-  if (value == null) {
-    return []
-  } else if (Array.isArray(value)) {
+  if (Array.isArray(value)) {
     return value
+  } else if (value === '' || value === null || value === undefined) {
+    return EMPTY
   }
 
   return typeof value === 'string' ? value.split(SPLITTER) : [value]
@@ -55,26 +58,6 @@ export function merge () {
   return copy
 }
 
-export function backfill (subject, properties) {
-  if (subject == null) {
-    return properties
-  }
-
-  let copy = subject
-
-  for (var key in properties) {
-    if (copy.hasOwnProperty(key) === false) {
-      if (copy === subject) {
-        copy = clone(subject)
-      }
-
-      copy[key] = properties[key]
-    }
-  }
-
-  return copy
-}
-
 /**
  * Basic prototypal inheritence
  */
@@ -82,7 +65,7 @@ export function inherit (Child, Ancestor, proto) {
   Child.__proto__ = Ancestor
 
   Child.prototype = merge(Object.create(Ancestor.prototype), {
-    constructor: Child
+    constructor: Child.prototype.constructor
   }, proto)
 
   return Child
@@ -92,25 +75,43 @@ export function inherit (Child, Ancestor, proto) {
  * Retrieve a value from an object. If no key is provided, just return the
  * object.
  */
-export function get (object, key, fallback) {
+export function get (object, keyPath, fallback) {
   if (object == null) {
     return fallback
   }
 
-  let path = castPath(key)
+  let path = castPath(keyPath)
 
   for (var i = 0, len = path.length; i < len; i++) {
-    let value = object == null ? undefined : object[path[i]]
+    var value = object == null ? undefined : object[path[i]]
 
     if (value === undefined) {
-      i = len
-      value = fallback
+      return fallback
     }
 
     object = value
   }
 
   return object
+}
+
+/**
+ * Determine if a value is defined within an object
+ */
+export function has (object, key, fallback) {
+  let path = castPath(key)
+
+  for (var i = 0, len = path.length; i < len; i++) {
+    var key = path[i]
+
+    if (!object || hasOwn.call(object, key) === false) {
+      return false
+    }
+
+    object = object[key]
+  }
+
+  return true
 }
 
 /**
