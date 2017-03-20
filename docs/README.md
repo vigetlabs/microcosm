@@ -2,6 +2,7 @@
 
 1. [Quick Start](guides/quickstart.md)
 2. [Architecture](guides/architecture.md)
+3. [Contributing](guides/contributing.md)
 
 ## API
 
