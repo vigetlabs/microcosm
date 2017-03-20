@@ -176,7 +176,7 @@ inherit(PresenterMediator, PureComponent, {
       }
     }
 
-    this.setState(next)
+    this.setState(state => next)
 
     return merge(this.state, next)
   },
