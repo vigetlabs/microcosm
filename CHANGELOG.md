@@ -1,6 +1,6 @@
 # Changelog
 
-## 12.2.1 (release candidate)
+## 12.2.1
 
 - adding domains does not reset state
 - patching parents with keys owned by children does not patch children
