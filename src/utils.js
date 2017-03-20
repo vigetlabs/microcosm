@@ -62,9 +62,7 @@ export function merge () {
  * Basic prototypal inheritence
  */
 export function inherit (Child, Ancestor, proto) {
-  if (Ancestor) {
-    Child.__proto__ = Ancestor
-  }
+  Child.__proto__ = Ancestor
 
   Child.prototype = merge(Object.create(Ancestor.prototype), {
     constructor: Child.prototype.constructor

@@ -74,13 +74,13 @@ Emitter.prototype = {
    * @param {string} event Type of event
    * @param {*} payload Value to send with callback
    */
-  _emit (event, payload) {
+  _emit (event, ...args) {
     let i = 0
     while (i < this._events.length) {
       var cb = this._events[i]
 
       if (cb.event === event) {
-        cb.fn.call(cb.scope || this, payload)
+        cb.fn.apply(cb.scope || this, args)
 
         if (cb.once) {
           this._events.splice(i, 1)

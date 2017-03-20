@@ -155,8 +155,6 @@ inherit(History, Emitter, {
 
     this.archive()
 
-    this.invoke('prepareRelease')
-
     this.invoke('release', action)
   },
 

@@ -4,6 +4,7 @@ import History         from './history'
 import Archive         from './archive'
 import DomainEngine    from './domain-engine'
 import EffectEngine    from './effect-engine'
+import CompareTree     from './compare-tree'
 import coroutine       from './coroutine'
 import getRegistration from './get-registration'
 import tag             from './tag'
@@ -35,17 +36,13 @@ function Microcosm (options, state, deserialize)  {
   this.archive = new Archive()
   this.domains = new DomainEngine(this)
   this.effects = new EffectEngine(this)
+  this.changes = new CompareTree(this.state)
 
   this.initial = this.parent ? this.parent.initial : {}
   this.state = this.parent ? this.parent.state : this.initial
 
   // Microcosm is now ready. Call the setup lifecycle method
   this.setup(options)
-
-  // Track a dirty flag, this is useful so that we can reconcile
-  // all Microcosm repos, then release their new state changes
-  // progressively
-  this.dirty = false
 
   // If given state, reset to that snapshot
   if (state) {
@@ -78,8 +75,6 @@ inherit(Microcosm, Emitter, {
   },
 
   recall (action, fallback) {
-    console.assert(action, 'Unable to get ' + typeof action + ' action')
-
     return this.archive.get(action, fallback)
   },
 
@@ -121,23 +116,40 @@ inherit(Microcosm, Emitter, {
 
     this.updateSnapshot(action, next)
 
-    return this
-  },
-
-  prepareRelease () {
-    let next = this.recall(this.history.head)
-
-    this.dirty = next !== this.state
     this.state = next
   },
 
   release (action) {
-    if (this.dirty) {
-      this.dirty = false
-      this._emit('change', this.state)
+    this.changes.update(this.state)
+    this.effects.dispatch(action)
+  },
+
+  on (type, callback, scope) {
+    let [event, meta] = type.split(':', 2)
+
+    switch (event) {
+      case 'change':
+        this.changes.on(meta || '', callback, scope)
+        break;
+      default:
+        Emitter.prototype.on.apply(this, arguments)
     }
 
-    this.effects.dispatch(action)
+    return this
+  },
+
+  off (type, callback, scope) {
+    let [event, meta] = type.split(':', 2)
+
+    switch (event) {
+      case 'change':
+        this.changes.off(meta, callback, scope)
+        break;
+      default:
+        Emitter.prototype.off.apply(this, arguments)
+    }
+
+    return this
   },
 
   /**

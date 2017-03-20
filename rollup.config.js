@@ -2,6 +2,7 @@
 
 import babel from 'rollup-plugin-babel'
 import uglify from 'rollup-plugin-uglify'
+import nodeResolve from 'rollup-plugin-node-resolve'
 import path from 'path'
 
 const config = {
@@ -13,7 +14,8 @@ const config = {
     path.resolve('src/microcosm.js')
   ],
   plugins: [
-    babel()
+    babel(),
+    nodeResolve()
   ]
 }
 
