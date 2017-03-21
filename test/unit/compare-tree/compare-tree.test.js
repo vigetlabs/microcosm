@@ -124,7 +124,7 @@ describe('CompareTree', function () {
 
     it('can remove a listener', function () {
       let handler = jest.fn()
-      let next = set(this.tree.state, 'meta', {})
+      let next = set(this.tree.snapshot, 'meta', {})
 
       this.tree.on('meta', handler)
       this.tree.off('meta', handler)
@@ -188,7 +188,7 @@ describe('CompareTree', function () {
       let one = jest.fn()
       let two = jest.fn()
 
-      let next = set(this.tree.state, ['meta', 'selected'], {})
+      let next = set(this.tree.snapshot, ['meta', 'selected'], {})
       let query = this.tree.on('meta.selected', one)
 
       this.tree.on('meta.selected', two)
