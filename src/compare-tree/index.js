@@ -66,7 +66,7 @@ CompareTree.prototype = {
 
   /**
    * Compare a new snapshot to the last snapshot, triggering event
-   * subscriptions a long the way.
+   * subscriptions along the way.
    * @public
    * @param {*} state - New snapshot of state
    */
