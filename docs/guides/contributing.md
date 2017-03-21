@@ -14,7 +14,7 @@ We want to make contributing to Microcosm as easy as possible for anyone, here a
     - Changes to the site
     - Improving or adding examples
     - Improving tooling
-4. Spread the word. On twitter you can use the hashtag `#micrcosmJS`. You can also tweet @[viget](https://twitter.com/viget) or @[natehunzaker](https://twitter.com/natehunzaker) with your Microcosm questions or comments
+4. Spread the word. On twitter you can use the hashtag `#microcosmJS`. You can also tweet @[viget](https://twitter.com/viget) or @[natehunzaker](https://twitter.com/natehunzaker) with your Microcosm questions or comments
 
 ## Get set up:
 
