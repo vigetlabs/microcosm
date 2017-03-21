@@ -125,11 +125,11 @@ inherit(Microcosm, Emitter, {
   },
 
   on (type, callback, scope) {
-    let [event, meta] = type.split(':', 2)
+    let [event, meta=''] = type.split(':', 2)
 
     switch (event) {
       case 'change':
-        this.changes.on(meta || '', callback, scope)
+        this.changes.on(meta, callback, scope)
         break;
       default:
         Emitter.prototype.on.apply(this, arguments)
@@ -139,7 +139,7 @@ inherit(Microcosm, Emitter, {
   },
 
   off (type, callback, scope) {
-    let [event, meta] = type.split(':', 2)
+    let [event, meta=''] = type.split(':', 2)
 
     switch (event) {
       case 'change':
