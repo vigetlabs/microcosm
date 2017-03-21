@@ -9,36 +9,42 @@ export default function Archive () {
 
 Archive.prototype = {
   /**
-   * Access a prior snapshot for a given action
-   * @param {string} key Identifier for snapshot
+   * Create an initial snapshot for an action by setting it to that of its
+   * parent.
+   * @param {Action} action Action to create an initial snapshot for
    */
-  get (key) {
-    return this.has(key) ? this.pool[key] : null
+  create (action) {
+    this.set(action, this.get(action.parent))
   },
 
   /**
-   * Determine if an archive has a snapshot for an action
-   * @param {string} key Identifier for snapshot
-   * @return {boolean}
+   * Access a prior snapshot for a given action
+   * @param {Action} action Action for requested snapshot
    */
-  has (key) {
-    return this.pool.hasOwnProperty(key)
+  get (action, fallback) {
+    console.assert(action, 'Unable to get ' + typeof action + ' action')
+
+    let value = this.pool[action.id]
+
+    return value === undefined ? fallback : value
   },
 
   /**
    * Assign a new snapshot for an action
-   * @param {string} key Identifier for snapshot
+   * @param {Action} action Action for requested snapshot
    * @param {Object} snapshot
    */
-  set (key, snapshot) {
-    this.pool[key] = snapshot
+  set (action, snapshot) {
+    this.pool[action.id] = snapshot
   },
 
   /**
    * Remove a snapshot for an action.
-   * @param {string} key Identifier for snapshot
+   * @param {Action} action Action to eliminate snapshot for
    */
-  remove (key) {
-    delete this.pool[key]
+  remove (action) {
+    console.assert(action, 'Unable to remove ' + typeof action + ' action.')
+
+    delete this.pool[action.id]
   }
 }

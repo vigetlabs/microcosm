@@ -1,22 +1,20 @@
 import Action          from './action'
 import Emitter         from './emitter'
 import History         from './history'
-import Realm           from './realm'
 import Archive         from './archive'
-import createEffect    from './create-effect'
-import tag             from './tag'
+import DomainEngine    from './domain-engine'
+import EffectEngine    from './effect-engine'
 import coroutine       from './coroutine'
 import getRegistration from './get-registration'
+import tag             from './tag'
 
 import {
   RESET,
   PATCH,
-  BIRTH,
   ADD_DOMAIN
 } from './lifecycle'
 
 import {
-  backfill,
   merge,
   inherit,
   get,
@@ -34,8 +32,9 @@ function Microcosm (options, state, deserialize)  {
   this.history = this.parent ? this.parent.history : new History(options.maxHistory)
   this.history.addRepo(this)
 
-  this.realm = new Realm(this)
   this.archive = new Archive()
+  this.domains = new DomainEngine(this)
+  this.effects = new EffectEngine(this)
 
   this.initial = this.parent ? this.parent.initial : {}
   this.state = this.parent ? this.parent.state : this.initial
@@ -61,6 +60,9 @@ inherit(Microcosm, Emitter, {
   },
 
   teardown () {
+    this.effects.teardown()
+    this.domains.teardown()
+
     // Trigger a teardown event before completely shutting down
     this._emit('teardown', this)
 
@@ -75,22 +77,19 @@ inherit(Microcosm, Emitter, {
     return this.initial
   },
 
-  recall (action) {
+  recall (action, fallback) {
     console.assert(action, 'Unable to get ' + typeof action + ' action')
 
-    return this.archive.get(action.id)
+    return this.archive.get(action, fallback)
   },
 
   /**
-   * Create the initial state snapshot for an action. This is
-   * important so that, when rolling back to this action, it always
-   * has a state value.
+   * Create the initial state snapshot for an action. This is important so
+   * that, when rolling back to this action, it always has a state value.
    * @param {Action} action - The action to generate a snapshot for
    */
   createInitialSnapshot (action) {
-    let state = this.recall(action.parent)
-
-    this.updateSnapshot(action, state)
+    this.archive.create(action)
   },
 
   /**
@@ -98,7 +97,7 @@ inherit(Microcosm, Emitter, {
    * @param {Action} action - The action to update the snapshot for
    */
   updateSnapshot (action, state) {
-    this.archive.set(action.id, state)
+    this.archive.set(action, state)
   },
 
   /**
@@ -106,40 +105,18 @@ inherit(Microcosm, Emitter, {
    * @param {Action} action - The action to remove the snapshot for
    */
   removeSnapshot (action) {
-    console.assert(action, 'Unable to remove ' + typeof action + ' action.')
-
-    this.archive.remove(action.id)
-  },
-
-  dispatch (state, action) {
-    let handlers = this.realm.register(action)
-    let current = state
-
-    for (var i = 0, len = handlers.length; i < len; i++) {
-      var { key, domain, handler } = handlers[i]
-
-      var last = get(state, key)
-      var next = handler.call(domain, last, action.payload)
-
-      current = set(current, key, next)
-    }
-
-    return current
+    this.archive.remove(action)
   },
 
   reconcile (action) {
-    let next = backfill(this.recall(action.parent), this.initial)
+    let next = this.recall(action.parent, this.initial)
 
     if (this.parent) {
       next = merge(next, this.parent.recall(action))
     }
 
     if (!action.disabled) {
-      next = this.dispatch(next, action)
-    }
-
-    if (this.parent) {
-      next = backfill(next, this.parent.recall(action))
+      next = this.domains.dispatch(next, action)
     }
 
     this.updateSnapshot(action, next)
@@ -160,7 +137,7 @@ inherit(Microcosm, Emitter, {
       this._emit('change', this.state)
     }
 
-    this._emit('effect', action)
+    this.effects.dispatch(action)
   },
 
   /**
@@ -188,7 +165,7 @@ inherit(Microcosm, Emitter, {
   },
 
   addDomain (key, config, options) {
-    let domain = this.realm.add(key, config, options)
+    let domain = this.domains.add(key, config, options)
 
     if (domain.getInitialState) {
       this.initial = set(this.initial, key, domain.getInitialState())
@@ -200,7 +177,7 @@ inherit(Microcosm, Emitter, {
   },
 
   addEffect (config, options) {
-    return createEffect(this, config, options)
+    return this.effects.add(config, options)
   },
 
   reset (data, deserialize) {
@@ -220,13 +197,13 @@ inherit(Microcosm, Emitter, {
       base = JSON.parse(base)
     }
 
-    return this.realm.invoke('deserialize', base, base)
+    return this.domains.deserialize(base)
   },
 
   serialize () {
     let base = this.parent ? this.parent.serialize() : {}
 
-    return this.realm.invoke('serialize', this.state, base)
+    return this.domains.serialize(this.state, base)
   },
 
   toJSON () {

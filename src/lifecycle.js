@@ -12,10 +12,9 @@ function sandbox (data, deserialize) {
       }
     }
 
-    // Strip out keys not managed by this repo. This prevents
-    // children from accidentally having their keys reset by
-    // parents.
-    let sanitary = repo.realm.prune({}, payload)
+    // Strip out keys not managed by this repo. This prevents children from
+    // accidentally having their keys reset by parents.
+    let sanitary = repo.domains.sanitize(payload)
 
     action.resolve(sanitary)
   }

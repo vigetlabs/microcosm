@@ -35,9 +35,7 @@ inherit(Action, Emitter, {
   disabled   : false,
   disposable : false,
   parent     : null,
-  first      : null,
   next       : null,
-  sibling    : null,
 
   is (type) {
     return this.command[this.status] === this.command[type]
@@ -145,19 +143,26 @@ inherit(Action, Emitter, {
 
 })
 
+Object.defineProperty(Action.prototype, 'type', {
+  get () {
+    return this.command[this.status]
+  }
+})
+
 /**
  * Generate action methods for each action state
  */
-Object.keys(STATES).forEach(function (key) {
-  const { once, listener } = STATES[key]
+Object.keys(STATES).forEach(function (status) {
+  const { once, disposable, listener } = STATES[status]
 
   /**
    * Create a method to update the action status. For example:
    * action.done({ id: 'earth' })
    */
-  Action.prototype[key] = function (payload) {
+  Action.prototype[status] = function (payload) {
     if (!this.disposable) {
-      this.setStatus(key)
+      this.status = status
+      this.disposable = disposable
 
       if (arguments.length) {
         this.payload = payload
@@ -165,7 +170,7 @@ Object.keys(STATES).forEach(function (key) {
 
       this.history.reconcile(this)
 
-      this._emit(key, this.payload)
+      this._emit(status, this.payload)
     }
 
     return this
@@ -177,10 +182,10 @@ Object.keys(STATES).forEach(function (key) {
    */
   Action.prototype[listener] = function (callback, scope) {
     if (callback) {
-      if (once && this.is(key)) {
+      if (once && this.status === status) {
         callback.call(scope, this.payload)
       } else {
-        this.once(key, callback, scope)
+        this.once(status, callback, scope)
       }
     }
 
