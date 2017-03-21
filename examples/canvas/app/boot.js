@@ -66,7 +66,7 @@ function updateLabel () {
 
   label.innerHTML = `${rows}x${columns} (${size}px grid)` +
                     `| ${writes} writes/frame` +
-                    `| ${events.toLocaleString()} events/frame`
+                    `| ${events.toLocaleString()} keys watched/frame`
 }
 
 const SLOW = 1000 / 58
