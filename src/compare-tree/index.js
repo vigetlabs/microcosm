@@ -4,8 +4,7 @@ import Query from './query'
 import {
   castPath,
   getKeyPaths,
-  getKeyString,
-  getKeyStrings
+  getKeyString
 } from '../key-path'
 
 const ROOT_KEY = '~'
