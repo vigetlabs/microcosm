@@ -8,7 +8,6 @@
 export default function Node (id, key, parent) {
   this.id = id
   this.key = key
-  this.revision = -1
   this.edges = []
 
   if (parent) {
