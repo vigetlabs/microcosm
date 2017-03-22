@@ -41,7 +41,7 @@ describe('CompareTree', function () {
       expect(a).toBe(b)
     })
 
-    it('only invokes a CompareTree once if given multiple compares', function () {
+    it('only invokes a subscription once if given multiple key paths', function () {
       let a = set(SOLAR_SYSTEM, ['meta', 'selected'], 'jupiter')
       let b = set(a, ['meta', 'focused'], false)
 
