@@ -6,6 +6,11 @@ import {
   getKeyString
 } from '../key-path'
 
+// The root key is an empty string. This can be a little
+// counter-intuitive, so we keep track of them as a named constant.
+const ROOT_KEY = ''
+const ROOT_PATH = ''
+
 export default function CompareTree (initial) {
   this.snapshot = initial
   this.nodes = {}
@@ -65,7 +70,7 @@ CompareTree.prototype = {
     let last = this.snapshot
     this.snapshot = snapshot
 
-    let root = this.nodes['']
+    let root = this.nodes[ROOT_KEY]
 
     if (root) {
       this.scan(root, last, snapshot)
@@ -147,7 +152,7 @@ CompareTree.prototype = {
    * @param {String} path A list of keys
    */
   track (path) {
-    let last = this.addNode('', '', null)
+    let last = this.addNode(ROOT_KEY, ROOT_PATH, null)
     let keyBase = ''
 
     for (var i = 0, len = path.length; i < len; i++) {
