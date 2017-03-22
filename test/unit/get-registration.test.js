@@ -20,6 +20,14 @@ describe('getRegistration', function () {
     expect(answer).toBe(success)
   })
 
+  it('use the returned value if it is a function', function () {
+    let success = n => n
+    let handler = n => n
+    let answer = getRegistration(handler, success, 'done')
+
+    expect(answer).toBe(handler)
+  })
+
   it('throws if given an invalid status', function () {
     let fail = function () {
       getRegistration({}, action ,'totally-missing')

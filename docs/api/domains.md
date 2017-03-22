@@ -115,7 +115,7 @@ const Planets = {
 }
 ```
 
-### `register()`
+### `register(command, status)`
 
 Returns an object mapping actions to methods on the domain. This is the
 communication point between a domain and the rest of the system.
@@ -135,5 +135,25 @@ const Planets = {
   }
 }
 
-repo.push(Actions.add, { name: 'earth' }) // this will add Earth
+repo.push(addPlanet, { name: 'earth' }) // this will add Earth
+```
+
+Registration is given the command associated with an action, and the
+current status of the action. Additionally, functions returned from
+register will be used as the handler for a Microcosm dispatch:
+
+```javascript
+import { addPlanet } from '../actions/planets'
+
+const StatusLog = {
+  //...
+  register (command, status) {
+    switch (command) {
+      case addPlanet:
+        return this.addPlanet
+    }
+  }
+}
+
+repo.push(addPlanet, { name: 'earth' }) // this will add Earth
 ```

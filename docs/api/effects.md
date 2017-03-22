@@ -93,3 +93,27 @@ class Planets {
 repo.addEffect(Planets)
 repo.push(addPlanet, { name: 'earth' }) // this will add Earth
 ```
+
+Registration is given the command associated with an action, and the
+current status of the action. Additionally, functions returned from
+register will be used as the handler for a Microcosm dispatch:
+
+```javascript
+import { addPlanet } from '../actions/planets'
+
+const Notifications = {
+  //...
+  register (command, status) {
+    switch (status) {
+      case 'reject':
+        return this.alert
+    }
+  },
+  alert () {
+    alert('Danger danger!')
+  }
+}
+
+// Let's say this action fails
+repo.push(addPlanet, { name: 'earth' }) // error!
+```

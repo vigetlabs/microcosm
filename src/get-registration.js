@@ -11,6 +11,13 @@ import { ALIASES } from './constants'
  */
 export default function getRegistration (pool, command, status) {
   let answer = null
+
+  if (pool == null) {
+    return answer
+  } else if (typeof pool === 'function') {
+    return pool
+  }
+
   let alias = ALIASES[status]
 
   console.assert(alias, 'Invalid action status ' + status)

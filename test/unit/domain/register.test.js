@@ -91,4 +91,20 @@ describe('Domain::register', function () {
 
   })
 
+  it('invokes register  with the command and status', function () {
+    let repo = new Microcosm()
+
+    let domain = repo.addDomain('key', {
+      register: jest.fn()
+    })
+    let command = n => n
+    let action = repo.append(command)
+
+    action.open()
+    expect(domain.register).toHaveBeenCalledWith(command, 'open')
+
+    action.resolve()
+    expect(domain.register).toHaveBeenCalledWith(command, 'resolve')
+  })
+
 })

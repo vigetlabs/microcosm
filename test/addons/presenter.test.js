@@ -1019,6 +1019,33 @@ describe('intercepting actions', function() {
     expect(test).toHaveBeenCalled()
   })
 
+  it('intercept can return a function', function () {
+    const handler = jest.fn(n => n)
+
+    class Parent extends Presenter {
+      intercept () {
+        return handler
+      }
+    }
+
+    let instance = mount(<Parent />).instance()
+    instance.send('test', true)
+
+    expect(handler).toHaveBeenCalledWith(instance.repo, true)
+  })
+
+  it('intercept gets the command', function () {
+    class Parent extends Presenter {
+      intercept = jest.fn()
+    }
+
+    let instance = mount(<Parent />).instance()
+
+    instance.send('test', true)
+
+    expect(instance.intercept).toHaveBeenCalledWith('test')
+  })
+
 })
 
 describe('forks', function () {
