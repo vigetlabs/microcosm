@@ -149,7 +149,7 @@ const StatusLog = {
   //...
   register (command, status) {
     switch (command) {
-      case Actions.add
+      case addPlanet:
         return this.addPlanet
     }
   }
