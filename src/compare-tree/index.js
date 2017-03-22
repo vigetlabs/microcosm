@@ -6,8 +6,6 @@ import {
   getKeyString
 } from '../key-path'
 
-const ROOT_KEY = ''
-
 export default function CompareTree (initial) {
   this.snapshot = initial
   this.nodes = {}
@@ -67,7 +65,7 @@ CompareTree.prototype = {
     let last = this.snapshot
     this.snapshot = snapshot
 
-    let root = this.nodes[ROOT_KEY]
+    let root = this.nodes['']
 
     if (root) {
       this.scan(root, last, snapshot)
@@ -149,7 +147,7 @@ CompareTree.prototype = {
    * @param {String} path A list of keys
    */
   track (path) {
-    let last = this.addNode(ROOT_KEY, '', null)
+    let last = this.addNode('', '', null)
     let keyBase = ''
 
     for (var i = 0, len = path.length; i < len; i++) {
