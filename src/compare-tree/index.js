@@ -6,7 +6,7 @@ import {
   getKeyString
 } from '../key-path'
 
-const ROOT_KEY = '~'
+const ROOT_KEY = ''
 
 export default function CompareTree (initial) {
   this.snapshot = initial
@@ -106,32 +106,41 @@ CompareTree.prototype = {
   },
 
   /**
+   * Remove a node from this tree.
+   * @private
+   * @param {Node} node Node to remove
+   */
+  remove (node) {
+    delete this.nodes[node.id]
+  },
+
+  /**
    * Remove a query, then traverse that queries key paths to remove
    * unused parents.
    * @private
    * @param {Query} query Query to remove
    */
   prune (query) {
-    let { keyPaths } = query
+    let ids = query.keyPaths.map(getKeyString)
 
-    for (var i = 0, len = keyPaths.length; i < len; i++) {
-      let path = keyPaths[i]
-      let id = path.length ? getKeyString(keyPaths[i]) : ROOT_KEY
-      let node = this.nodes[id]
+    for (var i = 0, len = ids.length; i < len; i++) {
+      let node = this.nodes[ids[i]]
 
       node.disconnect(query)
 
       do {
         if (node.isAlone()) {
           node.orphan()
-          delete this.nodes[node.id]
+          this.remove(node)
+        } else {
+          break
         }
 
         node = node.parent
       } while (node)
     }
 
-    delete this.nodes[query.id]
+    this.remove(query)
   },
 
   /**
