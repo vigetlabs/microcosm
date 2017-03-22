@@ -6,24 +6,30 @@ import {
 } from '../utils'
 
 import {
-  getKeyPaths
-} from './key-path'
+  getKeyPaths,
+  getKeyStrings
+} from '../key-path'
 
 export default function Query (id, keys) {
   Emitter.call(this)
 
   this.revision = -1
   this.id = id
-  this.keys = getKeyPaths(keys)
+  this.keyPaths = getKeyPaths(keys)
+}
+
+Query.getId = function (keyPaths) {
+  return 'query:' + getKeyStrings(getKeyPaths(keyPaths))
 }
 
 inherit(Query, Emitter, {
-  extract (state) {
-    let len = this.keys.length
-    let values = Array(len)
 
-    for (var i = 0; i < len; i++) {
-      values[i] = get(state, this.keys[i])
+  extract (state) {
+    let length = this.keyPaths.length
+    let values = Array(length)
+
+    for (var i = 0; i < length; i++) {
+      values[i] = get(state, this.keyPaths[i])
     }
 
     return values
@@ -34,4 +40,5 @@ inherit(Query, Emitter, {
 
     this._emit('change', ...values)
   }
+
 })

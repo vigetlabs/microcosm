@@ -1,8 +1,8 @@
 import {
   castPath
-} from '../../../src/utils'
+} from '../../../src/key-path'
 
-describe('Utils.castPath', function () {
+describe('castPath', function () {
 
   it('returns an empty array if given a blank string', function () {
     let path = castPath('')

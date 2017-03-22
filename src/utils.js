@@ -1,16 +1,8 @@
+import {
+  castPath
+} from './key-path'
+
 const hasOwn = Object.prototype.hasOwnProperty
-
-const EMPTY = []
-const SPLITTER = '.'
-export function castPath (value) {
-  if (Array.isArray(value)) {
-    return value
-  } else if (value === '' || value === null || value === undefined) {
-    return EMPTY
-  }
-
-  return typeof value === 'string' ? value.split(SPLITTER) : [value]
-}
 
 /**
  * Shallow copy an object

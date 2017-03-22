@@ -5,9 +5,12 @@ import {
   get,
   set,
   has,
-  castPath,
   createOrClone
 } from './utils'
+
+import {
+  castPath
+} from './key-path'
 
 export default function DomainEngine (repo) {
   this.repo = repo

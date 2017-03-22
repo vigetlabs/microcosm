@@ -41,15 +41,6 @@ describe('CompareTree', function () {
       expect(a).toBe(b)
     })
 
-    it('returns the same node given the same path in a different order', function () {
-      expect.assertions(1)
-
-      let a = this.tree.on('planets,meta.selected', jest.fn())
-      let b = this.tree.on('meta.selected,planets', jest.fn())
-
-      expect(a).toBe(b)
-    })
-
     it('only invokes a CompareTree once if given multiple compares', function () {
       let a = set(SOLAR_SYSTEM, ['meta', 'selected'], 'jupiter')
       let b = set(a, ['meta', 'focused'], false)
@@ -240,7 +231,7 @@ describe('CompareTree', function () {
   describe('::connect', function () {
 
     it('edges can not connect to themselves', function () {
-      let node = this.tree.add('node')
+      let node = this.tree.addNode('node')
 
       node.connect(node)
 
@@ -316,14 +307,7 @@ describe('CompareTree', function () {
       expect(keys).toContain('planets')
       expect(keys).toContain('meta')
       expect(keys).toContain('meta.selected')
-      expect(keys).toContain('query:planets,meta.selected')
-    })
-
-    it('consistently sorts keys by length', function () {
-      let a = this.tree.on(['meta.selected', 'planets'], jest.fn())
-      let b = this.tree.on(['planets', 'meta.selected'], jest.fn())
-
-      expect(a).toBe(b)
+      expect(keys).toContain('query:meta.selected,planets')
     })
   })
 
