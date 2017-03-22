@@ -247,13 +247,17 @@ describe('CompareTree', function () {
     })
 
     it('can traverse missing state keys', function () {
-      this.tree.on('meta.selected', n => n)
+      let handler = jest.fn()
+
+      this.tree.on('meta.selected', handler)
 
       this.tree.update({ meta: null })
 
       this.tree.update({
         meta: { selected: true }
       })
+
+      expect(handler).toHaveBeenCalledWith(undefined)
     })
 
     it('the root node does not get called twice if subscribing to two children', function () {
