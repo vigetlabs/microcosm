@@ -2,7 +2,6 @@ import Node from './node'
 import Query from './query'
 
 import {
-  castPath,
   getKeyPaths,
   getKeyString
 } from '../key-path'
@@ -45,7 +44,6 @@ CompareTree.prototype = {
    * @param {*} [scope] Associated scope
    */
   off (keyPaths, callback, scope) {
-    let dependencies = getKeyPaths(keyPaths)
     let id = Query.getId(keyPaths)
 
     let query = this.nodes[id]
@@ -53,8 +51,8 @@ CompareTree.prototype = {
     if (query) {
       query.off('change', callback, scope)
 
-      if (query._events <= 0) {
-        this.prune(query, dependencies)
+      if (query.isEmpty()) {
+        this.prune(query)
       }
     }
   },
@@ -81,10 +79,11 @@ CompareTree.prototype = {
    * @private
    * @param {String} id Identifier for the node.
    * @param {String} key Each node represents a key in a nested object.
+   * @param {Node} parent Parent to connect this node to.
    */
-  addNode (id, key) {
+  addNode (id, key, parent) {
     if (!this.nodes[id]) {
-      this.nodes[id] = new Node(id, key)
+      this.nodes[id] = new Node(id, key, parent)
     }
 
     return this.nodes[id]
@@ -107,30 +106,32 @@ CompareTree.prototype = {
   },
 
   /**
-   * Remove a node, then remove parents if they have no more edges.
+   * Remove a query, then traverse that queries key paths to remove
+   * unused parents.
    * @private
-   * @param {String} node Starting node
-   * @param {Array<String>} keyPaths determines the pathway to traverse
+   * @param {Query} query Query to remove
    */
-  prune (node, keyPaths) {
+  prune (query) {
+    let { keyPaths } = query
+
     for (var i = 0, len = keyPaths.length; i < len; i++) {
-      let key = getKeyString(keyPaths[i])
-      let parent = this.nodes[key]
+      let path = keyPaths[i]
+      let id = path.length ? getKeyString(keyPaths[i]) : ROOT_KEY
+      let node = this.nodes[id]
 
-      if (parent) {
-        let index = parent.edges.indexOf(node)
+      node.disconnect(query)
 
-        if (~index) {
-          parent.edges.splice(index, 1)
+      while (node) {
+        if (node.isAlone()) {
+          node.orphan()
+          delete this.nodes[node.id]
         }
 
-        if (parent.edges.length <= 0) {
-          this.prune(parent, [castPath(parent.id).slice(0, -1)])
-        }
+        node = node.parent
       }
     }
 
-    delete this.nodes[node.id]
+    delete this.nodes[query.id]
   },
 
   /**
@@ -139,17 +140,13 @@ CompareTree.prototype = {
    * @param {String} path A list of keys
    */
   track (path) {
-    let last = this.addNode(ROOT_KEY, '')
+    let last = this.addNode(ROOT_KEY, '', null)
     let keyBase = ''
 
     for (var i = 0, len = path.length; i < len; i++) {
       keyBase = keyBase ? `${keyBase}.${path[i]}` : path[i]
 
-      var next = this.addNode(keyBase, path[i])
-
-      last.connect(next)
-
-      last = next
+      last = this.addNode(keyBase, path[i], last)
     }
 
     return last
