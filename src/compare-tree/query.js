@@ -13,7 +13,6 @@ import {
 export default function Query (id, keys) {
   Emitter.call(this)
 
-  this.revision = -1
   this.id = id
   this.keyPaths = getKeyPaths(keys)
 }

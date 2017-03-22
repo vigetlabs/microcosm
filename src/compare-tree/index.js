@@ -172,34 +172,35 @@ CompareTree.prototype = {
    * @param {*} from Next snapshot
    */
   scan (root, from, to) {
+    // Maintain a stack of nodes to process. As we traverse the tree,
+    // we'll push edges into this stack for processing
     let stack = [{ node: root, last: from, next: to }]
+
+    // Track the queries we've already triggered so queries with
+    // multiple subscriptions do not fire excessively
+    let triggered = []
 
     while (stack.length) {
       var { node, last, next } = stack.pop()
 
       if (last !== next) {
-        node.revision += 1
 
         var edges = node.edges
         for (var i = 0, len = edges.length; i < len; i++) {
           var edge = edges[i]
 
-          if (node.revision > edge.revision) {
-            edge.revision = node.revision
-
-            if (edge instanceof Query) {
-              edge.trigger(this.snapshot)
-            } else {
-              stack.push({
-                node: edge,
-                last: last == null ? last : last[edge.key],
-                next: next == null ? next : next[edge.key]
-              })
-            }
+          if (edge instanceof Query && triggered.indexOf(edge) < 0) {
+            edge.trigger(this.snapshot)
+            triggered.push(edge)
+          } else {
+            stack.push({
+              node: edge,
+              last: last == null ? last : last[edge.key],
+              next: next == null ? next : next[edge.key]
+            })
           }
         }
       }
     }
   }
-
 }
