@@ -2,14 +2,11 @@ import Node from './node'
 import Query from './query'
 
 import {
+  castPath,
   getKeyPaths,
   getKeyString,
   getKeyStrings
-} from './key-path'
-
-import {
-  castPath
-} from '../utils'
+} from '../key-path'
 
 const ROOT_KEY = '~'
 
@@ -29,13 +26,12 @@ CompareTree.prototype = {
    */
   on (keyPaths, callback, scope) {
     let dependencies = getKeyPaths(keyPaths)
-    let key = 'query:' + getKeyStrings(dependencies)
+    let id = Query.getId(keyPaths)
 
-    let query = this.add(key, dependencies, 'query')
+    let query = this.addQuery(id, dependencies)
 
-    for (var i = 0, len = dependencies.length; i < len; i++) {
-      this.track(dependencies[i]).connect(query)
-    }
+    dependencies.map(this.track, this)
+                .forEach(node => node.connect(query))
 
     query.on('change', callback, scope)
 
@@ -51,9 +47,9 @@ CompareTree.prototype = {
    */
   off (keyPaths, callback, scope) {
     let dependencies = getKeyPaths(keyPaths)
-    let key = 'query:' + getKeyStrings(dependencies)
+    let id = Query.getId(keyPaths)
 
-    let query = this.nodes[key]
+    let query = this.nodes[id]
 
     if (query) {
       query.off('change', callback, scope)
@@ -85,12 +81,27 @@ CompareTree.prototype = {
    * Add a node to the tree if it has not otherwise been added.
    * @private
    * @param {String} id Identifier for the node.
-   * @param {String} name Each node presents a property name in a nested object. This is that name.
-   * @param {String} type Type of the node. This can be "query" or "binding"
+   * @param {String} key Each node represents a key in a nested object.
    */
-  add (id, name, type) {
-    if (typeof this.nodes[id] === 'undefined') {
-      this.nodes[id] = type === 'query' ? new Query(id, name) : new Node(id, name)
+  addNode (id, key) {
+    if (!this.nodes[id]) {
+      this.nodes[id] = new Node(id, key)
+    }
+
+    return this.nodes[id]
+  },
+
+  /**
+   * Add a query to the tree if it has not otherwise been
+   * added. Queries are leaf nodes responsible for managing
+   * subscriptions.
+   * @private
+   * @param {String} id Identifier for the node.
+   * @param {String} keyPaths Each query tracks a list of key paths
+   */
+  addQuery (id, keyPaths) {
+    if (!this.nodes[id]) {
+      this.nodes[id] = new Query(id, keyPaths)
     }
 
     return this.nodes[id]
@@ -129,13 +140,13 @@ CompareTree.prototype = {
    * @param {String} path A list of keys
    */
   track (path) {
-    let last = this.add(ROOT_KEY, '')
+    let last = this.addNode(ROOT_KEY, '')
     let keyBase = ''
 
     for (var i = 0, len = path.length; i < len; i++) {
       keyBase = keyBase ? `${keyBase}.${path[i]}` : path[i]
 
-      var next = this.add(keyBase, path[i], 'binding')
+      var next = this.addNode(keyBase, path[i])
 
       last.connect(next)
 
