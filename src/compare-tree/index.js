@@ -121,14 +121,14 @@ CompareTree.prototype = {
 
       node.disconnect(query)
 
-      while (node) {
+      do {
         if (node.isAlone()) {
           node.orphan()
           delete this.nodes[node.id]
         }
 
         node = node.parent
-      }
+      } while (node)
     }
 
     delete this.nodes[query.id]
