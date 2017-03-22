@@ -123,4 +123,20 @@ describe('Effect::register', function () {
     repo.push(test, true)
   })
 
+  it('invokes register with the command and status', function () {
+    let repo = new Microcosm()
+
+    let effect = repo.addEffect({
+      register: jest.fn()
+    })
+    let command = n => n
+    let action = repo.append(command)
+
+    action.open()
+    expect(effect.register).toHaveBeenCalledWith(command, 'open')
+
+    action.resolve()
+    expect(effect.register).toHaveBeenCalledWith(command, 'resolve')
+  })
+
 })

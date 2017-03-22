@@ -7,7 +7,7 @@ import {
 function createHook (repo, effect) {
 
   return function ({ command, status, payload }) {
-    let handler = getRegistration(effect.register(), command, status)
+    let handler = getRegistration(effect.register(command, status), command, status)
 
     if (handler) {
       handler.call(effect, repo, payload)

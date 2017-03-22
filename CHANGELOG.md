@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.3.0
+
+- Pass the command and status to register, if register returns a
+  function, use that as the handler for an Effect, Domain, or Presenter
+
 ## 12.2.1
 
 - adding domains does not reset state

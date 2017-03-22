@@ -7,7 +7,7 @@ export default function getDomainHandlers (domains, { command, status }) {
     var [key, domain] = domains[i]
 
     if (domain.register) {
-      var handler = getRegistration(domain.register(), command, status)
+      var handler = getRegistration(domain.register(command, status), command, status)
 
       if (handler) {
         handlers.push({ key, domain, handler })
