@@ -39,6 +39,10 @@ inherit(Query, Emitter, {
     let values = this.extract(state)
 
     this._emit('change', ...values)
+  },
+
+  isEmpty () {
+    return this._events.length <= 0
   }
 
 })

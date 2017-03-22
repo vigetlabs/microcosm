@@ -162,7 +162,7 @@ describe('CompareTree', function () {
       expect(this.tree.nodes['meta']).toBeDefined()
     })
 
-    it('keeps the root node in tact', function () {
+    it('removes the root node when there are no subscriptions', function () {
       let handler = jest.fn()
 
       this.tree.on('meta.selected', handler)
@@ -172,7 +172,7 @@ describe('CompareTree', function () {
 
       this.tree.off('meta.selected', handler)
 
-      expect(Object.keys(this.tree.nodes)).toEqual(['~'])
+      expect(Object.keys(this.tree.nodes)).toHaveLength(0)
     })
 
     it('keeps a query if it still has compares left', function () {
