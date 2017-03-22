@@ -31,8 +31,9 @@ CompareTree.prototype = {
 
     let query = this.addQuery(id, dependencies)
 
-    dependencies.map(this.track, this)
-                .forEach(node => node.connect(query))
+    for (var i = 0; i < dependencies.length; i++) {
+      this.addBranch(dependencies[i], query)
+    }
 
     query.on('change', callback, scope)
 
@@ -147,11 +148,13 @@ CompareTree.prototype = {
   },
 
   /**
-   * Build up a branch of nodes given a path of keys
+   * Build up a branch of nodes given a path of keys, appending a query
+   * to the end.
    * @private
    * @param {String} path A list of keys
+   * @param {Query} query Query to append to the end of the branch
    */
-  track (path) {
+  addBranch (path, query) {
     let last = this.addNode(ROOT_KEY, ROOT_PATH, null)
     let keyBase = ''
 
@@ -161,7 +164,7 @@ CompareTree.prototype = {
       last = this.addNode(keyBase, path[i], last)
     }
 
-    return last
+    last.connect(query)
   },
 
   /**
