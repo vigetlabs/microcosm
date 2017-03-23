@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.3.0
+
+- Allow failed deserializes to raise an exception
+- Add compatibility addon for 11.x indexing feature
+
 ## 12.2.1
 
 - adding domains does not reset state

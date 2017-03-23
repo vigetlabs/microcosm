@@ -28,13 +28,13 @@ describe('Microcosm::reset', function () {
     expect(repo).not.toHaveState('shapes')
   })
 
-  it('rejects if there is a JSON parse error deserialization fails', function () {
+  it('raises if there is a JSON parse error deserialization fails', function () {
     const repo = new Microcosm()
 
     // This is invalid
-    let badPatch = repo.reset("{ test: deserialize }", true)
+    let badPatch = () => repo.reset("{ test: deserialize }", true)
 
-    expect(badPatch).toHaveStatus('error')
+    expect(badPatch).toThrow()
   })
 
   it('preserves state if reset fails', function () {
@@ -51,7 +51,11 @@ describe('Microcosm::reset', function () {
     expect(repo).toHaveState('test', false)
 
     // This is invalid
-    repo.reset("{ test: deserialize }", true)
+    try {
+      repo.reset("{ test: deserialize }", true)
+    } catch (x) {
+      // do not handle this error
+    }
 
     expect(repo).toHaveState('test', false)
   })

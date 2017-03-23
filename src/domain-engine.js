@@ -18,7 +18,7 @@ export default function DomainEngine (repo) {
   this.registry = {}
 
   // All realms contain a meta domain for basic Microcosm operations
-  this.meta = this.add([], MetaDomain)
+  this.add([], MetaDomain)
 }
 
 DomainEngine.prototype = {

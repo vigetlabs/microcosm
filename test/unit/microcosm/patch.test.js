@@ -12,13 +12,13 @@ describe('Microcosm::patch', function () {
     expect(repo).not.toHaveState('shapes')
   })
 
-  it('rejects if there is a JSON parse error deserialization fails', function () {
+  it('raises if there is a JSON parse error deserialization fails', function () {
     const repo = new Microcosm()
 
     // This is invalid
-    let badPatch = repo.patch("{ test: deserialize }", true)
+    let badPatch = () => repo.patch("{ test: deserialize }", true)
 
-    expect(badPatch).toHaveStatus('error')
+    expect(badPatch).toThrow()
   })
 
   describe('forks', function () {

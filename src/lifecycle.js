@@ -9,6 +9,7 @@ function sandbox (data, deserialize) {
         payload = repo.deserialize(data)
       } catch (error) {
         action.reject(error)
+        throw error
       }
     }
 

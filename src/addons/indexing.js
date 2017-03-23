@@ -49,7 +49,7 @@ export default function () {
       }, answer)
     }
 
-    this.indexes = set(this.indexes, name, query)
+    this.indexes = set(this.indexes || {}, name, query)
 
     return query
   }
