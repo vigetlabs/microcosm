@@ -3,8 +3,8 @@
  * This is not for public consumption!
  */
 
-import Microcosm, { get, set } from 'microcosm'
-import { getKeyPaths } from '../key-paths'
+import Microcosm, { get, set } from '../microcosm'
+import { getKeyPaths } from '../key-path'
 
 /**
  * Given a query (see above), return a subset of an object.
