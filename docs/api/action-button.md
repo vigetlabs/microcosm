@@ -62,7 +62,7 @@ provided `value` prop.
 ### action
 
 A string or action to send to Presenters. If a Presenter is registered
-to that string via its `register()` method, it will execute the
+to that string via its `intercept()` method, it will execute the
 associated callback. Otherwise, it gets passed up the tree of
 Presenters, eventually dispatching to the associated Microcosm
 instance.

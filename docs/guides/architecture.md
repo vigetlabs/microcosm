@@ -132,12 +132,12 @@ export default withSend(function DeleteButton ({ send, id }) {
 })
 ```
 
-By implementing a `register` method, a Presenter can subscribe to these
+By implementing an `intercept` method, a Presenter can subscribe to these
 actions, adding intermediary processing or just push an action:
 
 ```javascript
 class PlanetsShow extends Presenter {
-  register () {
+  intercept () {
     return {
       'delete': (repo, id) => repo.push(deletePlanet, id)
     }
@@ -159,8 +159,7 @@ export default withSend(function DeleteButton ({ send, id }) {
 })
 ```
 
-In this case, there's no need for the Presenter to intercept the event. If no
-Presenter registers to a given action, it will get passed along to the Repo.
+In this case, there's no need for the Presenter to intercept the event, and it will just get passed along to the Repo.
 
 ## Actions
 
@@ -186,7 +185,7 @@ specific action states (`done`, `error`, `cancelled`...). As actions are pushed
 into a Microcosm, Domains are ultimately responsible for how those actions turn
 into data modifications useable by the presentation layer.
 
-Domains also implement a `register()` method to subscribe to actions:
+Domains implement a `register()` method to subscribe to actions:
 
 ```javascript
 class Planets {
