@@ -9,7 +9,7 @@ import { getKeyPaths } from '../key-path'
 /**
  * Given a query (see above), return a subset of an object.
  */
-export function extract (object, keyPaths, seed) {
+function extract (object, keyPaths, seed) {
   return keyPaths.reduce(function (memo, keyPath) {
     return set(memo, keyPath, get(object, keyPath))
   }, seed || {})
