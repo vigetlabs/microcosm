@@ -136,7 +136,7 @@ import { merge } from 'microcosm'
 
 let earth = { color: 'blue' }
 
-// Folding in new values returns an new object
+// Folding in new values returns a new object
 let newEarth = merge(earth, { color: 'azule' })
 console.log(newEarth) // { color: 'azule' }
 console.log(newEarth === earth) // false
