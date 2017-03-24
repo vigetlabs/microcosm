@@ -73,7 +73,7 @@ ActionForm inputs are serialized to JSON upon submission using
 ### action
 
 A string value to send to Presenters. If a Presenter is registered to
-that string via its `register()` method, it will execute the
+that string via its `intercept()` method, it will execute the
 associated callback.
 
 ### serializer(form)

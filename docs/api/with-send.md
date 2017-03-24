@@ -25,7 +25,7 @@ const Button = withSend(function ({ send }) {
 
 ```javascript
 // within a Presenter:
-register () {
+intercept () {
   return {
     'hello-world': this.doSomething
   }
