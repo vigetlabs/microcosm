@@ -446,6 +446,103 @@ cause a `getPlanets` to get queued up with the application's repo.
 Microcosm will process the action, sending updates to the domains who
 indicate they want to get updates based on their `register` function.
 
+## Handling user interaction
+
+This is looking great, but most applications respond to user interaction
+in some way, so lets look at one way to handle that in Microcosm.
+
+Microcosm provides a `withSend` addon that allows View components to
+`send` events up to their parent Presenter.
+
+Let's add a button tag to give our user something to interact with, and
+pull in the `withSend` addon to give the button some functionality:
+
+```javascript
+// src/views/planet-list.js
+import React from 'react'
+import withSend from 'microcosm/addons/with-send'
+
+const PlanetList = ({ planets = [], send }) => {
+  return (
+    <div>
+      <ul>
+        { planets.map(p => <li key={p}>{p}</li>)}
+      </ul>
+
+      <button onClick={() => send("addPlanet", "Proxima Centauri")}>
+        Add Proxima Centauri
+      </button>
+    </div>
+  )
+}
+
+export default withSend(PlanetList)
+```
+
+In our Presenter, we can catch this sent data by using `intercept()`,
+similar to how domains can `register` to pushed actions:
+
+```javascript
+// src/presenters/planets.js
+import React from 'react'
+import Presenter from 'microcosm/addons/presenter'
+import PlanetList from '../views/planet-list'
+import {getPlanets, addPlanet} from '../actions/planets'
+
+class Planets extends Presenter {
+
+  setup (repo) {
+    repo.push(getPlanets)
+  }
+
+  intercept () {
+    return {
+      "addPlanet" : (repo, planet) => {
+        repo.push(addPlanet, planet)
+      }
+    }
+  }
+
+  getModel () {
+    return {
+      planets: state => state.planets
+    }
+  }
+
+  render () {
+    const { planets } = this.model
+
+    return <PlanetList planets={planets} />
+  }
+}
+
+export default Planets
+```
+
+You can see here that we're now pushing the `addPlanet` action onto our
+Microcosm instance. This won't do anything at the moment since we
+haven't defined our `addPlanet` action, or registered the action with
+our Domain. Let's do that now to wrap this feature up:
+
+```javascript
+// add to src/actions/planets.js
+export function addPlanet (planet) {
+  return planet
+}
+```
+
+```javascript
+// update register() method in src/domains/planets.js
+register () {
+  return {
+    [getPlanets]: this.append,
+    [addPlanet]: this.append
+  }
+}
+```
+
+There we have it! Now we have a button which fires off an event which adds a new planet to our data model.
+
 ## Wrapping up
 
 That's it! You've just gone through a whirlwind tour of Microcosm and
