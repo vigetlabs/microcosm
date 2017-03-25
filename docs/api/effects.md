@@ -12,9 +12,9 @@ Not all actions result in updates to application state. For example:
 * Sending analytics events
 * Persisting query information in the URL.
 
-**Effect handlers fire immediately after Domain handlers and are only called once per
-action state.** This means that a repo's state is up to date with
-the latest state transitions by the time they execute.
+**Effect handlers fire immediately after Domain handlers and are only
+called once per action state.** This means that a repo's state is up to
+date with the latest state transitions by the time they execute.
 
 ## A quick example - query strings
 
