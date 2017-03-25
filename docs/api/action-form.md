@@ -39,7 +39,7 @@ repo.addDomain('count', {
 
 function StepperForm ({ count }) {
   return (
-    <ActionForm action={increment}>
+    <ActionForm action={increaseCount}>
       <input type="hidden" name="amount" value="1" />
       <button>+ 1</button>
     </ActionForm>
@@ -51,10 +51,6 @@ class CountPresenter extends Presenter {
     return {
       count : state => state.count
     }
-  }
-
-  increaseCount (repo, { amount }) {
-    return repo.push(increment, amount)
   }
 
   view ({ count }) {

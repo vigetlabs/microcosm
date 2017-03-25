@@ -68,13 +68,13 @@ hierarchy can be cumbersome and brittle. Presenters expose a method on
 `context` that enable child components to declare `actions` receivable
 by Presenters.
 
-The Form add-on can be used to broadcast actions to Presenters:
+The ActionForm add-on can be used to broadcast actions to Presenters:
 
 ```javascript
 import React from 'react'
 import DOM from 'react-dom'
 import Presenter from 'microcosm/addons/presenter'
-import Form from 'microcosm/addons/form'
+import ActionForm from 'microcosm/addons/action-form'
 import Microcosm from 'microcosm'
 
 const repo = new Microcosm()
@@ -97,11 +97,11 @@ repo.addDomain('count', {
 
 function StepperForm ({ count }) {
   return (
-    <Form action="increaseCount">
+    <ActionForm action="increment">
       <input type="hidden" name="amount" value="1" />
       <p>The current count is { count }</p>
       <button>+ 1</button>
-    </Form>
+    </ActionForm>
   )
 }
 
@@ -114,12 +114,12 @@ class CountPresenter extends Presenter {
 
   intercept () {
     return {
-      increaseCount: this.increaseCount
+      "increment": this.increaseCount
     }
   }
 
   increaseCount (repo, { amount }) {
-    return repo.push(increment, amount)
+    return repo.push(increaseCount, amount)
   }
 
   render () {
@@ -253,12 +253,12 @@ class Example extends Presenter {
 
 ### intercept()
 
-Catch an action emitted from a child view, using an add-on `Form`,
+Catch an action emitted from a child view, using an add-on `ActionForm`,
 `ActionButton`, or `withSend`. These add-ons are designed to improve the
 ergonomics of presenter/view communication. Data down, actions up.
 
 ```javascript
-import Form from 'microcosm/addons/form'
+import ActionForm from 'microcosm/addons/action-form'
 
 class HelloWorldPresenter extends Presenter {
   intercept () {
@@ -271,9 +271,9 @@ class HelloWorldPresenter extends Presenter {
   }
   render () {
     return (
-      <Form action="greet">
+      <ActionForm action="greet">
         <button>Greet</button>
-      </Form>
+      </ActionForm>
     )
   }
 }
