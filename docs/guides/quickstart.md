@@ -451,78 +451,34 @@ indicate they want to get updates based on their `register` function.
 This is looking great, but most applications respond to user interaction
 in some way, so lets look at one way to handle that in Microcosm.
 
-Microcosm provides a `withSend` addon that allows View components to
-`send` events up to their parent Presenter.
-
-Let's add a button tag to give our user something to interact with, and
-pull in the `withSend` addon to give the button some functionality:
+Microcosm provides a couple of options for capturing user input and
+passing it in to actions. One of these is by using the `ActionButton`
+addon. Let's modify our View layer to pull that in:
 
 ```javascript
-// src/views/planet-list.js
 import React from 'react'
-import withSend from 'microcosm/addons/with-send'
+import ActionButton from 'microcosm/addons/action-button'
+import {addPlanet} from '../actions/planets'
 
-const PlanetList = ({ planets = [], send }) => {
+export default function PlanetList ({ planets = [] }) {
+
   return (
     <div>
       <ul>
         { planets.map(p => <li key={p}>{p}</li>)}
       </ul>
 
-      <button onClick={() => send("addPlanet", "Proxima Centauri")}>
-        Add Proxima Centauri
-      </button>
+      <ActionButton action={addPlanet} value="Alpha Centauri">
+        Add Planet
+      </ActionButton>
     </div>
   )
 }
-
-export default withSend(PlanetList)
 ```
 
-In our Presenter, we can catch this sent data by using `intercept()`,
-similar to how domains can `register` to pushed actions:
-
-```javascript
-// src/presenters/planets.js
-import React from 'react'
-import Presenter from 'microcosm/addons/presenter'
-import PlanetList from '../views/planet-list'
-import {getPlanets, addPlanet} from '../actions/planets'
-
-class Planets extends Presenter {
-
-  setup (repo) {
-    repo.push(getPlanets)
-  }
-
-  intercept () {
-    return {
-      "addPlanet" : (repo, planet) => {
-        repo.push(addPlanet, planet)
-      }
-    }
-  }
-
-  getModel () {
-    return {
-      planets: state => state.planets
-    }
-  }
-
-  render () {
-    const { planets } = this.model
-
-    return <PlanetList planets={planets} />
-  }
-}
-
-export default Planets
-```
-
-You can see here that we're now pushing the `addPlanet` action onto our
-Microcosm instance. This won't do anything at the moment since we
-haven't defined our `addPlanet` action, or registered the action with
-our Domain. Let's do that now to wrap this feature up:
+When clicked, our button will broadcast the `addPlanet` action. This
+won't do anything currently because the `addPlanet` action doesn't
+exist. Let's create that action and subscribe our Domain to it:
 
 ```javascript
 // add to src/actions/planets.js
@@ -541,7 +497,10 @@ register () {
 }
 ```
 
-There we have it! Now we have a button which fires off an event which adds a new planet to our data model.
+There we have it! Now we have a button in our view which triggers an
+action that adds a new planet to our data model. When the Domain
+updates the state with the new planet, our Presenter and View will
+update accordingly to display the new data.
 
 ## Wrapping up
 
