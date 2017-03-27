@@ -206,10 +206,13 @@ inherit(PresenterMediator, PureComponent, {
   },
 
   send (intent, ...params) {
+    // tag intent first so the interceptor keys off the right key
+    let taggedIntent = tag(intent)
+
     let interceptors = this.presenter.intercept()
 
     // A presenter's register goes through the same registration steps
-    let handler = getRegistration(interceptors, tag(intent), 'resolve')
+    let handler = getRegistration(interceptors, taggedIntent, 'resolve')
 
     // Does the presenter register to this intent?
     if (handler) {
