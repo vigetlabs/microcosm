@@ -8,7 +8,7 @@
 
 1. [Microcosm](api/microcosm.md)
 2. [Domains](api/domains.md)
-3. [Actions](api/actions.md)
+3. [Tasks](api/tasks.md)
 4. [Effects](api/effects.md)
 5. [Immutability Helpers](api/immutability-helpers.md)
 

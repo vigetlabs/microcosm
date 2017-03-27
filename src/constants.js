@@ -1,6 +1,6 @@
 /**
- * Actions move through a specific set of states. This manifest
- * controls how they should behave.
+ * Tasks move through a specific set of states. This manifest controls how they
+ * should behave.
  */
 
 export const STATES = {}

@@ -1,4 +1,4 @@
-import { Action, merge, inherit } from '../microcosm'
+import { Task, merge, inherit } from '../microcosm'
 import { createElement, PureComponent, PropTypes } from 'react'
 
 export default function ActionButton (props, context) {
@@ -19,21 +19,21 @@ ActionButton.defaultProps = {
 inherit(ActionButton, PureComponent, {
 
   click (event) {
-    let action = this.send(this.props.action, this.props.value)
+    let task = this.send(this.props.action, this.props.value)
 
-    if (action && action instanceof Action) {
-      action.onOpen(this.props.onOpen)
-            .onUpdate(this.props.onUpdate)
-            .onCancel(this.props.onCancel)
-            .onDone(this.props.onDone)
-            .onError(this.props.onError)
+    if (task && task instanceof Task) {
+      task.onOpen(this.props.onOpen)
+      task.onUpdate(this.props.onUpdate)
+      task.onCancel(this.props.onCancel)
+      task.onDone(this.props.onDone)
+      task.onError(this.props.onError)
     }
 
     if (this.props.onClick) {
-      this.props.onClick(event, action)
+      this.props.onClick(event, task)
     }
 
-    return action
+    return task
   },
 
   render () {

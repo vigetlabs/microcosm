@@ -1,4 +1,4 @@
-import Action from './action'
+import Task from './task'
 import Emitter from './emitter'
 
 import {
@@ -11,9 +11,9 @@ import {
 } from './lifecycle'
 
 /**
- * The central tree data structure that is used to calculate state for
- * a Microcosm. Each node in the tree is an action. Branches are
- * changes over time.
+ * The central tree data structure that is used to calculate state for a
+ * Microcosm. Each node in the tree is an task. Branches are changes over
+ * time.
  * @constructor
  */
 export default function History (limit) {
@@ -30,7 +30,7 @@ export default function History (limit) {
 inherit(History, Emitter, {
 
   /**
-   * Setup the head and root action for a history. This effectively
+   * Setup the head and root task for a history. This effectively
    * starts or restarts history.
    */
   begin () {
@@ -63,8 +63,8 @@ inherit(History, Emitter, {
     }
   },
 
-  checkout (action) {
-    this.head = action || this.head
+  checkout (task) {
+    this.head = task || this.head
 
     this.setActiveBranch()
 
@@ -73,75 +73,75 @@ inherit(History, Emitter, {
     return this
   },
 
-  append (command, status) {
-    let action = new Action(command, status, this)
+  append (action, status) {
+    let task = new Task(action, status, this)
 
     if (this.size > 0) {
-      this.head.lead(action)
+      this.head.lead(task)
     } else {
       // Always have a parent node, no matter what
-      let birth = new Action(BIRTH, 'resolve', this)
-      birth.adopt(action)
+      let birth = new Task(BIRTH, 'resolve', this)
+      birth.adopt(task)
 
-      this.root = action
+      this.root = task
     }
 
-    this.head = action
+    this.head = task
     this.size += 1
 
-    this.invoke('createInitialSnapshot', action)
+    this.invoke('createInitialSnapshot', task)
 
-    this._emit('append', action)
+    this._emit('append', task)
 
     return this.head
   },
 
   /**
-   * Remove an action from history, connecting adjacent actions
+   * Remove an task from history, connecting adjacent tasks
    * together to bridge the gap.
-   * @param {Action} action - Action to remove from history
+   * @param {Task} task - Task to remove from history
    */
-  remove (action) {
-    if (action.isDisconnected()) {
+  remove (task) {
+    if (task.isDisconnected()) {
       return
     }
 
-    let next = action.next
-    let parent = action.parent
+    let next = task.next
+    let parent = task.parent
 
-    this.clean(action)
+    this.clean(task)
 
     if (this.size <= 0) {
       this.begin()
       return
     } else if (!next) {
       next = this.head = parent
-    } else if (action === this.root) {
+    } else if (task === this.root) {
       this.root = next
     }
 
-    if (!action.disabled) {
+    if (!task.disabled) {
       this.reconcile(next)
     }
   },
 
   /**
-   * The actual clean up operation that purges an action from both
+   * The actual clean up operation that purges an task from both
    * history, and removes all snapshots within tracking repos.
-   * @param {Action} action - Action to clean up
+   * @param {Task} task - Task to clean up
    */
-  clean (action) {
+  clean (task) {
     this.size -= 1
-    this.invoke('removeSnapshot', action)
+    this.invoke('removeSnapshot', task)
 
-    action.remove()
+    task.remove()
   },
 
-  reconcile (action) {
+  reconcile (task) {
     console.assert(this.head, 'History should always have a head node')
-    console.assert(action, 'History should never reconcile ' + action)
+    console.assert(task, 'History should never reconcile ' + task)
 
-    let focus = action
+    let focus = task
 
     while (focus) {
       this.invoke('reconcile', focus)
@@ -155,7 +155,7 @@ inherit(History, Emitter, {
 
     this.archive()
 
-    this.invoke('release', action)
+    this.invoke('release', task)
   },
 
   archive () {
@@ -175,15 +175,15 @@ inherit(History, Emitter, {
   },
 
   setActiveBranch () {
-    let action = this.head
+    let task = this.head
     let size = 1
 
-    while (action !== this.root) {
-      let parent = action.parent
+    while (task !== this.root) {
+      let parent = task.parent
 
-      parent.next = action
+      parent.next = task
 
-      action = parent
+      task = parent
 
       size += 1
     }
@@ -192,13 +192,13 @@ inherit(History, Emitter, {
   },
 
   /**
-   * Toggle actions in bulk, then reconcile from the first action
-   * @param {Action[]} - A list of actions to toggle
+   * Toggle tasks in bulk, then reconcile from the first task
+   * @param {Task[]} - A list of tasks to toggle
    */
-  toggle (actions) {
-    let list = [].concat(actions)
+  toggle (tasks) {
+    let list = [].concat(tasks)
 
-    list.forEach(action => action.toggle('silently'))
+    list.forEach(task => task.toggle('silently'))
 
     this.reconcile(list[0])
   },
@@ -206,11 +206,11 @@ inherit(History, Emitter, {
   map (fn, scope) {
     let size = this.size
     let items = Array(size)
-    let action = this.head
+    let task = this.head
 
     while (size--) {
-      items[size] = fn.call(scope, action)
-      action = action.parent
+      items[size] = fn.call(scope, task)
+      task = task.parent
     }
 
     return items

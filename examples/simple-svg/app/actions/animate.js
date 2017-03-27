@@ -6,14 +6,14 @@ export function animate (time, duration) {
   let goal  = time + duration
   let color = randomColor()
 
-  return function loop (action) {
+  return function loop (task) {
     time += 16
 
     if (time > goal) {
-      action.resolve({ color, time })
+      task.resolve({ color, time })
     } else {
-      action.update({ color, time })
-      requestAnimationFrame(() => loop(action))
+      task.update({ color, time })
+      requestAnimationFrame(() => loop(task))
     }
   }
 }

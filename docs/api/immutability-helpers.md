@@ -6,7 +6,7 @@
 ## Overview
 
 Microcosm requires immutable updates. This makes it easier to track changes,
-support Microcosm's action history, and keep things fast. However the
+support Microcosm's task history, and keep things fast. However the
 ergonomics and details of this can be a bit frustrating. Let's say we want to
 update a nested key:
 
@@ -17,8 +17,8 @@ let user = { id: 'Billy', facts: { height: 72, age: 23 } }
 let next = {...user, facts: {...facts, age: 24 } }
 ```
 
-Spreading can quickly get out of hand, and always copies data even if it hasn't 
-changed. Alternatively, we could use the immutability helpers that ship with 
+Spreading can quickly get out of hand, and always copies data even if it hasn't
+changed. Alternatively, we could use the immutability helpers that ship with
 Microcosm:
 
 ```javascript
@@ -32,7 +32,7 @@ let next = set(user, 'facts.age', 24)
 Additionally, `set` will not perform an update if no value requires changing.
 
 Microcosm uses these utilities internally. Pulling them into your application
-allows you to reuse that code. However if you are evaluating alternatives, we 
+allows you to reuse that code. However if you are evaluating alternatives, we
 recommend [immutability-helper](https://github.com/kolodny/immutability-helper).
 
 ---

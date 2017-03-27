@@ -11,16 +11,16 @@ import {
 } from './constants'
 
 /**
- * Actions encapsulate the process of resolving an action creator. Create an
- * action using `Microcosm::push`:
+ * Tasks encapsulate the process of resolving an action
  */
-export default function Action (command, status, history) {
+export default function Task (action, status, history) {
   Emitter.call(this)
 
   this.history = history || new History()
 
   this.id = this.history.getId()
-  this.command = tag(command)
+  this.action = tag(action)
+  this.command = this.action // For backwards compatibility
   this.timestamp = Date.now()
   this.children = []
 
@@ -29,7 +29,7 @@ export default function Action (command, status, history) {
   }
 }
 
-inherit(Action, Emitter, {
+inherit(Task, Emitter, {
   status     : 'inactive',
   payload    : undefined,
   disabled   : false,
@@ -76,7 +76,7 @@ inherit(Action, Emitter, {
   /**
    * Set the next action after this one in the historical tree of
    * actions.
-   * @param {?Action} child Action to follow this one
+   * @param {?Task} child Task to follow this one
    */
   lead (child) {
     this.next = child
@@ -88,7 +88,7 @@ inherit(Action, Emitter, {
 
   /**
    * Add an action to the list of children
-   * @param {Action} child Action to include in child list
+   * @param {Task} child Task to include in child list
    */
   adopt (child) {
     let index = this.children.indexOf(child)
@@ -101,8 +101,8 @@ inherit(Action, Emitter, {
   },
 
   /**
-   * Remove a child action
-   * @param {Action} child Action to remove
+   * Remove a child task
+   * @param {Task} child Task to remove
    */
   abandon (child) {
     let index = this.children.indexOf(child)
@@ -143,7 +143,7 @@ inherit(Action, Emitter, {
 
 })
 
-Object.defineProperty(Action.prototype, 'type', {
+Object.defineProperty(Task.prototype, 'type', {
   get () {
     return this.command[this.status]
   }
@@ -157,9 +157,9 @@ Object.keys(STATES).forEach(function (status) {
 
   /**
    * Create a method to update the action status. For example:
-   * action.done({ id: 'earth' })
+   * task.done({ id: 'earth' })
    */
-  Action.prototype[status] = function (payload) {
+  Task.prototype[status] = function (payload) {
     if (!this.disposable) {
       this.status = status
       this.disposable = disposable
@@ -178,9 +178,9 @@ Object.keys(STATES).forEach(function (status) {
 
   /**
    * Create a method to subscribe to a status. For example:
-   * action.onDone({ id: 'earth' })
+   * task.onDone(() => {})
    */
-  Action.prototype[listener] = function (callback, scope) {
+  Task.prototype[listener] = function (callback, scope) {
     if (callback) {
       if (once && this.status === status) {
         callback.call(scope, this.payload)

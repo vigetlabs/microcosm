@@ -145,7 +145,7 @@ class PlanetsShow extends Presenter {
 }
 ```
 
-Or, Actions can also take the form of Actions:
+Or, simply dispatch an action directly:
 
 ```javascript
 import React from 'react'
@@ -159,14 +159,14 @@ export default withSend(function DeleteButton ({ send, id }) {
 })
 ```
 
-In this case, there's no need for the Presenter to intercept the event. If no
-Presenter registers to a given action, it will get passed along to the Repo.
+In this case, there's no need for the Presenter to intercept the
+event. If no Presenter registers to a given action, it will get passed
+along to the Repo.
 
 ## Actions
 
-The message format for the application. In the context of Microcosm, an action
-contains information on the state of its progress as well as any associated
-data.
+The message format for the application. Actions describe some sort of
+work that needs to be done:
 
 ```javascript
 function createPlanet (body) {
@@ -178,15 +178,14 @@ function createPlanet (body) {
 
 ## Domains
 
-Whenever an Action is pushed into a repo (the project's instance of Microcosm),
-it leans on Domains to transform data.
+Domains are assigned to a specified key in a Microcosm instance,
+subscribing to specific action states (`done`, `error`,
+`cancelled`...). As tasks are created by a Microcosm, Domains are
+ultimately responsible for how those tasks turn into data
+modifications useable by the presentation layer.
 
-Domains are assigned to a specified key in a Microcosm instance, subscribing to
-specific action states (`done`, `error`, `cancelled`...). As actions are pushed
-into a Microcosm, Domains are ultimately responsible for how those actions turn
-into data modifications useable by the presentation layer.
-
-Domains also implement a `register()` method to subscribe to actions:
+Domains also implement a `register()` method to subscribe to different
+action states:
 
 ```javascript
 class Planets {
@@ -232,5 +231,5 @@ class Logger {
 ## Quick Recap
 
 Data flows downward, transformed by presenters into a form useful to the view layer.
-As users interact with the app, actions are dispatched to domains and effects
+As users interact with the app, tasks are dispatched to domains and effects
 to handle necessary state changes and side-effects.

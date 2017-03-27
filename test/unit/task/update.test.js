@@ -1,81 +1,81 @@
-import Action from '../../../src/action'
+import Task from '../../../src/task'
 import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
-describe('Action update state', function () {
+describe('Task update state', function () {
 
   it('exposes a loading type when in progress', function () {
-    const action = new Action(identity)
+    let task = new Task(identity)
 
-    action.update()
+    task.update()
 
-    expect(action).toHaveStatus('update')
+    expect(task).toHaveStatus('update')
   })
 
   it('listens to progress updates', function () {
-    const action = new Action(identity)
-    const fn = jest.fn()
+    let task = new Task(identity)
+    let fn = jest.fn()
 
-    action.onUpdate(fn)
-    action.update(true)
+    task.onUpdate(fn)
+    task.update(true)
 
     expect(fn).toHaveBeenCalledWith(true)
   })
 
   it('does not trigger onUpdate if in progress', function () {
-    const action = new Action(identity)
-    const fn = jest.fn()
+    let task = new Task(identity)
+    let fn = jest.fn()
 
-    action.update(true)
-    action.onUpdate(fn)
+    task.update(true)
+    task.onUpdate(fn)
 
     expect(fn).not.toHaveBeenCalled()
   })
 
-  it('actions are no longer open when in progress', function () {
-    const action = new Action(identity)
+  it('tasks are no longer open when in progress', function () {
+    let task = new Task(identity)
 
-    action.open(true)
-    action.update(true)
+    task.open(true)
+    task.update(true)
 
-    expect(action).not.toHaveStatus('open')
-    expect(action).toHaveStatus('loading')
+    expect(task).not.toHaveStatus('open')
+    expect(task).toHaveStatus('loading')
   })
 
   it('triggers an update event when it updates', function () {
-    const action = new Action(identity)
-    const callback = jest.fn()
+    let task = new Task(identity)
+    let callback = jest.fn()
 
-    action.once('update', callback)
-    action.update(3)
+    task.once('update', callback)
+    task.update(3)
 
     expect(callback).toHaveBeenCalledWith(3)
   })
 
   it('does not trigger an update event if it is disposable', function () {
-    const action = new Action(identity)
-    const spy = jest.fn()
+    let task = new Task(identity)
+    let spy = jest.fn()
 
-    action.on('update', spy)
-    action.resolve()
-    action.update()
+    task.on('update', spy)
+    task.resolve()
+    task.update()
 
     expect(spy).not.toHaveBeenCalled()
   })
 
   it('aliases the loading type with update', function () {
-    const action = new Action(identity)
+    let task = new Task(identity)
 
-    action.update()
+    task.update()
 
-    expect(action).toHaveStatus('update')
+    expect(task).toHaveStatus('update')
   })
 
   it('updates repo state with the latest progress', function () {
-    const repo = new Microcosm()
-    const test = n => n
-    const handler = jest.fn(n => n)
+    let repo = new Microcosm()
+    let test = n => n
+    let handler = jest.fn(n => n)
 
     repo.addDomain('progress', {
       getInitalState() {
@@ -90,17 +90,17 @@ describe('Action update state', function () {
       }
     })
 
-    const action = repo.append(test)
+    let task = repo.append(test)
 
-    action.update(1)
+    task.update(1)
     expect(handler).toHaveBeenCalledWith(1)
     expect(repo).toHaveState('progress', 1)
 
-    action.update(2)
+    task.update(2)
     expect(handler).toHaveBeenCalledWith(2)
     expect(repo).toHaveState('progress', 2)
 
-    action.update(3)
+    task.update(3)
     expect(handler).toHaveBeenCalledWith(3)
     expect(repo).toHaveState('progress', 3)
   })

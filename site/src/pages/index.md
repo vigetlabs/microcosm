@@ -1,11 +1,11 @@
-## Actions
+## Tasks
 
-Microcosm organizes itself around a history of user actions. As those
-actions move through a set lifecycle, Microcosm reconciles them in the
-order they were created.
+Microcosm organizes itself around a history of tasks. As those tasks
+move through a set lifecycle, Microcosm reconciles them in the order
+they were created.
 
-Invoking `push()` appends to that history, and returns an `Action`
-object to represent it:
+Invoking `push()` appends to that history, and returns a `Task` object
+to represent it:
 
 ```javascript
 function getPlanet (id) {
@@ -13,9 +13,9 @@ function getPlanet (id) {
   return fetch('/planets/' + id).then(response => response.json())
 }
 
-let action = repo.push(getPlanet, 'venus')
+let task = repo.push(getPlanet, 'venus')
 
-action.onDone(function (planet) {
+task.onDone(function (planet) {
   console.log(planet.id) // venus
 })
 ```
@@ -23,7 +23,7 @@ action.onDone(function (planet) {
 ## Domains: Stateless Stores
 
 A Domain is a collection of side-effect free operations for manipulating
-data. As actions update, Microcosm uses domains to determine how state
+data. As tasks update, Microcosm uses domains to determine how state
 should change. Old state comes in, new state comes out:
 
 ```javascript
@@ -48,9 +48,10 @@ const PlanetsDomain = {
 repo.addDomain('planets', PlanetsDomain)
 ```
 
-By implementing a register method, domains can subscribe to actions.
-Each action is assigned a unique string identifier. **Action type
-constants are generated automatically**.
+By implementing a register method, domains can subscribe to tasks that
+have particular types. These types are defined by the associated
+action. **Action type constants are generated automatically whenever
+an action is dispatched for the first time**.
 
 ## Pending, failed, and cancelled requests
 
@@ -75,59 +76,59 @@ const PlanetsDomain = {
 }
 ```
 
-`open`, `loading`, `done`, `error` and `cancelled` are action states. In
-our action creator, we can unlock a deeper level of control by returning
-a function:
+`open`, `loading`, `done`, `error` and `cancelled` are task states. In
+our action, we can unlock a deeper level of control over the task for
+a given action returning a function:
 
 ```javascript
 import request from 'superagent'
 
 function getPlanet (id) {
 
-  return function (action) {
-    action.open(id)
+  return function (task) {
+    task.open(id)
 
     let request = request('/planets/' + id)
 
     request.end(function (error, response) {
       if (error) {
-        action.reject(error)
+        task.reject(error)
       } else {
-        action.resolve(response.body)
+        task.resolve(response.body)
       }
     })
 
     // Cancellation!
-    action.onCancel(request.abort)
+    task.onCancel(request.abort)
   }
 }
 ```
 
-First, the action becomes `open`. This state is useful when waiting for
+First, the task becomes `open`. This state is useful when waiting for
 something to happen, such as loading. When the request finishes, if it
-fails, we reject the action, otherwise we resolve it.
+fails, we reject the task, otherwise we resolve it.
 
-**Microcosm actions are cancellable**. Invoking `action.cancel()`
+**Microcosm tasks are cancellable**. Invoking `task.cancel()`
 triggers a cancellation event:
 
 ```javascript
 import { getPlanet } from './actions/planets'
 
-let action = repo.push(getPlanet, 'Pluto')
+let task = repo.push(getPlanet, 'Pluto')
 
 // Wait, Pluto isn't a planet!
-action.cancel()
+task.cancel()
 ```
 
-When `action.cancel()` is called, the action will move into a
-`cancelled` state. If a domain doesn’t handle a given state no data
-operation will occur.
+When `task.cancel()` is called, the task will move into a `cancelled`
+state. If a domain doesn’t handle a given state no data operation will
+occur.
 
 ## A historical account of everything that has happened
 
-The source of truth in Microcosm is a historical tree of every action.
+The source of truth in Microcosm is a historical tree of every task.
 
-By default, this tree prunes itself as actions complete. However passing
+By default, this tree prunes itself as tasks complete. However passing
 the maxHistory option into Microcosm allows for a compelling debugging
 story.
 
@@ -199,10 +200,12 @@ leaking into the data layer, resulting in complicated code, and unexpected bugs 
 
 ### How Microcosm is different
 
-Microcosm thinks of actions as **_stories_**. They go through different states as they
-move from start to completion. Actions have a common public interface, regardless of what data
-structures or asynchronous patterns are utilized. An interface that is easy to query from the
-presentation layer in order to handle use-case specific display requirements.
+Microcosm thinks of actions as **_stories_**. A dispatched action
+creates a Task that records key moments as an action goes from start
+to completion. Tasks have a common public interface, regardless of
+what data structures or asynchronous patterns are utilized. An
+interface that is easy to query from the presentation layer in order
+to handle use-case specific display requirements.
 
 This makes it easier to handle complicated behaviors such as optimistic updates,
 dialog windows, or long running processes.
