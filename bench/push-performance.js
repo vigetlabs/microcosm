@@ -1,6 +1,6 @@
 /**
  * Push Performance Benchmark
- * Measures the performance of pushing a single action.
+ * Measures the performance of pushing a single task.
  */
 
 'use strict'
@@ -40,7 +40,7 @@ var results = SIZES.map(function (SIZE) {
   var then = process.hrtime()
 
   /**
-   * Append a given number of actions into history. We use this method
+   * Append a given number of tasks into history. We use this method
    * instead of `::push()` for benchmark setup performance. At the time of writing,
    * `push` takes anywhere from 0.5ms to 15ms depending on the sample range.
    * This adds up to a very slow boot time!

@@ -41,7 +41,7 @@ describe('History::checkout', function () {
     expect(top.next).toEqual(null)
   })
 
-  it('checks out the head if no action is specified', function () {
+  it('checks out the head if no task is specified', function () {
     const history = new History()
 
     jest.spyOn(history, 'reconcile')

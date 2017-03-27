@@ -13,7 +13,7 @@ export default function getRegistration (pool, command, status) {
   let answer = null
   let alias = ALIASES[status]
 
-  console.assert(alias, 'Invalid action status ' + status)
+  console.assert(alias, 'Invalid task status ' + status)
 
   let nest = pool[command]
 

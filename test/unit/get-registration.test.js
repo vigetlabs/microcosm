@@ -25,7 +25,7 @@ describe('getRegistration', function () {
       getRegistration({}, action ,'totally-missing')
     }
 
-    expect(fail).toThrow('Invalid action status totally-missing')
+    expect(fail).toThrow('Invalid task status totally-missing')
   })
 
   describe('Action aliasing', function () {

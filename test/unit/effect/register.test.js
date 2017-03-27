@@ -2,7 +2,7 @@ import Microcosm from '../../../src/microcosm'
 
 describe('Effect::register', function () {
 
-  it('invokes when an action completes', function () {
+  it('invokes when a task completes', function () {
     const repo = new Microcosm()
     const test = n => n
 

@@ -1,12 +1,12 @@
 import getRegistration from './get-registration'
 import { createOrClone } from './utils'
 
-export default function EffectEngine (repo) {
-  this.repo = repo
-  this.effects = []
-}
+export default class EffectEngine {
 
-EffectEngine.prototype = {
+  constructor (repo) {
+    this.repo = repo
+    this.effects = []
+  }
 
   add (config, options) {
     let effect = createOrClone(config, options, this.repo)
@@ -18,7 +18,7 @@ EffectEngine.prototype = {
     this.effects.push(effect)
 
     return effect
-  },
+  }
 
   teardown () {
     for (var i = 0, len = this.effects.length; i < len; i++) {
@@ -28,10 +28,10 @@ EffectEngine.prototype = {
         effect.teardown(this.repo)
       }
     }
-  },
+  }
 
-  dispatch (action) {
-    let { command, payload, status } = action
+  dispatch (task) {
+    let { command, payload, status } = task
 
     for (var i = 0, len = this.effects.length; i < len; i++) {
       var effect = this.effects[i]
@@ -45,4 +45,5 @@ EffectEngine.prototype = {
       }
     }
   }
+  
 }

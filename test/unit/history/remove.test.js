@@ -3,7 +3,7 @@ import Microcosm from '../../../src/microcosm'
 
 describe('History::remove', function() {
 
-  it('resets when there are no actions left', function() {
+  it('resets when there are no tasks left', function() {
     let history = new History({ maxHistory: Infinity })
     let root = history.root
 
@@ -18,13 +18,13 @@ describe('History::remove', function() {
 
   it('does not remove the root when given a node outside the tree', function () {
     let history = new History()
-    let action = history.append('test')
+    let task = history.append('test')
 
-    history.remove(action)
+    history.remove(task)
 
     jest.spyOn(history, 'clean')
 
-    history.remove(action)
+    history.remove(task)
 
     expect(history.clean).not.toHaveBeenCalled()
   })
@@ -36,13 +36,13 @@ describe('History::remove', function() {
 
       history.append('one')
 
-      let action = history.append('two')
+      let task = history.append('two')
 
-      action.toggle()
+      task.toggle()
 
       jest.spyOn(history, 'reconcile')
 
-      history.remove(action)
+      history.remove(task)
 
       expect(history.reconcile).not.toHaveBeenCalled()
     })
@@ -163,7 +163,7 @@ describe('History::remove', function() {
       expect(one.children.map(i => i.command.name)).toEqual(['three'])
     })
 
-    it('maintains children on the left when the next action is removed', function() {
+    it('maintains children on the left when the next task is removed', function() {
       let history = new History({ maxHistory: Infinity })
 
       let one = history.append(function one () {}, 'resolve')

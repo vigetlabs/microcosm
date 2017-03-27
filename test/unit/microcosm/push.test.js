@@ -2,7 +2,7 @@ import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm::push', function () {
 
-  it('can push an action, resolving it into state', function () {
+  it('can create a task, resolving it into state', function () {
     let repo = new Microcosm()
     let step = n => n
 
@@ -23,7 +23,7 @@ describe('Microcosm::push', function () {
     expect(repo).toHaveState('count', 4)
   })
 
-  it('does not change if no action responds', () => {
+  it('does not change if no domain responds to the task', () => {
     const repo = new Microcosm()
     const spy = jest.fn()
 
@@ -37,7 +37,7 @@ describe('Microcosm::push', function () {
 
   describe('forks', function () {
 
-    it('pushing actions on the child float up to the parent', function () {
+    it('creating tasks on the child float up to the parent', function () {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -77,7 +77,7 @@ describe('Microcosm::push', function () {
       expect(child.state.shape).toEqual('square')
     })
 
-    it('pushing actions on the parent sink down to children', function () {
+    it('creating tasks on the parent sink down to children', function () {
       const parent = new Microcosm()
       const child = parent.fork()
 

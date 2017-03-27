@@ -1,27 +1,23 @@
 import Emitter from '../emitter'
-
-import {
-  get,
-  inherit
-} from '../utils'
+import {get} from '../utils'
 
 import {
   getKeyPaths,
   getKeyStrings
 } from '../key-path'
 
-export default function Query (id, keys) {
-  Emitter.call(this)
+export default class Query extends Emitter {
 
-  this.id = id
-  this.keyPaths = getKeyPaths(keys)
-}
+  constructor (id, keys) {
+    super()
 
-Query.getId = function (keyPaths) {
-  return 'query:' + getKeyStrings(getKeyPaths(keyPaths))
-}
+    this.id = id
+    this.keyPaths = getKeyPaths(keys)
+  }
 
-inherit(Query, Emitter, {
+  static getId (keyPaths) {
+    return 'query:' + getKeyStrings(getKeyPaths(keyPaths))
+  }
 
   extract (state) {
     let length = this.keyPaths.length
@@ -32,16 +28,14 @@ inherit(Query, Emitter, {
     }
 
     return values
-  },
+  }
 
   trigger (state) {
-    let values = this.extract(state)
-
-    this._emit('change', ...values)
-  },
+    this._emit('change', ...this.extract(state))
+  }
 
   isEmpty () {
     return this._events.length <= 0
   }
 
-})
+}

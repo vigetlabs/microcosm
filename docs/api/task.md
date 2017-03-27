@@ -1,7 +1,7 @@
-# Actions
+# Tasks
 
 1. [Overview](#overview)
-2. [Writing action creators](#writing-action-creators)
+2. [Writing actions](#writing-actions)
 3. [Dispatching to Domains](#dispatching-to-domains)
 4. [How this works](#how-this-works)
 5. [API](#api)
@@ -45,14 +45,15 @@ An action moves through several states:
 You can access these states with varying degrees of control depending
 on how you author action creators.
 
-## Writing Action Creators
+## Writing actions
 
-There are three ways to write action creators in Microcosm, all of
-which relate to the value returned from functions passed into `repo.push()`.
+Tasks execute actions. There are three ways to write actions in
+Microcosm, all of which relate to the value returned from functions
+passed into `repo.push()`.
 
 ### Return a primitive value
 
-Action creators that return a primitive value resolve immediately:
+Actions that return a primitive value resolve immediately:
 
 ```javascript
 function addPlanet (props) {
@@ -75,14 +76,14 @@ repo.push(readPlanets)
 
 ### Return a function
 
-Action creators that return functions grant full access to the action
-that represents it. If we were to write a lower level version of the Promise
+Actions that return functions grant full access to the task that
+executed it. If we were to write a lower level version of the Promise
 example earlier:
 
 ```javascript
 function readPlanets () {
-  return function (action) {
-    action.open()
+  return function (task) {
+    task.open()
 
     const xhr = new XMLHttpRequest()
 
@@ -90,11 +91,11 @@ function readPlanets () {
     xhr.setRequestHeader('Content-Type', 'application/json')
 
     xhr.addEventListener('load', function () {
-      action.resolve(JSON.parse(xhr.responseText))
+      task.resolve(JSON.parse(xhr.responseText))
     })
 
     xhr.addEventListener('error', function () {
-      action.reject({ status: xhr.status })
+      task.reject({ status: xhr.status })
     })
 
     xhr.send()
@@ -107,10 +108,11 @@ repo.push(readPlanets)
 ## Dispatching to Domains
 
 One of the differences between Microcosm and other Flux
-implementations is the dispatch process. Sending actions to domains is
+implementations is the dispatch process. Sending tasks to domains is
 handled by Microcosm. Instead of dispatching `ACTION_LOADING` or
-`ACTION_FAILED`, actions go through various states as they
-resolve. You can subscribe to these states within domains like:
+`ACTION_FAILED`, tasks go through various states as they resolve,
+using their associated action as an identity for the type of work
+done. You can subscribe to these states within domains like:
 
 ```javascript
 // A sample domain that subscribes to every action state
@@ -132,13 +134,14 @@ const SolarSystem = {
 
 ## How this works
 
-Whenever `repo.push()` is invoked, Microcosm creates a new `Action`
-object, appending it to a ledger of all actions. As the state of an
-action changes, the associated microcosm will run through all
-outstanding actions to determine the next state.
+Whenever `repo.push(action)` is invoked, Microcosm creates a new
+`Task` object, appending it to a history of all tasks. As this task
+moves through different states, this history will run through all
+outstanding tasks to determine the next state.
 
-By default, Microcosm will only hold on to unresolved actions. This
-can be extended by setting the `maxHistory` setting when creating a Microcosm:
+By default, Microcosm only holds onto unresolved tasks. This can be
+extended by setting the `maxHistory` setting when creating a
+Microcosm:
 
 ```javascript
 const repo = new Microcosm({ maxHistory: 100 })
@@ -151,28 +154,28 @@ behavior.
 
 ### `onDone(callback, [scope])`
 
-Add a one-time event subscription for when the action resolves
-successfully. If the action is already resolved, it will immediately
+Add a one-time event subscription for when the task resolves
+successfully. If the task is already resolved, it will immediately
 execute.
 
 ### `onError(callback, [scope])`
 
-Add a one-time event subscription for when the action is rejected. If
-the action has already failed, it will immediately execute.
+Add a one-time event subscription for when the task is rejected. If
+the task has already failed, it will immediately execute.
 
 ### `onUpdate(callback, [scope])`
 
-Listen for progress updates from an action as it loads. For example:
+Listen for progress updates from an task as it loads. For example:
 
 ```javascript
 function wait () {
 
-  return function (action) {
-    action.open()
-    setTimeout(() => action.update(25), 500)
-    setTimeout(() => action.update(50), 1000)
-    setTimeout(() => action.update(75), 1500)
-    setTimeout(() => action.resolve(100), 1000)
+  return function (task) {
+    task.open()
+    setTimeout(() => task.update(25), 500)
+    setTimeout(() => task.update(50), 1000)
+    setTimeout(() => task.update(75), 1500)
+    setTimeout(() => task.resolve(100), 1000)
   }
 }
 
@@ -182,16 +185,16 @@ repo.push(wait).onUpdate(function (payload) {
 ```
 
 An important note here is that `onUpdate` does not trigger when an
-action completes.
+task completes.
 
 ### `onCancel(callback, [scope])`
 
-Add a one-time event subscription for when the action is cancelled. If
-the action has already been cancelled, it will immediately execute.
+Add a one-time event subscription for when the task is cancelled. If
+the task has already been cancelled, it will immediately execute.
 
 ### `then(resolve, reject)`
 
-Return a promisified version of the action. This is useful for interop
+Return a promisified version of the task. This is useful for interop
 with `async/await`, or working with testing tools like `ava` or
 `mocha`.
 
@@ -204,30 +207,30 @@ repo.push(promiseAction).then(success, failure)
 
 ### `open([payload])`
 
-Elevate an action into the `open` state and optional update the
+Elevate a task into the `open` state and optional update the
 payload. Domains registered to `action.open` will pick up on an action
 within this state.
 
 ### `update([payload])`
 
-Send a progress update. This will move an action into the `loading`
+Send a progress update. This will move a task into the `loading`
 state and optional update the payload. Domains registered to
-`action.loading` will pick up on an action within this state.
+`action.loading` will pick up on a task within this state.
 
 ### `reject([payload])`
 
-Reject an action. This will move an action into the `error` state and
+Reject a task. This will move an task into the `error` state and
 optional update the payload. Domains registered to `action.error` will
-pick up on an action within this state.
+pick up on an task within this state.
 
 ### `resolve([payload])`
 
-Resolve an action. This will move an action into the `done` state and
+Resolve a task. This will move a task into the `done` state and
 optional update the payload. Domains registered to `action` or `action.done`
-will pick up on an action within this state.
+will pick up on a task within this state.
 
 ### `cancel()`
 
-Cancel an action. This is useful for handling cases such as aborting
-ajax requests. Moves an action into the `cancelled`. Domains registered
-to `action.cancelled` will pick up on an action within this state.
+Cancel an task. This is useful for handling cases such as aborting
+ajax requests. Moves an task into the `cancelled`. Domains registered
+to `action.cancelled` will pick up on a task within this state.

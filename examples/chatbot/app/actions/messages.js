@@ -1,17 +1,17 @@
 export function send ({ message }) {
   var request = new XMLHttpRequest()
 
-  return function (action) {
+  return function (task) {
     request.addEventListener('readystatechange', function() {
       switch (request.readyState) {
 
         // Open
         case 1:
-          return action.open({ user: 'You', message })
+          return task.open({ user: 'You', message })
 
         // Complete
         case 4:
-          return action.resolve(JSON.parse(request.responseText))
+          return task.resolve(JSON.parse(request.responseText))
 
         default:
           return null
@@ -19,7 +19,7 @@ export function send ({ message }) {
     })
 
     request.addEventListener('error', function() {
-      action.reject(JSON.parse(request.responseText))
+      task.reject(JSON.parse(request.responseText))
     })
 
     request.open('POST', '/message')

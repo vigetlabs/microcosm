@@ -12,16 +12,16 @@ import {
   castPath
 } from './key-path'
 
-export default function DomainEngine (repo) {
-  this.repo = repo
-  this.domains = []
-  this.registry = {}
+export default class DomainEngine {
 
-  // All realms contain a meta domain for basic Microcosm operations
-  this.add([], MetaDomain)
-}
+  constructor (repo) {
+    this.repo = repo
+    this.domains = []
+    this.registry = {}
 
-DomainEngine.prototype = {
+    // All realms contain a meta domain for basic Microcosm operations
+    this.add([], MetaDomain)
+  }
 
   getHandlers ({ command, status }) {
     let handlers = []
@@ -39,17 +39,17 @@ DomainEngine.prototype = {
     }
 
     return handlers
-  },
+  }
 
-  register (action) {
-    let type = action.type
+  register (task) {
+    let type = task.type
 
     if (typeof this.registry[type] === 'undefined') {
-      this.registry[type] = this.getHandlers(action)
+      this.registry[type] = this.getHandlers(task)
     }
 
     return this.registry[type]
-  },
+  }
 
   add (key, config, options) {
     let domain = createOrClone(config, options, this.repo)
@@ -64,7 +64,7 @@ DomainEngine.prototype = {
     }
 
     return domain
-  },
+  }
 
   reduce (fn, state, scope) {
     let next = state
@@ -77,7 +77,7 @@ DomainEngine.prototype = {
     }
 
     return next
-  },
+  }
 
   sanitize (data) {
     let next = {}
@@ -91,22 +91,22 @@ DomainEngine.prototype = {
     }
 
     return next
-  },
+  }
 
-  dispatch (state, action) {
-    let handlers = this.register(action)
+  dispatch (state, task) {
+    let handlers = this.register(task)
 
     for (var i = 0, len = handlers.length; i < len; i++) {
       var { key, domain, handler } = handlers[i]
 
       var last = get(state, key)
-      var next = handler.call(domain, last, action.payload)
+      var next = handler.call(domain, last, task.payload)
 
       state = set(state, key, next)
     }
 
     return state
-  },
+  }
 
   deserialize (payload) {
     return this.reduce(function (memo, key, domain) {
@@ -116,7 +116,7 @@ DomainEngine.prototype = {
 
       return memo
     }, payload)
-  },
+  }
 
   serialize (state, payload) {
     return this.reduce(function (memo, key, domain) {
@@ -126,7 +126,7 @@ DomainEngine.prototype = {
 
       return memo
     }, payload)
-  },
+  }
 
   teardown () {
     for (var i = 0, len = this.domains.length; i < len; i++) {

@@ -48,7 +48,7 @@ describe('History::archive', function () {
     expect(history.size).toBe(3)
   })
 
-  it('archives all completed actions', function () {
+  it('archives all completed tasks', function () {
     const history = new History()
 
     const one = history.append(action)

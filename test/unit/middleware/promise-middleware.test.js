@@ -3,26 +3,26 @@ import Microcosm from '../../../src/microcosm'
 describe('Promise middleware', function () {
 
   it('completes when a promise resolves', function (done) {
-    const repo = new Microcosm()
-    const action = repo.push(n => Promise.resolve(n))
+    let repo = new Microcosm()
+    let task = repo.push(n => Promise.resolve(n))
 
-    action.onDone(() => done())
+    task.onDone(() => done())
   })
 
   it('rejects when a promise fails', function (done) {
-    const repo = new Microcosm()
-    const action = repo.push(n => Promise.reject(n))
+    let repo = new Microcosm()
+    let task = repo.push(n => Promise.reject(n))
 
-    action.onError(() => done())
+    task.onError(() => done())
   })
 
   it('rejects when a promise throws an error', function (done) {
-    const repo = new Microcosm()
-    const action = repo.push(n => new Promise(function (resolve, reject) {
+    let repo = new Microcosm()
+    let task = repo.push(n => new Promise(function (resolve, reject) {
       throw 'This error is intentional'
     }))
 
-    action.onError(() => done())
+    task.onError(() => done())
   })
 
 })

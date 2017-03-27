@@ -2,15 +2,15 @@ import Microcosm from '../../src/microcosm'
 
 describe('Removal', function() {
 
-  it('can remove an action from history', function() {
+  it('can remove an task from history', function() {
     const repo = new Microcosm({ maxHistory: Infinity })
     const handler = jest.fn()
 
-    let action = repo.push(handler)
+    let task = repo.push(handler)
 
     expect(repo.history.size).toBe(2)
 
-    repo.history.remove(action)
+    repo.history.remove(task)
 
     expect(repo.history.size).toBe(1)
   })

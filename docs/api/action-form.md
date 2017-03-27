@@ -111,7 +111,7 @@ class MyForm extends React.Component {
 }
 ```
 
-### onSubmit(event, action)
+### onSubmit(event, task)
 
 An event callback executed immediately after the form submits and the
 action is broadcasted.
@@ -119,25 +119,25 @@ action is broadcasted.
 ### onOpen(payload)
 
 After broadcasting, if the dispatched action returns a Microcosm
-action, this callback will execute when the action opens.
+task, this callback will execute when the task opens.
 
 ### onDone(payload)
 
 After broadcasting, if the dispatched action returns a Microcosm
-action, this callback will execute if the action completes successfully.
+task, this callback will execute if the task completes successfully.
 
 ### onError(payload)
 
 After broadcasting, if the dispatched action returns a Microcosm
-action, this callback will execute if the action is rejected.
+task, this callback will execute if the task is rejected.
 
 ### onCancel(payload)
 
 After broadcasting, if the dispatched action returns a Microcosm
-action, this callback will execute when the action is cancelled.
+task, this callback will execute when the task is cancelled.
 
 ### onUpdate(payload)
 
 After broadcasting, if the dispatched action returns a Microcosm
-action, this callback will execute when the action emits a progress
+task, this callback will execute when the task emits a progress
 update.

@@ -57,7 +57,7 @@ class Location {
 export default Location
 ```
 
-So in the case above, whenever a `patchQuery` action resolves, it'll
+So in the case above, whenever a `patchQuery` task resolves, it'll
 run through some logic to update the URL location. Triggering that
 might look something like:
 

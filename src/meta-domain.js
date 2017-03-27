@@ -8,34 +8,36 @@ import {
   ADD_DOMAIN
 } from './lifecycle'
 
-export default function MetaDomain (_, repo) {
-  this.repo = repo
-}
+export default class MetaDomain {
 
-MetaDomain.prototype = {
+  constructor (_, repo) {
+    this.repo = repo
+  }
 
   reset (state, data) {
     let filtered = this.repo.domains.sanitize(data)
 
     return merge(state, this.repo.getInitialState(), filtered)
-  },
+  }
 
   patch (state, data) {
     let filtered = this.repo.domains.sanitize(data)
 
     return merge(state, filtered)
-  },
+  }
 
   addDomain (state) {
     return merge(this.repo.getInitialState(), state)
-  },
+  }
 
   register () {
-    return {
+    let events = {
       [RESET] : this.reset,
       [PATCH] : this.patch,
       [ADD_DOMAIN]: this.addDomain
     }
+
+    return events
   }
 
 }

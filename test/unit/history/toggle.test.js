@@ -3,7 +3,7 @@ import History from '../../../src/history'
 describe('History::toggle', function () {
   const action = n => n
 
-  it('can toggle a single action', function () {
+  it('can toggle a single task', function () {
     const history = new History(Infinity)
 
     let one = history.append(action, 'resolve')
@@ -13,7 +13,7 @@ describe('History::toggle', function () {
     expect(one.disabled).toBe(true)
   })
 
-  it('can toggle actions in bulk', function () {
+  it('can toggle tasks in bulk', function () {
     const history = new History(Infinity)
 
     let one = history.append(action, 'resolve')

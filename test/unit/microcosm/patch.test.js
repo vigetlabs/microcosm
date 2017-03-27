@@ -94,7 +94,7 @@ describe('Microcosm::patch', function () {
       // downward through the repo network.
       //
       // Unfortunately, this causes an unexpected behavior with `patch` where
-      // consecutive actions always operate on the original patched value, and not
+      // consecutive tasks always operate on the original patched value, and not
       // the new state produced by a child.
       expect(child.state.count).toEqual(4)
     })

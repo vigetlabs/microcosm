@@ -2,7 +2,7 @@ import Microcosm, { merge } from '../../src/microcosm'
 
 describe('rollbacks', function () {
 
-  it('does not rollforward the same actions twice', function () {
+  it('does not rollforward the same tasks twice', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
     const send = n => n
 
@@ -208,13 +208,13 @@ describe('rollbacks', function () {
       }
     })
 
-    let action = repo.append(foldIn)
+    let task = repo.append(foldIn)
 
-    action.open({ color: 'red' })
+    task.open({ color: 'red' })
 
     expect(repo).toHaveState('styles.color', 'red')
 
-    action.cancel()
+    task.cancel()
 
     expect(repo).toHaveState('styles.color', 'blue')
   })

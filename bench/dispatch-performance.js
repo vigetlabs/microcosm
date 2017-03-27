@@ -1,7 +1,7 @@
 /**
  * Dispatch Performance Benchmark
  * The goal of this script is to evaluate if our goal of 10,000
- * uniquely folded actions can be done in under 16ms.
+ * uniquely folded tasks can be done in under 16ms.
  *
  * This test does not account for hardware diversity. It is a simple
  * gut check of "are we fast yet?"
@@ -62,7 +62,7 @@ var results = SIZES.map(function (SIZE) {
   }
 
   return {
-    'Actions' : SIZE.toLocaleString(),
+    'Tasks' : SIZE.toLocaleString(),
     'Slowest' : max.toLocaleString() + 'ms',
     'Fastest' : min.toLocaleString() + 'ms',
     'Average' : (cost / SIZE).toLocaleString() + 'ms',

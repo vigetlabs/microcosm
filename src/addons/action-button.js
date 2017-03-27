@@ -1,40 +1,32 @@
-import { Action, merge, inherit } from '../microcosm'
+import { Task, merge } from '../microcosm'
 import { createElement, PureComponent, PropTypes } from 'react'
 
-export default function ActionButton (props, context) {
-  PureComponent.apply(this, arguments)
+export default class ActionButton extends PureComponent {
 
-  this.send = this.props.send || this.context.send
-  this.click = this.click.bind(this)
-}
+  constructor (props, context) {
+    super(props, context)
 
-ActionButton.contextTypes = ActionButton.propTypes = {
-  send: PropTypes.func
-}
-
-ActionButton.defaultProps = {
-  tag: 'button'
-}
-
-inherit(ActionButton, PureComponent, {
+    this.send = this.props.send || this.context.send
+    this.click = this.click.bind(this)
+  }
 
   click (event) {
-    let action = this.send(this.props.action, this.props.value)
+    let task = this.send(this.props.action, this.props.value)
 
-    if (action && action instanceof Action) {
-      action.onOpen(this.props.onOpen)
-            .onUpdate(this.props.onUpdate)
-            .onCancel(this.props.onCancel)
-            .onDone(this.props.onDone)
-            .onError(this.props.onError)
+    if (task instanceof Task) {
+      task.onOpen(this.props.onOpen)
+      task.onUpdate(this.props.onUpdate)
+      task.onCancel(this.props.onCancel)
+      task.onDone(this.props.onDone)
+      task.onError(this.props.onError)
     }
 
     if (this.props.onClick) {
-      this.props.onClick(event, action)
+      this.props.onClick(event, task)
     }
 
-    return action
-  },
+    return task
+  }
 
   render () {
     const props = merge({}, this.props, { onClick: this.click })
@@ -56,4 +48,12 @@ inherit(ActionButton, PureComponent, {
     return createElement(this.props.tag, props)
   }
 
-})
+}
+
+ActionButton.contextTypes = ActionButton.propTypes = {
+  send: PropTypes.func
+}
+
+ActionButton.defaultProps = {
+  tag: 'button'
+}

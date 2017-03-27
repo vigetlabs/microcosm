@@ -1,33 +1,33 @@
 import React from 'react'
 import ActionButton from '../../src/addons/action-button'
-import Action from '../../src/action'
+import Task from '../../src/task'
 import {mount} from 'enzyme'
 
-describe('actions', function () {
+describe('tasks', function () {
 
-  it('passes the value property as parameters into the action', function () {
+  it('passes the value property as parameters into the task', function () {
     let button = mount(<ActionButton action="test" value={true} />, {
       context: {
-        send: (type, params) => new Action(type).resolve(params)
+        send: (type, params) => new Task(type).resolve(params)
       }
     })
 
-    let action = button.instance().click()
+    let task = button.instance().click()
 
-    expect(action.command.toString()).toEqual('test')
-    expect(action.payload).toBe(true)
+    expect(task.command.toString()).toEqual('test')
+    expect(task.payload).toBe(true)
   })
 
 })
 
 describe('callbacks', function () {
 
-  it('executes onOpen when that action completes', function () {
+  it('executes onOpen when that task completes', function () {
     let onOpen = jest.fn()
 
     let button = mount(<ActionButton action="test" onOpen={n => onOpen(n)} />, {
       context: {
-        send: () => new Action(n => n).open(true)
+        send: () => new Task(n => n).open(true)
       }
     })
 
@@ -36,12 +36,12 @@ describe('callbacks', function () {
     expect(onOpen).toHaveBeenCalledWith(true)
   })
 
-  it('executes onDone when that action completes', function () {
+  it('executes onDone when that task completes', function () {
     let onDone = jest.fn()
 
     let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
-        send: () => new Action(n => n).resolve(true)
+        send: () => new Task(n => n).resolve(true)
       }
     })
 
@@ -50,12 +50,12 @@ describe('callbacks', function () {
     expect(onDone).toHaveBeenCalledWith(true)
   })
 
-  it('executes onError when that action completes', function () {
+  it('executes onError when that task completes', function () {
     let onError = jest.fn()
 
     let button = mount(<ActionButton action="test" onError={n => onError(n)} />, {
       context: {
-        send: () => new Action(n => n).reject('bad')
+        send: () => new Task(n => n).reject('bad')
       }
     })
 
@@ -64,24 +64,24 @@ describe('callbacks', function () {
     expect(onError).toHaveBeenCalledWith('bad')
   })
 
-  it('executes onUpdate when that action sends an update', function () {
+  it('executes onUpdate when that task sends an update', function () {
     let onUpdate = jest.fn()
-    let action = new Action(n => n)
+    let task = new Task(n => n)
 
     let button = mount(<ActionButton action="test" onUpdate={n => onUpdate(n)} />, {
       context: {
-        send: () => action
+        send: () => task
       }
     })
 
     button.simulate('click')
 
-    action.update('loading')
+    task.update('loading')
 
     expect(onUpdate).toHaveBeenCalledWith('loading')
   })
 
-  it('does not execute onDone if not given an action', function () {
+  it('does not execute onDone if not given an task', function () {
     let onDone = jest.fn()
 
     mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
@@ -93,7 +93,7 @@ describe('callbacks', function () {
     expect(onDone).not.toHaveBeenCalled()
   })
 
-  it('does not execute onDone if not given an action', function () {
+  it('does not execute onDone if not given an task', function () {
     let onError = jest.fn()
 
     mount(<ActionButton action="test" onError={n => onError(n)} />, {
@@ -105,7 +105,7 @@ describe('callbacks', function () {
     expect(onError).not.toHaveBeenCalled()
   })
 
-  it('does not execute onUpdate if not given an action', function () {
+  it('does not execute onUpdate if not given an task', function () {
     let onUpdate = jest.fn()
 
     mount(<ActionButton action="test" onUpdate={n => onUpdate(n)} />, {
@@ -140,7 +140,7 @@ describe('manual operation', function () {
 
     let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
-        send: () => new Action(n => n).resolve(true)
+        send: () => new Task(n => n).resolve(true)
       }
     })
 
