@@ -1,42 +1,42 @@
 import { isPromise } from './utils'
 
 /**
- * Coroutine is used by an action to determine how it should resolve
+ * Coroutine is used by a task to determine how it should resolve
  * the body of their associated command.
  */
-export default function coroutine (action, body, repo) {
+export default function coroutine (task, body, repo) {
   /**
    * Provide support for Promises:
    *
-   * 1. Open the action
+   * 1. Open the task
    * 2. Unwrap the promise using `setTimeout`, which prevents errors
    *    elsewhere in the dispatch execution process from being trapped.
-   * 3. If the promise is rejected, reject the action
-   * 4. Otherwise resolve the action with the returned body
+   * 3. If the promise is rejected, reject the task
+   * 4. Otherwise resolve the task with the returned body
    */
   if (isPromise(body)) {
-    action.open()
+    task.open()
 
     body.then(
-      result => global.setTimeout(() => action.resolve(result), 0),
-      error  => global.setTimeout(() => action.reject(error), 0)
+      result => global.setTimeout(() => task.resolve(result), 0),
+      error  => global.setTimeout(() => task.reject(error), 0)
     )
 
-    return action
+    return task
   }
 
   /**
    * Check for thunks. An escape hatch to direction work with an
-   * action. It is triggered by returning a function from a
+   * task. It is triggered by returning a function from a
    * command. This middleware will execute that function with the
-   * action as the first argument.
+   * task as the first argument.
    */
   if (typeof body === 'function') {
-    body(action, repo)
+    body(task, repo)
 
-    return action
+    return task
   }
 
-  // Otherwise just return a resolved action
-  return action.resolve(body)
+  // Otherwise just return a resolved task
+  return task.resolve(body)
 }

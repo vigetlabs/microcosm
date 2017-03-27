@@ -2,13 +2,13 @@
  * An abstract event emitter class. Several modules extend from this class
  * to utilize events.
  * @constructor
- * @property {Object[]} _events A pool of event listeners
+ * @property {Array<Object>} _events A pool of event listeners
  */
-export default function Emitter () {
-  this._events = []
-}
+export default class Emitter {
 
-Emitter.prototype = {
+  constructor () {
+    this._events = []
+  }
 
   /**
    * Add an event listener.
@@ -20,7 +20,7 @@ Emitter.prototype = {
     this._events.push({ event, fn, scope, once: false })
 
     return this
-  },
+  }
 
   /**
    * Adds an `event` listener that will be invoked a single time then
@@ -33,7 +33,7 @@ Emitter.prototype = {
     this._events.push({ event, fn, scope, once: true })
 
     return this
-  },
+  }
 
   /**
    * Unsubscribe a callback. If no event is provided, removes all callbacks. If
@@ -60,14 +60,14 @@ Emitter.prototype = {
     }
 
     return this
-  },
+  }
 
   /**
    * Purge all event listeners
    */
   removeAllListeners () {
     this._events.length = 0
-  },
+  }
 
   /**
    * Emit `event` with the given args.
@@ -93,4 +93,5 @@ Emitter.prototype = {
 
     return this
   }
+
 }

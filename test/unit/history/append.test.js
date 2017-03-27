@@ -23,14 +23,14 @@ describe('History::append', function () {
     expect(three.parent).toEqual(two)
   })
 
-  it('emits an append event with the latest action', function () {
+  it('emits an append event with the latest task', function () {
     expect.assertions(1)
 
     const history = new History()
     const type = n => n
 
-    history.on('append', function (action) {
-      expect(action.command).toBe(type)
+    history.on('append', function (task) {
+      expect(task.command).toBe(type)
     })
 
     history.append(type)

@@ -1,10 +1,10 @@
-import Action          from './action'
-import Emitter         from './emitter'
-import History         from './history'
 import Archive         from './archive'
+import CompareTree     from './compare-tree'
 import DomainEngine    from './domain-engine'
 import EffectEngine    from './effect-engine'
-import CompareTree     from './compare-tree'
+import Emitter         from './emitter'
+import History         from './history'
+import Task            from './task'
 import coroutine       from './coroutine'
 import getRegistration from './get-registration'
 import tag             from './tag'
@@ -17,44 +17,42 @@ import {
 
 import {
   merge,
-  inherit,
   get,
   set,
   update
 } from './utils'
 
-function Microcosm (options, state, deserialize)  {
-  Emitter.call(this)
+class Microcosm extends Emitter {
+  constructor (options, state, deserialize)  {
+    super()
 
-  options = options || {}
+    options = options || {}
 
-  this.parent = options.parent || null
+    this.parent = options.parent || null
 
-  this.history = this.parent ? this.parent.history : new History(options.maxHistory)
-  this.history.addRepo(this)
+    this.history = this.parent ? this.parent.history : new History(options.maxHistory)
+    this.history.addRepo(this)
 
-  this.archive = new Archive()
-  this.domains = new DomainEngine(this)
-  this.effects = new EffectEngine(this)
-  this.changes = new CompareTree(this.state)
+    this.archive = new Archive()
+    this.domains = new DomainEngine(this)
+    this.effects = new EffectEngine(this)
+    this.changes = new CompareTree(this.state)
 
-  this.initial = this.parent ? this.parent.initial : {}
-  this.state = this.parent ? this.parent.state : this.initial
+    this.initial = this.parent ? this.parent.initial : {}
+    this.state = this.parent ? this.parent.state : this.initial
 
-  // Microcosm is now ready. Call the setup lifecycle method
-  this.setup(options)
+    // Microcosm is now ready. Call the setup lifecycle method
+    this.setup(options)
 
-  // If given state, reset to that snapshot
-  if (state) {
-    this.reset(state, deserialize)
+    // If given state, reset to that snapshot
+    if (state) {
+      this.reset(state, deserialize)
+    }
   }
-}
-
-inherit(Microcosm, Emitter, {
 
   setup () {
     // NOOP
-  },
+  }
 
   teardown () {
     this.effects.teardown()
@@ -68,61 +66,11 @@ inherit(Microcosm, Emitter, {
 
     // Remove all listeners
     this.removeAllListeners()
-  },
+  }
 
   getInitialState () {
     return this.initial
-  },
-
-  recall (action, fallback) {
-    return this.archive.get(action, fallback)
-  },
-
-  /**
-   * Create the initial state snapshot for an action. This is important so
-   * that, when rolling back to this action, it always has a state value.
-   * @param {Action} action - The action to generate a snapshot for
-   */
-  createInitialSnapshot (action) {
-    this.archive.create(action)
-  },
-
-  /**
-   * Update the state snapshot for a given action
-   * @param {Action} action - The action to update the snapshot for
-   */
-  updateSnapshot (action, state) {
-    this.archive.set(action, state)
-  },
-
-  /**
-   * Remove the snapshot for a given action
-   * @param {Action} action - The action to remove the snapshot for
-   */
-  removeSnapshot (action) {
-    this.archive.remove(action)
-  },
-
-  reconcile (action) {
-    let next = this.recall(action.parent, this.initial)
-
-    if (this.parent) {
-      next = merge(next, this.parent.recall(action))
-    }
-
-    if (!action.disabled) {
-      next = this.domains.dispatch(next, action)
-    }
-
-    this.updateSnapshot(action, next)
-
-    this.state = next
-  },
-
-  release (action) {
-    this.changes.update(this.state)
-    this.effects.dispatch(action)
-  },
+  }
 
   on (type, callback, scope) {
     let [event, meta=''] = type.split(':', 2)
@@ -136,7 +84,7 @@ inherit(Microcosm, Emitter, {
     }
 
     return this
-  },
+  }
 
   off (type, callback, scope) {
     let [event, meta=''] = type.split(':', 2)
@@ -150,31 +98,30 @@ inherit(Microcosm, Emitter, {
     }
 
     return this
-  },
+  }
 
   /**
-   * Append an action to history and return it. This is used by push,
-   * but also useful for testing action states.
+   * Append a task to history and return it. This is used by push, but
+   * also useful for testing specific task states.
    */
-  append (command, status) {
-    return this.history.append(command, status)
-  },
+  append (action, status) {
+    return this.history.append(action, status)
+  }
 
   /**
-   * Push an action into Microcosm. This will trigger the lifecycle for updating
-   * state.
+   * Create a task for a given action.
    */
-  push (command, ...params) {
-    let action = this.append(command)
+  push (action, ...params) {
+    let task = this.append(action)
 
-    coroutine(action, action.command.apply(null, params), this)
+    coroutine(task, task.action.apply(null, params), this)
 
-    return action
-  },
+    return task
+  }
 
   prepare (...params) {
     return (...extra) => this.push(...params, ...extra)
-  },
+  }
 
   addDomain (key, config, options) {
     let domain = this.domains.add(key, config, options)
@@ -186,19 +133,19 @@ inherit(Microcosm, Emitter, {
     this.push(ADD_DOMAIN, domain)
 
     return domain
-  },
+  }
 
   addEffect (config, options) {
     return this.effects.add(config, options)
-  },
+  }
 
   reset (data, deserialize) {
     return this.push(RESET, data, deserialize)
-  },
+  }
 
   patch (data, deserialize) {
     return this.push(PATCH, data, deserialize)
-  },
+  }
 
   deserialize (payload) {
     let base = payload
@@ -210,23 +157,23 @@ inherit(Microcosm, Emitter, {
     }
 
     return this.domains.deserialize(base)
-  },
+  }
 
   serialize () {
     let base = this.parent ? this.parent.serialize() : {}
 
     return this.domains.serialize(this.state, base)
-  },
+  }
 
   toJSON () {
     return this.serialize()
-  },
+  }
 
-  checkout (action) {
-    this.history.checkout(action)
+  checkout (task) {
+    this.history.checkout(task)
 
     return this
-  },
+  }
 
   fork () {
     return new Microcosm({
@@ -234,8 +181,58 @@ inherit(Microcosm, Emitter, {
     })
   }
 
-})
+  recall (task, fallback) {
+    return this.archive.get(task, fallback)
+  }
+
+  /**
+   * Create the initial state snapshot for a task. This is important so
+   * that, when rolling back to this task, it always has a state value.
+   * @param {Task} task - The task to generate a snapshot for
+   */
+  createInitialSnapshot (task) {
+    this.archive.create(task)
+  }
+
+  /**
+   * Update the state snapshot for a given task
+   * @param {Task} task The task to update the snapshot for
+   */
+  updateSnapshot (task, state) {
+    this.archive.set(task, state)
+  }
+
+  /**
+   * Remove the snapshot for a given task
+   * @param {Task} task - The task to remove the snapshot for
+   */
+  removeSnapshot (task) {
+    this.archive.remove(task)
+  }
+
+  reconcile (task) {
+    let next = this.recall(task.parent, this.initial)
+
+    if (this.parent) {
+      next = merge(next, this.parent.recall(task))
+    }
+
+    if (!task.disabled) {
+      next = this.domains.dispatch(next, task)
+    }
+
+    this.updateSnapshot(task, next)
+
+    this.state = next
+  }
+
+  release (task) {
+    this.changes.update(this.state)
+    this.effects.dispatch(task)
+  }
+
+}
 
 export default Microcosm
 
-export { Microcosm, Action, History, tag, get, set, update, merge, inherit, getRegistration }
+export { Microcosm, Task, History, tag, get, set, update, merge, getRegistration }

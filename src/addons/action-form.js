@@ -1,26 +1,15 @@
 import { createElement, PropTypes, PureComponent } from 'react'
-import { Action, merge, inherit } from '../microcosm'
+import { Task, merge } from '../microcosm'
 import serialize from 'form-serialize'
 
-function ActionForm () {
-  PureComponent.apply(this, arguments)
+class ActionForm extends PureComponent {
 
-  this.send = this.props.send || this.context.send
-  this.onSubmit = this.onSubmit.bind(this)
-}
+  constructor (props, context) {
+    super(props, context)
 
-ActionForm.contextTypes = {
-  send : PropTypes.func
-}
-
-ActionForm.defaultProps = {
-  action     : null,
-  serializer : form => serialize(form, { hash: true, empty: true }),
-  prepare    : n => n,
-  onSubmit   : n => n
-}
-
-inherit(ActionForm, PureComponent, {
+    this.send = this.props.send || this.context.send
+    this.onSubmit = this.onSubmit.bind(this)
+  }
 
   render () {
     let props = merge({}, this.props, { ref: 'form', onSubmit: this.onSubmit })
@@ -37,29 +26,40 @@ inherit(ActionForm, PureComponent, {
     delete props.send
 
     return createElement('form', props)
-  },
+  }
 
   onSubmit (event) {
     event.preventDefault()
     this.submit(event)
-  },
+  }
 
   submit (event) {
     let form   = this.refs.form
     let params = this.props.prepare(this.props.serializer(form))
-    let action = this.send(this.props.action, params)
+    let task   = this.send(this.props.action, params)
 
-    if (action && action instanceof Action) {
-      action.onOpen(this.props.onOpen)
-            .onUpdate(this.props.onUpdate)
-            .onCancel(this.props.onCancel)
-            .onDone(this.props.onDone)
-            .onError(this.props.onError)
+    if (task instanceof Task) {
+      task.onOpen(this.props.onOpen)
+      task.onUpdate(this.props.onUpdate)
+      task.onCancel(this.props.onCancel)
+      task.onDone(this.props.onDone)
+      task.onError(this.props.onError)
     }
 
-    this.props.onSubmit(event, action)
+    this.props.onSubmit(event, task)
   }
 
-})
+}
+
+ActionForm.contextTypes = {
+  send : PropTypes.func
+}
+
+ActionForm.defaultProps = {
+  action     : null,
+  serializer : form => serialize(form, { hash: true, empty: true }),
+  prepare    : n => n,
+  onSubmit   : n => n
+}
 
 export default ActionForm

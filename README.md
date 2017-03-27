@@ -16,11 +16,11 @@ let repo = new Microcosm()
 
 function getUser (id) {
   // This will return a promise. Microcosm automatically understands promises,
-  // see http://code.viget.com/microcosm/api/actions.html
+  // see http://code.viget.com/microcosm/api/tasks.html
   return fetch(`/users/#{id}`).then(response => response.json())
 }
 
-// Domains define how a Microcosm should turn actions into new state
+// Domains define how a Microcosm should turn tasks into new state
 repo.addDomain('users', {
   getInitialState () {
     return {}
@@ -36,10 +36,10 @@ repo.addDomain('users', {
   }
 })
 
-// Push an action, a request to perform some kind of work
-let action = repo.push(getUser, 2)
+// Create a task, a request to perform some kind of work
+let task = repo.push(getUser, 2)
 
-action.onDone(function () {
+task.onDone(function () {
   let user = get(repo.state, ['users', '2'])
 
   console.log(user) // { id: 2, name: "Bob" }
@@ -47,28 +47,42 @@ action.onDone(function () {
 
 // You could also handle errors in a domain's register method
 // by hooking into `getUser.error`
-action.onError(function () {
+task.onError(function () {
   alert("Something went terribly wrong!")
 })
 ```
 
 ## Why?
 
-Other [Flux](https://facebook.github.io/flux/) implementations treat actions as static events; the result of calling a dispatch method or resolving some sort of data structure like a Promise.
+Other [Flux](https://facebook.github.io/flux/) implementations treat
+actions as static events; the result of calling a dispatch method or
+resolving some sort of data structure like a Promise.
 
-But what if a user gets tired of waiting for a file to upload, or switches pages before a GET request finishes? What if they dip into a subway tunnel and lose connectivity? They might want to retry a request, cancel it, or just see what’s happening.
+But what if a user gets tired of waiting for a file to upload, or
+switches pages before a GET request finishes? What if they dip into a
+subway tunnel and lose connectivity? They might want to retry a
+request, cancel it, or just see what’s happening.
 
-The burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution for tracking outstanding requests and binding them to related action data. Presentation layer requirements leak into the data layer, making it harder to write tests, reuse code, and accommodate unexpected changes.
+The burden of this state often falls on data stores (Domains, in
+Microcosm) or a home-grown solution for tracking outstanding requests
+and binding them to related action data. Presentation layer
+requirements leak into the data layer, making it harder to write
+tests, reuse code, and accommodate unexpected changes.
 
 ### How Microcosm is different
 
-Microcosm actions are first-class citizens. An action can move from an `open` to `error` state if a request fails. Requests that are aborted may move into a `cancelled` state. As they change, actions resolve within a greater history of every other action.
+Microcosm actions are first-class citizens. Each dispatched action
+gets a unique task to represent it. This task can move from an `open`
+to `error` state if a request fails. Requests that are aborted may
+move into a `cancelled` state. As they change, tasks operate within a
+greater history.
 
 This means that applications can make a lot of assumptions about user actions:
 
-- Actions resolve in a consistent, predictable order
-- Action types are automatically generated
-- Actions maintain the same public API, no matter what asynchronous pattern is utilized (or not)
+- Tasks resolve in a consistent, predictable order
+- Task types are automatically generated based on their associated action
+- Tasks maintain the same public API, no matter what asynchronous
+  pattern is used inside of an action (or otherwise)
 
 This reduces a lot of boilerplate, however it also makes it easier for the presentation layer to handle use-case specific display requirements, like displaying an error, performing an optimistic update, or tracking file upload progress.
 
@@ -92,10 +106,13 @@ data modeling requirements of complicated UIs.
 
 ### Actions take center stage
 
-Microcosm organizes itself around a history of user actions. As those actions move through a set lifecycle,
-Microcosm reconciles them in the order they were created.
+Microcosm organizes itself around a history of user actions. Each
+dispatched action gets an associated Task to represent it. As this
+task executes the action, Microcosm reconciles changes to that task's
+state within a greater history
 
-Invoking `push()` appends to that history, and returns an `Action` object to represent it:
+Invoking `push()` appends to that history, creating a `Task` object
+for the associated action:
 
 ```javascript
 function getPlanet (id) {
@@ -103,16 +120,16 @@ function getPlanet (id) {
   return fetch('/planets/' + id).then(response => response.json())
 }
 
-let action = repo.push(getPlanet, 'venus')
+let task = repo.push(getPlanet, 'venus')
 
-action.onDone(function (planet) {
+task.onDone(function (planet) {
   console.log(planet.id) // venus
 })
 ```
 
 ### Domains: Stateless Stores
 
-A Domain is a collection of side-effect free operations for manipulating data. As actions update, Microcosm
+A Domain is a collection of side-effect free operations for manipulating data. As tasks update, Microcosm
 uses domains to determine how state should change. Old state comes in, new state comes out:
 
 ```javascript
@@ -135,8 +152,9 @@ const PlanetsDomain = {
 repo.addDomain('planets', PlanetsDomain)
 ```
 
-By implementing a register method, domains can subscribe to actions. Each action
-is assigned a unique string identifier. **Action type constants are generated automatically**.
+By implementing a register method, domains can subscribe to action
+statuses. Each action is assigned a unique string identifier. **Action
+type constants are generated automatically**.
 
 ### Pending, failed, and cancelled requests
 
@@ -162,61 +180,60 @@ const PlanetsDomain = {
 ```
 
 `open`, `loading`, `done`, `error` and `cancelled` are action
-states. In our action creator, we can unlock a deeper level of control
-by returning a function:
+states. In our action, we can operate directly on the Task object
+created for it by returning a function:
 
 ```javascript
 import request from 'superagent'
 
 function getPlanet (id) {
 
-  return function (action) {
-    action.open(id)
+  return function (task) {
+    task.open(id)
 
     let request = request('/planets/' + id)
 
     request.end(function (error, response) {
       if (error) {
-        action.reject(error)
+        task.reject(error)
       } else {
-        action.resolve(response.body)
+        task.resolve(response.body)
       }
     })
 
     // Cancellation!
-    action.onCancel(request.abort)
+    task.onCancel(request.abort)
   }
 }
 ```
 
-First, the action becomes `open`. This state is useful when waiting
+First, the task becomes `open`. This state is useful when waiting
 for something to happen, such as loading. When the request finishes,
-if it fails, we reject the action, otherwise we resolve it.
+if it fails, we reject the task, otherwise we resolve it.
 
-**Microcosm actions are cancellable**. Invoking `action.cancel()` triggers a
+**Microcosm tasks are cancellable**. Invoking `task.cancel()` triggers a
 cancellation event:
 
 ```javascript
-let action = repo.push(getPlanet, 'Pluto')
+let task = repo.push(getPlanet, 'Pluto')
 
 // Wait, Pluto isn't a planet!
-action.cancel()
+task.cancel()
 ```
 
-When `action.cancel()` is called, the action will move into a
+When `task.cancel()` is called, the task will move into a
 `cancelled` state. If a domain doesn't handle a given state no data
 operation will occur.
 
-Visit [the API documentation for actions](./docs/api/actions.md) to
+Visit [the API documentation for tasks](./docs/api/tasks.md) to
 read more.
 
 ### A historical account of everything that has happened
 
-Whenever an action creator is pushed into a Microcosm, it creates an
-action to represent it. This gets placed into a tree of all actions
-that have occurred.
+Whenever an action is dispatched in Microcosm, it creates task to
+represent it. This gets placed into a history of all previous tasks.
 
-For performance, completed actions are archived and purged from
+For performance, completed tasks are archived and purged from
 memory, however passing the `maxHistory` option into Microcosm allows
 for a compelling debugging story, For example, [the time-travelling
 Microcosm debugger](https://github.com/vigetlabs/microcosm-debugger):
@@ -233,11 +250,11 @@ Taken from [the Chatbot example](https://github.com/vigetlabs/microcosm/tree/mas
 
 #### Optimistic updates
 
-**Microcosm will never clean up an action that precedes incomplete
-work** When an action moves from `open` to `done`, or `cancelled`, the
-historical account of actions rolls back to the last state, rolling
-forward with the new action states. This makes optimistic updates simpler
-because action states are self cleaning:
+**Microcosm will never clean up a task that precedes incomplete
+work** When an task moves from `open` to `done`, or `cancelled`, the
+historical account of tasks rolls back to the last state, rolling
+forward with the new state. This makes optimistic updates simpler
+because handlers that operate on pending states self clean:
 
 ```javascript
 import { send } from 'actions/chat'
@@ -261,19 +278,21 @@ const Messages = {
 
   register () {
     return {
-      [action.open]  : this.setPending,
-      [action.error] : this.setError,
-      [action.done]  : this.addMessage
+      [send]: {
+        open  : this.setPending,
+        error : this.setError,
+        done  : this.addMessage
+      }
     }
   }
 }
 ```
 
 In this example, as chat messages are sent, we optimistically update
-state with the pending message. At this point, the action is in an
+state with the pending message. At this point, the task is in an
 `open` state. The request has not finished.
 
-On completion, when the action moves into `error` or `done`, Microcosm
+On completion, when the task moves into `error` or `done`, Microcosm
 recalculates state starting from the point _prior_ to the `open` state
 update. The message stops being in a loading state because, as far as
 Microcosm is now concerned, _it never occured_.
@@ -338,10 +357,10 @@ console.log(roster.state.users.length) // 20
 console.log(pagination.state.users.length) // 10
 ```
 
-`fork` returns a new Microcosm, however it shares the same action
-history. Additionally, it inherits state updates from its
-parent. In this example, we've added special version of the `roster`
-repo that only keeps track of the current page.
+`fork` returns a new Microcosm, however it shares the same
+history. Additionally, it inherits state updates from its parent. In
+this example, we've added special version of the `roster` repo that
+only keeps track of the current page.
 
 As `getUsers()` is called, the `roster` will add the new users to the
 total pool of records. Forks dispatch sequentially, so the child

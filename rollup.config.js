@@ -1,6 +1,7 @@
 'use strict'
 
-import babel from 'rollup-plugin-babel'
+import buble from 'rollup-plugin-buble'
+import strip from 'rollup-plugin-strip'
 import uglify from 'rollup-plugin-uglify'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import path from 'path'
@@ -14,8 +15,9 @@ const config = {
     path.resolve('src/microcosm.js')
   ],
   plugins: [
-    babel(),
-    nodeResolve()
+    buble(),
+    nodeResolve(),
+    strip()
   ]
 }
 
@@ -25,7 +27,12 @@ if (process.env.NODE_ENV === 'production') {
       compress: {
         passes: 5
       },
-      mangle: { toplevel: true }
+      mangleProperties: {
+        regex: /^_/
+      },
+      mangle: {
+        toplevel: true
+      }
     })
   )
 }

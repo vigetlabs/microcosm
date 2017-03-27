@@ -6,14 +6,14 @@
 
 ## Overview
 
-Not all actions result in updates to application state. For example:
+Not all tasks result in updates to application state. For example:
 
 * Writing backup data to `localStorage`
 * Sending analytics events
 * Persisting query information in the URL.
 
 **Effect handlers fire immediately Domains and are only called once per
-action state.** This means that a repo's state is up to date with
+task state.** This means that a repo's state is up to date with
 the latest state transitions by the time they execute.
 
 ## A quick example - query strings
@@ -69,7 +69,7 @@ work done in `setup()`.
 
 ### `register()`
 
-Returns an object mapping actions to methods on the effect. This is the
+Returns an object mapping tasks to methods on the effect. This is the
 communication point between a effect and the rest of the system.
 
 ```javascript

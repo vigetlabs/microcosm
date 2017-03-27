@@ -1,11 +1,11 @@
-import Action from '../../../src/action'
+import Task from '../../../src/task'
 
 describe('abandon', function () {
 
   it('will not abandon the same child twice', function () {
-    const one = new Action(n => n)
-    const two = new Action(n => n)
-    const parent = new Action(n => n)
+    const one = new Task(n => n)
+    const two = new Task(n => n)
+    const parent = new Task(n => n)
 
     parent.adopt(one)
     parent.adopt(two)

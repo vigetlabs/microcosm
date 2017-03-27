@@ -1,4 +1,4 @@
-import Microcosm, { get, merge, tag, inherit, getRegistration } from '../microcosm'
+import Microcosm, { get, merge, tag, getRegistration } from '../microcosm'
 import { Children, PropTypes, PureComponent, createElement } from 'react'
 
 const EMPTY = {}
@@ -7,21 +7,20 @@ function passChildren () {
   return this.props.children ? Children.only(this.props.children) : null
 }
 
-function Presenter (props, context) {
-  PureComponent.apply(this, arguments)
+class Presenter extends PureComponent {
+  constructor (props, context) {
+    super(props, context)
 
-  if (this.render !== Presenter.prototype.render) {
-    this.defaultRender = this.render
-    this.render = Presenter.prototype.render
-  } else {
-    this.defaultRender = passChildren
+    if (this.render !== Presenter.prototype.render) {
+      this.defaultRender = this.render
+      this.render = Presenter.prototype.render
+    } else {
+      this.defaultRender = passChildren
+    }
+
+    // Autobind send so that context is maintained when passing send to children
+    this.send = this.send.bind(this)
   }
-
-  // Autobind send so that context is maintained when passing send to children
-  this.send = this.send.bind(this)
-}
-
-inherit(Presenter, PureComponent, {
 
   _beginSetup (mediator) {
     this.repo = mediator.repo
@@ -32,11 +31,11 @@ inherit(Presenter, PureComponent, {
     this.model = this._prepareModel()
 
     this.ready(this.repo, this.props, this.state)
-  },
+  }
 
   _beginTeardown () {
     this.teardown(this.repo, this.props, this.state)
-  },
+  }
 
   _requestRepo (contextRepo) {
     let givenRepo = this.props.repo || contextRepo
@@ -45,48 +44,48 @@ inherit(Presenter, PureComponent, {
     this.didFork = workingRepo !== givenRepo
 
     return workingRepo
-  },
+  }
 
   _prepareModel (props = this.props, state = this.state) {
     return this.mediator.updateModel(props, state)
-  },
+  }
 
   setup (repo, props, state) {
     // NOOP
-  },
+  }
 
   ready (repo, props, state) {
     // NOOP
-  },
+  }
 
   update (repo, props, state) {
     // NOOP
-  },
+  }
 
   teardown (repo, props, state) {
     // NOOP
-  },
+  }
 
   intercept () {
     return EMPTY
-  },
+  }
 
   componentWillUpdate (props, state) {
     this.model = this._prepareModel(props, state)
     this.update(this.repo, props, state)
-  },
+  }
 
   getRepo (repo, props) {
     return repo ? repo.fork() : new Microcosm()
-  },
+  }
 
   send () {
     return this.mediator.send(...arguments)
-  },
+  }
 
   getModel (repo, props, state) {
     return EMPTY
-  },
+  }
 
   render () {
     return (
@@ -98,26 +97,25 @@ inherit(Presenter, PureComponent, {
     )
   }
 
-})
-
-function PresenterMediator (props, context) {
-  PureComponent.apply(this, arguments)
-
-  this.presenter = props.presenter
-
-  this.repo = this.presenter._requestRepo(context.repo)
-  this.send = this.send.bind(this)
-  this.state = { repo: this.repo, send: this.send }
 }
 
-inherit(PresenterMediator, PureComponent, {
+class PresenterMediator extends PureComponent {
+
+  constructor (props, context) {
+    super(props, context)
+    this.presenter = props.presenter
+
+    this.repo = this.presenter._requestRepo(context.repo)
+    this.send = this.send.bind(this)
+    this.state = { repo: this.repo, send: this.send }
+  }
 
   getChildContext () {
     return {
       repo : this.repo,
       send : this.send
     }
-  },
+  }
 
   componentWillMount () {
     if (this.presenter.getModel !== Presenter.prototype.getModel) {
@@ -125,11 +123,11 @@ inherit(PresenterMediator, PureComponent, {
     }
 
     this.presenter._beginSetup(this)
-  },
+  }
 
   componentDidMount () {
     this.presenter.refs = this.refs
-  },
+  }
 
   componentWillUnmount () {
     this.presenter.refs = this.refs
@@ -141,7 +139,7 @@ inherit(PresenterMediator, PureComponent, {
     }
 
     this.presenter._beginTeardown()
-  },
+  }
 
   render () {
     // setState might have been called before the model
@@ -156,7 +154,7 @@ inherit(PresenterMediator, PureComponent, {
     }
 
     return this.presenter.defaultRender()
-  },
+  }
 
   updateModel (props, state) {
     let model = this.presenter.getModel(props, state)
@@ -179,7 +177,7 @@ inherit(PresenterMediator, PureComponent, {
     this.setState(next)
 
     return merge(this.state, next)
-  },
+  }
 
   setModel (state) {
     let last = this.state
@@ -197,13 +195,13 @@ inherit(PresenterMediator, PureComponent, {
     if (next !== null) {
       this.setState(next)
     }
-  },
+  }
 
   hasParent () {
     // Do not allow transfer across repos. Check to for inheritence by comparing
     // the common history object shared between repos
     return get(this.repo, 'history') === get(this.context, ['repo', 'history'])
-  },
+  }
 
   send (intent, ...params) {
     // tag intent first so the interceptor keys off the right key
@@ -228,7 +226,7 @@ inherit(PresenterMediator, PureComponent, {
     return this.repo.push.apply(this.repo, arguments)
   }
 
-})
+}
 
 PresenterMediator.propTypes = {
   repo : PropTypes.object

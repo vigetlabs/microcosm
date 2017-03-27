@@ -34,7 +34,7 @@ describe('Reconciliation', function() {
     expect(handler).toHaveBeenCalledTimes(3)
   })
 
-  it('reapplies future actions if a prior action updates', function() {
+  it('reapplies future tasks if a prior task updates', function() {
     const repo = new Microcosm({ maxHistory: Infinity })
     const handler = jest.fn((a, b) => a + b)
 
@@ -66,7 +66,7 @@ describe('Reconciliation', function() {
     expect(repo).toHaveState('count', 6)
   })
 
-  it('archived actions are removed from the archive', function() {
+  it('archived tasks are removed from the archive', function() {
     const repo = new Microcosm()
 
     let one = repo.append('a')

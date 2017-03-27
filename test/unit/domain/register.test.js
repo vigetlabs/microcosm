@@ -3,7 +3,7 @@ import Microcosm from '../../../src/microcosm'
 let action = a => a
 
 describe('Domain::register', function () {
-  it('sends actions in the context of the domain', function () {
+  it('calls action handlers in the context of the domain', function () {
     expect.assertions(1)
 
     let repo = new Microcosm()

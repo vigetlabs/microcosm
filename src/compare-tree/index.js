@@ -11,12 +11,11 @@ import {
 const ROOT_KEY = ''
 const ROOT_PATH = ''
 
-export default function CompareTree (initial) {
-  this.snapshot = initial
-  this.nodes = {}
-}
-
-CompareTree.prototype = {
+export default class CompareTree {
+  constructor (initial) {
+    this.snapshot = initial
+    this.nodes = {}
+  }
 
   /**
    * Create a subscription to a particular set of key paths.
@@ -38,7 +37,7 @@ CompareTree.prototype = {
     query.on('change', callback, scope)
 
     return query
-  },
+  }
 
   /**
    * Remove a subscription created by .on()
@@ -59,7 +58,7 @@ CompareTree.prototype = {
         this.prune(query)
       }
     }
-  },
+  }
 
   /**
    * Compare a new snapshot to the last snapshot, triggering event
@@ -76,7 +75,7 @@ CompareTree.prototype = {
     if (root) {
       this.scan(root, last, snapshot)
     }
-  },
+  }
 
   /**
    * Add a node to the tree if it has not otherwise been added.
@@ -91,7 +90,7 @@ CompareTree.prototype = {
     }
 
     return this.nodes[id]
-  },
+  }
 
   /**
    * Add a query to the tree if it has not otherwise been
@@ -107,7 +106,7 @@ CompareTree.prototype = {
     }
 
     return this.nodes[id]
-  },
+  }
 
   /**
    * Remove a node from this tree.
@@ -116,7 +115,7 @@ CompareTree.prototype = {
    */
   remove (node) {
     delete this.nodes[node.id]
-  },
+  }
 
   /**
    * Remove a query, then traverse that queries key paths to remove
@@ -145,7 +144,7 @@ CompareTree.prototype = {
     }
 
     this.remove(query)
-  },
+  }
 
   /**
    * Build up a branch of nodes given a path of keys, appending a query
@@ -165,43 +164,36 @@ CompareTree.prototype = {
     }
 
     last.connect(query)
-  },
+  }
 
   /**
    * Traverse the tree of subscriptions, triggering queries along the way
    * @private
    * @param {Node} root Starting point to scan
    * @param {*} from Starting snapshot
-   * @param {*} from Next snapshot
+   * @param {*} next Next snapshot
+   * @param {Array.<Query>} [triggered] List of queries that have already changed
    */
-  scan (root, from, to) {
-    // Maintain a stack of nodes to process. As we traverse the tree,
-    // we'll push edges into this stack for processing
-    let stack = [{ node: root, last: from, next: to }]
+  scan (node, last, next, triggered) {
+    if (!triggered) {
+      triggered = []
+    }
 
-    // Track the queries we've already triggered so queries with
-    // multiple subscriptions do not fire excessively
-    let triggered = []
+    if (last !== next) {
+      var edges = node.edges
+      for (var i = 0, len = edges.length; i < len; i++) {
+        var edge = edges[i]
 
-    while (stack.length) {
-      var { node, last, next } = stack.pop()
-
-      if (last !== next) {
-
-        var edges = node.edges
-        for (var i = 0, len = edges.length; i < len; i++) {
-          var edge = edges[i]
-
-          if (edge instanceof Query && triggered.indexOf(edge) < 0) {
-            edge.trigger(this.snapshot)
+        if (edge instanceof Query) {
+          if (triggered.indexOf(edge) < 0) {
             triggered.push(edge)
-          } else {
-            stack.push({
-              node: edge,
-              last: last == null ? last : last[edge.key],
-              next: next == null ? next : next[edge.key]
-            })
+            edge.trigger(this.snapshot)
           }
+        } else {
+          var edgeLast = !last ? last : last[edge.key]
+          var edgeNext = !next ? next : next[edge.key]
+
+          this.scan(edge, edgeLast, edgeNext, triggered)
         }
       }
     }

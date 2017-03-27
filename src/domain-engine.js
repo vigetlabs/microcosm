@@ -12,22 +12,22 @@ import {
   castPath
 } from './key-path'
 
-export default function DomainEngine (repo) {
-  this.repo = repo
-  this.domains = []
-  this.registry = {}
+export default class DomainEngine {
 
-  // All realms contain a meta domain for basic Microcosm operations
-  this.add([], MetaDomain)
-}
+  constructor (repo) {
+    this._repo = repo
+    this._domains = []
+    this._registry = {}
 
-DomainEngine.prototype = {
+    // All realms contain a meta domain for basic Microcosm operations
+    this.add([], MetaDomain)
+  }
 
-  getHandlers ({ command, status }) {
+  _getHandlers ({ command, status }) {
     let handlers = []
 
-    for (var i = 0, len = this.domains.length; i < len; i++) {
-      var [key, domain] = this.domains[i]
+    for (var i = 0, len = this._domains.length; i < len; i++) {
+      var [key, domain] = this._domains[i]
 
       if (domain.register) {
         var handler = getRegistration(domain.register(), command, status)
@@ -39,51 +39,51 @@ DomainEngine.prototype = {
     }
 
     return handlers
-  },
+  }
 
-  register (action) {
-    let type = action.type
+  register (task) {
+    let type = task.type
 
-    if (typeof this.registry[type] === 'undefined') {
-      this.registry[type] = this.getHandlers(action)
+    if (typeof this._registry[type] === 'undefined') {
+      this._registry[type] = this._getHandlers(task)
     }
 
-    return this.registry[type]
-  },
+    return this._registry[type]
+  }
 
   add (key, config, options) {
-    let domain = createOrClone(config, options, this.repo)
+    let domain = createOrClone(config, options, this._repo)
 
-    this.domains.push([castPath(key), domain])
+    this._domains.push([castPath(key), domain])
 
     // Reset the registry
-    this.registry = {}
+    this._registry = {}
 
     if (domain.setup) {
-      domain.setup(this.repo, options)
+      domain.setup(this._repo, options)
     }
 
     return domain
-  },
+  }
 
   reduce (fn, state, scope) {
     let next = state
 
     // Important: start at 1 to avoid the meta domain
-    for (var i = 1, len = this.domains.length; i < len; i++) {
-      let [ key, domain ] = this.domains[i]
+    for (var i = 1, len = this._domains.length; i < len; i++) {
+      let [ key, domain ] = this._domains[i]
 
       next = fn.call(scope, next, key, domain)
     }
 
     return next
-  },
+  }
 
   sanitize (data) {
     let next = {}
 
-    for (var i = 0, len = this.domains.length; i < len; i++) {
-      let [key] = this.domains[i]
+    for (var i = 0, len = this._domains.length; i < len; i++) {
+      let [key] = this._domains[i]
 
       if (key.length && has(data, key)) {
         next = set(next, key, get(data, key))
@@ -91,22 +91,22 @@ DomainEngine.prototype = {
     }
 
     return next
-  },
+  }
 
-  dispatch (state, action) {
-    let handlers = this.register(action)
+  dispatch (state, task) {
+    let handlers = this.register(task)
 
     for (var i = 0, len = handlers.length; i < len; i++) {
       var { key, domain, handler } = handlers[i]
 
       var last = get(state, key)
-      var next = handler.call(domain, last, action.payload)
+      var next = handler.call(domain, last, task.payload)
 
       state = set(state, key, next)
     }
 
     return state
-  },
+  }
 
   deserialize (payload) {
     return this.reduce(function (memo, key, domain) {
@@ -116,7 +116,7 @@ DomainEngine.prototype = {
 
       return memo
     }, payload)
-  },
+  }
 
   serialize (state, payload) {
     return this.reduce(function (memo, key, domain) {
@@ -126,14 +126,14 @@ DomainEngine.prototype = {
 
       return memo
     }, payload)
-  },
+  }
 
   teardown () {
-    for (var i = 0, len = this.domains.length; i < len; i++) {
-      let [key, domain] = this.domains[i]
+    for (var i = 0, len = this._domains.length; i < len; i++) {
+      let [key, domain] = this._domains[i]
 
       if (domain.teardown) {
-        domain.teardown(this.repo)
+        domain.teardown(this._repo)
       }
     }
   }

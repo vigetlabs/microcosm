@@ -1,14 +1,14 @@
 import tag from './tag'
 
 function sandbox (data, deserialize) {
-  return (action, repo) => {
+  return (task, repo) => {
     let payload = data
 
     if (deserialize) {
       try {
         payload = repo.deserialize(data)
       } catch (error) {
-        action.reject(error)
+        task.reject(error)
         throw error
       }
     }
@@ -17,7 +17,7 @@ function sandbox (data, deserialize) {
     // accidentally having their keys reset by parents.
     let sanitary = repo.domains.sanitize(payload)
 
-    action.resolve(sanitary)
+    task.resolve(sanitary)
   }
 }
 

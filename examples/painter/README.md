@@ -5,7 +5,7 @@ between black and white. This example was created to test the
 [time-travel debugger for Microcosm](https://github.com/vigetlabs/microcosm-debugger).
 
 A pixel-painting application to showcase some of Microcosm's capabilities around
-action history using [microcosm-debugger](https://github.com/vigetlabs/microcosm-debugger).
+task history using [microcosm-debugger](https://github.com/vigetlabs/microcosm-debugger).
 
 ## Setup
 

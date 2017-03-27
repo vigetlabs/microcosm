@@ -19,7 +19,7 @@ describe('When pushing actions inside of another action', function () {
     }
 
     function stepper () {
-      return function (action, repo) {
+      return function (task, repo) {
         expect(repo).toHaveState('data.count', 2)
         expect(repo).toHaveState('data.focus', true)
 
@@ -28,11 +28,11 @@ describe('When pushing actions inside of another action', function () {
         expect(repo).toHaveState('data.count', 2)
         expect(repo).toHaveState('data.focus', false)
 
-        action.open()
+        task.open()
         expect(repo).toHaveState('data.count', 2)
         expect(repo).toHaveState('data.focus', false)
 
-        action.resolve(1)
+        task.resolve(1)
         expect(repo).toHaveState('data.count', 3)
         expect(repo).toHaveState('data.focus', false)
       }
