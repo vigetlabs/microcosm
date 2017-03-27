@@ -15,19 +15,19 @@ import {
 export default class DomainEngine {
 
   constructor (repo) {
-    this.repo = repo
-    this.domains = []
-    this.registry = {}
+    this._repo = repo
+    this._domains = []
+    this._registry = {}
 
     // All realms contain a meta domain for basic Microcosm operations
     this.add([], MetaDomain)
   }
 
-  getHandlers ({ command, status }) {
+  _getHandlers ({ command, status }) {
     let handlers = []
 
-    for (var i = 0, len = this.domains.length; i < len; i++) {
-      var [key, domain] = this.domains[i]
+    for (var i = 0, len = this._domains.length; i < len; i++) {
+      var [key, domain] = this._domains[i]
 
       if (domain.register) {
         var handler = getRegistration(domain.register(), command, status)
@@ -44,23 +44,23 @@ export default class DomainEngine {
   register (task) {
     let type = task.type
 
-    if (typeof this.registry[type] === 'undefined') {
-      this.registry[type] = this.getHandlers(task)
+    if (typeof this._registry[type] === 'undefined') {
+      this._registry[type] = this._getHandlers(task)
     }
 
-    return this.registry[type]
+    return this._registry[type]
   }
 
   add (key, config, options) {
-    let domain = createOrClone(config, options, this.repo)
+    let domain = createOrClone(config, options, this._repo)
 
-    this.domains.push([castPath(key), domain])
+    this._domains.push([castPath(key), domain])
 
     // Reset the registry
-    this.registry = {}
+    this._registry = {}
 
     if (domain.setup) {
-      domain.setup(this.repo, options)
+      domain.setup(this._repo, options)
     }
 
     return domain
@@ -70,8 +70,8 @@ export default class DomainEngine {
     let next = state
 
     // Important: start at 1 to avoid the meta domain
-    for (var i = 1, len = this.domains.length; i < len; i++) {
-      let [ key, domain ] = this.domains[i]
+    for (var i = 1, len = this._domains.length; i < len; i++) {
+      let [ key, domain ] = this._domains[i]
 
       next = fn.call(scope, next, key, domain)
     }
@@ -82,8 +82,8 @@ export default class DomainEngine {
   sanitize (data) {
     let next = {}
 
-    for (var i = 0, len = this.domains.length; i < len; i++) {
-      let [key] = this.domains[i]
+    for (var i = 0, len = this._domains.length; i < len; i++) {
+      let [key] = this._domains[i]
 
       if (key.length && has(data, key)) {
         next = set(next, key, get(data, key))
@@ -129,11 +129,11 @@ export default class DomainEngine {
   }
 
   teardown () {
-    for (var i = 0, len = this.domains.length; i < len; i++) {
-      let [key, domain] = this.domains[i]
+    for (var i = 0, len = this._domains.length; i < len; i++) {
+      let [key, domain] = this._domains[i]
 
       if (domain.teardown) {
-        domain.teardown(this.repo)
+        domain.teardown(this._repo)
       }
     }
   }

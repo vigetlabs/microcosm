@@ -25,12 +25,13 @@ if (process.env.NODE_ENV === 'production') {
   config.plugins.push(
     uglify({
       compress: {
-        passes: 2,
-        drop_console: true
+        passes: 5
+      },
+      mangleProperties: {
+        regex: /^_/
       },
       mangle: {
-        toplevel: true,
-        regex: /^_/
+        toplevel: true
       }
     })
   )
