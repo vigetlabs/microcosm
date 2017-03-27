@@ -5,11 +5,8 @@
 
 ## Overview
 
-Microcosm is [Flux](https://facebook.github.io/flux/) with first-class
-actions and state sandboxing.
-
-The source of truth in Microcosm is a historical record of actions. As
-they move through a set lifecycle, Microcosm reconciles actions in the
+The source of truth in Microcosm is a historical record of tasks. As
+they move through a set lifecycle, Microcosm reconciles tasks in the
 order they were created. This makes optimistic updates, cancellation,
 and loading states much simpler. They self clean.
 
@@ -48,26 +45,26 @@ pure; calling this function will not update state.
 
 ### `append(action)`
 
-Appends an action to a Microcosm's history, however does not execute
-it. This is useful for testing store responses to a specific action.
+Appends a task to a Microcosm's history, however does not execute
+it. This is useful for testing store responses to a specific task.
 
 ```javascript
-let action = repo.append(createPlanet)
+let task = repo.append(createPlanet)
 
-// Test that opening an action for a planet marks
+// Test that opening a task for a planet marks
 // that planet as loading
-action.open({ id: 'pluto' })
+task.open({ id: 'pluto' })
 assert.equal(repo.state.planets.pluto.loading, true)
 
-// And then test that closing the action moves marks
+// And then test that closing the task moves marks
 // the planet as no longer loading
-action.resolve({ id: 'pluto' })
+task.resolve({ id: 'pluto' })
 assert.falsy(repo.state.planets.pluto.loading)
 ```
 
 ### `push(action, ...parameters)`
 
-Resolves an action. Sends the result and any errors to a given error-first callback.
+Resolves a task. Sends the result and any errors to a given error-first callback.
 
 ```javascript
 repo.push(createPlanet, { name: 'Merkur' })
@@ -100,7 +97,7 @@ repo.patch({
 ### `addDomain(key, config, options)`
 
 Generates a domain based on the provided `config` and assigns it to
-manage the provided `key`. Whenever this domain responds to an action,
+manage the provided `key`. Whenever this domain responds to a task,
 it will be provided the current state for that particular key.
 
 `options` passed as the third argument are sent into a domain's
@@ -127,7 +124,7 @@ class Effect {
     // clean up
   }
   handleAction (repo, payload) {
-    // respond once to an action changing states
+    // respond once to a task changing states
   }
   register () {
     return {
@@ -176,7 +173,7 @@ Alias for `serialize`
 Partially applies `push`. Sucessive calls will append new parameters
 (see `push()`)
 
-### `checkout(action)`
+### `checkout(task)`
 
 Change the current focal point of the history data structure used by
 Microcosm. This is useful for undo/redo, or for debugging purposes:
@@ -203,7 +200,8 @@ console.log(repo.state.color) // "red"
 
 The `maxHistory` option passed into a Microcosm dictates how far back
 it will track history. By default, it will only track incomplete
-actions. Try setting `maxHistory` to a specific value, like `10` or `100`.
+tasks. Try setting `maxHistory` to a specific value, like `10` or
+`100`.
 
 ### `on(event, callback)`
 
@@ -231,7 +229,7 @@ repo.off('change', callback)
 
 ### `fork()`
 
-Instantiate a new Microcosm that shares the same action history as
+Instantiate a new Microcosm that shares the same task history as
 another. This is useful for producing "umbrellas" of Microcosms,
 particularly within a tree of UI components.
 
@@ -247,7 +245,7 @@ var fork = roster.fork()
 // Adding a domain to a fork does not add it to the parent
 fork.addDomain('page', PaginatedPeople)
 
-// Pushing from a fork will add an action to the same
+// Pushing from a fork will add a task to the same
 // history as the parent
 fork.push(getPeople)
 ```

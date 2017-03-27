@@ -1,4 +1,4 @@
-import Action          from './action'
+import Task            from './task'
 import Emitter         from './emitter'
 import History         from './history'
 import Archive         from './archive'
@@ -81,47 +81,47 @@ inherit(Microcosm, Emitter, {
   /**
    * Create the initial state snapshot for an action. This is important so
    * that, when rolling back to this action, it always has a state value.
-   * @param {Action} action - The action to generate a snapshot for
+   * @param {Task} task The task to generate a snapshot for
    */
-  createInitialSnapshot (action) {
-    this.archive.create(action)
+  createInitialSnapshot (task) {
+    this.archive.create(task)
   },
 
   /**
    * Update the state snapshot for a given action
-   * @param {Action} action - The action to update the snapshot for
+   * @param {Task} task The task to update the snapshot for
    */
-  updateSnapshot (action, state) {
-    this.archive.set(action, state)
+  updateSnapshot (task, state) {
+    this.archive.set(task, state)
   },
 
   /**
    * Remove the snapshot for a given action
-   * @param {Action} action - The action to remove the snapshot for
+   * @param {Task} task The task to remove the snapshot for
    */
-  removeSnapshot (action) {
-    this.archive.remove(action)
+  removeSnapshot (task) {
+    this.archive.remove(task)
   },
 
-  reconcile (action) {
-    let next = this.recall(action.parent, this.initial)
+  reconcile (task) {
+    let next = this.recall(task.parent, this.initial)
 
     if (this.parent) {
-      next = merge(next, this.parent.recall(action))
+      next = merge(next, this.parent.recall(task))
     }
 
-    if (!action.disabled) {
-      next = this.domains.dispatch(next, action)
+    if (!task.disabled) {
+      next = this.domains.dispatch(next, task)
     }
 
-    this.updateSnapshot(action, next)
+    this.updateSnapshot(task, next)
 
     this.state = next
   },
 
-  release (action) {
+  release (task) {
     this.changes.update(this.state)
-    this.effects.dispatch(action)
+    this.effects.dispatch(task)
   },
 
   on (type, callback, scope) {
@@ -165,11 +165,11 @@ inherit(Microcosm, Emitter, {
    * state.
    */
   push (command, ...params) {
-    let action = this.append(command)
+    let task = this.append(command)
 
-    coroutine(action, action.command.apply(null, params), this)
+    coroutine(task, task.action.apply(null, params), this)
 
-    return action
+    return task
   },
 
   prepare (...params) {
@@ -238,4 +238,4 @@ inherit(Microcosm, Emitter, {
 
 export default Microcosm
 
-export { Microcosm, Action, History, tag, get, set, update, merge, inherit, getRegistration }
+export { Microcosm, Task, History, tag, get, set, update, merge, inherit, getRegistration }

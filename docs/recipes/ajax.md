@@ -9,8 +9,7 @@ There are two ways to manage asynchronous requests in Microcosm:
 
 Microcosm implements standard behaviors for Promise resolution;
 convenient for Promise based AJAX libraries. Whenever an action
-creator returns a Promise, it will wait for that Promise to
-resolve/reject:
+returns a Promise, it will wait for that Promise to resolve/reject:
 
 ```javascript
 // Run this code yourself at:
@@ -43,33 +42,32 @@ repo.push(getSite)
 
 ### How it works
 
-When Microcosm detects a Promise returned from an action
-creator, it handles it in the following way:
+When Microcosm detects a Promise returned from an action, it handles
+it in the following way:
 
-1. Mark the action as `open`. This gives domain handlers a way to
+1. Mark the associated task as `open`. This gives domain handlers a way to
    subscribe to a loading state.
-2. On resolution, mark the action as `done` and update its payload to
+2. On resolution, mark the task as `done` and update its payload to
    that of the resolved Promise.
-3. On failure, mark the action as `error` and update its payload to
+3. On failure, mark the task as `error` and update its payload to
    the associated error.
 
-### Why did my loading state go away when the action completed?
+### Why did my loading state go away when the task completed?
 
 Microcosm's state management model enables easy clean up of loading
-states. Whenever the action moves from `open` to `done`, Microcosm
-re-executes all outstanding actions in the order they were pushed.
+states. Whenever the task moves from `open` to `done`, Microcosm
+re-executes all outstanding tasks in the order they were pushed.
 
-To illustrate, when the action creator is first pushed into Microcosm,
-it inserts an action into Microcosm's historical ledger of all actions
-like:
+To illustrate, when the action is first pushed into Microcosm, it
+inserts a task into Microcosm's historical ledger of all tasks like:
 
 ```
 1. ajax (open)
 ```
 
 Microcosm then enumerates through this list, using domain handlers to
-calculate repo state. When the action completes, it moves into a
-`done` state:
+calculate repo state. When the task completes, it moves into a `done`
+state:
 
 ```
 1. ajax (done)
@@ -78,9 +76,9 @@ calculate repo state. When the action completes, it moves into a
 Again, Microcosm rolls forward through the history list, recalculating
 state for the repo.
 
-Since the action is no longer in an `open` state, the
-resulting repo state will be as though the loading domain
-handler never fired. There's no cleanup.
+Since the task is no longer in an `open` state, the resulting repo
+state will be as though the loading domain handler never
+fired. There's no cleanup.
 
 ## Tap into the lower-level action API
 
@@ -101,14 +99,14 @@ var request = require('superagent')
 var repo = new Microcosm()
 
 function getSite () {
-  return function (action) {
-    action.open()
+  return function (task) {
+    task.open()
 
     request.get('http://code.viget.com/microcosm').end(function(error, payload) {
       if (error) {
-        action.reject(error)
+        task.reject(error)
       } else {
-        action.resolve(payload)
+        task.resolve(payload)
       }
     })
   }

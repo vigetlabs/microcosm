@@ -1,12 +1,12 @@
 # Domains
 
 1. [Overview](#overview)
-2. [Subscribing to different action states](#subscribing-to-different-action-states)
+2. [Subscribing to different task states](#subscribing-to-different-task-states)
 3. [API](#api)
 
 ## Overview
 
-Domains define the rules in which resolved actions are converted into
+Domains define the rules in which resolved tasks are converted into
 new state. They are added to a Microcosm instance using `addDomain`:
 
 ```javascript
@@ -23,9 +23,9 @@ Domains do not enforce any particular structure. However specific
 methods can be defined on domains to configure behavior at key points
 in a Microcosm's lifecycle.
 
-## Subscribing to different action states
+## Subscribing to different task states
 
-Domains can provide a `register` method to dictate what actions they
+Domains can provide a `register` method to dictate what tasks they
 listen to:
 
 ```javascript
@@ -117,7 +117,7 @@ const Planets = {
 
 ### `register()`
 
-Returns an object mapping actions to methods on the domain. This is the
+Returns an object mapping tasks to methods on the domain. This is the
 communication point between a domain and the rest of the system.
 
 ```javascript

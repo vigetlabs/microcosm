@@ -1,5 +1,5 @@
 import { createElement, PropTypes, PureComponent } from 'react'
-import { Action, merge, inherit } from '../microcosm'
+import { Task, merge, inherit } from '../microcosm'
 import serialize from 'form-serialize'
 
 function ActionForm () {
@@ -45,19 +45,19 @@ inherit(ActionForm, PureComponent, {
   },
 
   submit (event) {
-    let form   = this.refs.form
+    let form = this.refs.form
     let params = this.props.prepare(this.props.serializer(form))
-    let action = this.send(this.props.action, params)
+    let task = this.send(this.props.action, params)
 
-    if (action && action instanceof Action) {
-      action.onOpen(this.props.onOpen)
-            .onUpdate(this.props.onUpdate)
-            .onCancel(this.props.onCancel)
-            .onDone(this.props.onDone)
-            .onError(this.props.onError)
+    if (task && task instanceof Task) {
+      task.onOpen(this.props.onOpen)
+      task.onUpdate(this.props.onUpdate)
+      task.onCancel(this.props.onCancel)
+      task.onDone(this.props.onDone)
+      task.onError(this.props.onError)
     }
 
-    this.props.onSubmit(event, action)
+    this.props.onSubmit(event, task)
   }
 
 })

@@ -1,10 +1,10 @@
-import Action from '../../../src/action'
+import Task from '../../../src/task'
 
 describe('adopt', function () {
 
   it('will not adopt the same child twice', function () {
-    const child = new Action(n => n)
-    const parent = new Action(n => n)
+    let child = new Task(n => n)
+    let parent = new Task(n => n)
 
     parent.adopt(child)
     parent.adopt(child)

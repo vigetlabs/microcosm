@@ -1,7 +1,7 @@
 /**
- * Keep track of prior action states according to an action's id
+ * Keep track of prior task states according to an task's id
  * @constructor
- * @property {Object} pool An object mapping of action ids to snapshots
+ * @property {Object} pool An object mapping of task ids to snapshots
  */
 export default function Archive () {
   this.pool = {}
@@ -9,42 +9,42 @@ export default function Archive () {
 
 Archive.prototype = {
   /**
-   * Create an initial snapshot for an action by setting it to that of its
+   * Create an initial snapshot for an task by setting it to that of its
    * parent.
-   * @param {Action} action Action to create an initial snapshot for
+   * @param {Task} task Task to create an initial snapshot for
    */
-  create (action) {
-    this.set(action, this.get(action.parent))
+  create (task) {
+    this.set(task, this.get(task.parent))
   },
 
   /**
-   * Access a prior snapshot for a given action
-   * @param {Action} action Action for requested snapshot
+   * Access a prior snapshot for a given task
+   * @param {Task} task Task for requested snapshot
    */
-  get (action, fallback) {
-    console.assert(action, 'Unable to get ' + typeof action + ' action')
+  get (task, fallback) {
+    console.assert(task, 'Unable to get ' + typeof task + ' task')
 
-    let value = this.pool[action.id]
+    let value = this.pool[task.id]
 
     return value === undefined ? fallback : value
   },
 
   /**
-   * Assign a new snapshot for an action
-   * @param {Action} action Action for requested snapshot
+   * Assign a new snapshot for an task
+   * @param {Task} task Task for requested snapshot
    * @param {Object} snapshot
    */
-  set (action, snapshot) {
-    this.pool[action.id] = snapshot
+  set (task, snapshot) {
+    this.pool[task.id] = snapshot
   },
 
   /**
-   * Remove a snapshot for an action.
-   * @param {Action} action Action to eliminate snapshot for
+   * Remove a snapshot for an task.
+   * @param {Task} task Task to eliminate snapshot for
    */
-  remove (action) {
-    console.assert(action, 'Unable to remove ' + typeof action + ' action.')
+  remove (task) {
+    console.assert(task, 'Unable to remove ' + typeof task + ' task.')
 
-    delete this.pool[action.id]
+    delete this.pool[task.id]
   }
 }

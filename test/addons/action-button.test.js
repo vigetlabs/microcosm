@@ -1,6 +1,6 @@
 import React from 'react'
 import ActionButton from '../../src/addons/action-button'
-import Action from '../../src/action'
+import Task from '../../src/task'
 import {mount} from 'enzyme'
 
 describe('actions', function () {
@@ -8,7 +8,7 @@ describe('actions', function () {
   it('passes the value property as parameters into the action', function () {
     let button = mount(<ActionButton action="test" value={true} />, {
       context: {
-        send: (type, params) => new Action(type).resolve(params)
+        send: (type, params) => new Task(type).resolve(params)
       }
     })
 
@@ -27,7 +27,7 @@ describe('callbacks', function () {
 
     let button = mount(<ActionButton action="test" onOpen={n => onOpen(n)} />, {
       context: {
-        send: () => new Action(n => n).open(true)
+        send: () => new Task(n => n).open(true)
       }
     })
 
@@ -41,7 +41,7 @@ describe('callbacks', function () {
 
     let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
-        send: () => new Action(n => n).resolve(true)
+        send: () => new Task(n => n).resolve(true)
       }
     })
 
@@ -55,7 +55,7 @@ describe('callbacks', function () {
 
     let button = mount(<ActionButton action="test" onError={n => onError(n)} />, {
       context: {
-        send: () => new Action(n => n).reject('bad')
+        send: () => new Task(n => n).reject('bad')
       }
     })
 
@@ -66,7 +66,7 @@ describe('callbacks', function () {
 
   it('executes onUpdate when that action sends an update', function () {
     let onUpdate = jest.fn()
-    let action = new Action(n => n)
+    let action = new Task(n => n)
 
     let button = mount(<ActionButton action="test" onUpdate={n => onUpdate(n)} />, {
       context: {
@@ -140,7 +140,7 @@ describe('manual operation', function () {
 
     let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
-        send: () => new Action(n => n).resolve(true)
+        send: () => new Task(n => n).resolve(true)
       }
     })
 

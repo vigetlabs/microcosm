@@ -1,4 +1,4 @@
-import Microcosm, { Action, tag, get, getRegistration } from '../microcosm'
+import Microcosm, { Task, tag, get, getRegistration } from '../microcosm'
 
 expect.extend({
 
@@ -23,19 +23,19 @@ expect.extend({
     }
   },
 
-  toHaveStatus (action, status) {
-    if (action instanceof Action === false) {
-      throw new TypeError('toHaveStatus expects an Action. Received ' +
-                          (action != null ? 'a ' + action.constructor.name : action) + '.')
+  toHaveStatus (task, status) {
+    if (task instanceof Task === false) {
+      throw new TypeError('toHaveStatus expects an Task. Received ' +
+                          (task != null ? 'a ' + task.constructor.name : task) + '.')
     }
 
     let operator = this.isNot ? 'not to' : 'to'
-    let pass = action.is(status)
+    let pass = task.is(status)
 
     return {
       pass: pass,
       message: () => {
-        return `Expected action ${operator} to be'${status}'.`
+        return `Expected task ${operator} to be'${status}'.`
       }
     }
   },

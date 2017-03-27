@@ -1,9 +1,9 @@
-import Action from '../../../src/action'
+import Task from '../../../src/task'
 import Microcosm from '../../../src/microcosm'
 
-describe('Action::toggle', function() {
+describe('Task::toggle', function() {
 
-  it('it will not dispatch an action disabled at the head', function () {
+  it('it will not dispatch a task disabled at the head', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
 
     repo.addDomain('count', {
@@ -23,7 +23,7 @@ describe('Action::toggle', function() {
     expect(repo).toHaveState('count', 2)
   })
 
-  it('it will not dispatch an action disabled in the middle', function () {
+  it('it will not dispatch a task disabled in the middle', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
 
     repo.addDomain('count', {

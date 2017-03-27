@@ -16,9 +16,9 @@ components.
 
 Presenters also make it easy for components deep within a component
 tree to communicate without passing a long chain of props. The
-`withSend` and `<Form />` may be used to broadcast messages called
-"actions" to parent Presenter components, or straight to a Microcosm
-repo itself if no Presenter intercepts the message.
+`withSend` and `<Form />` may be used to broadcast actions parent
+Presenter components, or straight to a Microcosm repo itself if no
+Presenter intercepts the message.
 
 We'll cover both of these features within this document
 
@@ -134,11 +134,13 @@ DOM.render(<CountPresenter repo={ repo } />, document.getElementById('container'
 
 Whenever the form is submitted, an `increaseCount` action will bubble
 up to the associated Presenter including the serialized parameters of
-the form. Since this Presenter's intercept method includes `increaseCount`, it will
-invoke the method with the associated parameters.
+the form. Since this Presenter's intercept method includes
+`increaseCount`, it will invoke the method with the associated
+parameters.
 
 If a Presenter does not intercept an action, it will bubble up to any
-parent Presenters. If no Presenter intercepts the action, it will dispatch the action to the repo.
+parent Presenters. If no Presenter intercepts the action, it will
+dispatch the action to the repo.
 
 ```javascript
 function StepperForm ({ count }) {
