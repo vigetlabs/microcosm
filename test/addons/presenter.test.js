@@ -938,6 +938,7 @@ describe('intercepting actions', function() {
 
   it('send bubbles up to parent presenters', function () {
     const test = jest.fn()
+    const intercepted = jest.fn()
 
     class Child extends Presenter {
       view () {
@@ -947,7 +948,7 @@ describe('intercepting actions', function() {
 
     class Parent extends Presenter {
       intercept () {
-        return { test: (repo, props) => test(props) }
+        return { test: (repo, props) => intercepted(props) }
       }
       view () {
         return <Child />
@@ -956,7 +957,34 @@ describe('intercepting actions', function() {
 
     mount(<Parent repo={ new Microcosm() } />).find(View).simulate('click')
 
-    expect(test).toHaveBeenCalledWith(true)
+    expect(test).not.toHaveBeenCalled()
+    expect(intercepted).toHaveBeenCalledWith(true)
+  })
+
+  it('send with an action bubbles up to parent presenters', function () {
+    const test = jest.fn()
+    const intercepted = jest.fn()
+
+    const Child = withSend(function ({ send }) {
+      return <button id="button" onClick={() => send(test, true)} />
+    })
+
+    class Parent extends Presenter {
+      intercept () {
+        return {
+          [test]: (repo, val) => intercepted(val)
+        }
+      }
+      view () {
+        return <Child />
+      }
+    }
+
+    mount(<Parent repo={ new Microcosm() } />).find(Child).simulate('click')
+
+    expect(test).not.toHaveBeenCalled()
+    expect(intercepted).toHaveBeenCalledWith(true)
+
   })
 
   it('intents are tagged', function () {

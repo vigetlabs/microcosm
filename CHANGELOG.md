@@ -1,5 +1,9 @@
 # Changelog
 
+## 12.3.1
+- Fix bug where Presenters weren't intercepting actions sent from
+child views.
+
 ## 12.3.0
 
 - Allow failed deserializes to raise an exception
