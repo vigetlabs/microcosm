@@ -52,6 +52,8 @@ describe('History::wait', function () {
       three.resolve('Wut')
     }, 10)
 
+    // This will fail if the promise returned from `wait()` rejects, and
+    // it will only pass when the promise resolves.
     return history.wait()
   })
 

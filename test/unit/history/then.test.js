@@ -16,6 +16,8 @@ describe('History::then', function () {
       three.resolve()
     }, 10)
 
+    // This will fail if the promise returned from `history.then`
+    // rejects, it will only pass when the promise resolves.
     return history
   })
 

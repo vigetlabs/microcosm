@@ -106,6 +106,15 @@ In the example above, actions `one` and `two` will be forgotten. The
 repo's history will reconcile, and it will be as if they never
 existed.
 
+This flips the `disabled` state of each action provided. By executing
+toggle a second time, these actions will be re-enabled:
+
+```
+// Actions disabled in the prior example
+repo.history.toggle([ one, two ])
+// `one` and `two` have been re-enabled
+```
+
 ### toArray()
 
 Return an array version of the active branch:
