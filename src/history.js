@@ -30,6 +30,91 @@ export default function History (limit) {
 inherit(History, Emitter, {
 
   /**
+   * Set the head of the tree to a target action. This has the effect
+   * of controlling time in a Microcosm's history.
+   * @param {Action} action The new head of the tree
+   */
+  checkout (action) {
+    this.head = action || this.head
+
+    this.setActiveBranch()
+
+    this.reconcile(this.head)
+
+    return this
+  },
+
+  /**
+   * Toggle actions in bulk, then reconcile from the first action
+   * @param {Action[]} - A list of actions to toggle
+   * @public
+   */
+  toggle (actions) {
+    let list = [].concat(actions)
+
+    list.forEach(action => action.toggle('silently'))
+
+    this.reconcile(list[0])
+  },
+
+  /**
+   * Convert the active branch of history into an array.
+   */
+  toArray () {
+    return this.map(n => n)
+  },
+
+  /**
+   * Map over the active branch.
+   */
+  map (fn, scope) {
+    let size = this.size
+    let items = Array(size)
+    let action = this.head
+
+    while (size--) {
+      items[size] = fn.call(scope, action)
+      action = action.parent
+    }
+
+    return items
+  },
+
+  /**
+   * Return a promise that represents the resolution of all actions in
+   * the current branch.
+   * @returns {Promise}
+   */
+  wait () {
+    let actions = this.toArray()
+    let count = actions.length
+
+    return new Promise (function (resolve, reject) {
+      function checkStatus () {
+        count -= 1
+
+        if (count <= 0) {
+          resolve()
+        }
+      }
+
+      actions.map(function (action) {
+        action.onDone(checkStatus)
+        action.onCancel(checkStatus)
+        action.onError(reject)
+      })
+    })
+  },
+
+  /**
+   * Chain off of wait(). Provides a promise interface
+   * @returns {Promise}
+   */
+  then (pass, fail) {
+    return this.wait().then(pass, fail)
+  },
+
+  /**
    * Setup the head and root action for a history. This effectively
    * starts or restarts history.
    */
@@ -61,16 +146,6 @@ inherit(History, Emitter, {
       console.assert(repos[i], `Missing repo! Was it removed before it could run repo.${method}?`)
       repos[i][method](payload)
     }
-  },
-
-  checkout (action) {
-    this.head = action || this.head
-
-    this.setActiveBranch()
-
-    this.reconcile(this.head)
-
-    return this
   },
 
   append (command, status) {
@@ -189,35 +264,6 @@ inherit(History, Emitter, {
     }
 
     this.size = size
-  },
-
-  /**
-   * Toggle actions in bulk, then reconcile from the first action
-   * @param {Action[]} - A list of actions to toggle
-   */
-  toggle (actions) {
-    let list = [].concat(actions)
-
-    list.forEach(action => action.toggle('silently'))
-
-    this.reconcile(list[0])
-  },
-
-  map (fn, scope) {
-    let size = this.size
-    let items = Array(size)
-    let action = this.head
-
-    while (size--) {
-      items[size] = fn.call(scope, action)
-      action = action.parent
-    }
-
-    return items
-  },
-
-  toArray () {
-    return this.map(n => n)
   }
 
 })
