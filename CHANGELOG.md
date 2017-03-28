@@ -1,6 +1,14 @@
 # Changelog
 
+## 12.4.0
+
+- Added `repo.history.wait()` and `repo.history.then()` to allow tests
+  to wait for all outstanding actions to complete.
+- Added `repo.history` documentation.
+
+
 ## 12.3.1
+
 - Fix bug where Presenters weren't intercepting actions sent from
 child views.
 
