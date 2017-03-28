@@ -10,7 +10,8 @@
 2. [Domains](api/domains.md)
 3. [Actions](api/actions.md)
 4. [Effects](api/effects.md)
-5. [Immutability Helpers](api/immutability-helpers.md)
+5. [History](api/history.md)
+6. [Immutability Helpers](api/immutability-helpers.md)
 
 ## Addons
 
