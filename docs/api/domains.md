@@ -1,8 +1,9 @@
 # Domains
 
 1. [Overview](#overview)
-2. [Subscribing to different action states](#subscribing-to-different-action-states)
-3. [API](#api)
+2. [Creating Domains](#creating-domains)
+3. [Subscribing to different action states](#subscribing-to-different-action-states)
+4. [API](#api)
 
 ## Overview
 
@@ -23,6 +24,67 @@ Domains do not enforce any particular structure. However specific
 methods can be defined on domains to configure behavior at key points
 in a Microcosm's lifecycle.
 
+## Creating Domains
+
+There are two ways to create a domains: as a class, and as a plain object. The
+usage is roughly the same for both versions, the class form can additionally
+take advantage of having a `constructor`.
+
+### Domains as classes
+
+```javascript
+class Domain {
+  setup (repo, options) {
+    // Run startup behavior
+  }
+  teardown (repo) {
+    // Clean up any setup behavior
+  }
+  handleAction (state, payload) {
+    // Old state in, new state out...
+    let newState = { ...state, prop: payload.prop }
+
+    return newState
+  }
+  register () {
+    return {
+      [action] : this.handleAction
+    }
+  }
+}
+
+repo.addDomain('key', Domain)
+```
+
+### Domains as plain objects
+
+```javascript
+const Domain = {
+  setup (repo, options) {
+    // Run startup behavior
+  },
+  teardown (repo) {
+    // Clean up any setup behavior
+  },
+  handleAction (state, payload) {
+    let newState = { ...state, prop: payload.prop }
+
+    return newState
+  },
+  register () {
+    return {
+      [action] : this.handleAction
+    }
+  }
+}
+
+repo.addDomain('key', Domain)
+```
+
+Microcosm calls `Object.create` on the simple object form, preventing any
+assignments within the Domain from polluting other instances. In this way, they
+are somewhat similar to the class form.
+
 ## Subscribing to different action states
 
 Domains can provide a `register` method to dictate what actions they
@@ -35,11 +97,13 @@ const Domain = {
 
   register () {
     return {
-      [action.open]      : this.setLoading,
-      [action.loading]   : this.setProgress,
-      [action.done]      : this.addRecord,
-      [action.error]     : this.setError,
-      [action.cancelled] : this.setCancelled
+      [action]: {
+        open: this.setLoading,
+        loading: this.setProgress,
+        done: this.addRecord,
+        error: this.setError,
+        cancelled: this.setCancelled
+      }
     }
   }
 }

@@ -1,8 +1,9 @@
 # Effects
 
 1. [Overview](#overview)
-2. [A quick example](#a-quick-example---query-strings)
-3. [API](#api)
+2. [Creating Effects](#creating-effects)
+3. [A quick example](#a-quick-example---query-strings)
+4. [API](#api)
 
 ## Overview
 
@@ -15,6 +16,62 @@ Not all actions result in updates to application state. For example:
 **Effect handlers fire immediately after Domain handlers and are only
 called once per action state.** This means that a repo's state is up to
 date with the latest state transitions by the time they execute.
+
+## Creating Effects
+
+There are two ways to create an effect: as a class, and as a plain object. The usage
+is roughly the same for both versions, the class form can additionally take
+advantage of having a `constructor`.
+
+### Effects as classes
+
+```javascript
+class Effect {
+  setup (repo, options) {
+    // Run startup behavior
+  }
+  teardown (repo) {
+    // Clean up any setup behavior
+  }
+  handleAction (repo, payload) {
+    // Respond once to an action
+  }
+  register () {
+    return {
+      [action] : this.handleAction
+    }
+  }
+}
+
+repo.addEffect(Effect)
+```
+
+### Effects as plain objects
+
+```javascript
+const Effect = {
+  setup (repo, options) {
+    // Run starting behavior
+  },
+  teardown (repo) {
+    // Clean up
+  },
+  handleAction (repo, payload) {
+    // Respond once to an action
+  },
+  register () {
+    return {
+      [action] : this.handleAction
+    }
+  }
+}
+
+repo.addEffect(Effect)
+```
+
+Microcosm calls `Object.create` on the simple object form, preventing any
+assignments within the Effect from polluting other instances. In this way, they
+are somewhat similar to the class form.
 
 ## A quick example - query strings
 

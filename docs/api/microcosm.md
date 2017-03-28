@@ -109,6 +109,30 @@ with the provided options and associated repo.
 
 [See the documentation on domains](domains.md).
 
+```javascript
+class Domain {
+  setup (repo, options) {
+    // Run startup behavior
+  }
+  teardown (repo) {
+    // Clean up any setup behavior
+  }
+  handleAction (state, payload) {
+    // Old state in, new state out...
+    let newState = { ...state, prop: payload.prop }
+
+    return newState
+  }
+  register () {
+    return {
+      [action] : this.handleAction
+    }
+  }
+}
+
+repo.addDomain('key', Domain)
+```
+
 ### `addEffect(config, options)`
 
 Generates an effect based on the provided `config`. `options` passed
@@ -121,13 +145,13 @@ options and associated repo.
 ```javascript
 class Effect {
   setup (repo, options) {
-    // run starting behavior
+    // Run starting behavior
   }
   teardown (repo) {
-    // clean up
+    // Clean up
   }
   handleAction (repo, payload) {
-    // respond once to an action changing states
+    // Respond once to an action changing states
   }
   register () {
     return {
@@ -135,6 +159,7 @@ class Effect {
     }
   }
 }
+
 repo.addEffect(Effect)
 ```
 
