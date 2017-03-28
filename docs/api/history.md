@@ -3,9 +3,10 @@
 1. [Overview](#overview)
 2. [API](#api)
 
-**Note: This is a work in progress document and feature. History has been a
-private API for a very long time. We're still working through the best
-public interface for working with Microcosm's action history.
+**Note: This is a work in progress document and feature. History has
+been a private API for a very long time. We're still working through
+the best public interface for working with Microcosm's action
+history.**
 
 ## Overview
 
