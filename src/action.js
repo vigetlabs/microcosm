@@ -8,9 +8,8 @@ import {
 let uid = 0
 
 /**
- * Actions represent the state of an action. As actions change, their
- * associated history coordinates with Microcosm instances to update
- * state. Create an Action using `Microcosm::push`
+ * Actions encapsulate the process of resolving an action creator. Create an
+ * action using `Microcosm::push`:
  * @constructor
  * @param {Function|string} command
  * @param {string} [status] Starting status

@@ -1,5 +1,5 @@
 import tag from '../../src/tag'
-import getRegistration, {STATUSES} from '../../src/get-registration'
+import getRegistration, {ALIASES} from '../../src/get-registration'
 
 const action = tag(n => n)
 
@@ -25,8 +25,8 @@ describe('getRegistration', function () {
   })
 
   describe('Action aliasing', function () {
-    for (let status in STATUSES) {
-      let alias = STATUSES[status]
+    for (let status in ALIASES) {
+      let alias = ALIASES[status]
 
       it(`can inspect the ${status} status`, function () {
         let success = n => n
@@ -34,7 +34,7 @@ describe('getRegistration', function () {
           [action]: {
             [status]: success
           }
-        }, action, STATUSES[status])
+        }, action, ALIASES[status])
 
         expect(answer).toBe(success)
       })

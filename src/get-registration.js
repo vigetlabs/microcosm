@@ -1,6 +1,6 @@
 import { isObject } from './utils'
 
-export const STATUSES = {
+export const ALIASES = {
   inactive  : 'inactive',
   open      : 'open',
   update    : 'loading',
@@ -23,7 +23,7 @@ export const STATUSES = {
  */
 export default function getRegistration (pool, command, status) {
   let answer = null
-  let alias = STATUSES[status]
+  let alias = ALIASES[status]
 
   console.assert(alias, 'Invalid action status ' + status)
 
