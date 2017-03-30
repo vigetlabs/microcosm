@@ -15,12 +15,12 @@ describe('Action cancelled state', function () {
     expect(callback).toHaveBeenCalled()
   })
 
-  it('becomes disposable when cancelled', function () {
+  it('becomes complete when cancelled', function () {
     const action = new Action(identity)
 
     action.cancel()
 
-    expect(action.disposable).toBe(true)
+    expect(action.complete).toBe(true)
   })
 
   it('exposes a cancelled type when cancelled', function () {

@@ -25,7 +25,12 @@ if (process.env.NODE_ENV === 'production') {
       compress: {
         passes: 5
       },
-      mangle: { toplevel: true }
+      mangleProperties: {
+        regex: /^_/
+      },
+      mangle: {
+        toplevel: true
+      }
     })
   )
 }

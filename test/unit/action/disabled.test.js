@@ -26,12 +26,13 @@ describe('Action disabled state', function () {
 
   it('can toggle history without triggering a reconciliation', function () {
     const action = new Action(identity)
+    const handler = jest.fn()
 
-    jest.spyOn(action.history, 'reconcile')
+    action.on('change', handler)
 
     action.toggle('silently')
 
-    expect(action.history.reconcile).not.toHaveBeenCalled()
+    expect(handler).not.toHaveBeenCalled()
   })
 
 })

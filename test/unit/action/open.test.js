@@ -32,7 +32,7 @@ describe('Action open state', function () {
     expect(action).toHaveStatus('open')
   })
 
-  it('does not trigger an open event if it is disposable', function () {
+  it('does not trigger an open event if it is complete', function () {
     const action = new Action(identity)
     const spy = jest.fn()
 

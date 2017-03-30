@@ -43,7 +43,7 @@ describe('Action error state', function () {
     expect(fn).toHaveBeenCalledWith(true)
   })
 
-  it('does not trigger an error event if it is disposable', function () {
+  it('does not trigger an error event if it is complete', function () {
     const action = new Action(identity)
     const spy = jest.fn()
 

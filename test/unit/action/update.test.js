@@ -53,7 +53,7 @@ describe('Action update state', function () {
     expect(callback).toHaveBeenCalledWith(3)
   })
 
-  it('does not trigger an update event if it is disposable', function () {
+  it('does not trigger an update event if it is complete', function () {
     const action = new Action(identity)
     const spy = jest.fn()
 

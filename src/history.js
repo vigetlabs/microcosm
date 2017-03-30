@@ -19,7 +19,6 @@ import {
 export default function History (limit) {
   Emitter.call(this)
 
-  this.ids = 0
   this.size = 0
   this.limit = Math.max(1, limit || 1)
   this.repos = []
@@ -123,10 +122,6 @@ inherit(History, Emitter, {
     this.append(START, 'resolve')
   },
 
-  getId () {
-    return ++this.ids
-  },
-
   addRepo (repo) {
     this.repos.push(repo)
   },
@@ -149,13 +144,13 @@ inherit(History, Emitter, {
   },
 
   append (command, status) {
-    let action = new Action(command, status, this)
+    let action = new Action(command, status)
 
     if (this.size > 0) {
       this.head.lead(action)
     } else {
       // Always have a parent node, no matter what
-      let birth = new Action(BIRTH, 'resolve', this)
+      let birth = new Action(BIRTH, 'resolve')
       birth.adopt(action)
 
       this.root = action
@@ -165,6 +160,8 @@ inherit(History, Emitter, {
     this.size += 1
 
     this.invoke('createInitialSnapshot', action)
+
+    action.on('change', this.reconcile, this)
 
     this._emit('append', action)
 
@@ -237,7 +234,7 @@ inherit(History, Emitter, {
     let size = this.size
     let root = this.root
 
-    while (size > this.limit && root.disposable) {
+    while (size > this.limit && root.complete) {
       size -= 1
       this.invoke('removeSnapshot', root.parent)
       root = root.next
