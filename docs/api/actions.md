@@ -47,7 +47,7 @@ on how you author action creators.
 
 ## Writing Action Creators
 
-There are three ways to write action creators in Microcosm, all of
+There are four ways to write action creators in Microcosm, all of
 which relate to the value returned from functions passed into `repo.push()`.
 
 ### Return a primitive value
@@ -103,6 +103,45 @@ function readPlanets () {
 
 repo.push(readPlanets)
 ```
+
+### Return a generator
+
+Often times we need to dispatch multiple actions in sequential
+order. For example, what if we want to ask the user to confirm their
+action before deleting a record?
+
+This can be accomplished by using a generator:
+
+```javascript
+function ask (message) {
+  return action => {
+    if (confirm(message)) {
+      action.resolve()
+    } else {
+      action.reject()
+    }
+  }
+}
+
+function deleteUser (id) {
+  return fetch.delete('/users/${id}').then(response => response.json())
+}
+
+function confirmAndDelete (user) {
+  return function * (send) {
+    yield send(ask, `Are you sure you want to delete ${user.name}?`)
+    yield send(deleteUser, user.id)
+  }
+}
+```
+
+Each `yield` in the generator processes sequentially. A parent action
+is returned from `repo.push()` to represent the entire sequence. If
+any action is cancelled or rejected along the way, the parent action
+is rejected or cancelled with the same payload.
+
+When all steps of the generator complete, the payload of the parent
+action will be the resolved payload of the final action.
 
 ## Dispatching to Domains
 

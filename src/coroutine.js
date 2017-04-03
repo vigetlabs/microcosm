@@ -1,4 +1,5 @@
-import { isPromise } from './utils'
+import Action from './action'
+import { get, isPromise } from './utils'
 
 /**
  * Coroutine is used by an action to determine how it should resolve
@@ -21,6 +22,36 @@ export default function coroutine (action, body, repo) {
       result => global.setTimeout(() => action.resolve(result), 0),
       error  => global.setTimeout(() => action.reject(error), 0)
     )
+
+    return action
+  }
+
+  if (body && get(body, 'constructor.name') === 'GeneratorFunction') {
+    action.open()
+
+    let iterator = body(repo.push.bind(repo), repo)
+
+    function step (payload) {
+      let next = iterator.next(payload)
+
+      if (next.done) {
+        action.resolve(payload)
+      } else {
+        progress(next.value)
+      }
+    }
+
+    function progress (value) {
+      if (value instanceof Action) {
+        value.onDone(step)
+        value.onCancel(action.cancel, action)
+        value.onError(action.reject, action)
+      } else {
+        step(value)
+      }
+    }
+
+    step()
 
     return action
   }

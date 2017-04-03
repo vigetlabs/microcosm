@@ -51,7 +51,7 @@ expect.extend({
     let actual = get(repo.state, key)
 
     if (arguments.length > 2) {
-      pass = actual === value
+      pass = JSON.stringify(actual) === JSON.stringify(value)
     } else {
       pass = actual !== undefined
     }
@@ -62,8 +62,8 @@ expect.extend({
     return {
       pass: pass,
       message: () => {
-        return `Expected '${path}' in repo.state ${operator} be ${JSON.stringify(value)} ` +
-               `but it is ${actual}.`
+        return `Expected '${path}' in repo.state ${operator} be ${this.utils.printExpected(value)} ` +
+               `but it is ${this.utils.printReceived(actual)}.`
       }
     }
   }
