@@ -1,10 +1,6 @@
 let uid = 0
 const FALLBACK = '_action'
 
-const toString = function () {
-  return this.done
-}
-
 /**
  * Uniquely tag a function. This is used to identify actions.
  * @param {Function} fn The target function to add action identifiers to.
@@ -52,7 +48,7 @@ export default function tag (fn, name) {
   fn.cancelled = fn.cancel
 
   // The default state is done
-  fn.toString = toString
+  fn.toString = () => symbol
 
   return fn
 }
