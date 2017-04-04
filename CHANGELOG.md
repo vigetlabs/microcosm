@@ -7,6 +7,8 @@
 - The first argument of `setup`, the options object passed when
   instantiating a Microcosm argument, will always be an object. There
   is no need to handle the null case for options.
+- Added a strict mode build of Microcosm that ships with development
+  assertions. See `installation.md` for more details
 
 ### Defaults
 
