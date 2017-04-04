@@ -23,12 +23,12 @@ import {
   update
 } from './utils'
 
-function Microcosm (options, state, deserialize)  {
+function Microcosm (preOptions, state, deserialize)  {
   Emitter.call(this)
 
-  options = options || {}
+  let options = merge(Microcosm.defaults, this.constructor.defaults, preOptions)
 
-  this.parent = options.parent || null
+  this.parent = options.parent
 
   this.history = this.parent ? this.parent.history : new History(options.maxHistory)
   this.history.addRepo(this)
@@ -48,6 +48,16 @@ function Microcosm (options, state, deserialize)  {
   if (state) {
     this.reset(state, deserialize)
   }
+}
+
+/**
+ * Options passed into Microcosm always extend from this static
+ * property. You can override this value to provide additional
+ * defaults for your extension of Microcosm.
+ */
+Microcosm.defaults = {
+  maxHistory: 0,
+  parent: null
 }
 
 inherit(Microcosm, Emitter, {

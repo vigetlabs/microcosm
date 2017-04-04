@@ -2,16 +2,29 @@ import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm::setup', function() {
 
-  it('passes options from instantiation', function () {
-    const test = jest.fn()
+  it('extends defaults with options passed from instantiation', function () {
+    expect.assertions(2)
 
     class Repo extends Microcosm {
-      get setup () {
-        return test
+      setup (options) {
+        expect(options.foo).toEqual('bar')
+        expect(options.maxHistory).toEqual(0)
       }
     }
 
-    expect(new Repo({ foo: 'bar' }).setup).toHaveBeenCalledWith({ foo: 'bar' })
+    new Repo({ foo: 'bar' })
+  })
+
+  it('receives an options object, even when it is not passed', function () {
+    expect.assertions(1)
+
+    class Repo extends Microcosm {
+      setup (options) {
+        expect(options).toBeDefined()
+      }
+    }
+
+    new Repo()
   })
 
 })

@@ -1,5 +1,72 @@
 # Changelog
 
+## Edge
+
+- Added a `defaults` static to Microcosm that passes default options
+  to the constructor and setup method.
+- The first argument of `setup`, the options object passed when
+  instantiating a Microcosm argument, will always be an object. There
+  is no need to handle the null case for options.
+
+### Defaults
+
+We frequently pass custom options into Microcosm to configure Domains
+and Effects with different options based on the environment. For
+example, an Effect that auto-saves user data:
+
+```javascript
+class Repo extends Microcosm {
+  setup ({ saveInterval }) {
+    // ...
+    this.addEffect(Autosave, { saveInterval })
+  }
+}
+```
+
+It can be cumbersome to chase down the default options, which may be
+specified as defaults in individual domains/effects. With this
+release, you may now define defaults using the `defaults` static:
+
+```javascript
+class Repo extends Microcosm {
+  static defaults = {
+    saveInterval: 5000
+  }
+
+  setup ({ saveInterval }) {
+    // ...
+    this.addEffect(Autosave, { saveInterval })
+  }
+}
+```
+
+This takes advantage of
+the
+[Class Fields & Static Properties Spec](https://github.com/tc39/proposal-class-public-fields). This
+specification is still
+at [Stage 2](http://2ality.com/2015/11/tc39-process.html), however it
+has become common place to use this feature within React projects. If
+living on the edge isn't your thing, defaults may also be configured
+by assigning a `default` property to your Microcosm subclass:
+
+```javascript
+class Repo extends Microcosm {
+  setup ({ saveInterval }) {
+    // ...
+    this.addEffect(Autosave, { saveInterval })
+  }
+}
+
+
+Repo.defaults = {
+  saveInterval: 5000
+}
+```
+
+All Microcosm specific options, such as `maxHistory` will get merged
+into your custom defaults upon construction.
+
+
 ## 12.4.0
 
 - Added `repo.history.wait()` and `repo.history.then()` to allow tests

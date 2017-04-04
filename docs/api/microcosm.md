@@ -276,3 +276,29 @@ fork.addDomain('page', PaginatedPeople)
 // history as the parent
 fork.push(getPeople)
 ```
+
+### `Microcosm.defaults`
+
+Specifies default options a Microcosm is instantiated with. This
+provides a concise way to configure sensible defaults for setup
+options:
+
+```javascript
+class Repo extends Microcosm {
+  static defaults = {
+    saveInterval: 5000
+  }
+
+  setup ({ saveInterval }) {
+    // ...
+    this.addEffect(Autosave, { saveInterval })
+  }
+}
+```
+
+When instantiated, default options are determined in the following
+order:
+
+1. Microcosm defaults
+2. Subclass defaults
+3. Instantiation options
