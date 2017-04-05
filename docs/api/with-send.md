@@ -2,6 +2,7 @@
 
 1. [Overview](#overview)
 2. [Testing](#testing)
+3. [Accessing the original component](#accessing-the-original-component)
 
 ## Overview
 
@@ -59,4 +60,22 @@ describe('Button test', function () {
   })
 
 })
+```
+
+## Accessing the original component
+
+The component returned from `withSend(Component)` includes a
+`WrappedComponent` property. You can use this to get access to the
+original component:
+
+```javascript
+const Button = function ({ send }) {
+  return (
+    <button type="button" onClick={() => send('action')}>Click me</button>
+  )
+})
+
+const WrappedButton = withSend(Button)
+
+WrappedButton.WrappedComponent // Button
 ```
