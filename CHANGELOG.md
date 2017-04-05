@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.6.0-beta
+
+- Added WrappedComponent property to the component returned from
+  `withSend()`. This may be used to access the original component.
+
 ## 12.5.0
 
 - Added a `defaults` static to Microcosm that passes default options
