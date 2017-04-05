@@ -2,6 +2,7 @@
 
 1. [Up and running](#up-and-running)
 2. [Strict mode](#strict-mode)
+3. [Extra dependencies](#dependencies)
 
 ## Up and running
 
@@ -75,3 +76,14 @@ module.exports = {
   // ...
 }
 ```
+
+### Extra dependencies
+
+Microcosm actions can be described as generators. This is a new
+JavaScript feature available in JS2015, which does not have wide
+support.
+
+To get around this, we recommend using [Babel](https://babeljs.io)
+with the [regenerator](https://github.com/facebook/regenerator)
+polyfill available
+through [babel-polyfill](https://babeljs.io/docs/usage/polyfill/).

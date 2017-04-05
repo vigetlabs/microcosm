@@ -106,6 +106,13 @@ repo.push(readPlanets)
 
 ### Return a generator
 
+**Heads up:** Generators are a new feature included in the JS2015
+language specification, which does not have wide support. To get
+around this, we recommend using [Babel](https://babeljs.io) with
+the [regenerator](https://github.com/facebook/regenerator) polyfill
+available
+through [babel-polyfill](https://babeljs.io/docs/usage/polyfill/).
+
 Often times we need to dispatch multiple actions in sequential
 order. For example, what if we want to ask the user to confirm their
 action before deleting a record?
