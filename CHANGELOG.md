@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.6.0-beta
+
+- Actions may now create workflows of sequential actions using
+  generators. See `./docs/api/actions` for more information
+
 ## 12.5.0
 
 - Added a `defaults` static to Microcosm that passes default options
