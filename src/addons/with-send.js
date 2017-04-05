@@ -23,6 +23,7 @@ export default function withSend (Component) {
 
   withSend.displayName = 'withSend(' + displayName(Component) + ')'
   withSend.contextTypes = withSend.propTypes = TYPES
+  withSend.WrappedComponent = Component
 
   return withSend
 }

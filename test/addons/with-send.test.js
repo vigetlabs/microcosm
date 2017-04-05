@@ -2,6 +2,18 @@ import React from 'react'
 import withSend from '../../src/addons/with-send'
 import {mount} from 'enzyme'
 
+it('exposes the wrapped component as a static property', function () {
+  const Button = function ({ send }) {
+    return (
+      <button type="button" onClick={() => send('action')}>Click me</button>
+    )
+  }
+
+  const WrappedButton = withSend(Button)
+
+  expect(WrappedButton.WrappedComponent).toEqual(Button)
+})
+
 it('extracts send from context', function () {
   const Button = withSend(function ({ send }) {
     return (
