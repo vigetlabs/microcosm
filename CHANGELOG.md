@@ -1,6 +1,6 @@
 # Changelog
 
-## 12.5.0-beta
+## 12.5.0
 
 - Added a `defaults` static to Microcosm that passes default options
   to the constructor and setup method.
