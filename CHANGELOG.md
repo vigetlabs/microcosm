@@ -4,6 +4,8 @@
 
 - Actions may now create workflows of sequential actions using
   generators. See `./docs/api/actions` for more information
+- Added WrappedComponent property to the component returned from
+  `withSend()`. This may be used to access the original component.
 
 ## 12.5.0
 
