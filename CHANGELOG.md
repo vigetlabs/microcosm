@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.6.0-rc2
+
+- Change the signature of generator actions so that the first argument
+  is `repo`.
+
 ## 12.6.0-rc
 
 - Actions may now create workflows of sequential actions using
