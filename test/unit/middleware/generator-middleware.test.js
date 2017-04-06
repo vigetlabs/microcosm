@@ -165,4 +165,26 @@ describe('Generator Middleware', function () {
     return Promise.all([ repo.push(dream100), repo.push(dream100) ])
   })
 
+  it('history.wait() works with generators', async function () {
+    let repo = new Microcosm()
+
+    function sleep (time) {
+      return action => {
+        setTimeout(() => action.resolve(true), time)
+      }
+    }
+
+    function dream (time) {
+      return function * (send, repo) {
+        yield send(sleep, time)
+        yield send(sleep, time)
+        yield send(sleep, time)
+      }
+    }
+
+    repo.push(dream, 100)
+
+    await repo.history.wait()
+  })
+
 })
