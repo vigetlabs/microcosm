@@ -23,22 +23,20 @@ describe('Generator Middleware', function () {
     })
   })
 
-  it('continues if yielding a non-action value', function () {
+  it('throws if yielding a non-action value', function () {
     expect.assertions(1)
 
     let repo = new Microcosm()
     let step = n => n
 
     function test () {
-      return function * (send) {
+      return function * (repo) {
         yield repo.push(step, 1)
         yield true
       }
     }
 
-    repo.push(test).onDone(result => {
-      expect(result).toEqual(true)
-    })
+    expect(() => repo.push(test)).toThrow("Iteration of generator expected an Action")
   })
 
   it('a rejected step halts the chain', function () {
@@ -48,7 +46,7 @@ describe('Generator Middleware', function () {
     let repo = new Microcosm()
 
     let sequence = repo.push(function () {
-      return function * (send, repo) {
+      return function * (repo) {
         yield repo.push(stepper, 0)
         yield repo.append(stepper).reject('Failure')
         yield repo.push(stepper)
@@ -71,7 +69,7 @@ describe('Generator Middleware', function () {
     let repo = new Microcosm()
 
     let sequence = repo.push(function () {
-      return function * (send, repo) {
+      return function * (repo) {
         yield repo.push(stepper, 0)
         yield repo.append(stepper).cancel('Cancelled')
         yield repo.push(stepper)
@@ -102,7 +100,7 @@ describe('Generator Middleware', function () {
     }
 
     return repo.push(function () {
-      return function * (send, repo) {
+      return function * (repo) {
         yield repo.push(sleep, 100)
         yield repo.push(sleep, 100)
       }
@@ -122,14 +120,14 @@ describe('Generator Middleware', function () {
     }
 
     function dream (time) {
-      return function * (send, repo) {
+      return function * (repo) {
         yield repo.push(sleep, time)
         yield repo.push(sleep, time)
       }
     }
 
     return repo.push(function () {
-      return function * (send, repo) {
+      return function * (repo) {
         yield repo.push(dream, 100)
         yield repo.push(dream, 100)
       }
@@ -149,14 +147,14 @@ describe('Generator Middleware', function () {
     }
 
     function dream (time) {
-      return function * (send, repo) {
+      return function * (repo) {
         yield repo.push(sleep, time)
         yield repo.push(sleep, time)
       }
     }
 
     function dream100 () {
-      return function * (send, repo) {
+      return function * (repo) {
         yield repo.push(dream, 100)
         yield repo.push(dream, 100)
       }
@@ -175,7 +173,7 @@ describe('Generator Middleware', function () {
     }
 
     function dream (time) {
-      return function * (send, repo) {
+      return function * (repo) {
         yield repo.push(sleep, time)
         yield repo.push(sleep, time)
         yield repo.push(sleep, time)
@@ -205,7 +203,7 @@ describe('Generator Middleware', function () {
     }
 
     function dream (time) {
-      return function * (send, repo) {
+      return function * (repo) {
         yield repo.push(sleep, time)
         yield repo.push(sleep, time)
         yield repo.push(sleep, time)

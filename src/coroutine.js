@@ -45,14 +45,13 @@ export default function coroutine (action, body, repo) {
       }
     }
 
-    function progress (value) {
-      if (value instanceof Action) {
-        value.onDone(step)
-        value.onCancel(action.cancel, action)
-        value.onError(action.reject, action)
-      } else {
-        step(value)
-      }
+    function progress (subAction) {
+      console.assert(subAction instanceof Action,
+                     `Iteration of generator expected an Action. Instead got ${subAction}`)
+
+      subAction.onDone(step)
+      subAction.onCancel(action.cancel, action)
+      subAction.onError(action.reject, action)
     }
 
     step()
