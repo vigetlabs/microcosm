@@ -185,37 +185,4 @@ describe('Generator Middleware', function () {
     await repo.history.wait()
   })
 
-  it('can push new actions during history.wait() while processing a generator', async function () {
-    let repo = new Microcosm()
-
-    repo.addDomain('test', {
-      register () {
-        return {
-          'test': n => n
-        }
-      }
-    })
-
-    function sleep (time) {
-      return action => {
-        setTimeout(() => action.resolve(true), time)
-      }
-    }
-
-    function dream (time) {
-      return function * (repo) {
-        yield repo.push(sleep, time)
-        yield repo.push(sleep, time)
-        yield repo.push(sleep, time)
-      }
-    }
-
-    repo.push(dream, 100)
-
-    await repo.history.wait()
-
-    repo.push('test', 1)
-    repo.push('test', 2)
-  })
-
 })
