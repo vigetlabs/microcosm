@@ -91,4 +91,78 @@ describe('Generator Middleware', function () {
     })
   })
 
+  it('waits for an async action to finish before moving on', function () {
+    let stepper = n => n + 1
+    let repo = new Microcosm()
+
+    function sleep (time) {
+      return action => {
+        setTimeout(() => action.resolve(true), time)
+      }
+    }
+
+    return repo.push(function () {
+      return function * (send, repo) {
+        yield send(sleep, 100)
+        yield send(sleep, 100)
+      }
+    }).onDone(function (payload) {
+      expect(payload).toEqual(true)
+    })
+  })
+
+  it('waits for an async sequences', function () {
+    let stepper = n => n + 1
+    let repo = new Microcosm()
+
+    function sleep (time) {
+      return action => {
+        setTimeout(() => action.resolve(true), time)
+      }
+    }
+
+    function dream (time) {
+      return function * (send, repo) {
+        yield send(sleep, time)
+        yield send(sleep, time)
+      }
+    }
+
+    return repo.push(function () {
+      return function * (send, repo) {
+        yield send(dream, 100)
+        yield send(dream, 100)
+      }
+    }).onDone(function (payload) {
+      expect(payload).toEqual(true)
+    })
+  })
+
+  it('multiple async sequence pushes do not step on eachother', function () {
+    let stepper = n => n + 1
+    let repo = new Microcosm()
+
+    function sleep (time) {
+      return action => {
+        setTimeout(() => action.resolve(true), time)
+      }
+    }
+
+    function dream (time) {
+      return function * (send, repo) {
+        yield send(sleep, time)
+        yield send(sleep, time)
+      }
+    }
+
+    function dream100 () {
+      return function * (send, repo) {
+        yield send(dream, 100)
+        yield send(dream, 100)
+      }
+    }
+
+    return Promise.all([ repo.push(dream100), repo.push(dream100) ])
+  })
+
 })

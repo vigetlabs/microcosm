@@ -1,5 +1,5 @@
 import Action from './action'
-import { get, isPromise } from './utils'
+import { isPromise, isGeneratorFn } from './utils'
 
 /**
  * Coroutine is used by an action to determine how it should resolve
@@ -26,7 +26,11 @@ export default function coroutine (action, body, repo) {
     return action
   }
 
-  if (body && get(body, 'constructor.name') === 'GeneratorFunction') {
+  /**
+   * Provide support for generators, performing a sequence of actions
+   * in order
+   */
+  if (isGeneratorFn(body)) {
     action.open()
 
     let iterator = body(repo.push.bind(repo), repo)

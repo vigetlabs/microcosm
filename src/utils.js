@@ -153,13 +153,32 @@ export function set (object, key, value) {
   return root
 }
 
-export function isPromise(obj) {
+/**
+ * Is the provided object a promise?
+ * @param {*} obj
+ * @return {boolean}
+ */
+export function isPromise (obj) {
   let type = typeof obj
   return !!obj && (type === 'object' || type === 'function') && typeof obj.then === 'function'
 }
 
+/**
+ * Is a value an object?
+ * @param {*} target
+ * @return {boolean}
+ */
 export function isObject (target) {
   return !!target && typeof target === 'object'
+}
+
+/**
+ * Is the provided value a generator function?
+ * @param {*} value
+ * @return {boolean}
+ */
+export function isGeneratorFn (value) {
+  return get(value, ['constructor', 'name'], '') === 'GeneratorFunction'
 }
 
 export function createOrClone (target, options, repo) {
@@ -172,14 +191,20 @@ export function createOrClone (target, options, repo) {
 
 /**
  * A helper combination of get and set
+ * @param {Object} state
+ * @param {Array.<string>|string} keyPath
+ * @param {*} updater A function or static value
+ * @param {*} fallback value
  */
-export function update (state, path, fn, fallback) {
-  if (typeof fn !== 'function') {
-    return set(state, path, fn)
+export function update (state, keyPath, updater, fallback) {
+  let path = castPath(keyPath)
+
+  if (typeof updater !== 'function') {
+    return set(state, path, updater)
   }
 
   let last = get(state, path, fallback)
-  let next = fn(last)
+  let next = updater(last)
 
   return set(state, path, next)
 }

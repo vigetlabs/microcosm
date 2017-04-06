@@ -1,25 +1,29 @@
 import Microcosm from '../../src/microcosm'
 
-it('writes to repo state', function (done) {
-  const action = function() {}
-  const repo = new Microcosm()
+describe('Mutations', function () {
 
-  repo.addDomain(null, {
-    getInitialState() {
-      return { test: false }
-    },
-    register() {
-      return {
-        [action](state) {
-          state.test = true
-          return state
+  it('writes to repo state', function () {
+    const identity = function() {}
+    const repo = new Microcosm({ maxHistory: Infinity })
+
+    repo.addDomain(null, {
+      getInitialState() {
+        return { test: false }
+      },
+      mutate (state) {
+        state.test = true
+        return state
+      },
+      register() {
+        return {
+          [identity]: this.mutate
         }
       }
-    }
+    })
+
+    repo.push(identity, true)
+
+    expect(repo).toHaveState('test', true)
   })
 
-  repo.push(action, true).onDone(() => {
-    expect(repo).toHaveState('test', true)
-    done()
-  })
 })
