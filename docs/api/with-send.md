@@ -48,11 +48,11 @@ import Button from 'prior-example'
 
 describe('Button test', function () {
 
-  it('it emits an action when clicked', assert => {
-    assert.plan(1)
+  it('it emits an action when clicked', function() {
+    expect.assertions(1)
 
     function assertion (action) {
-      assert.is(action, 'hello-world')
+      expect(action).toEqual('hello-world')
     }
 
     mount(<Button send={assertion}) />
