@@ -135,9 +135,9 @@ function deleteUser (id) {
 }
 
 function confirmAndDelete (user) {
-  return function * (send) {
-    yield send(ask, `Are you sure you want to delete ${user.name}?`)
-    yield send(deleteUser, user.id)
+  return function * (repo) {
+    yield repo.push(ask, `Are you sure you want to delete ${user.name}?`)
+    yield repo.push(deleteUser, user.id)
   }
 }
 ```

@@ -9,11 +9,11 @@ describe('Generator Middleware', function () {
     let repo = new Microcosm()
 
     function range (start, end) {
-      return function * (send) {
+      return function * (repo) {
         let value = start
 
         while (value < end) {
-          value = yield send(stepper, value)
+          value = yield repo.push(stepper, value)
         }
       }
     }
@@ -31,7 +31,7 @@ describe('Generator Middleware', function () {
 
     function test () {
       return function * (send) {
-        yield send(step, 1)
+        yield repo.push(step, 1)
         yield true
       }
     }
@@ -49,9 +49,9 @@ describe('Generator Middleware', function () {
 
     let sequence = repo.push(function () {
       return function * (send, repo) {
-        yield send(stepper, 0)
+        yield repo.push(stepper, 0)
         yield repo.append(stepper).reject('Failure')
-        yield send(stepper)
+        yield repo.push(stepper)
       }
     })
 
@@ -72,9 +72,9 @@ describe('Generator Middleware', function () {
 
     let sequence = repo.push(function () {
       return function * (send, repo) {
-        yield send(stepper, 0)
+        yield repo.push(stepper, 0)
         yield repo.append(stepper).cancel('Cancelled')
-        yield send(stepper)
+        yield repo.push(stepper)
       }
     })
 
@@ -103,8 +103,8 @@ describe('Generator Middleware', function () {
 
     return repo.push(function () {
       return function * (send, repo) {
-        yield send(sleep, 100)
-        yield send(sleep, 100)
+        yield repo.push(sleep, 100)
+        yield repo.push(sleep, 100)
       }
     }).onDone(function (payload) {
       expect(payload).toEqual(true)
@@ -123,15 +123,15 @@ describe('Generator Middleware', function () {
 
     function dream (time) {
       return function * (send, repo) {
-        yield send(sleep, time)
-        yield send(sleep, time)
+        yield repo.push(sleep, time)
+        yield repo.push(sleep, time)
       }
     }
 
     return repo.push(function () {
       return function * (send, repo) {
-        yield send(dream, 100)
-        yield send(dream, 100)
+        yield repo.push(dream, 100)
+        yield repo.push(dream, 100)
       }
     }).onDone(function (payload) {
       expect(payload).toEqual(true)
@@ -150,15 +150,15 @@ describe('Generator Middleware', function () {
 
     function dream (time) {
       return function * (send, repo) {
-        yield send(sleep, time)
-        yield send(sleep, time)
+        yield repo.push(sleep, time)
+        yield repo.push(sleep, time)
       }
     }
 
     function dream100 () {
       return function * (send, repo) {
-        yield send(dream, 100)
-        yield send(dream, 100)
+        yield repo.push(dream, 100)
+        yield repo.push(dream, 100)
       }
     }
 
@@ -176,15 +176,48 @@ describe('Generator Middleware', function () {
 
     function dream (time) {
       return function * (send, repo) {
-        yield send(sleep, time)
-        yield send(sleep, time)
-        yield send(sleep, time)
+        yield repo.push(sleep, time)
+        yield repo.push(sleep, time)
+        yield repo.push(sleep, time)
       }
     }
 
     repo.push(dream, 100)
 
     await repo.history.wait()
+  })
+
+  it('can push new actions during history.wait() while processing a generator', async function () {
+    let repo = new Microcosm()
+
+    repo.addDomain('test', {
+      register () {
+        return {
+          'test': n => n
+        }
+      }
+    })
+
+    function sleep (time) {
+      return action => {
+        setTimeout(() => action.resolve(true), time)
+      }
+    }
+
+    function dream (time) {
+      return function * (send, repo) {
+        yield repo.push(sleep, time)
+        yield repo.push(sleep, time)
+        yield repo.push(sleep, time)
+      }
+    }
+
+    repo.push(dream, 100)
+
+    await repo.history.wait()
+
+    repo.push('test', 1)
+    repo.push('test', 2)
   })
 
 })

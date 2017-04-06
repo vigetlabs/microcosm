@@ -33,7 +33,7 @@ export default function coroutine (action, body, repo) {
   if (isGeneratorFn(body)) {
     action.open()
 
-    let iterator = body(repo.push.bind(repo), repo)
+    let iterator = body(repo)
 
     function step (payload) {
       let next = iterator.next(payload)
