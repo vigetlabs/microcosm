@@ -12,7 +12,7 @@ export default function tag (fn, name) {
     throw new Error(`Unable to identify ${fn} action`)
   }
 
-  if (fn.done) {
+  if (fn.__tagged === true) {
     return fn
   }
 
@@ -49,6 +49,9 @@ export default function tag (fn, name) {
 
   // The default state is done
   fn.toString = () => symbol
+
+  // Mark the function as tagged so we only do this once
+  fn.__tagged = true
 
   return fn
 }

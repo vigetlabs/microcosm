@@ -51,4 +51,65 @@ describe('getRegistration', function () {
       })
     }
   })
+
+  describe('Errors', function () {
+
+    describe('Flat registrations', function () {
+
+      it('throws when a registration is undefined', function () {
+        expect(function () {
+          getRegistration({
+            [action]: undefined
+          }, action, 'resolve')
+        }).toThrow('action key within a registration is undefined. Is it being referenced correctly?')
+      })
+
+      it('uses the command name when it can', function () {
+        let getUser = tag(function getUser () {})
+
+        expect(function () {
+          getRegistration({
+            [getUser]: undefined
+          }, getUser, 'resolve')
+        }).toThrow('getUser key within a registration is undefined. Is it being referenced correctly?')
+      })
+
+    })
+    
+    describe('Nested registrations', function () {
+
+      it('throws when a nested status registration is undefined', function () {
+        expect(function () {
+          getRegistration({
+            [action]: {
+              reject: undefined
+            }
+          }, action, 'reject')
+        }).toThrow('The "reject" key within a nested registration for an action is undefined. Is it being referenced correctly?')
+      })
+
+      it('throws when a nested alias registration is undefined', function () {
+        expect(function () {
+          getRegistration({
+            [action]: {
+              error: undefined
+            }
+          }, action, 'reject')
+        }).toThrow('The "error" key within a nested registration for an action is undefined. Is it being referenced correctly?')
+      })
+
+      it('uses the action name when it can', function () {
+        let getUser = tag(function getUser () {})
+
+        expect(function () {
+          getRegistration({
+            [getUser]: {
+              error: undefined
+            }
+          }, getUser, 'reject')
+        }).toThrow('The "error" key within a nested registration for getUser is undefined. Is it being referenced correctly?')
+      })
+    })
+
+  })
 })
