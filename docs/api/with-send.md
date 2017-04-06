@@ -43,7 +43,6 @@ in `withSend` can accept `send` as a prop:
 
 ```javascript
 import React from 'react'
-import test from 'ava'
 import {mount} from 'enzyme'
 import Button from 'prior-example'
 
