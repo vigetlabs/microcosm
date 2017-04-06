@@ -1,11 +1,12 @@
 # Changelog
 
-## 12.6.0-beta
+## 12.6.0-rc
 
 - Actions may now create workflows of sequential actions using
   generators. See `./docs/api/actions` for more information
 - Added WrappedComponent property to the component returned from
   `withSend()`. This may be used to access the original component.
+- Added strict mode validations for undefined Domain registrations
 
 ## 12.5.0
 
