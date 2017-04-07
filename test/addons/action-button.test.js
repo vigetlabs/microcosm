@@ -6,16 +6,14 @@ import {mount} from 'enzyme'
 describe('actions', function () {
 
   it('passes the value property as parameters into the action', function () {
-    let button = mount(<ActionButton action="test" value={true} />, {
-      context: {
-        send: (type, params) => new Action(type).resolve(params)
-      }
-    })
+    let action = n => n
+    let send = jest.fn()
 
-    let action = button.instance().click()
+    let button = mount(<ActionButton action="test" value={true} send={send} />)
 
-    expect(action.command.toString()).toEqual('test')
-    expect(action.payload).toBe(true)
+    button.instance().click()
+
+    expect(send).toHaveBeenCalledWith(action, true)
   })
 
 })
@@ -93,7 +91,7 @@ describe('callbacks', function () {
     expect(onDone).not.toHaveBeenCalled()
   })
 
-  it('does not execute onDone if not given an action', function () {
+  it('does not execute onError if not given an action', function () {
     let onError = jest.fn()
 
     mount(<ActionButton action="test" onError={n => onError(n)} />, {
