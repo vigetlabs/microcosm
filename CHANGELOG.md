@@ -1,5 +1,9 @@
 # Changelog
 
+## 12.6.1
+
+- Corrected generator check to be resistant to minification
+
 ## 12.6.0
 
 - Actions may now create workflows of sequential actions using
