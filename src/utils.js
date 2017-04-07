@@ -173,12 +173,17 @@ export function isObject (target) {
 }
 
 /**
- * Is the provided value a generator function?
+ * Is the provided value a generator function? This is largely informed
+ * by the regenerator runtime.
  * @param {*} value
  * @return {boolean}
  */
+
+var $Symbol = typeof Symbol === "function" ? Symbol : {};
+var iteratorSymbol = $Symbol.iterator || "@@iterator";
+var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
 export function isGeneratorFn (value) {
-  return get(value, ['constructor', 'name'], '') === 'GeneratorFunction'
+  return get(value, toStringTagSymbol, '') === 'GeneratorFunction'
 }
 
 export function createOrClone (target, options, repo) {

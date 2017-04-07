@@ -2,6 +2,39 @@ import Action from './action'
 import { isPromise, isGeneratorFn } from './utils'
 
 /**
+ * Provide support for generators, performing a sequence of actions in
+ * order.
+ */
+function processGenerator (action, body, repo) {
+  action.open()
+
+  let iterator = body(repo)
+
+  function step (payload) {
+    let next = iterator.next(payload)
+
+    if (next.done) {
+      action.resolve(payload)
+    } else {
+      progress(next.value)
+    }
+  }
+
+  function progress (subAction) {
+    console.assert(subAction instanceof Action,
+                   `Iteration of generator expected an Action. Instead got ${subAction}`)
+
+    subAction.onDone(step)
+    subAction.onCancel(action.cancel, action)
+    subAction.onError(action.reject, action)
+  }
+
+  step()
+
+  return action
+}
+
+/**
  * Coroutine is used by an action to determine how it should resolve
  * the body of their associated command.
  */
@@ -31,32 +64,7 @@ export default function coroutine (action, body, repo) {
    * in order
    */
   if (isGeneratorFn(body)) {
-    action.open()
-
-    let iterator = body(repo)
-
-    function step (payload) {
-      let next = iterator.next(payload)
-
-      if (next.done) {
-        action.resolve(payload)
-      } else {
-        progress(next.value)
-      }
-    }
-
-    function progress (subAction) {
-      console.assert(subAction instanceof Action,
-                     `Iteration of generator expected an Action. Instead got ${subAction}`)
-
-      subAction.onDone(step)
-      subAction.onCancel(action.cancel, action)
-      subAction.onError(action.reject, action)
-    }
-
-    step()
-
-    return action
+    return processGenerator(action, body, repo)
   }
 
   /**
