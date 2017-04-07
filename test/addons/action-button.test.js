@@ -6,14 +6,13 @@ import {mount} from 'enzyme'
 describe('actions', function () {
 
   it('passes the value property as parameters into the action', function () {
-    let action = n => n
     let send = jest.fn()
 
     let button = mount(<ActionButton action="test" value={true} send={send} />)
 
-    button.instance().click()
+    button.simulate('click')
 
-    expect(send).toHaveBeenCalledWith(action, true)
+    expect(send).toHaveBeenCalledWith('test', true)
   })
 
 })
