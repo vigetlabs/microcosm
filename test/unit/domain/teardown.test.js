@@ -14,7 +14,7 @@ describe('Domain::teardown', function () {
 
     repo.addDomain('count', Counter, { test: true })
 
-    repo.teardown()
+    repo.shutdown()
 
     expect(test).toHaveBeenCalledWith(repo)
   })

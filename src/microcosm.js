@@ -67,17 +67,7 @@ inherit(Microcosm, Emitter, {
   },
 
   teardown () {
-    this.effects.teardown()
-    this.domains.teardown()
-
-    // Trigger a teardown event before completely shutting down
-    this._emit('teardown', this)
-
-    // Remove this repo from history
-    this.history.removeRepo(this)
-
-    // Remove all listeners
-    this.removeAllListeners()
+    // NOOP
   },
 
   getInitialState () {
@@ -242,6 +232,32 @@ inherit(Microcosm, Emitter, {
     return new Microcosm({
       parent : this
     })
+  },
+
+  /**
+   * Close out a Microcosm:
+   *
+   * 1. Call teardown on the microcosm, domains and effects
+   * 2. Trigger a teardown event
+   * 3. Remove the microcosm from its associated history
+   * 4. Clean up all listeners
+   *
+   * @private
+   */
+  shutdown () {
+    this.teardown()
+
+    this.effects.teardown()
+    this.domains.teardown()
+
+    // Trigger a teardown event before completely shutting down
+    this._emit('teardown', this)
+
+    // Remove this repo from history
+    this.history.removeRepo(this)
+
+    // Remove all listeners
+    this.removeAllListeners()
   }
 
 })

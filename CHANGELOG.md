@@ -4,6 +4,9 @@
 
 - Remove PropType usage from addons to prevent React 15.5.x
   deprecation warnings.
+- Added configurable `teardown` method to the Microcosm
+  prototype. This behaves similarly to `teardown` methods on other
+  Microcosm classes.
 
 ## 12.6.1
 
