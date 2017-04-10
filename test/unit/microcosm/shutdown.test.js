@@ -1,6 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm::teardown', function () {
+describe('Microcosm::shutdown', function () {
 
   it('removes all listeners', function () {
     const repo = new Microcosm()
@@ -9,7 +9,7 @@ describe('Microcosm::teardown', function () {
 
     repo.on('change', listener)
 
-    repo.teardown()
+    repo.shutdown()
 
     repo._emit('change')
 
@@ -21,7 +21,7 @@ describe('Microcosm::teardown', function () {
     const teardown = jest.fn()
 
     repo.addDomain('test', { teardown })
-    repo.teardown()
+    repo.shutdown()
 
     expect(teardown).toHaveBeenCalled()
   })
@@ -30,7 +30,7 @@ describe('Microcosm::teardown', function () {
     const repo = new Microcosm()
     const child = repo.fork()
 
-    child.teardown()
+    child.shutdown()
 
     jest.spyOn(child, 'release')
 
@@ -53,7 +53,7 @@ describe('Microcosm::teardown', function () {
         throw new Error('Should not have changed')
       })
 
-      child.teardown()
+      child.shutdown()
 
       parent.patch({ color: 'blue' })
 

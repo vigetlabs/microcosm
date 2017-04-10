@@ -135,7 +135,7 @@ inherit(PresenterMediator, PureComponent, {
     this.repo.off('change', this.setModel, this)
 
     if (this.presenter.didFork) {
-      this.repo.teardown()
+      this.repo.shutdown()
     }
 
     this.presenter._beginTeardown()

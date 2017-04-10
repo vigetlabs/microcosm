@@ -27,7 +27,7 @@ describe('Microcosm events', function () {
 
       repo.on('teardown', handler)
 
-      repo.teardown()
+      repo.shutdown()
 
       expect(handler).toHaveBeenCalledTimes(1)
       expect(handler).toHaveBeenCalledWith(repo)
@@ -61,7 +61,7 @@ describe('Microcosm events', function () {
       repo.on('teardown', handler)
       repo.off('teardown', handler)
 
-      repo.teardown()
+      repo.shutdown()
 
       expect(handler).toHaveBeenCalledTimes(0)
     })

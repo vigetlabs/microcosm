@@ -41,6 +41,11 @@ class SolarSystem extends Microcosm {
 let repo = new SolarSystem({ test: true })
 ```
 
+### `teardown()`
+
+Called whenever a Microcosm is shut down. Do any necessary clean up
+work within this callback.
+
 ### `getInitialState()`
 
 Generates the starting state for a Microcosm instance. This is the

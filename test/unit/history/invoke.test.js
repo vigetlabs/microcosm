@@ -7,7 +7,7 @@ describe('History::invoke', function() {
     let parent = new Microcosm()
     let child = parent.fork()
 
-    parent.on('change', () => child.teardown())
+    parent.on('change', () => child.shutdown())
 
     jest.spyOn(child, 'release')
 

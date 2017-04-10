@@ -481,7 +481,7 @@ describe('::teardown', function() {
     const wrapper = mount(<Test repo={repo}/>)
 
     wrapper.unmount()
-    repo.teardown()
+    repo.shutdown()
 
     expect(spy).toHaveBeenCalledTimes(1)
   })
