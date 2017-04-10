@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.7.0-alpha
+
+- Remove PropType usage from addons to prevent React 15.5.x
+  deprecation warnings.
+
 ## 12.6.1
 
 - Corrected generator check to be resistant to minification
