@@ -12,25 +12,3 @@ it('gets a class component name', function () {
 
   expect(name).toBe('Button')
 })
-
-it('gets a createClass component name', function () {
-  const Button = React.createClass({
-    render () {
-      var { send } = this.props
-      return (
-        <button type="button" onClick={() => send('action')}>Click me</button>
-      )
-    }
-  })
-
-  const name = displayName(Button)
-
-  expect(name).toBe('Button')
-})
-
-it('uses "Component" when there is no name', function () {
-  // eslint-disable-next-line react/display-name
-  expect(displayName(React.createClass({
-    render () { return <p>Hi</p> }
-  }))).toBe('Component')
-})

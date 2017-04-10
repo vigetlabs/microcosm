@@ -1,7 +1,5 @@
 import Microcosm, { get, merge, tag, inherit, getRegistration } from '../microcosm'
-import { Children, PropTypes, PureComponent, createElement } from 'react'
-
-const EMPTY = {}
+import { Children, PureComponent, createElement } from 'react'
 
 function passChildren () {
   return this.props.children ? Children.only(this.props.children) : null
@@ -68,7 +66,7 @@ inherit(Presenter, PureComponent, {
   },
 
   intercept () {
-    return EMPTY
+    return {}
   },
 
   componentWillUpdate (props, state) {
@@ -85,7 +83,7 @@ inherit(Presenter, PureComponent, {
   },
 
   getModel (repo, props, state) {
-    return EMPTY
+    return {}
   },
 
   render () {
@@ -230,18 +228,16 @@ inherit(PresenterMediator, PureComponent, {
 
 })
 
-PresenterMediator.propTypes = {
-  repo : PropTypes.object
-}
+const identity = () => null
 
 PresenterMediator.contextTypes = {
-  repo : PropTypes.object,
-  send : PropTypes.func
+  repo: identity,
+  send: identity
 }
 
 PresenterMediator.childContextTypes = {
-  repo : PropTypes.object,
-  send : PropTypes.func
+  repo: identity,
+  send: identity
 }
 
 export default Presenter

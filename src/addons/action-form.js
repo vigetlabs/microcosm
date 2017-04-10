@@ -1,4 +1,4 @@
-import { createElement, PropTypes, PureComponent } from 'react'
+import { createElement, PureComponent } from 'react'
 import { Action, merge, inherit } from '../microcosm'
 import serialize from 'form-serialize'
 
@@ -10,7 +10,7 @@ function ActionForm () {
 }
 
 ActionForm.contextTypes = {
-  send : PropTypes.func
+  send: () => null
 }
 
 ActionForm.defaultProps = {
