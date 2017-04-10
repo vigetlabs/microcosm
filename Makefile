@@ -46,7 +46,7 @@ release: clean all
 prerelease: clean all
 	npm publish build --tag beta
 
-bench: minified
+bench: compiled
 	@ $(call PROFILE, bench/history-performance)
 	@ $(call PROFILE, bench/dispatch-performance)
 	@ $(call PROFILE, bench/push-performance)
