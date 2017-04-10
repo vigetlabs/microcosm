@@ -9,7 +9,7 @@ export default function ActionButton (props, context) {
 }
 
 ActionButton.contextTypes = {
-  send: () => null
+  send: () => {}
 }
 
 ActionButton.defaultProps = {

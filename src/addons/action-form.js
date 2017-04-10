@@ -10,7 +10,7 @@ function ActionForm () {
 }
 
 ActionForm.contextTypes = {
-  send: () => null
+  send: () => {}
 }
 
 ActionForm.defaultProps = {

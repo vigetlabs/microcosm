@@ -10,7 +10,7 @@ export function displayName (Component) {
 }
 
 const CONTEXT_TYPES = {
-  send: () => null
+  send: () => {}
 }
 
 export default function withSend (Component) {

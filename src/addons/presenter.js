@@ -228,7 +228,7 @@ inherit(PresenterMediator, PureComponent, {
 
 })
 
-const identity = () => null
+const identity = () => {}
 
 PresenterMediator.contextTypes = {
   repo: identity,
