@@ -18,11 +18,12 @@ and loading states much simpler. They self clean.
 ### `setup(options)`
 
 Called whenever a Microcosm is instantiated. This provides a general
-purpose hook for adding domains and other setup behavior.
+purpose hook for adding domains and other setup
+behavior. Instantiation options are passed in as the first argument.
 
 ```javascript
 class SolarSystem extends Microcosm {
-  setup() {
+  setup (options) {
     this.addDomain('planets', Planets)
   }
 }
