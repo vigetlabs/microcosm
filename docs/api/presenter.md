@@ -297,3 +297,12 @@ class NoFork extends Presenter {
   }
 }
 ```
+
+### send(action, ...params)
+
+Bubble an action up through the presenter tree. If no parent presenter
+responds to the action within their `intercept()` method, then
+dispatch it to the root Microcosm repo.
+
+This works exactly like the `send` property passed into a component
+that is wrapped in the `withSend` higher order component.
