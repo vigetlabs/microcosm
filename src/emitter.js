@@ -17,6 +17,10 @@ Emitter.prototype = {
    * @param {*} [scope] Optional scope to invoke callback with
    */
   on (event, fn, scope) {
+    console.assert(typeof fn === 'function',
+                   `Event listener for ${event} expected function callback, ` +
+                   `instead got ${typeof fn}`)
+
     this._events.push({ event, fn, scope, once: false })
 
     return this
@@ -30,6 +34,10 @@ Emitter.prototype = {
    * @param {*} [scope] Optional scope to invoke callback with
    */
   once (event, fn, scope) {
+    console.assert(typeof fn === 'function',
+                   `Event listener for ${event} expected function callback, ` +
+                   `instead got ${typeof fn}`)
+
     this._events.push({ event, fn, scope, once: true })
 
     return this

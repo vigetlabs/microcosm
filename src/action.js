@@ -108,7 +108,11 @@ inherit(Action, Emitter, {
    * @param {*} [scope]
    */
   onUpdate (callback, scope) {
-    return this.on('update', callback, scope)
+    if (!!callback) {
+      this.on('update', callback, scope)
+    }
+
+    return this
   },
 
   /**
