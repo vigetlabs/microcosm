@@ -251,7 +251,7 @@ class Example extends Presenter {
 }
 ```
 
-### intercept()
+### `intercept()`
 
 Catch an action emitted from a child view, using an add-on `ActionForm`,
 `ActionButton`, or `withSend`. These add-ons are designed to improve the
@@ -279,7 +279,7 @@ class HelloWorldPresenter extends Presenter {
 }
 ```
 
-### getRepo(repo, props)
+### `getRepo(repo, props)`
 
 Runs before assigning a repo to a Presenter. This method is given the
 parent repo, either passed in via `props` or `context`. By default, it
@@ -298,7 +298,7 @@ class NoFork extends Presenter {
 }
 ```
 
-### send(action, ...params)
+### `send(action, ...params)`
 
 Bubble an action up through the presenter tree. If no parent presenter
 responds to the action within their `intercept()` method, then
