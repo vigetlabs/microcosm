@@ -24,9 +24,11 @@ describe('Action promise interop', function () {
   })
 
   it('actions interop with chains off of other promises', async function () {
-    const action = new Action(function (n) {
+    const repo = new Microcosm()
+
+    const action = repo.push(function (n) {
       return Promise.resolve().then(() => n)
-    })
+    }, 'Test')
 
     const payload = await action
 
