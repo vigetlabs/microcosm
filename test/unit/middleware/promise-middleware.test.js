@@ -25,4 +25,31 @@ describe('Promise middleware', function () {
     action.onError(() => done())
   })
 
+  it('handles successful chains', function (done) {
+    const repo = new Microcosm()
+    const action = repo.push(n => Promise.resolve().then(() => n))
+
+    action.onDone(() => done())
+  })
+
+  it('handles failed chains', function (done) {
+    const repo = new Microcosm()
+    const action = repo.push(n => {
+      return Promise.resolve().then(() => Promise.reject('error'))
+    })
+
+    action.onError(() => done())
+  })
+
+  it('handles failed chains that raise errors', function (done) {
+    const repo = new Microcosm()
+    const action = repo.push(n => {
+      return Promise.resolve().then(() => {
+        throw new Error('error')
+      })
+    })
+
+    action.onError(() => done())
+  })
+
 })

@@ -23,4 +23,14 @@ describe('Action promise interop', function () {
     expect(payload).toBe('Test')
   })
 
+  it('actions interop with chains off of other promises', async function () {
+    const action = new Action(function (n) {
+      return Promise.resolve().then(() => n)
+    })
+
+    const payload = await action
+
+    expect(payload).toBe('Test')
+  })
+
 })
