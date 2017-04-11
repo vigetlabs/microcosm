@@ -21,7 +21,6 @@ export default function History (limit) {
 
   this.size = 0
   this.limit = Math.max(1, limit || 1)
-  this.repos = []
 
   this.begin()
 }
@@ -122,27 +121,6 @@ inherit(History, Emitter, {
     this.append(START, 'resolve')
   },
 
-  addRepo (repo) {
-    this.repos.push(repo)
-  },
-
-  removeRepo (repo) {
-    let index = this.repos.indexOf(repo)
-
-    if (~index) {
-      this.repos.splice(index, 1)
-    }
-  },
-
-  invoke (method, payload) {
-    let repos = this.repos
-
-    for (var i = 0; i < repos.length; i++) {
-      console.assert(repos[i], `Missing repo! Was it removed before it could run repo.${method}?`)
-      repos[i][method](payload)
-    }
-  },
-
   append (command, status) {
     let action = new Action(command, status)
 
@@ -159,11 +137,9 @@ inherit(History, Emitter, {
     this.head = action
     this.size += 1
 
-    this.invoke('createInitialSnapshot', action)
+    this._emit('append', action)
 
     action.on('change', this.reconcile, this)
-
-    this._emit('append', action)
 
     return this.head
   },
@@ -204,7 +180,8 @@ inherit(History, Emitter, {
    */
   clean (action) {
     this.size -= 1
-    this.invoke('removeSnapshot', action)
+
+    this._emit('remove', action)
 
     action.remove()
   },
@@ -216,7 +193,7 @@ inherit(History, Emitter, {
     let focus = action
 
     while (focus) {
-      this.invoke('reconcile', focus)
+      this._emit('update', focus)
 
       if (focus === this.head) {
         break
@@ -227,7 +204,9 @@ inherit(History, Emitter, {
 
     this.archive()
 
-    this.invoke('release', action)
+    this._emit('reconcile', action)
+
+    this._emit('release')
   },
 
   archive () {
@@ -236,7 +215,7 @@ inherit(History, Emitter, {
 
     while (size > this.limit && root.complete) {
       size -= 1
-      this.invoke('removeSnapshot', root.parent)
+      this._emit('remove', root.parent)
       root = root.next
     }
 

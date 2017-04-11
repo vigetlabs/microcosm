@@ -31,15 +31,32 @@ function Microcosm (preOptions, state, deserialize)  {
   this.parent = options.parent
 
   this.history = this.parent ? this.parent.history : new History(options.maxHistory)
-  this.history.addRepo(this)
 
   this.archive = new Archive()
   this.domains = new DomainEngine(this)
   this.effects = new EffectEngine(this)
-  this.changes = new CompareTree(this.state)
+  this.changes = new CompareTree()
 
   this.initial = this.parent ? this.parent.initial : {}
   this.state = this.parent ? this.parent.state : this.initial
+
+  // History moves through a set lifecycle. As that lifecycle occurs,
+  // save snapshots of new state:
+
+  // When an action is first created
+  this.history.on('append', this.createSnapshot, this)
+
+  // When an action snapshot needs updating
+  this.history.on('update', this.updateSnapshot, this)
+
+  // When an action snapshot should be removed
+  this.history.on('remove', this.removeSnapshot, this)
+
+  // When an action changes, it causes a reconcilation
+  this.history.on('reconcile', this.dispatchEffect, this)
+
+  // A history is done reconciling and is ready for a release
+  this.history.on('release', this.release, this)
 
   // Microcosm is now ready. Call the setup lifecycle method
   this.setup(options)
@@ -83,7 +100,7 @@ inherit(Microcosm, Emitter, {
    * that, when rolling back to this action, it always has a state value.
    * @param {Action} action - The action to generate a snapshot for
    */
-  createInitialSnapshot (action) {
+  createSnapshot (action) {
     this.archive.create(action)
   },
 
@@ -91,19 +108,7 @@ inherit(Microcosm, Emitter, {
    * Update the state snapshot for a given action
    * @param {Action} action - The action to update the snapshot for
    */
-  updateSnapshot (action, state) {
-    this.archive.set(action, state)
-  },
-
-  /**
-   * Remove the snapshot for a given action
-   * @param {Action} action - The action to remove the snapshot for
-   */
-  removeSnapshot (action) {
-    this.archive.remove(action)
-  },
-
-  reconcile (action) {
+  updateSnapshot (action) {
     let next = this.recall(action.parent, this.initial)
 
     if (this.parent) {
@@ -114,14 +119,25 @@ inherit(Microcosm, Emitter, {
       next = this.domains.dispatch(next, action)
     }
 
-    this.updateSnapshot(action, next)
+    this.archive.set(action, next)
 
     this.state = next
   },
 
-  release (action) {
-    this.changes.update(this.state)
+  /**
+   * Remove the snapshot for a given action
+   * @param {Action} action - The action to remove the snapshot for
+   */
+  removeSnapshot (action) {
+    this.archive.remove(action)
+  },
+
+  dispatchEffect (action) {
     this.effects.dispatch(action)
+  },
+
+  release () {
+    this.changes.update(this.state)
   },
 
   on (type, callback, scope) {
@@ -253,8 +269,8 @@ inherit(Microcosm, Emitter, {
     // Trigger a teardown event before completely shutting down
     this._emit('teardown', this)
 
-    // Remove this repo from history
-    this.history.removeRepo(this)
+    // Stop tracking history
+    this.history._removeScope(this)
 
     // Remove all listeners
     this.removeAllListeners()

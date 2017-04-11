@@ -100,5 +100,23 @@ Emitter.prototype = {
     }
 
     return this
+  },
+
+  /**
+   * Remove all events for a given scope
+   */
+  _removeScope (scope) {
+    let i = 0
+    while (i < this._events.length) {
+      var cb = this._events[i]
+
+      if (scope === cb.scope) {
+        this._events.splice(i, 1)
+        continue
+      }
+
+      i += 1
+    }
   }
+
 }
