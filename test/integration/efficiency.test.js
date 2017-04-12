@@ -84,4 +84,14 @@ describe('Efficiency', function() {
     expect(handler).toHaveBeenCalledTimes(3)
   })
 
+  it('does not dispatch a change event if nothing changes on the first reconciliation', () => {
+    const repo = new Microcosm()
+
+    repo.on('change', function () {
+      throw new Error('Change event should not have fired')
+    })
+
+    repo.push('test')
+  })
+
 })

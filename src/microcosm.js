@@ -31,15 +31,14 @@ function Microcosm (preOptions, state, deserialize)  {
 
   this.parent = options.parent
 
-  this.history = this.parent ? this.parent.history : new History(options.maxHistory)
+  this.initial = this.parent ? this.parent.initial : {}
+  this.state = this.parent ? this.parent.state : this.initial
 
+  this.history = this.parent ? this.parent.history : new History(options.maxHistory)
   this.archive = new Archive()
   this.domains = new DomainEngine(this)
   this.effects = new EffectEngine(this)
-  this.changes = new CompareTree()
-
-  this.initial = this.parent ? this.parent.initial : {}
-  this.state = this.parent ? this.parent.state : this.initial
+  this.changes = new CompareTree(this.state)
 
   // History moves through a set lifecycle. As that lifecycle occurs,
   // save snapshots of new state:
