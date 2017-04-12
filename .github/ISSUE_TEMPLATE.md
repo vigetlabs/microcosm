@@ -15,7 +15,7 @@ Before filing an issue please:
 - [ ] Documentation
 - [ ] Other, please describe:
 
-**What version of Mircrocosm is this for**
+**What version of Microcosm is this for**
 
 <!-- Version number or 'All' -->
 
