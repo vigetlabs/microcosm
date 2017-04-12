@@ -44,7 +44,7 @@ DomainEngine.prototype = {
   register (action) {
     let type = action.type
 
-    if (typeof this.registry[type] === 'undefined') {
+    if (!this.registry[type]) {
       this.registry[type] = this.getHandlers(action)
     }
 

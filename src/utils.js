@@ -159,8 +159,7 @@ export function set (object, key, value) {
  * @return {boolean}
  */
 export function isPromise (obj) {
-  let type = typeof obj
-  return !!obj && (type === 'object' || type === 'function') && typeof obj.then === 'function'
+  return (isObject(obj) || isFunction(obj)) && isFunction(obj.then)
 }
 
 /**
@@ -173,12 +172,29 @@ export function isObject (target) {
 }
 
 /**
- * Is the provided value a generator function? This is largely informed
- * by the regenerator runtime.
+ * Is a value a function?
+ * @param {*} target
+ * @return {boolean}
+ */
+export function isFunction (target) {
+  return !!target && typeof target === 'function'
+}
+
+/**
+ * Is a value a string?
+ * @param {*} target
+ * @return {boolean}
+ */
+export function isString (target) {
+  return typeof target === 'string'
+}
+
+/**
+ * Is the provided value a generator function? This is largely
+ * informed by the regenerator runtime.
  * @param {*} value
  * @return {boolean}
  */
-
 var $Symbol = typeof Symbol === "function" ? Symbol : {};
 var iteratorSymbol = $Symbol.iterator || "@@iterator";
 var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
@@ -187,7 +203,7 @@ export function isGeneratorFn (value) {
 }
 
 export function createOrClone (target, options, repo) {
-  if (typeof target === 'function') {
+  if (isFunction(target)) {
     return new target(options, repo)
   }
 
@@ -204,7 +220,7 @@ export function createOrClone (target, options, repo) {
 export function update (state, keyPath, updater, fallback) {
   let path = castPath(keyPath)
 
-  if (typeof updater !== 'function') {
+  if (isFunction(updater) === false) {
     return set(state, path, updater)
   }
 

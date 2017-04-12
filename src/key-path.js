@@ -4,6 +4,8 @@
  * could represent a path within in `{ users: [{id: 0}, {id: 1}] }`
  */
 
+import { isString } from './utils'
+
 const KEY_DELIMETER  = '.'
 const PATH_DELIMETER = ','
 
@@ -23,7 +25,7 @@ export function castPath (value) {
     return []
   }
 
-  return typeof value === 'string' ? value.split(KEY_DELIMETER) : [value]
+  return isString(value) ? value.split(KEY_DELIMETER) : [value]
 }
 
 /**

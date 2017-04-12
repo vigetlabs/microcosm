@@ -1,8 +1,29 @@
+import {
+  isFunction
+} from './utils'
+
+/**
+ * @constructor
+ * @param {string} event Type of event
+ * @param {Function} fn Event callback
+ * @param {*} scope Scope of callback
+ * @param {boolean} once Only run the event callback once
+ */
+function Listener (event, fn, scope, once) {
+  console.assert(isFunction(fn),
+                 `Expected ${event} listener to be function, instead got ${fn}`)
+
+  this.event = event
+  this.fn = fn
+  this.scope = scope
+  this.once = once
+}
+
 /**
  * An abstract event emitter class. Several modules extend from this class
  * to utilize events.
  * @constructor
- * @property {Object[]} _events A pool of event listeners
+ * @property {Array.<Listener>} _events A pool of event listeners
  */
 export default function Emitter () {
   this._events = []
@@ -17,11 +38,9 @@ Emitter.prototype = {
    * @param {*} [scope] Optional scope to invoke callback with
    */
   on (event, fn, scope) {
-    console.assert(typeof fn === 'function',
-                   `Event listener for ${event} expected function callback, ` +
-                   `instead got ${typeof fn}`)
+    let listener = new Listener(event, fn, scope, false)
 
-    this._events.push({ event, fn, scope, once: false })
+    this._events.push(listener)
 
     return this
   },
@@ -34,11 +53,9 @@ Emitter.prototype = {
    * @param {*} [scope] Optional scope to invoke callback with
    */
   once (event, fn, scope) {
-    console.assert(typeof fn === 'function',
-                   `Event listener for ${event} expected function callback, ` +
-                   `instead got ${typeof fn}`)
+    let listener = new Listener(event, fn, scope, true)
 
-    this._events.push({ event, fn, scope, once: true })
+    this._events.push(listener)
 
     return this
   },

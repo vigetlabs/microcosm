@@ -2,7 +2,8 @@ import Emitter from './emitter'
 import tag from './tag'
 
 import {
-  inherit
+  inherit,
+  isFunction
 } from './utils'
 
 let uid = 0
@@ -290,9 +291,9 @@ inherit(Action, Emitter, {
    */
   _callOrSubscribeOnce (status, callback, scope) {
     if (!!callback) {
-      console.assert(typeof callback === 'function',
+      console.assert(isFunction(callback),
                      `Expected a function when subscribing to ${status}` +
-                     `instead got ${typeof callback}`)
+                     `instead got ${callback}`)
 
       if (this.is(status)) {
         callback.call(scope, this.payload)

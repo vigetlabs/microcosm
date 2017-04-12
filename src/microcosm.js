@@ -20,7 +20,8 @@ import {
   inherit,
   get,
   set,
-  update
+  update,
+  isString
 } from './utils'
 
 function Microcosm (preOptions, state, deserialize)  {
@@ -221,7 +222,7 @@ inherit(Microcosm, Emitter, {
 
     if (this.parent) {
       base = this.parent.deserialize(payload)
-    } else if (typeof base === 'string') {
+    } else if (isString(base)) {
       base = JSON.parse(base)
     }
 

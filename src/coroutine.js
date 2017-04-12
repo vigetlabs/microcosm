@@ -1,5 +1,5 @@
 import Action from './action'
-import { isPromise, isGeneratorFn } from './utils'
+import { isFunction, isPromise, isGeneratorFn } from './utils'
 
 /**
  * Provide support for generators, performing a sequence of actions in
@@ -73,7 +73,7 @@ export default function coroutine (action, body, repo) {
    * command. This middleware will execute that function with the
    * action as the first argument.
    */
-  if (typeof body === 'function') {
+  if (isFunction(body)) {
     body(action, repo)
 
     return action

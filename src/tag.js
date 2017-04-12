@@ -1,3 +1,5 @@
+import { isString } from './utils'
+
 let uid = 0
 const FALLBACK = '_action'
 
@@ -8,15 +10,13 @@ const FALLBACK = '_action'
  * @return {Function} The tagged function (same as `fn`).
  */
 export default function tag (fn, name) {
-  if (fn == null) {
-    throw new Error(`Unable to identify ${fn} action`)
-  }
+  console.assert(fn, `Unable to identify ${fn} action.`)
 
   if (fn.__tagged === true) {
     return fn
   }
 
-  if (typeof fn === 'string') {
+  if (isString(fn)) {
     name = fn
     fn = n => n
   }
