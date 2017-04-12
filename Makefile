@@ -8,17 +8,19 @@ COMPILED = $(patsubst src/%.js,build/%.js,$(MODULES))
 # Strict mode output. These files include assertions
 STRICT = $(patsubst src/%.js,build/strict/%.js,$(MODULES))
 # Compressed output
-MINIFIED = $(patsubst src/%.js,build/%.min.js,$(MODULES))
+MINIFIED = $(patsubst src/%.js,build/min/%.js,$(MODULES))
 
-all: javascript docs build/package.json
+all: javascript docs
 
 javascript: strict minified compiled
 
-compiled: $(COMPILED)
+compiled: $(COMPILED) build/package.json
 
-strict: $(STRICT)
+strict: $(STRICT) build/package.json
+	@ cp build/package.json build/strict/package.json
 
-minified: $(MINIFIED)
+minified: $(MINIFIED) build/package.json
+	@ cp build/package.json build/min/package.json
 
 docs:
 	@ mkdir -p build
@@ -28,10 +30,10 @@ build/package.json: package.json
 	@ mkdir -p build
 	@ node -p 'p=require("./package");p.private=p.scripts=p.jest=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $@
 
-build/%.min.js: src/%.js $(SCRIPTS)
+build/min/%.js: src/%.js $(SCRIPTS)
 	@ BABEL_ENV=production $(ROLLUP) -c rollup.config.js $< --output $@
 	@ echo $@
-	@ gzip -c build/$*.min.js | wc -c | tr -d '[:space:]'
+	@ gzip -c $@ | wc -c | tr -d '[:space:]'
 	@ echo
 
 build/strict/%.js: src/%.js $(SCRIPTS)
