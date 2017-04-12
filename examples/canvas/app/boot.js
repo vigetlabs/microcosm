@@ -1,5 +1,8 @@
 import Microcosm, { update } from 'microcosm'
 import prepareCanvas from './prepare-canvas'
+import updater from './updater'
+
+let repo = new Microcosm({ updater })
 
 let size = 20
 let limit = Infinity
@@ -7,7 +10,6 @@ let rows = Math.min(window.innerWidth / size | 0, limit)
 let columns = Math.min(window.innerHeight / size | 0, limit)
 let writes = size * 25
 
-let repo = new Microcosm()
 let advance = (x, y) => ({ x, y })
 
 repo.addDomain('pixels', {
@@ -65,8 +67,8 @@ function updateLabel () {
   let events = rows * columns * writes
 
   label.innerHTML = `${rows}x${columns} (${size}px grid)` +
-                    `| ${writes} writes/frame` +
-                    `| ${events.toLocaleString()} keys watched/frame`
+    `| ${writes} writes/frame` +
+    `| ${events.toLocaleString()} keys watched/frame`
 }
 
 const SLOW = 1000 / 58

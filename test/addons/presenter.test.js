@@ -987,20 +987,20 @@ describe('intercepting actions', function() {
 
   })
 
-  it('intents are tagged', function () {
+  it('actions are tagged', function () {
     const spy = jest.fn()
 
     const a = function a () {}
     const b = function a () {}
 
-    const TestView = React.createClass({
-      contextTypes: {
+    class TestView extends React.Component {
+      static contextTypes = {
         send: React.PropTypes.func.isRequired
-      },
+      }
       render() {
         return <button id="button" onClick={() => this.context.send(b, true)} />
       }
-    })
+    }
 
     class Test extends Presenter {
       intercept () {

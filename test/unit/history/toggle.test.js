@@ -4,7 +4,7 @@ describe('History::toggle', function () {
   const action = n => n
 
   it('can toggle a single action', function () {
-    const history = new History(Infinity)
+    const history = new History({ maxHistory: Infinity })
 
     let one = history.append(action, 'resolve')
 
@@ -14,7 +14,7 @@ describe('History::toggle', function () {
   })
 
   it('can toggle actions in bulk', function () {
-    const history = new History(Infinity)
+    const history = new History({ maxHistory: Infinity })
 
     let one = history.append(action, 'resolve')
     let two = history.append(action, 'resolve')
@@ -28,7 +28,7 @@ describe('History::toggle', function () {
   })
 
   it('only reconciles once', function () {
-    const history = new History(Infinity)
+    const history = new History({ maxHistory: Infinity })
 
     let one = history.append(action, 'resolve')
     let two = history.append(action, 'resolve')

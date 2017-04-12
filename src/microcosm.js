@@ -34,7 +34,8 @@ function Microcosm (preOptions, state, deserialize)  {
   this.initial = this.parent ? this.parent.initial : {}
   this.state = this.parent ? this.parent.state : this.initial
 
-  this.history = this.parent ? this.parent.history : new History(options.maxHistory)
+  this.history = this.parent ? this.parent.history : new History(options)
+
   this.archive = new Archive()
   this.domains = new DomainEngine(this)
   this.effects = new EffectEngine(this)

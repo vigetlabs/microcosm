@@ -20,7 +20,7 @@ describe('History::wait', function () {
   })
 
   it('fails when an action rejects', async function () {
-    const history = new History(Infinity)
+    const history = new History({ maxHistory: Infinity })
 
     let one = history.append(action)
     let two = history.append(action)
@@ -40,7 +40,7 @@ describe('History::wait', function () {
   })
 
   it('ignores cancelled actions', function () {
-    const history = new History(Infinity)
+    const history = new History({ maxHistory: Infinity })
 
     let one = history.append(action)
     let two = history.append(action)

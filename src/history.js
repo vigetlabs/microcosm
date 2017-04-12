@@ -2,7 +2,8 @@ import Action from './action'
 import Emitter from './emitter'
 
 import {
-  inherit
+  inherit,
+  merge
 } from './utils'
 
 import {
@@ -10,17 +11,30 @@ import {
   START
 } from './lifecycle'
 
+const DEFAULTS = {
+  maxHistory: 1,
+
+  updater () {
+    return update => update()
+  }
+}
+
 /**
  * The central tree data structure that is used to calculate state for
  * a Microcosm. Each node in the tree is an action. Branches are
  * changes over time.
  * @constructor
  */
-export default function History (limit) {
+export default function History (config) {
   Emitter.call(this)
 
+  let { maxHistory, updater } = merge(DEFAULTS, config)
+
   this.size = 0
-  this.limit = Math.max(1, limit || 1)
+  this.limit = Math.max(1, maxHistory)
+
+  this.updater = updater()
+  this.release = () => this._emit('release')
 
   this.begin()
 }
@@ -85,22 +99,26 @@ inherit(History, Emitter, {
    */
   wait () {
     let actions = this.toArray()
-    let count = actions.length
 
-    return new Promise (function (resolve, reject) {
-      function checkStatus () {
-        count -= 1
+    return new Promise ((resolve, reject) => {
+      const checkStatus = () => {
+        let done = actions.every(action => action.complete)
+        let errors = actions.filter(action => action.is('reject'))
 
-        if (count <= 0) {
-          resolve()
+        if (done) {
+          this.off('release', checkStatus)
+
+          if (errors.length) {
+            return reject(errors[0].payload)
+          } else {
+            resolve()
+          }
         }
       }
 
-      actions.map(function (action) {
-        action.onDone(checkStatus)
-        action.onCancel(checkStatus)
-        action.onError(reject)
-      })
+      this.on('release', checkStatus)
+
+      checkStatus()
     })
   },
 
@@ -206,7 +224,7 @@ inherit(History, Emitter, {
 
     this._emit('reconcile', action)
 
-    this._emit('release')
+    this.updater(this.release)
   },
 
   archive () {
