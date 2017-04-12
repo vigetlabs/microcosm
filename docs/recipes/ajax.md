@@ -93,8 +93,7 @@ the lower level API for an action:
 
 ```javascript
 // Run this code yourself
-//
-https://tonicdev.com/57ac614723722e17003526a7/57acbfab74054114008fda70
+// https://tonicdev.com/57ac614723722e17003526a7/57acbfab74054114008fda70
 var Microcosm = require('microcosm')
 var request = require('superagent')
 
