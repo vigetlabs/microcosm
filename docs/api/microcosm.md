@@ -34,10 +34,10 @@ Microcosm supports the following options:
    gets rid of any old actions to reduce memory usage. By setting
    `maxHistory`, you can tell Microcosm to hold on to those actions.
 2. `updater:function`: When specified, this allows you to configure
-   how Microcosm releases change events. This is useful for apps with
-   a high degree of change to batch together frequent state changes.
-   See the [Batch Updates](../recipes/batch-updates.md) recipe for
-   more information.
+   how Microcosm releases change events. This is useful for batching
+   together frequent state changes. See
+   the [Batch Updates](../recipes/batch-updates.md) recipe for more
+   information.
 
 Feel free to add additional options to fit your use case. Any options
 you provide to Microcosm are passed into the `setup` lifecycle method:
