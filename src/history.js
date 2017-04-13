@@ -34,7 +34,15 @@ export default function History (config) {
   this.limit = Math.max(1, maxHistory)
 
   this.updater = updater()
-  this.release = () => this._emit('release')
+
+  // Track whether a release is pending. This prevents .wait() from getting
+  // stuck in limbo
+  this.releasing = false
+
+  this.release = () => {
+    this._emit('release')
+    this.releasing = false
+  }
 
   this.begin()
 }
@@ -109,16 +117,18 @@ inherit(History, Emitter, {
           this.off('release', checkStatus)
 
           if (errors.length) {
-            return reject(errors[0].payload)
+            reject(errors[0].payload)
           } else {
             resolve()
           }
         }
       }
 
-      this.on('release', checkStatus)
+      if (this.releasing === false) {
+        checkStatus()
+      }
 
-      checkStatus()
+      this.on('release', checkStatus)
     })
   },
 
@@ -223,6 +233,8 @@ inherit(History, Emitter, {
     this.archive()
 
     this._emit('reconcile', action)
+
+    this.releasing = true
 
     this.updater(this.release)
   },

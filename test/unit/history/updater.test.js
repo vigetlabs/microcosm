@@ -30,14 +30,32 @@ describe('History updater', function () {
     expect(spy).not.toHaveBeenCalled()
   })
 
-  it('.wait() waits for the updater', function () {
+  it('.wait() waits for the updater', async function () {
     const history = new History({
       updater: function () {
         return update => setTimeout(update, 10)
       }
     })
 
-    return history.wait()
+    let handler = jest.fn()
+
+    history.on('release', handler)
+
+    history.append('action').resolve()
+
+    await history.wait()
+
+    expect(handler).toHaveBeenCalled()
+  })
+
+  it('.wait() ignores the updater when there is nothing to do', async function () {
+    const history = new History({
+      updater: function () {
+        return update => setTimeout(update, 10)
+      }
+    })
+
+    await history.wait()
   })
 
   it('.wait() waits for the updater even on rejection', function () {

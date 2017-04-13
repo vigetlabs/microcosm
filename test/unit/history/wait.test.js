@@ -3,7 +3,7 @@ import History from '../../../src/history'
 describe('History::wait', function () {
   const action = n => n
 
-  it('resolves when every action completes successfull', function () {
+  it('resolves when every action completes successfully', function () {
     const history = new History()
 
     let one = history.append(action)
