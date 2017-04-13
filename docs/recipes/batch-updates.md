@@ -4,37 +4,13 @@ Microcosm will never fire a `change` event if data is the
 same. However it is still possible to push a large number of actions
 at the same time, all of which modify data.
 
-The solution to this is to emit fewer `change` events. To wait for a
-few actions to complete, then emit a single `change` event at once. We
-call this "batching".
+The problem is that each of these actions will trigger a `change`
+event, which may cause a costly re-render. If an animation is playing,
+the user might see a degradation in frame rate.
 
-## The Challenge
-
-The problem with batching is that you have to wait, which is
-problematic for testing. For example:
-
-```javascript
-import App from 'src/views/application'
-import { mount } from 'enzyme'
-
-test("it increases the number when the stepper is clicked", function () {
-  let app = mount(<App />)
-
-  app.find('#stepper).simulate('click')
-
-  let count = app.find('#count').text()
-
-  expect(count).toEqual('1')
-})
-```
-
-The test above is synchronous. It expects the Microcosm associated
-with `App` to update immediately. However, if we configure Microcosm
-to wait a few milliseconds before changing, this will never happen.
-
-To deal with this problem, Microcosm can accept an `updater`
-instantiation option. This makes it easy to configure the update
-process for a specific environment.
+An easy solution for this is simply to emit fewer `change` events. To
+wait for a few actions to complete, then emit a single `change` event
+at once. We call this "batching".
 
 ## The updater option
 
@@ -103,4 +79,53 @@ option:
 
 ```javascript
 let repo = new Microcosm({ updater: requestIdleBatch })
+```
+
+## Gotchas with testing
+
+The problem with batching is that you have to wait, which is
+problematic for testing. For example:
+
+```javascript
+import App from 'src/views/application'
+import { mount } from 'enzyme'
+
+test("it increases the number when the stepper is clicked", function () {
+  let app = mount(<App />)
+
+  app.find('#stepper).simulate('click')
+
+  let count = app.find('#count').text()
+
+  expect(count).toEqual('1')
+})
+```
+
+The test above is synchronous. It expects the Microcosm associated
+with `App` to update immediately. However, if we configure Microcosm
+to wait a few milliseconds before changing, this will never happen.
+
+The easiest way to deal with this problem is to only passing a custom
+`updater` to user facing code. However you could also lean in
+`repo.history.wait()`, which introduces a few more elements to the
+test:
+
+```javascript
+import Repo from 'src/repo'
+import App from 'src/views/application'
+import { mount } from 'enzyme'
+
+test("it increases the number when the stepper is clicked", async function () {
+  let repo = new Repo()
+  let app = mount(<App repo={repo} />)
+
+  app.find('#stepper).simulate('click')
+
+  // wait() will pause this test until all actions finish
+  await repo.history.wait()
+
+  let count = app.find('#count').text()
+
+  expect(count).toEqual('1')
+})
 ```
