@@ -5,9 +5,8 @@
 
 ## Overview
 
-The Microcosm class is the core module for the microcosm project. It
-provides a centralized place to store application data, preventing
-data duplication and making it easy to track changes.
+The Microcosm class provides a centralized place to store application
+state, dispatch actions, and track changes.
 
 ### Creating a Microcosm
 
