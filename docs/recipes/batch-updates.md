@@ -15,30 +15,27 @@ at once. We call this "batching".
 ## The updater option
 
 Microcosm provides an `updater` option that allows for customization
-of the update process:
+of the update process. For example, if we wanted to batch updates to a
+12 millisecond interval:
 
 ```javascript
 function updater () {
   // update is a function, executing it will send a request to
   // Microcosm, asking it trigger a change event if anything changed
-  return update => {
-    // Do whatever you want...
-
-    // Then call update when you want to ask Microcosm to check for
-    // changes
-    update()
-  }
+  return update => setTimeout(update, 12)
 }
 ```
 
-For batch operations, we recommend
-using
-[requestIdleCallback](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback).
+This will spool up any changes within a 12 millisecond time frame,
+sending out a larger update after the timeout completes.
 
-`requestIdleCallback` waits for user interaction and other browser
-work to finish before executing a provided callback. Additionally, it
-can be configured to never wait longer than a specified period of
-time:
+This certainly works, however we recommend
+using
+[`requestIdleCallback`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback) when
+possible. `requestIdleCallback` waits for user interaction and other
+browser work to finish before executing a provided
+callback. Additionally, it can be configured to never wait longer than
+a specified period of time:
 
 ```javascript
 function doWork () {
@@ -60,9 +57,6 @@ import 'ric'
 const options = { timeout: 24 }
 
 function requestIdleBatch () {
-  // Keep track of the last frame of work
-  let frame = null
-
   return update => requestIdleCallback(update, options)
 }
 ```
