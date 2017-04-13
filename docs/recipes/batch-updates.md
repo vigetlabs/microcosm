@@ -80,7 +80,7 @@ import { mount } from 'enzyme'
 test("it increases the number when the stepper is clicked", function () {
   let app = mount(<App />)
 
-  app.find('#stepper).simulate('click')
+  app.find('#stepper').simulate('click')
 
   let count = app.find('#count').text()
 
