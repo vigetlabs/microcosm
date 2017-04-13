@@ -14,8 +14,8 @@ at once. We call this "batching".
 
 ## The updater option
 
-Microcosm provides an `updater` instantiating option that allows you
-to customize the update process:
+Microcosm provides an `updater` option that allows for customization
+of the update process:
 
 ```javascript
 function updater () {
