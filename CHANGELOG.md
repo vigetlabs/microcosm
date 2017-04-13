@@ -7,6 +7,8 @@
 - Added configurable `teardown` method to the Microcosm
   prototype. This behaves similarly to `teardown` methods on other
   Microcosm classes.
+- Fixed a bug where the first action dispatched would always fire a
+  change event, even if state didn't change.
 
 ## 12.6.1
 
