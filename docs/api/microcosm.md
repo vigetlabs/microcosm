@@ -5,13 +5,59 @@
 
 ## Overview
 
-Microcosm is [Flux](https://facebook.github.io/flux/) with first-class
-actions and state sandboxing.
+The Microcosm class is the core module for the microcosm project. It
+provides a centralized place to store application data, preventing
+data duplication and making it easy to track changes.
 
-The source of truth in Microcosm is a historical record of actions. As
-they move through a set lifecycle, Microcosm reconciles actions in the
-order they were created. This makes optimistic updates, cancellation,
-and loading states much simpler. They self clean.
+### Creating a Microcosm
+
+All Microcosm apps start by instantiating a Microcosm class. We call
+this instance of Microcosm a "repo":
+
+```javascript
+let repo = new Microcosm()
+```
+
+### Options
+
+The first argument of the Microcosm constructor are options to
+configure the Microcosm:
+
+```javascript
+let repo = new Microcosm({ maxHistory: 10 })
+```
+
+Microcosm supports the following options:
+
+1. `maxHistory:number`: In Microcosm, data is changed by responding
+   to [actions](./actions.md). This builds up a history that can be
+   useful for debugging and undo/redo behavior. By default, Microcosm
+   gets rid of any old actions to reduce memory usage. By setting
+   `maxHistory`, you can tell Microcosm to hold on to those actions.
+2. `updater:function`: When specified, this allows you to configure
+   how Microcosm releases change events. This is useful for apps with
+   a high degree of change to batch together frequent state changes.
+   See the [Batch Updates](../recipes/batch-updates.md) recipe for
+   more information.
+
+Feel free to add additional options to fit your use case. Any options
+you provide to Microcosm are passed into the `setup` lifecycle method:
+
+```javascript
+import Autosave from './effects/autosave'
+
+class Repo extends Microcosm {
+
+  setup (options) {
+    if (options.autosave) {
+      this.addEffect(Autosave)
+    }
+  }
+
+}
+
+let repo = new Repo({ autosave: true })
+```
 
 ## API
 

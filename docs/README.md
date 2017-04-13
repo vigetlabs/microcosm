@@ -33,3 +33,4 @@
 2. [AJAX](recipes/ajax.md)
 3. [Preact](recipes/preact.md)
 4. [Hydrating State](recipes/hydrating-state.md)
+5. [Batch Updates](recipes/batch-updates.md)
