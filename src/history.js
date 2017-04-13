@@ -39,10 +39,7 @@ export default function History (config) {
   // stuck in limbo
   this.releasing = false
 
-  this.release = () => {
-    this._emit('release')
-    this.releasing = false
-  }
+  this.release = () => this.closeRelease()
 
   this.begin()
 }
@@ -234,9 +231,19 @@ inherit(History, Emitter, {
 
     this._emit('reconcile', action)
 
-    this.releasing = true
+    this.queueRelease()
+  },
 
-    this.updater(this.release)
+  queueRelease () {
+    if (this.releasing === false) {
+      this.releasing = true
+      this.updater(this.release)
+    }
+  },
+
+  closeRelease () {
+    this.releasing = false
+    this._emit('release')
   },
 
   archive () {
