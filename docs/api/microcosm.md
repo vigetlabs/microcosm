@@ -19,8 +19,8 @@ let repo = new Microcosm()
 
 ### Options
 
-The first argument of the Microcosm constructor are options to
-configure the Microcosm:
+The first argument of the Microcosm constructor is an object of
+options:
 
 ```javascript
 let repo = new Microcosm({ maxHistory: 10 })
