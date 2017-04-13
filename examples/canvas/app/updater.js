@@ -11,18 +11,5 @@ import 'ric'
 const options = { timeout: 24 }
 
 export default function requestIdleBatch () {
-
-  // Batching strategies return a function. This allows you to
-  // maintain state within the closure above. Here, we keep track of
-  // the last frame of work
-  let frame = null
-
-  return update => {
-    if (frame == null) {
-      frame = requestIdleCallback(() => {
-        frame = null
-        update()
-      }, options)
-    }
-  }
+  return update => requestIdleCallback(update, options)
 }

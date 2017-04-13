@@ -63,14 +63,7 @@ function requestIdleBatch () {
   // Keep track of the last frame of work
   let frame = null
 
-  return update => {
-    if (frame == null) {
-      frame = requestIdleCallback(() => {
-        frame = null
-        update()
-      }, options)
-    }
-  }
+  return update => requestIdleCallback(update, options)
 }
 ```
 
