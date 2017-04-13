@@ -103,7 +103,8 @@ test("it increases the number when the stepper is clicked", function () {
 
 The test above is synchronous. It expects the Microcosm associated
 with `App` to update immediately. However, if we configure Microcosm
-to wait a few milliseconds before changing, this will never happen.
+to wait a few milliseconds before changing, this won't have happened
+yet.
 
 The easiest way to deal with this problem is to only passing a custom
 `updater` to user facing code. However you could also lean in
