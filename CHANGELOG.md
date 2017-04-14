@@ -11,6 +11,31 @@
   change event, even if state didn't change.
 - The first argument of `repo.push` is passed into the `open` state of
   actions that return promises.
+- Action status changing methods are auto-bound, and will warn when a
+  completed action attempts to move into a new state (strict mode only)
+
+### Autobound action status methods
+
+Action status methods, like `action.resolve()`, or `action.reject()`
+are now auto-bound. This means that you can pass them directly into a
+callback, and the scope of the method will remain as the action. This
+is particularly useful when working with AJAX libraries. For example,
+when working with `superagent`:
+
+```javascript
+import superagent from 'superagent'
+
+function getPlanets () {
+  return action => {
+    let request = superagent.get('/planets')
+
+    request.on('request', action.open)
+    request.on('progress', action.update)
+
+    request.then(action.resolve, action.reject)
+  }
+}
+```
 
 ## 12.6.1
 

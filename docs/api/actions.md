@@ -1,7 +1,7 @@
 # Actions
 
 1. [Overview](#overview)
-2. [Writing action creators](#writing-action-creators)
+2. [Writing Action Creators](#writing-action-creators)
 3. [Dispatching to Domains](#dispatching-to-domains)
 4. [How this works](#how-this-works)
 5. [API](#api)
@@ -158,6 +158,29 @@ is rejected or cancelled with the same payload.
 
 When all steps of the generator complete, the payload of the parent
 action will be the resolved payload of the final action.
+
+### Action status methods are auto-bound
+
+Action status methods, like `action.resolve()`, or `action.reject()`
+are auto-bound. This means that you can pass them directly into a
+callback and the scope of the method will remain as the action. This
+is particularly useful when working with AJAX libraries. For example,
+`superagent`:
+
+```javascript
+import superagent from 'superagent'
+
+function getPlanets () {
+  return action => {
+    let request = superagent.get('/planets')
+
+    request.on('request', action.open)
+    request.on('progress', action.update)
+
+    request.then(action.resolve, action.reject)
+  }
+}
+```
 
 ## Dispatching to Domains
 

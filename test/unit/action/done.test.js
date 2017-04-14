@@ -49,7 +49,10 @@ describe('Action done state', function () {
     const action = repo.append(identity)
 
     action.reject(false)
-    action.resolve(true)
+
+    expect(function () {
+      action.resolve(true)
+    }).toThrow(/Action identity is already in the reject state/)
 
     expect(action).toHaveStatus('error')
     expect(action).not.toHaveStatus('done')

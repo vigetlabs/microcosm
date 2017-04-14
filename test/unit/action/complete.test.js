@@ -29,11 +29,14 @@ describe('Action complete state', function () {
     expect(action.complete).toBe(true)
   })
 
-  it('will not change states if already disposed', function () {
+  it('will not change states if already complete', function () {
     const action = new Action(identity)
 
     action.cancel()
-    action.resolve()
+
+    expect(function () {
+      action.resolve()
+    }).toThrow(/Action identity is already in the cancel state/)
 
     expect(action.is('cancelled')).toBe(true)
     expect(action.is('done')).toBe(false)

@@ -38,7 +38,8 @@ describe('Action cancelled state', function () {
     action.onCancel(callback)
 
     action.cancel()
-    action.cancel()
+
+    action._emit('cancel')
 
     expect(callback).toHaveBeenCalledTimes(1)
   })

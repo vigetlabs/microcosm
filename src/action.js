@@ -38,62 +38,6 @@ inherit(Action, Emitter, {
   next     : null,
 
   /**
-   * Open state. The action has started, but has received no response.
-   * @param {*} [nextPayload]
-   */
-  open (nextPayload) {
-    this._setPayload.apply(this, arguments)
-    this._setStatus('open', false)
-
-    return this
-  },
-
-  /**
-   * Update state. The action has received an update, such as loading progress.
-   * @param {*} [nextPayload]
-   */
-  update (nextPayload) {
-    this._setPayload.apply(this, arguments)
-    this._setStatus('update', false)
-
-    return this
-  },
-
-  /**
-   * Resolved state. The action has completed successfully.
-   * @param {*} [nextPayload]
-   */
-  resolve (nextPayload) {
-    this._setPayload.apply(this, arguments)
-    this._setStatus('resolve', true)
-
-    return this
-  },
-
-  /**
-   * Failure state. The action did not complete successfully.
-   * @param {*} [nextPayload]
-   */
-  reject (nextPayload) {
-    this._setPayload.apply(this, arguments)
-    this._setStatus('reject', true)
-
-    return this
-  },
-
-  /**
-   * Cancelled state. The action was halted, like aborting an HTTP
-   * request.
-   * @param {*} [nextPayload]
-   */
-  cancel (nextPayload) {
-    this._setPayload.apply(this, arguments)
-    this._setStatus('cancel', true)
-
-    return this
-  },
-
-  /**
    * Subscribe to when an action opens.
    * @param {Function} callback
    * @param {*} [scope]
@@ -256,32 +200,6 @@ inherit(Action, Emitter, {
   },
 
   /**
-   * Reset the payload
-   * @private
-   */
-  _setPayload (payload) {
-    if (arguments.length) {
-      this.payload = payload
-    }
-  },
-
-  /**
-   * Change the status of the action
-   * @private
-   * @param {string} status The next action status
-   * @param {boolean} complete Should the action be complete?
-   */
-  _setStatus (status, complete) {
-    if (!this.complete) {
-      this.status = status
-      this.complete = complete
-
-      this._emit('change', this)
-      this._emit(status, this.payload)
-    }
-  },
-
-  /**
    * If an action is already a given status, invoke the
    * provided callback. Otherwise setup a one-time listener
    * @private
@@ -305,8 +223,114 @@ inherit(Action, Emitter, {
 
 })
 
-Object.defineProperty(Action.prototype, 'type', {
-  get () {
-    return this.command[this.status]
+/**
+ * Complete actions can never change. This is a courtesy warning
+ * @param {Action} action
+ * @param {string} method
+ * @return A function that will warn developers that they can not
+ * update this action
+ */
+function createCompleteWarning (action, method) {
+  return function () {
+    console.assert(false, `Action ${action.command.name} is already in ` +
+                   `the ${action.status} state, it will not change. Calling ` +
+                   `${method} will not change it.`)
   }
+}
+
+/**
+ * Used to autobind action resolution methods.
+ * @param {Action} action
+ * @param {string} status
+ * @param {boolean} complete
+ * @return A function that will update the provided action with a new state
+ */
+function createActionUpdater (action, status, complete) {
+  return function (payload) {
+    action.status = status
+    action.complete = complete
+
+    // Check arguments, we want to allow payloads that are undefined
+    if (arguments.length > 0) {
+      action.payload = payload
+    }
+
+    action._emit('change', action)
+    action._emit(status, action.payload)
+
+    return action
+  }
+}
+
+/**
+ * If the action is complete, return a warning that the action can no longer be updated.
+ * Otherwise return an autobound updater function.
+ * @param {Action} action
+ * @param {string} status
+ * @param {boolean} complete
+ */
+function warnOrUpdate (action, status, complete) {
+  return action.complete ? createCompleteWarning(action, status)
+                         : createActionUpdater(action, status, complete)
+}
+
+Object.defineProperties(Action.prototype, {
+
+  type: {
+    get () {
+      return this.command[this.status]
+    }
+  },
+
+  /**
+   * Open state. The action has started, but has received no response.
+   * @param {*} [nextPayload]
+   */
+  open: {
+    get () {
+      return warnOrUpdate(this, 'open', false)
+    }
+  },
+
+  /**
+   * Update state. The action has received an update, such as loading progress.
+   * @param {*} [nextPayload]
+   */
+  update: {
+    get () {
+      return warnOrUpdate(this, 'update', false)
+    }
+  },
+
+  /**
+   * Resolved state. The action has completed successfully.
+   * @param {*} [nextPayload]
+   */
+  resolve: {
+    get () {
+      return warnOrUpdate(this, 'resolve', true)
+    }
+  },
+
+  /**
+   * Failure state. The action did not complete successfully.
+   * @param {*} [nextPayload]
+   */
+  reject: {
+    get () {
+      return warnOrUpdate(this, 'reject', true)
+    }
+  },
+
+  /**
+   * Cancelled state. The action was halted, like aborting an HTTP
+   * request.
+   * @param {*} [nextPayload]
+   */
+  cancel: {
+    get () {
+      return warnOrUpdate(this, 'cancel', true)
+    }
+  }
+
 })

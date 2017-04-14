@@ -38,7 +38,10 @@ describe('Action open state', function () {
 
     action.on('open', spy)
     action.resolve()
-    action.open()
+
+    expect(function () {
+      action.open()
+    }).toThrow(/Action identity is already in the resolve state/)
 
     expect(spy).not.toHaveBeenCalled()
   })

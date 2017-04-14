@@ -59,7 +59,10 @@ describe('Action update state', function () {
 
     action.on('update', spy)
     action.resolve()
-    action.update()
+
+    expect(function () {
+      action.update()
+    }).toThrow(/Action identity is already in the resolve state/)
 
     expect(spy).not.toHaveBeenCalled()
   })

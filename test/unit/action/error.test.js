@@ -49,7 +49,10 @@ describe('Action error state', function () {
 
     action.on('error', spy)
     action.resolve()
-    action.reject()
+
+    expect(function () {
+      action.reject()
+    }).toThrow(/Action identity is already in the resolve state/)
 
     expect(spy).not.toHaveBeenCalled()
   })
