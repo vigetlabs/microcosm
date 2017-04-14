@@ -13,6 +13,9 @@
   actions that return promises.
 - Action status changing methods are auto-bound, and will warn when a
   completed action attempts to move into a new state (strict mode only)
+- Added `batch` as an option when instantiating Microcosm. When set to
+  `true`, high frequency change events will be batched together using
+  `requestIdleCallback`
 
 ### Auto-bound action status methods
 
