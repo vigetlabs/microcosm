@@ -183,7 +183,7 @@ inherit(Microcosm, Emitter, {
   push (command, ...params) {
     let action = this.append(command)
 
-    coroutine(action, action.command.apply(null, params), this)
+    coroutine(action, action.command, params, this)
 
     return action
   },

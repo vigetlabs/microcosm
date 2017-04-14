@@ -9,6 +9,8 @@
   Microcosm classes.
 - Fixed a bug where the first action dispatched would always fire a
   change event, even if state didn't change.
+- The first argument of `repo.push` is passed into the `open` state of
+  actions that return promises.
 
 ## 12.6.1
 

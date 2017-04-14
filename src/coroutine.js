@@ -38,7 +38,9 @@ function processGenerator (action, body, repo) {
  * Coroutine is used by an action to determine how it should resolve
  * the body of their associated command.
  */
-export default function coroutine (action, body, repo) {
+export default function coroutine (action, command, params, repo) {
+  let body = command.apply(action, params)
+
   /**
    * Provide support for Promises:
    *
@@ -49,7 +51,7 @@ export default function coroutine (action, body, repo) {
    * 4. Otherwise resolve the action with the returned body
    */
   if (isPromise(body)) {
-    action.open()
+    action.open(...params)
 
     body.then(
       result => global.setTimeout(() => action.resolve(result), 0),

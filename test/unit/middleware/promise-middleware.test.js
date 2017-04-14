@@ -2,6 +2,14 @@ import Microcosm from '../../../src/microcosm'
 
 describe('Promise middleware', function () {
 
+  it('opens with the first argument of params', function () {
+    const repo = new Microcosm()
+    const action = repo.push(n => Promise.resolve(n), true)
+
+    expect(action).toHaveStatus('open')
+    expect(action.payload).toEqual(true)
+  })
+
   it('completes when a promise resolves', function (done) {
     const repo = new Microcosm()
     const action = repo.push(n => Promise.resolve(n))

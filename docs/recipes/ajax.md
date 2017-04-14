@@ -47,7 +47,8 @@ When Microcosm detects a Promise returned from an action
 creator, it handles it in the following way:
 
 1. Mark the action as `open`. This gives domain handlers a way to
-   subscribe to a loading state.
+   subscribe to a loading state. The payload of the action will be
+   the first argument of the parameters passed into `repo.push`.
 2. On resolution, mark the action as `done` and update its payload to
    that of the resolved Promise.
 3. On failure, mark the action as `error` and update its payload to

@@ -65,13 +65,22 @@ repo.push(addPlanet, { name: 'Saturn' })
 ### Return a promise
 
 ```javascript
-function readPlanets () {
+function getPlanet (id) {
   // Using your favorite promise-based ajax library (maybe axios or fetch?)
-  return ajax.get('/planets')
+  return ajax.get(`/planets/${id}`)
 }
 
-repo.push(readPlanets)
+repo.push(getPlanet, 'mars')
 ```
+
+When returning a Promise:
+
+1. The action is opened with the first argument of the parameters
+   passed to `repo.push`. In this case: `'mars'`
+2. When the request finishes, the action is resolved with the payload
+   passed into the Promise's resolve callback
+3. If the request fails, the action is rejected with whatever error
+   was passed with the Promise's reject callback
 
 ### Return a function
 
