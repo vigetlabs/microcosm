@@ -176,6 +176,7 @@ function getPlanets () {
 
     request.on('request', action.open)
     request.on('progress', action.update)
+    request.on('abort', action.cancel)
 
     request.then(action.resolve, action.reject)
   }
