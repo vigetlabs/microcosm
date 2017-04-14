@@ -75,7 +75,8 @@ function Microcosm (preOptions, state, deserialize)  {
  */
 Microcosm.defaults = {
   maxHistory: 0,
-  parent: null
+  parent: null,
+  batch: false
 }
 
 inherit(Microcosm, Emitter, {

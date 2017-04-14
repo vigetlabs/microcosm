@@ -12,6 +12,7 @@ const config = {
   external: [
     'react',
     'form-serialize',
+    'ric',
     path.resolve('src/microcosm.js')
   ],
   plugins: [

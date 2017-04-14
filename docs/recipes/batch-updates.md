@@ -12,11 +12,55 @@ An easy solution for this is simply to emit fewer `change` events. To
 wait for a few actions to complete, then emit a single `change` event
 at once. We call this "batching".
 
+## The batch option
+
+Microcosm provides a `batch` option that tells Microcosm that it is
+okay to group multiple change events together. This reduces the number
+of change events, resulting in less rendering. For example, without
+batching, this code would fire 3 change events:
+
+```javascript
+let repo = new Microcosm()
+
+let add = (n) => n
+
+repo.addDomain('count', {
+  getInitialState () {
+    return 0
+  },
+  register () {
+    return {
+      [add]: (count, n) => count + 1
+    }
+  }
+})
+
+repo.push(add, 2) // change!
+repo.push(add, 2) // change!
+repo.push(add, 2) // change!
+```
+
+With batching, only a single change event would fire:
+
+```javascript
+let repo = new Microcosm({ batch: true })
+
+// ...
+
+repo.push(add, 2)
+repo.push(add, 2)
+repo.push(add, 2)
+
+// change!
+```
+
 ## The updater option
 
-Microcosm provides an `updater` option that allows for customization
-of the update process. For example, if we wanted to batch updates to a
-12 millisecond interval:
+Most of the time, `batch: true` should be sufficient for accommodating
+apps with a high degree of change. However Microcosm provides an
+`updater` option that allows for more specific customization of the
+update process. For example, if we wanted to batch updates to a 12
+millisecond interval:
 
 ```javascript
 function updater () {
@@ -28,45 +72,6 @@ function updater () {
 
 This will spool up any changes within a 12 millisecond time frame,
 sending out a larger update after the timeout completes.
-
-This certainly works, however we recommend
-using
-[`requestIdleCallback`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback) when
-possible. `requestIdleCallback` waits for user interaction and other
-browser work to finish before executing a provided
-callback. Additionally, it can be configured to never wait longer than
-a specified period of time:
-
-```javascript
-function doWork () {
-  // Whatever work you need to do goes here
-}
-
-requestIdleCallback(doWork, { timeout: 24 })
-```
-
-The code above will execute `doWork` when the browser is ready for it,
-however it will never wait longer than 24 milliseconds. Integrating
-this into the Microcosm `updater` option is simple:
-
-```javascript
-// A lot of browsers don't support requestIdleCallback, so we patch it
-import 'ric'
-
-// Never let the user wait more than 24 milliseconds for an update
-const options = { timeout: 24 }
-
-function requestIdleBatch () {
-  return update => requestIdleCallback(update, options)
-}
-```
-
-Then, when creating a Microcosm, pass this function as the `updater`
-option:
-
-```javascript
-let repo = new Microcosm({ updater: requestIdleBatch })
-```
 
 ## Gotchas with testing
 
@@ -93,8 +98,8 @@ with `App` to update immediately. However, if we configure Microcosm
 to wait a few milliseconds before changing, this won't have happened
 yet.
 
-The easiest way to deal with this problem is to only passing a custom
-`updater` to user facing code. However you could also lean in
+The easiest way to deal with this problem is to **only pass `batch:
+true` for user facing code**. However you could also lean in
 `repo.history.wait()`, which introduces a few more elements to the
 test:
 

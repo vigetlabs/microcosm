@@ -1,5 +1,6 @@
 import Action from './action'
 import Emitter from './emitter'
+import defaultUpdateStrategy from './default-update-strategy'
 
 import {
   inherit,
@@ -13,10 +14,8 @@ import {
 
 const DEFAULTS = {
   maxHistory: 1,
-
-  updater () {
-    return update => update()
-  }
+  batch: false,
+  updater: defaultUpdateStrategy
 }
 
 /**
@@ -28,12 +27,12 @@ const DEFAULTS = {
 export default function History (config) {
   Emitter.call(this)
 
-  let { maxHistory, updater } = merge(DEFAULTS, config)
+  let options = merge(DEFAULTS, config)
 
   this.size = 0
-  this.limit = Math.max(1, maxHistory)
+  this.limit = Math.max(1, options.maxHistory)
 
-  this.updater = updater()
+  this.updater = options.updater(options)
 
   // Track whether a release is pending. This prevents .wait() from getting
   // stuck in limbo

@@ -33,9 +33,14 @@ Microcosm supports the following options:
    useful for debugging and undo/redo behavior. By default, Microcosm
    gets rid of any old actions to reduce memory usage. By setting
    `maxHistory`, you can tell Microcosm to hold on to those actions.
-2. `updater:function`: When specified, this allows you to configure
-   how Microcosm releases change events. This is useful for batching
-   together frequent state changes. See
+2. `batch:boolean`: When set to true, change events within a short
+   period of time will be grouped together
+   using
+   [`requestIdleCallback`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback). Defaults
+   to false. **Important:** this makes change events asynchronous.
+2. `updater:function`: `batch:true` should be sufficient for nearly
+   all use cases. However this option overrides the default batch
+   behavior if it proves problematic for your app. See
    the [Batch Updates](../recipes/batch-updates.md) recipe for more
    information.
 

@@ -1,8 +1,7 @@
 import Microcosm, { update } from 'microcosm'
 import prepareCanvas from './prepare-canvas'
-import updater from './updater'
 
-let repo = new Microcosm({ updater })
+let repo = new Microcosm({ batch: true })
 
 let size = 20
 let limit = Infinity
