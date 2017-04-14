@@ -232,9 +232,8 @@ inherit(Action, Emitter, {
  */
 function createCompleteWarning (action, method) {
   return function () {
-    console.assert(false, `Action "${action.command.name || action.type}" is already in ` +
-                   `the ${action.status} state, it will not change. Calling ` +
-                   `${method} will not change it.`)
+    console.warn(`Action "${action.command.name || action.type}" is already in ` +
+                 `the ${action.status} state. Calling ${method}() will not change it.`)
   }
 }
 

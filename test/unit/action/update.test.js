@@ -56,13 +56,13 @@ describe('Action update state', function () {
   it('does not trigger an update event if it is complete', function () {
     const action = new Action(identity)
     const spy = jest.fn()
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
     action.on('update', spy)
     action.resolve()
+    action.update()
 
-    expect(function () {
-      action.update()
-    }).toThrow(/Action "identity" is already in the resolve state/)
+    expect(warn).toHaveBeenCalledWith('Action "identity" is already in the resolve state. Calling update() will not change it.')
 
     expect(spy).not.toHaveBeenCalled()
   })

@@ -31,15 +31,17 @@ describe('Action complete state', function () {
 
   it('will not change states if already complete', function () {
     const action = new Action(identity)
+    const spy = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
     action.cancel()
+    action.resolve()
 
-    expect(function () {
-      action.resolve()
-    }).toThrow(/Action "identity" is already in the cancel state/)
+    expect(spy).toHaveBeenCalledWith('Action "identity" is already in the cancel state. Calling resolve() will not change it.')
 
     expect(action.is('cancelled')).toBe(true)
     expect(action.is('done')).toBe(false)
+
+    spy.mockRestore()
   })
 
 })

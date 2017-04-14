@@ -43,13 +43,13 @@
     ]
   },
   "dependencies": {
-    "form-serialize": "0.7.1"
+    "form-serialize": "0.7.1",
+    "rollup-plugin-strip": "^1.1.1"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.2",
     "babel-loader": "^6.4.1",
-    "babel-plugin-unassert": "^2.1.2",
     "babel-polyfill": "^6.22.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",

@@ -31,13 +31,13 @@ build/package.json: package.json
 	@ node -p 'p=require("./package");p.private=p.scripts=p.jest=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $@
 
 build/min/%.js: src/%.js $(SCRIPTS)
-	@ BABEL_ENV=production $(ROLLUP) -c rollup.config.js $< --output $@
+	@ MINIFY=true $(ROLLUP) -c rollup.config.js $< --output $@
 	@ echo $@
 	@ gzip -c $@ | wc -c | tr -d '[:space:]'
 	@ echo
 
 build/strict/%.js: src/%.js $(SCRIPTS)
-	@ BABEL_ENV=strict $(ROLLUP) -c rollup.config.js $< --output $@
+	@ STRICT=true $(ROLLUP) -c rollup.config.js $< --output $@
 
 build/%.js: src/%.js $(SCRIPTS)
 	@ $(ROLLUP) -c rollup.config.js $< --output $@
