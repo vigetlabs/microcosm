@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
-    "babel-eslint": "^7.2.1",
+    "babel-eslint": "^7.2.2",
     "babel-loader": "^6.4.1",
     "babel-plugin-unassert": "^2.1.2",
     "babel-polyfill": "^6.22.0",
@@ -60,7 +60,7 @@
     "codecov": "^2.1.0",
     "console.table": "0.8.0",
     "elizabot": "^0.0.2",
-    "enzyme": "^2.8.0",
+    "enzyme": "^2.8.2",
     "eslint": "^3.19.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-react": "^6.10.3",
@@ -71,13 +71,13 @@
     "react-addons-test-utils": "^15.5.1",
     "react-dom": "^15.5.4",
     "react-hot-loader": "next",
-    "react-router-dom": "^4.1.0",
+    "react-router-dom": "^4.1.1",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^1.0.1",
     "uid": "^0.0.2",
-    "webpack": "^2.3.3",
+    "webpack": "^2.4.0",
     "webpack-dev-server": "^2.4.2"
   }
 }
