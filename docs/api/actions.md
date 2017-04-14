@@ -198,11 +198,13 @@ const SolarSystem = {
 
   register() {
     return {
-      [getPlanet.open]      : this.setLoading,
-      [getPlanet.loading]   : this.setProgress,
-      [getPlanet.done]      : this.addPlanet,
-      [getPlanet.error]     : this.setError,
-      [getPlanet.cancelled] : this.setCancelled
+      [getPlanet]: {
+        open   : this.setLoading,
+        update : this.setProgress,
+        done   : this.addPlanet,
+        error  : this.setError,
+        cancel : this.setCancelled
+      }
     }
   }
 }
