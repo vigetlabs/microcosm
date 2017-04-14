@@ -48,14 +48,10 @@ Feel free to add additional options to fit your use case. Any options
 you provide to Microcosm are passed into the `setup` lifecycle method:
 
 ```javascript
-import Autosave from './effects/autosave'
-
 class Repo extends Microcosm {
 
   setup (options) {
-    if (options.autosave) {
-      this.addEffect(Autosave)
-    }
+    console.log(options) // { autosave: true }
   }
 
 }
