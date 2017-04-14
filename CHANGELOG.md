@@ -14,13 +14,34 @@
 - Action status changing methods are auto-bound, and will warn when a
   completed action attempts to move into a new state (strict mode only)
 
-### Autobound action status methods
+### Auto-bound action status methods
 
-Action status methods, like `action.resolve()`, or `action.reject()`
-are auto-bound. This means that you can pass them directly into a
-callback, and the scope of the method will remain as the action. This
-is particularly useful when working with AJAX libraries. For example,
-when working with `superagent`:
+Action status methods like `action.resolve()` and `action.reject()`
+are auto-bound. They can be passed directly into a callback without
+needing to wrap them in an anonymous function.
+
+This is particularly useful when working with AJAX libraries. For
+example, when working with `superagent`:
+
+Instead of:
+
+```javascript
+import superagent from 'superagent'
+
+function getPlanets () {
+  return action => {
+    let request = superagent.get('/planets')
+
+    request.on('request', (data) => action.open(data))
+    request.on('progress', (data) => action.update(data))
+    request.on('abort', (data) => action.cancel(data))
+
+    request.then((data) => action.resolve(data), (error) => action.reject(error))
+  }
+}
+```
+
+You can do:
 
 ```javascript
 import superagent from 'superagent'

@@ -161,11 +161,12 @@ action will be the resolved payload of the final action.
 
 ### Action status methods are auto-bound
 
-Action status methods, like `action.resolve()`, or `action.reject()`
-are auto-bound. This means that you can pass them directly into a
-callback and the scope of the method will remain as the action. This
-is particularly useful when working with AJAX libraries. For example,
-`superagent`:
+Action status methods like `action.resolve()` and `action.reject()`
+are auto-bound. They can be passed directly into a callback without
+needing to wrap them in an anonymous function.
+
+This is particularly useful when working with AJAX libraries. For
+example, when working with `superagent`:
 
 ```javascript
 import superagent from 'superagent'
