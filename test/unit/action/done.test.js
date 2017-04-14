@@ -52,7 +52,7 @@ describe('Action done state', function () {
 
     expect(function () {
       action.resolve(true)
-    }).toThrow(/Action identity is already in the reject state/)
+    }).toThrow(/Action "identity" is already in the reject state/)
 
     expect(action).toHaveStatus('error')
     expect(action).not.toHaveStatus('done')

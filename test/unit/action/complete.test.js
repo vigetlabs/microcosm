@@ -36,7 +36,7 @@ describe('Action complete state', function () {
 
     expect(function () {
       action.resolve()
-    }).toThrow(/Action identity is already in the cancel state/)
+    }).toThrow(/Action "identity" is already in the cancel state/)
 
     expect(action.is('cancelled')).toBe(true)
     expect(action.is('done')).toBe(false)
