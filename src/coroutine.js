@@ -39,7 +39,7 @@ function processGenerator (action, body, repo) {
  * the body of their associated command.
  */
 export default function coroutine (action, command, params, repo) {
-  let body = command.apply(action, params)
+  let body = command.apply(null, params)
 
   /**
    * Provide support for Promises:

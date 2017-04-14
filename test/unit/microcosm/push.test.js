@@ -2,6 +2,15 @@ import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm::push', function () {
 
+  it('the pushed function has no scope', function (done) {
+    let repo = new Microcosm()
+
+    repo.push(function () {
+      expect(this).toBe(null)
+      done()
+    })
+  })
+
   it('can push an action, resolving it into state', function () {
     let repo = new Microcosm()
     let step = n => n
