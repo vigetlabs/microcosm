@@ -2,6 +2,25 @@ import History from '../../../src/history'
 
 describe('History updater', function () {
 
+  it('provides a default batching method', function (done) {
+    const history = new History({
+      batch: true
+    })
+
+    let spy = jest.fn()
+
+    history.on('release', spy)
+
+    history.on('release', () => {
+      expect(spy).toHaveBeenCalledTimes(1)
+      done()
+    })
+
+    history.append('action').resolve()
+    history.append('action').resolve()
+    history.append('action').resolve()
+  })
+
   it('allows manual control over updates', function (done) {
     const history = new History({
       updater: function () {

@@ -112,7 +112,7 @@ test("it increases the number when the stepper is clicked", async function () {
   let repo = new Repo()
   let app = mount(<App repo={repo} />)
 
-  app.find('#stepper).simulate('click')
+  app.find('#stepper').simulate('click')
 
   // wait() will pause this test until all actions finish
   await repo.history.wait()
