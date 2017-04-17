@@ -1,8 +1,9 @@
 ## Introduction
 
 1. [Quick Start](guides/quickstart.md)
-2. [Architecture](guides/architecture.md)
-3. [Contributing](guides/contributing.md)
+2. [Installation](guides/installation.md)
+3. [Architecture](guides/architecture.md)
+4. [Contributing](guides/contributing.md)
 
 ## API
 

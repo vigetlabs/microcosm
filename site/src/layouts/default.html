@@ -23,6 +23,7 @@
         </a>
 
         <nav class="nav">
+          <a href="$base_url$/api/">API</a>
           <a href="$base_url$/guides/quickstart.html">Guides</a>
           <a href="https://github.com/vigetlabs/microcosm">Github</a>
         </nav>
@@ -32,7 +33,11 @@
     <main class="main -with-sidebar">
       <aside class="sidebar">
         <section class="sidebar__group">
-          <h4 class="sidebar__heading">Introduction</h4>
+          <h4 class="sidebar__heading">
+            <a href="$base_url$/guides/">
+              Guides
+            </a>
+          </h4>
           <ul>
             <li><a href="$base_url$/guides/quickstart.html">Quickstart</a></li>
             <li><a href="$base_url$/guides/installation.html">Installation</a></li>
@@ -41,7 +46,11 @@
           </ul>
         </section>
         <section class="sidebar__group">
-          <h4 class="sidebar__heading">API</h4>
+          <h4 class="sidebar__heading">
+            <a href="$base_url$/api/">
+              API
+            </a>
+          </h4>
           <ul>
             <li><a href="$base_url$/api/microcosm.html">Microcosm</a></li>
             <li><a href="$base_url$/api/domains.html">Domains</a></li>
@@ -52,7 +61,11 @@
           </ul>
         </section>
         <section class="sidebar__group">
-          <h4 class="sidebar__heading">Addons</h4>
+          <h4 class="sidebar__heading">
+            <a href="$base_url$/api/#addons">
+              Addons
+            </a>
+          </h4>
           <ul>
             <li><a href="$base_url$/api/presenter.html">Presenter</a></li>
             <li><a href="$base_url$/api/action-form.html">ActionForm</a></li>
@@ -61,7 +74,11 @@
           </ul>
         </section>
         <section class="sidebar__group">
-          <h4 class="sidebar__heading">Testing</h4>
+          <h4 class="sidebar__heading">
+            <a href="$base_url$/testing/">
+              Testing
+            </a>
+          </h4>
           <ul>
             <li><a href="$base_url$/testing/overview.html">Overview</a></li>
             <li><a href="$base_url$/testing/domains.html">Domains</a></li>
@@ -70,7 +87,11 @@
           </ul>
         </section>
         <section class="sidebar__group">
-          <h4 class="sidebar__heading">Recipes</h4>
+          <h4 class="sidebar__heading">
+            <a href="$base_url$/recipes/">
+              Recipes
+            </a>
+          </h4>
           <ul>
             <li><a href="$base_url$/recipes/ajax.html">AJAX</a></li>
             <li><a href="$base_url$/recipes/react-router.html">React Router</a></li>
@@ -100,15 +121,20 @@
     </footer>
 
     <script>
-      // set active links
       (function() {
-        var location = window.location.toString()
+        function checkActiveLinks () {
+          var location = window.location.toString()
 
-        for (var i = 0; i < document.links.length; i++) {
-          if (document.links[i].href === location) {
-            document.links[i].classList.add('active')
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
           }
         }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
       }())
     </script>
   </body>
