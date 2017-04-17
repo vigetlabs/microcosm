@@ -40,7 +40,7 @@ inherit(Query, Emitter, {
     this._emit('change', ...values)
   },
 
-  isEmpty () {
+  isAlone () {
     return this._events.length <= 0
   }
 

@@ -8,7 +8,6 @@ import {
 
 // The root key is an empty string. This can be a little
 // counter-intuitive, so we keep track of them as a named constant.
-const ROOT_KEY = ''
 const ROOT_PATH = ''
 
 export default function CompareTree (initial) {
@@ -55,7 +54,7 @@ CompareTree.prototype = {
     if (query) {
       query.off('change', callback, scope)
 
-      if (query.isEmpty()) {
+      if (query.isAlone()) {
         this.prune(query)
       }
     }
@@ -71,10 +70,14 @@ CompareTree.prototype = {
     let last = this.snapshot
     this.snapshot = snapshot
 
-    let root = this.nodes[ROOT_KEY]
+    let root = this.nodes[ROOT_PATH]
 
     if (root) {
-      this.scan(root, last, snapshot)
+      var queries = this.scan(this.nodes[ROOT_PATH], last, snapshot, [])
+
+      for (var i = 0; i < queries.length; i++) {
+        queries[i].trigger(snapshot)
+      }
     }
   },
 
@@ -85,7 +88,9 @@ CompareTree.prototype = {
    * @param {String} key Each node represents a key in a nested object.
    * @param {Node} parent Parent to connect this node to.
    */
-  addNode (id, key, parent) {
+  addNode (key, parent) {
+    let id = Node.getId(key, parent)
+
     if (!this.nodes[id]) {
       this.nodes[id] = new Node(id, key, parent)
     }
@@ -155,13 +160,10 @@ CompareTree.prototype = {
    * @param {Query} query Query to append to the end of the branch
    */
   addBranch (path, query) {
-    let last = this.addNode(ROOT_KEY, ROOT_PATH, null)
-    let keyBase = ''
+    let last = this.addNode(ROOT_PATH, null)
 
     for (var i = 0, len = path.length; i < len; i++) {
-      keyBase = keyBase ? `${keyBase}.${path[i]}` : path[i]
-
-      last = this.addNode(keyBase, path[i], last)
+      last = this.addNode(path[i], last)
     }
 
     last.connect(query)
@@ -174,36 +176,24 @@ CompareTree.prototype = {
    * @param {*} from Starting snapshot
    * @param {*} from Next snapshot
    */
-  scan (root, from, to) {
-    // Maintain a stack of nodes to process. As we traverse the tree,
-    // we'll push edges into this stack for processing
-    let stack = [{ node: root, last: from, next: to }]
+  scan (node, last, next, queries) {
+    if (last !== next) {
+      var edges = node.edges
 
-    // Track the queries we've already triggered so queries with
-    // multiple subscriptions do not fire excessively
-    let triggered = []
+      for (var i = 0, len = edges.length; i < len; i++) {
+        var edge = edges[i]
 
-    while (stack.length) {
-      var { node, last, next } = stack.pop()
+        if (edge instanceof Query && queries.indexOf(edge) < 0) {
+          queries.push(edge)
+        } else {
+          var edgeLast = last == null ? last : last[edge.key]
+          var edgeNext = next == null ? next : next[edge.key]
 
-      if (last !== next) {
-
-        var edges = node.edges
-        for (var i = 0, len = edges.length; i < len; i++) {
-          var edge = edges[i]
-
-          if (edge instanceof Query && triggered.indexOf(edge) < 0) {
-            edge.trigger(this.snapshot)
-            triggered.push(edge)
-          } else {
-            stack.push({
-              node: edge,
-              last: last == null ? last : last[edge.key],
-              next: next == null ? next : next[edge.key]
-            })
-          }
+          this.scan(edge, edgeLast, edgeNext, queries)
         }
       }
     }
+
+    return queries
   }
 }

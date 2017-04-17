@@ -3,6 +3,7 @@ import { set } from '../../../src/utils'
 import SOLAR_SYSTEM from './fixtures/solar-system'
 
 describe('CompareTree', function () {
+
   beforeEach(function () {
     this.tree = new CompareTree(SOLAR_SYSTEM)
   })

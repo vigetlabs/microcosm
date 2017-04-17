@@ -16,6 +16,10 @@ export default function Node (id, key, parent) {
   }
 }
 
+Node.getId = function (key, parent) {
+  return parent && parent.id ? parent.id + '.' + key : key
+}
+
 Node.prototype = {
   parent: null,
 
