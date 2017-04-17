@@ -43,8 +43,7 @@
     ]
   },
   "dependencies": {
-    "form-serialize": "0.7.1",
-    "ric": "1.3.0"
+    "form-serialize": "0.7.1"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
