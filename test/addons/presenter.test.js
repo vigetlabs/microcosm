@@ -815,7 +815,7 @@ describe('::render', function () {
     }
 
     Child.contextTypes = {
-      repo: React.PropTypes.any
+      repo: () => {}
     }
 
     class Test extends Presenter {
@@ -995,7 +995,7 @@ describe('intercepting actions', function() {
 
     class TestView extends React.Component {
       static contextTypes = {
-        send: React.PropTypes.func.isRequired
+        send: () => {}
       }
       render() {
         return <button id="button" onClick={() => this.context.send(b, true)} />

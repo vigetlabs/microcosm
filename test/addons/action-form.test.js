@@ -1,7 +1,7 @@
 import React from 'react'
 import ActionForm from '../../src/addons/action-form'
-import Action from '../../src/action'
 import mockSend from '../helpers/mock-send'
+import Action from '../../src/action'
 import {mount} from 'enzyme'
 
 describe('callbacks', function () {

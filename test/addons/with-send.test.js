@@ -26,7 +26,7 @@ it('extracts send from context', function () {
   const component = mount(<Button />, {
     context: { send },
     childContextTypes: {
-      send: React.PropTypes.func
+      send: () => {}
     }
   })
 
