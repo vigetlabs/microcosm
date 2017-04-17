@@ -15,19 +15,13 @@ EffectEngine.prototype = {
       effect.setup(this.repo, options)
     }
 
+    if (effect.teardown) {
+      this.repo.on('teardown', effect.teardown, effect)
+    }
+
     this.effects.push(effect)
 
     return effect
-  },
-
-  teardown () {
-    for (var i = 0, len = this.effects.length; i < len; i++) {
-      var effect = this.effects[i]
-
-      if (effect.teardown) {
-        effect.teardown(this.repo)
-      }
-    }
   },
 
   dispatch (action) {

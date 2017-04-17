@@ -4,7 +4,6 @@ import getRegistration from './get-registration'
 import {
   get,
   set,
-  has,
   createOrClone
 } from './utils'
 
@@ -63,6 +62,10 @@ DomainEngine.prototype = {
       domain.setup(this.repo, options)
     }
 
+    if (domain.teardown) {
+      this.repo.on('teardown', domain.teardown, domain)
+    }
+
     return domain
   },
 
@@ -85,7 +88,7 @@ DomainEngine.prototype = {
     for (var i = 0, len = this.domains.length; i < len; i++) {
       let [key] = this.domains[i]
 
-      if (key.length && has(data, key)) {
+      if (key.length) {
         next = set(next, key, get(data, key))
       }
     }
@@ -126,16 +129,6 @@ DomainEngine.prototype = {
 
       return memo
     }, payload)
-  },
-
-  teardown () {
-    for (var i = 0, len = this.domains.length; i < len; i++) {
-      let [key, domain] = this.domains[i]
-
-      if (domain.teardown) {
-        domain.teardown(this.repo)
-      }
-    }
   }
 
 }

@@ -265,9 +265,6 @@ inherit(Microcosm, Emitter, {
   shutdown () {
     this.teardown()
 
-    this.effects.teardown()
-    this.domains.teardown()
-
     // Trigger a teardown event before completely shutting down
     this._emit('teardown', this)
 

@@ -2,8 +2,6 @@ import {
   castPath
 } from './key-path'
 
-const hasOwn = Object.prototype.hasOwnProperty
-
 /**
  * Shallow copy an object
  */
@@ -85,25 +83,6 @@ export function get (object, keyPath, fallback) {
   }
 
   return object
-}
-
-/**
- * Determine if a value is defined within an object
- */
-export function has (object, key, fallback) {
-  let path = castPath(key)
-
-  for (var i = 0, len = path.length; i < len; i++) {
-    var key = path[i]
-
-    if (!object || hasOwn.call(object, key) === false) {
-      return false
-    }
-
-    object = object[key]
-  }
-
-  return true
 }
 
 /**
