@@ -1,6 +1,6 @@
 # Changelog
 
-## 12.7.0-alpha
+## 12.7.0-beta
 
 - Remove PropType usage from addons to prevent React 15.5.x
   deprecation warnings.
@@ -15,7 +15,7 @@
   completed action attempts to move into a new state (strict mode only)
 - Added `batch` as an option when instantiating Microcosm. When set to
   `true`, high frequency change events will be batched together using
-  `requestIdleCallback`
+  `requestIdleCallback`. When not available, it falls back to setTimeout.
 
 ### Auto-bound action status methods
 
