@@ -41,7 +41,7 @@ class PlanetsPresenter extends Presenter {
 
   getModel (props, state) {
     return {
-      planets: data => data.planets
+      planets: state => state.planets
     }
   }
 
