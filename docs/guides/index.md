@@ -1,4 +1,4 @@
-## Guides
+# Guides
 
 1. [Quick Start](./quickstart.md)
 2. [Installation](./installation.md)

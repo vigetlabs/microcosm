@@ -1,4 +1,4 @@
-## API
+# API
 
 1. [Microcosm](./microcosm.md)
 2. [Domains](./domains.md)

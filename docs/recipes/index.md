@@ -1,4 +1,4 @@
-## Recipes
+# Recipes
 
 1. [React Router](./react-router.md)
 2. [AJAX](./ajax.md)

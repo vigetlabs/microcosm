@@ -1,4 +1,4 @@
-## Testing
+# Testing
 
 1. [Overview](./overview.md)
 2. [Domains](./domains.md)
