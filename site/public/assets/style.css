@@ -182,9 +182,9 @@ p {
 
 .sidebar a {
   border-bottom: 0;
-  position: relative;
+  display: block;
   padding-left: 12px;
-  display:block;
+  position: relative;
 }
 
 .sidebar a.active {
