@@ -34,7 +34,7 @@ describe('Utils.get', function () {
     expect(fallback).toBe(true)
   })
 
-  it('returns the fallback if the key and fallback are null', function () {
+  it('returns the fallback if the key and object are null', function () {
     let fallback = get(null, null, true)
 
     expect(fallback).toBe(true)
@@ -44,6 +44,12 @@ describe('Utils.get', function () {
     let fallback = get({ a: { b: null }}, 'a.b.c', true)
 
     expect(fallback).toBe(true)
+  })
+
+  it('returns undefined if the fallback is undefined', function () {
+    let fallback = get({}, 'key')
+
+    expect(fallback).toBe(undefined)
   })
 
 })
