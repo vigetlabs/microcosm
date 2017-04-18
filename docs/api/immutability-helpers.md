@@ -17,8 +17,8 @@ let user = { id: 'Billy', facts: { height: 72, age: 23 } }
 let next = {...user, facts: {...facts, age: 24 } }
 ```
 
-Spreading can quickly get out of hand, and always copies data even if it hasn't 
-changed. Alternatively, we could use the immutability helpers that ship with 
+Spreading can quickly get out of hand, and always copies data even if it hasn't
+changed. Alternatively, we could use the immutability helpers that ship with
 Microcosm:
 
 ```javascript
@@ -32,7 +32,7 @@ let next = set(user, 'facts.age', 24)
 Additionally, `set` will not perform an update if no value requires changing.
 
 Microcosm uses these utilities internally. Pulling them into your application
-allows you to reuse that code. However if you are evaluating alternatives, we 
+allows you to reuse that code. However if you are evaluating alternatives, we
 recommend [immutability-helper](https://github.com/kolodny/immutability-helper).
 
 ---
@@ -61,6 +61,10 @@ console.log(planets) // { earth, mars }
 // Or an array of keys to access a deeply nested value
 let earth = get(state, ['planets', 'earth'])
 console.log(earth) // { color: 'blue' }
+
+// If a value isn't found
+let color = get(state, ['planets', 'venus', 'color'])
+console.log(color) // undefined
 
 // Optionally, provide a fallback if a value isn't found
 let color = get(state, ['planets', 'venus', 'color'], 'black')
