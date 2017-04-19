@@ -12,13 +12,14 @@ const repo = new Repo({ maxHistory: Infinity })
 Debugger(repo)
 
 function render () {
-  DOM.render((
+  DOM.render(
     <Router>
       <AppContainer>
         <Layout repo={repo} />
       </AppContainer>
-    </Router>
-  ), el)
+    </Router>,
+    el,
+  )
 }
 
 render()

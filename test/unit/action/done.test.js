@@ -4,7 +4,6 @@ import Microcosm from '../../../src/microcosm'
 const identity = n => n
 
 describe('Action done state', function () {
-
   it('exposes a done type when completed', function () {
     const action = new Action(identity)
 
@@ -52,7 +51,9 @@ describe('Action done state', function () {
     action.reject(false)
     action.resolve()
 
-    expect(spy).toHaveBeenCalledWith('Action "identity" is already in the reject state. Calling resolve() will not change it.')
+    expect(spy).toHaveBeenCalledWith(
+      'Action "identity" is already in the reject state. Calling resolve() will not change it.',
+    )
 
     expect(action).toHaveStatus('error')
     expect(action).not.toHaveStatus('done')
@@ -67,5 +68,4 @@ describe('Action done state', function () {
 
     expect(action).toHaveStatus('resolve')
   })
-
 })

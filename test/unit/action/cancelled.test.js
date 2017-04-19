@@ -4,7 +4,6 @@ import Microcosm from '../../../src/microcosm'
 const identity = n => n
 
 describe('Action cancelled state', function () {
-
   it('triggers a cancel event when it is cancelled', function () {
     const action = new Action(identity)
     const callback = jest.fn()
@@ -61,5 +60,4 @@ describe('Action cancelled state', function () {
 
     expect(action).toHaveStatus('cancel')
   })
-
 })

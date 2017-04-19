@@ -4,7 +4,6 @@ import Microcosm from '../../../src/microcosm'
 const identity = n => n
 
 describe('Action error state', function () {
-
   it('exposes a error type when rejected', function () {
     const action = new Action(identity)
 
@@ -52,7 +51,9 @@ describe('Action error state', function () {
     action.resolve()
     action.reject()
 
-    expect(warn).toHaveBeenCalledWith('Action "identity" is already in the resolve state. Calling reject() will not change it.')
+    expect(warn).toHaveBeenCalledWith(
+      'Action "identity" is already in the resolve state. Calling reject() will not change it.',
+    )
 
     expect(spy).not.toHaveBeenCalled()
   })
@@ -64,5 +65,4 @@ describe('Action error state', function () {
 
     expect(action).toHaveStatus('error')
   })
-
 })

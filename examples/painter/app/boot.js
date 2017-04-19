@@ -10,11 +10,12 @@ let repo = new Repo({ maxHistory: Infinity })
 Debugger(repo)
 
 function render () {
-  DOM.render((
+  DOM.render(
     <AppContainer>
       <Workspace repo={repo} />
-    </AppContainer>
-  ), document.querySelector('#app'))
+    </AppContainer>,
+    document.querySelector('#app'),
+  )
 }
 
 render()

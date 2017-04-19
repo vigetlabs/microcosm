@@ -1,30 +1,29 @@
 var Eliza = require('elizabot')
-var uid   = require('uid')
+var uid = require('uid')
 
 var COMMANDS = {
-
-  error(bot, message) {
+  error (bot, message) {
     return { id: uid(), error: true, user: 'You', message }
   },
 
-  reply(bot, message) {
+  reply (bot, message) {
     return [
-      { id: uid(), user: 'You',   message: message },
-      { id: uid(), user: 'Eliza', message: bot.transform(message) }
+      { id: uid(), user: 'You', message: message },
+      { id: uid(), user: 'Eliza', message: bot.transform(message) },
     ]
   },
 
-  unknown(bot, message) {
+  unknown (bot, message) {
     return {
-      id      : uid(),
-      user    : 'System',
-      message : `Unknown command “${ message }”`,
-      error   : true
+      id:      uid(),
+      user:    'System',
+      message: `Unknown command “${message}”`,
+      error:   true,
     }
-  }
+  },
 }
 
-exports.start = function() {
+exports.start = function () {
   return new Eliza()
 }
 
@@ -36,7 +35,7 @@ exports.parse = function parse (bot, message) {
   var command = message.match(/^\/(\w+)\s*(.*)/)
 
   if (command) {
-    var action  = command[1]
+    var action = command[1]
     var options = command[2]
 
     if (action in COMMANDS) {

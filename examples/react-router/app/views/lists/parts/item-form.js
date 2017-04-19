@@ -1,22 +1,19 @@
 import React from 'react'
 import ActionForm from 'microcosm/addons/action-form'
 
-import {
-  addItem
-} from '../../../actions/items'
+import { addItem } from '../../../actions/items'
 
 class ItemForm extends React.PureComponent {
-
   state = {
-    name: ''
+    name: '',
   }
 
   reset = () => {
     this.setState({ name: '' })
   }
 
-  setName = (e) => {
-    this.setState({ name : e.target.value })
+  setName = e => {
+    this.setState({ name: e.target.value })
   }
 
   render () {
@@ -28,7 +25,13 @@ class ItemForm extends React.PureComponent {
 
         <div className="textfield">
           <label htmlFor="item-name">Name</label>
-          <input id="item-name" name="name" value={name} onChange={this.setName} required />
+          <input
+            id="item-name"
+            name="name"
+            value={name}
+            onChange={this.setName}
+            required
+          />
         </div>
 
         <button className="btn">Add Item</button>

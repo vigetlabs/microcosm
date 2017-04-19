@@ -4,7 +4,6 @@ import Microcosm from '../../../src/microcosm'
 const identity = n => n
 
 describe('Action promise interop', function () {
-
   it('actions interop with promises', function () {
     const action = new Action(identity)
 
@@ -34,5 +33,4 @@ describe('Action promise interop', function () {
 
     expect(payload).toBe('Test')
   })
-
 })

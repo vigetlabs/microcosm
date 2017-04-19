@@ -1,14 +1,13 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm::addDomain', function () {
-
   it('adding a domain backfills the initial state', function () {
     let repo = new Microcosm()
 
     repo.addDomain('a', {
       getInitialState () {
         return 0
-      }
+      },
     })
 
     expect(repo).toHaveState('a', 0)
@@ -16,7 +15,7 @@ describe('Microcosm::addDomain', function () {
     repo.addDomain('b', {
       getInitialState () {
         return 1
-      }
+      },
     })
 
     expect(repo).toHaveState('a', 0)
@@ -30,7 +29,7 @@ describe('Microcosm::addDomain', function () {
       repo.addDomain('a', {
         getInitialState () {
           return 0
-        }
+        },
       })
 
       repo.reset({ a: 1 })
@@ -42,7 +41,7 @@ describe('Microcosm::addDomain', function () {
       fork.addDomain('b', {
         getInitialState () {
           return 2
-        }
+        },
       })
 
       expect(fork).toHaveState('a', 1)
@@ -56,7 +55,7 @@ describe('Microcosm::addDomain', function () {
       repo.addDomain('a', {
         getInitialState () {
           return 0
-        }
+        },
       })
 
       repo.reset({ a: 1 })
@@ -67,7 +66,7 @@ describe('Microcosm::addDomain', function () {
       fork.addDomain('b', {
         getInitialState () {
           return 2
-        }
+        },
       })
 
       expect(repo).toHaveState('a', 1)

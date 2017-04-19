@@ -2,7 +2,7 @@ export default function mockPresenter (send = jest.fn()) {
   send.context = { send }
 
   send.childContextTypes = {
-    send: () => null
+    send: () => null,
   }
 
   return send

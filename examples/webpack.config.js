@@ -21,46 +21,48 @@ module.exports = function (env) {
     devtool: 'source-map',
 
     entry: {
-      'application': ['./app/boot.js']
+      application: ['./app/boot.js'],
     },
 
     output: {
-      filename: '[name].[hash].js',
-      path: resolve(root, 'build'),
-      publicPath: '/'
+      filename:   '[name].[hash].js',
+      path:       resolve(root, 'build'),
+      publicPath: '/',
     },
 
     resolve: {
       alias: {
-        'microcosm$': resolve(__dirname, '../src/microcosm.js'),
-        'microcosm': resolve(__dirname, '../src/')
-      }
+        microcosm$: resolve(__dirname, '../src/microcosm.js'),
+        microcosm:  resolve(__dirname, '../src/'),
+      },
     },
 
     module: {
-      loaders: [{
-        test: /\.jsx*/,
-        loader: 'babel-loader',
-        exclude: /node_modules/,
-        options: {
-          cacheDirectory: '.babel-cache',
-          plugins: [
-            'react-hot-loader/babel'
-          ]
-        }
-      }]
+      loaders: [
+        {
+          test:    /\.jsx*/,
+          loader:  'babel-loader',
+          exclude: /node_modules/,
+          options: {
+            cacheDirectory: '.babel-cache',
+            plugins:        ['react-hot-loader/babel'],
+          },
+        },
+      ],
     },
 
     plugins: [
       new Webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production')
+        'process.env.NODE_ENV': JSON.stringify(
+          isDev ? 'development' : 'production',
+        ),
       }),
       new HtmlWebpackPlugin({
-        inject: true,
-        template: resolve(root, 'public/index.html')
+        inject:   true,
+        template: resolve(root, 'public/index.html'),
       }),
       new Webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
+        name:      'vendor',
         minChunks: function (module) {
           var context = module.context
 
@@ -68,29 +70,32 @@ module.exports = function (env) {
             return false
           }
 
-          return context.includes('node_modules') || context.includes('microcosm/src')
-        }
-      })
+          return (
+            context.includes('node_modules') ||
+            context.includes('microcosm/src')
+          )
+        },
+      }),
     ],
 
     node: {
-      global: true,
-      console: false,
-      process: false,
-      Buffer: false,
-      __filename: 'mock',
-      __dirname: 'mock',
-      setImmediate: false
+      global:       true,
+      console:      false,
+      process:      false,
+      Buffer:       false,
+      __filename:   'mock',
+      __dirname:    'mock',
+      setImmediate: false,
     },
 
     devServer: {
-      hot: isDev,
-      contentBase: resolve(root, 'public'),
-      publicPath: '/',
-      compress: true,
+      hot:                isDev,
+      contentBase:        resolve(root, 'public'),
+      publicPath:         '/',
+      compress:           true,
       historyApiFallback: true,
-      port: PORT
-    }
+      port:               PORT,
+    },
   }
 
   if (isDev) {
@@ -100,12 +105,12 @@ module.exports = function (env) {
 
     config.entry['dev'] = [
       'webpack-dev-server/client?http://localhost:' + PORT,
-      'webpack/hot/only-dev-server'
+      'webpack/hot/only-dev-server',
     ]
 
     config.plugins.unshift(
       new Webpack.HotModuleReplacementPlugin(),
-      new Webpack.NamedModulesPlugin()
+      new Webpack.NamedModulesPlugin(),
     )
   }
 

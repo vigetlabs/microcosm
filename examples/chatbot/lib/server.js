@@ -7,10 +7,8 @@ module.exports = function (app) {
   app.use(bodyParser.json())
 
   app.post('/message', function (req, res) {
-
-
     // Simulate latency
-    setTimeout(function() {
+    setTimeout(function () {
       res.send(Chat.parse(bot, req.body.message))
     }, 500 + Math.random() * 500)
   })

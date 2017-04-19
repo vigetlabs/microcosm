@@ -1,7 +1,6 @@
 import Microcosm from '../../src/microcosm'
 
-describe('Efficiency', function() {
-
+describe('Efficiency', function () {
   it('actions are not dispatched twice with 0 history', () => {
     const parent = new Microcosm({ maxHistory: 0 })
     const handler = jest.fn()
@@ -10,9 +9,9 @@ describe('Efficiency', function() {
     parent.addDomain('one', {
       register () {
         return {
-          [action] : handler
+          [action]: handler,
         }
-      }
+      },
     })
 
     parent.patch()
@@ -30,9 +29,9 @@ describe('Efficiency', function() {
     parent.addDomain('one', {
       register () {
         return {
-          [action] : handler
+          [action]: handler,
         }
-      }
+      },
     })
 
     parent.patch()
@@ -50,9 +49,9 @@ describe('Efficiency', function() {
     parent.addDomain('one', {
       register () {
         return {
-          [action] : handler
+          [action]: handler,
         }
-      }
+      },
     })
 
     parent.patch()
@@ -70,9 +69,9 @@ describe('Efficiency', function() {
     repo.addDomain('one', {
       register () {
         return {
-          [action] : handler
+          [action]: handler,
         }
-      }
+      },
     })
 
     const one = repo.append(action)
@@ -93,5 +92,4 @@ describe('Efficiency', function() {
 
     repo.push('test')
   })
-
 })

@@ -3,7 +3,6 @@ import { set } from '../../../src/utils'
 import SOLAR_SYSTEM from './fixtures/solar-system'
 
 describe('CompareTree', function () {
-
   beforeEach(function () {
     this.tree = new CompareTree(SOLAR_SYSTEM)
   })
@@ -60,7 +59,7 @@ describe('CompareTree', function () {
       let tree = new CompareTree(SOLAR_SYSTEM)
       let next = set(SOLAR_SYSTEM, ['planets', 3], false)
 
-      tree.on('planets.3', (planet) => {
+      tree.on('planets.3', planet => {
         expect(planet).toBe(false)
       })
 
@@ -72,7 +71,7 @@ describe('CompareTree', function () {
 
       let tree = new CompareTree({})
 
-      tree.on('planets.3', (planet) => {
+      tree.on('planets.3', planet => {
         expect(planet).toBe(SOLAR_SYSTEM.planets[3])
       })
 
@@ -80,7 +79,6 @@ describe('CompareTree', function () {
     })
 
     describe('subscribing to the root', function () {
-
       it('can subscribe to the root', function () {
         expect.assertions(1)
 
@@ -107,13 +105,10 @@ describe('CompareTree', function () {
 
         expect(handler).not.toHaveBeenCalledWith()
       })
-
     })
-
   })
 
   describe('::off', function () {
-
     it('can remove a listener', function () {
       let handler = jest.fn()
       let next = set(this.tree.snapshot, 'meta', {})
@@ -230,7 +225,6 @@ describe('CompareTree', function () {
   })
 
   describe('::connect', function () {
-
     it('edges can not connect to themselves', function () {
       let node = this.tree.addNode('node')
 
@@ -238,7 +232,6 @@ describe('CompareTree', function () {
 
       expect(node.edges).not.toContain(node)
     })
-
   })
 
   describe('::update', function () {
@@ -255,7 +248,7 @@ describe('CompareTree', function () {
       this.tree.update({ meta: null })
 
       this.tree.update({
-        meta: { selected: true }
+        meta: { selected: true },
       })
 
       expect(handler).toHaveBeenCalledWith(undefined)
@@ -275,7 +268,6 @@ describe('CompareTree', function () {
 
       this.tree.update(b)
     })
-
   })
 
   describe('keyPaths', function () {
@@ -315,5 +307,4 @@ describe('CompareTree', function () {
       expect(keys).toContain('query:meta.selected,planets')
     })
   })
-
 })

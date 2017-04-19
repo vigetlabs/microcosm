@@ -1,13 +1,8 @@
 import Microcosm from '../../../src/microcosm'
 
-import {
-  BIRTH,
-  START,
-  ADD_DOMAIN
-} from '../../../src/lifecycle'
+import { BIRTH, START, ADD_DOMAIN } from '../../../src/lifecycle'
 
 describe('Lifecycle', function () {
-
   it('$birth should never be invoked directly', function () {
     let repo = new Microcosm()
     let test = repo.prepare(BIRTH)
@@ -21,5 +16,4 @@ describe('Lifecycle', function () {
 
     expect(test).toThrow()
   })
-
 })

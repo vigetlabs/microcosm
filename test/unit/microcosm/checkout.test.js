@@ -1,17 +1,16 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm::checkout', function () {
-
   it('returns to a prior state', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
     const action = n => n
 
     repo.addDomain('number', {
-      register() {
+      register () {
         return {
-          [action]: (a, b) => b
+          [action]: (a, b) => b,
         }
-      }
+      },
     })
 
     let start = repo.push(action, 1)
@@ -23,5 +22,4 @@ describe('Microcosm::checkout', function () {
 
     expect(repo).toHaveState('number', 1)
   })
-
 })

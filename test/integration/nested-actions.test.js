@@ -8,7 +8,6 @@
 import Microcosm, { update } from '../../src/microcosm'
 
 describe('When pushing actions inside of another action', function () {
-
   it('does not return to an old state when pushing the second action', function () {
     expect.assertions(8)
 
@@ -51,13 +50,12 @@ describe('When pushing actions inside of another action', function () {
       register () {
         return {
           [stepper]: this.increase,
-          [focuser]: this.setFocus
+          [focuser]: this.setFocus,
         }
-      }
+      },
     })
 
     repo.patch({ data: { count: 2, focus: true } })
     repo.push(stepper)
   })
-
 })

@@ -1,9 +1,6 @@
-import {
-  merge
-} from '../../../src/utils'
+import { merge } from '../../../src/utils'
 
 describe('Utils.merge', function () {
-
   it('will not merge a null value into an object', function () {
     const a = {}
     const b = null
@@ -77,5 +74,4 @@ describe('Utils.merge', function () {
     expect(c).not.toBe(b)
     expect(c).toEqual(b)
   })
-
 })

@@ -36,9 +36,8 @@ describe('History::toggle', function () {
 
     jest.spyOn(history, 'reconcile')
 
-    history.toggle([ one, two, three ])
+    history.toggle([one, two, three])
 
     expect(history.reconcile).toHaveBeenCalledTimes(1)
   })
-
 })

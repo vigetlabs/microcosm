@@ -11,13 +11,13 @@ describe('Domain::register', function () {
     repo.addDomain('test', {
       test: true,
 
-      register() {
+      register () {
         return {
-          [action]() {
+          [action] () {
             expect(this.test).toBe(true)
-          }
+          },
         }
-      }
+      },
     })
 
     repo.push(action)
@@ -27,18 +27,17 @@ describe('Domain::register', function () {
     let repo = new Microcosm()
 
     repo.addDomain('test', {
-      getInitialState() {
+      getInitialState () {
         return 'test'
-      }
+      },
     })
 
-    return repo.push(action).onDone(function() {
+    return repo.push(action).onDone(function () {
       expect(repo).toHaveState('test', 'test')
     })
   })
 
   describe('nesting', function () {
-
     it('allows domains nested registration methods', function () {
       let repo = new Microcosm()
       let handler = jest.fn()
@@ -47,14 +46,14 @@ describe('Domain::register', function () {
         register () {
           return {
             [action]: {
-              open    : handler,
-              update  : handler,
-              reject  : handler,
-              resolve : handler,
-              cancel  : handler
-            }
+              open:    handler,
+              update:  handler,
+              reject:  handler,
+              resolve: handler,
+              cancel:  handler,
+            },
           }
-        }
+        },
       })
 
       expect(domain).toRegister(action, 'open')
@@ -63,7 +62,5 @@ describe('Domain::register', function () {
       expect(domain).toRegister(action, 'resolve')
       expect(domain).toRegister(action, 'cancel')
     })
-
   })
-
 })

@@ -4,7 +4,6 @@ import Microcosm from '../../../src/microcosm'
 const identity = n => n
 
 describe('Action update state', function () {
-
   it('exposes a loading type when in progress', function () {
     const action = new Action(identity)
 
@@ -62,7 +61,9 @@ describe('Action update state', function () {
     action.resolve()
     action.update()
 
-    expect(warn).toHaveBeenCalledWith('Action "identity" is already in the resolve state. Calling update() will not change it.')
+    expect(warn).toHaveBeenCalledWith(
+      'Action "identity" is already in the resolve state. Calling update() will not change it.',
+    )
 
     expect(spy).not.toHaveBeenCalled()
   })
@@ -81,16 +82,16 @@ describe('Action update state', function () {
     const handler = jest.fn(n => n)
 
     repo.addDomain('progress', {
-      getInitalState() {
+      getInitalState () {
         return 0
       },
       register () {
         return {
           [test]: {
-            update: (a, b) => handler(b)
-          }
+            update: (a, b) => handler(b),
+          },
         }
-      }
+      },
     })
 
     const action = repo.append(test)
@@ -107,5 +108,4 @@ describe('Action update state', function () {
     expect(handler).toHaveBeenCalledWith(3)
     expect(repo).toHaveState('progress', 3)
   })
-
 })

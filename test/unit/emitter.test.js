@@ -1,9 +1,8 @@
 import Emitter from '../../src/emitter'
 
 describe('Emitter', function () {
-
   it('adds listeners', function () {
-    const emitter = new Emitter
+    const emitter = new Emitter()
     const calls = []
 
     emitter.on('foo', function (val) {
@@ -18,11 +17,11 @@ describe('Emitter', function () {
     emitter._emit('bar', 1)
     emitter._emit('foo', 2)
 
-    expect(calls).toEqual([ 'one', 1, 'two', 1, 'one', 2, 'two', 2 ])
+    expect(calls).toEqual(['one', 1, 'two', 1, 'one', 2, 'two', 2])
   })
 
   it('adds a single-shot listener', function () {
-    const emitter = new Emitter
+    const emitter = new Emitter()
     const callback = jest.fn()
 
     emitter.once('foo', callback)
@@ -36,10 +35,10 @@ describe('Emitter', function () {
   })
 
   it('does not call listeners removed when another is emitted', function (done) {
-    const emitter = new Emitter
+    const emitter = new Emitter()
     const handler = jest.fn()
 
-    emitter.on('foo', function() {
+    emitter.on('foo', function () {
       emitter.off('foo', handler)
       done()
     })
@@ -51,9 +50,9 @@ describe('Emitter', function () {
     expect(handler).not.toHaveBeenCalled()
   })
 
-  describe('removal', function() {
+  describe('removal', function () {
     it('should remove a listener', function () {
-      var emitter = new Emitter
+      var emitter = new Emitter()
       var calls = []
 
       const one = () => calls.push('one')
@@ -75,7 +74,7 @@ describe('Emitter', function () {
     })
 
     it('should remove all listeners for an event', function () {
-      const emitter = new Emitter
+      const emitter = new Emitter()
       const calls = []
 
       const one = () => calls.push('one')
@@ -92,11 +91,15 @@ describe('Emitter', function () {
     })
 
     it('should remove all listeners', function () {
-      const emitter = new Emitter
+      const emitter = new Emitter()
       const calls = []
 
-      function one () { calls.push('one') }
-      function two () { calls.push('two') }
+      function one () {
+        calls.push('one')
+      }
+      function two () {
+        calls.push('two')
+      }
 
       emitter.on('foo', one)
       emitter.on('bar', two)
@@ -124,7 +127,5 @@ describe('Emitter', function () {
 
       expect(handler).not.toHaveBeenCalled()
     })
-
   })
-
 })

@@ -1,9 +1,6 @@
-import {
-  clone,
-} from '../../../src/utils'
+import { clone } from '../../../src/utils'
 
 describe('Utils.clone', function () {
-
   it('can shallow copy an object', function () {
     let original = { id: '1' }
     let copy = clone(original)

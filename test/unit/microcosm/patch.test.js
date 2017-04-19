@@ -1,7 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm::patch', function () {
-
   it('only patches within managed keys', function () {
     const repo = new Microcosm()
 
@@ -16,13 +15,12 @@ describe('Microcosm::patch', function () {
     const repo = new Microcosm()
 
     // This is invalid
-    let badPatch = () => repo.patch("{ test: deserialize }", true)
+    let badPatch = () => repo.patch('{ test: deserialize }', true)
 
     expect(badPatch).toThrow()
   })
 
   describe('forks', function () {
-
     it('deeply inherits state', function () {
       const tree = new Microcosm({ maxHistory: Infinity })
 
@@ -43,19 +41,19 @@ describe('Microcosm::patch', function () {
       parent.addDomain('one', {
         register () {
           return {
-            getInitialState : () => false,
-            one : (a, b) => b
+            getInitialState: () => false,
+            one:             (a, b) => b,
           }
-        }
+        },
       })
 
       parent.addDomain('two', {
         register () {
           return {
-            getInitialState : () => false,
-            two : (a, b) => b
+            getInitialState: () => false,
+            two:             (a, b) => b,
           }
-        }
+        },
       })
 
       parent.patch({ one: false, two: false })
@@ -79,9 +77,9 @@ describe('Microcosm::patch', function () {
       child.addDomain('count', {
         register () {
           return {
-            'add' : (a, b) => a + b
+            add: (a, b) => a + b,
           }
-        }
+        },
       })
 
       child.patch({ count: 2 })
@@ -104,15 +102,15 @@ describe('Microcosm::patch', function () {
       const child = parent.fork()
 
       parent.addDomain('top', {
-        getInitialState() {
+        getInitialState () {
           return false
-        }
+        },
       })
 
       child.addDomain('bottom', {
-        getInitialState() {
+        getInitialState () {
           return false
-        }
+        },
       })
 
       child.patch({ bottom: true })
@@ -126,15 +124,15 @@ describe('Microcosm::patch', function () {
       const child = parent.fork()
 
       parent.addDomain('top', {
-        getInitialState() {
+        getInitialState () {
           return false
-        }
+        },
       })
 
       child.addDomain('bottom', {
-        getInitialState() {
+        getInitialState () {
           return false
-        }
+        },
       })
 
       parent.patch({ top: true })
@@ -148,15 +146,15 @@ describe('Microcosm::patch', function () {
       const child = parent.fork()
 
       parent.addDomain('top', {
-        getInitialState() {
+        getInitialState () {
           return false
-        }
+        },
       })
 
       child.addDomain('bottom', {
-        getInitialState() {
+        getInitialState () {
           return false
-        }
+        },
       })
 
       parent.patch({ bottom: true })
@@ -165,5 +163,4 @@ describe('Microcosm::patch', function () {
       expect(child).toHaveState('bottom', false)
     })
   })
-
 })

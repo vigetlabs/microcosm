@@ -1,7 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm::shutdown', function () {
-
   it('removes all listeners', function () {
     const repo = new Microcosm()
 
@@ -40,7 +39,6 @@ describe('Microcosm::shutdown', function () {
   })
 
   describe('forks', function () {
-
     it('tearing down eliminates parent subscriptions', function () {
       const parent = new Microcosm()
       const child = parent.fork()
@@ -49,7 +47,7 @@ describe('Microcosm::shutdown', function () {
 
       parent.patch({ color: 'red' })
 
-      child.on('change', function() {
+      child.on('change', function () {
         throw new Error('Should not have changed')
       })
 
@@ -60,7 +58,5 @@ describe('Microcosm::shutdown', function () {
       expect(parent.state.color).toEqual('blue')
       expect(child.state.color).toEqual('red')
     })
-
   })
-
 })

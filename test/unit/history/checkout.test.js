@@ -54,8 +54,8 @@ describe('History::checkout', function () {
   it('properly handles forked branches', function () {
     let history = new History()
 
-    let one   = history.append(action)
-    let two   = history.append(action)
+    let one = history.append(action)
+    let two = history.append(action)
     let three = history.append(action)
 
     history.archive()
@@ -64,11 +64,10 @@ describe('History::checkout', function () {
     let four = history.append(action)
     let five = history.append(action)
 
-    expect(history.toArray()).toEqual([ one, two, four, five ])
+    expect(history.toArray()).toEqual([one, two, four, five])
 
     history.checkout(three)
 
-    expect(history.toArray()).toEqual([ one, two, three ])
+    expect(history.toArray()).toEqual([one, two, three])
   })
-
 })

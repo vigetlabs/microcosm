@@ -13,7 +13,7 @@ describe('History node children', function () {
 
     const c = history.append(action)
 
-    expect(a.children.map(n => n.id)).toEqual([ b.id, c.id ])
+    expect(a.children.map(n => n.id)).toEqual([b.id, c.id])
   })
 
   it('does not lose children when checking out nodes on the left', function () {
@@ -28,7 +28,7 @@ describe('History node children', function () {
 
     const d = history.append(action)
 
-    expect(b.children).toEqual([ c, d ])
+    expect(b.children).toEqual([c, d])
   })
 
   it('does not lose children when checking out nodes on the right', function () {
@@ -45,7 +45,6 @@ describe('History node children', function () {
 
     history.checkout(c)
 
-    expect(b.children).toEqual([ c, d ])
+    expect(b.children).toEqual([c, d])
   })
-
 })

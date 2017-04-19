@@ -6,13 +6,12 @@ import ItemList from './parts/item-list'
 import Link from 'react-router-dom/Link'
 
 class ListShow extends Presenter {
-
   getModel ({ match }) {
     let { id } = match.params
 
     return {
-      list  : state => state.lists.find(list => list.id === id),
-      items : state => state.items.filter(item => item.list === id)
+      list:  state => state.lists.find(list => list.id === id),
+      items: state => state.items.filter(item => item.list === id),
     }
   }
 
@@ -28,7 +27,7 @@ class ListShow extends Presenter {
         <header className="header">
           <div className="container">
             <h1 className="text-display">
-              <Link to="/">Lists</Link> › { list.name }
+              <Link to="/">Lists</Link> › {list.name}
             </h1>
           </div>
         </header>
@@ -36,15 +35,14 @@ class ListShow extends Presenter {
         <main role="main" className="container">
           <aside className="aside">
             <h2 className="subhead">New Item</h2>
-            <ItemForm list={ list.id } />
+            <ItemForm list={list.id} />
           </aside>
 
-          <ItemList items={ items } />
+          <ItemList items={items} />
         </main>
       </div>
     )
   }
-
 }
 
 export default ListShow

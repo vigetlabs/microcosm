@@ -1,7 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Effect::teardown', function() {
-
+describe('Effect::teardown', function () {
   it('is torn down with the repo', function () {
     const repo = new Microcosm()
     const spy = jest.fn()
@@ -22,5 +21,4 @@ describe('Effect::teardown', function() {
     repo.addEffect(class Effect {})
     repo.shutdown()
   })
-
 })

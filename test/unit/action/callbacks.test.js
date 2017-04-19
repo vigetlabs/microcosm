@@ -2,7 +2,6 @@ import Action from '../../../src/action'
 import Microcosm from '../../../src/microcosm'
 
 describe('Action callbacks', function () {
-
   it('handles listeners with no callback', function () {
     const action = new Action(n => n)
 
@@ -11,5 +10,4 @@ describe('Action callbacks', function () {
     action.onCancel()
     action.onUpdate()
   })
-
 })

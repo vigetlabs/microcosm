@@ -4,7 +4,6 @@ import Microcosm from '../../../src/microcosm'
 const identity = n => n
 
 describe('Action complete state', function () {
-
   it('actions are complete when they resolve', function () {
     const action = new Action(identity)
 
@@ -36,12 +35,13 @@ describe('Action complete state', function () {
     action.cancel()
     action.resolve()
 
-    expect(spy).toHaveBeenCalledWith('Action "identity" is already in the cancel state. Calling resolve() will not change it.')
+    expect(spy).toHaveBeenCalledWith(
+      'Action "identity" is already in the cancel state. Calling resolve() will not change it.',
+    )
 
     expect(action.is('cancelled')).toBe(true)
     expect(action.is('done')).toBe(false)
 
     spy.mockRestore()
   })
-
 })

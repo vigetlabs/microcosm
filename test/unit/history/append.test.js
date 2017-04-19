@@ -35,5 +35,4 @@ describe('History::append', function () {
 
     history.append(type)
   })
-
 })

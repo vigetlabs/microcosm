@@ -1,7 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm::push', function () {
-
   it('the pushed function has no scope', function (done) {
     let repo = new Microcosm()
 
@@ -21,9 +20,9 @@ describe('Microcosm::push', function () {
       },
       register () {
         return {
-          [step]: (count, n) => count + n
+          [step]: (count, n) => count + n,
         }
-      }
+      },
     })
 
     repo.push(step, 1)
@@ -45,7 +44,6 @@ describe('Microcosm::push', function () {
   })
 
   describe('forks', function () {
-
     it('pushing actions on the child float up to the parent', function () {
       const parent = new Microcosm()
       const child = parent.fork()
@@ -54,21 +52,21 @@ describe('Microcosm::push', function () {
       const setShape = n => n
 
       parent.addDomain('color', {
-        getInitialState() {
+        getInitialState () {
           return 'red'
         },
-        register() {
+        register () {
           return { [setColor]: (a, b) => b }
-        }
+        },
       })
 
       child.addDomain('shape', {
-        getInitialState() {
+        getInitialState () {
           return 'triangle'
         },
-        register() {
+        register () {
           return { [setShape]: (a, b) => b }
-        }
+        },
       })
 
       expect(parent.state.color).toEqual('red')
@@ -94,21 +92,21 @@ describe('Microcosm::push', function () {
       const setShape = n => n
 
       parent.addDomain('color', {
-        getInitialState() {
+        getInitialState () {
           return 'red'
         },
-        register() {
+        register () {
           return { [setColor]: (a, b) => b }
-        }
+        },
       })
 
       child.addDomain('shape', {
-        getInitialState() {
+        getInitialState () {
           return 'triangle'
         },
-        register() {
+        register () {
           return { [setShape]: (a, b) => b }
-        }
+        },
       })
 
       expect(parent.state.color).toEqual('red')
@@ -133,12 +131,12 @@ describe('Microcosm::push', function () {
       const setColor = n => n
 
       parent.addDomain('color', {
-        getInitialState() {
+        getInitialState () {
           return 'red'
         },
-        register() {
+        register () {
           return { [setColor]: (a, b) => b }
-        }
+        },
       })
 
       parent.push(setColor, 'blue')
@@ -148,5 +146,4 @@ describe('Microcosm::push', function () {
       expect(left.state.color).toEqual('blue')
     })
   })
-
 })

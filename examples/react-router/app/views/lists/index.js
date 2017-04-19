@@ -5,10 +5,9 @@ import ListForm from './parts/list-form'
 import ListList from './parts/list-list'
 
 class ListIndex extends Presenter {
-
   getModel () {
     return {
-      lists : this.getListsWithCounts
+      lists: this.getListsWithCounts,
     }
   }
 
@@ -37,12 +36,11 @@ class ListIndex extends Presenter {
             <ListForm />
           </aside>
 
-          <ListList items={ lists } />
+          <ListList items={lists} />
         </main>
       </div>
     )
   }
-
 }
 
 export default ListIndex

@@ -1,18 +1,17 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Effect::register', function () {
-
   it('invokes when an action completes', function () {
     const repo = new Microcosm()
     const test = n => n
 
     const Effect = {
       handler: jest.fn(),
-      register() {
+      register () {
         return {
-          [test] : this.handler
+          [test]: this.handler,
         }
-      }
+      },
     }
 
     repo.addEffect(Effect)
@@ -29,14 +28,14 @@ describe('Effect::register', function () {
 
     const Effect = {
       test: true,
-      handler() {
+      handler () {
         spy(this.test)
       },
-      register() {
+      register () {
         return {
-          [test] : this.handler
+          [test]: this.handler,
         }
-      }
+      },
     }
 
     repo.addEffect(Effect)
@@ -52,11 +51,11 @@ describe('Effect::register', function () {
 
     const Effect = {
       handler: jest.fn(),
-      register() {
+      register () {
         return {
-          [test] : this.handler
+          [test]: this.handler,
         }
-      }
+      },
     }
 
     repo.addEffect(Effect)
@@ -80,7 +79,7 @@ describe('Effect::register', function () {
     const repo = new Microcosm()
 
     class Effect {
-      register() {
+      register () {
         return {}
       }
     }
@@ -102,20 +101,20 @@ describe('Effect::register', function () {
       },
       register () {
         return {
-          [test]: (a, b) => b
+          [test]: (a, b) => b,
         }
-      }
+      },
     })
 
     const Effect = {
       handler (repo) {
         expect(repo).toHaveState('test', true)
       },
-      register() {
+      register () {
         return {
-          [test] : this.handler
+          [test]: this.handler,
         }
-      }
+      },
     }
 
     repo.addEffect(Effect)
@@ -132,14 +131,14 @@ describe('Effect::register', function () {
       register () {
         return {
           [action]: {
-            open    : handler,
-            update  : handler,
-            reject  : handler,
-            resolve : handler,
-            cancel  : handler
-          }
+            open:    handler,
+            update:  handler,
+            reject:  handler,
+            resolve: handler,
+            cancel:  handler,
+          },
         }
-      }
+      },
     })
 
     expect(effect).toRegister(action, 'open')
@@ -148,5 +147,4 @@ describe('Effect::register', function () {
     expect(effect).toRegister(action, 'resolve')
     expect(effect).toRegister(action, 'cancel')
   })
-
 })

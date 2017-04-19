@@ -1,13 +1,11 @@
-import {
-  set
-} from '../../../src/utils'
+import { set } from '../../../src/utils'
 
 describe('Utils.set', function () {
   const subject = {
     styles: {
       color: 'blue',
-      font: 'Helvetica, sans-serif'
-    }
+      font:  'Helvetica, sans-serif',
+    },
   }
 
   it('can set a single key', function () {
@@ -69,7 +67,6 @@ describe('Utils.set', function () {
   })
 
   describe('arrays', function () {
-
     it('can operate on arrays', function () {
       let list = ['a', 'b', 'c']
       let next = set(list, 3, 'd')
@@ -78,23 +75,21 @@ describe('Utils.set', function () {
       expect(next[3]).toBe('d')
     })
 
-
     it('properly assigns nested arrays', function () {
-      let list = { 'a': ['b', 'c'] }
+      let list = { a: ['b', 'c'] }
       let next = set(list, ['a', 1], 'd')
 
-      expect(next).toEqual({ 'a' : ['b', 'd'] })
+      expect(next).toEqual({ a: ['b', 'd'] })
       expect(next['a']).toBeInstanceOf(Array)
     })
 
     it('properly assigns nested arrays where keys are missing', function () {
-      let space = { 'planets': [] }
+      let space = { planets: [] }
       let next = set(space, ['planets', 0, 'color'], 'red')
 
       expect(next).toEqual({ planets: [{ color: 'red' }] })
       expect(next['planets']).toBeInstanceOf(Array)
-      expect(next['planets'][0]).toEqual({ color: 'red'})
+      expect(next['planets'][0]).toEqual({ color: 'red' })
     })
   })
-
 })

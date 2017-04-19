@@ -5,14 +5,14 @@ let repo = new Microcosm({ batch: true })
 
 let size = 20
 let limit = Infinity
-let rows = Math.min(window.innerWidth / size | 0, limit)
-let columns = Math.min(window.innerHeight / size | 0, limit)
+let rows = Math.min((window.innerWidth / size) | 0, limit)
+let columns = Math.min((window.innerHeight / size) | 0, limit)
 let writes = size * 25
 
 let advance = (x, y) => ({ x, y })
 
 repo.addDomain('pixels', {
-  getInitialState() {
+  getInitialState () {
     return {}
   },
   rotateHue (n) {
@@ -21,11 +21,11 @@ repo.addDomain('pixels', {
   advance (state, { x, y }) {
     return update(state, [x, y], this.rotateHue)
   },
-  register() {
+  register () {
     return {
-      [advance]: this.advance
+      [advance]: this.advance,
     }
-  }
+  },
 })
 
 var canvas = document.createElement('canvas')
@@ -46,17 +46,17 @@ for (let x = 0; x < rows; x++) {
   }
 }
 
-canvas.addEventListener('mousemove', (event) => {
-  let x = event.clientX / size | 0
-  let y = event.clientY / size | 0
+canvas.addEventListener('mousemove', event => {
+  let x = (event.clientX / size) | 0
+  let y = (event.clientY / size) | 0
 
   repo.push(advance, x, y)
 })
 
 function randomMoves (n = 1) {
   while (n-- > 0) {
-    let x = Math.random() * rows | 0
-    let y = Math.random() * columns | 0
+    let x = (Math.random() * rows) | 0
+    let y = (Math.random() * columns) | 0
 
     repo.push(advance, x, y)
   }
@@ -65,7 +65,8 @@ function randomMoves (n = 1) {
 function updateLabel () {
   let events = rows * columns * writes
 
-  label.innerHTML = `${rows}x${columns} (${size}px grid)` +
+  label.innerHTML =
+    `${rows}x${columns} (${size}px grid)` +
     `| ${writes} writes/frame` +
     `| ${events.toLocaleString()} keys watched/frame`
 }
@@ -73,7 +74,7 @@ function updateLabel () {
 const SLOW = 1000 / 58
 const FAST = 1000 / 60
 
-function play() {
+function play () {
   let last = performance.now()
   requestAnimationFrame(function loop () {
     let next = performance.now()
