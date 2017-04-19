@@ -27,6 +27,7 @@
     "quotes": [2, "single"],
     "space-before-function-paren": [2, "always"],
     "sort-vars": 2,
+    "comma-dangle": [2, "never"],
     "no-console": 0,
     "no-unused-vars" : [2, { "args": "none" }],
     "react/jsx-equals-spacing": ["warn", "never"],
