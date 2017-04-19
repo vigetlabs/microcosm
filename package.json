@@ -7,7 +7,7 @@
   "homepage": "http://code.viget.com/microcosm",
   "scripts": {
     "build": "make all",
-    "lint": "eslint {src,test,examples}/**/*.js",
+    "lint": "eslint \"{src,test,examples}/**/*.js\"",
     "pretty": "prettier-eslint --write \"{src,test,examples}/**/*.js\"",
     "test": "npm run lint && NODE_ENV=test jest --maxWorkers=2",
     "test:cov": "NODE_ENV=test jest --coverage --maxWorkers=2",
