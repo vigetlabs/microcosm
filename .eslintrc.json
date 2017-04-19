@@ -25,6 +25,12 @@
   "rules": {
     "semi": [2, "never"],
     "quotes": [2, "single"],
+    "key-spacing": [2, {
+      "beforeColon": false,
+      "afterColon": true,
+      "mode": "minimum",
+      "align": "value"
+    }],
     "no-console": 0,
     "no-unused-vars" : [2, { "args": "none" }],
     "react/jsx-equals-spacing": ["warn", "never"],
