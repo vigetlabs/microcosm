@@ -25,12 +25,6 @@
   "rules": {
     "semi": [2, "never"],
     "quotes": [2, "single"],
-    "key-spacing": [2, {
-      "beforeColon": false,
-      "afterColon": true,
-      "mode": "strict",
-      "align": "value"
-    }],
     "space-before-function-paren": [2, "always"],
     "sort-vars": 2,
     "no-console": 0,
