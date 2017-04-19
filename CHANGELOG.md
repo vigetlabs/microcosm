@@ -1,6 +1,6 @@
 # Changelog
 
-## 12.7.0-beta
+## 12.7.0
 
 - Remove PropType usage from addons to prevent React 15.5.x
   deprecation warnings.
