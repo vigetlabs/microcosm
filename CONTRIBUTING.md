@@ -43,6 +43,20 @@ Documentation found on the [Microcosm site](http://code.viget.com/microcosm) is 
 
 You may want to run what you see on [code.viget.com/microcosm](http://code.viget.com/microcosm) locally. To do so head over the [site section of this repo](site).
 
+## Prettier
+
+We are using [prettier](https://github.com/prettier/prettier) combined with [eslint](http://eslint.org/) to keep formatting and linting easy. We do that by using [prettier-eslint](https://github.com/prettier/prettier-eslint) and [prettier-eslint-cli](https://github.com/prettier/prettier-eslint-cli). This will run `prettier` followed by `eslint --fix` to make things pretty. You can run these like this:
+
+```bash
+yarn run pretty
+```
+
+or
+
+```bash
+make pretty
+```
+
 ## Testing
 
 ```bash
