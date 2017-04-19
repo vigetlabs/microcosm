@@ -25,7 +25,7 @@ export function castPath (value) {
     return []
   }
 
-  return isString(value) ? value.split(KEY_DELIMETER) : [value]
+  return isString(value) ? value.trim().split(KEY_DELIMETER) : [value]
 }
 
 /**
