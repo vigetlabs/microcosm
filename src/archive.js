@@ -46,5 +46,5 @@ Archive.prototype = {
     console.assert(action, 'Unable to remove ' + action + ' action.')
 
     delete this.pool[action.id]
-  }
+  },
 }

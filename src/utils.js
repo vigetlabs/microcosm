@@ -1,6 +1,4 @@
-import {
-  castPath
-} from './key-path'
+import { castPath } from './key-path'
 
 /**
  * Shallow copy an object
@@ -54,9 +52,13 @@ export function merge () {
 export function inherit (Child, Ancestor, proto) {
   Child.__proto__ = Ancestor
 
-  Child.prototype = merge(Object.create(Ancestor.prototype), {
-    constructor: Child.prototype.constructor
-  }, proto)
+  Child.prototype = merge(
+    Object.create(Ancestor.prototype),
+    {
+      constructor: Child.prototype.constructor,
+    },
+    proto,
+  )
 
   return Child
 }
@@ -93,7 +95,7 @@ export function set (object, key, value) {
   // Ensure we're working with a key path, like: ['a', 'b', 'c']
   let path = castPath(key)
 
-  let len  = path.length
+  let len = path.length
 
   if (len <= 0) {
     return value
@@ -174,9 +176,9 @@ export function isString (target) {
  * @param {*} value
  * @return {boolean}
  */
-var $Symbol = typeof Symbol === "function" ? Symbol : {};
-var iteratorSymbol = $Symbol.iterator || "@@iterator";
-var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+var $Symbol = typeof Symbol === 'function' ? Symbol : {}
+var iteratorSymbol = $Symbol.iterator || '@@iterator'
+var toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
 export function isGeneratorFn (value) {
   return get(value, toStringTagSymbol, '') === 'GeneratorFunction'
 }

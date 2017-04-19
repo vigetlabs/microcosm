@@ -1,30 +1,19 @@
-import Action          from './action'
-import Emitter         from './emitter'
-import History         from './history'
-import Archive         from './archive'
-import DomainEngine    from './domain-engine'
-import EffectEngine    from './effect-engine'
-import CompareTree     from './compare-tree'
-import coroutine       from './coroutine'
+import Action from './action'
+import Emitter from './emitter'
+import History from './history'
+import Archive from './archive'
+import DomainEngine from './domain-engine'
+import EffectEngine from './effect-engine'
+import CompareTree from './compare-tree'
+import coroutine from './coroutine'
 import getRegistration from './get-registration'
-import tag             from './tag'
+import tag from './tag'
 
-import {
-  RESET,
-  PATCH,
-  ADD_DOMAIN
-} from './lifecycle'
+import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
 
-import {
-  merge,
-  inherit,
-  get,
-  set,
-  update,
-  isString
-} from './utils'
+import { merge, inherit, get, set, update, isString } from './utils'
 
-function Microcosm (preOptions, state, deserialize)  {
+function Microcosm (preOptions, state, deserialize) {
   Emitter.call(this)
 
   let options = merge(Microcosm.defaults, this.constructor.defaults, preOptions)
@@ -75,12 +64,11 @@ function Microcosm (preOptions, state, deserialize)  {
  */
 Microcosm.defaults = {
   maxHistory: 0,
-  parent: null,
-  batch: false
+  parent:     null,
+  batch:      false,
 }
 
 inherit(Microcosm, Emitter, {
-
   setup () {
     // NOOP
   },
@@ -148,7 +136,7 @@ inherit(Microcosm, Emitter, {
     switch (event) {
       case 'change':
         this.changes.on(meta || '', callback, scope)
-        break;
+        break
       default:
         Emitter.prototype.on.apply(this, arguments)
     }
@@ -162,7 +150,7 @@ inherit(Microcosm, Emitter, {
     switch (event) {
       case 'change':
         this.changes.off(meta || '', callback, scope)
-        break;
+        break
       default:
         Emitter.prototype.off.apply(this, arguments)
     }
@@ -248,7 +236,7 @@ inherit(Microcosm, Emitter, {
 
   fork () {
     return new Microcosm({
-      parent : this
+      parent: this,
     })
   },
 
@@ -273,10 +261,20 @@ inherit(Microcosm, Emitter, {
 
     // Remove all listeners
     this.removeAllListeners()
-  }
-
+  },
 })
 
 export default Microcosm
 
-export { Microcosm, Action, History, tag, get, set, update, merge, inherit, getRegistration }
+export {
+  Microcosm,
+  Action,
+  History,
+  tag,
+  get,
+  set,
+  update,
+  merge,
+  inherit,
+  getRegistration,
+}

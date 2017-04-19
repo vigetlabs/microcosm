@@ -1,14 +1,8 @@
 import Emitter from '../emitter'
 
-import {
-  get,
-  inherit
-} from '../utils'
+import { get, inherit } from '../utils'
 
-import {
-  getKeyPaths,
-  getKeyStrings
-} from '../key-path'
+import { getKeyPaths, getKeyStrings } from '../key-path'
 
 export default function Query (id, keys) {
   Emitter.call(this)
@@ -22,7 +16,6 @@ Query.getId = function (keyPaths) {
 }
 
 inherit(Query, Emitter, {
-
   extract (state) {
     let length = this.keyPaths.length
     let values = Array(length)
@@ -42,6 +35,5 @@ inherit(Query, Emitter, {
 
   isAlone () {
     return this._events.length <= 0
-  }
-
+  },
 })

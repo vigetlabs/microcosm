@@ -1,10 +1,7 @@
 import Emitter from './emitter'
 import tag from './tag'
 
-import {
-  inherit,
-  isFunction
-} from './utils'
+import { inherit, isFunction } from './utils'
 
 let uid = 0
 
@@ -30,12 +27,12 @@ export default function Action (command, status) {
 }
 
 inherit(Action, Emitter, {
-  status   : 'inactive',
-  payload  : undefined,
-  disabled : false,
-  complete : false,
-  parent   : null,
-  next     : null,
+  status:   'inactive',
+  payload:  undefined,
+  disabled: false,
+  complete: false,
+  parent:   null,
+  next:     null,
 
   /**
    * Subscribe to when an action opens.
@@ -53,7 +50,7 @@ inherit(Action, Emitter, {
    * @param {*} [scope]
    */
   onUpdate (callback, scope) {
-    if (!!callback) {
+    if (callback) {
       this.on('update', callback, scope)
     }
 
@@ -208,10 +205,12 @@ inherit(Action, Emitter, {
    * @param {*} scope
    */
   _callOrSubscribeOnce (status, callback, scope) {
-    if (!!callback) {
-      console.assert(isFunction(callback),
-                     `Expected a function when subscribing to ${status}` +
-                     `instead got ${callback}`)
+    if (callback) {
+      console.assert(
+        isFunction(callback),
+        `Expected a function when subscribing to ${status}` +
+          `instead got ${callback}`,
+      )
 
       if (this.is(status)) {
         callback.call(scope, this.payload)
@@ -219,8 +218,7 @@ inherit(Action, Emitter, {
         this.once(status, callback, scope)
       }
     }
-  }
-
+  },
 })
 
 /**
@@ -232,8 +230,10 @@ inherit(Action, Emitter, {
  */
 function createCompleteWarning (action, method) {
   return function () {
-    console.warn(`Action "${action.command.name || action.type}" is already in ` +
-                 `the ${action.status} state. Calling ${method}() will not change it.`)
+    console.warn(
+      `Action "${action.command.name || action.type}" is already in ` +
+        `the ${action.status} state. Calling ${method}() will not change it.`,
+    )
   }
 }
 
@@ -269,16 +269,16 @@ function createActionUpdater (action, status, complete) {
  * @param {boolean} complete
  */
 function warnOrUpdate (action, status, complete) {
-  return action.complete ? createCompleteWarning(action, status)
-                         : createActionUpdater(action, status, complete)
+  return action.complete
+    ? createCompleteWarning(action, status)
+    : createActionUpdater(action, status, complete)
 }
 
 Object.defineProperties(Action.prototype, {
-
   type: {
     get () {
       return this.command[this.status]
-    }
+    },
   },
 
   /**
@@ -288,7 +288,7 @@ Object.defineProperties(Action.prototype, {
   open: {
     get () {
       return warnOrUpdate(this, 'open', false)
-    }
+    },
   },
 
   /**
@@ -298,7 +298,7 @@ Object.defineProperties(Action.prototype, {
   update: {
     get () {
       return warnOrUpdate(this, 'update', false)
-    }
+    },
   },
 
   /**
@@ -308,7 +308,7 @@ Object.defineProperties(Action.prototype, {
   resolve: {
     get () {
       return warnOrUpdate(this, 'resolve', true)
-    }
+    },
   },
 
   /**
@@ -318,7 +318,7 @@ Object.defineProperties(Action.prototype, {
   reject: {
     get () {
       return warnOrUpdate(this, 'reject', true)
-    }
+    },
   },
 
   /**
@@ -329,7 +329,6 @@ Object.defineProperties(Action.prototype, {
   cancel: {
     get () {
       return warnOrUpdate(this, 'cancel', true)
-    }
-  }
-
+    },
+  },
 })
