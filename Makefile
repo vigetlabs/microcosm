@@ -15,7 +15,7 @@ all: javascript docs
 javascript: strict minified compiled
 
 pretty:
-	npm run prettier
+	yarn run pretty
 
 compiled: $(COMPILED) build/package.json
 
