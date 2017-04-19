@@ -8,8 +8,8 @@ export default function Messenger ({ messages = [] }) {
 
   return (
     <main className="chat">
-      <Announcer { ...toSay } />
-      <Conversation messages={ messages } />
+      <Announcer {...toSay} />
+      <Conversation messages={messages} />
       <Prompt />
     </main>
   )

@@ -4,12 +4,13 @@ import Microcosm from '../../../src/microcosm'
 const identity = n => n
 
 describe('Action::teardown', function () {
-
   it('does not lose an onDone subscription when it resolves', function (done) {
     function test (action, method, payload) {
       return function (action) {
-        Promise.resolve().then(() => action.resolve(true),
-                               () => action.reject(false))
+        Promise.resolve().then(
+          () => action.resolve(true),
+          () => action.reject(false),
+        )
       }
     }
 

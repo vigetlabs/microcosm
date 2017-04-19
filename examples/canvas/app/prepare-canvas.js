@@ -17,7 +17,7 @@ export default function prepareCanvas (canvas) {
 
   context.scale(density, density)
 
-  context.fillStyle = "#eee"
+  context.fillStyle = '#eee'
   context.fillRect(0, 0, width, height)
   context.font = '16px Helvetica'
 }

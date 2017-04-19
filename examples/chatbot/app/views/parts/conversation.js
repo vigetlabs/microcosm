@@ -1,27 +1,27 @@
-import React   from 'react'
+import React from 'react'
 import Message from './message'
 
 class Conversation extends React.PureComponent {
   static defaultProps = {
-    messages: []
+    messages: [],
   }
 
-  componentDidUpdate() {
+  componentDidUpdate () {
     let el = this.refs.list
 
     el.scrollTop = el.scrollHeight
   }
 
-  getMessage(message) {
-    return (<Message key={ message.id } { ...message } />)
+  getMessage (message) {
+    return <Message key={message.id} {...message} />
   }
 
-  render() {
+  render () {
     const { messages } = this.props
 
     return (
       <ol className="conversation" ref="list">
-        { messages.map(this.getMessage, this) }
+        {messages.map(this.getMessage, this)}
       </ol>
     )
   }

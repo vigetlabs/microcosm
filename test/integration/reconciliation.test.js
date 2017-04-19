@@ -1,19 +1,19 @@
 import Microcosm from '../../src/microcosm'
 
-describe('Reconciliation', function() {
+describe('Reconciliation', function () {
   const action = n => n
 
-  it('only interates over the point of reconciliation', function() {
+  it('only interates over the point of reconciliation', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
     const handler = jest.fn((a, b) => a + b)
 
     repo.addDomain('count', {
-      getInitialState() {
+      getInitialState () {
         return 0
       },
       register () {
         return { [action]: handler }
-      }
+      },
     })
 
     let one = repo.append(action)
@@ -34,17 +34,17 @@ describe('Reconciliation', function() {
     expect(handler).toHaveBeenCalledTimes(3)
   })
 
-  it('reapplies future actions if a prior action updates', function() {
+  it('reapplies future actions if a prior action updates', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
     const handler = jest.fn((a, b) => a + b)
 
     repo.addDomain('count', {
-      getInitialState() {
+      getInitialState () {
         return 0
       },
       register () {
         return { [action]: handler }
-      }
+      },
     })
 
     let one = repo.append(action)
@@ -66,7 +66,7 @@ describe('Reconciliation', function() {
     expect(repo).toHaveState('count', 6)
   })
 
-  it('archived actions are removed from the archive', function() {
+  it('archived actions are removed from the archive', function () {
     const repo = new Microcosm()
 
     let one = repo.append('a')
@@ -85,17 +85,17 @@ describe('Reconciliation', function() {
     expect(repo.recall(three)).toBeDefined()
   })
 
-  it('pushing actions while the root is "open" does not result in extra invocations', function() {
+  it('pushing actions while the root is "open" does not result in extra invocations', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
     const handler = jest.fn((a, b) => a + b)
 
     repo.addDomain('count', {
-      getInitialState() {
+      getInitialState () {
         return 0
       },
       register () {
         return { [action]: handler }
-      }
+      },
     })
 
     repo.append(action)

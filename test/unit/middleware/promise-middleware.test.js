@@ -1,7 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Promise middleware', function () {
-
   it('opens with the first argument of params', function () {
     const repo = new Microcosm()
     const action = repo.push(n => Promise.resolve(n), true)
@@ -26,9 +25,12 @@ describe('Promise middleware', function () {
 
   it('rejects when a promise throws an error', function (done) {
     const repo = new Microcosm()
-    const action = repo.push(n => new Promise(function (resolve, reject) {
-      throw 'This error is intentional'
-    }))
+    const action = repo.push(
+      n =>
+        new Promise(function (resolve, reject) {
+          throw 'This error is intentional'
+        }),
+    )
 
     action.onError(() => done())
   })
@@ -59,5 +61,4 @@ describe('Promise middleware', function () {
 
     action.onError(() => done())
   })
-
 })

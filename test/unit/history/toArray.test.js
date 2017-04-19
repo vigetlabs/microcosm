@@ -14,7 +14,7 @@ describe('History::toArray', function () {
 
     history.archive()
 
-    expect(history.toArray()).toEqual([ one ])
+    expect(history.toArray()).toEqual([one])
   })
 
   it('only walks through the main timeline', function () {
@@ -32,7 +32,6 @@ describe('History::toArray', function () {
 
     const ids = history.map(n => n.id)
 
-    expect(ids).toEqual([ first.id, third.id ])
+    expect(ids).toEqual([first.id, third.id])
   })
-
 })

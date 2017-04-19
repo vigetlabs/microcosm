@@ -1,9 +1,8 @@
 import tag from '../../src/tag'
 
 describe('tag', function () {
-
   it('includes the function name', function () {
-    const tagged = tag(function test() {})
+    const tagged = tag(function test () {})
 
     expect(`${tagged}`.search('test')).toEqual(0)
   })
@@ -23,16 +22,15 @@ describe('tag', function () {
   })
 
   it('can have an override name', function () {
-    const tagged = tag(function(){}, 'test')
+    const tagged = tag(function () {}, 'test')
 
     expect(`${tagged}`).toEqual('test')
   })
 
   it('is unique', function () {
-    let a = tag(function(){}).toString()
-    let b = tag(function(){}).toString()
+    let a = tag(function () {}).toString()
+    let b = tag(function () {}).toString()
 
     expect(a).not.toEqual(b)
   })
-
 })

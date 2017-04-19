@@ -1,7 +1,6 @@
 import Action from '../../../src/action'
 
 describe('abandon', function () {
-
   it('will not abandon the same child twice', function () {
     const one = new Action(n => n)
     const two = new Action(n => n)
@@ -15,5 +14,4 @@ describe('abandon', function () {
 
     expect(parent.children).toEqual([two])
   })
-
 })

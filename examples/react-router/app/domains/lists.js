@@ -1,8 +1,7 @@
 import { addList, removeList } from '../actions/lists'
 
 const Lists = {
-
-  getInitialState() {
+  getInitialState () {
     return []
   },
 
@@ -14,13 +13,12 @@ const Lists = {
     return lists.filter(i => i.id !== unwanted)
   },
 
-  register() {
+  register () {
     return {
-      [addList]    : Lists.add,
-      [removeList] : Lists.remove
+      [addList]:    Lists.add,
+      [removeList]: Lists.remove,
     }
-  }
-
+  },
 }
 
 export default Lists

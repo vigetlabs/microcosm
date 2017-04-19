@@ -1,7 +1,6 @@
 import Microcosm, { merge } from '../../src/microcosm'
 
 describe('rollbacks', function () {
-
   it('does not rollforward the same actions twice', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
     const send = n => n
@@ -11,24 +10,24 @@ describe('rollbacks', function () {
     const c = repo.append(send)
 
     repo.addDomain('messages', {
-      getInitialState() {
+      getInitialState () {
         return []
       },
 
-      add(state, items) {
+      add (state, items) {
         return state.concat(items)
       },
 
-      addLoading(state, params) {
+      addLoading (state, params) {
         return this.add(state, { ...params, pending: true })
       },
 
-      register() {
+      register () {
         return {
-          [send.open] : this.addLoading,
-          [send.done] : this.add
+          [send.open]: this.addLoading,
+          [send.done]: this.add,
         }
-      }
+      },
     })
 
     a.open({ id: 1 })
@@ -50,17 +49,17 @@ describe('rollbacks', function () {
     const send = n => n
 
     repo.addDomain('messages', {
-      getInitialState() {
+      getInitialState () {
         return []
       },
-      add(state, items) {
+      add (state, items) {
         return state.concat(items)
       },
-      register() {
+      register () {
         return {
-          [send.done] : this.add
+          [send.done]: this.add,
         }
-      }
+      },
     })
 
     const a = repo.push(send, { id: 1 })
@@ -84,11 +83,11 @@ describe('rollbacks', function () {
     const single = n => n
 
     repo.addDomain('items', {
-      getInitialState() {
+      getInitialState () {
         return []
       },
 
-      reset(_, items) {
+      reset (_, items) {
         return items
       },
 
@@ -112,11 +111,11 @@ describe('rollbacks', function () {
 
       register () {
         return {
-          [all.done] : this.reset,
-          [single.open] : this.setLoading,
-          [single.done] : this.update
+          [all.done]:    this.reset,
+          [single.open]: this.setLoading,
+          [single.done]: this.update,
         }
-      }
+      },
     })
 
     const getAll = repo.append(all)
@@ -132,7 +131,10 @@ describe('rollbacks', function () {
 
     getTwo.resolve({ id: '2', done: true })
 
-    expect(repo.state.items).toEqual([{ id: '1', done: true }, { id: '2', done: true }])
+    expect(repo.state.items).toEqual([
+      { id: '1', done: true },
+      { id: '2', done: true },
+    ])
   })
 
   it('processes multiple loading states', () => {
@@ -142,11 +144,11 @@ describe('rollbacks', function () {
     const single = n => n
 
     repo.addDomain('items', {
-      getInitialState() {
+      getInitialState () {
         return []
       },
 
-      reset(_, items) {
+      reset (_, items) {
         return items
       },
 
@@ -170,11 +172,11 @@ describe('rollbacks', function () {
 
       register () {
         return {
-          [all.done] : this.reset,
-          [single.open] : this.setLoading,
-          [single.done] : this.update
+          [all.done]:    this.reset,
+          [single.open]: this.setLoading,
+          [single.done]: this.update,
         }
-      }
+      },
     })
 
     repo.push(all, [{ id: '1' }, { id: '2' }, { id: '3' }])
@@ -192,7 +194,7 @@ describe('rollbacks', function () {
     const foldIn = n => n
 
     repo.addDomain('styles', {
-      getInitialState() {
+      getInitialState () {
         return { color: 'blue' }
       },
 
@@ -202,10 +204,10 @@ describe('rollbacks', function () {
 
       register () {
         return {
-          [foldIn.open] : this.merge,
-          [foldIn.done] : this.merge
+          [foldIn.open]: this.merge,
+          [foldIn.done]: this.merge,
         }
-      }
+      },
     })
 
     let action = repo.append(foldIn)
@@ -223,9 +225,9 @@ describe('rollbacks', function () {
     const repo = new Microcosm()
 
     repo.addDomain('test', {
-      getInitialState() {
+      getInitialState () {
         return true
-      }
+      },
     })
 
     repo.checkout(repo.history.root)
@@ -237,9 +239,9 @@ describe('rollbacks', function () {
     const repo = new Microcosm()
 
     repo.addDomain('test', {
-      getInitialState() {
+      getInitialState () {
         return true
-      }
+      },
     })
 
     repo.reset({ test: false })

@@ -1,9 +1,6 @@
-import {
-  castPath
-} from '../../../src/key-path'
+import { castPath } from '../../../src/key-path'
 
 describe('castPath', function () {
-
   it('returns an empty array if given a blank string', function () {
     let path = castPath('')
 
@@ -11,7 +8,7 @@ describe('castPath', function () {
   })
 
   it('returns the same array if given an array', function () {
-    let path = [1,2,3]
+    let path = [1, 2, 3]
     let next = castPath(path)
 
     expect(next).toBe(path)
@@ -40,5 +37,4 @@ describe('castPath', function () {
 
     expect(next).toEqual([1])
   })
-
 })

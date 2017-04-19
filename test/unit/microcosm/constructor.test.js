@@ -1,7 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm constructor', function () {
-
   it('can seed initial state', function () {
     class Repo extends Microcosm {
       setup () {
@@ -29,9 +28,7 @@ describe('Microcosm constructor', function () {
   })
 
   describe('options', function () {
-
     describe('parent', function () {
-
       it('has no parent by default', function () {
         expect.assertions(1)
 
@@ -46,7 +43,6 @@ describe('Microcosm constructor', function () {
     })
 
     describe('maxHistory', function () {
-
       it('has no history by default', function () {
         expect.assertions(1)
 
@@ -77,17 +73,15 @@ describe('Microcosm constructor', function () {
         expect(repo.history.root.payload).toEqual(2)
         expect(repo.history.head.payload).toEqual(6)
       })
-
     })
 
     describe('extension', function () {
-
       it('extends custom defaults with Microcosm defaults', function () {
         expect.assertions(2)
 
         class Repo extends Microcosm {
           static defaults = {
-            test: true
+            test: true,
           }
 
           setup (options) {
@@ -104,7 +98,7 @@ describe('Microcosm constructor', function () {
 
         class Repo extends Microcosm {
           static defaults = {
-            test: true
+            test: true,
           }
 
           setup (options) {
@@ -116,9 +110,6 @@ describe('Microcosm constructor', function () {
 
         new Repo({ maxHistory: 10, instantiated: true })
       })
-
     })
-
   })
-
 })

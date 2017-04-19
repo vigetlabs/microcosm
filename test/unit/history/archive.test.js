@@ -105,5 +105,4 @@ describe('History::archive', function () {
 
     expect(history.root).toEqual(a)
   })
-
 })

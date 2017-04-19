@@ -3,11 +3,10 @@ import Switch from 'react-router-dom/Switch'
 import Route from 'react-router-dom/Route'
 import Presenter from 'microcosm/addons/presenter'
 import ListIndex from './lists/index'
-import ListShow  from './lists/show'
-import NotFound  from './errors/notfound'
+import ListShow from './lists/show'
+import NotFound from './errors/notfound'
 
 class Application extends Presenter {
-
   render () {
     return (
       <Switch>
@@ -17,7 +16,6 @@ class Application extends Presenter {
       </Switch>
     )
   }
-
 }
 
 export default Application

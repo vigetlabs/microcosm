@@ -10,7 +10,7 @@ describe('History::then', function () {
     let two = history.append(action)
     let three = history.append(action)
 
-    setTimeout(function() {
+    setTimeout(function () {
       one.resolve()
       two.resolve()
       three.resolve()
@@ -28,7 +28,7 @@ describe('History::then', function () {
     let two = history.append(action)
     let three = history.append(action)
 
-    setTimeout(function() {
+    setTimeout(function () {
       one.resolve()
       two.resolve()
       three.reject('Error')
@@ -38,5 +38,4 @@ describe('History::then', function () {
       expect(error).toEqual('Error')
     })
   })
-
 })

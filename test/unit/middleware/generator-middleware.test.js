@@ -1,7 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Generator Middleware', function () {
-
   it('processes actions sequentially', function () {
     expect.assertions(1)
 
@@ -9,7 +8,7 @@ describe('Generator Middleware', function () {
     let repo = new Microcosm()
 
     function range (start, end) {
-      return function * (repo) {
+      return function*(repo) {
         let value = start
 
         while (value < end) {
@@ -30,13 +29,15 @@ describe('Generator Middleware', function () {
     let step = n => n
 
     function test () {
-      return function * (repo) {
+      return function*(repo) {
         yield repo.push(step, 1)
         yield true
       }
     }
 
-    expect(() => repo.push(test)).toThrow("Iteration of generator expected an Action")
+    expect(() => repo.push(test)).toThrow(
+      'Iteration of generator expected an Action',
+    )
   })
 
   it('a rejected step halts the chain', function () {
@@ -46,7 +47,7 @@ describe('Generator Middleware', function () {
     let repo = new Microcosm()
 
     let sequence = repo.push(function () {
-      return function * (repo) {
+      return function*(repo) {
         yield repo.push(stepper, 0)
         yield repo.append(stepper).reject('Failure')
         yield repo.push(stepper)
@@ -69,7 +70,7 @@ describe('Generator Middleware', function () {
     let repo = new Microcosm()
 
     let sequence = repo.push(function () {
-      return function * (repo) {
+      return function*(repo) {
         yield repo.push(stepper, 0)
         yield repo.append(stepper).cancel('Cancelled')
         yield repo.push(stepper)
@@ -99,14 +100,16 @@ describe('Generator Middleware', function () {
       }
     }
 
-    return repo.push(function () {
-      return function * (repo) {
-        yield repo.push(sleep, 100)
-        yield repo.push(sleep, 100)
-      }
-    }).onDone(function (payload) {
-      expect(payload).toEqual(true)
-    })
+    return repo
+      .push(function () {
+        return function*(repo) {
+          yield repo.push(sleep, 100)
+          yield repo.push(sleep, 100)
+        }
+      })
+      .onDone(function (payload) {
+        expect(payload).toEqual(true)
+      })
   })
 
   it('waits for an async sequences', function () {
@@ -120,20 +123,22 @@ describe('Generator Middleware', function () {
     }
 
     function dream (time) {
-      return function * (repo) {
+      return function*(repo) {
         yield repo.push(sleep, time)
         yield repo.push(sleep, time)
       }
     }
 
-    return repo.push(function () {
-      return function * (repo) {
-        yield repo.push(dream, 100)
-        yield repo.push(dream, 100)
-      }
-    }).onDone(function (payload) {
-      expect(payload).toEqual(true)
-    })
+    return repo
+      .push(function () {
+        return function*(repo) {
+          yield repo.push(dream, 100)
+          yield repo.push(dream, 100)
+        }
+      })
+      .onDone(function (payload) {
+        expect(payload).toEqual(true)
+      })
   })
 
   it('multiple async sequence pushes do not step on eachother', function () {
@@ -147,20 +152,20 @@ describe('Generator Middleware', function () {
     }
 
     function dream (time) {
-      return function * (repo) {
+      return function*(repo) {
         yield repo.push(sleep, time)
         yield repo.push(sleep, time)
       }
     }
 
     function dream100 () {
-      return function * (repo) {
+      return function*(repo) {
         yield repo.push(dream, 100)
         yield repo.push(dream, 100)
       }
     }
 
-    return Promise.all([ repo.push(dream100), repo.push(dream100) ])
+    return Promise.all([repo.push(dream100), repo.push(dream100)])
   })
 
   it('history.wait() works with generators', async function () {
@@ -173,7 +178,7 @@ describe('Generator Middleware', function () {
     }
 
     function dream (time) {
-      return function * (repo) {
+      return function*(repo) {
         yield repo.push(sleep, time)
         yield repo.push(sleep, time)
         yield repo.push(sleep, time)
@@ -184,5 +189,4 @@ describe('Generator Middleware', function () {
 
     await repo.history.wait()
   })
-
 })

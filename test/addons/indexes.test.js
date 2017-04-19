@@ -8,14 +8,13 @@ class Repo extends Microcosm {
     this.addDomain('styles', {
       getInitialState () {
         return { color: 'red' }
-      }
+      },
     })
   }
 }
 
 describe('indexing', function () {
-
-  it('can save an index for later', function() {
+  it('can save an index for later', function () {
     let repo = new Repo()
 
     repo.index('color', 'styles.color', state => state.styles.color)
@@ -41,9 +40,9 @@ describe('indexing', function () {
     let repo = new Repo()
 
     repo.addDomain('another', {
-      getInitialState() {
+      getInitialState () {
         return true
-      }
+      },
     })
 
     repo.index('color', 'styles.color')
@@ -85,11 +84,9 @@ describe('indexing', function () {
 
     expect(a).toBe(b)
   })
-
 })
 
 describe('compute', function () {
-
   it('can perform additional data processing on indexes', function () {
     let repo = new Repo()
 
@@ -107,11 +104,9 @@ describe('compute', function () {
       repo.compute('missing')
     }).toThrow('Unable to find missing index missing')
   })
-
 })
 
 describe('memo', function () {
-
   it('returns the same result if state has not changed', function () {
     let repo = new Repo()
 
@@ -149,7 +144,7 @@ describe('memo', function () {
 
     let a = query()
 
-    repo.patch({ styles: { color: 'blue' }})
+    repo.patch({ styles: { color: 'blue' } })
 
     let b = query()
 
@@ -162,15 +157,17 @@ describe('memo', function () {
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
-    let query = repo.memo('color',
-                          color => color.toUpperCase(),
-                          color => color + ' - it')
+    let query = repo.memo(
+      'color',
+      color => color.toUpperCase(),
+      color => color + ' - it',
+    )
 
     expect(query()).toEqual('RED - it')
   })
 
   it('the result of processing one memo does not effect another', function () {
-    let repo = new Repo({}, { styles: { color: 'blue' }})
+    let repo = new Repo({}, { styles: { color: 'blue' } })
 
     repo.index('color', 'styles.color', state => state.styles.color)
 
@@ -180,5 +177,4 @@ describe('memo', function () {
     expect(one()).toEqual(null)
     expect(two()).toEqual('BLUE')
   })
-
 })

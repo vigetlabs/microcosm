@@ -1,7 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm::setup', function() {
-
+describe('Microcosm::setup', function () {
   it('extends defaults with options passed from instantiation', function () {
     expect.assertions(2)
 
@@ -26,5 +25,4 @@ describe('Microcosm::setup', function() {
 
     new Repo()
   })
-
 })

@@ -1,7 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm::fork', function () {
-
   it('forks do not own state of parents', () => {
     const parent = new Microcosm()
     const child = parent.fork()
@@ -9,22 +8,22 @@ describe('Microcosm::fork', function () {
     const add = n => n
 
     parent.addDomain('counter', {
-      getInitialState() {
+      getInitialState () {
         return 0
       },
-      register() {
+      register () {
         return {
-          [add]: (a, b) => a + b
+          [add]: (a, b) => a + b,
         }
-      }
+      },
     })
 
     child.addDomain('counter', {
-      register() {
+      register () {
         return {
-          [add]: (a, b)  => a * 2
+          [add]: (a, b) => a * 2,
         }
-      }
+      },
     })
 
     parent.push(add, 2)
@@ -40,24 +39,24 @@ describe('Microcosm::fork', function () {
     const add = n => n
 
     parent.addDomain('counter', {
-      getInitialState() {
+      getInitialState () {
         return 0
       },
-      register() {
+      register () {
         return {
-          [add]: (a, b) => a + b
+          [add]: (a, b) => a + b,
         }
-      }
+      },
     })
 
     child.addDomain('counter', {
-      register() {
+      register () {
         return {
-          [add](a) {
+          [add] (a) {
             return a * 2
-          }
+          },
         }
-      }
+      },
     })
 
     child.push(add, 2)
@@ -77,24 +76,24 @@ describe('Microcosm::fork', function () {
     const add = n => n
 
     parent.addDomain('counter', {
-      getInitialState() {
+      getInitialState () {
         return 0
       },
-      register() {
+      register () {
         return {
-          [add]: (a, b) => a + b
+          [add]: (a, b) => a + b,
         }
-      }
+      },
     })
 
     child.addDomain('counter', {
-      register() {
+      register () {
         return {
-          [add](a) {
+          [add] (a) {
             return a * 2
-          }
+          },
         }
-      }
+      },
     })
 
     child.push(add, 2)
@@ -111,11 +110,10 @@ describe('Microcosm::fork', function () {
     const parent = new Microcosm()
     const child = parent.fork()
 
-    parent.on('change', function() {
+    parent.on('change', function () {
       child.teardown()
     })
 
     parent.patch({ test: true })
   })
-
 })

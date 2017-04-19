@@ -1,6 +1,6 @@
 import React from 'react'
 import withSend from '../../src/addons/with-send'
-import {mount} from 'enzyme'
+import { mount } from 'enzyme'
 
 it('exposes the wrapped component as a static property', function () {
   const Button = function ({ send }) {
@@ -24,10 +24,10 @@ it('extracts send from context', function () {
   const send = jest.fn()
 
   const component = mount(<Button />, {
-    context: { send },
+    context:           { send },
     childContextTypes: {
-      send: () => {}
-    }
+      send: () => {},
+    },
   })
 
   component.simulate('click')
@@ -46,13 +46,12 @@ it('allows send to be overridden by a prop', function () {
     )
   })
 
-  mount(<Button send={send}/>).simulate('click')
+  mount(<Button send={send} />).simulate('click')
 
   expect(send).toHaveBeenCalledWith('action')
 })
 
 describe('Display name', function () {
-
   it('sets the correct display name for stateless components', function () {
     const Button = withSend(function Button () {
       return <button type="button" />
@@ -64,15 +63,16 @@ describe('Display name', function () {
   })
 
   it('sets the correct display name for stateful components', function () {
-    const Button = withSend(class Button extends React.Component {
-      render () {
-        return <button type="button" />
-      }
-    })
+    const Button = withSend(
+      class Button extends React.Component {
+        render () {
+          return <button type="button" />
+        }
+      },
+    )
 
     let wrapper = mount(<div><Button /></div>)
 
     expect(wrapper.find('withSend(Button)')).toHaveLength(1)
   })
-
 })

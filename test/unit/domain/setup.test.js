@@ -1,7 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Domain::setup', function () {
-
   it('is invoked with a reference to the repo and options', function () {
     const repo = new Microcosm()
     const test = jest.fn()
@@ -16,5 +15,4 @@ describe('Domain::setup', function () {
 
     expect(test).toHaveBeenCalledWith(repo, { test: true })
   })
-
 })

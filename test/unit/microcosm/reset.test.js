@@ -1,12 +1,11 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm::reset', function () {
-
   it('reset returns to initial state', function () {
     const repo = new Microcosm()
 
     repo.addDomain('test', {
-      getInitialState: () => false
+      getInitialState: () => false,
     })
 
     repo.patch({ test: true })
@@ -32,7 +31,7 @@ describe('Microcosm::reset', function () {
     const repo = new Microcosm()
 
     // This is invalid
-    let badPatch = () => repo.reset("{ test: deserialize }", true)
+    let badPatch = () => repo.reset('{ test: deserialize }', true)
 
     expect(badPatch).toThrow()
   })
@@ -41,7 +40,7 @@ describe('Microcosm::reset', function () {
     const repo = new Microcosm()
 
     repo.addDomain('test', {
-      getInitialState: () => true
+      getInitialState: () => true,
     })
 
     expect(repo).toHaveState('test', true)
@@ -52,7 +51,7 @@ describe('Microcosm::reset', function () {
 
     // This is invalid
     try {
-      repo.reset("{ test: deserialize }", true)
+      repo.reset('{ test: deserialize }', true)
     } catch (x) {
       // do not handle this error
     }
@@ -61,7 +60,6 @@ describe('Microcosm::reset', function () {
   })
 
   describe('forks', function () {
-
     it('forks inherit state on reset', function () {
       const parent = new Microcosm()
       const child = parent.fork()
@@ -80,9 +78,9 @@ describe('Microcosm::reset', function () {
       child.addDomain('count', {
         register () {
           return {
-            'add' : (a, b) => a + b
+            add: (a, b) => a + b,
           }
-        }
+        },
       })
 
       child.reset({ count: 2 })
@@ -99,7 +97,5 @@ describe('Microcosm::reset', function () {
       // the new state produced by a child.
       expect(child.state.count).toEqual(4)
     })
-
   })
-
 })

@@ -1,8 +1,7 @@
 import Action from '../../../src/action'
 import Microcosm from '../../../src/microcosm'
 
-describe('Action::toggle', function() {
-
+describe('Action::toggle', function () {
   it('it will not dispatch an action disabled at the head', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
 
@@ -12,9 +11,9 @@ describe('Action::toggle', function() {
       },
       register () {
         return {
-          action : (a, b) => a + b
+          action: (a, b) => a + b,
         }
-      }
+      },
     })
 
     repo.push('action', 2)
@@ -32,9 +31,9 @@ describe('Action::toggle', function() {
       },
       register () {
         return {
-          action : (a, b) => a + b
+          action: (a, b) => a + b,
         }
-      }
+      },
     })
 
     repo.push('action', 2)
@@ -45,5 +44,4 @@ describe('Action::toggle', function() {
 
     expect(repo).toHaveState('count', 4)
   })
-
 })

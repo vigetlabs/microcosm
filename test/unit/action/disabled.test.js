@@ -4,7 +4,6 @@ import Microcosm from '../../../src/microcosm'
 const identity = n => n
 
 describe('Action disabled state', function () {
-
   it('preserves other states when disabled', function () {
     const action = new Action(identity)
 
@@ -34,5 +33,4 @@ describe('Action disabled state', function () {
 
     expect(handler).not.toHaveBeenCalled()
   })
-
 })

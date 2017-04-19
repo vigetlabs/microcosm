@@ -1,8 +1,7 @@
 import Microcosm from '../../src/microcosm'
 
-describe('Removal', function() {
-
-  it('can remove an action from history', function() {
+describe('Removal', function () {
+  it('can remove an action from history', function () {
     const repo = new Microcosm({ maxHistory: Infinity })
     const handler = jest.fn()
 
@@ -14,5 +13,4 @@ describe('Removal', function() {
 
     expect(repo.history.size).toBe(1)
   })
-
 })

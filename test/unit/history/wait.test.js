@@ -10,7 +10,7 @@ describe('History::wait', function () {
     let two = history.append(action)
     let three = history.append(action)
 
-    setTimeout(function() {
+    setTimeout(function () {
       one.resolve()
       two.resolve()
       three.resolve()
@@ -26,7 +26,7 @@ describe('History::wait', function () {
     let two = history.append(action)
     let three = history.append(action)
 
-    setTimeout(function() {
+    setTimeout(function () {
       one.resolve()
       two.resolve()
       three.reject('Wut')
@@ -46,7 +46,7 @@ describe('History::wait', function () {
     let two = history.append(action)
     let three = history.append(action)
 
-    setTimeout(function() {
+    setTimeout(function () {
       one.resolve()
       two.cancel()
       three.resolve('Wut')
@@ -56,5 +56,4 @@ describe('History::wait', function () {
     // it will only pass when the promise resolves.
     return history.wait()
   })
-
 })

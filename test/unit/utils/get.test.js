@@ -1,13 +1,11 @@
-import {
-  get
-} from '../../../src/utils'
+import { get } from '../../../src/utils'
 
 describe('Utils.get', function () {
   const subject = {
     styles: {
       color: 'blue',
-      font: 'Helvetica, sans-serif'
-    }
+      font:  'Helvetica, sans-serif',
+    },
   }
 
   it('can retrieve a single key', function () {
@@ -34,22 +32,15 @@ describe('Utils.get', function () {
     expect(fallback).toBe(true)
   })
 
-  it('returns the fallback if the key and object are null', function () {
+  it('returns the fallback if the key and fallback are null', function () {
     let fallback = get(null, null, true)
 
     expect(fallback).toBe(true)
   })
 
   it('returns the fallback if a mid-way key is null', function () {
-    let fallback = get({ a: { b: null }}, 'a.b.c', true)
+    let fallback = get({ a: { b: null } }, 'a.b.c', true)
 
     expect(fallback).toBe(true)
   })
-
-  it('returns undefined if the fallback is undefined', function () {
-    let fallback = get({}, 'key')
-
-    expect(fallback).toBe(undefined)
-  })
-
 })
