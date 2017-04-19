@@ -10,18 +10,17 @@ function ActionForm () {
 }
 
 ActionForm.contextTypes = {
-  send: () => {}
+  send: () => {},
 }
 
 ActionForm.defaultProps = {
-  action     : null,
-  serializer : form => serialize(form, { hash: true, empty: true }),
-  prepare    : n => n,
-  onSubmit   : n => n
+  action:     null,
+  serializer: form => serialize(form, { hash: true, empty: true }),
+  prepare:    n => n,
+  onSubmit:   n => n,
 }
 
 inherit(ActionForm, PureComponent, {
-
   render () {
     let props = merge({}, this.props, { ref: 'form', onSubmit: this.onSubmit })
 
@@ -45,21 +44,21 @@ inherit(ActionForm, PureComponent, {
   },
 
   submit (event) {
-    let form   = this.refs.form
+    let form = this.refs.form
     let params = this.props.prepare(this.props.serializer(form))
     let action = this.send(this.props.action, params)
 
     if (action && action instanceof Action) {
-      action.onOpen(this.props.onOpen)
-            .onUpdate(this.props.onUpdate)
-            .onCancel(this.props.onCancel)
-            .onDone(this.props.onDone)
-            .onError(this.props.onError)
+      action
+        .onOpen(this.props.onOpen)
+        .onUpdate(this.props.onUpdate)
+        .onCancel(this.props.onCancel)
+        .onDone(this.props.onDone)
+        .onError(this.props.onError)
     }
 
     this.props.onSubmit(event, action)
-  }
-
+  },
 })
 
 export default ActionForm

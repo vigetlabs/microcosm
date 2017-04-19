@@ -1,15 +1,9 @@
 import MetaDomain from './meta-domain'
 import getRegistration from './get-registration'
 
-import {
-  get,
-  set,
-  createOrClone
-} from './utils'
+import { get, set, createOrClone } from './utils'
 
-import {
-  castPath
-} from './key-path'
+import { castPath } from './key-path'
 
 export default function DomainEngine (repo) {
   this.repo = repo
@@ -21,7 +15,6 @@ export default function DomainEngine (repo) {
 }
 
 DomainEngine.prototype = {
-
   getHandlers ({ command, status }) {
     let handlers = []
 
@@ -74,7 +67,7 @@ DomainEngine.prototype = {
 
     // Important: start at 1 to avoid the meta domain
     for (var i = 1, len = this.domains.length; i < len; i++) {
-      let [ key, domain ] = this.domains[i]
+      let [key, domain] = this.domains[i]
 
       next = fn.call(scope, next, key, domain)
     }
@@ -129,6 +122,5 @@ DomainEngine.prototype = {
 
       return memo
     }, payload)
-  }
-
+  },
 }

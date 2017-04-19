@@ -12,7 +12,8 @@
  * Note: To be fully compliant, we would invoke the callback with the
  * time remaining. Given our usage, we don't need to do that.
  */
-const scheduler = global.requestIdleCallback || (update => setTimeout(update, 4))
+const scheduler =
+  global.requestIdleCallback || (update => setTimeout(update, 4))
 
 /**
  * When using requestIdleCallback, batch together updates until the

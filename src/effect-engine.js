@@ -7,7 +7,6 @@ export default function EffectEngine (repo) {
 }
 
 EffectEngine.prototype = {
-
   add (config, options) {
     let effect = createOrClone(config, options, this.repo)
 
@@ -38,5 +37,5 @@ EffectEngine.prototype = {
         }
       }
     }
-  }
+  },
 }

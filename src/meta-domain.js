@@ -1,19 +1,12 @@
-import {
-  merge
-} from './utils'
+import { merge } from './utils'
 
-import {
-  RESET,
-  PATCH,
-  ADD_DOMAIN
-} from './lifecycle'
+import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
 
 export default function MetaDomain (_, repo) {
   this.repo = repo
 }
 
 MetaDomain.prototype = {
-
   reset (state, data) {
     let filtered = this.repo.domains.sanitize(data)
 
@@ -32,10 +25,9 @@ MetaDomain.prototype = {
 
   register () {
     return {
-      [RESET] : this.reset,
-      [PATCH] : this.patch,
-      [ADD_DOMAIN]: this.addDomain
+      [RESET]:      this.reset,
+      [PATCH]:      this.patch,
+      [ADD_DOMAIN]: this.addDomain,
     }
-  }
-
+  },
 }

@@ -6,7 +6,7 @@
 
 import { isString } from './utils'
 
-const KEY_DELIMETER  = '.'
+const KEY_DELIMETER = '.'
 const PATH_DELIMETER = ','
 
 function isBlank (value) {

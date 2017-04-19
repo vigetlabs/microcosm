@@ -1,6 +1,4 @@
-import {
-  isFunction
-} from './utils'
+import { isFunction } from './utils'
 
 /**
  * @constructor
@@ -10,8 +8,10 @@ import {
  * @param {boolean} once Only run the event callback once
  */
 function Listener (event, fn, scope, once) {
-  console.assert(isFunction(fn),
-                 `Expected ${event} listener to be function, instead got ${fn}`)
+  console.assert(
+    isFunction(fn),
+    `Expected ${event} listener to be function, instead got ${fn}`,
+  )
 
   this.event = event
   this.fn = fn
@@ -30,7 +30,6 @@ export default function Emitter () {
 }
 
 Emitter.prototype = {
-
   /**
    * Add an event listener.
    * @param {string} event Type of event
@@ -134,6 +133,5 @@ Emitter.prototype = {
 
       i += 1
     }
-  }
-
+  },
 }

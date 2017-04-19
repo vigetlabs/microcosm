@@ -21,8 +21,10 @@ function processGenerator (action, body, repo) {
   }
 
   function progress (subAction) {
-    console.assert(subAction instanceof Action,
-                   `Iteration of generator expected an Action. Instead got ${subAction}`)
+    console.assert(
+      subAction instanceof Action,
+      `Iteration of generator expected an Action. Instead got ${subAction}`,
+    )
 
     subAction.onDone(step)
     subAction.onCancel(action.cancel, action)
@@ -55,7 +57,7 @@ export default function coroutine (action, command, params, repo) {
 
     body.then(
       result => global.setTimeout(() => action.resolve(result), 0),
-      error  => global.setTimeout(() => action.reject(error), 0)
+      error => global.setTimeout(() => action.reject(error), 0),
     )
 
     return action

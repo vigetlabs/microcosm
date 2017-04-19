@@ -1,10 +1,7 @@
 import Node from './node'
 import Query from './query'
 
-import {
-  getKeyPaths,
-  getKeyString
-} from '../key-path'
+import { getKeyPaths, getKeyString } from '../key-path'
 
 // The root key is an empty string. This can be a little
 // counter-intuitive, so we keep track of them as a named constant.
@@ -16,7 +13,6 @@ export default function CompareTree (initial) {
 }
 
 CompareTree.prototype = {
-
   /**
    * Create a subscription to a particular set of key paths.
    * @public
@@ -195,5 +191,5 @@ CompareTree.prototype = {
     }
 
     return queries
-  }
+  },
 }

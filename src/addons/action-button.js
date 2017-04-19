@@ -9,24 +9,24 @@ export default function ActionButton (props, context) {
 }
 
 ActionButton.contextTypes = {
-  send: () => {}
+  send: () => {},
 }
 
 ActionButton.defaultProps = {
-  tag: 'button'
+  tag: 'button',
 }
 
 inherit(ActionButton, PureComponent, {
-
   click (event) {
     let action = this.send(this.props.action, this.props.value)
 
     if (action && action instanceof Action) {
-      action.onOpen(this.props.onOpen)
-            .onUpdate(this.props.onUpdate)
-            .onCancel(this.props.onCancel)
-            .onDone(this.props.onDone)
-            .onError(this.props.onError)
+      action
+        .onOpen(this.props.onOpen)
+        .onUpdate(this.props.onUpdate)
+        .onCancel(this.props.onCancel)
+        .onDone(this.props.onDone)
+        .onError(this.props.onError)
     }
 
     if (this.props.onClick) {
@@ -54,6 +54,5 @@ inherit(ActionButton, PureComponent, {
     }
 
     return createElement(this.props.tag, props)
-  }
-
+  },
 })

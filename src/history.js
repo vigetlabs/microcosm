@@ -2,20 +2,14 @@ import Action from './action'
 import Emitter from './emitter'
 import defaultUpdateStrategy from './default-update-strategy'
 
-import {
-  inherit,
-  merge
-} from './utils'
+import { inherit, merge } from './utils'
 
-import {
-  BIRTH,
-  START
-} from './lifecycle'
+import { BIRTH, START } from './lifecycle'
 
 const DEFAULTS = {
   maxHistory: 1,
-  batch: false,
-  updater: defaultUpdateStrategy
+  batch:      false,
+  updater:    defaultUpdateStrategy,
 }
 
 /**
@@ -44,7 +38,6 @@ export default function History (config) {
 }
 
 inherit(History, Emitter, {
-
   /**
    * Set the head of the tree to a target action. This has the effect
    * of controlling time in a Microcosm's history.
@@ -104,7 +97,7 @@ inherit(History, Emitter, {
   wait () {
     let actions = this.toArray()
 
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const checkStatus = () => {
         let done = actions.every(action => action.complete)
         let errors = actions.filter(action => action.is('reject'))
@@ -276,6 +269,5 @@ inherit(History, Emitter, {
     }
 
     this.size = size
-  }
-
+  },
 })

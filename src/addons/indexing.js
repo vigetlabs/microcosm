@@ -16,7 +16,6 @@ function extract (object, keyPaths, seed) {
 }
 
 export default function () {
-
   /**
    * Memoize a computation of a fragment of application state.
    * This may be referenced when computing properties or querying
@@ -25,7 +24,7 @@ export default function () {
   Microcosm.prototype.index = function (name, fragment, ...processors) {
     let keyPaths = getKeyPaths(fragment)
 
-    let state  = null
+    let state = null
     let subset = null
     let answer = null
 
@@ -97,5 +96,4 @@ export default function () {
       return answer
     }
   }
-
 }
