@@ -28,7 +28,7 @@
     "key-spacing": [2, {
       "beforeColon": false,
       "afterColon": true,
-      "mode": "minimum",
+      "mode": "strict",
       "align": "value"
     }],
     "space-before-function-paren": [2, "always"],
