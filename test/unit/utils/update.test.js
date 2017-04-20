@@ -15,7 +15,7 @@ describe('Utils.update', function () {
   })
 
   it('can work from a fallback if a key is missing', function () {
-    let next = update(subject, 'styles.padding', padding => padding += 10, 0)
+    let next = update(subject, 'styles.padding', padding => (padding += 10), 0)
 
     expect(next.styles.padding).toEqual(10)
   })

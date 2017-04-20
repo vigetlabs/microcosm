@@ -82,7 +82,7 @@ describe('Microcosm constructor', function () {
         class Repo extends Microcosm {
           static defaults = {
             test: true
-          }
+          };
 
           setup (options) {
             expect(options.maxHistory).toBe(0)
@@ -99,7 +99,7 @@ describe('Microcosm constructor', function () {
         class Repo extends Microcosm {
           static defaults = {
             test: true
-          }
+          };
 
           setup (options) {
             expect(options.maxHistory).toBe(10)
