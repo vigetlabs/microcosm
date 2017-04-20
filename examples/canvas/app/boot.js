@@ -12,16 +12,16 @@ let writes = size * 25
 let advance = (x, y) => ({ x, y })
 
 repo.addDomain('pixels', {
-  getInitialState () {
+  getInitialState() {
     return {}
   },
-  rotateHue (n) {
+  rotateHue(n) {
     return isNaN(n) ? 0 : n + 5
   },
-  advance (state, { x, y }) {
+  advance(state, { x, y }) {
     return update(state, [x, y], this.rotateHue)
   },
-  register () {
+  register() {
     return {
       [advance]: this.advance
     }
@@ -53,7 +53,7 @@ canvas.addEventListener('mousemove', event => {
   repo.push(advance, x, y)
 })
 
-function randomMoves (n = 1) {
+function randomMoves(n = 1) {
   while (n-- > 0) {
     let x = (Math.random() * rows) | 0
     let y = (Math.random() * columns) | 0
@@ -62,7 +62,7 @@ function randomMoves (n = 1) {
   }
 }
 
-function updateLabel () {
+function updateLabel() {
   let events = rows * columns * writes
   let label
 
@@ -75,9 +75,9 @@ function updateLabel () {
 const SLOW = 1000 / 58
 const FAST = 1000 / 60
 
-function play () {
+function play() {
   let last = performance.now()
-  requestAnimationFrame(function loop () {
+  requestAnimationFrame(function loop() {
     let next = performance.now()
     let elapsed = next - last
 

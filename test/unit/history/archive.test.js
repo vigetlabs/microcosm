@@ -1,9 +1,9 @@
 import History from '../../../src/history'
 
-describe('History::archive', function () {
+describe('History::archive', function() {
   const action = n => n
 
-  it('archive moves all the way up to the head', function () {
+  it('archive moves all the way up to the head', function() {
     const history = new History()
 
     // One
@@ -30,7 +30,7 @@ describe('History::archive', function () {
     expect(history.head).toBe(two)
   })
 
-  it('will not archive a node if prior nodes are not complete', function () {
+  it('will not archive a node if prior nodes are not complete', function() {
     const history = new History()
 
     // one
@@ -47,7 +47,7 @@ describe('History::archive', function () {
     expect(history.size).toBe(3)
   })
 
-  it('archives all completed actions', function () {
+  it('archives all completed actions', function() {
     const history = new History()
 
     const one = history.append(action)
@@ -65,7 +65,7 @@ describe('History::archive', function () {
     expect(history.size).toBe(1)
   })
 
-  it('archived nodes have no relations', function () {
+  it('archived nodes have no relations', function() {
     const history = new History()
 
     history.append(action).resolve()
@@ -77,7 +77,7 @@ describe('History::archive', function () {
     expect(history.root.parent.parent).toBe(null)
   })
 
-  it('archiving the entire tree clears cursors', function () {
+  it('archiving the entire tree clears cursors', function() {
     const history = new History()
 
     // one
@@ -92,7 +92,7 @@ describe('History::archive', function () {
     expect(history.head).toBe(two)
   })
 
-  it('adjusts the root node', function () {
+  it('adjusts the root node', function() {
     const history = new History()
 
     const a = history.append(action)

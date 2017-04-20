@@ -1,13 +1,13 @@
 import Microcosm from '../../src/microcosm'
 
-describe('Efficiency', function () {
+describe('Efficiency', function() {
   it('actions are not dispatched twice with 0 history', () => {
     const parent = new Microcosm({ maxHistory: 0 })
     const handler = jest.fn()
     const action = n => n
 
     parent.addDomain('one', {
-      register () {
+      register() {
         return {
           [action]: handler
         }
@@ -27,7 +27,7 @@ describe('Efficiency', function () {
     const action = n => n
 
     parent.addDomain('one', {
-      register () {
+      register() {
         return {
           [action]: handler
         }
@@ -47,7 +47,7 @@ describe('Efficiency', function () {
     const action = n => n
 
     parent.addDomain('one', {
-      register () {
+      register() {
         return {
           [action]: handler
         }
@@ -67,7 +67,7 @@ describe('Efficiency', function () {
     const action = n => n
 
     repo.addDomain('one', {
-      register () {
+      register() {
         return {
           [action]: handler
         }
@@ -86,7 +86,7 @@ describe('Efficiency', function () {
   it('does not dispatch a change event if nothing changes on the first reconciliation', () => {
     const repo = new Microcosm()
 
-    repo.on('change', function () {
+    repo.on('change', function() {
       throw new Error('Change event should not have fired')
     })
 

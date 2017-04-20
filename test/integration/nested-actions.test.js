@@ -7,18 +7,18 @@
 
 import Microcosm, { update } from '../../src/microcosm'
 
-describe('When pushing actions inside of another action', function () {
-  it('does not return to an old state when pushing the second action', function () {
+describe('When pushing actions inside of another action', function() {
+  it('does not return to an old state when pushing the second action', function() {
     expect.assertions(8)
 
     let repo = new Microcosm()
 
-    function focuser (focus) {
+    function focuser(focus) {
       return focus
     }
 
-    function stepper () {
-      return function (action, repo) {
+    function stepper() {
+      return function(action, repo) {
         expect(repo).toHaveState('data.count', 2)
         expect(repo).toHaveState('data.focus', true)
 
@@ -38,16 +38,16 @@ describe('When pushing actions inside of another action', function () {
     }
 
     repo.addDomain('data', {
-      getInitialState () {
+      getInitialState() {
         return { count: 0, focus: false }
       },
-      increase (state, amount) {
+      increase(state, amount) {
         return update(state, 'count', n => n + amount)
       },
-      setFocus (state, yes) {
+      setFocus(state, yes) {
         return update(state, 'focus', yes)
       },
-      register () {
+      register() {
         return {
           [stepper]: this.increase,
           [focuser]: this.setFocus

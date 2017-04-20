@@ -22,7 +22,7 @@ const scheduler =
  */
 const BATCH_OPTIONS = { timeout: 36 }
 
-export default function defaultUpdateStrategy (options) {
+export default function defaultUpdateStrategy(options) {
   return update => {
     if (options.batch === true) {
       scheduler(update, BATCH_OPTIONS)

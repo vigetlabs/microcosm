@@ -2,8 +2,8 @@ import Action from '../../../src/action'
 
 const identity = n => n
 
-describe('Action disabled state', function () {
-  it('preserves other states when disabled', function () {
+describe('Action disabled state', function() {
+  it('preserves other states when disabled', function() {
     const action = new Action(identity)
 
     action.resolve()
@@ -12,7 +12,7 @@ describe('Action disabled state', function () {
     expect(action).toHaveStatus('done')
   })
 
-  it('is toggleable', function () {
+  it('is toggleable', function() {
     const action = new Action(identity)
 
     action.resolve()
@@ -22,7 +22,7 @@ describe('Action disabled state', function () {
     expect(action.disabled).toBe(true)
   })
 
-  it('can toggle history without triggering a reconciliation', function () {
+  it('can toggle history without triggering a reconciliation', function() {
     const action = new Action(identity)
     const handler = jest.fn()
 

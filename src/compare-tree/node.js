@@ -5,7 +5,7 @@
  * @param {String} id Identifier for the node.
  * @param {String} key String name of the key this node represents
  */
-export default function Node (id, key, parent) {
+export default function Node(id, key, parent) {
   this.id = id
   this.key = key
   this.edges = []
@@ -16,7 +16,7 @@ export default function Node (id, key, parent) {
   }
 }
 
-Node.getId = function (key, parent) {
+Node.getId = function(key, parent) {
   return parent && parent.id ? parent.id + '.' + key : key
 }
 
@@ -29,7 +29,7 @@ Node.prototype = {
    * @public
    * @param {Node} node
    */
-  connect (node) {
+  connect(node) {
     if (node !== this && this.edges.indexOf(node) < 0) {
       this.edges.push(node)
     }
@@ -40,7 +40,7 @@ Node.prototype = {
    * @public
    * @param {Node} node
    */
-  disconnect (node) {
+  disconnect(node) {
     let index = this.edges.indexOf(node)
 
     if (~index) {
@@ -51,14 +51,14 @@ Node.prototype = {
   /**
    * Does a node have any edges?
    */
-  isAlone () {
+  isAlone() {
     return this.edges.length <= 0
   },
 
   /**
    * Disconnect from a parent
    */
-  orphan () {
+  orphan() {
     if (this.parent) {
       this.parent.disconnect(this)
     }

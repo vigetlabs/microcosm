@@ -3,8 +3,8 @@ import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
-describe('Action update state', function () {
-  it('exposes a loading type when in progress', function () {
+describe('Action update state', function() {
+  it('exposes a loading type when in progress', function() {
     const action = new Action(identity)
 
     action.update()
@@ -12,7 +12,7 @@ describe('Action update state', function () {
     expect(action).toHaveStatus('update')
   })
 
-  it('listens to progress updates', function () {
+  it('listens to progress updates', function() {
     const action = new Action(identity)
     const fn = jest.fn()
 
@@ -22,7 +22,7 @@ describe('Action update state', function () {
     expect(fn).toHaveBeenCalledWith(true)
   })
 
-  it('does not trigger onUpdate if in progress', function () {
+  it('does not trigger onUpdate if in progress', function() {
     const action = new Action(identity)
     const fn = jest.fn()
 
@@ -32,7 +32,7 @@ describe('Action update state', function () {
     expect(fn).not.toHaveBeenCalled()
   })
 
-  it('actions are no longer open when in progress', function () {
+  it('actions are no longer open when in progress', function() {
     const action = new Action(identity)
 
     action.open(true)
@@ -42,7 +42,7 @@ describe('Action update state', function () {
     expect(action).toHaveStatus('loading')
   })
 
-  it('triggers an update event when it updates', function () {
+  it('triggers an update event when it updates', function() {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -52,7 +52,7 @@ describe('Action update state', function () {
     expect(callback).toHaveBeenCalledWith(3)
   })
 
-  it('does not trigger an update event if it is complete', function () {
+  it('does not trigger an update event if it is complete', function() {
     const action = new Action(identity)
     const spy = jest.fn()
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
@@ -68,7 +68,7 @@ describe('Action update state', function () {
     expect(spy).not.toHaveBeenCalled()
   })
 
-  it('aliases the loading type with update', function () {
+  it('aliases the loading type with update', function() {
     const action = new Action(identity)
 
     action.update()
@@ -76,16 +76,16 @@ describe('Action update state', function () {
     expect(action).toHaveStatus('update')
   })
 
-  it('updates repo state with the latest progress', function () {
+  it('updates repo state with the latest progress', function() {
     const repo = new Microcosm()
     const test = n => n
     const handler = jest.fn(n => n)
 
     repo.addDomain('progress', {
-      getInitalState () {
+      getInitalState() {
         return 0
       },
-      register () {
+      register() {
         return {
           [test]: {
             update: (a, b) => handler(b)

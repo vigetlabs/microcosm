@@ -5,12 +5,12 @@ import { isFunction, isPromise, isGeneratorFn } from './utils'
  * Provide support for generators, performing a sequence of actions in
  * order.
  */
-function processGenerator (action, body, repo) {
+function processGenerator(action, body, repo) {
   action.open()
 
   let iterator = body(repo)
 
-  function step (payload) {
+  function step(payload) {
     let next = iterator.next(payload)
 
     if (next.done) {
@@ -20,7 +20,7 @@ function processGenerator (action, body, repo) {
     }
   }
 
-  function progress (subAction) {
+  function progress(subAction) {
     console.assert(
       subAction instanceof Action,
       `Iteration of generator expected an Action. Instead got ${subAction}`
@@ -40,7 +40,7 @@ function processGenerator (action, body, repo) {
  * Coroutine is used by an action to determine how it should resolve
  * the body of their associated command.
  */
-export default function coroutine (action, command, params, repo) {
+export default function coroutine(action, command, params, repo) {
   let body = command.apply(null, params)
 
   /**

@@ -1,6 +1,6 @@
 import uid from 'uid'
 
-function Message ({
+function Message({
   id = uid(),
   message,
   user,

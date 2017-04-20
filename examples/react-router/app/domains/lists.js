@@ -1,19 +1,19 @@
 import { addList, removeList } from '../actions/lists'
 
 const Lists = {
-  getInitialState () {
+  getInitialState() {
     return []
   },
 
-  add (lists, params) {
+  add(lists, params) {
     return lists.concat({ name: 'Unspecified', ...params })
   },
 
-  remove (lists, unwanted) {
+  remove(lists, unwanted) {
     return lists.filter(i => i.id !== unwanted)
   },
 
-  register () {
+  register() {
     return {
       [addList]: Lists.add,
       [removeList]: Lists.remove

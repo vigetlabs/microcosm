@@ -5,7 +5,7 @@ import { get, set, createOrClone } from './utils'
 
 import { castPath } from './key-path'
 
-export default function DomainEngine (repo) {
+export default function DomainEngine(repo) {
   this.repo = repo
   this.domains = []
   this.registry = {}
@@ -15,7 +15,7 @@ export default function DomainEngine (repo) {
 }
 
 DomainEngine.prototype = {
-  getHandlers ({ command, status }) {
+  getHandlers({ command, status }) {
     let handlers = []
 
     for (var i = 0, len = this.domains.length; i < len; i++) {
@@ -33,7 +33,7 @@ DomainEngine.prototype = {
     return handlers
   },
 
-  register (action) {
+  register(action) {
     let type = action.type
 
     if (!this.registry[type]) {
@@ -43,7 +43,7 @@ DomainEngine.prototype = {
     return this.registry[type]
   },
 
-  add (key, config, options) {
+  add(key, config, options) {
     let domain = createOrClone(config, options, this.repo)
 
     this.domains.push([castPath(key), domain])
@@ -62,7 +62,7 @@ DomainEngine.prototype = {
     return domain
   },
 
-  reduce (fn, state, scope) {
+  reduce(fn, state, scope) {
     let next = state
 
     // Important: start at 1 to avoid the meta domain
@@ -75,7 +75,7 @@ DomainEngine.prototype = {
     return next
   },
 
-  sanitize (data) {
+  sanitize(data) {
     let next = {}
 
     for (var i = 0, len = this.domains.length; i < len; i++) {
@@ -89,7 +89,7 @@ DomainEngine.prototype = {
     return next
   },
 
-  dispatch (state, action) {
+  dispatch(state, action) {
     let handlers = this.register(action)
 
     for (var i = 0, len = handlers.length; i < len; i++) {
@@ -104,8 +104,8 @@ DomainEngine.prototype = {
     return state
   },
 
-  deserialize (payload) {
-    return this.reduce(function (memo, key, domain) {
+  deserialize(payload) {
+    return this.reduce(function(memo, key, domain) {
       if (domain.deserialize) {
         return set(memo, key, domain.deserialize(get(payload, key)))
       }
@@ -114,8 +114,8 @@ DomainEngine.prototype = {
     }, payload)
   },
 
-  serialize (state, payload) {
-    return this.reduce(function (memo, key, domain) {
+  serialize(state, payload) {
+    return this.reduce(function(memo, key, domain) {
       if (domain.serialize) {
         return set(memo, key, domain.serialize(get(state, key)))
       }

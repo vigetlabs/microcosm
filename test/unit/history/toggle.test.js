@@ -1,9 +1,9 @@
 import History from '../../../src/history'
 
-describe('History::toggle', function () {
+describe('History::toggle', function() {
   const action = n => n
 
-  it('can toggle a single action', function () {
+  it('can toggle a single action', function() {
     const history = new History({ maxHistory: Infinity })
 
     let one = history.append(action, 'resolve')
@@ -13,7 +13,7 @@ describe('History::toggle', function () {
     expect(one.disabled).toBe(true)
   })
 
-  it('can toggle actions in bulk', function () {
+  it('can toggle actions in bulk', function() {
     const history = new History({ maxHistory: Infinity })
 
     let one = history.append(action, 'resolve')
@@ -27,7 +27,7 @@ describe('History::toggle', function () {
     expect(three.disabled).toBe(true)
   })
 
-  it('only reconciles once', function () {
+  it('only reconciles once', function() {
     const history = new History({ maxHistory: Infinity })
 
     let one = history.append(action, 'resolve')

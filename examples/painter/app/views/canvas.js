@@ -1,7 +1,7 @@
 import React from 'react'
 import Row from './row'
 
-export default function Canvas ({ pixels, height, width, send }) {
+export default function Canvas({ pixels, height, width, send }) {
   const scaleX = width / pixels[0].length
   const scaleY = height / pixels.length
   const transform = `scale(${scaleX}, ${scaleY})`

@@ -1,13 +1,13 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm events', function () {
-  describe('::on', function () {
-    it('can add a fine grained event subscription', function () {
+describe('Microcosm events', function() {
+  describe('::on', function() {
+    it('can add a fine grained event subscription', function() {
       let repo = new Microcosm()
       let handler = jest.fn()
 
       repo.addDomain('styles', {
-        getInitialState () {
+        getInitialState() {
           return { text: { color: 'blue' } }
         }
       })
@@ -20,7 +20,7 @@ describe('Microcosm events', function () {
       expect(handler).toHaveBeenCalledWith('red')
     })
 
-    it('can subscribe to teardown', function () {
+    it('can subscribe to teardown', function() {
       let repo = new Microcosm()
       let handler = jest.fn()
 
@@ -33,13 +33,13 @@ describe('Microcosm events', function () {
     })
   })
 
-  describe('off', function () {
-    it('can remove a fine grained event subscription', function () {
+  describe('off', function() {
+    it('can remove a fine grained event subscription', function() {
       let repo = new Microcosm()
       let handler = jest.fn()
 
       repo.addDomain('styles', {
-        getInitialState () {
+        getInitialState() {
           return { text: { color: 'blue' } }
         }
       })
@@ -52,7 +52,7 @@ describe('Microcosm events', function () {
       expect(handler).toHaveBeenCalledTimes(0)
     })
 
-    it('can unsubscribe from teardown', function () {
+    it('can unsubscribe from teardown', function() {
       let repo = new Microcosm()
       let handler = jest.fn()
 

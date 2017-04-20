@@ -10,11 +10,11 @@ let el = document.getElementById('app')
 
 repo.addDomain('circle', Circle)
 
-repo.on('change', function (state) {
+repo.on('change', function(state) {
   DOM.render(<Logo {...state} />, el)
 })
 
-function loop ({ time = Date.now() } = {}) {
+function loop({ time = Date.now() } = {}) {
   repo.push(animate, time, 1000).onDone(loop)
 }
 

@@ -1,7 +1,7 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm::shutdown', function () {
-  it('removes all listeners', function () {
+describe('Microcosm::shutdown', function() {
+  it('removes all listeners', function() {
     const repo = new Microcosm()
 
     const listener = jest.fn()
@@ -15,7 +15,7 @@ describe('Microcosm::shutdown', function () {
     expect(listener).not.toHaveBeenCalled()
   })
 
-  it('calls teardown on domains', function () {
+  it('calls teardown on domains', function() {
     const repo = new Microcosm()
     const teardown = jest.fn()
 
@@ -25,7 +25,7 @@ describe('Microcosm::shutdown', function () {
     expect(teardown).toHaveBeenCalled()
   })
 
-  it('removes the microcosm from its history', function () {
+  it('removes the microcosm from its history', function() {
     const repo = new Microcosm()
     const child = repo.fork()
 
@@ -38,8 +38,8 @@ describe('Microcosm::shutdown', function () {
     expect(child.release).not.toHaveBeenCalled()
   })
 
-  describe('forks', function () {
-    it('tearing down eliminates parent subscriptions', function () {
+  describe('forks', function() {
+    it('tearing down eliminates parent subscriptions', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -47,7 +47,7 @@ describe('Microcosm::shutdown', function () {
 
       parent.patch({ color: 'red' })
 
-      child.on('change', function () {
+      child.on('change', function() {
         throw new Error('Should not have changed')
       })
 

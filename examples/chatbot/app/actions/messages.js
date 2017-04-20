@@ -1,8 +1,8 @@
-export function send ({ message }) {
+export function send({ message }) {
   var request = new XMLHttpRequest()
 
-  return function (action) {
-    request.addEventListener('readystatechange', function () {
+  return function(action) {
+    request.addEventListener('readystatechange', function() {
       switch (request.readyState) {
         // Open
         case 1:
@@ -16,7 +16,7 @@ export function send ({ message }) {
       }
     })
 
-    request.addEventListener('error', function () {
+    request.addEventListener('error', function() {
       action.reject(JSON.parse(request.responseText))
     })
 
@@ -29,6 +29,6 @@ export function send ({ message }) {
   }
 }
 
-export function receive (message) {
+export function receive(message) {
   return message
 }

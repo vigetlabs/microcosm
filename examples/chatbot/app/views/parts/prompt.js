@@ -5,7 +5,7 @@ import { send } from '../../actions/messages'
 
 const onSubmit = event => event.target.reset()
 
-export default function Prompt () {
+export default function Prompt() {
   return (
     <ActionForm action={send} onSubmit={onSubmit}>
       <label className="audible" htmlFor="message">Respond:</label>

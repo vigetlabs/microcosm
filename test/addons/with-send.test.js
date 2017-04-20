@@ -2,8 +2,8 @@ import React from 'react'
 import withSend from '../../src/addons/with-send'
 import { mount } from 'enzyme'
 
-it('exposes the wrapped component as a static property', function () {
-  const Button = function ({ send }) {
+it('exposes the wrapped component as a static property', function() {
+  const Button = function({ send }) {
     return (
       <button type="button" onClick={() => send('action')}>Click me</button>
     )
@@ -14,8 +14,8 @@ it('exposes the wrapped component as a static property', function () {
   expect(WrappedButton.WrappedComponent).toEqual(Button)
 })
 
-it('extracts send from context', function () {
-  const Button = withSend(function ({ send }) {
+it('extracts send from context', function() {
+  const Button = withSend(function({ send }) {
     return (
       <button type="button" onClick={() => send('action')}>Click me</button>
     )
@@ -35,10 +35,10 @@ it('extracts send from context', function () {
   expect(send).toHaveBeenCalledWith('action')
 })
 
-it('allows send to be overridden by a prop', function () {
+it('allows send to be overridden by a prop', function() {
   const send = jest.fn()
 
-  const Button = withSend(function ({ send }) {
+  const Button = withSend(function({ send }) {
     return (
       <button type="button" onClick={() => send('action')}>
         Click me
@@ -51,9 +51,9 @@ it('allows send to be overridden by a prop', function () {
   expect(send).toHaveBeenCalledWith('action')
 })
 
-describe('Display name', function () {
-  it('sets the correct display name for stateless components', function () {
-    const Button = withSend(function Button () {
+describe('Display name', function() {
+  it('sets the correct display name for stateless components', function() {
+    const Button = withSend(function Button() {
       return <button type="button" />
     })
 
@@ -62,10 +62,10 @@ describe('Display name', function () {
     expect(wrapper.find('withSend(Button)')).toHaveLength(1)
   })
 
-  it('sets the correct display name for stateful components', function () {
+  it('sets the correct display name for stateful components', function() {
     const Button = withSend(
       class Button extends React.Component {
-        render () {
+        render() {
           return <button type="button" />
         }
       }

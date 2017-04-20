@@ -2,18 +2,18 @@ var Eliza = require('elizabot')
 var uid = require('uid')
 
 var COMMANDS = {
-  error (bot, message) {
+  error(bot, message) {
     return { id: uid(), error: true, user: 'You', message }
   },
 
-  reply (bot, message) {
+  reply(bot, message) {
     return [
       { id: uid(), user: 'You', message: message },
       { id: uid(), user: 'Eliza', message: bot.transform(message) }
     ]
   },
 
-  unknown (bot, message) {
+  unknown(bot, message) {
     return {
       id: uid(),
       user: 'System',
@@ -23,15 +23,15 @@ var COMMANDS = {
   }
 }
 
-exports.start = function () {
+exports.start = function() {
   return new Eliza()
 }
 
-exports.greet = function (bot) {
+exports.greet = function(bot) {
   return { id: uid(), user: 'Eliza', message: bot.getInitial() }
 }
 
-exports.parse = function parse (bot, message) {
+exports.parse = function parse(bot, message) {
   var command = message.match(/^\/(\w+)\s*(.*)/)
 
   if (command) {

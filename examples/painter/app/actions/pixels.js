@@ -1,3 +1,3 @@
-export function paint (point) {
+export function paint(point) {
   return point
 }

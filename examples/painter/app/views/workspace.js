@@ -3,13 +3,13 @@ import Presenter from 'microcosm/addons/presenter'
 import Canvas from './canvas'
 
 class Workspace extends Presenter {
-  getModel () {
+  getModel() {
     return {
       pixels: state => state.pixels
     }
   }
 
-  render () {
+  render() {
     return <Canvas pixels={this.model.pixels} />
   }
 }

@@ -1,11 +1,11 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm::setup', function () {
-  it('extends defaults with options passed from instantiation', function () {
+describe('Microcosm::setup', function() {
+  it('extends defaults with options passed from instantiation', function() {
     expect.assertions(2)
 
     class Repo extends Microcosm {
-      setup (options) {
+      setup(options) {
         expect(options.foo).toEqual('bar')
         expect(options.maxHistory).toEqual(0)
       }
@@ -14,11 +14,11 @@ describe('Microcosm::setup', function () {
     new Repo({ foo: 'bar' })
   })
 
-  it('receives an options object, even when it is not passed', function () {
+  it('receives an options object, even when it is not passed', function() {
     expect.assertions(1)
 
     class Repo extends Microcosm {
-      setup (options) {
+      setup(options) {
         expect(options).toBeDefined()
       }
     }

@@ -1,15 +1,15 @@
 import Emitter from '../../src/emitter'
 
-describe('Emitter', function () {
-  it('adds listeners', function () {
+describe('Emitter', function() {
+  it('adds listeners', function() {
     const emitter = new Emitter()
     const calls = []
 
-    emitter.on('foo', function (val) {
+    emitter.on('foo', function(val) {
       calls.push('one', val)
     })
 
-    emitter.on('foo', function (val) {
+    emitter.on('foo', function(val) {
       calls.push('two', val)
     })
 
@@ -20,7 +20,7 @@ describe('Emitter', function () {
     expect(calls).toEqual(['one', 1, 'two', 1, 'one', 2, 'two', 2])
   })
 
-  it('adds a single-shot listener', function () {
+  it('adds a single-shot listener', function() {
     const emitter = new Emitter()
     const callback = jest.fn()
 
@@ -34,11 +34,11 @@ describe('Emitter', function () {
     expect(callback).toHaveBeenCalledTimes(1)
   })
 
-  it('does not call listeners removed when another is emitted', function (done) {
+  it('does not call listeners removed when another is emitted', function(done) {
     const emitter = new Emitter()
     const handler = jest.fn()
 
-    emitter.on('foo', function () {
+    emitter.on('foo', function() {
       emitter.off('foo', handler)
       done()
     })
@@ -50,8 +50,8 @@ describe('Emitter', function () {
     expect(handler).not.toHaveBeenCalled()
   })
 
-  describe('removal', function () {
-    it('should remove a listener', function () {
+  describe('removal', function() {
+    it('should remove a listener', function() {
       var emitter = new Emitter()
       var calls = []
 
@@ -67,13 +67,13 @@ describe('Emitter', function () {
       expect(calls).toEqual(['one'])
     })
 
-    it('gracefully handles removing listeners not set', function () {
+    it('gracefully handles removing listeners not set', function() {
       const emitter = new Emitter()
 
       emitter.off('foo')
     })
 
-    it('should remove all listeners for an event', function () {
+    it('should remove all listeners for an event', function() {
       const emitter = new Emitter()
       const calls = []
 
@@ -90,14 +90,14 @@ describe('Emitter', function () {
       expect(calls.length).toBe(0)
     })
 
-    it('should remove all listeners', function () {
+    it('should remove all listeners', function() {
       const emitter = new Emitter()
       const calls = []
 
-      function one () {
+      function one() {
         calls.push('one')
       }
-      function two () {
+      function two() {
         calls.push('two')
       }
 
@@ -115,7 +115,7 @@ describe('Emitter', function () {
       expect(calls).toEqual(['one', 'two'])
     })
 
-    it('off removes once subscriptions', function () {
+    it('off removes once subscriptions', function() {
       const emitter = new Emitter()
       const handler = jest.fn()
 

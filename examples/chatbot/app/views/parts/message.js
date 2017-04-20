@@ -6,9 +6,9 @@ class Message extends React.PureComponent {
     message: '',
     pending: false,
     time: new Date()
-  };
+  }
 
-  render () {
+  render() {
     const { user, time, message, error, pending } = this.props
 
     const status = pending ? 'sending...' : error ? '✖' : '✔'

@@ -1,7 +1,7 @@
 import History from '../../../src/history'
 
-describe('History::remove', function () {
-  it('resets when there are no actions left', function () {
+describe('History::remove', function() {
+  it('resets when there are no actions left', function() {
     let history = new History({ maxHistory: Infinity })
     let root = history.root
 
@@ -14,7 +14,7 @@ describe('History::remove', function () {
     expect(history.root.command.name).toEqual('$start')
   })
 
-  it('does not remove the root when given a node outside the tree', function () {
+  it('does not remove the root when given a node outside the tree', function() {
     let history = new History()
     let action = history.append('test')
 
@@ -27,8 +27,8 @@ describe('History::remove', function () {
     expect(history.clean).not.toHaveBeenCalled()
   })
 
-  describe('reconciliation', function () {
-    it('does not call reconciliation when removing a disabled child', function () {
+  describe('reconciliation', function() {
+    it('does not call reconciliation when removing a disabled child', function() {
       let history = new History()
 
       history.append('one')
@@ -45,13 +45,13 @@ describe('History::remove', function () {
     })
   })
 
-  describe('removing the head', function () {
-    it('adjusts the head to the prior node', function () {
+  describe('removing the head', function() {
+    it('adjusts the head to the prior node', function() {
       let history = new History({ maxHistory: Infinity })
 
-      history.append(function one () {}, 'resolve')
-      history.append(function two () {}, 'resolve')
-      history.append(function three () {}, 'resolve')
+      history.append(function one() {}, 'resolve')
+      history.append(function two() {}, 'resolve')
+      history.append(function three() {}, 'resolve')
 
       let head = history.head
       let prior = head.parent
@@ -61,30 +61,26 @@ describe('History::remove', function () {
       expect(history.head.id).toBe(prior.id)
     })
 
-    it('removes the node from the active branch', function () {
+    it('removes the node from the active branch', function() {
       let history = new History({ maxHistory: Infinity })
 
-      history.append(function one () {}, 'resolve')
-      history.append(function two () {}, 'resolve')
-      let three = history.append(function three () {}, 'resolve')
+      history.append(function one() {}, 'resolve')
+      history.append(function two() {}, 'resolve')
+      let three = history.append(function three() {}, 'resolve')
 
       history.archive()
 
       history.remove(three)
 
-      expect(history.map(a => a.command.name)).toEqual([
-        '$start',
-        'one',
-        'two'
-      ])
+      expect(history.map(a => a.command.name)).toEqual(['$start', 'one', 'two'])
     })
 
-    it('removing the head node eliminates the reference to "next"', function () {
+    it('removing the head node eliminates the reference to "next"', function() {
       let history = new History({ maxHistory: Infinity })
 
-      history.append(function one () {}, 'resolve')
-      history.append(function two () {}, 'resolve')
-      let three = history.append(function three () {}, 'resolve')
+      history.append(function one() {}, 'resolve')
+      history.append(function two() {}, 'resolve')
+      let three = history.append(function three() {}, 'resolve')
 
       history.archive()
 
@@ -94,13 +90,13 @@ describe('History::remove', function () {
     })
   })
 
-  describe('removing the root', function () {
-    it('adjusts the root to the next node', function () {
+  describe('removing the root', function() {
+    it('adjusts the root to the next node', function() {
       let history = new History({ maxHistory: Infinity })
 
-      history.append(function one () {}, 'resolve')
-      history.append(function two () {}, 'resolve')
-      history.append(function three () {}, 'resolve')
+      history.append(function one() {}, 'resolve')
+      history.append(function two() {}, 'resolve')
+      history.append(function three() {}, 'resolve')
 
       let root = history.root
       let next = root.next
@@ -110,12 +106,12 @@ describe('History::remove', function () {
       expect(history.root.id).toBe(next.id)
     })
 
-    it('updates the active branch', function () {
+    it('updates the active branch', function() {
       let history = new History({ maxHistory: Infinity })
 
-      history.append(function one () {}, 'resolve')
-      history.append(function two () {}, 'resolve')
-      history.append(function three () {}, 'resolve')
+      history.append(function one() {}, 'resolve')
+      history.append(function two() {}, 'resolve')
+      history.append(function three() {}, 'resolve')
 
       history.archive()
 
@@ -125,13 +121,13 @@ describe('History::remove', function () {
     })
   })
 
-  describe('removing an intermediary node', function () {
-    it('joins the parent and child', function () {
+  describe('removing an intermediary node', function() {
+    it('joins the parent and child', function() {
       let history = new History({ maxHistory: Infinity })
 
-      history.append(function one () {}, 'resolve')
-      let two = history.append(function two () {}, 'resolve')
-      history.append(function three () {}, 'resolve')
+      history.append(function one() {}, 'resolve')
+      let two = history.append(function two() {}, 'resolve')
+      history.append(function three() {}, 'resolve')
 
       history.archive()
 
@@ -145,47 +141,47 @@ describe('History::remove', function () {
     })
   })
 
-  describe('children', function () {
-    it('eliminates references to removed on the left', function () {
+  describe('children', function() {
+    it('eliminates references to removed on the left', function() {
       let history = new History({ maxHistory: Infinity })
 
-      let one = history.append(function one () {}, 'resolve')
-      let two = history.append(function two () {}, 'resolve')
+      let one = history.append(function one() {}, 'resolve')
+      let two = history.append(function two() {}, 'resolve')
 
       history.checkout(one)
 
-      history.append(function three () {}, 'resolve')
+      history.append(function three() {}, 'resolve')
 
       history.remove(two)
 
       expect(one.children.map(i => i.command.name)).toEqual(['three'])
     })
 
-    it('maintains children on the left when the next action is removed', function () {
+    it('maintains children on the left when the next action is removed', function() {
       let history = new History({ maxHistory: Infinity })
 
-      let one = history.append(function one () {}, 'resolve')
-      history.append(function two () {}, 'resolve')
+      let one = history.append(function one() {}, 'resolve')
+      history.append(function two() {}, 'resolve')
 
       history.checkout(one)
 
-      let three = history.append(function three () {}, 'resolve')
+      let three = history.append(function three() {}, 'resolve')
 
       history.remove(three)
 
       expect(one.children.map(i => i.command.name)).toEqual(['two'])
     })
 
-    it('allows having children, but no next value', function () {
+    it('allows having children, but no next value', function() {
       let history = new History({ maxHistory: Infinity })
 
-      let one = history.append(function one () {}, 'resolve')
+      let one = history.append(function one() {}, 'resolve')
 
-      history.append(function two () {}, 'resolve')
+      history.append(function two() {}, 'resolve')
 
       history.checkout(one)
 
-      let three = history.append(function three () {}, 'resolve')
+      let three = history.append(function three() {}, 'resolve')
 
       history.remove(three)
 

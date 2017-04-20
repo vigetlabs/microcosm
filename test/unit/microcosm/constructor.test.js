@@ -1,9 +1,9 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm constructor', function () {
-  it('can seed initial state', function () {
+describe('Microcosm constructor', function() {
+  it('can seed initial state', function() {
     class Repo extends Microcosm {
-      setup () {
+      setup() {
         this.addDomain('foo', {})
       }
     }
@@ -13,9 +13,9 @@ describe('Microcosm constructor', function () {
     expect(repo).toHaveState('foo', 'bar')
   })
 
-  it('can deserialize the seed', function () {
+  it('can deserialize the seed', function() {
     class Repo extends Microcosm {
-      setup () {
+      setup() {
         this.addDomain('foo', {})
       }
     }
@@ -27,13 +27,13 @@ describe('Microcosm constructor', function () {
     expect(repo).toHaveState('foo', 'bar')
   })
 
-  describe('options', function () {
-    describe('parent', function () {
-      it('has no parent by default', function () {
+  describe('options', function() {
+    describe('parent', function() {
+      it('has no parent by default', function() {
         expect.assertions(1)
 
         class Repo extends Microcosm {
-          setup ({ parent }) {
+          setup({ parent }) {
             expect(parent).toEqual(null)
           }
         }
@@ -42,12 +42,12 @@ describe('Microcosm constructor', function () {
       })
     })
 
-    describe('maxHistory', function () {
-      it('has no history by default', function () {
+    describe('maxHistory', function() {
+      it('has no history by default', function() {
         expect.assertions(1)
 
         class Repo extends Microcosm {
-          setup ({ maxHistory }) {
+          setup({ maxHistory }) {
             expect(maxHistory).toEqual(0)
           }
         }
@@ -55,7 +55,7 @@ describe('Microcosm constructor', function () {
         new Repo()
       })
 
-      it('controls how many transactions are merged', function () {
+      it('controls how many transactions are merged', function() {
         const repo = new Microcosm({ maxHistory: 5 })
         const identity = n => n
 
@@ -75,16 +75,16 @@ describe('Microcosm constructor', function () {
       })
     })
 
-    describe('extension', function () {
-      it('extends custom defaults with Microcosm defaults', function () {
+    describe('extension', function() {
+      it('extends custom defaults with Microcosm defaults', function() {
         expect.assertions(2)
 
         class Repo extends Microcosm {
           static defaults = {
             test: true
-          };
+          }
 
-          setup (options) {
+          setup(options) {
             expect(options.maxHistory).toBe(0)
             expect(options.test).toBe(true)
           }
@@ -93,15 +93,15 @@ describe('Microcosm constructor', function () {
         new Repo()
       })
 
-      it('extends custom defaults with passed arguments', function () {
+      it('extends custom defaults with passed arguments', function() {
         expect.assertions(3)
 
         class Repo extends Microcosm {
           static defaults = {
             test: true
-          };
+          }
 
-          setup (options) {
+          setup(options) {
             expect(options.maxHistory).toBe(10)
             expect(options.test).toBe(true)
             expect(options.instantiated).toBe(true)

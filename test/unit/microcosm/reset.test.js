@@ -1,7 +1,7 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm::reset', function () {
-  it('reset returns to initial state', function () {
+describe('Microcosm::reset', function() {
+  it('reset returns to initial state', function() {
     const repo = new Microcosm()
 
     repo.addDomain('test', {
@@ -17,7 +17,7 @@ describe('Microcosm::reset', function () {
     expect(repo).toHaveState('test', false)
   })
 
-  it('only resets within managed keys', function () {
+  it('only resets within managed keys', function() {
     const repo = new Microcosm()
 
     repo.addDomain('colors', {})
@@ -27,7 +27,7 @@ describe('Microcosm::reset', function () {
     expect(repo).not.toHaveState('shapes')
   })
 
-  it('raises if there is a JSON parse error deserialization fails', function () {
+  it('raises if there is a JSON parse error deserialization fails', function() {
     const repo = new Microcosm()
 
     // This is invalid
@@ -36,7 +36,7 @@ describe('Microcosm::reset', function () {
     expect(badPatch).toThrow()
   })
 
-  it('preserves state if reset fails', function () {
+  it('preserves state if reset fails', function() {
     const repo = new Microcosm()
 
     repo.addDomain('test', {
@@ -59,8 +59,8 @@ describe('Microcosm::reset', function () {
     expect(repo).toHaveState('test', false)
   })
 
-  describe('forks', function () {
-    it('forks inherit state on reset', function () {
+  describe('forks', function() {
+    it('forks inherit state on reset', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -71,12 +71,12 @@ describe('Microcosm::reset', function () {
       expect(child).toHaveState('foo', 'bar')
     })
 
-    it('reset does not cause forks to revert state', function () {
+    it('reset does not cause forks to revert state', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
       child.addDomain('count', {
-        register () {
+        register() {
           return {
             add: (a, b) => a + b
           }

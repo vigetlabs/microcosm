@@ -3,7 +3,7 @@ import Announcer from './announcer'
 import Conversation from './conversation'
 import Prompt from './prompt'
 
-export default function Messenger ({ messages = [] }) {
+export default function Messenger({ messages = [] }) {
   var toSay = messages.filter(m => m.user !== 'You').pop()
 
   return (

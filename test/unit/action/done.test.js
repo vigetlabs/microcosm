@@ -3,8 +3,8 @@ import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
-describe('Action done state', function () {
-  it('exposes a done type when completed', function () {
+describe('Action done state', function() {
+  it('exposes a done type when completed', function() {
     const action = new Action(identity)
 
     action.resolve()
@@ -12,7 +12,7 @@ describe('Action done state', function () {
     expect(action).toHaveStatus('done')
   })
 
-  it('triggers a done event when it resolves', function () {
+  it('triggers a done event when it resolves', function() {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -22,7 +22,7 @@ describe('Action done state', function () {
     expect(callback).toHaveBeenCalledWith(3)
   })
 
-  it('immediately invokes onDone if the action already closed', function () {
+  it('immediately invokes onDone if the action already closed', function() {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -32,7 +32,7 @@ describe('Action done state', function () {
     expect(callback).toHaveBeenCalledWith(true)
   })
 
-  it('actions are no longer open when they complete', function () {
+  it('actions are no longer open when they complete', function() {
     const action = new Action(identity)
 
     action.open(true)
@@ -43,7 +43,7 @@ describe('Action done state', function () {
     expect(action).toHaveStatus('done')
   })
 
-  it('actions can not be resolved after rejected', function () {
+  it('actions can not be resolved after rejected', function() {
     const repo = new Microcosm()
     const action = repo.append(identity)
     const spy = jest.spyOn(console, 'warn').mockImplementation(() => {})
@@ -61,7 +61,7 @@ describe('Action done state', function () {
     spy.mockRestore()
   })
 
-  it('aliases the done type with resolve', function () {
+  it('aliases the done type with resolve', function() {
     const action = new Action(identity)
 
     action.resolve()

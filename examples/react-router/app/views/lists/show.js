@@ -6,7 +6,7 @@ import ItemList from './parts/item-list'
 import Link from 'react-router-dom/Link'
 
 class ListShow extends Presenter {
-  getModel ({ match }) {
+  getModel({ match }) {
     let { id } = match.params
 
     return {
@@ -15,7 +15,7 @@ class ListShow extends Presenter {
     }
   }
 
-  render () {
+  render() {
     const { list, items } = this.model
 
     if (!list) {

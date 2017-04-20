@@ -2,7 +2,7 @@ import { update } from 'microcosm'
 import { paint } from '../actions/pixels'
 
 const Pixels = {
-  getInitialState () {
+  getInitialState() {
     const matrix = []
 
     while (matrix.length < 15) {
@@ -18,11 +18,11 @@ const Pixels = {
     return matrix
   },
 
-  flip (pixels, { x, y }) {
+  flip(pixels, { x, y }) {
     return update(pixels, [y, x], val => (val ? 0 : 1), 0)
   },
 
-  register () {
+  register() {
     return {
       [paint]: this.flip
     }

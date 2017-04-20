@@ -4,17 +4,17 @@ import Indexing from '../../src/addons/indexing'
 Indexing()
 
 class Repo extends Microcosm {
-  setup () {
+  setup() {
     this.addDomain('styles', {
-      getInitialState () {
+      getInitialState() {
         return { color: 'red' }
       }
     })
   }
 }
 
-describe('indexing', function () {
-  it('can save an index for later', function () {
+describe('indexing', function() {
+  it('can save an index for later', function() {
     let repo = new Repo()
 
     repo.index('color', 'styles.color', state => state.styles.color)
@@ -24,7 +24,7 @@ describe('indexing', function () {
     expect(color).toEqual('red')
   })
 
-  it('computing an index twice returns the same value', function () {
+  it('computing an index twice returns the same value', function() {
     let repo = new Repo()
 
     repo.index('styles', 'styles.color')
@@ -36,11 +36,11 @@ describe('indexing', function () {
     expect(a).toBe(b)
   })
 
-  it('computing an index from the same state fragment returns the same value', function () {
+  it('computing an index from the same state fragment returns the same value', function() {
     let repo = new Repo()
 
     repo.addDomain('another', {
-      getInitialState () {
+      getInitialState() {
         return true
       }
     })
@@ -57,7 +57,7 @@ describe('indexing', function () {
     expect(a).toBe(b)
   })
 
-  it('updates if state changes', function () {
+  it('updates if state changes', function() {
     let repo = new Repo()
 
     repo.index('color', 'styles.color', state => state.styles.color)
@@ -72,7 +72,7 @@ describe('indexing', function () {
     expect(b).toEqual('blue')
   })
 
-  it('forks inherit indexes from parents', function () {
+  it('forks inherit indexes from parents', function() {
     let repo = new Repo()
 
     repo.index('styles', 'styles')
@@ -86,8 +86,8 @@ describe('indexing', function () {
   })
 })
 
-describe('compute', function () {
-  it('can perform additional data processing on indexes', function () {
+describe('compute', function() {
+  it('can perform additional data processing on indexes', function() {
     let repo = new Repo()
 
     repo.index('color', 'styles.color', state => state.styles.color)
@@ -97,17 +97,17 @@ describe('compute', function () {
     expect(value).toEqual('RED')
   })
 
-  it('raises an exception if an index is missing', function () {
+  it('raises an exception if an index is missing', function() {
     let repo = new Microcosm()
 
-    expect(function () {
+    expect(function() {
       repo.compute('missing')
     }).toThrow('Unable to find missing index missing')
   })
 })
 
-describe('memo', function () {
-  it('returns the same result if state has not changed', function () {
+describe('memo', function() {
+  it('returns the same result if state has not changed', function() {
     let repo = new Repo()
 
     repo.index('color', 'styles.color', state => state.styles.color)
@@ -121,7 +121,7 @@ describe('memo', function () {
     expect(a).toBe(b)
   })
 
-  it('does not recalculate processors if the index has not changed', function () {
+  it('does not recalculate processors if the index has not changed', function() {
     let repo = new Repo()
     let toUpperCase = jest.fn(value => value.toUpperCase())
 
@@ -135,7 +135,7 @@ describe('memo', function () {
     expect(toUpperCase).toHaveBeenCalledTimes(1)
   })
 
-  it('returns a new result if state has changed', function () {
+  it('returns a new result if state has changed', function() {
     let repo = new Repo()
 
     repo.index('color', 'styles.color', state => state.styles.color)
@@ -152,7 +152,7 @@ describe('memo', function () {
     expect(b).toEqual('BLUE')
   })
 
-  it('queries may run multiple processors', function () {
+  it('queries may run multiple processors', function() {
     let repo = new Repo()
 
     repo.index('color', 'styles.color', state => state.styles.color)
@@ -166,7 +166,7 @@ describe('memo', function () {
     expect(query()).toEqual('RED - it')
   })
 
-  it('the result of processing one memo does not effect another', function () {
+  it('the result of processing one memo does not effect another', function() {
     let repo = new Repo({}, { styles: { color: 'blue' } })
 
     repo.index('color', 'styles.color', state => state.styles.color)

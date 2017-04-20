@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'react-router-dom/Link'
 
-export default function NotFound ({ resource = 'Page' }) {
+export default function NotFound({ resource = 'Page' }) {
   return (
     <div>
       <header className="header">

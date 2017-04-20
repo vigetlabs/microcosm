@@ -2,8 +2,8 @@ import Action from '../../../src/action'
 
 const identity = n => n
 
-describe('Action open state', function () {
-  it('exposes an open type when opened', function () {
+describe('Action open state', function() {
+  it('exposes an open type when opened', function() {
     const action = new Action(identity)
 
     action.open()
@@ -11,7 +11,7 @@ describe('Action open state', function () {
     expect(action).toHaveStatus('open')
   })
 
-  it('triggers an open event when it opens', function () {
+  it('triggers an open event when it opens', function() {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -21,7 +21,7 @@ describe('Action open state', function () {
     expect(callback).toHaveBeenCalledWith(3)
   })
 
-  it('actions are no longer disabled when opened', function () {
+  it('actions are no longer disabled when opened', function() {
     const action = new Action(identity)
 
     action.open(true)
@@ -30,7 +30,7 @@ describe('Action open state', function () {
     expect(action).toHaveStatus('open')
   })
 
-  it('does not trigger an open event if it is complete', function () {
+  it('does not trigger an open event if it is complete', function() {
     const action = new Action(identity)
     const spy = jest.fn()
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})

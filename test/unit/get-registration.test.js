@@ -3,8 +3,8 @@ import getRegistration, { ALIASES } from '../../src/get-registration'
 
 const action = tag(n => n)
 
-describe('getRegistration', function () {
-  it('can use nested objects to return specific statuses', function () {
+describe('getRegistration', function() {
+  it('can use nested objects to return specific statuses', function() {
     let success = n => n
     let answer = getRegistration(
       {
@@ -19,19 +19,19 @@ describe('getRegistration', function () {
     expect(answer).toBe(success)
   })
 
-  it('throws if given an invalid status', function () {
-    let fail = function () {
+  it('throws if given an invalid status', function() {
+    let fail = function() {
       getRegistration({}, action, 'totally-missing')
     }
 
     expect(fail).toThrow('Invalid action status totally-missing')
   })
 
-  describe('Action aliasing', function () {
+  describe('Action aliasing', function() {
     for (let status in ALIASES) {
       let alias = ALIASES[status]
 
-      it(`can inspect the ${status} status`, function () {
+      it(`can inspect the ${status} status`, function() {
         let success = n => n
         let answer = getRegistration(
           {
@@ -46,7 +46,7 @@ describe('getRegistration', function () {
         expect(answer).toBe(success)
       })
 
-      it(`can register the ${alias} alias`, function () {
+      it(`can register the ${alias} alias`, function() {
         let success = n => n
         let answer = getRegistration(
           {
@@ -63,10 +63,10 @@ describe('getRegistration', function () {
     }
   })
 
-  describe('Errors', function () {
-    describe('Flat registrations', function () {
-      it('throws when a registration is undefined', function () {
-        expect(function () {
+  describe('Errors', function() {
+    describe('Flat registrations', function() {
+      it('throws when a registration is undefined', function() {
+        expect(function() {
           getRegistration(
             {
               [action]: undefined
@@ -79,10 +79,10 @@ describe('getRegistration', function () {
         )
       })
 
-      it('uses the command name when it can', function () {
-        let getUser = tag(function getUser () {})
+      it('uses the command name when it can', function() {
+        let getUser = tag(function getUser() {})
 
-        expect(function () {
+        expect(function() {
           getRegistration(
             {
               [getUser]: undefined
@@ -96,9 +96,9 @@ describe('getRegistration', function () {
       })
     })
 
-    describe('Nested registrations', function () {
-      it('throws when a nested status registration is undefined', function () {
-        expect(function () {
+    describe('Nested registrations', function() {
+      it('throws when a nested status registration is undefined', function() {
+        expect(function() {
           getRegistration(
             {
               [action]: {
@@ -113,8 +113,8 @@ describe('getRegistration', function () {
         )
       })
 
-      it('throws when a nested alias registration is undefined', function () {
-        expect(function () {
+      it('throws when a nested alias registration is undefined', function() {
+        expect(function() {
           getRegistration(
             {
               [action]: {
@@ -129,10 +129,10 @@ describe('getRegistration', function () {
         )
       })
 
-      it('uses the action name when it can', function () {
-        let getUser = tag(function getUser () {})
+      it('uses the action name when it can', function() {
+        let getUser = tag(function getUser() {})
 
-        expect(function () {
+        expect(function() {
           getRegistration(
             {
               [getUser]: {

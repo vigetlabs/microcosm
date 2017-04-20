@@ -7,7 +7,7 @@ import { getKeyPaths, getKeyString } from '../key-path'
 // counter-intuitive, so we keep track of them as a named constant.
 const ROOT_PATH = ''
 
-export default function CompareTree (initial) {
+export default function CompareTree(initial) {
   this.snapshot = initial
   this.nodes = {}
 }
@@ -20,7 +20,7 @@ CompareTree.prototype = {
    * @param {Function} callback Function to execute when a key path changes
    * @param {*} [scope] Optional scope to invoke the function with
    */
-  on (keyPaths, callback, scope) {
+  on(keyPaths, callback, scope) {
     let dependencies = getKeyPaths(keyPaths)
     let id = Query.getId(keyPaths)
 
@@ -42,7 +42,7 @@ CompareTree.prototype = {
    * @param {Function} callback Associated callback function
    * @param {*} [scope] Associated scope
    */
-  off (keyPaths, callback, scope) {
+  off(keyPaths, callback, scope) {
     let id = Query.getId(keyPaths)
 
     let query = this.nodes[id]
@@ -62,7 +62,7 @@ CompareTree.prototype = {
    * @public
    * @param {*} state - New snapshot of state
    */
-  update (snapshot) {
+  update(snapshot) {
     let last = this.snapshot
     this.snapshot = snapshot
 
@@ -84,7 +84,7 @@ CompareTree.prototype = {
    * @param {String} key Each node represents a key in a nested object.
    * @param {Node} parent Parent to connect this node to.
    */
-  addNode (key, parent) {
+  addNode(key, parent) {
     let id = Node.getId(key, parent)
 
     if (!this.nodes[id]) {
@@ -102,7 +102,7 @@ CompareTree.prototype = {
    * @param {String} id Identifier for the node.
    * @param {String} keyPaths Each query tracks a list of key paths
    */
-  addQuery (id, keyPaths) {
+  addQuery(id, keyPaths) {
     if (!this.nodes[id]) {
       this.nodes[id] = new Query(id, keyPaths)
     }
@@ -115,7 +115,7 @@ CompareTree.prototype = {
    * @private
    * @param {Node} node Node to remove
    */
-  remove (node) {
+  remove(node) {
     delete this.nodes[node.id]
   },
 
@@ -125,7 +125,7 @@ CompareTree.prototype = {
    * @private
    * @param {Query} query Query to remove
    */
-  prune (query) {
+  prune(query) {
     let ids = query.keyPaths.map(getKeyString)
 
     for (var i = 0, len = ids.length; i < len; i++) {
@@ -155,7 +155,7 @@ CompareTree.prototype = {
    * @param {String} path A list of keys
    * @param {Query} query Query to append to the end of the branch
    */
-  addBranch (path, query) {
+  addBranch(path, query) {
     let last = this.addNode(ROOT_PATH, null)
 
     for (var i = 0, len = path.length; i < len; i++) {
@@ -172,7 +172,7 @@ CompareTree.prototype = {
    * @param {*} from Starting snapshot
    * @param {*} from Next snapshot
    */
-  scan (node, last, next, queries) {
+  scan(node, last, next, queries) {
     if (last !== next) {
       var edges = node.edges
 

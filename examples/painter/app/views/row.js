@@ -3,7 +3,7 @@ import withSend from 'microcosm/addons/with-send'
 
 import { paint } from '../actions/pixels'
 
-function Cell ({ x, y, active, onClick }) {
+function Cell({ x, y, active, onClick }) {
   const color = active ? 'black' : 'white'
 
   return (
@@ -11,7 +11,7 @@ function Cell ({ x, y, active, onClick }) {
   )
 }
 
-export default withSend(function Row ({ cells, y, send }) {
+export default withSend(function Row({ cells, y, send }) {
   return (
     <g key={y}>
       {cells.map((active, x) => (

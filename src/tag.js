@@ -9,7 +9,7 @@ const FALLBACK = '_action'
  * @param {String} [name] An override to use instead of `fn.name`.
  * @return {Function} The tagged function (same as `fn`).
  */
-export default function tag (fn, name) {
+export default function tag(fn, name) {
   console.assert(fn, `Unable to identify ${fn} action.`)
 
   if (fn.__tagged === true) {

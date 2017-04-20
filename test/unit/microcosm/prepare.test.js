@@ -1,7 +1,7 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm::prepare', function () {
-  it('partially applies Microcosm::push', function () {
+describe('Microcosm::prepare', function() {
+  it('partially applies Microcosm::push', function() {
     const repo = new Microcosm()
     const action = jest.fn()
 

@@ -1,11 +1,11 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Domain construction', function () {
-  it('object - primitive', function () {
+describe('Domain construction', function() {
+  it('object - primitive', function() {
     const repo = new Microcosm()
 
     repo.addDomain('count', {
-      getInitialState () {
+      getInitialState() {
         return 0
       }
     })
@@ -13,11 +13,11 @@ describe('Domain construction', function () {
     expect(repo).toHaveState('count', 0)
   })
 
-  it('object - original primitive is not mutated', function () {
+  it('object - original primitive is not mutated', function() {
     const repo = new Microcosm()
 
     const MyDomain = {
-      getInitialState () {
+      getInitialState() {
         return 0
       }
     }
@@ -27,11 +27,11 @@ describe('Domain construction', function () {
     expect(MyDomain.setup).toBeUndefined()
   })
 
-  it('class - simple', function () {
+  it('class - simple', function() {
     const repo = new Microcosm()
 
     class Counter {
-      getInitialState () {
+      getInitialState() {
         return 0
       }
     }
@@ -41,11 +41,11 @@ describe('Domain construction', function () {
     expect(repo).toHaveState('count', 0)
   })
 
-  it('class - extends domain', function () {
+  it('class - extends domain', function() {
     const repo = new Microcosm()
 
     class Counter {
-      getInitialState () {
+      getInitialState() {
         return 0
       }
     }

@@ -5,7 +5,7 @@
 import { createElement } from 'react'
 import { merge } from '../microcosm'
 
-export function displayName (Component) {
+export function displayName(Component) {
   return Component.displayName || Component.name || 'Component'
 }
 
@@ -13,8 +13,8 @@ const CONTEXT_TYPES = {
   send: () => {}
 }
 
-export default function withSend (Component) {
-  function withSend (props, context) {
+export default function withSend(Component) {
+  function withSend(props, context) {
     let send = props.send || context.send
 
     return createElement(Component, merge({ send }, props))

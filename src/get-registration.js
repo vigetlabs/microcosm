@@ -21,7 +21,7 @@ export const ALIASES = {
  * @param {string} status
  * @return {Function|null} Registration for command if it exists within the pool.
  */
-export default function getRegistration (pool, command, status) {
+export default function getRegistration(pool, command, status) {
   let answer = null
   let alias = ALIASES[status]
 

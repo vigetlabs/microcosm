@@ -2,8 +2,8 @@ import Action from '../../../src/action'
 
 const identity = n => n
 
-describe('Action complete state', function () {
-  it('actions are complete when they resolve', function () {
+describe('Action complete state', function() {
+  it('actions are complete when they resolve', function() {
     const action = new Action(identity)
 
     action.resolve(true)
@@ -11,7 +11,7 @@ describe('Action complete state', function () {
     expect(action.complete).toBe(true)
   })
 
-  it('actions are complete when they cancel', function () {
+  it('actions are complete when they cancel', function() {
     const action = new Action(identity)
 
     action.cancel(true)
@@ -19,7 +19,7 @@ describe('Action complete state', function () {
     expect(action.complete).toBe(true)
   })
 
-  it('actions are complete when they fail', function () {
+  it('actions are complete when they fail', function() {
     const action = new Action(identity)
 
     action.reject(true)
@@ -27,7 +27,7 @@ describe('Action complete state', function () {
     expect(action.complete).toBe(true)
   })
 
-  it('will not change states if already complete', function () {
+  it('will not change states if already complete', function() {
     const action = new Action(identity)
     const spy = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
