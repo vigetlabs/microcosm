@@ -45,7 +45,7 @@ You may want to run what you see on [code.viget.com/microcosm](http://code.viget
 
 ## Prettier
 
-We are using [prettier](https://github.com/prettier/prettier) combined with [eslint](http://eslint.org/) to keep formatting and linting easy. We do that by using [prettier-eslint](https://github.com/prettier/prettier-eslint) and [prettier-eslint-cli](https://github.com/prettier/prettier-eslint-cli). This will run `prettier` followed by `eslint --fix` to make things pretty. You can run these like this:
+We are using [prettier](https://github.com/prettier/prettier) combined with [eslint](http://eslint.org/) to keep formatting and format linting easy. We do that by running:
 
 ```bash
 yarn run pretty
@@ -56,6 +56,26 @@ or
 ```bash
 make pretty
 ```
+
+These will first run `prettier` to format our code and then run `eslint --fix` to make additional style changes and fixes.
+
+### Things to note about the prettier/eslint combo
+
+We are defaulting to prettier's opinions on some things (the ones it forces us to). Most notably single quotes. Prettiers **will** use double quotes (even in single quote mode) when it is "prettier" to do so.
+
+ie:
+```javascript
+// prettier will do this (what we chose to do)
+"I am using double quotes because it's prettier"
+
+// eslint --fix would do this
+'I am using single quotes because it\'s eslint --fix'
+```
+
+We are letting this happen for two reasons:
+
+1. Write whatever you want, prettier will fix it, that's the point
+2. Our `yarn run lint` task would error out if we did a `eslint --fix`. There is no way to turn change prettier's behaviour but we can turn off the offending eslint rule
 
 ## Testing
 
@@ -110,7 +130,7 @@ for style:
 - Prefer ' over ", use string interpolation (enforced by `.eslintrc.json`)
 - 80 character line length (enforced by `.editorconfig`)
 
-> We recommend using an [editorconfig](http://editorconfig.org/) and [eslint](http://eslint.org/) plugin during development to ensure standards are met.
+> We recommend using an [editorconfig](http://editorconfig.org/), a [eslint](http://eslint.org/) plugin, and [prettier](https://github.com/prettier/prettier) integration for your editor during development to ensure standards are met.
 
 ### Reviews
 
