@@ -72,7 +72,11 @@ describe('History::remove', function () {
 
       history.remove(three)
 
-      expect(history.map(a => a.command.name)).toEqual(['$start', 'one', 'two'])
+      expect(history.map(a => a.command.name)).toEqual([
+        '$start',
+        'one',
+        'two'
+      ])
     })
 
     it('removing the head node eliminates the reference to "next"', function () {

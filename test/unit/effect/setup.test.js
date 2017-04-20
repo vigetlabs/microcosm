@@ -6,7 +6,7 @@ describe('Effect::setup', function () {
     const spy = jest.fn()
 
     class Effect {
-      setup = spy
+      setup = spy;
     }
 
     repo.addEffect(Effect, { test: true })

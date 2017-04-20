@@ -6,7 +6,7 @@ describe('Effect::teardown', function () {
     const spy = jest.fn()
 
     class Effect {
-      teardown = spy
+      teardown = spy;
     }
 
     repo.addEffect(Effect)

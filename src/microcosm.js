@@ -16,7 +16,11 @@ import { merge, inherit, get, set, update, isString } from './utils'
 function Microcosm (preOptions, state, deserialize) {
   Emitter.call(this)
 
-  let options = merge(Microcosm.defaults, this.constructor.defaults, preOptions)
+  let options = merge(
+    Microcosm.defaults,
+    this.constructor.defaults,
+    preOptions
+  )
 
   this.parent = options.parent
 

@@ -7,7 +7,7 @@ describe('Effect construction', function () {
     const spy = jest.fn()
 
     class Effect {
-      handler = spy
+      handler = spy;
 
       register () {
         return {

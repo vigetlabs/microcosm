@@ -4,7 +4,7 @@ import Message from './message'
 class Conversation extends React.PureComponent {
   static defaultProps = {
     messages: []
-  }
+  };
 
   componentDidUpdate () {
     let el = this.refs.list

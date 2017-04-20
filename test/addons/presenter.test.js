@@ -36,7 +36,7 @@ describe('refs', function () {
 
     class MyPresenter extends Presenter {
       render () {
-        return <p ref={() => this.foo = count++}>Test</p>
+        return <p ref={() => (this.foo = count++)}>Test</p>
       }
     }
 
@@ -151,7 +151,7 @@ describe('::getModel', function () {
         return { active: true }
       }
 
-      view = spy
+      view = spy;
     }
 
     const repo = new Repo()
@@ -197,7 +197,7 @@ describe('::getModel', function () {
       const spy = jest.fn()
 
       class Namer extends Presenter {
-        getModel = spy
+        getModel = spy;
       }
 
       const wrapper = mount(<Namer prefix="Colonel" repo={repo} />)
@@ -212,7 +212,7 @@ describe('::getModel', function () {
     class Namer extends Presenter {
       state = {
         greeting: 'Hello'
-      }
+      };
 
       getModel (props, state) {
         return {
@@ -247,7 +247,7 @@ describe('::getModel', function () {
       })
 
       class TrackedNamer extends Namer {
-        view = spy
+        view = spy;
       }
 
       const wrapper = mount(<TrackedNamer name="Colonel" />)
@@ -335,7 +335,7 @@ describe('::ready', function () {
     expect.assertions(1)
 
     class MyPresenter extends Presenter {
-      setup = jest.fn()
+      setup = jest.fn();
 
       ready () {
         expect(this.setup).toHaveBeenCalled()
@@ -459,7 +459,7 @@ describe('::teardown', function () {
     const spy = jest.fn()
 
     class Test extends Presenter {
-      teardown = spy
+      teardown = spy;
 
       getRepo (repo) {
         return repo
@@ -552,7 +552,7 @@ describe('::view', function () {
     }
 
     class MyPresenter extends Presenter {
-      view = MyView
+      view = MyView;
 
       getModel () {
         return { message: 'hello' }
@@ -570,7 +570,7 @@ describe('::view', function () {
     }
 
     class MyPresenter extends Presenter {
-      view = MyView
+      view = MyView;
 
       getModel () {
         return { message: 'hello' }
@@ -722,7 +722,7 @@ describe('Efficiency', function () {
     })
 
     class Child extends Presenter {
-      getModel = model
+      getModel = model;
 
       render () {
         return <p>{this.model.color}</p>
@@ -730,7 +730,7 @@ describe('Efficiency', function () {
     }
 
     class Parent extends Presenter {
-      view = Child
+      view = Child;
     }
 
     let wrapper = mount(<Parent repo={repo} />)
@@ -745,7 +745,7 @@ describe('Efficiency', function () {
     const spy = jest.fn(() => null)
 
     class Test extends Presenter {
-      view = spy
+      view = spy;
     }
 
     mount(<Test />).setState({ test: true })
@@ -838,7 +838,7 @@ describe('intercepting actions', function () {
     const test = jest.fn()
 
     class MyPresenter extends Presenter {
-      view = View
+      view = View;
 
       intercept () {
         return { test }
@@ -852,7 +852,7 @@ describe('intercepting actions', function () {
 
   it('actions do not bubble to different repo types', function () {
     class Child extends Presenter {
-      view = View
+      view = View;
     }
 
     class Parent extends Presenter {
@@ -874,7 +874,7 @@ describe('intercepting actions', function () {
 
   it('intents do not bubble to different repo types even if not forking', function () {
     class Child extends Presenter {
-      view = View
+      view = View;
     }
 
     class Parent extends Presenter {
@@ -970,9 +970,11 @@ describe('intercepting actions', function () {
     class TestView extends React.Component {
       static contextTypes = {
         send: () => {}
-      }
+      };
       render () {
-        return <button id="button" onClick={() => this.context.send(b, true)} />
+        return (
+          <button id="button" onClick={() => this.context.send(b, true)} />
+        )
       }
     }
 
@@ -1065,7 +1067,7 @@ describe('::send', function () {
     expect.assertions(2)
 
     class Test extends Presenter {
-      prop = true
+      prop = true;
 
       intercept () {
         return {
@@ -1078,7 +1080,7 @@ describe('::send', function () {
 
       view = function ({ send }) {
         return <button onClick={() => send('test')}>Click me</button>
-      }
+      };
     }
 
     mount(<Test />).find('button').simulate('click')

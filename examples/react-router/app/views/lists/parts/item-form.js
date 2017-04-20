@@ -6,15 +6,15 @@ import { addItem } from '../../../actions/items'
 class ItemForm extends React.PureComponent {
   state = {
     name: ''
-  }
+  };
 
   reset = () => {
     this.setState({ name: '' })
-  }
+  };
 
   setName = e => {
     this.setState({ name: e.target.value })
-  }
+  };
 
   render () {
     const { name } = this.state
