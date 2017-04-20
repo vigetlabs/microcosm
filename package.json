@@ -69,8 +69,6 @@
     "jest": "^19.0.1",
     "microcosm-debugger": "^3.0.0",
     "prettier": "^1.2.2",
-    "prettier-eslint": "^5.1.0",
-    "prettier-eslint-cli": "^3.3.0",
     "react": "^15.5.4",
     "react-addons-test-utils": "^15.5.1",
     "react-dom": "^15.5.4",
