@@ -37,5 +37,5 @@ EffectEngine.prototype = {
         }
       }
     }
-  },
+  }
 }

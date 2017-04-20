@@ -1,5 +1,4 @@
 import Action from '../../../src/action'
-import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
@@ -41,7 +40,7 @@ describe('Action open state', function () {
     action.open()
 
     expect(warn).toHaveBeenCalledWith(
-      'Action "identity" is already in the resolve state. Calling open() will not change it.',
+      'Action "identity" is already in the resolve state. Calling open() will not change it.'
     )
 
     expect(spy).not.toHaveBeenCalled()

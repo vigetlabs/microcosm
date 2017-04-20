@@ -1,5 +1,4 @@
 import History from '../../../src/history'
-import Microcosm from '../../../src/microcosm'
 
 describe('History::checkout', function () {
   const action = n => n

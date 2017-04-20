@@ -1,5 +1,4 @@
 import Action from '../../../src/action'
-import Microcosm from '../../../src/microcosm'
 
 describe('Action callbacks', function () {
   it('handles listeners with no callback', function () {

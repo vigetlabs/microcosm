@@ -122,5 +122,5 @@ DomainEngine.prototype = {
 
       return memo
     }, payload)
-  },
+  }
 }

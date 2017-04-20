@@ -9,11 +9,11 @@ describe('getRegistration', function () {
     let answer = getRegistration(
       {
         [action]: {
-          reject: success,
-        },
+          reject: success
+        }
       },
       action,
-      'reject',
+      'reject'
     )
 
     expect(answer).toBe(success)
@@ -36,11 +36,11 @@ describe('getRegistration', function () {
         let answer = getRegistration(
           {
             [action]: {
-              [status]: success,
-            },
+              [status]: success
+            }
           },
           action,
-          ALIASES[status],
+          ALIASES[status]
         )
 
         expect(answer).toBe(success)
@@ -51,11 +51,11 @@ describe('getRegistration', function () {
         let answer = getRegistration(
           {
             [action]: {
-              [alias]: success,
-            },
+              [alias]: success
+            }
           },
           action,
-          status,
+          status
         )
 
         expect(answer).toBe(success)
@@ -69,13 +69,13 @@ describe('getRegistration', function () {
         expect(function () {
           getRegistration(
             {
-              [action]: undefined,
+              [action]: undefined
             },
             action,
-            'resolve',
+            'resolve'
           )
         }).toThrow(
-          'action key within a registration is undefined. Is it being referenced correctly?',
+          'action key within a registration is undefined. Is it being referenced correctly?'
         )
       })
 
@@ -85,13 +85,13 @@ describe('getRegistration', function () {
         expect(function () {
           getRegistration(
             {
-              [getUser]: undefined,
+              [getUser]: undefined
             },
             getUser,
-            'resolve',
+            'resolve'
           )
         }).toThrow(
-          'getUser key within a registration is undefined. Is it being referenced correctly?',
+          'getUser key within a registration is undefined. Is it being referenced correctly?'
         )
       })
     })
@@ -102,14 +102,14 @@ describe('getRegistration', function () {
           getRegistration(
             {
               [action]: {
-                reject: undefined,
-              },
+                reject: undefined
+              }
             },
             action,
-            'reject',
+            'reject'
           )
         }).toThrow(
-          'The "reject" key within a nested registration for an action is undefined. Is it being referenced correctly?',
+          'The "reject" key within a nested registration for an action is undefined. Is it being referenced correctly?'
         )
       })
 
@@ -118,14 +118,14 @@ describe('getRegistration', function () {
           getRegistration(
             {
               [action]: {
-                error: undefined,
-              },
+                error: undefined
+              }
             },
             action,
-            'reject',
+            'reject'
           )
         }).toThrow(
-          'The "error" key within a nested registration for an action is undefined. Is it being referenced correctly?',
+          'The "error" key within a nested registration for an action is undefined. Is it being referenced correctly?'
         )
       })
 
@@ -136,14 +136,14 @@ describe('getRegistration', function () {
           getRegistration(
             {
               [getUser]: {
-                error: undefined,
-              },
+                error: undefined
+              }
             },
             getUser,
-            'reject',
+            'reject'
           )
         }).toThrow(
-          'The "error" key within a nested registration for getUser is undefined. Is it being referenced correctly?',
+          'The "error" key within a nested registration for getUser is undefined. Is it being referenced correctly?'
         )
       })
     })

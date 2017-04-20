@@ -18,7 +18,7 @@ function render () {
         <Layout repo={repo} />
       </AppContainer>
     </Router>,
-    el,
+    el
   )
 }
 

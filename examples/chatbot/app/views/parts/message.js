@@ -2,10 +2,10 @@ import React from 'react'
 
 class Message extends React.PureComponent {
   static defaultProps = {
-    user:    '',
+    user: '',
     message: '',
     pending: false,
-    time:    new Date(),
+    time: new Date()
   }
 
   render () {

@@ -4,8 +4,8 @@ describe('Utils.update', function () {
   const subject = {
     styles: {
       color: 'blue',
-      font:  'Helvetica, sans-serif',
-    },
+      font: 'Helvetica, sans-serif'
+    }
   }
 
   it('updates a value in-place', function () {

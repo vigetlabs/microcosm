@@ -1,4 +1,3 @@
-import Action from '../../../src/action'
 import Microcosm from '../../../src/microcosm'
 
 describe('Action::toggle', function () {
@@ -11,9 +10,9 @@ describe('Action::toggle', function () {
       },
       register () {
         return {
-          action: (a, b) => a + b,
+          action: (a, b) => a + b
         }
-      },
+      }
     })
 
     repo.push('action', 2)
@@ -31,9 +30,9 @@ describe('Action::toggle', function () {
       },
       register () {
         return {
-          action: (a, b) => a + b,
+          action: (a, b) => a + b
         }
-      },
+      }
     })
 
     repo.push('action', 2)

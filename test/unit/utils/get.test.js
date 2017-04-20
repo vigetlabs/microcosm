@@ -4,8 +4,8 @@ describe('Utils.get', function () {
   const subject = {
     styles: {
       color: 'blue',
-      font:  'Helvetica, sans-serif',
-    },
+      font: 'Helvetica, sans-serif'
+    }
   }
 
   it('can retrieve a single key', function () {

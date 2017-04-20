@@ -15,10 +15,10 @@ const Lists = {
 
   register () {
     return {
-      [addList]:    Lists.add,
-      [removeList]: Lists.remove,
+      [addList]: Lists.add,
+      [removeList]: Lists.remove
     }
-  },
+  }
 }
 
 export default Lists

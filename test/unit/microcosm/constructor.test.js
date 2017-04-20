@@ -81,7 +81,7 @@ describe('Microcosm constructor', function () {
 
         class Repo extends Microcosm {
           static defaults = {
-            test: true,
+            test: true
           }
 
           setup (options) {
@@ -98,7 +98,7 @@ describe('Microcosm constructor', function () {
 
         class Repo extends Microcosm {
           static defaults = {
-            test: true,
+            test: true
           }
 
           setup (options) {

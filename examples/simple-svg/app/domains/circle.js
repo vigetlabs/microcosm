@@ -11,18 +11,18 @@ const Circle = {
 
     return {
       color: color,
-      cx:    50 * sin,
-      cy:    35 * cos,
-      r:     12 + 8 * cos,
+      cx: 50 * sin,
+      cy: 35 * cos,
+      r: 12 + 8 * cos
     }
   },
 
   register () {
     return {
       [animate.loading]: Circle.set,
-      [animate.done]:    Circle.set,
+      [animate.done]: Circle.set
     }
-  },
+  }
 }
 
 export default Circle

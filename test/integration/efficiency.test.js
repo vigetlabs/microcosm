@@ -9,9 +9,9 @@ describe('Efficiency', function () {
     parent.addDomain('one', {
       register () {
         return {
-          [action]: handler,
+          [action]: handler
         }
-      },
+      }
     })
 
     parent.patch()
@@ -29,9 +29,9 @@ describe('Efficiency', function () {
     parent.addDomain('one', {
       register () {
         return {
-          [action]: handler,
+          [action]: handler
         }
-      },
+      }
     })
 
     parent.patch()
@@ -49,9 +49,9 @@ describe('Efficiency', function () {
     parent.addDomain('one', {
       register () {
         return {
-          [action]: handler,
+          [action]: handler
         }
-      },
+      }
     })
 
     parent.patch()
@@ -69,9 +69,9 @@ describe('Efficiency', function () {
     repo.addDomain('one', {
       register () {
         return {
-          [action]: handler,
+          [action]: handler
         }
-      },
+      }
     })
 
     const one = repo.append(action)

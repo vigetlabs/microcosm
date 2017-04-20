@@ -13,7 +13,7 @@ describe('Reconciliation', function () {
       },
       register () {
         return { [action]: handler }
-      },
+      }
     })
 
     let one = repo.append(action)
@@ -44,7 +44,7 @@ describe('Reconciliation', function () {
       },
       register () {
         return { [action]: handler }
-      },
+      }
     })
 
     let one = repo.append(action)
@@ -95,7 +95,7 @@ describe('Reconciliation', function () {
       },
       register () {
         return { [action]: handler }
-      },
+      }
     })
 
     repo.append(action)

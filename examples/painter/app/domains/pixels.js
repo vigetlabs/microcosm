@@ -24,9 +24,9 @@ const Pixels = {
 
   register () {
     return {
-      [paint]: this.flip,
+      [paint]: this.flip
     }
-  },
+  }
 }
 
 export default Pixels

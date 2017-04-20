@@ -15,9 +15,9 @@ describe('Mutations', function () {
       },
       register () {
         return {
-          [identity]: this.mutate,
+          [identity]: this.mutate
         }
-      },
+      }
     })
 
     repo.push(identity, true)

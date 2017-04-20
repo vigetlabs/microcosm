@@ -50,9 +50,9 @@ describe('When pushing actions inside of another action', function () {
       register () {
         return {
           [stepper]: this.increase,
-          [focuser]: this.setFocus,
+          [focuser]: this.setFocus
         }
-      },
+      }
     })
 
     repo.patch({ data: { count: 2, focus: true } })

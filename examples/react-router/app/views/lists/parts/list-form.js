@@ -5,7 +5,7 @@ import { addList } from '../../../actions/lists'
 
 class ListForm extends React.PureComponent {
   state = {
-    name: '',
+    name: ''
   }
 
   reset = () => {

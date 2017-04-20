@@ -36,7 +36,7 @@ describe('Generator Middleware', function () {
     }
 
     expect(() => repo.push(test)).toThrow(
-      'Iteration of generator expected an Action',
+      'Iteration of generator expected an Action'
     )
   })
 
@@ -91,7 +91,6 @@ describe('Generator Middleware', function () {
   })
 
   it('waits for an async action to finish before moving on', function () {
-    let stepper = n => n + 1
     let repo = new Microcosm()
 
     function sleep (time) {
@@ -113,7 +112,6 @@ describe('Generator Middleware', function () {
   })
 
   it('waits for an async sequences', function () {
-    let stepper = n => n + 1
     let repo = new Microcosm()
 
     function sleep (time) {
@@ -142,7 +140,6 @@ describe('Generator Middleware', function () {
   })
 
   it('multiple async sequence pushes do not step on eachother', function () {
-    let stepper = n => n + 1
     let repo = new Microcosm()
 
     function sleep (time) {

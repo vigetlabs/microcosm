@@ -4,8 +4,8 @@ describe('Utils.set', function () {
   const subject = {
     styles: {
       color: 'blue',
-      font:  'Helvetica, sans-serif',
-    },
+      font: 'Helvetica, sans-serif'
+    }
   }
 
   it('can set a single key', function () {

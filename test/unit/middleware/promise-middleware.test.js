@@ -29,7 +29,7 @@ describe('Promise middleware', function () {
       n =>
         new Promise(function (resolve, reject) {
           throw 'This error is intentional'
-        }),
+        })
     )
 
     action.onError(() => done())

@@ -27,12 +27,12 @@ export default function Action (command, status) {
 }
 
 inherit(Action, Emitter, {
-  status:   'inactive',
-  payload:  undefined,
+  status: 'inactive',
+  payload: undefined,
   disabled: false,
   complete: false,
-  parent:   null,
-  next:     null,
+  parent: null,
+  next: null,
 
   /**
    * Subscribe to when an action opens.
@@ -209,7 +209,7 @@ inherit(Action, Emitter, {
       console.assert(
         isFunction(callback),
         `Expected a function when subscribing to ${status}` +
-          `instead got ${callback}`,
+          `instead got ${callback}`
       )
 
       if (this.is(status)) {
@@ -218,7 +218,7 @@ inherit(Action, Emitter, {
         this.once(status, callback, scope)
       }
     }
-  },
+  }
 })
 
 /**
@@ -232,7 +232,7 @@ function createCompleteWarning (action, method) {
   return function () {
     console.warn(
       `Action "${action.command.name || action.type}" is already in ` +
-        `the ${action.status} state. Calling ${method}() will not change it.`,
+        `the ${action.status} state. Calling ${method}() will not change it.`
     )
   }
 }
@@ -278,7 +278,7 @@ Object.defineProperties(Action.prototype, {
   type: {
     get () {
       return this.command[this.status]
-    },
+    }
   },
 
   /**
@@ -288,7 +288,7 @@ Object.defineProperties(Action.prototype, {
   open: {
     get () {
       return warnOrUpdate(this, 'open', false)
-    },
+    }
   },
 
   /**
@@ -298,7 +298,7 @@ Object.defineProperties(Action.prototype, {
   update: {
     get () {
       return warnOrUpdate(this, 'update', false)
-    },
+    }
   },
 
   /**
@@ -308,7 +308,7 @@ Object.defineProperties(Action.prototype, {
   resolve: {
     get () {
       return warnOrUpdate(this, 'resolve', true)
-    },
+    }
   },
 
   /**
@@ -318,7 +318,7 @@ Object.defineProperties(Action.prototype, {
   reject: {
     get () {
       return warnOrUpdate(this, 'reject', true)
-    },
+    }
   },
 
   /**
@@ -329,6 +329,6 @@ Object.defineProperties(Action.prototype, {
   cancel: {
     get () {
       return warnOrUpdate(this, 'cancel', true)
-    },
-  },
+    }
+  }
 })

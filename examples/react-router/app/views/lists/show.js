@@ -10,8 +10,8 @@ class ListShow extends Presenter {
     let { id } = match.params
 
     return {
-      list:  state => state.lists.find(list => list.id === id),
-      items: state => state.items.filter(item => item.list === id),
+      list: state => state.lists.find(list => list.id === id),
+      items: state => state.items.filter(item => item.list === id)
     }
   }
 

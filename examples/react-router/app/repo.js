@@ -1,4 +1,4 @@
-import Microcosm, { set } from 'microcosm'
+import Microcosm from 'microcosm'
 import Items from './domains/items'
 import Lists from './domains/lists'
 

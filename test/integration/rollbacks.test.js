@@ -25,9 +25,9 @@ describe('rollbacks', function () {
       register () {
         return {
           [send.open]: this.addLoading,
-          [send.done]: this.add,
+          [send.done]: this.add
         }
-      },
+      }
     })
 
     a.open({ id: 1 })
@@ -57,9 +57,9 @@ describe('rollbacks', function () {
       },
       register () {
         return {
-          [send.done]: this.add,
+          [send.done]: this.add
         }
-      },
+      }
     })
 
     const a = repo.push(send, { id: 1 })
@@ -111,11 +111,11 @@ describe('rollbacks', function () {
 
       register () {
         return {
-          [all.done]:    this.reset,
+          [all.done]: this.reset,
           [single.open]: this.setLoading,
-          [single.done]: this.update,
+          [single.done]: this.update
         }
-      },
+      }
     })
 
     const getAll = repo.append(all)
@@ -133,7 +133,7 @@ describe('rollbacks', function () {
 
     expect(repo.state.items).toEqual([
       { id: '1', done: true },
-      { id: '2', done: true },
+      { id: '2', done: true }
     ])
   })
 
@@ -172,11 +172,11 @@ describe('rollbacks', function () {
 
       register () {
         return {
-          [all.done]:    this.reset,
+          [all.done]: this.reset,
           [single.open]: this.setLoading,
-          [single.done]: this.update,
+          [single.done]: this.update
         }
-      },
+      }
     })
 
     repo.push(all, [{ id: '1' }, { id: '2' }, { id: '3' }])
@@ -205,9 +205,9 @@ describe('rollbacks', function () {
       register () {
         return {
           [foldIn.open]: this.merge,
-          [foldIn.done]: this.merge,
+          [foldIn.done]: this.merge
         }
-      },
+      }
     })
 
     let action = repo.append(foldIn)
@@ -227,7 +227,7 @@ describe('rollbacks', function () {
     repo.addDomain('test', {
       getInitialState () {
         return true
-      },
+      }
     })
 
     repo.checkout(repo.history.root)
@@ -241,7 +241,7 @@ describe('rollbacks', function () {
     repo.addDomain('test', {
       getInitialState () {
         return true
-      },
+      }
     })
 
     repo.reset({ test: false })

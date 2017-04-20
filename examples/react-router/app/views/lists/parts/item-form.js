@@ -5,7 +5,7 @@ import { addItem } from '../../../actions/items'
 
 class ItemForm extends React.PureComponent {
   state = {
-    name: '',
+    name: ''
   }
 
   reset = () => {

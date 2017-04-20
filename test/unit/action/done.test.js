@@ -52,7 +52,7 @@ describe('Action done state', function () {
     action.resolve()
 
     expect(spy).toHaveBeenCalledWith(
-      'Action "identity" is already in the reject state. Calling resolve() will not change it.',
+      'Action "identity" is already in the reject state. Calling resolve() will not change it.'
     )
 
     expect(action).toHaveStatus('error')

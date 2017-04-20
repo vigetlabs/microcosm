@@ -9,9 +9,9 @@ describe('Effect::register', function () {
       handler: jest.fn(),
       register () {
         return {
-          [test]: this.handler,
+          [test]: this.handler
         }
-      },
+      }
     }
 
     repo.addEffect(Effect)
@@ -33,9 +33,9 @@ describe('Effect::register', function () {
       },
       register () {
         return {
-          [test]: this.handler,
+          [test]: this.handler
         }
-      },
+      }
     }
 
     repo.addEffect(Effect)
@@ -53,9 +53,9 @@ describe('Effect::register', function () {
       handler: jest.fn(),
       register () {
         return {
-          [test]: this.handler,
+          [test]: this.handler
         }
-      },
+      }
     }
 
     repo.addEffect(Effect)
@@ -101,9 +101,9 @@ describe('Effect::register', function () {
       },
       register () {
         return {
-          [test]: (a, b) => b,
+          [test]: (a, b) => b
         }
-      },
+      }
     })
 
     const Effect = {
@@ -112,9 +112,9 @@ describe('Effect::register', function () {
       },
       register () {
         return {
-          [test]: this.handler,
+          [test]: this.handler
         }
-      },
+      }
     }
 
     repo.addEffect(Effect)
@@ -131,14 +131,14 @@ describe('Effect::register', function () {
       register () {
         return {
           [action]: {
-            open:    handler,
-            update:  handler,
-            reject:  handler,
+            open: handler,
+            update: handler,
+            reject: handler,
             resolve: handler,
-            cancel:  handler,
-          },
+            cancel: handler
+          }
         }
-      },
+      }
     })
 
     expect(effect).toRegister(action, 'open')

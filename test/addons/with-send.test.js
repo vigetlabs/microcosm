@@ -24,10 +24,10 @@ it('extracts send from context', function () {
   const send = jest.fn()
 
   const component = mount(<Button />, {
-    context:           { send },
+    context: { send },
     childContextTypes: {
-      send: () => {},
-    },
+      send: () => {}
+    }
   })
 
   component.simulate('click')
@@ -68,7 +68,7 @@ describe('Display name', function () {
         render () {
           return <button type="button" />
         }
-      },
+      }
     )
 
     let wrapper = mount(<div><Button /></div>)

@@ -9,11 +9,11 @@ export default function ActionButton (props, context) {
 }
 
 ActionButton.contextTypes = {
-  send: () => {},
+  send: () => {}
 }
 
 ActionButton.defaultProps = {
-  tag: 'button',
+  tag: 'button'
 }
 
 inherit(ActionButton, PureComponent, {
@@ -54,5 +54,5 @@ inherit(ActionButton, PureComponent, {
     }
 
     return createElement(this.props.tag, props)
-  },
+  }
 })

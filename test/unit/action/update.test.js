@@ -62,7 +62,7 @@ describe('Action update state', function () {
     action.update()
 
     expect(warn).toHaveBeenCalledWith(
-      'Action "identity" is already in the resolve state. Calling update() will not change it.',
+      'Action "identity" is already in the resolve state. Calling update() will not change it.'
     )
 
     expect(spy).not.toHaveBeenCalled()
@@ -88,10 +88,10 @@ describe('Action update state', function () {
       register () {
         return {
           [test]: {
-            update: (a, b) => handler(b),
-          },
+            update: (a, b) => handler(b)
+          }
         }
-      },
+      }
     })
 
     const action = repo.append(test)

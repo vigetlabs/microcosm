@@ -8,13 +8,13 @@ export default {
     { id: 'saturn', name: 'Saturn', color: 'yellow', orbit: 29 * 365 },
     { id: 'uranus', name: 'Uranus', color: 'blue', orbit: 84 * 365 },
     { id: 'neptune', name: 'Neptune', color: 'blue', orbit: 165 * 365 },
-    { id: 'pluto', name: 'Pluto', color: 'brown', orbit: 248 * 365 },
+    { id: 'pluto', name: 'Pluto', color: 'brown', orbit: 248 * 365 }
   ],
   physics: {
     gravity: 1,
-    energy:  500,
+    energy: 500
   },
   meta: {
-    selected: 'venus',
-  },
+    selected: 'venus'
+  }
 }

@@ -13,7 +13,7 @@ class Repo extends Microcosm {
     this.addDomain('color', {
       getInitialState () {
         return 'yellow'
-      },
+      }
     })
   }
 }
@@ -55,7 +55,7 @@ describe('::getModel', function () {
     class Hello extends Presenter {
       getModel ({ place }) {
         return {
-          greeting: 'Hello, ' + place + '!',
+          greeting: 'Hello, ' + place + '!'
         }
       }
 
@@ -75,7 +75,7 @@ describe('::getModel', function () {
     class Hello extends Presenter {
       intercept () {
         return {
-          test: spy,
+          test: spy
         }
       }
       view ({ send }) {
@@ -108,7 +108,7 @@ describe('::getModel', function () {
     class MyPresenter extends Presenter {
       getModel () {
         return {
-          color: state => state.color,
+          color: state => state.color
         }
       }
       view ({ color }) {
@@ -130,7 +130,7 @@ describe('::getModel', function () {
     class MyPresenter extends Presenter {
       getModel ({ name }) {
         return {
-          upper: name.toUpperCase(),
+          upper: name.toUpperCase()
         }
       }
       view ({ upper }) {
@@ -171,13 +171,13 @@ describe('::getModel', function () {
       repo.addDomain('name', {
         getInitialState () {
           return 'Kurtz'
-        },
+        }
       })
 
       class Namer extends Presenter {
         getModel (props) {
           return {
-            name: state => props.prefix + ' ' + state.name,
+            name: state => props.prefix + ' ' + state.name
           }
         }
         view ({ name }) {
@@ -211,12 +211,12 @@ describe('::getModel', function () {
   describe('when updating state', function () {
     class Namer extends Presenter {
       state = {
-        greeting: 'Hello',
+        greeting: 'Hello'
       }
 
       getModel (props, state) {
         return {
-          text: state.greeting + ', ' + props.name,
+          text: state.greeting + ', ' + props.name
         }
       }
 
@@ -235,7 +235,7 @@ describe('::getModel', function () {
       const wrapper = mount(<Namer name="Colonel" />)
 
       wrapper.setState({
-        greeting: 'Salutations',
+        greeting: 'Salutations'
       })
 
       expect(wrapper.text()).toEqual('Salutations, Colonel')
@@ -253,7 +253,7 @@ describe('::getModel', function () {
       const wrapper = mount(<TrackedNamer name="Colonel" />)
 
       wrapper.setState({
-        greeting: 'Hello',
+        greeting: 'Hello'
       })
 
       expect(spy).toHaveBeenCalledTimes(1)
@@ -282,13 +282,13 @@ describe('::setup', function () {
         repo.addDomain('prop', {
           getInitialState () {
             return 'test'
-          },
+          }
         })
       }
 
       getModel () {
         return {
-          prop: state => state.prop,
+          prop: state => state.prop
         }
       }
 
@@ -321,7 +321,7 @@ describe('::setup', function () {
       }
       getModel () {
         return {
-          test: true,
+          test: true
         }
       }
     }
@@ -353,7 +353,7 @@ describe('::ready', function () {
         repo.addDomain('prop', {
           getInitialState () {
             return 'test'
-          },
+          }
         })
       }
 
@@ -363,7 +363,7 @@ describe('::ready', function () {
 
       getModel () {
         return {
-          prop: state => state.prop,
+          prop: state => state.prop
         }
       }
     }
@@ -419,7 +419,7 @@ describe('::update', function () {
     class MyPresenter extends Presenter {
       getModel (props) {
         return {
-          next: props.test,
+          next: props.test
         }
       }
       update (repo, props) {
@@ -510,7 +510,7 @@ describe('::teardown', function () {
     mount(<Test repo={repo} />).unmount()
 
     repo.addDomain('test', {
-      getInitialState: () => true,
+      getInitialState: () => true
     })
 
     // Once: for the initial calculation
@@ -526,7 +526,7 @@ describe('::teardown', function () {
       }
       teardown (repo) {
         repo.addDomain('test', {
-          getInitialState: () => true,
+          getInitialState: () => true
         })
       }
       getRepo (repo) {
@@ -702,7 +702,7 @@ describe('Efficiency', function () {
     class Parent extends Presenter {
       getModel () {
         return {
-          foo: 'bar',
+          foo: 'bar'
         }
       }
     }
@@ -717,7 +717,7 @@ describe('Efficiency', function () {
 
     const model = jest.fn(function () {
       return {
-        color: state => state.color,
+        color: state => state.color
       }
     })
 
@@ -795,7 +795,7 @@ describe('::render', function () {
     }
 
     Child.contextTypes = {
-      repo: () => {},
+      repo: () => {}
     }
 
     class Test extends Presenter {
@@ -947,7 +947,7 @@ describe('intercepting actions', function () {
     class Parent extends Presenter {
       intercept () {
         return {
-          [test]: (repo, val) => intercepted(val),
+          [test]: (repo, val) => intercepted(val)
         }
       }
       view () {
@@ -969,7 +969,7 @@ describe('intercepting actions', function () {
 
     class TestView extends React.Component {
       static contextTypes = {
-        send: () => {},
+        send: () => {}
       }
       render () {
         return <button id="button" onClick={() => this.context.send(b, true)} />
@@ -1072,7 +1072,7 @@ describe('::send', function () {
           test: () => {
             expect(this).toBeInstanceOf(Test)
             expect(this.prop).toBe(true)
-          },
+          }
         }
       }
 

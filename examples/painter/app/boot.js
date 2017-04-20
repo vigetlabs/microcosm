@@ -14,7 +14,7 @@ function render () {
     <AppContainer>
       <Workspace repo={repo} />
     </AppContainer>,
-    document.querySelector('#app'),
+    document.querySelector('#app')
   )
 }
 

@@ -15,9 +15,9 @@ describe('Domain::register', function () {
         return {
           [action] () {
             expect(this.test).toBe(true)
-          },
+          }
         }
-      },
+      }
     })
 
     repo.push(action)
@@ -29,7 +29,7 @@ describe('Domain::register', function () {
     repo.addDomain('test', {
       getInitialState () {
         return 'test'
-      },
+      }
     })
 
     return repo.push(action).onDone(function () {
@@ -46,14 +46,14 @@ describe('Domain::register', function () {
         register () {
           return {
             [action]: {
-              open:    handler,
-              update:  handler,
-              reject:  handler,
+              open: handler,
+              update: handler,
+              reject: handler,
               resolve: handler,
-              cancel:  handler,
-            },
+              cancel: handler
+            }
           }
-        },
+        }
       })
 
       expect(domain).toRegister(action, 'open')

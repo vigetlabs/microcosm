@@ -12,7 +12,7 @@ describe('Microcosm::release', function () {
       },
       register () {
         return { [identity]: (state, next) => next }
-      },
+      }
     })
 
     repo.on('change', spy)
@@ -33,7 +33,7 @@ describe('Microcosm::release', function () {
       },
       register () {
         return { [identity]: (_, next) => next }
-      },
+      }
     })
 
     repo.on('change', spy)
@@ -56,7 +56,7 @@ describe('Microcosm::release', function () {
       },
       register () {
         return { [step]: (a, b) => a + b }
-      },
+      }
     })
 
     repo.on('change', function () {

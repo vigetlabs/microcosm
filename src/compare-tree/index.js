@@ -191,5 +191,5 @@ CompareTree.prototype = {
     }
 
     return queries
-  },
+  }
 }

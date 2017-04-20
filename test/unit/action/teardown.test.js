@@ -1,7 +1,4 @@
-import Action from '../../../src/action'
 import Microcosm from '../../../src/microcosm'
-
-const identity = n => n
 
 describe('Action::teardown', function () {
   it('does not lose an onDone subscription when it resolves', function (done) {
@@ -9,7 +6,7 @@ describe('Action::teardown', function () {
       return function (action) {
         Promise.resolve().then(
           () => action.resolve(true),
-          () => action.reject(false),
+          () => action.reject(false)
         )
       }
     }

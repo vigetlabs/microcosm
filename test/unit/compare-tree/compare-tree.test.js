@@ -248,7 +248,7 @@ describe('CompareTree', function () {
       this.tree.update({ meta: null })
 
       this.tree.update({
-        meta: { selected: true },
+        meta: { selected: true }
       })
 
       expect(handler).toHaveBeenCalledWith(undefined)

@@ -7,7 +7,7 @@ describe('Domain construction', function () {
     repo.addDomain('count', {
       getInitialState () {
         return 0
-      },
+      }
     })
 
     expect(repo).toHaveState('count', 0)
@@ -19,7 +19,7 @@ describe('Domain construction', function () {
     const MyDomain = {
       getInitialState () {
         return 0
-      },
+      }
     }
 
     repo.addDomain('count', MyDomain)

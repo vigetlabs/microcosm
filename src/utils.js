@@ -55,9 +55,9 @@ export function inherit (Child, Ancestor, proto) {
   Child.prototype = merge(
     Object.create(Ancestor.prototype),
     {
-      constructor: Child.prototype.constructor,
+      constructor: Child.prototype.constructor
     },
-    proto,
+    proto
   )
 
   return Child
@@ -177,7 +177,6 @@ export function isString (target) {
  * @return {boolean}
  */
 var $Symbol = typeof Symbol === 'function' ? Symbol : {}
-var iteratorSymbol = $Symbol.iterator || '@@iterator'
 var toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
 export function isGeneratorFn (value) {
   return get(value, toStringTagSymbol, '') === 'GeneratorFunction'
