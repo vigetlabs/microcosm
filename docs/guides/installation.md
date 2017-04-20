@@ -48,7 +48,6 @@ module.exports = {
   // ...
   resolve: {
     alias: {
-      "microcosm$": "microcosm/strict/microcosm.js",
       "microcosm": "microcosm/strict",
     }
   }
@@ -69,7 +68,6 @@ module.exports = {
   // ...
   resolve: {
     alias: {
-      "microcosm$": isProduction ? 'microcosm' : "microcosm/strict/microcosm.js",
       "microcosm": isProduction ? 'microcosm' : "microcosm/strict",
     }
   }
