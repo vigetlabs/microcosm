@@ -8,7 +8,7 @@
   "scripts": {
     "build": "make all",
     "lint": "eslint \"{src,test,examples}/**/*.js\"",
-    "pretty": "prettier-eslint --write \"{src,test,examples}/**/*.js\"",
+    "pretty": "prettier --write \"{src,test,examples}/**/*.js\" && eslint --fix \"{src,test,examples}/**/*.js\"",
     "test": "npm run lint && NODE_ENV=test jest --maxWorkers=2",
     "test:cov": "NODE_ENV=test jest --coverage --maxWorkers=2",
     "report-coverage": "codecov coverage/lcov.info",
@@ -67,6 +67,7 @@
     "html-webpack-plugin": "^2.28.0",
     "jest": "^19.0.1",
     "microcosm-debugger": "^3.0.0",
+    "prettier": "^1.2.2",
     "prettier-eslint": "^5.1.0",
     "prettier-eslint-cli": "^3.3.0",
     "react": "^15.5.4",
