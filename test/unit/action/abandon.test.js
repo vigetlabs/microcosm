@@ -1,7 +1,7 @@
 import Action from '../../../src/action'
 
-describe('abandon', function () {
-  it('will not abandon the same child twice', function () {
+describe('abandon', function() {
+  it('will not abandon the same child twice', function() {
     const one = new Action(n => n)
     const two = new Action(n => n)
     const parent = new Action(n => n)

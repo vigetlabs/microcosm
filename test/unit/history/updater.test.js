@@ -1,7 +1,7 @@
 import History from '../../../src/history'
 
-describe('History updater', function () {
-  it('provides a default batching method', function (done) {
+describe('History updater', function() {
+  it('provides a default batching method', function(done) {
     const history = new History({
       batch: true
     })
@@ -20,9 +20,9 @@ describe('History updater', function () {
     history.append('action').resolve()
   })
 
-  it('allows manual control over updates', function (done) {
+  it('allows manual control over updates', function(done) {
     const history = new History({
-      updater: function () {
+      updater: function() {
         return update => setTimeout(update, 10)
       }
     })
@@ -32,9 +32,9 @@ describe('History updater', function () {
     history.append('action').resolve()
   })
 
-  it('does not emit an update if update is not called', function () {
+  it('does not emit an update if update is not called', function() {
     const history = new History({
-      updater: function () {
+      updater: function() {
         return update => {}
       }
     })
@@ -48,9 +48,9 @@ describe('History updater', function () {
     expect(spy).not.toHaveBeenCalled()
   })
 
-  it('.wait() waits for the updater', async function () {
+  it('.wait() waits for the updater', async function() {
     const history = new History({
-      updater: function () {
+      updater: function() {
         return update => setTimeout(update, 10)
       }
     })
@@ -66,9 +66,9 @@ describe('History updater', function () {
     expect(handler).toHaveBeenCalled()
   })
 
-  it('.wait() ignores the updater when there is nothing to do', async function () {
+  it('.wait() ignores the updater when there is nothing to do', async function() {
     const history = new History({
-      updater: function () {
+      updater: function() {
         return update => setTimeout(update, 10)
       }
     })
@@ -76,9 +76,9 @@ describe('History updater', function () {
     await history.wait()
   })
 
-  it('.wait() waits for the updater even on rejection', function () {
+  it('.wait() waits for the updater even on rejection', function() {
     const history = new History({
-      updater: function () {
+      updater: function() {
         return update => setTimeout(update, 10)
       }
     })

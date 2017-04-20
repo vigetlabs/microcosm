@@ -3,7 +3,7 @@ import { castPath } from './key-path'
 /**
  * Shallow copy an object
  */
-export function clone (target) {
+export function clone(target) {
   if (Array.isArray(target)) {
     return target.slice(0)
   } else if (isObject(target) === false) {
@@ -22,7 +22,7 @@ export function clone (target) {
 /**
  * Merge any number of objects into a provided object.
  */
-export function merge () {
+export function merge() {
   let copy = null
   let subject = null
 
@@ -49,7 +49,7 @@ export function merge () {
 /**
  * Basic prototypal inheritence
  */
-export function inherit (Child, Ancestor, proto) {
+export function inherit(Child, Ancestor, proto) {
   Child.__proto__ = Ancestor
 
   Child.prototype = merge(
@@ -67,7 +67,7 @@ export function inherit (Child, Ancestor, proto) {
  * Retrieve a value from an object. If no key is provided, just return the
  * object.
  */
-export function get (object, keyPath, fallback) {
+export function get(object, keyPath, fallback) {
   if (object == null) {
     return fallback
   }
@@ -91,7 +91,7 @@ export function get (object, keyPath, fallback) {
  * Non-destructively assign a value to a provided object at a given key. If the
  * value is the same, don't do anything. Otherwise return a new object.
  */
-export function set (object, key, value) {
+export function set(object, key, value) {
   // Ensure we're working with a key path, like: ['a', 'b', 'c']
   let path = castPath(key)
 
@@ -139,7 +139,7 @@ export function set (object, key, value) {
  * @param {*} obj
  * @return {boolean}
  */
-export function isPromise (obj) {
+export function isPromise(obj) {
   return (isObject(obj) || isFunction(obj)) && isFunction(obj.then)
 }
 
@@ -148,7 +148,7 @@ export function isPromise (obj) {
  * @param {*} target
  * @return {boolean}
  */
-export function isObject (target) {
+export function isObject(target) {
   return !!target && typeof target === 'object'
 }
 
@@ -157,7 +157,7 @@ export function isObject (target) {
  * @param {*} target
  * @return {boolean}
  */
-export function isFunction (target) {
+export function isFunction(target) {
   return !!target && typeof target === 'function'
 }
 
@@ -166,7 +166,7 @@ export function isFunction (target) {
  * @param {*} target
  * @return {boolean}
  */
-export function isString (target) {
+export function isString(target) {
   return typeof target === 'string'
 }
 
@@ -178,11 +178,11 @@ export function isString (target) {
  */
 var $Symbol = typeof Symbol === 'function' ? Symbol : {}
 var toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
-export function isGeneratorFn (value) {
+export function isGeneratorFn(value) {
   return get(value, toStringTagSymbol, '') === 'GeneratorFunction'
 }
 
-export function createOrClone (target, options, repo) {
+export function createOrClone(target, options, repo) {
   if (isFunction(target)) {
     return new target(options, repo)
   }
@@ -197,7 +197,7 @@ export function createOrClone (target, options, repo) {
  * @param {*} updater A function or static value
  * @param {*} fallback value
  */
-export function update (state, keyPath, updater, fallback) {
+export function update(state, keyPath, updater, fallback) {
   let path = castPath(keyPath)
 
   if (isFunction(updater) === false) {

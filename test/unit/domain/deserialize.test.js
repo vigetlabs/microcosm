@@ -1,25 +1,25 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Domain::deserialize', function () {
-  it('to getInitialState when no deserialize method is provided', function () {
+describe('Domain::deserialize', function() {
+  it('to getInitialState when no deserialize method is provided', function() {
     const repo = new Microcosm()
 
     repo.addDomain('fiz', {
-      getInitialState () {
+      getInitialState() {
         return true
       }
     })
 
-    return repo.patch({}, true).onDone(function () {
+    return repo.patch({}, true).onDone(function() {
       expect(repo).toHaveState('fiz', true)
     })
   })
 
-  it('can deserialize a string', function () {
+  it('can deserialize a string', function() {
     const repo = new Microcosm()
 
     repo.addDomain('fiz', {
-      deserialize (state) {
+      deserialize(state) {
         return state.toUpperCase()
       }
     })
@@ -29,8 +29,8 @@ describe('Domain::deserialize', function () {
     expect(answer).toEqual({ fiz: 'BUZZ' })
   })
 
-  describe('forks', function () {
-    it('deserialize works from parents to children', function () {
+  describe('forks', function() {
+    it('deserialize works from parents to children', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -47,7 +47,7 @@ describe('Domain::deserialize', function () {
       expect(data).toEqual({ fiz: 'fiz', buzz: 'buzz' })
     })
 
-    it('deserializing a child with the same key works from serialization', function () {
+    it('deserializing a child with the same key works from serialization', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 

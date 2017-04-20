@@ -1,7 +1,7 @@
 import { Action, merge, inherit } from '../microcosm'
 import { createElement, PureComponent } from 'react'
 
-export default function ActionButton (props, context) {
+export default function ActionButton(props, context) {
   PureComponent.apply(this, arguments)
 
   this.send = this.props.send || this.context.send
@@ -17,7 +17,7 @@ ActionButton.defaultProps = {
 }
 
 inherit(ActionButton, PureComponent, {
-  click (event) {
+  click(event) {
     let action = this.send(this.props.action, this.props.value)
 
     if (action && action instanceof Action) {
@@ -36,7 +36,7 @@ inherit(ActionButton, PureComponent, {
     return action
   },
 
-  render () {
+  render() {
     const props = merge({}, this.props, { onClick: this.click })
 
     delete props.tag

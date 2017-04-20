@@ -13,14 +13,10 @@ import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
 
 import { merge, inherit, get, set, update, isString } from './utils'
 
-function Microcosm (preOptions, state, deserialize) {
+function Microcosm(preOptions, state, deserialize) {
   Emitter.call(this)
 
-  let options = merge(
-    Microcosm.defaults,
-    this.constructor.defaults,
-    preOptions
-  )
+  let options = merge(Microcosm.defaults, this.constructor.defaults, preOptions)
 
   this.parent = options.parent
 
@@ -73,19 +69,19 @@ Microcosm.defaults = {
 }
 
 inherit(Microcosm, Emitter, {
-  setup () {
+  setup() {
     // NOOP
   },
 
-  teardown () {
+  teardown() {
     // NOOP
   },
 
-  getInitialState () {
+  getInitialState() {
     return this.initial
   },
 
-  recall (action, fallback) {
+  recall(action, fallback) {
     return this.archive.get(action, fallback)
   },
 
@@ -94,7 +90,7 @@ inherit(Microcosm, Emitter, {
    * that, when rolling back to this action, it always has a state value.
    * @param {Action} action - The action to generate a snapshot for
    */
-  createSnapshot (action) {
+  createSnapshot(action) {
     this.archive.create(action)
   },
 
@@ -102,7 +98,7 @@ inherit(Microcosm, Emitter, {
    * Update the state snapshot for a given action
    * @param {Action} action - The action to update the snapshot for
    */
-  updateSnapshot (action) {
+  updateSnapshot(action) {
     let next = this.recall(action.parent, this.initial)
 
     if (this.parent) {
@@ -122,19 +118,19 @@ inherit(Microcosm, Emitter, {
    * Remove the snapshot for a given action
    * @param {Action} action - The action to remove the snapshot for
    */
-  removeSnapshot (action) {
+  removeSnapshot(action) {
     this.archive.remove(action)
   },
 
-  dispatchEffect (action) {
+  dispatchEffect(action) {
     this.effects.dispatch(action)
   },
 
-  release () {
+  release() {
     this.changes.update(this.state)
   },
 
-  on (type, callback, scope) {
+  on(type, callback, scope) {
     let [event, meta] = type.split(':', 2)
 
     switch (event) {
@@ -148,7 +144,7 @@ inherit(Microcosm, Emitter, {
     return this
   },
 
-  off (type, callback, scope) {
+  off(type, callback, scope) {
     let [event, meta] = type.split(':', 2)
 
     switch (event) {
@@ -166,7 +162,7 @@ inherit(Microcosm, Emitter, {
    * Append an action to history and return it. This is used by push,
    * but also useful for testing action states.
    */
-  append (command, status) {
+  append(command, status) {
     return this.history.append(command, status)
   },
 
@@ -174,7 +170,7 @@ inherit(Microcosm, Emitter, {
    * Push an action into Microcosm. This will trigger the lifecycle for updating
    * state.
    */
-  push (command, ...params) {
+  push(command, ...params) {
     let action = this.append(command)
 
     coroutine(action, action.command, params, this)
@@ -182,11 +178,11 @@ inherit(Microcosm, Emitter, {
     return action
   },
 
-  prepare (...params) {
+  prepare(...params) {
     return (...extra) => this.push(...params, ...extra)
   },
 
-  addDomain (key, config, options) {
+  addDomain(key, config, options) {
     let domain = this.domains.add(key, config, options)
 
     if (domain.getInitialState) {
@@ -198,19 +194,19 @@ inherit(Microcosm, Emitter, {
     return domain
   },
 
-  addEffect (config, options) {
+  addEffect(config, options) {
     return this.effects.add(config, options)
   },
 
-  reset (data, deserialize) {
+  reset(data, deserialize) {
     return this.push(RESET, data, deserialize)
   },
 
-  patch (data, deserialize) {
+  patch(data, deserialize) {
     return this.push(PATCH, data, deserialize)
   },
 
-  deserialize (payload) {
+  deserialize(payload) {
     let base = payload
 
     if (this.parent) {
@@ -222,23 +218,23 @@ inherit(Microcosm, Emitter, {
     return this.domains.deserialize(base)
   },
 
-  serialize () {
+  serialize() {
     let base = this.parent ? this.parent.serialize() : {}
 
     return this.domains.serialize(this.state, base)
   },
 
-  toJSON () {
+  toJSON() {
     return this.serialize()
   },
 
-  checkout (action) {
+  checkout(action) {
     this.history.checkout(action)
 
     return this
   },
 
-  fork () {
+  fork() {
     return new Microcosm({
       parent: this
     })
@@ -254,7 +250,7 @@ inherit(Microcosm, Emitter, {
    *
    * @private
    */
-  shutdown () {
+  shutdown() {
     this.teardown()
 
     // Trigger a teardown event before completely shutting down

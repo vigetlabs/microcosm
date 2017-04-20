@@ -9,7 +9,7 @@ let repo = new Repo({ maxHistory: Infinity })
 
 Debugger(repo)
 
-function render () {
+function render() {
   DOM.render(
     <AppContainer>
       <Workspace repo={repo} />

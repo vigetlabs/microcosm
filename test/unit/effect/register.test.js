@@ -1,13 +1,13 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Effect::register', function () {
-  it('invokes when an action completes', function () {
+describe('Effect::register', function() {
+  it('invokes when an action completes', function() {
     const repo = new Microcosm()
     const test = n => n
 
     const Effect = {
       handler: jest.fn(),
-      register () {
+      register() {
         return {
           [test]: this.handler
         }
@@ -21,17 +21,17 @@ describe('Effect::register', function () {
     expect(Effect.handler).toHaveBeenCalledWith(repo, true)
   })
 
-  it('invokes within the scope of the effect', function () {
+  it('invokes within the scope of the effect', function() {
     const repo = new Microcosm()
     const test = n => n
     const spy = jest.fn()
 
     const Effect = {
       test: true,
-      handler () {
+      handler() {
         spy(this.test)
       },
-      register () {
+      register() {
         return {
           [test]: this.handler
         }
@@ -45,13 +45,13 @@ describe('Effect::register', function () {
     expect(spy).toHaveBeenCalledWith(true)
   })
 
-  it('is only called once  - at reconciliation', function () {
+  it('is only called once  - at reconciliation', function() {
     const repo = new Microcosm()
     const test = n => n
 
     const Effect = {
       handler: jest.fn(),
-      register () {
+      register() {
         return {
           [test]: this.handler
         }
@@ -69,17 +69,17 @@ describe('Effect::register', function () {
     expect(Effect.handler).toHaveBeenCalledTimes(2)
   })
 
-  it('does not need to register', function () {
+  it('does not need to register', function() {
     const repo = new Microcosm()
     repo.addEffect({})
     repo.push(n => n)
   })
 
-  it('does not respond to all handlers', function () {
+  it('does not respond to all handlers', function() {
     const repo = new Microcosm()
 
     class Effect {
-      register () {
+      register() {
         return {}
       }
     }
@@ -89,17 +89,17 @@ describe('Effect::register', function () {
     repo.push('missing', true)
   })
 
-  it('repo state should be up to date by the time of effect dispatch', function () {
+  it('repo state should be up to date by the time of effect dispatch', function() {
     expect.assertions(1)
 
     const repo = new Microcosm()
     const test = n => n
 
     repo.addDomain('test', {
-      getInitialState () {
+      getInitialState() {
         return false
       },
-      register () {
+      register() {
         return {
           [test]: (a, b) => b
         }
@@ -107,10 +107,10 @@ describe('Effect::register', function () {
     })
 
     const Effect = {
-      handler (repo) {
+      handler(repo) {
         expect(repo).toHaveState('test', true)
       },
-      register () {
+      register() {
         return {
           [test]: this.handler
         }
@@ -122,13 +122,13 @@ describe('Effect::register', function () {
     repo.push(test, true)
   })
 
-  it('allows domains nested registration methods', function () {
+  it('allows domains nested registration methods', function() {
     let repo = new Microcosm()
     let handler = jest.fn()
     let action = n => n
 
     let effect = repo.addEffect({
-      register () {
+      register() {
         return {
           [action]: {
             open: handler,

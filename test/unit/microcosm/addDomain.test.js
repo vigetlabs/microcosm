@@ -1,11 +1,11 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm::addDomain', function () {
-  it('adding a domain backfills the initial state', function () {
+describe('Microcosm::addDomain', function() {
+  it('adding a domain backfills the initial state', function() {
     let repo = new Microcosm()
 
     repo.addDomain('a', {
-      getInitialState () {
+      getInitialState() {
         return 0
       }
     })
@@ -13,7 +13,7 @@ describe('Microcosm::addDomain', function () {
     expect(repo).toHaveState('a', 0)
 
     repo.addDomain('b', {
-      getInitialState () {
+      getInitialState() {
         return 1
       }
     })
@@ -22,12 +22,12 @@ describe('Microcosm::addDomain', function () {
     expect(repo).toHaveState('b', 1)
   })
 
-  describe('forks', function () {
-    it('adding a domain to a fork does not reset all state', function () {
+  describe('forks', function() {
+    it('adding a domain to a fork does not reset all state', function() {
       let repo = new Microcosm()
 
       repo.addDomain('a', {
-        getInitialState () {
+        getInitialState() {
           return 0
         }
       })
@@ -39,7 +39,7 @@ describe('Microcosm::addDomain', function () {
       let fork = repo.fork()
 
       fork.addDomain('b', {
-        getInitialState () {
+        getInitialState() {
           return 2
         }
       })
@@ -48,12 +48,12 @@ describe('Microcosm::addDomain', function () {
       expect(fork).toHaveState('b', 2)
     })
 
-    it('adding a domain to a parent sends initial state to forks', function () {
+    it('adding a domain to a parent sends initial state to forks', function() {
       let repo = new Microcosm()
       let fork = repo.fork()
 
       repo.addDomain('a', {
-        getInitialState () {
+        getInitialState() {
           return 0
         }
       })
@@ -64,7 +64,7 @@ describe('Microcosm::addDomain', function () {
       expect(fork).toHaveState('a', 1)
 
       fork.addDomain('b', {
-        getInitialState () {
+        getInitialState() {
           return 2
         }
       })

@@ -1,6 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm::fork', function () {
+describe('Microcosm::fork', function() {
   it('forks do not own state of parents', () => {
     const parent = new Microcosm()
     const child = parent.fork()
@@ -8,10 +8,10 @@ describe('Microcosm::fork', function () {
     const add = n => n
 
     parent.addDomain('counter', {
-      getInitialState () {
+      getInitialState() {
         return 0
       },
-      register () {
+      register() {
         return {
           [add]: (a, b) => a + b
         }
@@ -19,7 +19,7 @@ describe('Microcosm::fork', function () {
     })
 
     child.addDomain('counter', {
-      register () {
+      register() {
         return {
           [add]: (a, b) => a * 2
         }
@@ -39,10 +39,10 @@ describe('Microcosm::fork', function () {
     const add = n => n
 
     parent.addDomain('counter', {
-      getInitialState () {
+      getInitialState() {
         return 0
       },
-      register () {
+      register() {
         return {
           [add]: (a, b) => a + b
         }
@@ -50,9 +50,9 @@ describe('Microcosm::fork', function () {
     })
 
     child.addDomain('counter', {
-      register () {
+      register() {
         return {
-          [add] (a) {
+          [add](a) {
             return a * 2
           }
         }
@@ -76,10 +76,10 @@ describe('Microcosm::fork', function () {
     const add = n => n
 
     parent.addDomain('counter', {
-      getInitialState () {
+      getInitialState() {
         return 0
       },
-      register () {
+      register() {
         return {
           [add]: (a, b) => a + b
         }
@@ -87,9 +87,9 @@ describe('Microcosm::fork', function () {
     })
 
     child.addDomain('counter', {
-      register () {
+      register() {
         return {
-          [add] (a) {
+          [add](a) {
             return a * 2
           }
         }
@@ -106,11 +106,11 @@ describe('Microcosm::fork', function () {
     expect(child.state.counter).toEqual(12)
   })
 
-  it('forks handle cases where they are lostlost during a reconcilation', function () {
+  it('forks handle cases where they are lostlost during a reconcilation', function() {
     const parent = new Microcosm()
     const child = parent.fork()
 
-    parent.on('change', function () {
+    parent.on('change', function() {
       child.teardown()
     })
 

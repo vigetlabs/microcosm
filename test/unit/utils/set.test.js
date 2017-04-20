@@ -1,6 +1,6 @@
 import { set } from '../../../src/utils'
 
-describe('Utils.set', function () {
+describe('Utils.set', function() {
   const subject = {
     styles: {
       color: 'blue',
@@ -8,43 +8,43 @@ describe('Utils.set', function () {
     }
   }
 
-  it('can set a single key', function () {
+  it('can set a single key', function() {
     let next = set(subject, 'styles', false)
 
     expect(next.styles).toEqual(false)
   })
 
-  it('can assign an empty path', function () {
+  it('can assign an empty path', function() {
     let value = set(subject, [], false)
 
     expect(value).toBe(false)
   })
 
-  it('assigns undefined', function () {
+  it('assigns undefined', function() {
     let next = set(subject, 'styles', undefined)
 
     expect(next.styles).toEqual(undefined)
   })
 
-  it('can set a deep key', function () {
+  it('can set a deep key', function() {
     let next = set(subject, ['styles', 'color'], 'red')
 
     expect(next.styles.color).toEqual('red')
   })
 
-  it('can set a deep key using dot notation', function () {
+  it('can set a deep key using dot notation', function() {
     let next = set(subject, 'styles.color', 'red')
 
     expect(next.styles.color).toEqual('red')
   })
 
-  it('can set new keys deeply', function () {
+  it('can set new keys deeply', function() {
     let next = set(subject, ['styles', 'padding', 'top'], 10)
 
     expect(next.styles.padding.top).toEqual(10)
   })
 
-  it('does not destructively update data', function () {
+  it('does not destructively update data', function() {
     let next = set(subject, ['styles', 'padding', 'top'], 10)
 
     expect(next).not.toBe(subject)
@@ -52,22 +52,22 @@ describe('Utils.set', function () {
     expect(next.styles.padding).not.toBe(subject.styles.padding)
   })
 
-  it('does not duplicate objects when the value is the same', function () {
+  it('does not duplicate objects when the value is the same', function() {
     let next = set(subject, ['styles', 'color'], 'blue')
 
     expect(next).toBe(subject)
     expect(next.styles).toBe(subject.styles)
   })
 
-  it('does modify the original value', function () {
+  it('does modify the original value', function() {
     let next = set(subject, ['styles', 'color'], 'red')
 
     expect(subject.styles.color).toBe('blue')
     expect(next.styles.color).toBe('red')
   })
 
-  describe('arrays', function () {
-    it('can operate on arrays', function () {
+  describe('arrays', function() {
+    it('can operate on arrays', function() {
       let list = ['a', 'b', 'c']
       let next = set(list, 3, 'd')
 
@@ -75,7 +75,7 @@ describe('Utils.set', function () {
       expect(next[3]).toBe('d')
     })
 
-    it('properly assigns nested arrays', function () {
+    it('properly assigns nested arrays', function() {
       let list = { a: ['b', 'c'] }
       let next = set(list, ['a', 1], 'd')
 
@@ -83,7 +83,7 @@ describe('Utils.set', function () {
       expect(next['a']).toBeInstanceOf(Array)
     })
 
-    it('properly assigns nested arrays where keys are missing', function () {
+    it('properly assigns nested arrays where keys are missing', function() {
       let space = { planets: [] }
       let next = set(space, ['planets', 0, 'color'], 'red')
 

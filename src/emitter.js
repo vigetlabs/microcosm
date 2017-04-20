@@ -7,7 +7,7 @@ import { isFunction } from './utils'
  * @param {*} scope Scope of callback
  * @param {boolean} once Only run the event callback once
  */
-function Listener (event, fn, scope, once) {
+function Listener(event, fn, scope, once) {
   console.assert(
     isFunction(fn),
     `Expected ${event} listener to be function, instead got ${fn}`
@@ -25,7 +25,7 @@ function Listener (event, fn, scope, once) {
  * @constructor
  * @property {Array.<Listener>} _events A pool of event listeners
  */
-export default function Emitter () {
+export default function Emitter() {
   this._events = []
 }
 
@@ -36,7 +36,7 @@ Emitter.prototype = {
    * @param {Function} fn Event callback
    * @param {*} [scope] Optional scope to invoke callback with
    */
-  on (event, fn, scope) {
+  on(event, fn, scope) {
     let listener = new Listener(event, fn, scope, false)
 
     this._events.push(listener)
@@ -51,7 +51,7 @@ Emitter.prototype = {
    * @param {Function} fn Event callback
    * @param {*} [scope] Optional scope to invoke callback with
    */
-  once (event, fn, scope) {
+  once(event, fn, scope) {
     let listener = new Listener(event, fn, scope, true)
 
     this._events.push(listener)
@@ -66,7 +66,7 @@ Emitter.prototype = {
    * @param {Function} fn Event callback
    * @param {*} [scope] Optional scope to invoke callback with
    */
-  off (event, fn, scope) {
+  off(event, fn, scope) {
     var removeAll = fn == null
 
     let i = 0
@@ -89,7 +89,7 @@ Emitter.prototype = {
   /**
    * Purge all event listeners
    */
-  removeAllListeners () {
+  removeAllListeners() {
     this._events.length = 0
   },
 
@@ -98,7 +98,7 @@ Emitter.prototype = {
    * @param {string} event Type of event
    * @param {*} payload Value to send with callback
    */
-  _emit (event, ...args) {
+  _emit(event, ...args) {
     let i = 0
     while (i < this._events.length) {
       var cb = this._events[i]
@@ -121,7 +121,7 @@ Emitter.prototype = {
   /**
    * Remove all events for a given scope
    */
-  _removeScope (scope) {
+  _removeScope(scope) {
     let i = 0
     while (i < this._events.length) {
       var cb = this._events[i]

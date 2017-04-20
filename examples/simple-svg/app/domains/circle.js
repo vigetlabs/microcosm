@@ -1,11 +1,11 @@
 import { animate } from '../actions/animate'
 
 const Circle = {
-  getInitialState () {
+  getInitialState() {
     return Circle.set(null, { color: 'orange', time: Date.now() })
   },
 
-  set (_, { color, time }) {
+  set(_, { color, time }) {
     let sin = Math.sin(time / 200)
     let cos = Math.cos(time / 200)
 
@@ -17,7 +17,7 @@ const Circle = {
     }
   },
 
-  register () {
+  register() {
     return {
       [animate.loading]: Circle.set,
       [animate.done]: Circle.set

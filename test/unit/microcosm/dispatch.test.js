@@ -1,20 +1,20 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm::dispatch', function () {
-  it.only('does not mutate base state on prior dispatches', function () {
+describe('Microcosm::dispatch', function() {
+  it.only('does not mutate base state on prior dispatches', function() {
     const repo = new Microcosm()
     const mutation = () => true
 
     repo.addDomain(null, {
-      getInitialState () {
+      getInitialState() {
         return {
           toggled: false
         }
       },
 
-      register () {
+      register() {
         return {
-          [mutation] (state) {
+          [mutation](state) {
             state.toggled = !state.toggled
             return state
           }

@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Logo ({ circle }) {
+export default function Logo({ circle }) {
   const { cx, cy, r, color } = circle
 
   return (

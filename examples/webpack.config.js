@@ -9,7 +9,7 @@ const { resolve } = require('path')
 
 const PORT = process.env.PORT || 3000
 
-module.exports = function (env) {
+module.exports = function(env) {
   let isDev = env !== 'production'
   let root = process.cwd()
 
@@ -63,7 +63,7 @@ module.exports = function (env) {
       }),
       new Webpack.optimize.CommonsChunkPlugin({
         name: 'vendor',
-        minChunks: function (module) {
+        minChunks: function(module) {
           var context = module.context
 
           if (context == null) {

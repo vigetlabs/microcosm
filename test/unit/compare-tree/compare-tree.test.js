@@ -2,13 +2,13 @@ import CompareTree from '../../../src/compare-tree'
 import { set } from '../../../src/utils'
 import SOLAR_SYSTEM from './fixtures/solar-system'
 
-describe('CompareTree', function () {
-  beforeEach(function () {
+describe('CompareTree', function() {
+  beforeEach(function() {
     this.tree = new CompareTree(SOLAR_SYSTEM)
   })
 
-  describe('::on', function () {
-    it('passes the selected state into a compare', function () {
+  describe('::on', function() {
+    it('passes the selected state into a compare', function() {
       expect.assertions(1)
 
       let next = set(SOLAR_SYSTEM, ['meta', 'selected'], 'jupiter')
@@ -20,7 +20,7 @@ describe('CompareTree', function () {
       expect(handler).toHaveBeenCalledWith('jupiter')
     })
 
-    it('passes every key in the query', function () {
+    it('passes every key in the query', function() {
       expect.assertions(1)
 
       let next = set(SOLAR_SYSTEM, ['meta', 'selected'], 'jupiter')
@@ -32,7 +32,7 @@ describe('CompareTree', function () {
       expect(handler).toHaveBeenCalledWith('jupiter', SOLAR_SYSTEM.planets)
     })
 
-    it('returns the same node given the same path', function () {
+    it('returns the same node given the same path', function() {
       expect.assertions(1)
 
       let a = this.tree.on('meta.selected', jest.fn())
@@ -41,7 +41,7 @@ describe('CompareTree', function () {
       expect(a).toBe(b)
     })
 
-    it('only invokes a subscription once if given multiple key paths', function () {
+    it('only invokes a subscription once if given multiple key paths', function() {
       let a = set(SOLAR_SYSTEM, ['meta', 'selected'], 'jupiter')
       let b = set(a, ['meta', 'focused'], false)
 
@@ -53,7 +53,7 @@ describe('CompareTree', function () {
       expect(handler).toHaveBeenCalledTimes(1)
     })
 
-    it('can subscribe to an index in an array', function () {
+    it('can subscribe to an index in an array', function() {
       expect.assertions(1)
 
       let tree = new CompareTree(SOLAR_SYSTEM)
@@ -66,7 +66,7 @@ describe('CompareTree', function () {
       tree.update(next)
     })
 
-    it('handles moving from an empty state to a hydrated state', function () {
+    it('handles moving from an empty state to a hydrated state', function() {
       expect.assertions(1)
 
       let tree = new CompareTree({})
@@ -78,8 +78,8 @@ describe('CompareTree', function () {
       tree.update(SOLAR_SYSTEM)
     })
 
-    describe('subscribing to the root', function () {
-      it('can subscribe to the root', function () {
+    describe('subscribing to the root', function() {
+      it('can subscribe to the root', function() {
         expect.assertions(1)
 
         let next = {}
@@ -92,7 +92,7 @@ describe('CompareTree', function () {
         expect(handler).toHaveBeenCalledWith(next)
       })
 
-      it('unsubscribe from the root', function () {
+      it('unsubscribe from the root', function() {
         expect.assertions(1)
 
         let next = {}
@@ -108,8 +108,8 @@ describe('CompareTree', function () {
     })
   })
 
-  describe('::off', function () {
-    it('can remove a listener', function () {
+  describe('::off', function() {
+    it('can remove a listener', function() {
       let handler = jest.fn()
       let next = set(this.tree.snapshot, 'meta', {})
 
@@ -121,11 +121,11 @@ describe('CompareTree', function () {
       expect(handler).not.toHaveBeenCalled()
     })
 
-    it('gracefully ignores removing a missing listener', function () {
+    it('gracefully ignores removing a missing listener', function() {
       this.tree.off('meta', n => n)
     })
 
-    it('removes the query node if there are no callbacks left', function () {
+    it('removes the query node if there are no callbacks left', function() {
       let handler = jest.fn()
       let query = this.tree.on('meta', handler)
 
@@ -134,7 +134,7 @@ describe('CompareTree', function () {
       expect(this.tree.nodes[query.id]).toBeUndefined()
     })
 
-    it('removes nodes without edges up the chain', function () {
+    it('removes nodes without edges up the chain', function() {
       let handler = jest.fn()
       let query = this.tree.on('meta.selected', handler)
 
@@ -145,7 +145,7 @@ describe('CompareTree', function () {
       expect(this.tree.nodes['meta']).toBeUndefined()
     })
 
-    it('does not remove parents with other compares', function () {
+    it('does not remove parents with other compares', function() {
       let handler = jest.fn()
       let query = this.tree.on('meta.selected', handler)
 
@@ -158,7 +158,7 @@ describe('CompareTree', function () {
       expect(this.tree.nodes['meta']).toBeDefined()
     })
 
-    it('removes the root node when there are no subscriptions', function () {
+    it('removes the root node when there are no subscriptions', function() {
       let handler = jest.fn()
 
       this.tree.on('meta.selected', handler)
@@ -171,7 +171,7 @@ describe('CompareTree', function () {
       expect(Object.keys(this.tree.nodes)).toHaveLength(0)
     })
 
-    it('keeps a query if it still has compares left', function () {
+    it('keeps a query if it still has compares left', function() {
       let one = jest.fn()
       let two = jest.fn()
 
@@ -190,7 +190,7 @@ describe('CompareTree', function () {
       expect(this.tree.nodes[query.id]).toBeDefined()
     })
 
-    it('gracefully handles parents missing an edge (which should never happen)', function () {
+    it('gracefully handles parents missing an edge (which should never happen)', function() {
       let one = n => n
       let two = n => n
 
@@ -211,7 +211,7 @@ describe('CompareTree', function () {
       expect(keys).not.toContain('query:a.b.c')
     })
 
-    it('gracefully handles compares that do not exist', function () {
+    it('gracefully handles compares that do not exist', function() {
       this.tree.on('a.b.c', n => n)
       this.tree.off('a.b.c', n => n)
 
@@ -224,8 +224,8 @@ describe('CompareTree', function () {
     })
   })
 
-  describe('::connect', function () {
-    it('edges can not connect to themselves', function () {
+  describe('::connect', function() {
+    it('edges can not connect to themselves', function() {
       let node = this.tree.addNode('node')
 
       node.connect(node)
@@ -234,13 +234,13 @@ describe('CompareTree', function () {
     })
   })
 
-  describe('::update', function () {
-    it('can traverse compares for missing keys', function () {
+  describe('::update', function() {
+    it('can traverse compares for missing keys', function() {
       this.tree.on('a.b.c', n => n)
       this.tree.update({})
     })
 
-    it('can traverse missing state keys', function () {
+    it('can traverse missing state keys', function() {
       let handler = jest.fn()
 
       this.tree.on('meta.selected', handler)
@@ -254,7 +254,7 @@ describe('CompareTree', function () {
       expect(handler).toHaveBeenCalledWith(undefined)
     })
 
-    it('the root node does not get called twice if subscribing to two children', function () {
+    it('the root node does not get called twice if subscribing to two children', function() {
       expect.assertions(1)
 
       let a = set(SOLAR_SYSTEM, ['meta', 'selected'], 'jupiter')
@@ -262,7 +262,7 @@ describe('CompareTree', function () {
 
       this.tree.on(['meta.selected', 'meta.focused'], () => {})
 
-      this.tree.on('meta', function (meta) {
+      this.tree.on('meta', function(meta) {
         expect(meta).toBe(b.meta)
       })
 
@@ -270,8 +270,8 @@ describe('CompareTree', function () {
     })
   })
 
-  describe('keyPaths', function () {
-    it('allows a simple string', function () {
+  describe('keyPaths', function() {
+    it('allows a simple string', function() {
       this.tree.on('meta.selected', jest.fn())
 
       expect(this.tree.nodes['meta']).toBeDefined()
@@ -279,7 +279,7 @@ describe('CompareTree', function () {
       expect(this.tree.nodes['query:meta.selected']).toBeDefined()
     })
 
-    it('allows a simple, comma separated string', function () {
+    it('allows a simple, comma separated string', function() {
       this.tree.on('meta.selected,meta.focused', jest.fn())
 
       expect(this.tree.nodes['meta']).toBeDefined()
@@ -288,7 +288,7 @@ describe('CompareTree', function () {
       expect(this.tree.nodes['query:meta.selected,meta.focused']).toBeDefined()
     })
 
-    it('allows arrays of paths', function () {
+    it('allows arrays of paths', function() {
       this.tree.on([['meta', 'selected']], jest.fn())
 
       expect(this.tree.nodes['meta']).toBeDefined()
@@ -296,7 +296,7 @@ describe('CompareTree', function () {
       expect(this.tree.nodes['query:meta.selected']).toBeDefined()
     })
 
-    it('allows arrays of strings', function () {
+    it('allows arrays of strings', function() {
       this.tree.on(['meta.selected', 'planets'], jest.fn())
 
       let keys = Object.keys(this.tree.nodes)

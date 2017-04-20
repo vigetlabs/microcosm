@@ -1,9 +1,9 @@
 import History from '../../../src/history'
 
-describe('History::toArray', function () {
+describe('History::toArray', function() {
   const action = n => n
 
-  it('does not walk past the head', function () {
+  it('does not walk past the head', function() {
     const history = new History()
 
     let one = history.append(action)
@@ -17,7 +17,7 @@ describe('History::toArray', function () {
     expect(history.toArray()).toEqual([one])
   })
 
-  it('only walks through the main timeline', function () {
+  it('only walks through the main timeline', function() {
     const history = new History()
 
     const first = history.append(action)

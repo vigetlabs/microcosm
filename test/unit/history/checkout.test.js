@@ -1,6 +1,6 @@
 import History from '../../../src/history'
 
-describe('History::checkout', function () {
+describe('History::checkout', function() {
   const action = n => n
 
   /*
@@ -10,7 +10,7 @@ describe('History::checkout', function () {
    * <1>-|
    *     +-<3>
    */
-  it('updates the next values of nodes to follow the current branch', function () {
+  it('updates the next values of nodes to follow the current branch', function() {
     const history = new History()
 
     history.append(action)
@@ -40,7 +40,7 @@ describe('History::checkout', function () {
     expect(top.next).toEqual(null)
   })
 
-  it('checks out the head if no action is specified', function () {
+  it('checks out the head if no action is specified', function() {
     const history = new History()
 
     jest.spyOn(history, 'reconcile')
@@ -50,7 +50,7 @@ describe('History::checkout', function () {
     expect(history.reconcile).toHaveBeenCalledWith(history.head)
   })
 
-  it('properly handles forked branches', function () {
+  it('properly handles forked branches', function() {
     let history = new History()
 
     let one = history.append(action)

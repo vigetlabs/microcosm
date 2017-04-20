@@ -1,7 +1,7 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm::patch', function () {
-  it('only patches within managed keys', function () {
+describe('Microcosm::patch', function() {
+  it('only patches within managed keys', function() {
     const repo = new Microcosm()
 
     repo.addDomain('colors', {})
@@ -11,7 +11,7 @@ describe('Microcosm::patch', function () {
     expect(repo).not.toHaveState('shapes')
   })
 
-  it('raises if there is a JSON parse error deserialization fails', function () {
+  it('raises if there is a JSON parse error deserialization fails', function() {
     const repo = new Microcosm()
 
     // This is invalid
@@ -20,8 +20,8 @@ describe('Microcosm::patch', function () {
     expect(badPatch).toThrow()
   })
 
-  describe('forks', function () {
-    it('deeply inherits state', function () {
+  describe('forks', function() {
+    it('deeply inherits state', function() {
       const tree = new Microcosm({ maxHistory: Infinity })
 
       tree.addDomain('color', {})
@@ -39,7 +39,7 @@ describe('Microcosm::patch', function () {
       const parent = new Microcosm({ maxHistory: 0 })
 
       parent.addDomain('one', {
-        register () {
+        register() {
           return {
             getInitialState: () => false,
             one: (a, b) => b
@@ -48,7 +48,7 @@ describe('Microcosm::patch', function () {
       })
 
       parent.addDomain('two', {
-        register () {
+        register() {
           return {
             getInitialState: () => false,
             two: (a, b) => b
@@ -70,12 +70,12 @@ describe('Microcosm::patch', function () {
       expect(child.state.two).toBe(true)
     })
 
-    it('does not cause forks to revert state', function () {
+    it('does not cause forks to revert state', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
       child.addDomain('count', {
-        register () {
+        register() {
           return {
             add: (a, b) => a + b
           }
@@ -97,18 +97,18 @@ describe('Microcosm::patch', function () {
       expect(child.state.count).toEqual(4)
     })
 
-    it('does not strip away parent inherited state', function () {
+    it('does not strip away parent inherited state', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
       parent.addDomain('top', {
-        getInitialState () {
+        getInitialState() {
           return false
         }
       })
 
       child.addDomain('bottom', {
-        getInitialState () {
+        getInitialState() {
           return false
         }
       })
@@ -119,18 +119,18 @@ describe('Microcosm::patch', function () {
       expect(child).toHaveState('bottom', true)
     })
 
-    it('does not strip away parent inherited state when the parent patches', function () {
+    it('does not strip away parent inherited state when the parent patches', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
       parent.addDomain('top', {
-        getInitialState () {
+        getInitialState() {
           return false
         }
       })
 
       child.addDomain('bottom', {
-        getInitialState () {
+        getInitialState() {
           return false
         }
       })
@@ -141,18 +141,18 @@ describe('Microcosm::patch', function () {
       expect(child).toHaveState('top', true)
     })
 
-    it('patching on a parent does not reset state of children', function () {
+    it('patching on a parent does not reset state of children', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
       parent.addDomain('top', {
-        getInitialState () {
+        getInitialState() {
           return false
         }
       })
 
       child.addDomain('bottom', {
-        getInitialState () {
+        getInitialState() {
           return false
         }
       })

@@ -4,19 +4,19 @@ import Message from './message'
 class Conversation extends React.PureComponent {
   static defaultProps = {
     messages: []
-  };
+  }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     let el = this.refs.list
 
     el.scrollTop = el.scrollHeight
   }
 
-  getMessage (message) {
+  getMessage(message) {
     return <Message key={message.id} {...message} />
   }
 
-  render () {
+  render() {
     const { messages } = this.props
 
     return (

@@ -4,7 +4,7 @@ import Link from 'react-router-dom/Link'
 
 import { removeList } from '../../../actions/lists'
 
-function List ({ id, name, count }) {
+function List({ id, name, count }) {
   return (
     <li key={id}>
       <Link to={`/lists/${id}`}>{name} ({count})</Link>
@@ -15,10 +15,10 @@ function List ({ id, name, count }) {
   )
 }
 
-function Empty () {
+function Empty() {
   return <p className="spacious">No lists</p>
 }
 
-export default function ListList ({ items = [] }) {
+export default function ListList({ items = [] }) {
   return items.length ? <ul className="list">{items.map(List)}</ul> : <Empty />
 }

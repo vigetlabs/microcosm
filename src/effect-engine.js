@@ -1,13 +1,13 @@
 import getRegistration from './get-registration'
 import { createOrClone } from './utils'
 
-export default function EffectEngine (repo) {
+export default function EffectEngine(repo) {
   this.repo = repo
   this.effects = []
 }
 
 EffectEngine.prototype = {
-  add (config, options) {
+  add(config, options) {
     let effect = createOrClone(config, options, this.repo)
 
     if (effect.setup) {
@@ -23,7 +23,7 @@ EffectEngine.prototype = {
     return effect
   },
 
-  dispatch (action) {
+  dispatch(action) {
     let { command, payload, status } = action
 
     for (var i = 0, len = this.effects.length; i < len; i++) {

@@ -12,7 +12,7 @@ let uid = 0
  * @param {Function|string} command
  * @param {string} [status] Starting status
  */
-export default function Action (command, status) {
+export default function Action(command, status) {
   Emitter.call(this)
 
   this.id = uid++
@@ -39,7 +39,7 @@ inherit(Action, Emitter, {
    * @param {Function} callback
    * @param {*} [scope]
    */
-  onOpen (callback, scope) {
+  onOpen(callback, scope) {
     this._callOrSubscribeOnce('open', callback, scope)
     return this
   },
@@ -49,7 +49,7 @@ inherit(Action, Emitter, {
    * @param {Function} callback
    * @param {*} [scope]
    */
-  onUpdate (callback, scope) {
+  onUpdate(callback, scope) {
     if (callback) {
       this.on('update', callback, scope)
     }
@@ -62,7 +62,7 @@ inherit(Action, Emitter, {
    * @param {Function} callback
    * @param {*} [scope]
    */
-  onDone (callback, scope) {
+  onDone(callback, scope) {
     this._callOrSubscribeOnce('resolve', callback, scope)
     return this
   },
@@ -72,7 +72,7 @@ inherit(Action, Emitter, {
    * @param {Function} callback
    * @param {*} [scope]
    */
-  onError (callback, scope) {
+  onError(callback, scope) {
     this._callOrSubscribeOnce('reject', callback, scope)
     return this
   },
@@ -82,7 +82,7 @@ inherit(Action, Emitter, {
    * @param {Function} callback
    * @param {*} [scope]
    */
-  onCancel (callback, scope) {
+  onCancel(callback, scope) {
     this._callOrSubscribeOnce('cancel', callback, scope)
     return this
   },
@@ -91,7 +91,7 @@ inherit(Action, Emitter, {
    * @param {string} type
    * @returns {boolean}
    */
-  is (type) {
+  is(type) {
     return this.command[this.status] === this.command[type]
   },
 
@@ -99,7 +99,7 @@ inherit(Action, Emitter, {
    * @param {boolean} [silent]
    * @return {this}
    */
-  toggle (silent) {
+  toggle(silent) {
     this.disabled = !this.disabled
 
     if (!silent) {
@@ -114,7 +114,7 @@ inherit(Action, Emitter, {
    * @param {Function} [fail]
    * @returns {Promise}
    */
-  then (pass, fail) {
+  then(pass, fail) {
     return new Promise((resolve, reject) => {
       this.onDone(resolve)
       this.onError(reject)
@@ -125,14 +125,14 @@ inherit(Action, Emitter, {
    * Is this action connected?
    * @return {boolean}
    */
-  isDisconnected () {
+  isDisconnected() {
     return !this.parent
   },
 
   /**
    * Remove the grandparent of this action, cutting off history.
    */
-  prune () {
+  prune() {
     console.assert(this.parent, 'Expected action to have parent')
     this.parent.parent = null
   },
@@ -142,7 +142,7 @@ inherit(Action, Emitter, {
    * actions.
    * @param {?Action} child Action to follow this one
    */
-  lead (child) {
+  lead(child) {
     this.next = child
 
     if (child) {
@@ -154,7 +154,7 @@ inherit(Action, Emitter, {
    * Add action to the list of children
    * @param {Action} child Action to include in child list
    */
-  adopt (child) {
+  adopt(child) {
     let index = this.children.indexOf(child)
 
     if (index < 0) {
@@ -168,7 +168,7 @@ inherit(Action, Emitter, {
    * Connect the parent node to the next node. Removing this action
    * from history.
    */
-  remove () {
+  remove() {
     console.assert(!this.isDisconnected(), 'Action has already been removed.')
 
     this.parent.abandon(this)
@@ -181,7 +181,7 @@ inherit(Action, Emitter, {
    * @param {Action} child Action to remove
    * @private
    */
-  abandon (child) {
+  abandon(child) {
     let index = this.children.indexOf(child)
 
     if (index >= 0) {
@@ -204,7 +204,7 @@ inherit(Action, Emitter, {
    * @param {Function} callback
    * @param {*} scope
    */
-  _callOrSubscribeOnce (status, callback, scope) {
+  _callOrSubscribeOnce(status, callback, scope) {
     if (callback) {
       console.assert(
         isFunction(callback),
@@ -228,8 +228,8 @@ inherit(Action, Emitter, {
  * @return A function that will warn developers that they can not
  * update this action
  */
-function createCompleteWarning (action, method) {
-  return function () {
+function createCompleteWarning(action, method) {
+  return function() {
     console.warn(
       `Action "${action.command.name || action.type}" is already in ` +
         `the ${action.status} state. Calling ${method}() will not change it.`
@@ -244,8 +244,8 @@ function createCompleteWarning (action, method) {
  * @param {boolean} complete
  * @return A function that will update the provided action with a new state
  */
-function createActionUpdater (action, status, complete) {
-  return function (payload) {
+function createActionUpdater(action, status, complete) {
+  return function(payload) {
     action.status = status
     action.complete = complete
 
@@ -268,7 +268,7 @@ function createActionUpdater (action, status, complete) {
  * @param {string} status
  * @param {boolean} complete
  */
-function warnOrUpdate (action, status, complete) {
+function warnOrUpdate(action, status, complete) {
   return action.complete
     ? createCompleteWarning(action, status)
     : createActionUpdater(action, status, complete)
@@ -276,7 +276,7 @@ function warnOrUpdate (action, status, complete) {
 
 Object.defineProperties(Action.prototype, {
   type: {
-    get () {
+    get() {
       return this.command[this.status]
     }
   },
@@ -286,7 +286,7 @@ Object.defineProperties(Action.prototype, {
    * @param {*} [nextPayload]
    */
   open: {
-    get () {
+    get() {
       return warnOrUpdate(this, 'open', false)
     }
   },
@@ -296,7 +296,7 @@ Object.defineProperties(Action.prototype, {
    * @param {*} [nextPayload]
    */
   update: {
-    get () {
+    get() {
       return warnOrUpdate(this, 'update', false)
     }
   },
@@ -306,7 +306,7 @@ Object.defineProperties(Action.prototype, {
    * @param {*} [nextPayload]
    */
   resolve: {
-    get () {
+    get() {
       return warnOrUpdate(this, 'resolve', true)
     }
   },
@@ -316,7 +316,7 @@ Object.defineProperties(Action.prototype, {
    * @param {*} [nextPayload]
    */
   reject: {
-    get () {
+    get() {
       return warnOrUpdate(this, 'reject', true)
     }
   },
@@ -327,7 +327,7 @@ Object.defineProperties(Action.prototype, {
    * @param {*} [nextPayload]
    */
   cancel: {
-    get () {
+    get() {
       return warnOrUpdate(this, 'cancel', true)
     }
   }

@@ -9,7 +9,7 @@ import { isString } from './utils'
 const KEY_DELIMETER = '.'
 const PATH_DELIMETER = ','
 
-function isBlank (value) {
+function isBlank(value) {
   return value === '' || value === null || value === undefined
 }
 
@@ -18,7 +18,7 @@ function isBlank (value) {
  * @param {*} value Value to convert into a key path
  * @return {Array} List of keys, like ['users', 2]
  */
-export function castPath (value) {
+export function castPath(value) {
   if (Array.isArray(value)) {
     return value
   } else if (isBlank(value)) {
@@ -35,7 +35,7 @@ export function castPath (value) {
  * @param {String|String[]} value Comma separated string or array
  * @return {Array} List of paths, like [['users'], ['query', 'focus']]
  */
-export function getKeyPaths (value) {
+export function getKeyPaths(value) {
   let paths = value
 
   if (Array.isArray(value) === false) {
@@ -50,7 +50,7 @@ export function getKeyPaths (value) {
  * @param {String[]} value List of keys, like ['query', 'focus']
  * @return {String} Dot separated string, like 'query.focus'
  */
-export function getKeyString (value) {
+export function getKeyString(value) {
   return value.join(KEY_DELIMETER)
 }
 
@@ -59,6 +59,6 @@ export function getKeyString (value) {
  * @param {Array} array List of key paths, like [['users'], ['query', 'focus']]
  * @return {Array} Comma key paths, like 'users,query.focus'
  */
-export function getKeyStrings (array) {
+export function getKeyStrings(array) {
   return array.map(getKeyString).join(PATH_DELIMETER)
 }

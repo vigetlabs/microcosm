@@ -1,9 +1,9 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Action::teardown', function () {
-  it('does not lose an onDone subscription when it resolves', function (done) {
-    function test (action, method, payload) {
-      return function (action) {
+describe('Action::teardown', function() {
+  it('does not lose an onDone subscription when it resolves', function(done) {
+    function test(action, method, payload) {
+      return function(action) {
         Promise.resolve().then(
           () => action.resolve(true),
           () => action.reject(false)
@@ -18,8 +18,8 @@ describe('Action::teardown', function () {
     action.onDone(() => done())
   })
 
-  it('does not lose an onError subscription when it fails', function (done) {
-    function test (action, method, payload) {
+  it('does not lose an onError subscription when it fails', function(done) {
+    function test(action, method, payload) {
       return Promise.reject()
     }
 
@@ -30,9 +30,9 @@ describe('Action::teardown', function () {
     action.onError(() => done())
   })
 
-  it('does not lose an onCancel subscription when it cancels', function (done) {
-    function test (action, method, payload) {
-      return function (action) {
+  it('does not lose an onCancel subscription when it cancels', function(done) {
+    function test(action, method, payload) {
+      return function(action) {
         // intentionally blank
       }
     }

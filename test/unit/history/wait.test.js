@@ -1,16 +1,16 @@
 import History from '../../../src/history'
 
-describe('History::wait', function () {
+describe('History::wait', function() {
   const action = n => n
 
-  it('resolves when every action completes successfully', function () {
+  it('resolves when every action completes successfully', function() {
     const history = new History()
 
     let one = history.append(action)
     let two = history.append(action)
     let three = history.append(action)
 
-    setTimeout(function () {
+    setTimeout(function() {
       one.resolve()
       two.resolve()
       three.resolve()
@@ -19,14 +19,14 @@ describe('History::wait', function () {
     return history.wait()
   })
 
-  it('fails when an action rejects', async function () {
+  it('fails when an action rejects', async function() {
     const history = new History({ maxHistory: Infinity })
 
     let one = history.append(action)
     let two = history.append(action)
     let three = history.append(action)
 
-    setTimeout(function () {
+    setTimeout(function() {
       one.resolve()
       two.resolve()
       three.reject('Wut')
@@ -39,14 +39,14 @@ describe('History::wait', function () {
     }
   })
 
-  it('ignores cancelled actions', function () {
+  it('ignores cancelled actions', function() {
     const history = new History({ maxHistory: Infinity })
 
     let one = history.append(action)
     let two = history.append(action)
     let three = history.append(action)
 
-    setTimeout(function () {
+    setTimeout(function() {
       one.resolve()
       two.cancel()
       three.resolve('Wut')

@@ -1,12 +1,12 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Domain::setup', function () {
-  it('is invoked with a reference to the repo and options', function () {
+describe('Domain::setup', function() {
+  it('is invoked with a reference to the repo and options', function() {
     const repo = new Microcosm()
     const test = jest.fn()
 
     class Counter {
-      get setup () {
+      get setup() {
         return test
       }
     }

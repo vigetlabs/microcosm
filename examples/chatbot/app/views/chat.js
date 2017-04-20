@@ -3,13 +3,13 @@ import Presenter from 'microcosm/addons/presenter'
 import Messenger from './parts/messenger'
 
 export default class ChatPresenter extends Presenter {
-  getModel () {
+  getModel() {
     return {
       messages: state => state.messages
     }
   }
 
-  render () {
+  render() {
     return <Messenger messages={this.model.messages} />
   }
 }

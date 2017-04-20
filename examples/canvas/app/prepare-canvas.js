@@ -1,4 +1,4 @@
-export default function prepareCanvas (canvas) {
+export default function prepareCanvas(canvas) {
   var context = canvas.getContext('2d')
 
   // https://www.html5rocks.com/en/tutorials/canvas/hidpi/

@@ -2,8 +2,8 @@ import Action from '../../../src/action'
 
 const identity = n => n
 
-describe('Action error state', function () {
-  it('exposes a error type when rejected', function () {
+describe('Action error state', function() {
+  it('exposes a error type when rejected', function() {
     const action = new Action(identity)
 
     action.reject()
@@ -11,7 +11,7 @@ describe('Action error state', function () {
     expect(action).toHaveStatus('error')
   })
 
-  it('triggers a error event when it is rejected', function () {
+  it('triggers a error event when it is rejected', function() {
     const action = new Action(identity)
     const callback = jest.fn()
 
@@ -21,7 +21,7 @@ describe('Action error state', function () {
     expect(callback).toHaveBeenCalledWith(404)
   })
 
-  it('listens to failures', function () {
+  it('listens to failures', function() {
     const action = new Action(identity)
     const fn = jest.fn()
 
@@ -31,7 +31,7 @@ describe('Action error state', function () {
     expect(fn).toHaveBeenCalledWith(true)
   })
 
-  it('immediately invokes onError if the action already failed', function () {
+  it('immediately invokes onError if the action already failed', function() {
     const action = new Action(identity)
     const fn = jest.fn()
 
@@ -41,7 +41,7 @@ describe('Action error state', function () {
     expect(fn).toHaveBeenCalledWith(true)
   })
 
-  it('does not trigger an error event if it is complete', function () {
+  it('does not trigger an error event if it is complete', function() {
     const action = new Action(identity)
     const spy = jest.fn()
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
@@ -57,7 +57,7 @@ describe('Action error state', function () {
     expect(spy).not.toHaveBeenCalled()
   })
 
-  it('aliases the done type with reject', function () {
+  it('aliases the done type with reject', function() {
     const action = new Action(identity)
 
     action.reject()

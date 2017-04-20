@@ -9,19 +9,19 @@ import { getKeyPaths } from '../key-path'
 /**
  * Given a query (see above), return a subset of an object.
  */
-function extract (object, keyPaths, seed) {
-  return keyPaths.reduce(function (memo, keyPath) {
+function extract(object, keyPaths, seed) {
+  return keyPaths.reduce(function(memo, keyPath) {
     return set(memo, keyPath, get(object, keyPath))
   }, seed || {})
 }
 
-export default function () {
+export default function() {
   /**
    * Memoize a computation of a fragment of application state.
    * This may be referenced when computing properties or querying
    * state within Presenters.
    */
-  Microcosm.prototype.index = function (name, fragment, ...processors) {
+  Microcosm.prototype.index = function(name, fragment, ...processors) {
     let keyPaths = getKeyPaths(fragment)
 
     let state = null
@@ -53,7 +53,7 @@ export default function () {
     return query
   }
 
-  Microcosm.prototype.lookup = function (name) {
+  Microcosm.prototype.lookup = function(name) {
     let index = get(this.indexes, name)
 
     if (index == null) {
@@ -70,7 +70,7 @@ export default function () {
   /**
    * Invoke an index, optionally adding additional processing.
    */
-  Microcosm.prototype.compute = function (name, ...processors) {
+  Microcosm.prototype.compute = function(name, ...processors) {
     return this.lookup(name)(...processors)
   }
 
@@ -79,7 +79,7 @@ export default function () {
    * invocations of a computation as state changes. Useful for use inside
    * of Presenters.
    */
-  Microcosm.prototype.memo = function (name, ...processors) {
+  Microcosm.prototype.memo = function(name, ...processors) {
     let index = this.lookup(name)
 
     let last = null

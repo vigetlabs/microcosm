@@ -1,4 +1,4 @@
-export default function mockPresenter (send = jest.fn()) {
+export default function mockPresenter(send = jest.fn()) {
   send.context = { send }
 
   send.childContextTypes = {

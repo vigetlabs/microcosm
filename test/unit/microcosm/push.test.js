@@ -1,24 +1,24 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Microcosm::push', function () {
-  it('the pushed function has no scope', function (done) {
+describe('Microcosm::push', function() {
+  it('the pushed function has no scope', function(done) {
     let repo = new Microcosm()
 
-    repo.push(function () {
+    repo.push(function() {
       expect(this).toBe(null)
       done()
     })
   })
 
-  it('can push an action, resolving it into state', function () {
+  it('can push an action, resolving it into state', function() {
     let repo = new Microcosm()
     let step = n => n
 
     repo.addDomain('count', {
-      getInitialState () {
+      getInitialState() {
         return 0
       },
-      register () {
+      register() {
         return {
           [step]: (count, n) => count + n
         }
@@ -43,8 +43,8 @@ describe('Microcosm::push', function () {
     expect(spy).toHaveBeenCalledTimes(0)
   })
 
-  describe('forks', function () {
-    it('pushing actions on the child float up to the parent', function () {
+  describe('forks', function() {
+    it('pushing actions on the child float up to the parent', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -52,19 +52,19 @@ describe('Microcosm::push', function () {
       const setShape = n => n
 
       parent.addDomain('color', {
-        getInitialState () {
+        getInitialState() {
           return 'red'
         },
-        register () {
+        register() {
           return { [setColor]: (a, b) => b }
         }
       })
 
       child.addDomain('shape', {
-        getInitialState () {
+        getInitialState() {
           return 'triangle'
         },
-        register () {
+        register() {
           return { [setShape]: (a, b) => b }
         }
       })
@@ -84,7 +84,7 @@ describe('Microcosm::push', function () {
       expect(child.state.shape).toEqual('square')
     })
 
-    it('pushing actions on the parent sink down to children', function () {
+    it('pushing actions on the parent sink down to children', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -92,19 +92,19 @@ describe('Microcosm::push', function () {
       const setShape = n => n
 
       parent.addDomain('color', {
-        getInitialState () {
+        getInitialState() {
           return 'red'
         },
-        register () {
+        register() {
           return { [setColor]: (a, b) => b }
         }
       })
 
       child.addDomain('shape', {
-        getInitialState () {
+        getInitialState() {
           return 'triangle'
         },
-        register () {
+        register() {
           return { [setShape]: (a, b) => b }
         }
       })
@@ -123,7 +123,7 @@ describe('Microcosm::push', function () {
       expect(child.state.shape).toEqual('square')
     })
 
-    it('forks from the same parent propagate', function () {
+    it('forks from the same parent propagate', function() {
       const parent = new Microcosm()
       const left = parent.fork()
       const right = parent.fork()
@@ -131,10 +131,10 @@ describe('Microcosm::push', function () {
       const setColor = n => n
 
       parent.addDomain('color', {
-        getInitialState () {
+        getInitialState() {
           return 'red'
         },
-        register () {
+        register() {
           return { [setColor]: (a, b) => b }
         }
       })

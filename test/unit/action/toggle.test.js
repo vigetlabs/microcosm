@@ -1,14 +1,14 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Action::toggle', function () {
-  it('it will not dispatch an action disabled at the head', function () {
+describe('Action::toggle', function() {
+  it('it will not dispatch an action disabled at the head', function() {
     const repo = new Microcosm({ maxHistory: Infinity })
 
     repo.addDomain('count', {
-      getInitialState () {
+      getInitialState() {
         return 0
       },
-      register () {
+      register() {
         return {
           action: (a, b) => a + b
         }
@@ -21,14 +21,14 @@ describe('Action::toggle', function () {
     expect(repo).toHaveState('count', 2)
   })
 
-  it('it will not dispatch an action disabled in the middle', function () {
+  it('it will not dispatch an action disabled in the middle', function() {
     const repo = new Microcosm({ maxHistory: Infinity })
 
     repo.addDomain('count', {
-      getInitialState () {
+      getInitialState() {
         return 0
       },
-      register () {
+      register() {
         return {
           action: (a, b) => a + b
         }

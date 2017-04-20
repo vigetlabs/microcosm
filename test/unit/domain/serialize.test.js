@@ -1,14 +1,14 @@
 import Microcosm from '../../../src/microcosm'
 
-describe('Domain::serialize', function () {
-  it('runs through serialize methods on domains', function () {
+describe('Domain::serialize', function() {
+  it('runs through serialize methods on domains', function() {
     const repo = new Microcosm()
 
     repo.addDomain('serialize-test', {
-      getInitialState () {
+      getInitialState() {
         return 'this will not display'
       },
-      serialize () {
+      serialize() {
         return 'this is a test'
       }
     })
@@ -16,20 +16,20 @@ describe('Domain::serialize', function () {
     expect(repo.toJSON()['serialize-test']).toBe('this is a test')
   })
 
-  it('only includes keys that impliment serialize', function () {
+  it('only includes keys that impliment serialize', function() {
     const repo = new Microcosm()
 
     repo.addDomain('missing', {
-      getInitialState () {
+      getInitialState() {
         return true
       }
     })
 
     repo.addDomain('included', {
-      getInitialState () {
+      getInitialState() {
         return 'howdy'
       },
-      serialize (state) {
+      serialize(state) {
         return state.toUpperCase()
       }
     })
@@ -40,8 +40,8 @@ describe('Domain::serialize', function () {
     expect(json.missing).not.toBeDefined()
   })
 
-  describe('forks', function () {
-    it('serialize works from parents to children', function () {
+  describe('forks', function() {
+    it('serialize works from parents to children', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -58,7 +58,7 @@ describe('Domain::serialize', function () {
       expect(child.serialize()).toEqual({ fiz: 'FIZ', buzz: 'BUZZ' })
     })
 
-    it('serializing a child with the same key works from that state', function () {
+    it('serializing a child with the same key works from that state', function() {
       const parent = new Microcosm()
       const child = parent.fork()
 

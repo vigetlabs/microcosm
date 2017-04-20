@@ -2,7 +2,7 @@ import { createElement, PureComponent } from 'react'
 import { Action, merge, inherit } from '../microcosm'
 import serialize from 'form-serialize'
 
-function ActionForm () {
+function ActionForm() {
   PureComponent.apply(this, arguments)
 
   this.send = this.props.send || this.context.send
@@ -21,7 +21,7 @@ ActionForm.defaultProps = {
 }
 
 inherit(ActionForm, PureComponent, {
-  render () {
+  render() {
     let props = merge({}, this.props, { ref: 'form', onSubmit: this.onSubmit })
 
     // Remove invalid props to prevent React warnings
@@ -38,12 +38,12 @@ inherit(ActionForm, PureComponent, {
     return createElement('form', props)
   },
 
-  onSubmit (event) {
+  onSubmit(event) {
     event.preventDefault()
     this.submit(event)
   },
 
-  submit (event) {
+  submit(event) {
     let form = this.refs.form
     let params = this.props.prepare(this.props.serializer(form))
     let action = this.send(this.props.action, params)

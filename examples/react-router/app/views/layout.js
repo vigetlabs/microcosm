@@ -7,7 +7,7 @@ import ListShow from './lists/show'
 import NotFound from './errors/notfound'
 
 class Application extends Presenter {
-  render () {
+  render() {
     return (
       <Switch>
         <Route path="/" exact component={ListIndex} />

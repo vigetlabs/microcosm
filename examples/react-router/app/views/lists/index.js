@@ -5,21 +5,21 @@ import ListForm from './parts/list-form'
 import ListList from './parts/list-list'
 
 class ListIndex extends Presenter {
-  getModel () {
+  getModel() {
     return {
       lists: this.getListsWithCounts
     }
   }
 
-  getListsWithCounts ({ lists, items }) {
-    return lists.map(function (list) {
+  getListsWithCounts({ lists, items }) {
+    return lists.map(function(list) {
       let count = items.filter(i => i.list === list.id).length
 
       return set(list, 'count', count)
     })
   }
 
-  render () {
+  render() {
     const { lists } = this.model
 
     return (

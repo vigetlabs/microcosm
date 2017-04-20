@@ -18,7 +18,7 @@ const DEFAULTS = {
  * changes over time.
  * @constructor
  */
-export default function History (config) {
+export default function History(config) {
   Emitter.call(this)
 
   let options = merge(DEFAULTS, config)
@@ -43,7 +43,7 @@ inherit(History, Emitter, {
    * of controlling time in a Microcosm's history.
    * @param {Action} action The new head of the tree
    */
-  checkout (action) {
+  checkout(action) {
     this.head = action || this.head
 
     this.setActiveBranch()
@@ -58,7 +58,7 @@ inherit(History, Emitter, {
    * @param {Action[]} - A list of actions to toggle
    * @public
    */
-  toggle (actions) {
+  toggle(actions) {
     let list = [].concat(actions)
 
     list.forEach(action => action.toggle('silently'))
@@ -69,14 +69,14 @@ inherit(History, Emitter, {
   /**
    * Convert the active branch of history into an array.
    */
-  toArray () {
+  toArray() {
     return this.map(n => n)
   },
 
   /**
    * Map over the active branch.
    */
-  map (fn, scope) {
+  map(fn, scope) {
     let size = this.size
     let items = Array(size)
     let action = this.head
@@ -94,7 +94,7 @@ inherit(History, Emitter, {
    * the current branch.
    * @returns {Promise}
    */
-  wait () {
+  wait() {
     let actions = this.toArray()
 
     return new Promise((resolve, reject) => {
@@ -125,7 +125,7 @@ inherit(History, Emitter, {
    * Chain off of wait(). Provides a promise interface
    * @returns {Promise}
    */
-  then (pass, fail) {
+  then(pass, fail) {
     return this.wait().then(pass, fail)
   },
 
@@ -133,12 +133,12 @@ inherit(History, Emitter, {
    * Setup the head and root action for a history. This effectively
    * starts or restarts history.
    */
-  begin () {
+  begin() {
     this.head = this.root = null
     this.append(START, 'resolve')
   },
 
-  append (command, status) {
+  append(command, status) {
     let action = new Action(command, status)
 
     if (this.size > 0) {
@@ -166,7 +166,7 @@ inherit(History, Emitter, {
    * together to bridge the gap.
    * @param {Action} action - Action to remove from history
    */
-  remove (action) {
+  remove(action) {
     if (action.isDisconnected()) {
       return
     }
@@ -195,7 +195,7 @@ inherit(History, Emitter, {
    * history, and removes all snapshots within tracking repos.
    * @param {Action} action - Action to clean up
    */
-  clean (action) {
+  clean(action) {
     this.size -= 1
 
     this._emit('remove', action)
@@ -203,7 +203,7 @@ inherit(History, Emitter, {
     action.remove()
   },
 
-  reconcile (action) {
+  reconcile(action) {
     console.assert(this.head, 'History should always have a head node')
     console.assert(action, 'History should never reconcile ' + action)
 
@@ -226,19 +226,19 @@ inherit(History, Emitter, {
     this.queueRelease()
   },
 
-  queueRelease () {
+  queueRelease() {
     if (this.releasing === false) {
       this.releasing = true
       this.updater(this.release)
     }
   },
 
-  closeRelease () {
+  closeRelease() {
     this.releasing = false
     this._emit('release')
   },
 
-  archive () {
+  archive() {
     let size = this.size
     let root = this.root
 
@@ -254,7 +254,7 @@ inherit(History, Emitter, {
     this.size = size
   },
 
-  setActiveBranch () {
+  setActiveBranch() {
     let action = this.head
     let size = 1
 

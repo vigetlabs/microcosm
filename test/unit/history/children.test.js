@@ -1,9 +1,9 @@
 import History from '../../../src/history'
 
-describe('History node children', function () {
+describe('History node children', function() {
   const action = n => n
 
-  it('can determine children', function () {
+  it('can determine children', function() {
     const history = new History()
     const a = history.append(action)
     const b = history.append(action)
@@ -15,7 +15,7 @@ describe('History node children', function () {
     expect(a.children.map(n => n.id)).toEqual([b.id, c.id])
   })
 
-  it('does not lose children when checking out nodes on the left', function () {
+  it('does not lose children when checking out nodes on the left', function() {
     const history = new History()
 
     history.append(action)
@@ -30,7 +30,7 @@ describe('History node children', function () {
     expect(b.children).toEqual([c, d])
   })
 
-  it('does not lose children when checking out nodes on the right', function () {
+  it('does not lose children when checking out nodes on the right', function() {
     const history = new History()
 
     history.append(action)

@@ -11,7 +11,7 @@ const repo = new Repo({ maxHistory: Infinity })
 
 Debugger(repo)
 
-function render () {
+function render() {
   DOM.render(
     <Router>
       <AppContainer>

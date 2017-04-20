@@ -1,7 +1,7 @@
 import Microcosm, { Action, tag, get, getRegistration } from '../microcosm'
 
 expect.extend({
-  toRegister (entity, command, status = 'done') {
+  toRegister(entity, command, status = 'done') {
     let tagged = tag(command)
     let name = command.name || tagged.toString()
 
@@ -22,7 +22,7 @@ expect.extend({
     }
   },
 
-  toHaveStatus (action, status) {
+  toHaveStatus(action, status) {
     if (action instanceof Action === false) {
       throw new TypeError(
         'toHaveStatus expects an Action. Received ' +
@@ -42,7 +42,7 @@ expect.extend({
     }
   },
 
-  toHaveState (repo, key, value) {
+  toHaveState(repo, key, value) {
     if (repo instanceof Microcosm === false) {
       throw new TypeError(
         'toHaveState expects a Microcosm. Received ' +

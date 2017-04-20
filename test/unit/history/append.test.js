@@ -1,9 +1,9 @@
 import History from '../../../src/history'
 
-describe('History::append', function () {
+describe('History::append', function() {
   const action = n => n
 
-  it('adjusts the focal point when adding a node', function () {
+  it('adjusts the focal point when adding a node', function() {
     const history = new History()
 
     history.append(action)
@@ -12,7 +12,7 @@ describe('History::append', function () {
     expect(history.head.command).toEqual(action)
   })
 
-  it('can get the previous node in the chain', function () {
+  it('can get the previous node in the chain', function() {
     const history = new History()
 
     const one = history.append(action)
@@ -23,13 +23,13 @@ describe('History::append', function () {
     expect(three.parent).toEqual(two)
   })
 
-  it('emits an append event with the latest action', function () {
+  it('emits an append event with the latest action', function() {
     expect.assertions(1)
 
     const history = new History()
     const type = n => n
 
-    history.on('append', function (action) {
+    history.on('append', function(action) {
       expect(action.command).toBe(type)
     })
 
