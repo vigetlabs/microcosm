@@ -1,5 +1,4 @@
 import Action from '../../../src/action'
-import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
@@ -52,7 +51,7 @@ describe('Action error state', function () {
     action.reject()
 
     expect(warn).toHaveBeenCalledWith(
-      'Action "identity" is already in the resolve state. Calling reject() will not change it.',
+      'Action "identity" is already in the resolve state. Calling reject() will not change it.'
     )
 
     expect(spy).not.toHaveBeenCalled()

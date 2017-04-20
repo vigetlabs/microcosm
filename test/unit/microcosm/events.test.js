@@ -9,7 +9,7 @@ describe('Microcosm events', function () {
       repo.addDomain('styles', {
         getInitialState () {
           return { text: { color: 'blue' } }
-        },
+        }
       })
 
       repo.on('change:styles.text.color', handler)
@@ -41,7 +41,7 @@ describe('Microcosm events', function () {
       repo.addDomain('styles', {
         getInitialState () {
           return { text: { color: 'blue' } }
-        },
+        }
       })
 
       repo.on('change:styles.text.color', handler)

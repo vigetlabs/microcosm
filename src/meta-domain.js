@@ -25,9 +25,9 @@ MetaDomain.prototype = {
 
   register () {
     return {
-      [RESET]:      this.reset,
-      [PATCH]:      this.patch,
-      [ADD_DOMAIN]: this.addDomain,
+      [RESET]: this.reset,
+      [PATCH]: this.patch,
+      [ADD_DOMAIN]: this.addDomain
     }
-  },
+  }
 }

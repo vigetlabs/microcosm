@@ -6,7 +6,7 @@ function Message ({
   user,
   error = false,
   pending = false,
-  time = new Date(),
+  time = new Date()
 }) {
   return { id, message, user, error, pending, time }
 }

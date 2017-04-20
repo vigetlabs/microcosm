@@ -9,18 +9,18 @@ var COMMANDS = {
   reply (bot, message) {
     return [
       { id: uid(), user: 'You', message: message },
-      { id: uid(), user: 'Eliza', message: bot.transform(message) },
+      { id: uid(), user: 'Eliza', message: bot.transform(message) }
     ]
   },
 
   unknown (bot, message) {
     return {
-      id:      uid(),
-      user:    'System',
+      id: uid(),
+      user: 'System',
       message: `Unknown command “${message}”`,
-      error:   true,
+      error: true
     }
-  },
+  }
 }
 
 exports.start = function () {

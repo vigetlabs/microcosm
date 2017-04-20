@@ -1,5 +1,4 @@
 import History from '../../../src/history'
-import Microcosm from '../../../src/microcosm'
 
 describe('History::remove', function () {
   it('resets when there are no actions left', function () {
@@ -65,8 +64,8 @@ describe('History::remove', function () {
     it('removes the node from the active branch', function () {
       let history = new History({ maxHistory: Infinity })
 
-      let one = history.append(function one () {}, 'resolve')
-      let two = history.append(function two () {}, 'resolve')
+      history.append(function one () {}, 'resolve')
+      history.append(function two () {}, 'resolve')
       let three = history.append(function three () {}, 'resolve')
 
       history.archive()
@@ -79,8 +78,8 @@ describe('History::remove', function () {
     it('removing the head node eliminates the reference to "next"', function () {
       let history = new History({ maxHistory: Infinity })
 
-      let one = history.append(function one () {}, 'resolve')
-      let two = history.append(function two () {}, 'resolve')
+      history.append(function one () {}, 'resolve')
+      history.append(function two () {}, 'resolve')
       let three = history.append(function three () {}, 'resolve')
 
       history.archive()
@@ -110,9 +109,9 @@ describe('History::remove', function () {
     it('updates the active branch', function () {
       let history = new History({ maxHistory: Infinity })
 
-      let one = history.append(function one () {}, 'resolve')
-      let two = history.append(function two () {}, 'resolve')
-      let three = history.append(function three () {}, 'resolve')
+      history.append(function one () {}, 'resolve')
+      history.append(function two () {}, 'resolve')
+      history.append(function three () {}, 'resolve')
 
       history.archive()
 
@@ -126,9 +125,9 @@ describe('History::remove', function () {
     it('joins the parent and child', function () {
       let history = new History({ maxHistory: Infinity })
 
-      let one = history.append(function one () {}, 'resolve')
+      history.append(function one () {}, 'resolve')
       let two = history.append(function two () {}, 'resolve')
-      let three = history.append(function three () {}, 'resolve')
+      history.append(function three () {}, 'resolve')
 
       history.archive()
 
@@ -137,7 +136,7 @@ describe('History::remove', function () {
       expect(history.map(a => a.command.name)).toEqual([
         '$start',
         'one',
-        'three',
+        'three'
       ])
     })
   })
@@ -151,7 +150,7 @@ describe('History::remove', function () {
 
       history.checkout(one)
 
-      let three = history.append(function three () {}, 'resolve')
+      history.append(function three () {}, 'resolve')
 
       history.remove(two)
 
@@ -162,7 +161,7 @@ describe('History::remove', function () {
       let history = new History({ maxHistory: Infinity })
 
       let one = history.append(function one () {}, 'resolve')
-      let two = history.append(function two () {}, 'resolve')
+      history.append(function two () {}, 'resolve')
 
       history.checkout(one)
 

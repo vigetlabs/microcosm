@@ -3,7 +3,7 @@ import History from '../../../src/history'
 describe('History updater', function () {
   it('provides a default batching method', function (done) {
     const history = new History({
-      batch: true,
+      batch: true
     })
 
     let spy = jest.fn()
@@ -24,7 +24,7 @@ describe('History updater', function () {
     const history = new History({
       updater: function () {
         return update => setTimeout(update, 10)
-      },
+      }
     })
 
     history.on('release', () => done())
@@ -36,7 +36,7 @@ describe('History updater', function () {
     const history = new History({
       updater: function () {
         return update => {}
-      },
+      }
     })
 
     const spy = jest.spyOn(history, 'release')
@@ -52,7 +52,7 @@ describe('History updater', function () {
     const history = new History({
       updater: function () {
         return update => setTimeout(update, 10)
-      },
+      }
     })
 
     let handler = jest.fn()
@@ -70,7 +70,7 @@ describe('History updater', function () {
     const history = new History({
       updater: function () {
         return update => setTimeout(update, 10)
-      },
+      }
     })
 
     await history.wait()
@@ -80,7 +80,7 @@ describe('History updater', function () {
     const history = new History({
       updater: function () {
         return update => setTimeout(update, 10)
-      },
+      }
     })
 
     let action = history.append('action')

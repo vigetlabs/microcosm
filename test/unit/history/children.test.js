@@ -1,5 +1,4 @@
 import History from '../../../src/history'
-import Microcosm from '../../../src/microcosm'
 
 describe('History node children', function () {
   const action = n => n

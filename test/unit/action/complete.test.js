@@ -1,5 +1,4 @@
 import Action from '../../../src/action'
-import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
@@ -36,7 +35,7 @@ describe('Action complete state', function () {
     action.resolve()
 
     expect(spy).toHaveBeenCalledWith(
-      'Action "identity" is already in the cancel state. Calling resolve() will not change it.',
+      'Action "identity" is already in the cancel state. Calling resolve() will not change it.'
     )
 
     expect(action.is('cancelled')).toBe(true)

@@ -11,7 +11,7 @@ describe('callbacks', function () {
 
     const form = mount(
       <ActionForm action="test" onDone={n => onDone(n)} />,
-      context,
+      context
     )
 
     form.simulate('submit')
@@ -25,7 +25,7 @@ describe('callbacks', function () {
 
     const form = mount(
       <ActionForm action="test" onError={n => onError(n)} />,
-      context,
+      context
     )
 
     form.simulate('submit')
@@ -40,7 +40,7 @@ describe('callbacks', function () {
 
     const form = mount(
       <ActionForm action="test" onOpen={n => onOpen(n)} />,
-      context,
+      context
     )
 
     form.simulate('submit')
@@ -57,7 +57,7 @@ describe('callbacks', function () {
 
     const form = mount(
       <ActionForm action="test" onUpdate={n => onUpdate(n)} />,
-      context,
+      context
     )
 
     form.simulate('submit')
@@ -73,7 +73,7 @@ describe('callbacks', function () {
 
     const form = mount(
       <ActionForm action="test" onDone={n => onDone(n)} />,
-      context,
+      context
     )
 
     form.simulate('submit')
@@ -87,7 +87,7 @@ describe('callbacks', function () {
 
     const form = mount(
       <ActionForm action="test" onError={n => onError(n)} />,
-      context,
+      context
     )
 
     form.simulate('submit')
@@ -101,7 +101,7 @@ describe('callbacks', function () {
 
     const form = mount(
       <ActionForm action="test" onUpdate={n => onUpdate(n)} />,
-      context,
+      context
     )
 
     form.simulate('submit')
@@ -117,7 +117,7 @@ describe('manual operation', function () {
 
     const form = mount(
       <ActionForm action="test" onDone={n => onDone(n)} />,
-      context,
+      context
     )
 
     form.instance().submit()
@@ -148,7 +148,7 @@ describe('prepare', function () {
       <ActionForm action="test" prepare={prepare}>
         <input name="name" defaultValue="Billy" />
       </ActionForm>,
-      send,
+      send
     )
 
     form.simulate('submit')

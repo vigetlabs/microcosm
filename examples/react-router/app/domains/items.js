@@ -20,11 +20,11 @@ const Items = {
 
   register () {
     return {
-      [addItem]:    Items.add,
+      [addItem]: Items.add,
       [removeItem]: Items.remove,
-      [removeList]: Items.removeByList,
+      [removeList]: Items.removeByList
     }
-  },
+  }
 }
 
 export default Items

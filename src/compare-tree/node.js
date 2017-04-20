@@ -62,5 +62,5 @@ Node.prototype = {
     if (this.parent) {
       this.parent.disconnect(this)
     }
-  },
+  }
 }

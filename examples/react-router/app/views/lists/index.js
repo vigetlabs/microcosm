@@ -7,7 +7,7 @@ import ListList from './parts/list-list'
 class ListIndex extends Presenter {
   getModel () {
     return {
-      lists: this.getListsWithCounts,
+      lists: this.getListsWithCounts
     }
   }
 

@@ -5,7 +5,7 @@ import Canvas from './canvas'
 class Workspace extends Presenter {
   getModel () {
     return {
-      pixels: state => state.pixels,
+      pixels: state => state.pixels
     }
   }
 

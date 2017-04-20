@@ -20,9 +20,9 @@ describe('Microcosm::push', function () {
       },
       register () {
         return {
-          [step]: (count, n) => count + n,
+          [step]: (count, n) => count + n
         }
-      },
+      }
     })
 
     repo.push(step, 1)
@@ -57,7 +57,7 @@ describe('Microcosm::push', function () {
         },
         register () {
           return { [setColor]: (a, b) => b }
-        },
+        }
       })
 
       child.addDomain('shape', {
@@ -66,7 +66,7 @@ describe('Microcosm::push', function () {
         },
         register () {
           return { [setShape]: (a, b) => b }
-        },
+        }
       })
 
       expect(parent.state.color).toEqual('red')
@@ -97,7 +97,7 @@ describe('Microcosm::push', function () {
         },
         register () {
           return { [setColor]: (a, b) => b }
-        },
+        }
       })
 
       child.addDomain('shape', {
@@ -106,7 +106,7 @@ describe('Microcosm::push', function () {
         },
         register () {
           return { [setShape]: (a, b) => b }
-        },
+        }
       })
 
       expect(parent.state.color).toEqual('red')
@@ -136,7 +136,7 @@ describe('Microcosm::push', function () {
         },
         register () {
           return { [setColor]: (a, b) => b }
-        },
+        }
       })
 
       parent.push(setColor, 'blue')

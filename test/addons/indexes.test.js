@@ -8,7 +8,7 @@ class Repo extends Microcosm {
     this.addDomain('styles', {
       getInitialState () {
         return { color: 'red' }
-      },
+      }
     })
   }
 }
@@ -42,7 +42,7 @@ describe('indexing', function () {
     repo.addDomain('another', {
       getInitialState () {
         return true
-      },
+      }
     })
 
     repo.index('color', 'styles.color')
@@ -160,7 +160,7 @@ describe('memo', function () {
     let query = repo.memo(
       'color',
       color => color.toUpperCase(),
-      color => color + ' - it',
+      color => color + ' - it'
     )
 
     expect(query()).toEqual('RED - it')

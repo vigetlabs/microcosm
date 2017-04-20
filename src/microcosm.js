@@ -64,8 +64,8 @@ function Microcosm (preOptions, state, deserialize) {
  */
 Microcosm.defaults = {
   maxHistory: 0,
-  parent:     null,
-  batch:      false,
+  parent: null,
+  batch: false
 }
 
 inherit(Microcosm, Emitter, {
@@ -236,7 +236,7 @@ inherit(Microcosm, Emitter, {
 
   fork () {
     return new Microcosm({
-      parent: this,
+      parent: this
     })
   },
 
@@ -261,7 +261,7 @@ inherit(Microcosm, Emitter, {
 
     // Remove all listeners
     this.removeAllListeners()
-  },
+  }
 })
 
 export default Microcosm
@@ -276,5 +276,5 @@ export {
   update,
   merge,
   inherit,
-  getRegistration,
+  getRegistration
 }

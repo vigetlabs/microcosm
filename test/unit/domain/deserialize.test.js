@@ -7,7 +7,7 @@ describe('Domain::deserialize', function () {
     repo.addDomain('fiz', {
       getInitialState () {
         return true
-      },
+      }
     })
 
     return repo.patch({}, true).onDone(function () {
@@ -21,7 +21,7 @@ describe('Domain::deserialize', function () {
     repo.addDomain('fiz', {
       deserialize (state) {
         return state.toUpperCase()
-      },
+      }
     })
 
     let answer = repo.deserialize('{ "fiz": "buzz"}')
@@ -35,11 +35,11 @@ describe('Domain::deserialize', function () {
       const child = parent.fork()
 
       parent.addDomain('fiz', {
-        deserialize: word => word.toLowerCase(),
+        deserialize: word => word.toLowerCase()
       })
 
       child.addDomain('buzz', {
-        deserialize: word => word.toLowerCase(),
+        deserialize: word => word.toLowerCase()
       })
 
       const data = child.deserialize({ fiz: 'FIZ', buzz: 'BUZZ' })
@@ -52,11 +52,11 @@ describe('Domain::deserialize', function () {
       const child = parent.fork()
 
       parent.addDomain('fiz', {
-        deserialize: word => word + '-first',
+        deserialize: word => word + '-first'
       })
 
       child.addDomain('fiz', {
-        deserialize: word => word + '-second',
+        deserialize: word => word + '-second'
       })
 
       const data = child.deserialize({ fiz: 'fiz' })

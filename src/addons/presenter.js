@@ -3,7 +3,7 @@ import Microcosm, {
   merge,
   tag,
   inherit,
-  getRegistration,
+  getRegistration
 } from '../microcosm'
 import { Children, PureComponent, createElement } from 'react'
 
@@ -93,11 +93,11 @@ inherit(Presenter, PureComponent, {
 
   render () {
     return createElement(PresenterMediator, {
-      presenter:   this,
+      presenter: this,
       parentState: this.state,
-      parentProps: this.props,
+      parentProps: this.props
     })
-  },
+  }
 })
 
 function PresenterMediator (props, context) {
@@ -114,7 +114,7 @@ inherit(PresenterMediator, PureComponent, {
   getChildContext () {
     return {
       repo: this.repo,
-      send: this.send,
+      send: this.send
     }
   },
 
@@ -225,19 +225,19 @@ inherit(PresenterMediator, PureComponent, {
 
     // If we hit the top, push the intent into the Microcosm instance
     return this.repo.push.apply(this.repo, arguments)
-  },
+  }
 })
 
 const identity = () => {}
 
 PresenterMediator.contextTypes = {
   repo: identity,
-  send: identity,
+  send: identity
 }
 
 PresenterMediator.childContextTypes = {
   repo: identity,
-  send: identity,
+  send: identity
 }
 
 export default Presenter

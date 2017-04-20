@@ -1,5 +1,4 @@
 import History from '../../../src/history'
-import Microcosm from '../../../src/microcosm'
 
 describe('History::archive', function () {
   const action = n => n
@@ -14,7 +13,7 @@ describe('History::archive', function () {
     const two = history.append('second')
 
     // Three
-    const three = history.append('third')
+    history.append('third')
 
     history.checkout(two)
 
@@ -69,7 +68,7 @@ describe('History::archive', function () {
   it('archived nodes have no relations', function () {
     const history = new History()
 
-    const one = history.append(action).resolve()
+    history.append(action).resolve()
 
     history.append(action)
 

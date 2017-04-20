@@ -5,7 +5,7 @@ import Messenger from './parts/messenger'
 export default class ChatPresenter extends Presenter {
   getModel () {
     return {
-      messages: state => state.messages,
+      messages: state => state.messages
     }
   }
 

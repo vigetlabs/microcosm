@@ -35,5 +35,5 @@ inherit(Query, Emitter, {
 
   isAlone () {
     return this._events.length <= 0
-  },
+  }
 })

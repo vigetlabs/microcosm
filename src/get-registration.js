@@ -1,16 +1,16 @@
 import { isObject } from './utils'
 
 export const ALIASES = {
-  inactive:  'inactive',
-  open:      'open',
-  update:    'loading',
-  loading:   'update',
-  done:      'resolve',
-  resolve:   'done',
-  reject:    'error',
-  error:     'reject',
-  cancel:    'cancelled',
-  cancelled: 'cancel',
+  inactive: 'inactive',
+  open: 'open',
+  update: 'loading',
+  loading: 'update',
+  done: 'resolve',
+  resolve: 'done',
+  reject: 'error',
+  error: 'reject',
+  cancel: 'cancelled',
+  cancelled: 'cancel'
 }
 
 /**
@@ -28,7 +28,7 @@ export default function getRegistration (pool, command, status) {
   console.assert(alias, 'Invalid action status ' + status)
   console.assert(
     command.__tagged,
-    `Unable to register ${command.name || 'action'}(). It has not been tagged.`,
+    `Unable to register ${command.name || 'action'}(). It has not been tagged.`
   )
 
   let nest = pool[command]
@@ -45,11 +45,11 @@ export default function getRegistration (pool, command, status) {
      */
     console.assert(
       !(alias in nest) || answer !== undefined,
-      `The "${alias}" key within a nested registration for ${command.name || 'an action'} is ${answer}. Is it being referenced correctly?`,
+      `The "${alias}" key within a nested registration for ${command.name || 'an action'} is ${answer}. Is it being referenced correctly?`
     )
     console.assert(
       !(status in nest) || answer !== undefined,
-      `The "${status}" key within a nested registration for ${command.name || 'an action'} is ${answer}. Is it being referenced correctly?`,
+      `The "${status}" key within a nested registration for ${command.name || 'an action'} is ${answer}. Is it being referenced correctly?`
     )
   } else {
     answer = pool[type]
@@ -59,7 +59,7 @@ export default function getRegistration (pool, command, status) {
      */
     console.assert(
       !(type in pool) || answer !== undefined,
-      `${command.name || 'action'} key within a registration is ${answer}. Is it being referenced correctly?`,
+      `${command.name || 'action'} key within a registration is ${answer}. Is it being referenced correctly?`
     )
   }
 

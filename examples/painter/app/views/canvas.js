@@ -23,5 +23,5 @@ export default function Canvas ({ pixels, height, width, send }) {
 Canvas.defaultProps = {
   pixels: [],
   height: 400,
-  width:  400,
+  width: 400
 }

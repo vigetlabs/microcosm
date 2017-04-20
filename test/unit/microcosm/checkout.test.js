@@ -8,9 +8,9 @@ describe('Microcosm::checkout', function () {
     repo.addDomain('number', {
       register () {
         return {
-          [action]: (a, b) => b,
+          [action]: (a, b) => b
         }
-      },
+      }
     })
 
     let start = repo.push(action, 1)

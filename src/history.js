@@ -8,8 +8,8 @@ import { BIRTH, START } from './lifecycle'
 
 const DEFAULTS = {
   maxHistory: 1,
-  batch:      false,
-  updater:    defaultUpdateStrategy,
+  batch: false,
+  updater: defaultUpdateStrategy
 }
 
 /**
@@ -269,5 +269,5 @@ inherit(History, Emitter, {
     }
 
     this.size = size
-  },
+  }
 })

@@ -10,7 +10,7 @@ import { isFunction } from './utils'
 function Listener (event, fn, scope, once) {
   console.assert(
     isFunction(fn),
-    `Expected ${event} listener to be function, instead got ${fn}`,
+    `Expected ${event} listener to be function, instead got ${fn}`
   )
 
   this.event = event
@@ -133,5 +133,5 @@ Emitter.prototype = {
 
       i += 1
     }
-  },
+  }
 }

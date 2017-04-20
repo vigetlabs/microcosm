@@ -5,7 +5,7 @@ describe('Microcosm::reset', function () {
     const repo = new Microcosm()
 
     repo.addDomain('test', {
-      getInitialState: () => false,
+      getInitialState: () => false
     })
 
     repo.patch({ test: true })
@@ -40,7 +40,7 @@ describe('Microcosm::reset', function () {
     const repo = new Microcosm()
 
     repo.addDomain('test', {
-      getInitialState: () => true,
+      getInitialState: () => true
     })
 
     expect(repo).toHaveState('test', true)
@@ -78,9 +78,9 @@ describe('Microcosm::reset', function () {
       child.addDomain('count', {
         register () {
           return {
-            add: (a, b) => a + b,
+            add: (a, b) => a + b
           }
-        },
+        }
       })
 
       child.reset({ count: 2 })

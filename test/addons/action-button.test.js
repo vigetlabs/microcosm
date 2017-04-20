@@ -21,8 +21,8 @@ describe('callbacks', function () {
 
     let button = mount(<ActionButton action="test" onOpen={n => onOpen(n)} />, {
       context: {
-        send: () => new Action(n => n).open(true),
-      },
+        send: () => new Action(n => n).open(true)
+      }
     })
 
     button.simulate('click')
@@ -35,8 +35,8 @@ describe('callbacks', function () {
 
     let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
-        send: () => new Action(n => n).resolve(true),
-      },
+        send: () => new Action(n => n).resolve(true)
+      }
     })
 
     button.simulate('click')
@@ -51,9 +51,9 @@ describe('callbacks', function () {
       <ActionButton action="test" onError={n => onError(n)} />,
       {
         context: {
-          send: () => new Action(n => n).reject('bad'),
-        },
-      },
+          send: () => new Action(n => n).reject('bad')
+        }
+      }
     )
 
     button.simulate('click')
@@ -69,9 +69,9 @@ describe('callbacks', function () {
       <ActionButton action="test" onUpdate={n => onUpdate(n)} />,
       {
         context: {
-          send: () => action,
-        },
-      },
+          send: () => action
+        }
+      }
     )
 
     button.simulate('click')
@@ -86,8 +86,8 @@ describe('callbacks', function () {
 
     mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
-        send: () => true,
-      },
+        send: () => true
+      }
     }).simulate('click')
 
     expect(onDone).not.toHaveBeenCalled()
@@ -98,8 +98,8 @@ describe('callbacks', function () {
 
     mount(<ActionButton action="test" onError={n => onError(n)} />, {
       context: {
-        send: () => true,
-      },
+        send: () => true
+      }
     }).simulate('click')
 
     expect(onError).not.toHaveBeenCalled()
@@ -110,8 +110,8 @@ describe('callbacks', function () {
 
     mount(<ActionButton action="test" onUpdate={n => onUpdate(n)} />, {
       context: {
-        send: () => true,
-      },
+        send: () => true
+      }
     }).simulate('click')
 
     expect(onUpdate).not.toHaveBeenCalled()
@@ -122,8 +122,8 @@ describe('callbacks', function () {
 
     let wrapper = mount(<ActionButton onClick={handler} />, {
       context: {
-        send: () => {},
-      },
+        send: () => {}
+      }
     })
 
     wrapper.simulate('click')
@@ -138,8 +138,8 @@ describe('manual operation', function () {
 
     let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
-        send: () => new Action(n => n).resolve(true),
-      },
+        send: () => new Action(n => n).resolve(true)
+      }
     })
 
     button.instance().click()

@@ -22,11 +22,11 @@ const Messages = {
 
   register () {
     return {
-      [send.open]:  Messages.addLoading,
-      [send.done]:  Messages.add,
-      [send.error]: Messages.addError,
+      [send.open]: Messages.addLoading,
+      [send.done]: Messages.add,
+      [send.error]: Messages.addError
     }
-  },
+  }
 }
 
 export default Messages

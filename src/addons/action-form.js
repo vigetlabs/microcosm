@@ -10,14 +10,14 @@ function ActionForm () {
 }
 
 ActionForm.contextTypes = {
-  send: () => {},
+  send: () => {}
 }
 
 ActionForm.defaultProps = {
-  action:     null,
+  action: null,
   serializer: form => serialize(form, { hash: true, empty: true }),
-  prepare:    n => n,
-  onSubmit:   n => n,
+  prepare: n => n,
+  onSubmit: n => n
 }
 
 inherit(ActionForm, PureComponent, {
@@ -58,7 +58,7 @@ inherit(ActionForm, PureComponent, {
     }
 
     this.props.onSubmit(event, action)
-  },
+  }
 })
 
 export default ActionForm

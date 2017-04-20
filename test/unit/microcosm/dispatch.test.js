@@ -8,7 +8,7 @@ describe('Microcosm::dispatch', function () {
     repo.addDomain(null, {
       getInitialState () {
         return {
-          toggled: false,
+          toggled: false
         }
       },
 
@@ -17,9 +17,9 @@ describe('Microcosm::dispatch', function () {
           [mutation] (state) {
             state.toggled = !state.toggled
             return state
-          },
+          }
         }
-      },
+      }
     })
 
     repo.push(mutation)

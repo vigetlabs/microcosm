@@ -13,17 +13,17 @@ describe('Microcosm::fork', function () {
       },
       register () {
         return {
-          [add]: (a, b) => a + b,
+          [add]: (a, b) => a + b
         }
-      },
+      }
     })
 
     child.addDomain('counter', {
       register () {
         return {
-          [add]: (a, b) => a * 2,
+          [add]: (a, b) => a * 2
         }
-      },
+      }
     })
 
     parent.push(add, 2)
@@ -44,9 +44,9 @@ describe('Microcosm::fork', function () {
       },
       register () {
         return {
-          [add]: (a, b) => a + b,
+          [add]: (a, b) => a + b
         }
-      },
+      }
     })
 
     child.addDomain('counter', {
@@ -54,9 +54,9 @@ describe('Microcosm::fork', function () {
         return {
           [add] (a) {
             return a * 2
-          },
+          }
         }
-      },
+      }
     })
 
     child.push(add, 2)
@@ -81,9 +81,9 @@ describe('Microcosm::fork', function () {
       },
       register () {
         return {
-          [add]: (a, b) => a + b,
+          [add]: (a, b) => a + b
         }
-      },
+      }
     })
 
     child.addDomain('counter', {
@@ -91,9 +91,9 @@ describe('Microcosm::fork', function () {
         return {
           [add] (a) {
             return a * 2
-          },
+          }
         }
-      },
+      }
     })
 
     child.push(add, 2)

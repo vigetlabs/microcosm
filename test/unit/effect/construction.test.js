@@ -11,7 +11,7 @@ describe('Effect construction', function () {
 
       register () {
         return {
-          [test]: this.handler,
+          [test]: this.handler
         }
       }
     }

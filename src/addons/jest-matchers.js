@@ -15,10 +15,10 @@ expect.extend({
     }
 
     return {
-      pass:    pass,
+      pass: pass,
       message: () => {
         return `Expected entity ${operator} register to the '${status}' state of ${name}.`
-      },
+      }
     }
   },
 
@@ -27,7 +27,7 @@ expect.extend({
       throw new TypeError(
         'toHaveStatus expects an Action. Received ' +
           (action != null ? 'a ' + action.constructor.name : action) +
-          '.',
+          '.'
       )
     }
 
@@ -35,10 +35,10 @@ expect.extend({
     let pass = action.is(status)
 
     return {
-      pass:    pass,
+      pass: pass,
       message: () => {
         return `Expected action ${operator} to be'${status}'.`
-      },
+      }
     }
   },
 
@@ -47,7 +47,7 @@ expect.extend({
       throw new TypeError(
         'toHaveState expects a Microcosm. Received ' +
           (repo != null ? 'a ' + repo.constructor.name : repo) +
-          '.',
+          '.'
       )
     }
 
@@ -65,13 +65,13 @@ expect.extend({
     let path = [].concat(key).join('.')
 
     return {
-      pass:    pass,
+      pass: pass,
       message: () => {
         return (
           `Expected '${path}' in repo.state ${operator} be ${this.utils.printExpected(value)} ` +
           `but it is ${this.utils.printReceived(actual)}.`
         )
-      },
+      }
     }
-  },
+  }
 })
