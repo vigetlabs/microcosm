@@ -24,8 +24,6 @@
   "plugins": [ "import", "react" ],
   "rules": {
     "semi": [2, "never"],
-    "quotes": [2, "single"],
-    "space-before-function-paren": [2, "always"],
     "sort-vars": 2,
     "comma-dangle": [2, "never"],
     "no-console": 0,
