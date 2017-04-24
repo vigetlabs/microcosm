@@ -1,38 +1,83 @@
+/**
+ * @fileoverview Actions encapsulate the process of resolving an
+ * action creator. Create an action using `Microcosm::push`:
+ */
+
 import Emitter from './emitter'
 import tag from './tag'
-
-import { inherit, isFunction } from './utils'
+import { isFunction } from './utils'
 
 let uid = 0
 
-/**
- * Actions encapsulate the process of resolving an action creator. Create an
- * action using `Microcosm::push`:
- * @constructor
- * @param {Function|string} command
- * @param {string} [status] Starting status
- */
-export default function Action(command, status) {
-  Emitter.call(this)
+class Action extends Emitter {
+  /**
+   * @param {Function|string} command
+   * @param {string} [status] Starting status
+   */
+  constructor(command, status) {
+    super()
 
-  this.id = uid++
-  this.command = tag(command)
-  this.timestamp = Date.now()
-  this.children = []
+    this.id = uid++
+    this.command = tag(command)
+    this.status = 'inactive'
+    this.payload = undefined
+    this.disabled = false
+    this.complete = false
+    this.parent = null
+    this.next = null
+    this.timestamp = Date.now()
+    this.children = []
 
-  if (status) {
-    console.assert(this[status], 'Unexpected task status ' + status)
-    this[status]()
+    if (status) {
+      console.assert(this[status], 'Unexpected task status ' + status)
+      this[status]()
+    }
   }
-}
 
-inherit(Action, Emitter, {
-  status: 'inactive',
-  payload: undefined,
-  disabled: false,
-  complete: false,
-  parent: null,
-  next: null,
+  get type() {
+    return this.command[this.status]
+  }
+
+  /**
+   * Open state. The action has started, but has received no response.
+   * @param {*} [nextPayload]
+   */
+  get open() {
+    return warnOrUpdate(this, 'open', false)
+  }
+
+  /**
+   * Update state. The action has received an update, such as loading progress.
+   * @param {*} [nextPayload]
+   */
+  get update() {
+    return warnOrUpdate(this, 'update', false)
+  }
+
+  /**
+   * Resolved state. The action has completed successfully.
+   * @param {*} [nextPayload]
+   */
+  get resolve() {
+    return warnOrUpdate(this, 'resolve', true)
+  }
+
+  /**
+   * Failure state. The action did not complete successfully.
+   * @param {*} [nextPayload]
+   */
+  get reject() {
+    return warnOrUpdate(this, 'reject', true)
+  }
+
+  /**
+   * Cancelled state. The action was halted, like aborting an HTTP
+   * request.
+   * @param {*} [nextPayload]
+   */
+  get cancel() {
+    return warnOrUpdate(this, 'cancel', true)
+  }
 
   /**
    * Subscribe to when an action opens.
@@ -42,7 +87,7 @@ inherit(Action, Emitter, {
   onOpen(callback, scope) {
     this._callOrSubscribeOnce('open', callback, scope)
     return this
-  },
+  }
 
   /**
    * Subscribe to when a action updates
@@ -55,7 +100,7 @@ inherit(Action, Emitter, {
     }
 
     return this
-  },
+  }
 
   /**
    * Subscribe to when a action resolves
@@ -65,7 +110,7 @@ inherit(Action, Emitter, {
   onDone(callback, scope) {
     this._callOrSubscribeOnce('resolve', callback, scope)
     return this
-  },
+  }
 
   /**
    * Subscribe to when a action rejects
@@ -75,7 +120,7 @@ inherit(Action, Emitter, {
   onError(callback, scope) {
     this._callOrSubscribeOnce('reject', callback, scope)
     return this
-  },
+  }
 
   /**
    * Subscribe to when a action is cancelled
@@ -85,7 +130,7 @@ inherit(Action, Emitter, {
   onCancel(callback, scope) {
     this._callOrSubscribeOnce('cancel', callback, scope)
     return this
-  },
+  }
 
   /**
    * @param {string} type
@@ -93,7 +138,7 @@ inherit(Action, Emitter, {
    */
   is(type) {
     return this.command[this.status] === this.command[type]
-  },
+  }
 
   /**
    * @param {boolean} [silent]
@@ -107,7 +152,7 @@ inherit(Action, Emitter, {
     }
 
     return this
-  },
+  }
 
   /**
    * @param {?Function} pass
@@ -119,7 +164,7 @@ inherit(Action, Emitter, {
       this.onDone(resolve)
       this.onError(reject)
     }).then(pass, fail)
-  },
+  }
 
   /**
    * Is this action connected?
@@ -127,7 +172,7 @@ inherit(Action, Emitter, {
    */
   isDisconnected() {
     return !this.parent
-  },
+  }
 
   /**
    * Remove the grandparent of this action, cutting off history.
@@ -135,7 +180,7 @@ inherit(Action, Emitter, {
   prune() {
     console.assert(this.parent, 'Expected action to have parent')
     this.parent.parent = null
-  },
+  }
 
   /**
    * Set the next action after this one in the historical tree of
@@ -148,7 +193,7 @@ inherit(Action, Emitter, {
     if (child) {
       this.adopt(child)
     }
-  },
+  }
 
   /**
    * Add action to the list of children
@@ -162,7 +207,7 @@ inherit(Action, Emitter, {
     }
 
     child.parent = this
-  },
+  }
 
   /**
    * Connect the parent node to the next node. Removing this action
@@ -174,7 +219,7 @@ inherit(Action, Emitter, {
     this.parent.abandon(this)
 
     this.removeAllListeners()
-  },
+  }
 
   /**
    * Remove a child action
@@ -194,7 +239,7 @@ inherit(Action, Emitter, {
     if (this.next === child) {
       this.lead(child.next)
     }
-  },
+  }
 
   /**
    * If an action is already a given status, invoke the
@@ -219,7 +264,7 @@ inherit(Action, Emitter, {
       }
     }
   }
-})
+}
 
 /**
  * Complete actions can never change. This is a courtesy warning
@@ -274,61 +319,4 @@ function warnOrUpdate(action, status, complete) {
     : createActionUpdater(action, status, complete)
 }
 
-Object.defineProperties(Action.prototype, {
-  type: {
-    get() {
-      return this.command[this.status]
-    }
-  },
-
-  /**
-   * Open state. The action has started, but has received no response.
-   * @param {*} [nextPayload]
-   */
-  open: {
-    get() {
-      return warnOrUpdate(this, 'open', false)
-    }
-  },
-
-  /**
-   * Update state. The action has received an update, such as loading progress.
-   * @param {*} [nextPayload]
-   */
-  update: {
-    get() {
-      return warnOrUpdate(this, 'update', false)
-    }
-  },
-
-  /**
-   * Resolved state. The action has completed successfully.
-   * @param {*} [nextPayload]
-   */
-  resolve: {
-    get() {
-      return warnOrUpdate(this, 'resolve', true)
-    }
-  },
-
-  /**
-   * Failure state. The action did not complete successfully.
-   * @param {*} [nextPayload]
-   */
-  reject: {
-    get() {
-      return warnOrUpdate(this, 'reject', true)
-    }
-  },
-
-  /**
-   * Cancelled state. The action was halted, like aborting an HTTP
-   * request.
-   * @param {*} [nextPayload]
-   */
-  cancel: {
-    get() {
-      return warnOrUpdate(this, 'cancel', true)
-    }
-  }
-})
+export default Action
