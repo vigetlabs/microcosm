@@ -8,82 +8,84 @@ import CompareTree from './compare-tree'
 import coroutine from './coroutine'
 import getRegistration from './get-registration'
 import tag from './tag'
-
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
-
 import { merge, inherit, get, set, update, isString } from './utils'
 
-function Microcosm(preOptions, state, deserialize) {
-  Emitter.call(this)
-
-  let options = merge(Microcosm.defaults, this.constructor.defaults, preOptions)
-
-  this.parent = options.parent
-
-  this.initial = this.parent ? this.parent.initial : {}
-  this.state = this.parent ? this.parent.state : this.initial
-
-  this.history = this.parent ? this.parent.history : new History(options)
-
-  this.archive = new Archive()
-  this.domains = new DomainEngine(this)
-  this.effects = new EffectEngine(this)
-  this.changes = new CompareTree(this.state)
-
-  // History moves through a set lifecycle. As that lifecycle occurs,
-  // save snapshots of new state:
-
-  // When an action is first created
-  this.history.on('append', this.createSnapshot, this)
-
-  // When an action snapshot needs updating
-  this.history.on('update', this.updateSnapshot, this)
-
-  // When an action snapshot should be removed
-  this.history.on('remove', this.removeSnapshot, this)
-
-  // When an action changes, it causes a reconcilation
-  this.history.on('reconcile', this.dispatchEffect, this)
-
-  // A history is done reconciling and is ready for a release
-  this.history.on('release', this.release, this)
-
-  // Microcosm is now ready. Call the setup lifecycle method
-  this.setup(options)
-
-  // If given state, reset to that snapshot
-  if (state) {
-    this.reset(state, deserialize)
-  }
-}
-
 /**
- * Options passed into Microcosm always extend from this static
- * property. You can override this value to provide additional
- * defaults for your extension of Microcosm.
+ * Options passed into Microcosm always extend from this object. You
+ * can override this value to provide additional defaults for your
+ * extension of Microcosm.
  */
-Microcosm.defaults = {
+const DEFAULTS = {
   maxHistory: 0,
   parent: null,
   batch: false
 }
 
-inherit(Microcosm, Emitter, {
+/**
+ * @fileoverview The Microcosm class provides a centralized place to
+ * store application state, dispatch actions, and track changes.
+ */
+class Microcosm extends Emitter {
+  constructor(preOptions, state, deserialize) {
+    super()
+
+    let options = merge(DEFAULTS, this.constructor.defaults, preOptions)
+
+    this.parent = options.parent
+
+    this.initial = this.parent ? this.parent.initial : {}
+    this.state = this.parent ? this.parent.state : this.initial
+
+    this.history = this.parent ? this.parent.history : new History(options)
+
+    this.archive = new Archive()
+    this.domains = new DomainEngine(this)
+    this.effects = new EffectEngine(this)
+    this.changes = new CompareTree(this.state)
+
+    // History moves through a set lifecycle. As that lifecycle occurs,
+    // save snapshots of new state:
+
+    // When an action is first created
+    this.history.on('append', this.createSnapshot, this)
+
+    // When an action snapshot needs updating
+    this.history.on('update', this.updateSnapshot, this)
+
+    // When an action snapshot should be removed
+    this.history.on('remove', this.removeSnapshot, this)
+
+    // When an action changes, it causes a reconcilation
+    this.history.on('reconcile', this.dispatchEffect, this)
+
+    // A history is done reconciling and is ready for a release
+    this.history.on('release', this.release, this)
+
+    // Microcosm is now ready. Call the setup lifecycle method
+    this.setup(options)
+
+    // If given state, reset to that snapshot
+    if (state) {
+      this.reset(state, deserialize)
+    }
+  }
+
   setup() {
     // NOOP
-  },
+  }
 
   teardown() {
     // NOOP
-  },
+  }
 
   getInitialState() {
     return this.initial
-  },
+  }
 
   recall(action, fallback) {
     return this.archive.get(action, fallback)
-  },
+  }
 
   /**
    * Create the initial state snapshot for an action. This is important so
@@ -92,7 +94,7 @@ inherit(Microcosm, Emitter, {
    */
   createSnapshot(action) {
     this.archive.create(action)
-  },
+  }
 
   /**
    * Update the state snapshot for a given action
@@ -112,7 +114,7 @@ inherit(Microcosm, Emitter, {
     this.archive.set(action, next)
 
     this.state = next
-  },
+  }
 
   /**
    * Remove the snapshot for a given action
@@ -120,15 +122,15 @@ inherit(Microcosm, Emitter, {
    */
   removeSnapshot(action) {
     this.archive.remove(action)
-  },
+  }
 
   dispatchEffect(action) {
     this.effects.dispatch(action)
-  },
+  }
 
   release() {
     this.changes.update(this.state)
-  },
+  }
 
   on(type, callback, scope) {
     let [event, meta] = type.split(':', 2)
@@ -142,7 +144,7 @@ inherit(Microcosm, Emitter, {
     }
 
     return this
-  },
+  }
 
   off(type, callback, scope) {
     let [event, meta] = type.split(':', 2)
@@ -156,7 +158,7 @@ inherit(Microcosm, Emitter, {
     }
 
     return this
-  },
+  }
 
   /**
    * Append an action to history and return it. This is used by push,
@@ -164,7 +166,7 @@ inherit(Microcosm, Emitter, {
    */
   append(command, status) {
     return this.history.append(command, status)
-  },
+  }
 
   /**
    * Push an action into Microcosm. This will trigger the lifecycle for updating
@@ -176,11 +178,11 @@ inherit(Microcosm, Emitter, {
     coroutine(action, action.command, params, this)
 
     return action
-  },
+  }
 
   prepare(...params) {
     return (...extra) => this.push(...params, ...extra)
-  },
+  }
 
   addDomain(key, config, options) {
     let domain = this.domains.add(key, config, options)
@@ -192,19 +194,19 @@ inherit(Microcosm, Emitter, {
     this.push(ADD_DOMAIN, domain)
 
     return domain
-  },
+  }
 
   addEffect(config, options) {
     return this.effects.add(config, options)
-  },
+  }
 
   reset(data, deserialize) {
     return this.push(RESET, data, deserialize)
-  },
+  }
 
   patch(data, deserialize) {
     return this.push(PATCH, data, deserialize)
-  },
+  }
 
   deserialize(payload) {
     let base = payload
@@ -216,44 +218,40 @@ inherit(Microcosm, Emitter, {
     }
 
     return this.domains.deserialize(base)
-  },
+  }
 
   serialize() {
     let base = this.parent ? this.parent.serialize() : {}
 
     return this.domains.serialize(this.state, base)
-  },
+  }
 
   toJSON() {
     return this.serialize()
-  },
+  }
 
   checkout(action) {
     this.history.checkout(action)
 
     return this
-  },
+  }
 
   fork() {
     return new Microcosm({
       parent: this
     })
-  },
+  }
 
   /**
-   * Close out a Microcosm:
-   *
-   * 1. Call teardown on the microcosm, domains and effects
-   * 2. Trigger a teardown event
-   * 3. Remove the microcosm from its associated history
-   * 4. Clean up all listeners
-   *
+   * Close out a Microcosm
    * @private
    */
   shutdown() {
+    // Call teardown on the Microcosm
     this.teardown()
 
-    // Trigger a teardown event before completely shutting down
+    // Trigger a teardown event before completely shutting
+    // down. Signalling teardown on domains and effects
     this._emit('teardown', this)
 
     // Stop tracking history
@@ -262,7 +260,7 @@ inherit(Microcosm, Emitter, {
     // Remove all listeners
     this.removeAllListeners()
   }
-})
+}
 
 export default Microcosm
 
