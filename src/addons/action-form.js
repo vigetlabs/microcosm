@@ -1,26 +1,26 @@
-import { createElement, PureComponent } from 'react'
-import { Action, merge, inherit } from '../microcosm'
+import React from 'react'
+import { Action, merge } from '../microcosm'
 import serialize from 'form-serialize'
 
-function ActionForm() {
-  PureComponent.apply(this, arguments)
+class ActionForm extends React.PureComponent {
+  constructor(props, context) {
+    super(props, context)
 
-  this.send = this.props.send || this.context.send
-  this.onSubmit = this.onSubmit.bind(this)
-}
+    this.send = this.props.send || this.context.send
+    this.onSubmit = this.onSubmit.bind(this)
+  }
 
-ActionForm.contextTypes = {
-  send: () => {}
-}
+  static contextTypes = {
+    send: () => {}
+  }
 
-ActionForm.defaultProps = {
-  action: null,
-  serializer: form => serialize(form, { hash: true, empty: true }),
-  prepare: n => n,
-  onSubmit: n => n
-}
+  static defaultProps = {
+    action: null,
+    serializer: form => serialize(form, { hash: true, empty: true }),
+    prepare: n => n,
+    onSubmit: n => n
+  }
 
-inherit(ActionForm, PureComponent, {
   render() {
     let props = merge({}, this.props, { ref: 'form', onSubmit: this.onSubmit })
 
@@ -35,13 +35,13 @@ inherit(ActionForm, PureComponent, {
     delete props.onError
     delete props.send
 
-    return createElement('form', props)
-  },
+    return React.createElement('form', props)
+  }
 
   onSubmit(event) {
     event.preventDefault()
     this.submit(event)
-  },
+  }
 
   submit(event) {
     let form = this.refs.form
@@ -59,6 +59,6 @@ inherit(ActionForm, PureComponent, {
 
     this.props.onSubmit(event, action)
   }
-})
+}
 
 export default ActionForm

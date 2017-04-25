@@ -1,22 +1,22 @@
-import { Action, merge, inherit } from '../microcosm'
-import { createElement, PureComponent } from 'react'
+import React from 'react'
+import { Action, merge } from '../microcosm'
 
-export default function ActionButton(props, context) {
-  PureComponent.apply(this, arguments)
+class ActionButton extends React.PureComponent {
+  constructor(props, context) {
+    super(props, context)
 
-  this.send = this.props.send || this.context.send
-  this.click = this.click.bind(this)
-}
+    this.send = this.props.send || this.context.send
+    this.click = this.click.bind(this)
+  }
 
-ActionButton.contextTypes = {
-  send: () => {}
-}
+  static contextTypes = {
+    send: () => {}
+  }
 
-ActionButton.defaultProps = {
-  tag: 'button'
-}
+  static defaultProps = {
+    tag: 'button'
+  }
 
-inherit(ActionButton, PureComponent, {
   click(event) {
     let action = this.send(this.props.action, this.props.value)
 
@@ -34,7 +34,7 @@ inherit(ActionButton, PureComponent, {
     }
 
     return action
-  },
+  }
 
   render() {
     const props = merge({}, this.props, { onClick: this.click })
@@ -53,6 +53,8 @@ inherit(ActionButton, PureComponent, {
       props.type = 'button'
     }
 
-    return createElement(this.props.tag, props)
+    return React.createElement(this.props.tag, props)
   }
-})
+}
+
+export default ActionButton

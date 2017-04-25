@@ -1,27 +1,26 @@
 /**
- * A node in a CompareTree represents a single key with a JavaScript
- * object.
- * @constructor
- * @param {String} id Identifier for the node.
- * @param {String} key String name of the key this node represents
+ * @fileoverview A node in a CompareTree represents a single key with
+ * a JavaScript object.
  */
-export default function Node(id, key, parent) {
-  this.id = id
-  this.key = key
-  this.edges = []
-
-  if (parent) {
-    this.parent = parent
-    parent.connect(this)
+class Node {
+  static getId(key, parent) {
+    return parent && parent.id ? parent.id + '.' + key : key
   }
-}
 
-Node.getId = function(key, parent) {
-  return parent && parent.id ? parent.id + '.' + key : key
-}
+  /**
+   * @param {String} id Identifier for the node.
+   * @param {String} key String name of the key this node represents
+   */
+  constructor(id, key, parent) {
+    this.id = id
+    this.key = key
+    this.edges = []
+    this.parent = parent || null
 
-Node.prototype = {
-  parent: null,
+    if (parent) {
+      parent.connect(this)
+    }
+  }
 
   /**
    * Connect another node to this instance by adding it to
@@ -33,7 +32,7 @@ Node.prototype = {
     if (node !== this && this.edges.indexOf(node) < 0) {
       this.edges.push(node)
     }
-  },
+  }
 
   /**
    * Remove a node this instances list of edges.
@@ -46,14 +45,14 @@ Node.prototype = {
     if (~index) {
       this.edges.splice(index, 1)
     }
-  },
+  }
 
   /**
    * Does a node have any edges?
    */
   isAlone() {
     return this.edges.length <= 0
-  },
+  }
 
   /**
    * Disconnect from a parent
@@ -64,3 +63,5 @@ Node.prototype = {
     }
   }
 }
+
+export default Node

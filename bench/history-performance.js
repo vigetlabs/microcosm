@@ -43,9 +43,9 @@ const results = SIZES.map(function (SIZE) {
    * the current branch.
    */
   var now = process.hrtime()
-  history.setActiveBranch()
+  history.setSize()
   var end = process.hrtime(now)[1]
-  stats.setActiveBranch = (end / 1000000)
+  stats.setSize = (end / 1000000)
 
   var memoryUsage = process.memoryUsage().heapUsed - memoryBefore
 
@@ -71,7 +71,7 @@ const results = SIZES.map(function (SIZE) {
   return {
     'Nodes': SIZE.toLocaleString(),
     '::append()': stats.build.toFixed(2) + 'ms',
-    '::setActiveBranch()': stats.setActiveBranch.toFixed(2) + 'ms',
+    '::setSize()': stats.setSize.toFixed(2) + 'ms',
     '::rollforward()': stats.rollforward.toFixed(2) + 'ms',
     'Total Memory': (memoryUsage / 1000000).toFixed(2) + 'mbs',
     'Memory Growth': stats.memory.toFixed(2) + 'mbs (' + growth.toFixed(2) + '%)'

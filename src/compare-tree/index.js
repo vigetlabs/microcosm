@@ -1,18 +1,20 @@
 import Node from './node'
 import Query from './query'
-
 import { getKeyPaths, getKeyString } from '../key-path'
 
 // The root key is an empty string. This can be a little
 // counter-intuitive, so we keep track of them as a named constant.
 const ROOT_PATH = ''
 
-export default function CompareTree(initial) {
-  this.snapshot = initial
-  this.nodes = {}
-}
+class CompareTree {
+  /**
+   * @param {*} initial Starting state
+   */
+  constructor(initial) {
+    this.snapshot = initial
+    this.nodes = {}
+  }
 
-CompareTree.prototype = {
   /**
    * Create a subscription to a particular set of key paths.
    * @public
@@ -33,7 +35,7 @@ CompareTree.prototype = {
     query.on('change', callback, scope)
 
     return query
-  },
+  }
 
   /**
    * Remove a subscription created by .on()
@@ -54,7 +56,7 @@ CompareTree.prototype = {
         this.prune(query)
       }
     }
-  },
+  }
 
   /**
    * Compare a new snapshot to the last snapshot, triggering event
@@ -75,7 +77,7 @@ CompareTree.prototype = {
         queries[i].trigger(snapshot)
       }
     }
-  },
+  }
 
   /**
    * Add a node to the tree if it has not otherwise been added.
@@ -92,7 +94,7 @@ CompareTree.prototype = {
     }
 
     return this.nodes[id]
-  },
+  }
 
   /**
    * Add a query to the tree if it has not otherwise been
@@ -108,7 +110,7 @@ CompareTree.prototype = {
     }
 
     return this.nodes[id]
-  },
+  }
 
   /**
    * Remove a node from this tree.
@@ -117,7 +119,7 @@ CompareTree.prototype = {
    */
   remove(node) {
     delete this.nodes[node.id]
-  },
+  }
 
   /**
    * Remove a query, then traverse that queries key paths to remove
@@ -146,7 +148,7 @@ CompareTree.prototype = {
     }
 
     this.remove(query)
-  },
+  }
 
   /**
    * Build up a branch of nodes given a path of keys, appending a query
@@ -163,7 +165,7 @@ CompareTree.prototype = {
     }
 
     last.connect(query)
-  },
+  }
 
   /**
    * Traverse the tree of subscriptions, triggering queries along the way
@@ -193,3 +195,5 @@ CompareTree.prototype = {
     return queries
   }
 }
+
+export default CompareTree

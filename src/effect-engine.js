@@ -1,12 +1,15 @@
 import getRegistration from './get-registration'
 import { createOrClone } from './utils'
 
-export default function EffectEngine(repo) {
-  this.repo = repo
-  this.effects = []
-}
+class EffectEngine {
+  /**
+   * @param {Microcosm} repo
+   */
+  constructor(repo) {
+    this.repo = repo
+    this.effects = []
+  }
 
-EffectEngine.prototype = {
   add(config, options) {
     let effect = createOrClone(config, options, this.repo)
 
@@ -21,7 +24,7 @@ EffectEngine.prototype = {
     this.effects.push(effect)
 
     return effect
-  },
+  }
 
   dispatch(action) {
     let { command, payload, status } = action
@@ -39,3 +42,5 @@ EffectEngine.prototype = {
     }
   }
 }
+
+export default EffectEngine

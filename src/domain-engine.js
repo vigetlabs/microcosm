@@ -1,20 +1,21 @@
 import MetaDomain from './meta-domain'
 import getRegistration from './get-registration'
-
 import { get, set, createOrClone } from './utils'
-
 import { castPath } from './key-path'
 
-export default function DomainEngine(repo) {
-  this.repo = repo
-  this.domains = []
-  this.registry = {}
+class DomainEngine {
+  /**
+   * @param {Microcosm} repo
+   */
+  constructor(repo) {
+    this.repo = repo
+    this.domains = []
+    this.registry = {}
 
-  // All realms contain a meta domain for basic Microcosm operations
-  this.add([], MetaDomain)
-}
+    // All realms contain a meta domain for basic Microcosm operations
+    this.add([], MetaDomain)
+  }
 
-DomainEngine.prototype = {
   getHandlers({ command, status }) {
     let handlers = []
 
@@ -31,7 +32,7 @@ DomainEngine.prototype = {
     }
 
     return handlers
-  },
+  }
 
   register(action) {
     let type = action.type
@@ -41,7 +42,7 @@ DomainEngine.prototype = {
     }
 
     return this.registry[type]
-  },
+  }
 
   add(key, config, options) {
     let domain = createOrClone(config, options, this.repo)
@@ -60,7 +61,7 @@ DomainEngine.prototype = {
     }
 
     return domain
-  },
+  }
 
   reduce(fn, state, scope) {
     let next = state
@@ -73,7 +74,7 @@ DomainEngine.prototype = {
     }
 
     return next
-  },
+  }
 
   sanitize(data) {
     let next = {}
@@ -87,7 +88,7 @@ DomainEngine.prototype = {
     }
 
     return next
-  },
+  }
 
   dispatch(state, action) {
     let handlers = this.register(action)
@@ -102,7 +103,7 @@ DomainEngine.prototype = {
     }
 
     return state
-  },
+  }
 
   deserialize(payload) {
     return this.reduce(function(memo, key, domain) {
@@ -112,7 +113,7 @@ DomainEngine.prototype = {
 
       return memo
     }, payload)
-  },
+  }
 
   serialize(state, payload) {
     return this.reduce(function(memo, key, domain) {
@@ -124,3 +125,5 @@ DomainEngine.prototype = {
     }, payload)
   }
 }
+
+export default DomainEngine

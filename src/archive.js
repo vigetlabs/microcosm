@@ -1,13 +1,16 @@
 /**
- * Keep track of prior action states according to an action's id
- * @constructor
- * @property {Object} pool An object mapping of action ids to snapshots
+ * @fileoverview Keeps track of prior action states according to an
+ * action's id
  */
-export default function Archive() {
-  this.pool = {}
-}
 
-Archive.prototype = {
+class Archive {
+  /**
+   * @property {Object} pool An object mapping of action ids to snapshots
+   */
+  constructor() {
+    this.pool = {}
+  }
+
   /**
    * Create an initial snapshot for an action by setting it to that of its
    * parent.
@@ -15,7 +18,7 @@ Archive.prototype = {
    */
   create(action) {
     this.set(action, this.get(action.parent))
-  },
+  }
 
   /**
    * Access a prior snapshot for a given action
@@ -27,7 +30,7 @@ Archive.prototype = {
     let value = this.pool[action.id]
 
     return value === undefined ? fallback : value
-  },
+  }
 
   /**
    * Assign a new snapshot for an action
@@ -36,7 +39,7 @@ Archive.prototype = {
    */
   set(action, snapshot) {
     this.pool[action.id] = snapshot
-  },
+  }
 
   /**
    * Remove a snapshot for an action.
@@ -48,3 +51,5 @@ Archive.prototype = {
     delete this.pool[action.id]
   }
 }
+
+export default Archive
