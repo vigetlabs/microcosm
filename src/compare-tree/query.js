@@ -1,21 +1,23 @@
 import Emitter from '../emitter'
-
-import { get, inherit } from '../utils'
-
+import { get } from '../utils'
 import { getKeyPaths, getKeyStrings } from '../key-path'
 
-export default function Query(id, keys) {
-  Emitter.call(this)
+/**
+ * @fileoverview Leaf nodes of the comparison tree are queries. A
+ * grouping of data subscriptions.
+ */
+class Query extends Emitter {
+  static getId(keyPaths) {
+    return 'query:' + getKeyStrings(getKeyPaths(keyPaths))
+  }
 
-  this.id = id
-  this.keyPaths = getKeyPaths(keys)
-}
+  constructor(id, keys) {
+    super()
 
-Query.getId = function(keyPaths) {
-  return 'query:' + getKeyStrings(getKeyPaths(keyPaths))
-}
+    this.id = id
+    this.keyPaths = getKeyPaths(keys)
+  }
 
-inherit(Query, Emitter, {
   extract(state) {
     let length = this.keyPaths.length
     let values = Array(length)
@@ -25,15 +27,17 @@ inherit(Query, Emitter, {
     }
 
     return values
-  },
+  }
 
   trigger(state) {
     let values = this.extract(state)
 
     this._emit('change', ...values)
-  },
+  }
 
   isAlone() {
     return this._events.length <= 0
   }
-})
+}
+
+export default Query
