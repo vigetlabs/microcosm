@@ -1,35 +1,40 @@
+/**
+ * @fileoverview Emitter is an abstract class used by a few other
+ * classes to communicate via events
+ */
+
 import { isFunction } from './utils'
 
-/**
- * @constructor
- * @param {string} event Type of event
- * @param {Function} fn Event callback
- * @param {*} scope Scope of callback
- * @param {boolean} once Only run the event callback once
- */
-function Listener(event, fn, scope, once) {
-  console.assert(
-    isFunction(fn),
-    `Expected ${event} listener to be function, instead got ${fn}`
-  )
+class Listener {
+  /**
+   * @param {string} event Type of event
+   * @param {Function} fn Event callback
+   * @param {*} scope Scope of callback
+   * @param {boolean} once Only run the event callback once
+   */
+  constructor(event, fn, scope, once) {
+    console.assert(
+      isFunction(fn),
+      `Expected ${event} listener to be function, instead got ${fn}`
+    )
 
-  this.event = event
-  this.fn = fn
-  this.scope = scope
-  this.once = once
+    this.event = event
+    this.fn = fn
+    this.scope = scope
+    this.once = once
+  }
 }
 
 /**
  * An abstract event emitter class. Several modules extend from this class
  * to utilize events.
- * @constructor
  * @property {Array.<Listener>} _events A pool of event listeners
  */
-export default function Emitter() {
-  this._events = []
-}
+class Emitter {
+  constructor() {
+    this._events = []
+  }
 
-Emitter.prototype = {
   /**
    * Add an event listener.
    * @param {string} event Type of event
@@ -42,7 +47,7 @@ Emitter.prototype = {
     this._events.push(listener)
 
     return this
-  },
+  }
 
   /**
    * Adds an `event` listener that will be invoked a single time then
@@ -57,7 +62,7 @@ Emitter.prototype = {
     this._events.push(listener)
 
     return this
-  },
+  }
 
   /**
    * Unsubscribe a callback. If no event is provided, removes all callbacks. If
@@ -84,14 +89,14 @@ Emitter.prototype = {
     }
 
     return this
-  },
+  }
 
   /**
    * Purge all event listeners
    */
   removeAllListeners() {
     this._events.length = 0
-  },
+  }
 
   /**
    * Emit `event` with the given args.
@@ -116,7 +121,7 @@ Emitter.prototype = {
     }
 
     return this
-  },
+  }
 
   /**
    * Remove all events for a given scope
@@ -135,3 +140,5 @@ Emitter.prototype = {
     }
   }
 }
+
+export default Emitter
