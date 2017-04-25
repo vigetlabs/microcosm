@@ -1,9 +1,7 @@
 import Action from './action'
 import Emitter from './emitter'
 import defaultUpdateStrategy from './default-update-strategy'
-
-import { inherit, merge } from './utils'
-
+import { merge } from './utils'
 import { BIRTH, START } from './lifecycle'
 
 const DEFAULTS = {
@@ -13,31 +11,31 @@ const DEFAULTS = {
 }
 
 /**
- * The central tree data structure that is used to calculate state for
- * a Microcosm. Each node in the tree is an action. Branches are
- * changes over time.
- * @constructor
+ * @fileoverview All Microcosms have a history. This history keeps
+ * track of outstanding actions, working with a Microcosm to determine
+ * the next application state as actions move through different
+ * states.
  */
-export default function History(config) {
-  Emitter.call(this)
+class History extends Emitter {
+  constructor(config) {
+    super()
 
-  let options = merge(DEFAULTS, config)
+    let options = merge(DEFAULTS, config)
 
-  this.size = 0
-  this.limit = Math.max(1, options.maxHistory)
+    this.size = 0
+    this.limit = Math.max(1, options.maxHistory)
 
-  this.updater = options.updater(options)
+    this.updater = options.updater(options)
 
-  // Track whether a release is pending. This prevents .wait() from getting
-  // stuck in limbo
-  this.releasing = false
+    // Track whether a release is pending. This prevents .wait() from getting
+    // stuck in limbo
+    this.releasing = false
 
-  this.release = () => this.closeRelease()
+    this.release = () => this.closeRelease()
 
-  this.begin()
-}
+    this.begin()
+  }
 
-inherit(History, Emitter, {
   /**
    * Set the head of the tree to a target action. This has the effect
    * of controlling time in a Microcosm's history.
@@ -46,17 +44,20 @@ inherit(History, Emitter, {
   checkout(action) {
     this.head = action || this.head
 
-    this.setActiveBranch()
+    // Each action has a "next" property that tells the history how to
+    //  move forward. Update that path:
+    this.head.parent.next = this.head
+
+    this.setSize()
 
     this.reconcile(this.head)
 
     return this
-  },
+  }
 
   /**
    * Toggle actions in bulk, then reconcile from the first action
    * @param {Action[]} - A list of actions to toggle
-   * @public
    */
   toggle(actions) {
     let list = [].concat(actions)
@@ -64,17 +65,19 @@ inherit(History, Emitter, {
     list.forEach(action => action.toggle('silently'))
 
     this.reconcile(list[0])
-  },
+  }
 
   /**
    * Convert the active branch of history into an array.
    */
   toArray() {
     return this.map(n => n)
-  },
+  }
 
   /**
    * Map over the active branch.
+   * @param {Function} fn
+   * @param {*} scope
    */
   map(fn, scope) {
     let size = this.size
@@ -87,7 +90,7 @@ inherit(History, Emitter, {
     }
 
     return items
-  },
+  }
 
   /**
    * Return a promise that represents the resolution of all actions in
@@ -119,7 +122,7 @@ inherit(History, Emitter, {
 
       this.on('release', checkStatus)
     })
-  },
+  }
 
   /**
    * Chain off of wait(). Provides a promise interface
@@ -127,7 +130,7 @@ inherit(History, Emitter, {
    */
   then(pass, fail) {
     return this.wait().then(pass, fail)
-  },
+  }
 
   /**
    * Setup the head and root action for a history. This effectively
@@ -136,8 +139,13 @@ inherit(History, Emitter, {
   begin() {
     this.head = this.root = null
     this.append(START, 'resolve')
-  },
+  }
 
+  /**
+   * Append a new action to the end of history
+   * @param {Function|string} command
+   * @param {string} [status]
+   */
   append(command, status) {
     let action = new Action(command, status)
 
@@ -159,7 +167,7 @@ inherit(History, Emitter, {
     action.on('change', this.reconcile, this)
 
     return this.head
-  },
+  }
 
   /**
    * Remove an action from history, connecting adjacent actions
@@ -188,7 +196,7 @@ inherit(History, Emitter, {
     if (!action.disabled) {
       this.reconcile(next)
     }
-  },
+  }
 
   /**
    * The actual clean up operation that purges an action from both
@@ -201,8 +209,14 @@ inherit(History, Emitter, {
     this._emit('remove', action)
 
     action.remove()
-  },
+  }
 
+  /**
+   * Starting with a given action, emit events such that repos can
+   * dispatch actions to domains in a consistent order to build a new
+   * state. This is how Microcosm updates state.
+   * @param {Action} action
+   */
   reconcile(action) {
     console.assert(this.head, 'History should always have a head node')
     console.assert(action, 'History should never reconcile ' + action)
@@ -224,20 +238,34 @@ inherit(History, Emitter, {
     this._emit('reconcile', action)
 
     this.queueRelease()
-  },
+  }
 
+  /**
+   * Batch releases by "queuing" an update. See `closeRelease`.
+   */
   queueRelease() {
     if (this.releasing === false) {
       this.releasing = true
       this.updater(this.release)
     }
-  },
+  }
 
+  /**
+   * Complete a release by emitting the "release" event. This function
+   * is called by the updater for the given history. If batching is
+   * enabled, it will be asynchronous.
+   */
   closeRelease() {
     this.releasing = false
     this._emit('release')
-  },
+  }
 
+  /**
+   * Instead of holding on to actions forever, Microcosm initiates an
+   * archival process at the end of every reconciliation. If the
+   * active branch of history is greater than the `limit` property,
+   * signal that the action should be removed.
+   */
   archive() {
     let size = this.size
     let root = this.root
@@ -252,22 +280,23 @@ inherit(History, Emitter, {
 
     this.root = root
     this.size = size
-  },
+  }
 
-  setActiveBranch() {
+  /**
+   * Update the size of the tree by bubbling up from the head to the
+   * root.
+   */
+  setSize() {
     let action = this.head
     let size = 1
 
     while (action !== this.root) {
-      let parent = action.parent
-
-      parent.next = action
-
-      action = parent
-
+      action = action.parent
       size += 1
     }
 
     this.size = size
   }
-})
+}
+
+export default History
