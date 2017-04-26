@@ -5,7 +5,23 @@
 [![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 [![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 
-Microcosm is a state management tool for [React](https://github.com/facebook/react) (and similar libraries). Keep track of user actions, cancel requests, and perform optimistic updates with ease.
+Microcosm is a state management tool
+for [React](https://github.com/facebook/react) (and similar
+libraries). Keep track of user actions, cancel requests, and perform
+optimistic updates with ease.
+
+## What you get
+
+- A central place to keep track of all application state
+- The ability to [split up state](./docs/api/microcosm.md#fork) in
+  large applications while still sharing common data
+- [Painless optimistic updates](./docs/api/history.md)
+- [A way to schedule work](./docs/api/actions.md) that understands
+  Promises out of the box and moves through consistent states no
+  matter what work is being done.
+- [Opinions about architecture](./docs/guides/architecture.md)
+- [Addons for decoupling business and presentation logic](./docs/api/presenter.md)
+- 5kb gzipped (~15kb minified)
 
 ## At a glance
 
