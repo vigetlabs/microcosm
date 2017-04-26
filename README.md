@@ -15,7 +15,7 @@ optimistic updates with ease.
 - A central place to keep track of all application state
 - The ability to [split up state](./docs/api/microcosm.md#fork) in
   large applications while still sharing common data
-- [Painless optimistic updates](./docs/api/history.md)
+- [Painless optimistic updates](./docs/recipes/ajax.md)
 - [A way to schedule work](./docs/api/actions.md) that understands
   Promises out of the box and moves through consistent states
 - [Opinions about architecture](./docs/guides/architecture.md)
