@@ -17,8 +17,7 @@ optimistic updates with ease.
   large applications while still sharing common data
 - [Painless optimistic updates](./docs/api/history.md)
 - [A way to schedule work](./docs/api/actions.md) that understands
-  Promises out of the box and moves through consistent states no
-  matter what work is being done.
+  Promises out of the box and moves through consistent states
 - [Opinions about architecture](./docs/guides/architecture.md)
 - [Addons for decoupling business and presentation logic](./docs/api/presenter.md)
 - 5kb gzipped (~15kb minified)
