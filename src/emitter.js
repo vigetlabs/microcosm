@@ -7,6 +7,8 @@
 import { isFunction } from './utils'
 
 type EventName = string
+type EventPayload = Array<any>
+type EventCallback = (...payload: EventPayload) => {}
 
 class Listener {
   event: EventName
@@ -14,7 +16,7 @@ class Listener {
   scope: any
   once: boolean
 
-  constructor(event: EventName, fn: Function, scope: any, once: boolean) {
+  constructor(event: EventName, fn: EventCallback, scope: any, once: boolean) {
     console.assert(isFunction(fn), `Expected ${event} listener to be function,`)
 
     this.event = event
@@ -39,7 +41,7 @@ class Emitter {
   /**
    * Add an event listener.
    */
-  on(event: EventName, fn: Function, scope: any) {
+  on(event: EventName, fn: EventCallback, scope: any) {
     let listener = new Listener(event, fn, scope, false)
 
     this._events.push(listener)
@@ -51,7 +53,7 @@ class Emitter {
    * Adds an `event` listener that will be invoked a single time then
    * automatically removed.
    */
-  once(event: EventName, fn: Function, scope: any) {
+  once(event: EventName, fn: EventCallback, scope: any) {
     let listener = new Listener(event, fn, scope, true)
 
     this._events.push(listener)
@@ -63,7 +65,7 @@ class Emitter {
    * Unsubscribe a callback. If no event is provided, removes all callbacks. If
    * no callback is provided, removes all callbacks for the given type.
    */
-  off(event: EventName, fn: Function, scope: any) {
+  off(event: EventName, fn: EventCallback, scope: any) {
     var removeAll = fn == null
 
     let i = 0
@@ -93,7 +95,7 @@ class Emitter {
   /**
    * Emit `event` with the given args.
    */
-  _emit(event: EventName, ...payload: Array<any>) {
+  _emit(event: EventName, ...payload: EventPayload) {
     let i = 0
     while (i < this._events.length) {
       var cb = this._events[i]
