@@ -1,9 +1,17 @@
-import { castPath } from './key-path'
+/**
+ * @flow
+ */
+
+import type Microcosm from './microcosm'
+import { castPath, type KeyPath } from './key-path'
+
+const $Symbol = typeof Symbol === 'function' ? Symbol : {}
+const toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
 
 /**
  * Shallow copy an object
  */
-export function clone(target) {
+export function clone(target: any) {
   if (Array.isArray(target)) {
     return target.slice(0)
   } else if (isObject(target) === false) {
@@ -47,32 +55,15 @@ export function merge() {
 }
 
 /**
- * Basic prototypal inheritence
- */
-export function inherit(Child, Ancestor, proto) {
-  Child.__proto__ = Ancestor
-
-  Child.prototype = merge(
-    Object.create(Ancestor.prototype),
-    {
-      constructor: Child.prototype.constructor
-    },
-    proto
-  )
-
-  return Child
-}
-
-/**
  * Retrieve a value from an object. If no key is provided, just return the
  * object.
  */
-export function get(object, keyPath, fallback) {
+export function get(object: ?Object, key: KeyPath | string, fallback?: any) {
   if (object == null) {
     return fallback
   }
 
-  let path = castPath(keyPath)
+  let path = castPath(key)
 
   for (var i = 0, len = path.length; i < len; i++) {
     var value = object == null ? undefined : object[path[i]]
@@ -91,7 +82,7 @@ export function get(object, keyPath, fallback) {
  * Non-destructively assign a value to a provided object at a given key. If the
  * value is the same, don't do anything. Otherwise return a new object.
  */
-export function set(object, key, value) {
+export function set(object: ?Object, key: KeyPath | string, value: any) {
   // Ensure we're working with a key path, like: ['a', 'b', 'c']
   let path = castPath(key)
 
@@ -136,54 +127,46 @@ export function set(object, key, value) {
 
 /**
  * Is the provided object a promise?
- * @param {*} obj
- * @return {boolean}
  */
-export function isPromise(obj) {
+export function isPromise(obj: any): boolean {
   return (isObject(obj) || isFunction(obj)) && isFunction(obj.then)
 }
 
 /**
  * Is a value an object?
- * @param {*} target
- * @return {boolean}
  */
-export function isObject(target) {
+export function isObject(target: any): boolean {
   return !!target && typeof target === 'object'
 }
 
 /**
  * Is a value a function?
- * @param {*} target
- * @return {boolean}
  */
-export function isFunction(target) {
+export function isFunction(target: any): boolean {
   return !!target && typeof target === 'function'
 }
 
 /**
  * Is a value a string?
- * @param {*} target
- * @return {boolean}
  */
-export function isString(target) {
+export function isString(target: any): boolean {
   return typeof target === 'string'
 }
 
 /**
  * Is the provided value a generator function? This is largely
  * informed by the regenerator runtime.
- * @param {*} value
- * @return {boolean}
  */
-var $Symbol = typeof Symbol === 'function' ? Symbol : {}
-var toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
-export function isGeneratorFn(value) {
+export function isGeneratorFn(value: any): boolean {
   return get(value, toStringTagSymbol, '') === 'GeneratorFunction'
 }
 
-export function createOrClone(target, options, repo) {
-  if (isFunction(target)) {
+export function createOrClone(
+  target: Object | Function,
+  options: Object,
+  repo: Microcosm
+) {
+  if (typeof target === 'function') {
     return new target(options, repo)
   }
 
@@ -191,14 +174,15 @@ export function createOrClone(target, options, repo) {
 }
 
 /**
- * A helper combination of get and set
- * @param {Object} state
- * @param {Array.<string>|string} keyPath
- * @param {*} updater A function or static value
- * @param {*} fallback value
+ * A helper combination of get and set.
  */
-export function update(state, keyPath, updater, fallback) {
-  let path = castPath(keyPath)
+export function update(
+  state: ?Object,
+  key: KeyPath | string,
+  updater: any,
+  fallback: ?any
+) {
+  let path = castPath(key)
 
   if (isFunction(updater) === false) {
     return set(state, path, updater)

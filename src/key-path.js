@@ -6,6 +6,8 @@
 
 import { isString } from './utils'
 
+export type KeyPath = Array<string>
+
 const KEY_DELIMETER = '.'
 const PATH_DELIMETER = ','
 
