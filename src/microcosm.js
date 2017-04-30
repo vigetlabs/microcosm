@@ -1,3 +1,7 @@
+/**
+ * @fileoverview The Microcosm class provides a centralized place to
+ * store application state, dispatch actions, and track changes.
+ */
 import Action from './action'
 import Emitter from './emitter'
 import History from './history'
@@ -23,8 +27,8 @@ const DEFAULTS = {
 }
 
 /**
- * @fileoverview The Microcosm class provides a centralized place to
- * store application state, dispatch actions, and track changes.
+ * Stuff
+ * @tutorial test
  */
 class Microcosm extends Emitter {
   constructor(preOptions, state, deserialize) {

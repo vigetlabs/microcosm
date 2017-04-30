@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>JSDoc: <?js= title ?></title>
+
+  <script src="scripts/prettify/prettify.js"> </script>
+  <script src="scripts/prettify/lang-css.js"> </script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <!-- <link type="text/css" rel="stylesheet" href="/styles/prettify-tomorrow.css"> -->
+  <link type="text/css" rel="stylesheet" href="/styles/jsdoc-default.css">
+</head>
+
+<body>
+<header class="header <?js if (title !== 'Home') { ?>fill-bloom<?js } else { ?>-float<?js } ?>">
+  <div class="header__inner">
+    <a href="<?js= this.basePath ?>index.html">
+      <img src="assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+    </a>
+
+    <nav class="nav">
+      <a href="<?js= this.basePath ?>index.html">API</a>
+      <a href="<?js= this.basePath ?>tutorial-test.html">Guides</a>
+      <a href="https://github.com/vigetlabs/microcosm" target="_blank" rel="noopener noreferrer">Github</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="main <?js if (title !== 'Home') { ?>-with-sidebar<?js } ?>">
+
+  <?js if (title !== 'Home') { ?>
+    <nav class="sidebar">
+      <?js= this.nav ?>
+    </nav>
+  <?js } ?>
+
+  <?js if (title === 'Home') { ?>
+    <section class="hero fill-bloom">
+      <div class="hero__inner">
+        <h1>An evolution of Flux</h1>
+        <p>
+          Microcosm <?js this.version && print(`(${this.version})`) ?> is
+          <a href="https://facebook.github.io/flux/docs/overview.html">Flux</a>
+          with actions at center stage. Write optimistic updates,
+          cancel requests, and track changes with ease.
+        </p>
+        <footer>
+          <a class="hero__callout" href="#">
+            Get Started
+          </a>
+        </footer>
+      </div>
+    </section>
+  <?js } ?>
+
+  <section class="content">
+    <?js if(this.version) { ?>
+      <p class="callout">You are viewing an older version of the Microcosm docs. The docs for <a href="/index.html">the latest version can be found here</a></p>
+    <?js } ?>
+    <?js if (title !== 'Home') { ?>
+      <h1 class="page-title"><?js= title ?></h1>
+    <?js } ?>
+    <?js= content ?>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <nav class="footer__left">
+      <a href="https://www.npmjs.com/package/microcosm" target="_blank" rel="noopener noreferrer">
+        <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+      </a>
+      <a href="//changelog.html" target="_blank" rel="noopener noreferrer">Changelog</a>
+      <a href="https://github.com/vigetlabs/microcosm" target="_blank" rel="noopener noreferrer">Source</a>
+    </nav>
+    <div class="footer__right">
+      Built with patience and time by <a href="https://viget.com" target="_blank" rel="noopener noreferrer">●° Viget</a>
+    </div>
+  </div>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
