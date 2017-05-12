@@ -252,7 +252,7 @@ class PresenterMediator extends React.PureComponent {
     for (var key in model) {
       var entry = model[key]
 
-      if (typeof entry === 'function') {
+      if (entry && typeof entry.call === 'function') {
         this.propMap[key] = entry
         next[key] = entry.call(this.presenter, data, this.repo)
       } else {

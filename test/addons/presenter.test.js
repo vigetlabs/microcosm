@@ -343,6 +343,26 @@ describe('::getModel', function() {
       expect(spy).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('invoking model callbacks', function() {
+    it('supports any callable value', function() {
+      let callable = {
+        call: jest.fn()
+      }
+
+      class MyPresenter extends Presenter {
+        getModel() {
+          return {
+            test: callable
+          }
+        }
+      }
+
+      mount(<MyPresenter />)
+
+      expect(callable.call).toHaveBeenCalled()
+    })
+  })
 })
 
 describe('::setup', function() {
