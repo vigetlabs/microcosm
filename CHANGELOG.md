@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.8.0
+
+- The current repo is passed as the second argument of
+  Presenter::getModel state key callbacks
+
 ## 12.7.0
 
 - Remove PropType usage from addons to prevent React 15.5.x
