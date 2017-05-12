@@ -2,7 +2,8 @@
   "presets": [
     ["es2015", {"loose": true, "modules": false}],
     "stage-2",
-    "react"
+    "react",
+    "flow"
   ],
   "env": {
     "test": {
