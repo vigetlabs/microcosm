@@ -163,6 +163,26 @@ is rejected or cancelled with the same payload.
 When all steps of the generator complete, the payload of the parent
 action will be the resolved payload of the final action.
 
+#### Yielding Actions in Parallel
+
+By yielding an array of actions, you can wait for multiple actions to
+complete before continuing:
+
+```javascript
+function getUser (id) {
+  return fetch(`/users/${id}`)
+}
+
+function getUsers (ids) {
+  return function * (repo) {
+    yield ids.map(id => repo.push(getUser, id))
+  }
+}
+```
+
+If all actions resolve or cancel, the generator sequence
+continues.
+
 ### Action status methods are auto-bound
 
 Action status methods like `action.resolve()` and `action.reject()`

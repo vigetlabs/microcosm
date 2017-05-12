@@ -368,6 +368,10 @@ class Microcosm extends Emitter {
     // Remove all listeners
     this.removeAllListeners()
   }
+
+  all(actions) {
+    return this.append('GROUP').link(actions)
+  }
 }
 
 export default Microcosm

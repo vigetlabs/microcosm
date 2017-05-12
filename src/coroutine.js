@@ -22,6 +22,10 @@ function processGenerator(action, body, repo) {
   }
 
   function progress(subAction) {
+    if (Array.isArray(subAction)) {
+      subAction = repo.all(subAction)
+    }
+
     console.assert(
       subAction instanceof Action,
       `Iteration of generator expected an Action. Instead got ${subAction}`

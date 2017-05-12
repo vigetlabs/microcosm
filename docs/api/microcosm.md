@@ -329,6 +329,23 @@ fork.addDomain('page', PaginatedPeople)
 fork.push(getPeople)
 ```
 
+### `all([...actions])`
+
+Create a new "group" action bound to the resolution of a list of
+actions. If all actions resolve or cancel, the group action will
+resolve. If any action is rejected, the group action fails:
+
+```javascript
+let group = repo.all([
+  repo.push(actionOne),
+  repo.push(actionTwo)
+])
+
+group.onDone(function () {
+  console.log('hurrah!')
+})
+```
+
 ### `Microcosm.defaults`
 
 Specifies default options a Microcosm is instantiated with. This

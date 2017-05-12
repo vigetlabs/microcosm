@@ -155,6 +155,32 @@ class Action extends Emitter {
   }
 
   /**
+   * Set up an action such that it depends on the result of another
+   * series of actions.
+   * @param {Array.<Action>} actions
+   * @return {this}
+   */
+  link(actions) {
+    let outstanding = actions.length
+
+    const onDone = () => {
+      outstanding -= 1
+
+      if (outstanding <= 0) {
+        this.resolve()
+      }
+    }
+
+    actions.forEach(action => {
+      action.onDone(onDone)
+      action.onCancel(onDone)
+      action.onError(this.reject)
+    })
+
+    return this
+  }
+
+  /**
    * @param {?Function} pass
    * @param {Function} [fail]
    * @returns {Promise}
