@@ -28,8 +28,63 @@ const DEFAULTS = {
 }
 
 /**
- * Stuff
- * @tutorial test
+ * # Overview
+ *
+ * The Microcosm class provides a centralized place to store application
+ * state, dispatch actions, and track changes.
+ *
+ * ### Creating a Microcosm
+ *
+ * All Microcosm apps start by instantiating a Microcosm class. We call
+ * this instance of Microcosm a "repo":
+ *
+ * ```javascript
+ * let repo = new Microcosm()
+ * ```
+ *
+ * ### Options
+ *
+ * The first argument of the Microcosm constructor is an object of
+ * options:
+ *
+ * ```javascript
+ * let repo = new Microcosm({ maxHistory: 10 })
+ * ```
+ *
+ * Microcosm supports the following options:
+ *
+ * 1. `maxHistory:number`: In Microcosm, data is changed by responding
+ *    to [actions](./actions.md). This builds up a history that can be
+ *    useful for debugging and undo/redo behavior. By default, Microcosm
+ *    gets rid of any old actions to reduce memory usage. By setting
+ *    `maxHistory`, you can tell Microcosm to hold on to those actions.
+ * 2. `batch:boolean`: When set to true, change events within a short
+ *    period of time will be grouped together
+ *    using
+ *    [`requestIdleCallback`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback). Defaults
+ *    to false. **Important:** this makes change events asynchronous.
+ * 2. `updater:function`: `batch:true` should be sufficient for nearly
+ *    all use cases. However this option overrides the default batch
+ *    behavior if it proves problematic for your app. See
+ *    the [Batch Updates](../recipes/batch-updates.md) recipe for more
+ *    information.
+ *
+ * Feel free to add additional options to fit your use case. Any options
+ * you provide to Microcosm are passed into the `setup` lifecycle method:
+ *
+ * ```javascript
+ * class Repo extends Microcosm {
+ *
+ *   setup (options) {
+ *     console.log(options) // { autosave: true }
+ *   }
+ *
+ * }
+ *
+ * let repo = new Repo({ autosave: true })
+ * ```
+ * @extends Emitter
+ * @tutorial quickstart
  */
 class Microcosm extends Emitter {
   constructor(preOptions, state, deserialize) {
@@ -76,14 +131,47 @@ class Microcosm extends Emitter {
     }
   }
 
+  /**
+   * ### `setup(options)`
+   *
+   * Called whenever a Microcosm is instantiated. This provides a general
+   * purpose hook for adding domains and other setup
+   * behavior. Instantiation options are passed in as the first argument.
+   *
+   * ```javascript
+   * class SolarSystem extends Microcosm {
+   *   setup (options) {
+   *     this.addDomain('planets', Planets)
+   *   }
+   * }
+   * ```
+   *
+   * Setup receives options passed from instantiation. For example:
+   *
+   * ```javascript
+   * class SolarSystem extends Microcosm {
+   *   setup(options) {
+   *     console.log(options) // { test: true }
+   *   }
+   * }
+   *
+   * let repo = new SolarSystem({ test: true })
+   * ```
+   */
   setup() {
     // NOOP
   }
 
+  /**
+   * Called whenever a Microcosm is shut down. Do any necessary clean up work within this callback.
+   */
   teardown() {
     // NOOP
   }
 
+  /**
+   * Generates the starting state for a Microcosm instance. This is the result of dispatching `getInitialState` to all domains. It is pure; calling this function will not update state.
+   */
   getInitialState() {
     return this.initial
   }
@@ -168,14 +256,29 @@ class Microcosm extends Emitter {
   /**
    * Append an action to history and return it. This is used by push,
    * but also useful for testing action states.
+   * ```
+   * let action = repo.append(createPlanet)
+   *
+   * // Test that opening an action for a planet marks
+   * // that planet as loading
+   * action.open({ id: 'pluto' })
+   * assert.equal(repo.state.planets.pluto.loading, true)
+   *
+   * // And then test that closing the action moves marks
+   * // the planet as no longer loading
+   * action.resolve({ id: 'pluto' })
+   * assert.falsy(repo.state.planets.pluto.loading)
+   * ```
    */
   append(command, status) {
     return this.history.append(command, status)
   }
 
   /**
-   * Push an action into Microcosm. This will trigger the lifecycle for updating
-   * state.
+   * Resolves an action. Sends the result and any errors to a given error-first callback.
+   * ```
+   * repo.push(createPlanet, { name: 'Merkur' })
+   * ```
    */
   push(command, ...params) {
     let action = this.append(command)

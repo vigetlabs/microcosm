@@ -1,0 +1,17 @@
+{
+  "quickstart": {
+    "title": "Quickstart",
+    "children": {}
+  },
+  "recipes": {
+    "title": "Recipes",
+    "children": {
+      "preact": {
+        "title": "Preact"
+      },
+      "ajax": {
+        "title": "Ajax"
+      }
+    }
+  }
+}

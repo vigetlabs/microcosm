@@ -1,3 +1,18 @@
+/**
+ * @fileoverview The Presenter add-on makes it easier to keep
+ * application logic high within a component tree. It subscribes to
+ * state changes via a `getModel` method, designed specifically to
+ * extract and compute properties coming from a Microcosm
+ * instance. When state changes, model keys are efficiently sent down
+ * as props to child "passive view" React components.
+ *
+ * Presenters also make it easy for components deep within a component
+ * tree to communicate without passing a long chain of props. The
+ * `withSend` and `<Form />` may be used to broadcast messages called
+ * "actions" to parent Presenter components, or straight to a Microcosm
+ * repo itself if no Presenter intercepts the message.
+ */
+
 import React from 'react'
 import Microcosm, { get, merge, tag, getRegistration } from '../microcosm'
 
@@ -8,18 +23,8 @@ function passChildren() {
 const identity = () => {}
 
 /**
- * @fileoverview The Presenter add-on makes it easier to keep
- * application logic high within a component tree. It subscribes to
- * state changes via a `getModel` method, designed specifically to
- * extract and compute properties coming from a Microcosm
- * instance. When state changes, model keys are efficiently sent down
- * as props to child “passive view” React components.
- *
- * Presenters also make it easy for components deep within a component
- * tree to communicate without passing a long chain of props. The
- * `withSend` and `<Form />` may be used to broadcast messages called
- * "actions" to parent Presenter components, or straight to a Microcosm
- * repo itself if no Presenter intercepts the message.
+ * @class
+ * @extends React.PureComponent
  */
 class Presenter extends React.PureComponent {
   constructor(props, context) {
@@ -180,12 +185,10 @@ class PresenterMediator extends React.PureComponent {
     repo: identity,
     send: identity
   }
-
   static childContextTypes = {
     repo: identity,
     send: identity
   }
-
   constructor(props, context) {
     super(props, context)
 
