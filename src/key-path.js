@@ -17,6 +17,7 @@ function isBlank(value) {
  * Ensure a value is a valid key path.
  * @param {*} value Value to convert into a key path
  * @return {Array} List of keys, like ['users', 2]
+ * @private
  */
 export function castPath(value) {
   if (Array.isArray(value)) {
@@ -34,6 +35,7 @@ export function castPath(value) {
  * subscription to multiple pathways in an object.
  * @param {String|String[]} value Comma separated string or array
  * @return {Array} List of paths, like [['users'], ['query', 'focus']]
+ * @private
  */
 export function getKeyPaths(value) {
   let paths = value
@@ -49,6 +51,7 @@ export function getKeyPaths(value) {
  * Convert a key path into a string.
  * @param {String[]} value List of keys, like ['query', 'focus']
  * @return {String} Dot separated string, like 'query.focus'
+ * @private
  */
 export function getKeyString(value) {
   return value.join(KEY_DELIMETER)
@@ -58,6 +61,7 @@ export function getKeyString(value) {
  * Convert a list of keys path into a string.
  * @param {Array} array List of key paths, like [['users'], ['query', 'focus']]
  * @return {Array} Comma key paths, like 'users,query.focus'
+ * @private
  */
 export function getKeyStrings(array) {
   return array.map(getKeyString).join(PATH_DELIMETER)

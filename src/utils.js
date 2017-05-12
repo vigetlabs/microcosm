@@ -2,6 +2,7 @@ import { castPath } from './key-path'
 
 /**
  * Shallow copy an object
+ * @private
  */
 export function clone(target) {
   if (Array.isArray(target)) {
@@ -21,6 +22,7 @@ export function clone(target) {
 
 /**
  * Merge any number of objects into a provided object.
+ * @private
  */
 export function merge() {
   let copy = null
@@ -48,6 +50,7 @@ export function merge() {
 
 /**
  * Basic prototypal inheritence
+ * @private
  */
 export function inherit(Child, Ancestor, proto) {
   Child.__proto__ = Ancestor
@@ -66,6 +69,7 @@ export function inherit(Child, Ancestor, proto) {
 /**
  * Retrieve a value from an object. If no key is provided, just return the
  * object.
+ * @private
  */
 export function get(object, keyPath, fallback) {
   if (object == null) {
@@ -90,6 +94,7 @@ export function get(object, keyPath, fallback) {
 /**
  * Non-destructively assign a value to a provided object at a given key. If the
  * value is the same, don't do anything. Otherwise return a new object.
+ * @private
  */
 export function set(object, key, value) {
   // Ensure we're working with a key path, like: ['a', 'b', 'c']
@@ -138,6 +143,7 @@ export function set(object, key, value) {
  * Is the provided object a promise?
  * @param {*} obj
  * @return {boolean}
+ * @private
  */
 export function isPromise(obj) {
   return (isObject(obj) || isFunction(obj)) && isFunction(obj.then)
@@ -147,6 +153,7 @@ export function isPromise(obj) {
  * Is a value an object?
  * @param {*} target
  * @return {boolean}
+ * @private
  */
 export function isObject(target) {
   return !!target && typeof target === 'object'
@@ -156,6 +163,7 @@ export function isObject(target) {
  * Is a value a function?
  * @param {*} target
  * @return {boolean}
+ * @private
  */
 export function isFunction(target) {
   return !!target && typeof target === 'function'
@@ -165,6 +173,7 @@ export function isFunction(target) {
  * Is a value a string?
  * @param {*} target
  * @return {boolean}
+ * @private
  */
 export function isString(target) {
   return typeof target === 'string'
@@ -175,6 +184,7 @@ export function isString(target) {
  * informed by the regenerator runtime.
  * @param {*} value
  * @return {boolean}
+ * @private
  */
 var $Symbol = typeof Symbol === 'function' ? Symbol : {}
 var toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
@@ -182,6 +192,9 @@ export function isGeneratorFn(value) {
   return get(value, toStringTagSymbol, '') === 'GeneratorFunction'
 }
 
+/**
+ * @private
+ */
 export function createOrClone(target, options, repo) {
   if (isFunction(target)) {
     return new target(options, repo)
@@ -196,6 +209,7 @@ export function createOrClone(target, options, repo) {
  * @param {Array.<string>|string} keyPath
  * @param {*} updater A function or static value
  * @param {*} fallback value
+ * @private
  */
 export function update(state, keyPath, updater, fallback) {
   let path = castPath(keyPath)

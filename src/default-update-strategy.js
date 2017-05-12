@@ -11,6 +11,7 @@
  *
  * Note: To be fully compliant, we would invoke the callback with the
  * time remaining. Given our usage, we don't need to do that.
+ * @private
  */
 const scheduler =
   global.requestIdleCallback || (update => setTimeout(update, 4))
@@ -19,6 +20,7 @@ const scheduler =
  * When using requestIdleCallback, batch together updates until the
  * browser is ready for them, but never make the user wait longer than
  * 36 milliseconds.
+ * @private
  */
 const BATCH_OPTIONS = { timeout: 36 }
 

@@ -272,6 +272,7 @@ class Action extends Emitter {
  * @param {string} method
  * @return A function that will warn developers that they can not
  * update this action
+ * @private
  */
 function createCompleteWarning(action, method) {
   return function() {
@@ -288,6 +289,7 @@ function createCompleteWarning(action, method) {
  * @param {string} status
  * @param {boolean} complete
  * @return A function that will update the provided action with a new state
+ * @private
  */
 function createActionUpdater(action, status, complete) {
   return function(payload) {
@@ -312,6 +314,7 @@ function createActionUpdater(action, status, complete) {
  * @param {Action} action
  * @param {string} status
  * @param {boolean} complete
+ * @private
  */
 function warnOrUpdate(action, status, complete) {
   return action.complete

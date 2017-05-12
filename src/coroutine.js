@@ -4,6 +4,7 @@ import { isFunction, isPromise, isGeneratorFn } from './utils'
 /**
  * Provide support for generators, performing a sequence of actions in
  * order.
+ * @private
  */
 function processGenerator(action, body, repo) {
   action.open()

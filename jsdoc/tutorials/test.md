@@ -1,3 +1,0 @@
-# TUTORIAL
-
-microcosm tutorial

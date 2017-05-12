@@ -19,6 +19,7 @@ import { merge, inherit, get, set, update, isString } from './utils'
  * Options passed into Microcosm always extend from this object. You
  * can override this value to provide additional defaults for your
  * extension of Microcosm.
+ * @private
  */
 const DEFAULTS = {
   maxHistory: 0,
