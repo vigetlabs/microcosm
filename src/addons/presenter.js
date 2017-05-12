@@ -254,7 +254,7 @@ class PresenterMediator extends React.PureComponent {
 
       if (typeof entry === 'function') {
         this.propMap[key] = entry
-        next[key] = entry(data)
+        next[key] = entry.call(this.presenter, data, this.repo)
       } else {
         next[key] = entry
       }
@@ -270,7 +270,7 @@ class PresenterMediator extends React.PureComponent {
     let next = null
 
     for (var key in this.propMap) {
-      var value = this.propMap[key](state)
+      var value = this.propMap[key].call(this.presenter, state, this.repo)
 
       if (last[key] !== value) {
         next = next || {}

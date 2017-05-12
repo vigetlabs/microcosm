@@ -164,6 +164,46 @@ describe('::getModel', function() {
     expect(spy).toHaveBeenCalledTimes(1)
   })
 
+  describe('when first building a model', function() {
+    it('passes the repo as the second argument of model callbacks', function() {
+      expect.assertions(1)
+
+      let repo = new Repo()
+
+      class TestCase extends Presenter {
+        getModel(props) {
+          return {
+            name: this.process
+          }
+        }
+
+        process(_state, fork) {
+          expect(fork.parent).toBe(repo)
+        }
+      }
+
+      mount(<TestCase repo={repo} />)
+    })
+
+    it('invokes model callbacks in the scope of the presenter', function() {
+      expect.assertions(1)
+
+      class TestCase extends Presenter {
+        getModel(props) {
+          return {
+            name: this.process
+          }
+        }
+
+        process() {
+          expect(this).toBeInstanceOf(TestCase)
+        }
+      }
+
+      mount(<TestCase />)
+    })
+  })
+
   describe('when updating props', function() {
     it('recalculates the view model if the props are different', function() {
       const repo = new Microcosm()
@@ -205,6 +245,50 @@ describe('::getModel', function() {
       wrapper.setProps({ prefix: 'Colonel' })
 
       expect(spy.mock.calls.length).toEqual(1)
+    })
+
+    it('passes the repo as the second argument of model callbacks', function() {
+      expect.assertions(2)
+
+      let repo = new Repo()
+
+      class TestCase extends Presenter {
+        getModel(props) {
+          return {
+            name: this.process
+          }
+        }
+
+        process(_state, fork) {
+          expect(fork.parent).toBe(repo)
+        }
+      }
+
+      mount(<TestCase repo={repo} />)
+
+      repo.patch({ color: 'purple' })
+    })
+
+    it('invokes model callbacks in the scope of the presenter', function() {
+      expect.assertions(2)
+
+      let repo = new Repo()
+
+      class TestCase extends Presenter {
+        getModel(props) {
+          return {
+            name: this.process
+          }
+        }
+
+        process() {
+          expect(this).toBeInstanceOf(TestCase)
+        }
+      }
+
+      mount(<TestCase repo={repo} />)
+
+      repo.patch({ color: 'purple' })
     })
   })
 
