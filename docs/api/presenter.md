@@ -266,7 +266,7 @@ class HelloWorldPresenter extends Presenter {
       'greet': this.greet
     }
   }
-  greet () {
+  greet (repo, data) {
     alert("hello world!")
   }
   render () {
