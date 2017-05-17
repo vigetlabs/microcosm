@@ -382,7 +382,7 @@ class Microcosm extends Emitter {
       }
     }
 
-    this.push(sequence)
+    return this.push(sequence)
   }
 }
 

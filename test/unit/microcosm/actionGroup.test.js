@@ -33,6 +33,24 @@ describe('Microcosm::parallel', function() {
 
     expect(resolveOrder.slice(0, 2)).toEqual(['early', 'late'])
   })
+
+  it ('rejects the group action if any sub action rejects', function() {
+    let repo = new Microcosm()
+    let identity = n => n
+    let rejects = () => {
+      return (action) => action.reject()
+    }
+    let callback = jest.fn()
+
+    let group = repo.parallel([
+      repo.push(identity),
+      repo.push(rejects)
+    ])
+
+    group.onError(callback)
+
+    expect(callback).toHaveBeenCalled()
+  })
 })
 
 describe('Microcosm::sequence', function() {
@@ -92,5 +110,23 @@ describe('Microcosm::sequence', function() {
     // additional argument to the next action
     // add(2, 1) => 3
     expect(repo).toHaveState('count', 4)
+  })
+
+  it ('rejects the group action if any sub action rejects', function() {
+    let repo = new Microcosm()
+    let identity = n => n
+    let rejects = () => {
+      return (action) => action.reject()
+    }
+    let callback = jest.fn()
+
+    let group = repo.sequence([
+      repo.prepare(identity),
+      repo.prepare(rejects)
+    ])
+
+    group.onError(callback)
+
+    expect(callback).toHaveBeenCalled()
   })
 })
