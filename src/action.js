@@ -163,7 +163,7 @@ class Action extends Emitter {
   link(actions) {
     let outstanding = actions.length
 
-    const onDone = () => {
+    const onResolve = () => {
       outstanding -= 1
 
       if (outstanding <= 0) {
@@ -172,8 +172,8 @@ class Action extends Emitter {
     }
 
     actions.forEach(action => {
-      action.onDone(onDone)
-      action.onCancel(onDone)
+      action.onDone(onResolve)
+      action.onCancel(onResolve)
       action.onError(this.reject)
     })
 
