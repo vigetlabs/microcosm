@@ -10,6 +10,7 @@
 
 import React from 'react'
 import Microcosm, { get, merge, tag, getRegistration } from '../microcosm'
+import Model from './model'
 
 function passChildren() {
   return this.props.children ? React.Children.only(this.props.children) : null
@@ -202,11 +203,11 @@ class PresenterMediator extends React.PureComponent {
   }
 
   componentWillMount() {
+    this.presenter._beginSetup(this)
+
     if (this.presenter.getModel !== Presenter.prototype.getModel) {
       this.repo.on('change', this.setModel, this)
     }
-
-    this.presenter._beginSetup(this)
   }
 
   componentDidMount() {
@@ -241,40 +242,17 @@ class PresenterMediator extends React.PureComponent {
   }
 
   updateModel(props, state) {
-    let model = this.presenter.getModel(props, state)
-    let data = this.repo.state
-    let next = {}
+    let bindings = this.presenter.getModel(props, state)
 
-    this.propMap = {}
+    this.model = new Model(bindings, this.repo, this.presenter)
 
-    for (var key in model) {
-      var entry = model[key]
+    this.setState(this.model.value)
 
-      if (entry && typeof entry.call === 'function') {
-        this.propMap[key] = entry
-        next[key] = entry.call(this.presenter, data, this.repo)
-      } else {
-        next[key] = entry
-      }
-    }
-
-    this.setState(next)
-
-    return merge(this.state, next)
+    return merge(this.state, this.model.value)
   }
 
   setModel(state) {
-    let last = this.state
-    let next = null
-
-    for (var key in this.propMap) {
-      var value = this.propMap[key].call(this.presenter, state, this.repo)
-
-      if (last[key] !== value) {
-        next = next || {}
-        next[key] = value
-      }
-    }
+    let next = this.model.update(state)
 
     if (next !== null) {
       this.setState(next)
