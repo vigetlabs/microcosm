@@ -23,7 +23,7 @@ function processGenerator(action, body, repo) {
 
   function progress(subAction) {
     if (Array.isArray(subAction)) {
-      subAction = repo.all(subAction)
+      subAction = repo.parallel(subAction)
     }
 
     console.assert(

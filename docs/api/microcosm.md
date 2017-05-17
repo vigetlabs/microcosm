@@ -329,14 +329,14 @@ fork.addDomain('page', PaginatedPeople)
 fork.push(getPeople)
 ```
 
-### `all([...actions])`
+### `parallel([...actions])`
 
 Create a new "group" action bound to the resolution of a list of
 actions. If all actions resolve or cancel, the group action will
 resolve. If any action is rejected, the group action fails:
 
 ```javascript
-let group = repo.all([
+let group = repo.parallel([
   repo.push(actionOne),
   repo.push(actionTwo)
 ])
