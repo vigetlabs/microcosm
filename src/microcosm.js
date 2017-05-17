@@ -372,6 +372,18 @@ class Microcosm extends Emitter {
   parallel(actions) {
     return this.append('GROUP').link(actions)
   }
+
+  sequence(prepared) {
+    let payload
+
+    let sequence = () => function * () {
+      for (var i = 0; i < prepared.length; i++) {
+        payload = yield prepared[i](payload)
+      }
+    }
+
+    this.push(sequence)
+  }
 }
 
 export default Microcosm
