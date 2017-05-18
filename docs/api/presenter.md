@@ -156,11 +156,44 @@ function StepperForm ({ count }) {
 
 ### `setup(repo, props, state)`
 
-Called when a presenter is created, useful any prep work. `setup` runs before the first `getModel` invocation.
+Called when a presenter is created, useful any prep work. `setup` runs
+before the first `getModel` invocation.
+
+```javascript
+import { getPlanets } from '../actions/planets'
+
+class PlanetsList extends Presenter {
+  setup (repo, props, state) {
+    // Important: this.model is not defined yet!
+    repo.push(getPlanets)
+  }
+  // ...
+}
+```
 
 ### `ready(repo, props, state)`
 
-Called after the presenter has run `setup` and executed the first `getModel`. This hook is useful for fetching initial data and other start tasks that need access to the model data.
+Called after the presenter has run `setup` and executed the first
+`getModel`. This hook is useful for fetching initial data and other
+start tasks that need access to the model data.
+
+```javascript
+import { getPlanets } from '../actions/planets'
+
+class PlanetsList extends Presenter {
+  getModel () {
+    return {
+      planets: state => state.planets
+    }
+  }
+  ready (repo, props, state) {
+    if (this.model.planets.length <=0) {
+      repo.push(getPlanets)
+    }
+  }
+  // ...
+}
+```
 
 ### `update(repo, props, state)`
 
@@ -168,11 +201,44 @@ Called when a presenter gets new props. This is useful for secondary
 data fetching and other work that must happen when a Presenter receives
 new information.
 
+```javascript
+import { getPlanet } from '../actions/planets'
+
+class Planet extends Presenter {
+  getModel (props) {
+    const { planetId } = props
+
+    return {
+      planet: state => state.planets.find(planet => planet.id === planetId)
+    }
+  }
+  // These are the next props and state
+  update (repo, props, state) {
+    if (props.planetId !== this.props.planetId)
+      repo.push(getPlanet, props.planetId)
+    }
+  }
+  // ...
+}
+```
+
 `update` is always executed after the latest model has been calculated.
 
 ### `teardown(repo, props, state)`
 
-Runs when the presenter unmounts. Useful for tearing down subscriptions and other setup behavior.
+Runs when the presenter unmounts. Useful for tearing down
+subscriptions and other setup behavior.
+
+```javascript
+class Example extends Presenter {
+  setup () {
+    this.socket = new WebSocket('ws://localhost:3000')
+  }
+  teardown () {
+    this.socket.close()
+  }
+}
+```
 
 ### `getModel(props, state)`
 
@@ -306,3 +372,25 @@ dispatch it to the root Microcosm repo.
 
 This works exactly like the `send` property passed into a component
 that is wrapped in the `withSend` higher order component.
+
+```javascript
+function AlertButton ({ message, send }) {
+  return (
+    <button onClick=() => send('alert', message)>
+      Click Me
+    </button>
+  )
+}
+
+class Example extends Presenter {
+  intercept () {
+    return {
+      alert: message => alert(message)
+    }
+  }
+
+  render () {
+    return <AlertButton message="Hey!" send={this.send} />
+  }
+}
+```
