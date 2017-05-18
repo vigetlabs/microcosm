@@ -36,7 +36,7 @@ describe('refs', function() {
 
     class MyPresenter extends Presenter {
       render() {
-        return <p ref={() => this.foo = count++}>Test</p>
+        return <p ref={() => (this.foo = count++)}>Test</p>
       }
     }
 

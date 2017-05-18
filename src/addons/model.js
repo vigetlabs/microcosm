@@ -22,6 +22,10 @@ function invoke(binding, repo, scope) {
 }
 
 export default class Model extends Emitter {
+  /**
+   * @param {Microcosm} repo Track this Microcosm instance for updates
+   * @param {scope} scope Scope to invoke functional bindings
+   */
   constructor(repo, scope) {
     super()
 
@@ -34,9 +38,14 @@ export default class Model extends Emitter {
     this.repo.on('change', this.compute, this)
   }
 
-  subscribe(key, binding) {
+  /**
+   * Track an observable. Sending updates to a given key.
+   * @param {string} key
+   * @param {Observable} observable
+   */
+  track(key, observable) {
     let last = this.subscriptions[key]
-    let next = binding.subscribe(value => this.set(key, value))
+    let next = observable.subscribe(value => this.set(key, value))
 
     this.subscriptions[key] = next
 
@@ -45,6 +54,9 @@ export default class Model extends Emitter {
     }
   }
 
+  /**
+   * @param {Object} bindings An set of key/value pairs for building a model
+   */
   bind(bindings) {
     this.bindings = {}
 
@@ -52,7 +64,7 @@ export default class Model extends Emitter {
       let binding = bindings[key]
 
       if (isObservable(binding)) {
-        this.subscribe(key, binding)
+        this.track(key, binding)
       } else {
         this.bindings[key] = binding
       }
@@ -61,6 +73,11 @@ export default class Model extends Emitter {
     this.compute()
   }
 
+  /**
+   * Update a specific model key. Emits a change event
+   * @param {string} key
+   * @param {*} value
+   */
   set(key, value) {
     let next = set(this.value, key, value)
 
@@ -70,6 +87,10 @@ export default class Model extends Emitter {
     }
   }
 
+  /**
+   * Run through each invokable binding, recomputing the model
+   * for their associated keys.
+   */
   compute() {
     let last = this.value
     let next = last
@@ -88,6 +109,10 @@ export default class Model extends Emitter {
     return next
   }
 
+  /**
+   * Dispose a model, removing all subscriptions and unsubscribing
+   * from the repo.
+   */
   teardown() {
     for (var key in this.subscriptions) {
       this.subscriptions[key].unsubscribe()
