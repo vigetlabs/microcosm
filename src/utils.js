@@ -180,16 +180,26 @@ export function isString(target) {
 }
 
 /**
+ * Get the toStringTag symbol out of an object, with
+ * some legacy support.
+ * @param {*} value
+ * @return {string}
+ */
+const $Symbol = typeof Symbol === 'function' ? Symbol : {}
+const toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
+export function toStringTag(value) {
+  return get(value, toStringTagSymbol, '')
+}
+
+/**
  * Is the provided value a generator function? This is largely
  * informed by the regenerator runtime.
  * @param {*} value
  * @return {boolean}
  * @private
  */
-var $Symbol = typeof Symbol === 'function' ? Symbol : {}
-var toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
 export function isGeneratorFn(value) {
-  return get(value, toStringTagSymbol, '') === 'GeneratorFunction'
+  return toStringTag(value) === 'GeneratorFunction'
 }
 
 /**

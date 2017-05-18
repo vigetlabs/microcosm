@@ -380,6 +380,7 @@ export {
   Microcosm,
   Action,
   History,
+  Emitter,
   tag,
   get,
   set,

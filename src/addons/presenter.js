@@ -192,7 +192,12 @@ class PresenterMediator extends React.PureComponent {
 
     this.repo = this.presenter._requestRepo(context.repo)
     this.send = this.send.bind(this)
+
     this.state = { repo: this.repo, send: this.send }
+
+    this.model = new Model(this.repo, this.presenter)
+
+    this.model.on('change', this.assignModel, this)
   }
 
   getChildContext() {
@@ -204,10 +209,6 @@ class PresenterMediator extends React.PureComponent {
 
   componentWillMount() {
     this.presenter._beginSetup(this)
-
-    if (this.presenter.getModel !== Presenter.prototype.getModel) {
-      this.repo.on('change', this.setModel, this)
-    }
   }
 
   componentDidMount() {
@@ -217,11 +218,11 @@ class PresenterMediator extends React.PureComponent {
   componentWillUnmount() {
     this.presenter.refs = this.refs
 
-    this.repo.off('change', this.setModel, this)
-
     if (this.presenter.didFork) {
       this.repo.shutdown()
     }
+
+    this.model.teardown()
 
     this.presenter._beginTeardown()
   }
@@ -241,22 +242,16 @@ class PresenterMediator extends React.PureComponent {
     return this.presenter.defaultRender()
   }
 
+  assignModel(state) {
+    this.setState(() => state)
+  }
+
   updateModel(props, state) {
     let bindings = this.presenter.getModel(props, state)
 
-    this.model = new Model(bindings, this.repo, this.presenter)
+    this.model.bind(bindings)
 
-    this.setState(this.model.value)
-
-    return merge(this.state, this.model.value)
-  }
-
-  setModel(state) {
-    let next = this.model.update(state)
-
-    if (next !== null) {
-      this.setState(next)
-    }
+    return this.model.value
   }
 
   hasParent() {
