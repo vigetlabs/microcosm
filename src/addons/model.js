@@ -55,7 +55,7 @@ export default class Model extends Emitter {
   }
 
   /**
-   * @param {Object} bindings An set of key/value pairs for building a model
+   * @param {Object} bindings A set of key/value pairs for building a model
    */
   bind(bindings) {
     this.bindings = {}
@@ -105,8 +105,6 @@ export default class Model extends Emitter {
       this.value = next
       this._emit('change', this.value)
     }
-
-    return next
   }
 
   /**
