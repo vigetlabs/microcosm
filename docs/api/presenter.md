@@ -1,31 +1,25 @@
 # Presenter
 
 1. [Overview](#overview)
-2. [Computed Properties](#computed-properties)
+2. [Track changes and compute values](#track-changes-and-compute-values)
 3. [Receiving Actions](#receiving-actions)
 4. [API](#api)
 
 ## Overview
 
-The Presenter add-on makes it easier to keep application logic high
-within a component tree. It subscribes to state changes via a
-`getModel` method, designed specifically to extract and compute
-properties coming from a Microcosm instance. When state changes, model
-keys are efficiently sent down as props to child “passive view” React
-components.
+Presenter is a specialized React component that creates a boundary
+between "smart" and "dumb" components. This improves testing and keeps
+business logic in a consistent place (instead of spread across bunches
+of components).
 
-Presenters also make it easy for components deep within a component
-tree to communicate without passing a long chain of props. The
-`withSend` and `<Form />` may be used to broadcast messages called
-"actions" to parent Presenter components, or straight to a Microcosm
-repo itself if no Presenter intercepts the message.
+Use Presenters to track changes to a Microcosm, push actions, and
+manage application flow.
 
-We'll cover both of these features within this document
+## Track changes and compute values
 
-## Computed Properties
-
-Presenter extends from `React.Component`, and can be used just like a
-React component:
+Presenter extends from `React.Component` and can be used exactly the
+same way. By implementing a `getModel` method, Presenters declare what
+information they need from an instance of Microcosm:
 
 ```javascript
 import React from 'react'
@@ -54,12 +48,16 @@ class PlanetsPresenter extends Presenter {
 }
 
 DOM.render(<PlanetsPresenter repo={ repo } />)
+
+// <p>Mercury, Venus, Earth</p>
 ```
 
-In the example above, the `PlanetsPresenter` will extract a list of
-planets from the Microcosm instance provided to it via the `repo`
-prop. This is available as state, which the Presenter can send into a
-child component.
+Presenters accept a `repo` property; an instance of
+Microcosm. Here, `PlanetsPresenter` extracts a list of planets its given
+Microcosm and stores it within `this.model`.
+
+Presenters track their Microcosm instance for changes, keeping
+`this.model` in sync.
 
 ## Receiving Actions
 
@@ -68,7 +66,8 @@ hierarchy can be cumbersome and brittle. Presenters expose a method on
 `context` that enable child components to declare `actions` receivable
 by Presenters.
 
-The ActionForm add-on can be used to broadcast actions to Presenters:
+The [ActionForm](./action-form.md) add-on can be used to broadcast
+actions to Presenters:
 
 ```javascript
 import React from 'react'
@@ -134,11 +133,13 @@ DOM.render(<CountPresenter repo={ repo } />, document.getElementById('container'
 
 Whenever the form is submitted, an `increaseCount` action will bubble
 up to the associated Presenter including the serialized parameters of
-the form. Since this Presenter's intercept method includes `increaseCount`, it will
-invoke the method with the associated parameters.
+the form. Since this Presenter's intercept method includes
+`increaseCount`, it will invoke the method with the associated
+parameters.
 
 If a Presenter does not intercept an action, it will bubble up to any
-parent Presenters. If no Presenter intercepts the action, it will dispatch the action to the repo.
+parent Presenters. If no Presenter intercepts the action, it will
+dispatch the action to the repo.
 
 ```javascript
 function StepperForm ({ count }) {
@@ -195,7 +196,7 @@ class PlanetsList extends Presenter {
 }
 ```
 
-### `update(repo, props, state)`
+### `update(repo, nextProps, nextState)`
 
 Called when a presenter gets new props. This is useful for secondary
 data fetching and other work that must happen when a Presenter receives
@@ -212,10 +213,9 @@ class Planet extends Presenter {
       planet: state => state.planets.find(planet => planet.id === planetId)
     }
   }
-  // These are the next props and state
-  update (repo, props, state) {
-    if (props.planetId !== this.props.planetId)
-      repo.push(getPlanet, props.planetId)
+  update (repo, nextProps, nextState) {
+    if (nextProps.planetId !== this.props.planetId)
+      repo.push(getPlanet, nextProps.planetId)
     }
   }
   // ...
