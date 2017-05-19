@@ -22,13 +22,14 @@ Microcosm is a state management tool for [React](https://github.com/facebook/rea
 
 ```javascript
 import Microcosm, { get, set } from 'microcosm'
+import superagent from 'superagent'
 
 let repo = new Microcosm()
 
 function getUser (id) {
   // This will return a promise. Microcosm automatically understands promises,
   // see http://code.viget.com/microcosm/api/actions.html
-  return fetch(`/users/#{id}`).then(response => response.json())
+  return superagent(`/users/#{id}`)
 }
 
 // Domains define how a Microcosm should turn actions into new state
@@ -42,7 +43,9 @@ repo.addDomain('users', {
   },
   register () {
     return {
-      [getUser.done]: this.addUser
+      [getUser]: {
+        done: this.addUser
+      }
     }
   }
 })
