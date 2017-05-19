@@ -94,7 +94,6 @@ export default class Model extends Emitter {
   compute() {
     let last = this.value
     let next = last
-
     for (var key in this.bindings) {
       var value = invoke(this.bindings[key], this.repo, this.scope)
 
@@ -103,7 +102,7 @@ export default class Model extends Emitter {
 
     if (last !== next) {
       this.value = next
-      this._emit('change', this.value)
+      this._emit('change', next)
     }
   }
 

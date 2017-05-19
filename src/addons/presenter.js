@@ -43,7 +43,7 @@ class Presenter extends React.PureComponent {
 
     this.setup(this.repo, this.props, this.state)
 
-    this.model = this._prepareModel()
+    this.model = this.mediator.updateModel(this.props, this.state)
 
     this.ready(this.repo, this.props, this.state)
   }
@@ -59,10 +59,6 @@ class Presenter extends React.PureComponent {
     this.didFork = workingRepo !== givenRepo
 
     return workingRepo
-  }
-
-  _prepareModel(props = this.props, state = this.state) {
-    return this.mediator.updateModel(props, state)
   }
 
   /**
@@ -122,7 +118,7 @@ class Presenter extends React.PureComponent {
   }
 
   componentWillUpdate(props, state) {
-    this.model = this._prepareModel(props, state)
+    this.model = this.mediator.updateModel(props, state)
     this.update(this.repo, props, state)
   }
 
@@ -181,10 +177,12 @@ class PresenterMediator extends React.PureComponent {
     repo: identity,
     send: identity
   }
+
   static childContextTypes = {
     repo: identity,
     send: identity
   }
+
   constructor(props, context) {
     super(props, context)
 
