@@ -6,6 +6,8 @@
   represents a group of actions processing in parallel.
 - The action generator form may now `yeild` an array. This produces
   the same behavior as `repo.parallel`
+- `Presenter::getModel` assignments
+  accept [Observables](https://github.com/tc39/proposal-observable).
 
 ## 12.8.0
 
