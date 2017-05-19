@@ -22,14 +22,14 @@ Microcosm is a state management tool for [React](https://github.com/facebook/rea
 
 ```javascript
 import Microcosm, { get, set } from 'microcosm'
-import superagent from 'superagent'
+import axios from 'axios'
 
 let repo = new Microcosm()
 
 function getUser (id) {
-  // This will return a promise. Microcosm automatically understands promises,
-  // see http://code.viget.com/microcosm/api/actions.html
-  return superagent(`/users/#{id}`)
+  // This will return a promise. Microcosm automatically handles promises.
+  // See http://code.viget.com/microcosm/api/actions.html
+  return axios(`/users/#{id}`)
 }
 
 // Domains define how a Microcosm should turn actions into new state
@@ -112,9 +112,13 @@ Microcosm reconciles them in the order they were created.
 Invoking `push()` appends to that history, and returns an `Action` object to represent it:
 
 ```javascript
+// axios is an AJAX library
+// https://github.com/mzabriskie/axios
+import axios from 'axios'
+
 function getPlanet (id) {
-  // Fetch returns a Promise, handled out of the box
-  return fetch('/planets/' + id).then(response => response.json())
+  // axios returns a Promise, handled out of the box
+  return axios(`/planets/${id}`)
 }
 
 let action = repo.push(getPlanet, 'venus')

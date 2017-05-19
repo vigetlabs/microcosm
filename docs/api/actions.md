@@ -17,20 +17,22 @@ Create an action by executing `Microcosm::push` with a function that
 performs some type of work. We call this function an _action creator_.
 
 ```javascript
+// axios is an AJAX library
+// https://github.com/mzabriskie/axios
+import axios from 'axios'
+
 const repo = new Microcosm()
 
 function createPlanet (data) {
-  let request = fetch('/planets', { method: 'POST', data })
-
   // This will return a promise, which Microcosm automatically
   // understands. Read further for more details.
-  return request.then(response => response.json())
+  return axios.post('/planets', data)
 }
 
 const action = repo.push(createPlanet, { name: 'Venus' })
 
 action.onDone(function () {
-  // All done!
+  console.log('All done!')
 })
 ```
 
@@ -65,9 +67,11 @@ repo.push(addPlanet, { name: 'Saturn' })
 ### Return a promise
 
 ```javascript
+import axios from 'axios'
+
 function getPlanet (id) {
-  // Using your favorite promise-based ajax library (maybe axios or fetch?)
-  return ajax.get(`/planets/${id}`)
+  // Any promise-based AJAX library will do. We like axios
+  return axios(`/planets/${id}`)
 }
 
 repo.push(getPlanet, 'mars')
@@ -140,7 +144,7 @@ function ask (message) {
 }
 
 function deleteUser (id) {
-  return fetch.delete('/users/${id}').then(response => response.json())
+  return axios.delete('/users/${id}')
 }
 
 function confirmAndDelete (user) {

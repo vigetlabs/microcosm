@@ -169,10 +169,13 @@ contains information on the state of its progress as well as any associated
 data.
 
 ```javascript
+// axios is an AJAX library
+// https://github.com/mzabriskie/axios
+import axios from 'axios'
+
 function createPlanet (body) {
-  // Fetch returns a Promise
-  // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
-  return fetch('/planets', { method: 'POST', body })
+  // axios returns a Promise, handled out of the box
+  return axios.post('/planets', body)
 }
 ```
 
