@@ -10,12 +10,12 @@ Microcosm is a state management tool for [React](https://github.com/facebook/rea
 ## What you get
 
 - A central place to track all application data
-- [Schedule work with actions](./docs/api/actions.md). Actions understand Promises out of the box and move through predefined states.
+- [Schedule work with actions](./docs/api/actions.md)
+- Actions understand Promises out of the box and move through predefined states.
 - Keep loading states out of the data layer. Track action progress using [status callbacks](./docs/api/actions.md#ondonecallback-scope).
 - [Split up application state in large apps](./docs/api/microcosm.md#fork) while still sharing common data
 - [Painless optimistic updates](./docs/recipes/ajax.md)
-- [Opinions about architecture](./docs/guides/architecture.md)
-- [Addons for decoupling business and presentation logic](./docs/api/presenter.md)
+- Track changes and handle business logic with [Presenter components](./docs/api/presenter.md)
 - 5kb gzipped (~15kb minified)
 
 ## At a glance
