@@ -1,5 +1,12 @@
 # Changelog
 
+## Edge
+
+- Added new `repo.parallel` method. This returns an action that
+  represents a group of actions processing in parallel.
+- The action generator form may now `yeild` an array. This produces
+  the same behavior as `repo.parallel`
+
 ## 12.8.0
 
 - The current repo is passed as the second argument of
