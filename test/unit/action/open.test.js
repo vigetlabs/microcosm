@@ -33,15 +33,10 @@ describe('Action open state', function() {
   it('does not trigger an open event if it is complete', function() {
     const action = new Action(identity)
     const spy = jest.fn()
-    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
     action.on('open', spy)
     action.resolve()
     action.open()
-
-    expect(warn).toHaveBeenCalledWith(
-      'Action "identity" is already in the resolve state. Calling open() will not change it.'
-    )
 
     expect(spy).not.toHaveBeenCalled()
   })

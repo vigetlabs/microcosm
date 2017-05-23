@@ -44,15 +44,10 @@ describe('Action error state', function() {
   it('does not trigger an error event if it is complete', function() {
     const action = new Action(identity)
     const spy = jest.fn()
-    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
     action.on('error', spy)
     action.resolve()
     action.reject()
-
-    expect(warn).toHaveBeenCalledWith(
-      'Action "identity" is already in the resolve state. Calling reject() will not change it.'
-    )
 
     expect(spy).not.toHaveBeenCalled()
   })

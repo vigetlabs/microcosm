@@ -46,19 +46,12 @@ describe('Action done state', function() {
   it('actions can not be resolved after rejected', function() {
     const repo = new Microcosm()
     const action = repo.append(identity)
-    const spy = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
     action.reject(false)
     action.resolve()
 
-    expect(spy).toHaveBeenCalledWith(
-      'Action "identity" is already in the reject state. Calling resolve() will not change it.'
-    )
-
     expect(action).toHaveStatus('error')
     expect(action).not.toHaveStatus('done')
-
-    spy.mockRestore()
   })
 
   it('aliases the done type with resolve', function() {

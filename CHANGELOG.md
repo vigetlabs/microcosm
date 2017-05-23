@@ -8,6 +8,9 @@
   the same behavior as `repo.parallel`
 - `Presenter::getModel` assignments
   accept [Observables](https://github.com/tc39/proposal-observable).
+- Do not warn in strict mode when attempting to change a complete
+  action. This allows for use cases like, "Cancel this action, but
+  only if it hasn't finished yet."
 
 ## 12.8.0
 

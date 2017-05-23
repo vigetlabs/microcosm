@@ -43,7 +43,7 @@ class Action extends Emitter {
    * @param {*} [nextPayload]
    */
   get open() {
-    return warnOrUpdate(this, 'open', false)
+    return createActionUpdater(this, 'open', false)
   }
 
   /**
@@ -51,7 +51,7 @@ class Action extends Emitter {
    * @param {*} [nextPayload]
    */
   get update() {
-    return warnOrUpdate(this, 'update', false)
+    return createActionUpdater(this, 'update', false)
   }
 
   /**
@@ -59,7 +59,7 @@ class Action extends Emitter {
    * @param {*} [nextPayload]
    */
   get resolve() {
-    return warnOrUpdate(this, 'resolve', true)
+    return createActionUpdater(this, 'resolve', true)
   }
 
   /**
@@ -67,7 +67,7 @@ class Action extends Emitter {
    * @param {*} [nextPayload]
    */
   get reject() {
-    return warnOrUpdate(this, 'reject', true)
+    return createActionUpdater(this, 'reject', true)
   }
 
   /**
@@ -76,7 +76,7 @@ class Action extends Emitter {
    * @param {*} [nextPayload]
    */
   get cancel() {
-    return warnOrUpdate(this, 'cancel', true)
+    return createActionUpdater(this, 'cancel', true)
   }
 
   /**
@@ -293,23 +293,6 @@ class Action extends Emitter {
 }
 
 /**
- * Complete actions can never change. This is a courtesy warning
- * @param {Action} action
- * @param {string} method
- * @return A function that will warn developers that they can not
- * update this action
- * @private
- */
-function createCompleteWarning(action, method) {
-  return function() {
-    console.warn(
-      `Action "${action.command.name || action.type}" is already in ` +
-        `the ${action.status} state. Calling ${method}() will not change it.`
-    )
-  }
-}
-
-/**
  * Used to autobind action resolution methods.
  * @param {Action} action
  * @param {string} status
@@ -319,33 +302,21 @@ function createCompleteWarning(action, method) {
  */
 function createActionUpdater(action, status, complete) {
   return function(payload) {
-    action.status = status
-    action.complete = complete
+    if (action.complete === false) {
+      action.status = status
+      action.complete = complete
 
-    // Check arguments, we want to allow payloads that are undefined
-    if (arguments.length > 0) {
-      action.payload = payload
+      // Check arguments, we want to allow payloads that are undefined
+      if (arguments.length > 0) {
+        action.payload = payload
+      }
+
+      action._emit('change', action)
+      action._emit(status, action.payload)
     }
-
-    action._emit('change', action)
-    action._emit(status, action.payload)
 
     return action
   }
-}
-
-/**
- * If the action is complete, return a warning that the action can no longer be updated.
- * Otherwise return an autobound updater function.
- * @param {Action} action
- * @param {string} status
- * @param {boolean} complete
- * @private
- */
-function warnOrUpdate(action, status, complete) {
-  return action.complete
-    ? createCompleteWarning(action, status)
-    : createActionUpdater(action, status, complete)
 }
 
 export default Action
