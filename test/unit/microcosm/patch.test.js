@@ -11,6 +11,20 @@ describe('Microcosm::patch', function() {
     expect(repo).not.toHaveState('shapes')
   })
 
+  it('allows patching state for domains that operate on the root', function() {
+    const repo = new Microcosm()
+
+    repo.addDomain('', {
+      getInitialState() {
+        return { shapes: [] }
+      }
+    })
+
+    repo.patch({ shapes: ['square', 'triangle', 'circle'] })
+
+    expect(repo).toHaveState('shapes', ['square', 'triangle', 'circle'])
+  })
+
   it('raises if there is a JSON parse error deserialization fails', function() {
     const repo = new Microcosm()
 

@@ -9,12 +9,8 @@ const View = withSend(function({ send }) {
 })
 
 class Repo extends Microcosm {
-  setup() {
-    this.addDomain('color', {
-      getInitialState() {
-        return 'yellow'
-      }
-    })
+  getInitialState() {
+    return { color: 'yellow' }
   }
 }
 

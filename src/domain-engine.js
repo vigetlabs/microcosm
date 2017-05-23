@@ -1,16 +1,16 @@
 import MetaDomain from './meta-domain'
 import getRegistration from './get-registration'
 import { get, set, createOrClone } from './utils'
-import { castPath } from './key-path'
+import { castPath, getKeyString } from './key-path'
 
 class DomainEngine {
   /**
    * @param {Microcosm} repo
    */
   constructor(repo) {
-    this.repo = repo
-    this.domains = []
     this.registry = {}
+    this.repo = repo
+    this.domains = [[[], this.repo]]
 
     // All realms contain a meta domain for basic Microcosm operations
     this.add([], MetaDomain)
@@ -76,14 +76,26 @@ class DomainEngine {
     return next
   }
 
+  supportsKey(key) {
+    if (key in this.repo.state) {
+      return true
+    }
+
+    return this.domains.some(entry => getKeyString(entry[0]) === key)
+  }
+
   sanitize(data) {
+    let repo = this.repo
+    let parent = repo.parent
     let next = {}
 
-    for (var i = 0, len = this.domains.length; i < len; i++) {
-      let [key] = this.domains[i]
+    for (var key in data) {
+      if (parent && parent.domains.supportsKey(key)) {
+        continue
+      }
 
-      if (key.length) {
-        next = set(next, key, get(data, key))
+      if (this.supportsKey(key)) {
+        next[key] = data[key]
       }
     }
 

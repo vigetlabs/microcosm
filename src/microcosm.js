@@ -94,7 +94,7 @@ class Microcosm extends Emitter {
 
     this.parent = options.parent
 
-    this.initial = this.parent ? this.parent.initial : {}
+    this.initial = this.parent ? this.parent.initial : this.getInitialState()
     this.state = this.parent ? this.parent.state : this.initial
 
     this.history = this.parent ? this.parent.history : new History(options)
@@ -173,7 +173,7 @@ class Microcosm extends Emitter {
    * Generates the starting state for a Microcosm instance. This is the result of dispatching `getInitialState` to all domains. It is pure; calling this function will not update state.
    */
   getInitialState() {
-    return this.initial
+    return this.initial == null ? {} : this.initial
   }
 
   recall(action, fallback) {
@@ -371,6 +371,10 @@ class Microcosm extends Emitter {
 
   parallel(actions) {
     return this.append('GROUP').link(actions)
+  }
+
+  register() {
+    return {}
   }
 }
 
