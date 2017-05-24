@@ -144,6 +144,52 @@ describe('History::remove', function() {
 
       expect(history.head.id).toBe(one.id)
     })
+
+    it('reconciles at the next action', function() {
+      let history = new History({ maxHistory: Infinity })
+
+      history.append(function one() {}, 'resolve')
+      let two = history.append(function two() {}, 'resolve')
+      let three = history.append(function three() {}, 'resolve')
+
+      jest.spyOn(history, 'reconcile')
+
+      history.remove(two)
+
+      expect(history.reconcile).toHaveBeenCalledWith(three)
+    })
+
+    it('reconciles at the parent if the action is head of an active branch', function() {
+      let history = new History({ maxHistory: Infinity })
+
+      let one = history.append(function one() {}, 'resolve')
+      let two = history.append(function two() {}, 'resolve')
+      history.append(function three() {}, 'resolve')
+
+      history.checkout(two)
+
+      jest.spyOn(history, 'reconcile')
+
+      history.remove(two)
+
+      expect(history.reconcile).toHaveBeenCalledWith(one)
+    })
+
+    it('does not reconcile if the action is not in active branch', function() {
+      let history = new History({ maxHistory: Infinity })
+
+      history.append(function one() {}, 'resolve')
+      let two = history.append(function two() {}, 'resolve')
+      let three = history.append(function three() {}, 'resolve')
+
+      history.checkout(two)
+
+      jest.spyOn(history, 'reconcile')
+
+      history.remove(three)
+
+      expect(history.reconcile).not.toHaveBeenCalled()
+    })
   })
 
   describe('removing an unfocused branch terminator', function() {

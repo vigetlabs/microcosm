@@ -179,22 +179,29 @@ class History extends Emitter {
       return
     }
 
-    let next = action.next
+    // cache linking references and activeness
     let parent = action.parent
+    let next = action.next
+    let wasActive = this.isActive(action)
 
     this.clean(action)
 
+    // if there are no more actions left, we're done
     if (this.size <= 0) {
       this.begin()
       return
-    } else if (action === this.head) {
+    }
+
+    // reset head/root references if necessary
+    if (action === this.head) {
       next = this.head = parent
     } else if (action === this.root) {
       this.root = next
     }
 
-    if (!action.disabled) {
-      this.reconcile(this.head)
+    // reconcile history if action was in active history branch
+    if (wasActive && !action.disabled) {
+      this.reconcile(next)
     }
   }
 
@@ -296,6 +303,14 @@ class History extends Emitter {
     }
 
     this.size = size
+  }
+
+  /**
+   * Determine if provided action is within active history branch
+   * @param {Action} action
+   */
+  isActive(action) {
+    return this.toArray().indexOf(action) >= 0
   }
 }
 
