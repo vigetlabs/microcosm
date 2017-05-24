@@ -345,6 +345,18 @@ class History extends Emitter {
       cursor = cursor.parent
     }
   }
+
+  /**
+   * Serialize history into JSON data
+   */
+  toJSON() {
+    return {
+      head: this.head.id,
+      root: this.root.id,
+      size: this.size,
+      tree: this.root
+    }
+  }
 }
 
 export default History

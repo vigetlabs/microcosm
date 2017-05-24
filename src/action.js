@@ -290,6 +290,16 @@ class Action extends Emitter {
       }
     }
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      status: this.status,
+      type: this.type,
+      payload: this.payload,
+      children: this.children
+    }
+  }
 }
 
 /**
