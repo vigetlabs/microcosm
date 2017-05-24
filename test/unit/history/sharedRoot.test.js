@@ -1,6 +1,6 @@
 import History from '../../../src/history'
 
-describe('History::isActive', function() {
+describe('History::sharedRoot', function() {
   const action = n => n
   const history = new History()
 
@@ -22,17 +22,15 @@ describe('History::isActive', function() {
   const five = history.append(action)
   const six = history.append(action)
 
-  history.checkout(four)
-
-  it('returns true for actions in the active branch', function() {
-    expect(history.isActive(one)).toEqual(true)
-    expect(history.isActive(two)).toEqual(true)
-    expect(history.isActive(three)).toEqual(true)
-    expect(history.isActive(four)).toEqual(true)
+  it('returns the shared root for inactive actions', function() {
+    expect(history.sharedRoot(three)).toEqual(two)
+    expect(history.sharedRoot(four)).toEqual(two)
   })
 
-  it('returns false for actions not in the active branch', function() {
-    expect(history.isActive(five)).toEqual(false)
-    expect(history.isActive(six)).toEqual(false)
+  it('returns the provided action if the action is active', function() {
+    expect(history.sharedRoot(one)).toEqual(one)
+    expect(history.sharedRoot(two)).toEqual(two)
+    expect(history.sharedRoot(five)).toEqual(five)
+    expect(history.sharedRoot(six)).toEqual(six)
   })
 })

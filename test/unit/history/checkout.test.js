@@ -4,40 +4,34 @@ describe('History::checkout', function() {
   const action = n => n
 
   /*
-   * Reproduce the following tree:
+   * Set up the following tree:
    *
-   *     +-<2>
-   * <1>-|
-   *     +-<3>
+   *               |- [three] - [four]
+   * [one] - [two] +
+   *               |- [five] - [*six]
    */
   it('updates the next values of nodes to follow the current branch', function() {
-    const history = new History()
+    let history = new History()
 
-    history.append(action)
+    let one = history.append(action)
+    let two = history.append(action)
+    let three = history.append(action)
+    let four = history.append(action)
 
-    // 1. Create a fork, a node that will have two branches
-    const fork = history.append(action)
+    history.checkout(two)
 
-    // 2. Append a node to the active branch
-    const top = history.append(action)
+    let five = history.append(action)
+    let six = history.append(action)
 
-    // 3. Return to the root
-    history.checkout(fork)
+    expect(one.next).toEqual(two)
+    expect(two.next).toEqual(five)
+    expect(five.next).toEqual(six)
 
-    // 4. Create a new branch by appending another node to the root
-    const bottom = history.append(action)
+    history.checkout(four)
 
-    // 5. The fork's next node should be the bottom
-    expect(fork.next).toEqual(bottom)
-
-    // 6. Then return to the first branch
-    history.checkout(top)
-
-    // 7. The fork should point to the top
-    expect(fork.next).toEqual(top)
-
-    // 8. The top should point to nothing
-    expect(top.next).toEqual(null)
+    expect(one.next).toEqual(two)
+    expect(two.next).toEqual(three)
+    expect(three.next).toEqual(four)
   })
 
   it('checks out the head if no action is specified', function() {
@@ -50,23 +44,52 @@ describe('History::checkout', function() {
     expect(history.reconcile).toHaveBeenCalledWith(history.head)
   })
 
+  it('reconciles on the supplied action if it is active', function() {
+    let history = new History()
+
+    let one = history.append(action)
+    history.append(action)
+
+    jest.spyOn(history, 'reconcile')
+
+    history.checkout(one)
+
+    expect(history.reconcile).toHaveBeenCalledWith(one)
+  })
+
+  it('reconciles on the most recent shared node if hopping branches', function() {
+    let history = new History()
+
+    let one = history.append(action)
+    let two = history.append(action)
+    history.checkout(one)
+    history.append(action)
+
+    jest.spyOn(history, 'reconcile')
+
+    history.checkout(two)
+
+    expect(history.reconcile).toHaveBeenCalledWith(one)
+  })
+
   it('properly handles forked branches', function() {
     let history = new History()
 
     let one = history.append(action)
     let two = history.append(action)
     let three = history.append(action)
+    let four = history.append(action)
 
     history.archive()
     history.checkout(two)
 
-    let four = history.append(action)
     let five = history.append(action)
+    let six = history.append(action)
 
-    expect(history.toArray()).toEqual([one, two, four, five])
+    expect(history.toArray()).toEqual([one, two, five, six])
 
-    history.checkout(three)
+    history.checkout(four)
 
-    expect(history.toArray()).toEqual([one, two, three])
+    expect(history.toArray()).toEqual([one, two, three, four])
   })
 })

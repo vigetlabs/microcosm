@@ -42,15 +42,23 @@ class History extends Emitter {
    * @param {Action} action The new head of the tree
    */
   checkout(action) {
+    let sharedRoot = this.sharedRoot(action) || this.head
+
     this.head = action || this.head
 
     // Each action has a "next" property that tells the history how to
-    //  move forward. Update that path:
-    this.head.parent.next = this.head
+    //  move forward. Update that path back to the sharedRoot:
+    let cursor = this.head
+    while (cursor != sharedRoot) {
+      let parent = cursor.parent
+      parent.next = cursor
+
+      cursor = parent
+    }
 
     this.setSize()
 
-    this.reconcile(this.head)
+    this.reconcile(sharedRoot)
 
     return this
   }
@@ -310,7 +318,26 @@ class History extends Emitter {
    * @param {Action} action
    */
   isActive(action) {
-    return this.toArray().indexOf(action) >= 0
+    let cursor = action
+    while (cursor) {
+      if (cursor === this.head) {
+        return true
+      }
+      cursor = cursor.next
+    }
+
+    return false
+  }
+
+  sharedRoot(action) {
+    let cursor = action
+
+    while (cursor) {
+      if (this.isActive(cursor)) {
+        return cursor
+      }
+      cursor = cursor.parent
+    }
   }
 }
 
