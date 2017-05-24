@@ -141,6 +141,27 @@ describe('History::remove', function() {
     })
   })
 
+  describe('removing an unfocused branch terminator', function() {
+    it('leaves the head reference alone', function() {
+      let history = new History({ maxHistory: Infinity })
+
+      let one = history.append(function one() {}, 'resolve')
+      let two = history.append(function two() {}, 'resolve')
+
+      history.checkout(one)
+      let three = history.append(function three() {}, 'resolve')
+
+      // History tree now looks like this:
+      //                |- [two]
+      // [root] - [one] +
+      //                |- [*three]
+
+      history.remove(two)
+
+      expect(history.head.id).toBe(three.id)
+    })
+  })
+
   describe('children', function() {
     it('eliminates references to removed on the left', function() {
       let history = new History({ maxHistory: Infinity })

@@ -187,13 +187,13 @@ class History extends Emitter {
     if (this.size <= 0) {
       this.begin()
       return
-    } else if (!next) {
+    } else if (action === this.head && !next) {
       next = this.head = parent
     } else if (action === this.root) {
       this.root = next
     }
 
-    if (!action.disabled) {
+    if (!action.disabled && next) {
       this.reconcile(next)
     }
   }
