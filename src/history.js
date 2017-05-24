@@ -193,8 +193,8 @@ class History extends Emitter {
       this.root = next
     }
 
-    if (!action.disabled && next) {
-      this.reconcile(next)
+    if (!action.disabled) {
+      this.reconcile(this.head)
     }
   }
 
