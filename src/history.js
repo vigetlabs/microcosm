@@ -187,7 +187,7 @@ class History extends Emitter {
     if (this.size <= 0) {
       this.begin()
       return
-    } else if (action === this.head && !next) {
+    } else if (action === this.head) {
       next = this.head = parent
     } else if (action === this.root) {
       this.root = next

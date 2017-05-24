@@ -139,6 +139,19 @@ describe('History::remove', function() {
         'three'
       ])
     })
+
+    it('resets the head if removing the head', function() {
+      let history = new History({ maxHistory: Infinity })
+
+      let one = history.append(function one() {}, 'resolve')
+      let two = history.append(function two() {}, 'resolve')
+      history.append(function three() {}, 'resolve')
+
+      history.checkout(two)
+      history.remove(two)
+
+      expect(history.head.id).toBe(one.id)
+    })
   })
 
   describe('removing an unfocused branch terminator', function() {
