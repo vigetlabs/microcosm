@@ -329,6 +329,12 @@ class History extends Emitter {
     return false
   }
 
+  /**
+   * Starting with the provided action, navigate up the parent chain
+   * until you find an action which is active. That action is the shared
+   * root between the provided action and the current head.
+   * @param {Action} action
+   */
   sharedRoot(action) {
     let cursor = action
 
