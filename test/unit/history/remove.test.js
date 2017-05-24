@@ -68,8 +68,6 @@ describe('History::remove', function() {
       history.append(function two() {}, 'resolve')
       let three = history.append(function three() {}, 'resolve')
 
-      history.archive()
-
       history.remove(three)
 
       expect(history.map(a => a.command.name)).toEqual(['$start', 'one', 'two'])
@@ -81,8 +79,6 @@ describe('History::remove', function() {
       history.append(function one() {}, 'resolve')
       history.append(function two() {}, 'resolve')
       let three = history.append(function three() {}, 'resolve')
-
-      history.archive()
 
       history.remove(three)
 
@@ -113,8 +109,6 @@ describe('History::remove', function() {
       history.append(function two() {}, 'resolve')
       history.append(function three() {}, 'resolve')
 
-      history.archive()
-
       history.remove(history.root)
 
       expect(history.map(a => a.command.name)).toEqual(['one', 'two', 'three'])
@@ -128,8 +122,6 @@ describe('History::remove', function() {
       history.append(function one() {}, 'resolve')
       let two = history.append(function two() {}, 'resolve')
       history.append(function three() {}, 'resolve')
-
-      history.archive()
 
       history.remove(two)
 
