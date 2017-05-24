@@ -2,6 +2,7 @@
 
 1. [Overview](#overview)
 2. [API](#api)
+2. [Events](#events)
 
 **Note: This is a work in progress document and feature. History has
 been a private API for a very long time. We're still working through
@@ -67,6 +68,27 @@ In the example above, the following tree would be produced:
 branch is used to determine state. Here, a Microcosm's state will be
 the result of dispatching `root`, `one`, and `three` to Domains.
 
+### Reconciling
+
+What makes History such a powerful feature of Microcosm is it's
+ability to walk through recorded actions whenever there is a change,
+similar to a rebase in git.
+
+Let's say we have four actions pushed to our History, and that three
+of the four are completed `(C)`, but the second action we pushed is
+taking a long time and is still open `(O)`.
+```
+[root] - [one](C) - [two](O) - [three](C) - [four](C)
+```
+
+When our `two` action here resolves or rejects, History will initiate
+a reconciling starting at `two`, and walking forward to `three` and
+then `four`. At each step, your Domains will recompute changes to the
+state based on the actions.
+
+This ensures that your application state is always accurate based on
+the order in which actions were triggered.
+
 ## API
 
 ### checkout(action)
@@ -93,7 +115,7 @@ calculate state by reconciling `root`, `one,` and `three`.
 
 Disable a group of actions:
 
-```
+```javascript
 let repo = new Microcosm({ maxHistory: Infinity })
 
 let one = repo.push(addUser)
@@ -109,7 +131,7 @@ existed.
 This flips the `disabled` state of each action provided. By executing
 toggle a second time, these actions will be re-enabled:
 
-```
+```javascript
 // Actions disabled in the prior example
 repo.history.toggle([ one, two ])
 // `one` and `two` have been re-enabled
@@ -189,4 +211,134 @@ let three = repo.push(action)
 repo.history.remove(two)
 
 repo.history.toArray() // [root, one, three]
+```
+
+## Events
+
+History emits events any time something of interest happens. This is
+how Microcosm knows to update the state to accurately reflect what's
+going on given a sequence of actions and their varying statuses.
+
+You can manage event listeners with the following methods.
+
+### `on(event, callback)`
+
+Adds an event listener to a Microcosm History instance.
+```javascript
+const repo = new Microcosm()
+const history = repo.history
+
+history.on('append', callback)
+```
+
+### `off(event, callback)`
+
+Remove an event listener.
+
+```javascript
+// Remove a callback
+history.off('append', callback)
+```
+
+### Event Types
+
+### `append`
+Arguments: `action`
+
+Emitted when an action is pushed onto the History stack.
+
+```javascript
+history.on('append', function(action) {
+  console.log('Action pushed:', action.id)
+})
+
+repo.push(newAction)
+
+// Action pushed: 42
+```
+
+### `remove`
+Arguments: `action`
+
+Emitted when an action is removed from the History stack.
+
+```javascript
+history.on('remove', function(action) {
+  console.log('Action removed:', action.id)
+})
+
+action = repo.push(newAction)
+history.remove(action)
+
+// Action removed: 42
+```
+
+### `update`
+Arguments: `action`
+
+Whenever there is an update to an action's status, an `update` event
+is emitted with that action.
+
+```javascript
+history.on('update', function(action) {
+  console.log('Action status:', action.status)
+})
+
+repo.push(newAction)
+
+// Action status: inactive
+// Action status: open
+// Action status: update
+// Action status: [resolve, reject, cancel]
+```
+
+Whenever an action status updates that precedes other actions in
+History, History walks forward in time from that action reconciling
+the application state (see [Reconciling](#reconciling) for more
+details.) For every action in this process, `update` will be emitted.
+
+### `reconcile`
+Arguments: `action`
+
+In response to an action's status changing, History triggers a
+reconciliation. Once that has completed (and an `update` event has
+been emitted for each reconciled action), `reconcile` is emitted with
+the action that triggered the walk through.
+
+```javascript
+history.on('reconcile', function(action) {
+  console.log('Action:', action.id)
+})
+
+repo.push(newAction)
+
+// Action: 42
+```
+
+### `release`
+
+Emitted after a reconciliation pass. In setting up a Microcosm, you
+have the option to pass a `batch` option which will cause `release`
+to be emitted in batched intervals (used internally to improve state
+comparison performance).
+
+```javascript
+let repo = new Microcosm({ batch: true })
+let history = repo.history
+
+history.on('append', function(action) {
+  console.log('Action:', action.id)
+})
+history.on('release', function() {
+  console.log('Released!')
+})
+
+repo.push(newAction)
+repo.push(newAction)
+repo.push(newAction)
+
+// Action: 1
+// Action: 2
+// Action: 3
+// Released!
 ```
