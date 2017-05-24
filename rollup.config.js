@@ -38,9 +38,6 @@ if (process.env.MINIFY) {
       compress: {
         passes: 5
       },
-      mangleProperties: {
-        regex: /^_/
-      },
       mangle: {
         toplevel: true
       }
