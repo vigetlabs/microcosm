@@ -27,6 +27,7 @@
     "sort-vars": 2,
     "comma-dangle": [2, "never"],
     "no-console": 0,
+    "quotes": [2, "single", { "avoidEscape": true }],
     "no-unused-vars" : [2, { "args": "none" }],
     "react/jsx-equals-spacing": ["warn", "never"],
     "react/jsx-no-duplicate-props": ["warn", { "ignoreCase": true }],
