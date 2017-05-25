@@ -10,10 +10,19 @@ class DomainEngine {
   constructor(repo) {
     this.registry = {}
     this.repo = repo
-    this.domains = [[[], this.repo]]
+    this.domains = []
 
     // All realms contain a meta domain for basic Microcosm operations
     this.add([], MetaDomain)
+
+    // Microcosms can register actions
+    this.addRepo(repo)
+  }
+
+  addRepo(repo) {
+    if (typeof repo.register !== 'undefined') {
+      this.domains.push([[], repo])
+    }
   }
 
   getHandlers({ command, status }) {

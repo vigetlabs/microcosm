@@ -372,10 +372,6 @@ class Microcosm extends Emitter {
   parallel(actions) {
     return this.append('GROUP').link(actions)
   }
-
-  register() {
-    return {}
-  }
 }
 
 export default Microcosm
