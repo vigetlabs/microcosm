@@ -100,15 +100,15 @@ class History extends Emitter {
    * @param {*} scope
    */
   map(fn, scope) {
-    let size = this.size
-    let items = Array(size)
-    let action = this.head
+    let items = []
+    let cursor = this.root
 
-    while (size--) {
-      items[size] = fn.call(scope, action)
-      action = action.parent
+    while (cursor) {
+      items.push(fn.call(scope, cursor))
+
+      if (cursor == this.head) break
+      cursor = cursor.next
     }
-
     return items
   }
 
