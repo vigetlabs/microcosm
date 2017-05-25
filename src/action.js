@@ -297,6 +297,7 @@ class Action extends Emitter {
       status: this.status,
       type: this.type,
       payload: this.payload,
+      disabled: this.disabled,
       children: this.children
     }
   }
