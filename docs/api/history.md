@@ -2,7 +2,7 @@
 
 1. [Overview](#overview)
 2. [API](#api)
-2. [Events](#events)
+3. [Events](#events)
 
 **Note: This is a work in progress document and feature. History has
 been a private API for a very long time. We're still working through
@@ -70,7 +70,7 @@ the result of dispatching `root`, `one`, and `three` to Domains.
 
 ### Reconciling
 
-What makes History such a powerful feature of Microcosm is it's
+What makes History such a powerful feature of Microcosm is its
 ability to walk through recorded actions whenever there is a change,
 similar to a rebase in git.
 
@@ -82,7 +82,7 @@ taking a long time and is still open `(O)`.
 ```
 
 When our `two` action here resolves or rejects, History will initiate
-a reconciling starting at `two`, and walking forward to `three` and
+a reconciliation starting at `two`, and walk forward to `three` and
 then `four`. At each step, your Domains will recompute changes to the
 state based on the actions.
 
@@ -217,7 +217,7 @@ repo.history.toArray() // [root, one, three]
 
 History emits events any time something of interest happens. This is
 how Microcosm knows to update the state to accurately reflect what's
-going on given a sequence of actions and their varying statuses.
+going on given a sequence of actions and their statuses.
 
 You can manage event listeners with the following methods.
 
@@ -233,10 +233,9 @@ history.on('append', callback)
 
 ### `off(event, callback)`
 
-Remove an event listener.
+Removes an event listener.
 
 ```javascript
-// Remove a callback
 history.off('append', callback)
 ```
 
@@ -292,10 +291,10 @@ repo.push(newAction)
 // Action status: [resolve, reject, cancel]
 ```
 
-Whenever an action status updates that precedes other actions in
-History, History walks forward in time from that action reconciling
-the application state (see [Reconciling](#reconciling) for more
-details.) For every action in this process, `update` will be emitted.
+Whenever an action that precedes other actions has a status update,
+History walks forward in time from that action reconciling the
+application state (see [Reconciling](#reconciling) for more details.)
+For every action in this process, `update` will be emitted.
 
 ### `reconcile`
 Arguments: `action`
