@@ -332,8 +332,9 @@ fork.push(getPeople)
 ### `parallel([...actions])`
 
 Create a new "group" action bound to the resolution of a list of
-actions. If all actions resolve or cancel, the group action will
-resolve. If any action is rejected, the group action fails:
+actions run in parallel. If all actions resolve or cancel, the
+group action will resolve. If any action is rejected, the group
+action fails:
 
 ```javascript
 let group = repo.parallel([
@@ -345,6 +346,45 @@ group.onDone(function () {
   console.log('hurrah!')
 })
 ```
+
+### `sequence([...prepared])`
+
+Create a new "group" action bound to the resolution of a list of
+actions run sequentially. Similar to `parallel`, if all actions
+resolve or cancel, the group action resolves. If any action is
+rejected, the group action fails. Unlike `parallel`, you must
+pass in an array of "prepared" actions so they can be later
+triggered sequentially.
+
+```javascript
+let group = repo.sequence([
+  repo.prepare(actionOne),
+  repo.prepare(actionTwo)
+])
+
+group.onDone(function () {
+  console.log('hurrah!')
+})
+```
+
+The returned value of any given action will be passed in as an
+additional parameter to the following action. So in our above
+example, `actionTwo` would be called with the return value of
+`actionOne` passed in as the first argument. If this is
+undesirable, you can customize or bypass this functionality like
+so:
+
+```javascript
+let group = repo.sequence([
+  () => repo.push(actionOne),
+  (payload) => repo.push(handlesActionOneResponse),
+  () => repo.push(isolatedAction),
+])
+```
+
+So here, the response of `actionOne` would be passed in to the
+second action, but the response of that would be ignored when the
+third `isolatedAction` is called.
 
 ### `Microcosm.defaults`
 

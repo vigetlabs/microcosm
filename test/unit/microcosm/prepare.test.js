@@ -9,4 +9,13 @@ describe('Microcosm::prepare', function() {
 
     expect(action).toBeCalledWith(1, 2, 3)
   })
+
+  it('does not push the action by default', function() {
+    const repo = new Microcosm()
+    const action = jest.fn()
+
+    repo.prepare(action, 1, 2)
+
+    expect(action).not.toBeCalled()
+  })
 })

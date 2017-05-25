@@ -170,7 +170,7 @@ complete before continuing:
 
 ```javascript
 function getUser (id) {
-  return fetch(`/users/${id}`)
+  return axios(`/users/${id}`)
 }
 
 function getUsers (ids) {
