@@ -10,7 +10,7 @@
     "lint": "prettier --single-quote --semi false -l \"{src,test,examples}/**/*.js\" && eslint \"{src,test,examples}/**/*.js\"",
     "pretty": "prettier --single-quote --semi false --write \"{src,test,examples}/**/*.js\" && eslint --fix \"{src,test,examples}/**/*.js\"",
     "docs": "jsdoc src -c jsdoc/conf.json && jsdoc src -c jsdoc/conf.json --package package.json",
-    "test": "npm run lint && NODE_ENV=test jest --maxWorkers=2",
+    "test": "NODE_ENV=test jest --maxWorkers=2",
     "test:cov": "NODE_ENV=test jest --coverage --maxWorkers=2",
     "report-coverage": "codecov coverage/lcov.info",
     "release": "make release"
