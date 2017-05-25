@@ -72,7 +72,19 @@ class History extends Emitter {
 
     list.forEach(action => action.toggle('silently'))
 
-    this.reconcile(list[0])
+    // determine oldest active action to reconcile on
+    let toReconcile
+    let toReconcileIndex = Infinity
+    let actionCache = this.toArray()
+    list.forEach(action => {
+      let activeIndex = actionCache.indexOf(action)
+      if (activeIndex >= 0 && activeIndex < toReconcileIndex) {
+        toReconcileIndex = activeIndex
+        toReconcile = action
+      }
+    })
+
+    if (toReconcile) this.reconcile(toReconcile)
   }
 
   /**
