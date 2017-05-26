@@ -298,7 +298,8 @@ class Action extends Emitter {
       type: this.type,
       payload: this.payload,
       disabled: this.disabled,
-      children: this.children
+      children: this.children,
+      next: this.next && this.next.id
     }
   }
 }
