@@ -9,13 +9,17 @@ Object {
     "children": Array [
       Object {
         "children": Array [],
+        "disabled": false,
         "id": 12,
+        "next": null,
         "payload": true,
         "status": "resolve",
         "type": "action.5",
       },
     ],
+    "disabled": false,
     "id": 10,
+    "next": 12,
     "payload": undefined,
     "status": "resolve",
     "type": "$start.3",
