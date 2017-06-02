@@ -14,19 +14,20 @@ class DomainEngine {
 
     // All realms contain a meta domain for basic Microcosm operations
     this.add([], MetaDomain)
-
-    // Microcosms can register actions
-    this.addRepo(repo)
   }
 
-  addRepo(repo) {
-    if (typeof repo.register !== 'undefined') {
-      this.domains.push([[], repo])
-    }
+  getRepoHandlers(action) {
+    let { command, status } = action
+
+    let handler = getRegistration(this.repo.register(), command, status)
+
+    return handler ? [{ key: [], domain: this.repo, handler }] : []
   }
 
-  getHandlers({ command, status }) {
-    let handlers = []
+  getHandlers(action) {
+    let handlers = this.getRepoHandlers(action)
+
+    let { command, status } = action
 
     for (var i = 0, len = this.domains.length; i < len; i++) {
       var [key, domain] = this.domains[i]
