@@ -369,10 +369,6 @@ class Microcosm extends Emitter {
     this.removeAllListeners()
   }
 
-  register() {
-    return {}
-  }
-
   parallel(actions) {
     return this.append('GROUP').link(actions)
   }
