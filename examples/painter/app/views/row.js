@@ -14,7 +14,7 @@ function Cell({ x, y, active, onClick }) {
 export default withSend(function Row({ cells, y, send }) {
   return (
     <g key={y}>
-      {cells.map((active, x) => (
+      {cells.map((active, x) =>
         <Cell
           key={x}
           x={x}
@@ -22,7 +22,7 @@ export default withSend(function Row({ cells, y, send }) {
           active={active}
           onClick={() => send(paint, { x, y })}
         />
-      ))}
+      )}
     </g>
   )
 })
