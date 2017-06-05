@@ -195,7 +195,7 @@ class PresenterMediator extends React.PureComponent {
 
     this.model = new Model(this.repo, this.presenter)
 
-    this.model.on('change', this.assignModel, this)
+    this.model.on('change', this.setState, this)
   }
 
   getChildContext() {
@@ -238,10 +238,6 @@ class PresenterMediator extends React.PureComponent {
     }
 
     return this.presenter.defaultRender()
-  }
-
-  assignModel(state) {
-    this.setState(() => state)
   }
 
   updateModel(props, state) {
