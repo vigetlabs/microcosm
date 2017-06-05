@@ -68,8 +68,9 @@ expect.extend({
       pass: pass,
       message: () => {
         return (
-          `Expected '${path}' in repo.state ${operator} be ${this.utils.printExpected(value)} ` +
-          `but it is ${this.utils.printReceived(actual)}.`
+          `Expected '${path}' in repo.state ${operator} be ${this.utils.printExpected(
+            value
+          )} ` + `but it is ${this.utils.printReceived(actual)}.`
         )
       }
     }
