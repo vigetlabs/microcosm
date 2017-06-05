@@ -1,8 +1,7 @@
-html,
-body {
+html, body {
   margin: 0;
   font-family: Roboto, sans-serif;
-  -webkit-text-size-adjust: 100%
+  -webkit-text-size-adjust: 100%;
 }
 
 h1, h2, h3, h4 {
@@ -18,8 +17,7 @@ a {
   color: inherit;
 }
 
-a:focus,
-a:hover {
+a:focus, a:hover {
   color: #E61875;
 }
 
@@ -49,8 +47,7 @@ a:hover {
   text-transform: uppercase;
 }
 
-.btn:hover,
-.btn:focus {
+.btn:hover, .btn:focus {
   color: #E61875;
 }
 
