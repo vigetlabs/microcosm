@@ -288,10 +288,24 @@ class Microcosm extends Emitter {
     return action
   }
 
+  /**
+   * Partially applies push. Successive calls will append new
+   * parameters (see push())
+   */
   prepare(...params) {
     return (...extra) => this.push(...params, ...extra)
   }
 
+  /**
+   * Generates a domain based on the provided config and assigns it to
+   * manage the provided key. Whenever this domain responds to an
+   * action, it will be provided the current state for that particular
+   * key.
+   *
+   * options passed as the third argument are sent into a domain’s setup
+   * method and, if using a class, the constructor is instantiated with the
+   * provided options and associated repo.
+   */
   addDomain(key, config, options) {
     let domain = this.domains.add(key, config, options)
 
@@ -304,18 +318,39 @@ class Microcosm extends Emitter {
     return domain
   }
 
+  /**
+   * Generates an effect based on the provided config. options passed as
+   * the second argument are sent into a effect’s setup method and, if
+   * using a class, the constructor is instantiated with the provided
+   * options and associated repo.
+   */
   addEffect(config, options) {
     return this.effects.add(config, options)
   }
 
+  /**
+   * Resets state. The new state is the result of folding the provided
+   * data over getInitialState(). If no data is provided, the repo will
+   * revert to this initial value. If the second argument is true,
+   * Microcosm will call deserialize on the data.
+   */
   reset(data, deserialize) {
     return this.push(RESET, data, deserialize)
   }
 
+  /**
+   * Merges a data payload into the existing state. If the second
+   * argument is true, Microcosm will call deserialize on the data.
+   */
   patch(data, deserialize) {
     return this.push(PATCH, data, deserialize)
   }
 
+  /**
+   * For each key in the provided data parameter, transform it using
+   * the deserialize method provided by the domain managing that
+   * key. Then fold the deserialized data over the current repo state.
+   */
   deserialize(payload) {
     let base = payload
 
@@ -328,22 +363,40 @@ class Microcosm extends Emitter {
     return this.domains.deserialize(base)
   }
 
+  /**
+   * Serialize the Microcosm’s state into a plain object. By default,
+   * only domains that implement serialize will pass through their
+   * tracked state.
+   */
   serialize() {
     let base = this.parent ? this.parent.serialize() : {}
 
     return this.domains.serialize(this.state, base)
   }
 
+  /**
+   * Alias for serialize
+   */
   toJSON() {
     return this.serialize()
   }
 
+  /**
+   * Change the current focal point of the history data structure used
+   * by Microcosm. This is useful for undo/redo, or for debugging
+   * purposes
+   */
   checkout(action) {
     this.history.checkout(action)
 
     return this
   }
 
+  /**
+   * Instantiate a new Microcosm that shares the same action history as
+   * another. This is useful for producing “umbrellas” of Microcosms,
+   * particularly within a tree of UI components.
+   */
   fork() {
     return new Microcosm({
       parent: this
