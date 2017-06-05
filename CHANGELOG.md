@@ -1,6 +1,6 @@
 # Changelog
 
-## Edge
+## 12.9.0 Alpha
 
 - Added new `repo.parallel` method. This returns an action that
   represents a group of actions processing in parallel.
@@ -11,6 +11,8 @@
 - Do not warn in strict mode when attempting to change a complete
   action. This allows for use cases like, "Cancel this action, but
   only if it hasn't finished yet."
+- History and Action now serialize to JSON. This supports a new
+  [debugger](https://github.com/vigetlabs/microcosm-devtools).
 
 ## 12.8.0
 
