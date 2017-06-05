@@ -376,7 +376,7 @@ that is wrapped in the `withSend` higher order component.
 ```javascript
 function AlertButton ({ message, send }) {
   return (
-    <button onClick=() => send('alert', message)>
+    <button onClick={() => send('alert', message)}>
       Click Me
     </button>
   )
