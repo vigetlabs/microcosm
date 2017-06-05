@@ -42,6 +42,8 @@ export function getKeyPaths(value) {
 
   if (Array.isArray(value) === false) {
     paths = `${paths}`.split(PATH_DELIMETER)
+  } else if (value.every(Array.isArray)) {
+    return value
   }
 
   return paths.map(castPath)

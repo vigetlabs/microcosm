@@ -45,4 +45,11 @@ describe('getKeyPaths', function() {
     expect(path[0]).toEqual(['foo'])
     expect(path[1]).toEqual(['b ar'])
   })
+
+  it('returns the same array if every value is an array', function() {
+    let path = [['foo', 'bar'], ['bip', 'baz']]
+    let answer = getKeyPaths(path)
+
+    expect(answer).toBe(path)
+  })
 })

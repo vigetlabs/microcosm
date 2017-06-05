@@ -18,6 +18,14 @@ class Query extends Emitter {
     this.keyPaths = getKeyPaths(keys)
   }
 
+  forEachPath(callback, scope) {
+    let paths = this.keyPaths
+
+    for (var i = 0, len = paths.length; i < len; i++) {
+      callback.call(scope, paths[i], this)
+    }
+  }
+
   extract(state) {
     let length = this.keyPaths.length
     let values = Array(length)

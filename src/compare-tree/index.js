@@ -1,6 +1,6 @@
 import Node from './node'
 import Query from './query'
-import { getKeyPaths, getKeyString } from '../key-path'
+import { getKeyString } from '../key-path'
 
 // The root key is an empty string. This can be a little
 // counter-intuitive, so we keep track of them as a named constant.
@@ -23,16 +23,11 @@ class CompareTree {
    * @param {*} [scope] Optional scope to invoke the function with
    */
   on(keyPaths, callback, scope) {
-    let dependencies = getKeyPaths(keyPaths)
-    let id = Query.getId(keyPaths)
-
-    let query = this.addQuery(id, dependencies)
-
-    for (var i = 0; i < dependencies.length; i++) {
-      this.addBranch(dependencies[i], query)
-    }
+    let query = this.addQuery(keyPaths)
 
     query.on('change', callback, scope)
+
+    query.forEachPath(this.addBranch, this)
 
     return query
   }
@@ -104,9 +99,11 @@ class CompareTree {
    * @param {String} id Identifier for the node.
    * @param {String} keyPaths Each query tracks a list of key paths
    */
-  addQuery(id, keyPaths) {
+  addQuery(dependencies) {
+    let id = Query.getId(dependencies)
+
     if (!this.nodes[id]) {
-      this.nodes[id] = new Query(id, keyPaths)
+      this.nodes[id] = new Query(id, dependencies)
     }
 
     return this.nodes[id]
