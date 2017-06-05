@@ -45,11 +45,13 @@ export default function getRegistration(pool, command, status) {
      */
     console.assert(
       !(alias in nest) || answer !== undefined,
-      `The "${alias}" key within a nested registration for ${command.name || 'an action'} is ${answer}. Is it being referenced correctly?`
+      `The "${alias}" key within a nested registration for ${command.name ||
+        'an action'} is ${answer}. Is it being referenced correctly?`
     )
     console.assert(
       !(status in nest) || answer !== undefined,
-      `The "${status}" key within a nested registration for ${command.name || 'an action'} is ${answer}. Is it being referenced correctly?`
+      `The "${status}" key within a nested registration for ${command.name ||
+        'an action'} is ${answer}. Is it being referenced correctly?`
     )
   } else {
     answer = pool[type]
@@ -59,7 +61,8 @@ export default function getRegistration(pool, command, status) {
      */
     console.assert(
       !(type in pool) || answer !== undefined,
-      `${command.name || 'action'} key within a registration is ${answer}. Is it being referenced correctly?`
+      `${command.name ||
+        'action'} key within a registration is ${answer}. Is it being referenced correctly?`
     )
   }
 
