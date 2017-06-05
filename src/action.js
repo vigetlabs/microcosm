@@ -5,9 +5,7 @@
 
 import Emitter from './emitter'
 import tag from './tag'
-import { isFunction } from './utils'
-
-let uid = 0
+import { isFunction, uid } from './utils'
 
 class Action extends Emitter {
   /**
@@ -17,7 +15,7 @@ class Action extends Emitter {
   constructor(command, status) {
     super()
 
-    this.id = uid++
+    this.id = uid('action')
     this.command = tag(command)
     this.status = 'inactive'
     this.payload = undefined
