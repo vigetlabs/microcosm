@@ -49,7 +49,6 @@
     "form-serialize": "0.7.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.0.0",
@@ -63,7 +62,6 @@
     "browser-sync": "^2.18.12",
     "codecov": "^2.2.0",
     "console.table": "0.8.0",
-    "documentation": "^4.0.0-rc.1",
     "elizabot": "^0.0.2",
     "enzyme": "^2.8.2",
     "eslint": "^3.19.0",
