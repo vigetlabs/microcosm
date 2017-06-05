@@ -4,9 +4,9 @@ import { castPath } from './key-path'
  * Generate a unique id
  * @private
  */
-let uid = 0
+let uidStepper = 0
 export function uid(prefix) {
-  return `${prefix}${uid++}`
+  return `${prefix}${uidStepper++}`
 }
 
 /**
