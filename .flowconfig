@@ -1,0 +1,9 @@
+[ignore]
+test
+
+[include]
+src
+
+[libs]
+
+[options]
