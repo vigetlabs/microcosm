@@ -44,7 +44,7 @@ class Archive {
   /**
    * Does a snapshot exist for an action?
    */
-  has(action:Action):boolean {
+  has(action: Action): boolean {
     return typeof this.pool[action.id] !== 'undefined'
   }
 

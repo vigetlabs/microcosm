@@ -15,7 +15,7 @@ dependencies:
     - ~/.cache/yarn
 test:
   override:
-    - flow check
+    - yarn flow
     - yarn test:cov
     - yarn lint
   post:
