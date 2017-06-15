@@ -6,10 +6,8 @@
 
 import type Action from './action'
 
-type Payload = { [string]: * }
-
 class Archive {
-  pool: { [string]: Payload }
+  pool: { [string]: Object }
 
   /**
    * @property {Object} pool An object mapping of action ids to snapshots
@@ -23,7 +21,7 @@ class Archive {
    * parent.
    * @param {Action} action Action to create an initial snapshot for
    */
-  create(action: Action): void {
+  create(action: Action) {
     this.set(action, this.get(action.parent))
   }
 
@@ -31,7 +29,7 @@ class Archive {
    * Access a prior snapshot for a given action
    * @param {Action} action Action for requested snapshot
    */
-  get(action: Action, fallback: ?Payload): Payload {
+  get(action: Action, fallback: ?Object): Object {
     console.assert(action, 'Unable to get ' + action + ' action')
 
     if (this.has(action)) {
@@ -53,7 +51,7 @@ class Archive {
    * @param {Action} action Action for requested snapshot
    * @param {Object} snapshot
    */
-  set(action: Action, snapshot: Payload) {
+  set(action: Action, snapshot: Object) {
     this.pool[action.id] = snapshot
   }
 
@@ -61,7 +59,7 @@ class Archive {
    * Remove a snapshot for an action.
    * @param {Action} action Action to eliminate snapshot for
    */
-  remove(action: Action): void {
+  remove(action: Action) {
     console.assert(action, 'Unable to remove ' + action + ' action.')
 
     delete this.pool[action.id]
