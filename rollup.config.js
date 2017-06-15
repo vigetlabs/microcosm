@@ -9,11 +9,7 @@ import path from 'path'
 const config = {
   format: 'cjs',
   exports: 'named',
-  external: [
-    'react',
-    'form-serialize',
-    path.resolve('src/microcosm.js')
-  ],
+  external: ['react', 'form-serialize', path.resolve('src/microcosm.js')],
   plugins: [
     nodeResolve(),
     babel({
@@ -36,7 +32,7 @@ if (process.env.MINIFY) {
   config.plugins.push(
     uglify({
       compress: {
-        passes: 5
+        passes: 2
       },
       mangle: {
         toplevel: true
