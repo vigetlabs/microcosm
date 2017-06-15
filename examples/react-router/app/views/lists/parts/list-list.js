@@ -1,7 +1,6 @@
 import React from 'react'
 import ActionButton from 'microcosm/addons/action-button'
-import Link from 'react-router-dom/Link'
-
+import { Link } from 'react-router-dom'
 import { removeList } from '../../../actions/lists'
 
 function List({ id, name, count }) {

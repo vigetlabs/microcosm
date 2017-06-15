@@ -1,19 +1,18 @@
 import React from 'react'
 import DOM from 'react-dom'
-import Router from 'react-router-dom/BrowserRouter'
-import Debugger from 'microcosm-debugger'
+import { Router } from 'react-router'
+import createBrowserHistory from 'history/createBrowserHistory'
 import { AppContainer } from 'react-hot-loader'
 import Repo from './repo'
 import Layout from './views/layout'
 
 const el = document.getElementById('app')
-const repo = new Repo({ maxHistory: Infinity })
-
-Debugger(repo)
+const browserHistory = createBrowserHistory()
+const repo = new Repo({ maxHistory: Infinity, browserHistory })
 
 function render() {
   DOM.render(
-    <Router>
+    <Router history={browserHistory}>
       <AppContainer>
         <Layout repo={repo} />
       </AppContainer>

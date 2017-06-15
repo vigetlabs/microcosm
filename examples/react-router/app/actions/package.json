@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "babel-plugin-transform-runtime": "^6.23.0"
+  }
+}

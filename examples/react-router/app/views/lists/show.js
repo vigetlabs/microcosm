@@ -3,7 +3,7 @@ import Presenter from 'microcosm/addons/presenter'
 import NotFound from '../errors/notfound'
 import ItemForm from './parts/item-form'
 import ItemList from './parts/item-list'
-import Link from 'react-router-dom/Link'
+import { Link } from 'react-router-dom'
 
 class ListShow extends Presenter {
   getModel({ match }) {

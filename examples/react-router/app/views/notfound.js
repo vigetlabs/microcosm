@@ -1,9 +1,10 @@
 import React from 'react'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 export default function NotFound({ resource = 'Page' }) {
   return (
     <div>
+      Link
       <header className="header">
         <h1 className="text-display container">
           {resource} Not Found
