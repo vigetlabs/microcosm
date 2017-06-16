@@ -58,24 +58,6 @@ export function merge() {
 }
 
 /**
- * Basic prototypal inheritence
- * @private
- */
-export function inherit(Child, Ancestor, proto) {
-  Child.__proto__ = Ancestor
-
-  Child.prototype = merge(
-    Object.create(Ancestor.prototype),
-    {
-      constructor: Child.prototype.constructor
-    },
-    proto
-  )
-
-  return Child
-}
-
-/**
  * Retrieve a value from an object. If no key is provided, just return the
  * object.
  * @private

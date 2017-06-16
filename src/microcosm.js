@@ -13,7 +13,7 @@ import coroutine from './coroutine'
 import getRegistration from './get-registration'
 import tag from './tag'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
-import { merge, inherit, get, set, update, isString } from './utils'
+import { merge, get, set, update, isString } from './utils'
 
 /**
  * Options passed into Microcosm always extend from this object. You
@@ -439,6 +439,5 @@ export {
   set,
   update,
   merge,
-  inherit,
   getRegistration
 }
