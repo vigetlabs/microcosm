@@ -1,3 +1,7 @@
+/**
+ * @flow
+ */
+
 import Microcosm from '../../../src/microcosm'
 import Presenter from '../../../src/addons/presenter'
 
