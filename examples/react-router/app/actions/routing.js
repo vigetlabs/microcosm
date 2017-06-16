@@ -1,3 +1,3 @@
-export function push(n) {
-  return n
+export function visit(path) {
+  return path
 }

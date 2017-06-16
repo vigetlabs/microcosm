@@ -1,17 +1,17 @@
-import { push } from '../actions/routing'
+import { visit } from '../actions/routing'
 
 class Routing {
   setup(repo, { history }) {
     this.history = history
   }
 
-  handlePush(repo, route) {
+  visitRoute(repo, route) {
     this.history.push(route)
   }
 
   register() {
     return {
-      [push]: this.handlePush
+      [visit]: this.visitRoute
     }
   }
 }

@@ -4,14 +4,15 @@ import NotFound from '../errors/notfound'
 import ItemForm from './parts/item-form'
 import ItemList from './parts/item-list'
 import { Link } from 'react-router-dom'
+import { List, ListItems } from '../../models/lists'
 
 class ListShow extends Presenter {
   getModel({ match }) {
     let { id } = match.params
 
     return {
-      list: state => state.lists.find(list => list.id === id),
-      items: state => state.items.filter(item => item.list === id)
+      list: new List(id),
+      items: new ListItems(id)
     }
   }
 

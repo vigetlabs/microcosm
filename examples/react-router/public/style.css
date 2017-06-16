@@ -1,14 +1,10 @@
-html,
-body {
+html, body {
   margin: 0;
   font-family: Roboto, sans-serif;
   -webkit-text-size-adjust: 100%;
 }
 
-h1,
-h2,
-h3,
-h4 {
+h1, h2, h3, h4 {
   margin: 0;
 }
 
@@ -21,9 +17,8 @@ a {
   color: inherit;
 }
 
-a:focus,
-a:hover {
-  color: #e61875;
+a:focus, a:hover {
+  color: #E61875;
 }
 
 .text-display {
@@ -52,9 +47,8 @@ a:hover {
   text-transform: uppercase;
 }
 
-.btn:hover,
-.btn:focus {
-  color: #e61875;
+.btn:hover, .btn:focus {
+  color: #E61875;
 }
 
 input:not([type=submit]) {
@@ -64,7 +58,7 @@ input:not([type=submit]) {
 }
 
 .header {
-  background: #3f51b5;
+  background: #3F51B5;
   color: white;
   padding: 48px 0 16px;
 }

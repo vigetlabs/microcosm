@@ -1,9 +1,13 @@
-import uid from 'uid'
+import Items from '../domains/items'
 
 export function addItem(params) {
-  return { id: uid(), ...params }
+  return function*(repo) {
+    yield repo.push(Items.create, params)
+  }
 }
 
 export function removeItem(id) {
-  return id
+  return function*(repo) {
+    yield repo.push(Items.destroy, id)
+  }
 }

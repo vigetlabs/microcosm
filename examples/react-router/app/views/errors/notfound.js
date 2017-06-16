@@ -12,8 +12,8 @@ export default function NotFound({ resource = 'Page' }) {
 
       <main role="main" className="container">
         <p className="spacious">
-          It is possible this {resource.toLowerCase()} was removed or never
-          existed.
+          It is possible this {resource.toLowerCase()} was
+          removed or never existed.
         </p>
         <p className="spacious">
           <Link to="/">Try starting over from the beginning</Link>

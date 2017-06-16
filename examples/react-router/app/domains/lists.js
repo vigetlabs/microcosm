@@ -1,28 +1,28 @@
-// @flow
-import { addList, removeList } from '../actions/lists'
+/**
+ * @flow
+ */
 
-type List = {
-  id: string,
+import uid from 'uid'
+import Domain from './domain'
+
+export type List = {
+  id?: string,
   name: string
 }
 
-class Lists {
-  getInitialState() {
-    return []
+class Lists extends Domain {
+  static create(params): List {
+    return { id: uid(), ...params }
   }
 
-  add(lists: List[], params: Object): List[] {
-    return lists.concat({ name: 'Unspecified', ...params })
-  }
-
-  remove(lists: List[], unwanted: string) {
-    return lists.filter(i => i.id !== unwanted)
+  static destroy(id: string) {
+    return id
   }
 
   register() {
     return {
-      [addList.toString()]: this.add,
-      [removeList.toString()]: this.remove
+      [Lists.create]: this.add,
+      [Lists.destroy]: this.remove
     }
   }
 }

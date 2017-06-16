@@ -1,28 +1,31 @@
-import { removeList } from '../actions/lists'
-import { addItem, removeItem } from '../actions/items'
+/**
+ * @flow
+ */
 
-const Items = {
-  getInitialState() {
-    return []
-  },
+import uid from 'uid'
+import Lists from './lists'
+import Domain from './domain'
 
-  add(items, params) {
-    return items.concat({ name: 'Unspecified', ...params })
-  },
+export type Item = {
+  id?: string,
+  name: string,
+  list: string
+}
 
-  remove(item, unwanted) {
-    return item.filter(i => i.id !== unwanted)
-  },
+class Items extends Domain {
+  static create(params): Item {
+    return { id: uid(), ...params }
+  }
 
-  removeByList(items, list) {
-    return items.filter(i => i.list !== list)
-  },
+  static destroy(id: string) {
+    return id
+  }
 
   register() {
     return {
-      [addItem]: Items.add,
-      [removeItem]: Items.remove,
-      [removeList]: Items.removeByList
+      [Items.create]: this.add,
+      [Items.destroy]: this.remove,
+      [Lists.destroy]: this.removeBy('list')
     }
   }
 }

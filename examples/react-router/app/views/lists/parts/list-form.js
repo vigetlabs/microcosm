@@ -1,6 +1,6 @@
 import React from 'react'
 import ActionForm from 'microcosm/addons/action-form'
-import { addListAndVisit } from '../../../actions/lists'
+import { addList } from '../../../actions/lists'
 
 class ListForm extends React.PureComponent {
   state = {
@@ -19,7 +19,7 @@ class ListForm extends React.PureComponent {
     const { name } = this.state
 
     return (
-      <ActionForm action={addListAndVisit} onSubmit={this.reset}>
+      <ActionForm action={addList} onSubmit={this.reset}>
         <div className="textfield">
           <label htmlFor="list-name">Name</label>
           <input
