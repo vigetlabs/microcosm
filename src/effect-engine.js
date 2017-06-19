@@ -2,7 +2,6 @@
  * @flow
  */
 
-import Registration from './registration'
 import getRegistration from './get-registration'
 import { createOrClone } from './utils'
 

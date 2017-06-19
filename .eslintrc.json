@@ -20,8 +20,13 @@
       "jsx": true
     }
   },
-  "extends": ["eslint:recommended"],
-  "plugins": [ "import", "react" ],
+  "settings": {
+    "flowtype": {
+      "onlyFilesWithFlowAnnotation": true
+    }
+  },
+  "extends": ["eslint:recommended", "plugin:flowtype/recommended"],
+  "plugins": [ "import", "react", "flowtype" ],
   "rules": {
     "semi": [2, "never"],
     "sort-vars": 2,
