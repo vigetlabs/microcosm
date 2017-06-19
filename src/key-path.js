@@ -1,4 +1,5 @@
 /**
+ * @flow
  * A key path is a list of property names that describe a pathway
  * through a nested javascript object. For example, `['users', 2]`
  * could represent a path within in `{ users: [{id: 0}, {id: 1}] }`
@@ -6,10 +7,12 @@
 
 import { isString } from './utils'
 
+export type KeyPath = Array<string>
+
 const KEY_DELIMETER = '.'
 const PATH_DELIMETER = ','
 
-function isBlank(value) {
+function isBlank(value: *): boolean {
   return value === '' || value === null || value === undefined
 }
 
@@ -19,7 +22,7 @@ function isBlank(value) {
  * @return {Array} List of keys, like ['users', 2]
  * @private
  */
-export function castPath(value) {
+export function castPath(value: string | KeyPath): KeyPath {
   if (Array.isArray(value)) {
     return value
   } else if (isBlank(value)) {
@@ -37,7 +40,7 @@ export function castPath(value) {
  * @return {Array} List of paths, like [['users'], ['query', 'focus']]
  * @private
  */
-export function getKeyPaths(value) {
+export function getKeyPaths(value: *): Array<KeyPath> {
   let paths = value
 
   if (Array.isArray(value) === false) {
@@ -55,7 +58,7 @@ export function getKeyPaths(value) {
  * @return {String} Dot separated string, like 'query.focus'
  * @private
  */
-export function getKeyString(value) {
+export function getKeyString(value: KeyPath): string {
   return value.join(KEY_DELIMETER)
 }
 
@@ -65,6 +68,6 @@ export function getKeyString(value) {
  * @return {Array} Comma key paths, like 'users,query.focus'
  * @private
  */
-export function getKeyStrings(array) {
+export function getKeyStrings(array: Array<KeyPath>): string {
   return array.map(getKeyString).join(PATH_DELIMETER)
 }

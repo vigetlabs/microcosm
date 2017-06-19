@@ -1,13 +1,25 @@
+/**
+ * @flow
+ */
+
 import MetaDomain from './meta-domain'
+import Registration from './registration'
 import getRegistration from './get-registration'
 import { get, set, createOrClone } from './utils'
-import { castPath, getKeyString } from './key-path'
+import { castPath, getKeyString, type KeyPath } from './key-path'
+
+import type Action from './action'
+import type Microcosm from './microcosm'
+
+type DomainList = Array<[KeyPath, Registerable]>
+type Registry = { [*]: Registrations }
 
 class DomainEngine {
-  /**
-   * @param {Microcosm} repo
-   */
-  constructor(repo) {
+  repo: Microcosm
+  registry: Registry
+  domains: DomainList
+
+  constructor(repo: Microcosm) {
     this.registry = {}
     this.repo = repo
     this.domains = []
@@ -16,7 +28,7 @@ class DomainEngine {
     this.add([], MetaDomain)
   }
 
-  getRepoHandlers(action) {
+  getRepoHandlers(action: Action): Registrations {
     let { command, status } = action
 
     let handler = null
@@ -25,10 +37,10 @@ class DomainEngine {
       handler = getRegistration(this.repo.register(), command, status)
     }
 
-    return handler ? [{ key: [], domain: this.repo, handler }] : []
+    return handler ? [new Registration([], this.repo, handler)] : []
   }
 
-  getHandlers(action) {
+  getHandlers(action: Action): Registrations {
     let handlers = this.getRepoHandlers(action)
 
     let { command, status } = action
@@ -40,7 +52,7 @@ class DomainEngine {
         var handler = getRegistration(domain.register(), command, status)
 
         if (handler) {
-          handlers.push({ key, domain, handler })
+          handlers.push(new Registration(key, domain, handler))
         }
       }
     }
@@ -48,7 +60,7 @@ class DomainEngine {
     return handlers
   }
 
-  register(action) {
+  register(action: Action): Array<Handler> {
     let type = action.type
 
     if (!this.registry[type]) {
@@ -58,10 +70,11 @@ class DomainEngine {
     return this.registry[type]
   }
 
-  add(key, config, options) {
-    let domain = createOrClone(config, options, this.repo)
+  add(key: string | KeyPath, config: Object | Function, options?: Object) {
+    let domain: Registerable = createOrClone(config, options, this.repo)
+    let keyPath: KeyPath = castPath(key)
 
-    this.domains.push([castPath(key), domain])
+    this.domains.push([keyPath, domain])
 
     // Reset the registry
     this.registry = {}
@@ -77,7 +90,7 @@ class DomainEngine {
     return domain
   }
 
-  reduce(fn, state, scope) {
+  reduce(fn: Function, state: Object, scope: *) {
     let next = state
 
     // Important: start at 1 to avoid the meta domain
@@ -90,7 +103,7 @@ class DomainEngine {
     return next
   }
 
-  supportsKey(key) {
+  supportsKey(key: string) {
     if (key in this.repo.state) {
       return true
     }
@@ -98,7 +111,7 @@ class DomainEngine {
     return this.domains.some(entry => getKeyString(entry[0]) === key)
   }
 
-  sanitize(data) {
+  sanitize(data: Object) {
     let repo = this.repo
     let parent = repo.parent
     let next = {}
@@ -116,7 +129,7 @@ class DomainEngine {
     return next
   }
 
-  dispatch(state, action) {
+  dispatch(state: Object, action: Action) {
     let handlers = this.register(action)
 
     for (var i = 0, len = handlers.length; i < len; i++) {
@@ -131,7 +144,7 @@ class DomainEngine {
     return state
   }
 
-  deserialize(payload) {
+  deserialize(payload: Object): Object {
     return this.reduce(function(memo, key, domain) {
       if (domain.deserialize) {
         return set(memo, key, domain.deserialize(get(payload, key)))
@@ -141,7 +154,7 @@ class DomainEngine {
     }, payload)
   }
 
-  serialize(state, payload) {
+  serialize(state: Object, payload: Object): Object {
     return this.reduce(function(memo, key, domain) {
       if (domain.serialize) {
         return set(memo, key, domain.serialize(get(state, key)))

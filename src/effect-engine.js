@@ -1,17 +1,25 @@
+/**
+ * @flow
+ */
+
+import Registration from './registration'
 import getRegistration from './get-registration'
 import { createOrClone } from './utils'
 
+import type Action from './action'
+import type Microcosm from './microcosm'
+
 class EffectEngine {
-  /**
-   * @param {Microcosm} repo
-   */
-  constructor(repo) {
+  repo: Microcosm
+  effects: Array<Registerable>
+
+  constructor(repo: Microcosm) {
     this.repo = repo
     this.effects = []
   }
 
-  add(config, options) {
-    let effect = createOrClone(config, options, this.repo)
+  add(config: Object | Function, options?: Object) {
+    let effect: Registerable = createOrClone(config, options, this.repo)
 
     if (effect.setup) {
       effect.setup(this.repo, options)
@@ -26,7 +34,7 @@ class EffectEngine {
     return effect
   }
 
-  dispatch(action) {
+  dispatch(action: Action) {
     let { command, payload, status } = action
 
     for (var i = 0, len = this.effects.length; i < len; i++) {

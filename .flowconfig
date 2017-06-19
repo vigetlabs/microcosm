@@ -1,9 +1,11 @@
 [ignore]
-test
+test/
+.*/node_modules/.*
 
 [include]
-src
+src/
 
 [libs]
+flow/
 
 [options]
