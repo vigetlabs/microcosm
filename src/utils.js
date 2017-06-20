@@ -73,7 +73,7 @@ export function merge(): Object {
  * object.
  * @private
  */
-export function get(object: ?Object, keyPath: string | KeyPath, fallback: ?*) {
+export function get(object: ?Object, keyPath: string | KeyPath, fallback?: *) {
   if (object == null) {
     return fallback
   }
@@ -231,7 +231,7 @@ export function update(
   state: *,
   keyPath: string | KeyPath,
   updater: *,
-  fallback: *
+  fallback?: *
 ) {
   let path = castPath(keyPath)
 
