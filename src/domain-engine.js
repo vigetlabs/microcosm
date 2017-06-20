@@ -129,7 +129,7 @@ class DomainEngine {
     return next
   }
 
-  dispatch(state: Object, action: Action) {
+  dispatch(state: Object, action: Action): Object {
     let handlers = this.register(action)
 
     for (var i = 0, len = handlers.length; i < len; i++) {

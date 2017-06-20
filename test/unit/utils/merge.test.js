@@ -27,7 +27,7 @@ describe('Utils.merge', function() {
     const b = { foo: 'bar' }
     const c = { foo: 'bar' }
 
-    expect(merge(a, b, c)).toBe(b)
+    expect(merge(a, b, c)).toBe(c)
   })
 
   it('merges many arguments', function() {
@@ -42,7 +42,7 @@ describe('Utils.merge', function() {
     const a = { foo: 'bar' }
     const b = { foo: 'bar' }
 
-    expect(merge(null, a, null, b)).toBe(a)
+    expect(merge(null, a, null, b)).toBe(b)
   })
 
   it('copys even with falsy middle arguments', function() {
@@ -51,8 +51,7 @@ describe('Utils.merge', function() {
     const c = merge(null, a, null, b)
 
     expect(c).not.toBe(a)
-    expect(c).not.toBe(b)
-    expect(c).toEqual(b)
+    expect(c).toBe(b)
   })
 
   it('handles subsequent null arguments', function() {
@@ -61,17 +60,63 @@ describe('Utils.merge', function() {
     const c = merge(null, null, a, b)
 
     expect(c).not.toBe(a)
-    expect(c).not.toBe(b)
-    expect(c).toEqual(b)
+    expect(c).toBe(b)
   })
 
   it('handles mixtures of undefined and null', function() {
+    const a = { green: true }
+    const b = { blue: true }
+    const c = merge(a, null, b, undefined)
+
+    expect(c).not.toBe(a)
+    expect(c).not.toBe(b)
+    expect(c).toEqual({ green: true, blue: true })
+  })
+
+  it('when there are no unique keys, it returns the last object', function() {
     const a = { foo: 'bar' }
     const b = { foo: 'baz' }
     const c = merge(a, null, b, undefined)
 
     expect(c).not.toBe(a)
+    expect(c).toBe(b)
+  })
+
+  it('returns the last object when the left most value is a superset', function() {
+    const a = { red: true }
+    const b = { red: true, green: true }
+    const c = merge(a, null, b, undefined)
+
+    expect(c).not.toBe(a)
+    expect(c).toBe(b)
+  })
+
+  it('uses the left value when it is a superset of the right', function() {
+    const a = { red: false }
+    const b = { red: true, green: true }
+    const c = merge(a, null, b, undefined)
+
+    expect(c).not.toBe(a)
+    expect(c).toBe(b)
+  })
+
+  it('returns a new object when the last object is not a superset', function() {
+    const a = { red: false, blue: true }
+    const b = { red: true, green: true }
+    const c = merge(a, null, b, undefined)
+
+    expect(c).not.toBe(a)
     expect(c).not.toBe(b)
-    expect(c).toEqual(b)
+    expect(c).toEqual({ red: true, green: true, blue: true })
+  })
+
+  // TODO: We can recycle supersets from the right to the left. How can we
+  // recycle from the left to the right?
+  xit('uses the right value when it is a superset of the left', function() {
+    const a = { red: true, green: true, blue: true }
+    const b = { red: true, green: true }
+    const c = merge(a, null, b, undefined)
+
+    expect(c).toBe(a)
   })
 })

@@ -26,23 +26,25 @@ describe('Utils.clone', function() {
     expect(copy).not.toBe(original)
   })
 
-  it('does not clone strings', function() {
-    expect(clone('a')).toBe('a')
-  })
+  describe('non-object values', function() {
+    it('does not clone strings', function() {
+      expect(clone('a')).toEqual({})
+    })
 
-  it('does not clone numbers', function() {
-    expect(clone(1)).toBe(1)
-  })
+    it('does not clone numbers', function() {
+      expect(clone(1)).toEqual({})
+    })
 
-  it('does not clone booleans', function() {
-    expect(clone(true)).toBe(true)
-  })
+    it('does not clone booleans', function() {
+      expect(clone(true)).toEqual({})
+    })
 
-  it('does not clone null', function() {
-    expect(clone(null)).toBe(null)
-  })
+    it('does not clone null', function() {
+      expect(clone(null)).toEqual({})
+    })
 
-  it('does not clone undefined', function() {
-    expect(clone(undefined)).toBe(undefined)
+    it('does not clone undefined', function() {
+      expect(clone(undefined)).toEqual({})
+    })
   })
 })

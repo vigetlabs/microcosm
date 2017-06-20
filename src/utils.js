@@ -1,11 +1,16 @@
-import { castPath } from './key-path'
+/**
+ * @flow
+ */
+
+import type Microcosm from './microcosm'
+import { castPath, type KeyPath } from './key-path'
 
 /**
  * Generate a unique id
  * @private
  */
 let uidStepper = 0
-export function uid(prefix) {
+export function uid(prefix: string): string {
   return `${prefix}${uidStepper++}`
 }
 
@@ -13,11 +18,11 @@ export function uid(prefix) {
  * Shallow copy an object
  * @private
  */
-export function clone(target) {
+export function clone(target: ?Object): Object {
   if (Array.isArray(target)) {
     return target.slice(0)
   } else if (isObject(target) === false) {
-    return target
+    return {}
   }
 
   let copy = {}
@@ -33,28 +38,34 @@ export function clone(target) {
  * Merge any number of objects into a provided object.
  * @private
  */
-export function merge() {
-  let copy = null
-  let subject = null
+export function merge(): Object {
+  var copy = {}
+  var first = copy
+  var dirty = false
 
-  for (var i = 0, len = arguments.length; i < len; i++) {
-    copy = copy || arguments[i]
-    subject = subject || copy
+  for (var i = arguments.length - 1; i >= 0; i--) {
+    var subject = arguments[i]
 
-    var next = arguments[i]
+    if (isObject(subject) === false) {
+      continue
+    }
 
-    for (var key in next) {
-      if (copy[key] !== next[key]) {
-        if (copy === subject) {
-          copy = clone(subject)
-        }
+    if (first === copy) {
+      first = subject
+    }
 
-        copy[key] = next[key]
+    for (var key in subject) {
+      if (!dirty) {
+        dirty = key in first === false
+      }
+
+      if (key in copy === false) {
+        copy[key] = subject[key]
       }
     }
   }
 
-  return copy
+  return dirty ? copy : first
 }
 
 /**
@@ -62,7 +73,7 @@ export function merge() {
  * object.
  * @private
  */
-export function get(object, keyPath, fallback) {
+export function get(object: ?Object, keyPath: string | KeyPath, fallback: ?*) {
   if (object == null) {
     return fallback
   }
@@ -87,7 +98,7 @@ export function get(object, keyPath, fallback) {
  * value is the same, don't do anything. Otherwise return a new object.
  * @private
  */
-export function set(object, key, value) {
+export function set(object: Object, key: string | KeyPath, value: *): Object {
   // Ensure we're working with a key path, like: ['a', 'b', 'c']
   let path = castPath(key)
 
@@ -136,7 +147,7 @@ export function set(object, key, value) {
  * @return {boolean}
  * @private
  */
-export function isPromise(obj) {
+export function isPromise(obj: *): boolean {
   return (isObject(obj) || isFunction(obj)) && isFunction(obj.then)
 }
 
@@ -146,8 +157,8 @@ export function isPromise(obj) {
  * @return {boolean}
  * @private
  */
-export function isObject(target) {
-  return !!target && typeof target === 'object'
+export function isObject(target: *): boolean {
+  return !(!target || typeof target !== 'object')
 }
 
 /**
@@ -156,7 +167,7 @@ export function isObject(target) {
  * @return {boolean}
  * @private
  */
-export function isFunction(target) {
+export function isFunction(target: *): boolean {
   return !!target && typeof target === 'function'
 }
 
@@ -166,7 +177,7 @@ export function isFunction(target) {
  * @return {boolean}
  * @private
  */
-export function isString(target) {
+export function isString(target: *): boolean {
   return typeof target === 'string'
 }
 
@@ -178,8 +189,12 @@ export function isString(target) {
  */
 const $Symbol = typeof Symbol === 'function' ? Symbol : {}
 const toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
-export function toStringTag(value) {
-  return get(value, toStringTagSymbol, '')
+export function toStringTag(value: *): string {
+  if (!value) {
+    return ''
+  }
+
+  return value[toStringTagSymbol] || ''
 }
 
 /**
@@ -189,14 +204,14 @@ export function toStringTag(value) {
  * @return {boolean}
  * @private
  */
-export function isGeneratorFn(value) {
+export function isGeneratorFn(value: *): boolean {
   return toStringTag(value) === 'GeneratorFunction'
 }
 
 /**
  * @private
  */
-export function createOrClone(target, options, repo) {
+export function createOrClone(target: *, options: ?Object, repo: Microcosm) {
   if (isFunction(target)) {
     return new target(options, repo)
   }
@@ -212,7 +227,12 @@ export function createOrClone(target, options, repo) {
  * @param {*} fallback value
  * @private
  */
-export function update(state, keyPath, updater, fallback) {
+export function update(
+  state: *,
+  keyPath: string | KeyPath,
+  updater: *,
+  fallback: *
+) {
   let path = castPath(keyPath)
 
   if (isFunction(updater) === false) {
