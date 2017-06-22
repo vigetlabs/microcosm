@@ -39,33 +39,27 @@ export function clone(target: ?Object): Object {
  * @private
  */
 export function merge(): Object {
-  var copy = {}
-  var first = copy
-  var dirty = false
+  let copy = null
+  let subject = null
 
-  for (var i = arguments.length - 1; i >= 0; i--) {
-    var subject = arguments[i]
+  for (var i = 0, len = arguments.length; i < len; i++) {
+    copy = copy || arguments[i]
+    subject = subject || copy
 
-    if (isObject(subject) === false) {
-      continue
-    }
+    var next = arguments[i]
 
-    if (first === copy) {
-      first = subject
-    }
+    for (var key in next) {
+      if (copy[key] !== next[key]) {
+        if (copy === subject) {
+          copy = clone(subject)
+        }
 
-    for (var key in subject) {
-      if (!dirty) {
-        dirty = key in first === false
-      }
-
-      if (key in copy === false) {
-        copy[key] = subject[key]
+        copy[key] = next[key]
       }
     }
   }
 
-  return dirty ? copy : first
+  return copy || {}
 }
 
 /**
