@@ -1,21 +1,21 @@
 /**
  * @fileoverview Emitter is an abstract class used by a few other
  * classes to communicate via events
+ * @flow
  */
 
 import { isFunction } from './utils'
 
 class Listener {
-  /**
-   * @param {string} event Type of event
-   * @param {Function} fn Event callback
-   * @param {*} scope Scope of callback
-   * @param {boolean} once Only run the event callback once
-   */
-  constructor(event, fn, scope, once) {
+  event: string
+  fn: Function
+  scope: ?Object
+  once: boolean
+
+  constructor(event: string, fn: Function, scope: ?Object, once: boolean) {
     console.assert(
       isFunction(fn),
-      `Expected ${event} listener to be function, instead got ${fn}`
+      `Expected ${event} listener to be function, instead got ${typeof fn}`
     )
 
     this.event = event
@@ -31,17 +31,16 @@ class Listener {
  * @property {Array.<Listener>} _events A pool of event listeners
  */
 class Emitter {
+  _events: Array<Listener>
+
   constructor() {
     this._events = []
   }
 
   /**
    * Add an event listener.
-   * @param {string} event Type of event
-   * @param {Function} fn Event callback
-   * @param {*} [scope] Optional scope to invoke callback with
    */
-  on(event, fn, scope) {
+  on(event: string, fn: Function, scope?: Object) {
     let listener = new Listener(event, fn, scope, false)
 
     this._events.push(listener)
@@ -52,11 +51,8 @@ class Emitter {
   /**
    * Adds an `event` listener that will be invoked a single time then
    * automatically removed.
-   * @param {string} event Type of event
-   * @param {Function} fn Event callback
-   * @param {*} [scope] Optional scope to invoke callback with
    */
-  once(event, fn, scope) {
+  once(event: string, fn: Function, scope?: Object) {
     let listener = new Listener(event, fn, scope, true)
 
     this._events.push(listener)
@@ -67,11 +63,8 @@ class Emitter {
   /**
    * Unsubscribe a callback. If no event is provided, removes all callbacks. If
    * no callback is provided, removes all callbacks for the given type.
-   * @param {string} event Type of event
-   * @param {Function} fn Event callback
-   * @param {*} [scope] Optional scope to invoke callback with
    */
-  off(event, fn, scope) {
+  off(event: string, fn: Function, scope?: Object) {
     var removeAll = fn == null
 
     let i = 0
@@ -103,7 +96,7 @@ class Emitter {
    * @param {string} event Type of event
    * @param {*} payload Value to send with callback
    */
-  _emit(event, ...args) {
+  _emit(event: string, ...args: Array<*>) {
     let i = 0
     while (i < this._events.length) {
       var cb = this._events[i]
@@ -126,7 +119,7 @@ class Emitter {
   /**
    * Remove all events for a given scope
    */
-  _removeScope(scope) {
+  _removeScope(scope: Object) {
     let i = 0
     while (i < this._events.length) {
       var cb = this._events[i]

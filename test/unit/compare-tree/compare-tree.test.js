@@ -133,7 +133,7 @@ describe('CompareTree', function() {
 
       tree.off('meta', handler)
 
-      expect(tree.nodes[query.id]).toBeUndefined()
+      expect(query.id in tree.queries).toBe(false)
     })
 
     it('removes nodes without edges up the chain', function() {
@@ -142,9 +142,9 @@ describe('CompareTree', function() {
 
       tree.off('meta.selected', handler)
 
-      expect(tree.nodes[query.id]).toBeUndefined()
       expect(tree.nodes['meta.selected']).toBeUndefined()
       expect(tree.nodes['meta']).toBeUndefined()
+      expect(tree.queries[query.id]).toBeUndefined()
     })
 
     it('does not remove parents with other compares', function() {
@@ -154,10 +154,10 @@ describe('CompareTree', function() {
       tree.on('meta.focused', handler)
       tree.off('meta.selected', handler)
 
-      expect(tree.nodes[query.id]).toBeUndefined()
       expect(tree.nodes['meta.selected']).toBeUndefined()
       expect(tree.nodes['meta.focused']).toBeDefined()
       expect(tree.nodes['meta']).toBeDefined()
+      expect(tree.queries[query.id]).toBeUndefined()
     })
 
     it('removes the root node when there are no subscriptions', function() {
@@ -165,12 +165,11 @@ describe('CompareTree', function() {
 
       tree.on('meta.selected', handler)
 
-      // 'root', 'meta', 'selected', 'handler'
-      expect(Object.keys(tree.nodes)).toHaveLength(4)
+      expect('' in tree.nodes).toBe(true)
 
       tree.off('meta.selected', handler)
 
-      expect(Object.keys(tree.nodes)).toHaveLength(0)
+      expect('' in tree.nodes).toBe(false)
     })
 
     it('keeps a query if it still has compares left', function() {
@@ -189,7 +188,7 @@ describe('CompareTree', function() {
       expect(one).not.toHaveBeenCalled()
       expect(two).toHaveBeenCalled()
 
-      expect(tree.nodes[query.id]).toBeDefined()
+      expect(query.id in tree.queries).toBe(true)
     })
 
     it('gracefully handles parents missing an edge (which should never happen)', function() {
@@ -205,24 +204,22 @@ describe('CompareTree', function() {
 
       tree.off('a.b.c', one)
 
-      let keys = Object.keys(tree.nodes)
-
-      expect(keys).toContain('a')
-      expect(keys).toContain('a.b')
-      expect(keys).toContain('query:a.b')
-      expect(keys).not.toContain('query:a.b.c')
+      expect('a' in tree.nodes).toBe(true)
+      expect('a.b' in tree.nodes).toBe(true)
+      expect('query:a.b' in tree.queries).toBe(true)
+      expect('query:a.b.c' in tree.queries).not.toBe(true)
     })
 
-    it('gracefully handles compares that do not exist', function() {
-      tree.on('a.b.c', n => n)
-      tree.off('a.b.c', n => n)
+    it('gracefully handles nodes that do not exist', function() {
+      let callback = n => n
 
-      let keys = Object.keys(tree.nodes)
+      tree.on('a.b.c', callback)
+      tree.off('a.b.c', callback)
 
-      expect(keys).toContain('a')
-      expect(keys).toContain('a.b')
-      expect(keys).toContain('a.b.c')
-      expect(keys).toContain('query:a.b.c')
+      expect('a' in tree.nodes).toBe(false)
+      expect('a.b' in tree.nodes).toBe(false)
+      expect('a.b.c' in tree.nodes).toBe(false)
+      expect('query:a.b.c' in tree.queries).toBe(false)
     })
   })
 
@@ -278,7 +275,7 @@ describe('CompareTree', function() {
 
       expect(tree.nodes['meta']).toBeDefined()
       expect(tree.nodes['meta.selected']).toBeDefined()
-      expect(tree.nodes['query:meta.selected']).toBeDefined()
+      expect(tree.queries['query:meta.selected']).toBeDefined()
     })
 
     it('allows a simple, comma separated string', function() {
@@ -287,7 +284,7 @@ describe('CompareTree', function() {
       expect(tree.nodes['meta']).toBeDefined()
       expect(tree.nodes['meta.selected']).toBeDefined()
       expect(tree.nodes['meta.focused']).toBeDefined()
-      expect(tree.nodes['query:meta.selected,meta.focused']).toBeDefined()
+      expect(tree.queries['query:meta.selected,meta.focused']).toBeDefined()
     })
 
     it('allows arrays of paths', function() {
@@ -295,18 +292,16 @@ describe('CompareTree', function() {
 
       expect(tree.nodes['meta']).toBeDefined()
       expect(tree.nodes['meta.selected']).toBeDefined()
-      expect(tree.nodes['query:meta.selected']).toBeDefined()
+      expect(tree.queries['query:meta.selected']).toBeDefined()
     })
 
     it('allows arrays of strings', function() {
       tree.on(['meta.selected', 'planets'], jest.fn())
 
-      let keys = Object.keys(tree.nodes)
-
-      expect(keys).toContain('planets')
-      expect(keys).toContain('meta')
-      expect(keys).toContain('meta.selected')
-      expect(keys).toContain('query:meta.selected,planets')
+      expect(tree.nodes['planets']).toBeDefined()
+      expect(tree.nodes['meta']).toBeDefined()
+      expect(tree.nodes['meta.selected']).toBeDefined()
+      expect(tree.queries['query:meta.selected,planets']).toBeDefined()
     })
   })
 })

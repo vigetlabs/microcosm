@@ -1,17 +1,22 @@
 /**
  * @fileoverview A node in a CompareTree represents a single key with
  * a JavaScript object.
+ * @flow
  */
+
+import type Query from './query'
+
 class Node {
+  id: string
+  key: string
+  parent: ?Node
+  edges: Array<Node | Query>
+
   static getId(key, parent) {
     return parent && parent.id ? parent.id + '.' + key : key
   }
 
-  /**
-   * @param {String} id Identifier for the node.
-   * @param {String} key String name of the key this node represents
-   */
-  constructor(id, key, parent) {
+  constructor(id: string, key: string, parent: ?Node) {
     this.id = id
     this.key = key
     this.edges = []
@@ -25,10 +30,8 @@ class Node {
   /**
    * Connect another node to this instance by adding it to
    * the list of edges.
-   * @public
-   * @param {Node} node
    */
-  connect(node) {
+  connect(node: Node | Query) {
     if (node !== this && this.edges.indexOf(node) < 0) {
       this.edges.push(node)
     }
@@ -36,10 +39,8 @@ class Node {
 
   /**
    * Remove a node this instances list of edges.
-   * @public
-   * @param {Node} node
    */
-  disconnect(node) {
+  disconnect(node: Node | Query) {
     let index = this.edges.indexOf(node)
 
     if (~index) {
@@ -50,7 +51,7 @@ class Node {
   /**
    * Does a node have any edges?
    */
-  isAlone() {
+  isAlone(): boolean {
     return this.edges.length <= 0
   }
 

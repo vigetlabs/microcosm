@@ -1,28 +1,31 @@
+/**
+ * @flow
+ * @private
+ */
+
 import Node from './node'
 import Query from './query'
-import { getKeyString } from '../key-path'
+import { getKeyString, type KeyPath } from '../key-path'
 
 // The root key is an empty string. This can be a little
 // counter-intuitive, so we keep track of them as a named constant.
 const ROOT_PATH = ''
 
 class CompareTree {
-  /**
-   * @param {*} initial Starting state
-   */
-  constructor(initial) {
+  snapshot: Object
+  nodes: { [key: string]: Node }
+  queries: { [key: string]: Query }
+
+  constructor(initial: Object) {
     this.snapshot = initial
     this.nodes = {}
+    this.queries = {}
   }
 
   /**
    * Create a subscription to a particular set of key paths.
-   * @public
-   * @param {String} keyPaths A list of key paths to trigger the callback
-   * @param {Function} callback Function to execute when a key path changes
-   * @param {*} [scope] Optional scope to invoke the function with
    */
-  on(keyPaths, callback, scope) {
+  on(keyPaths: Array<KeyPath>, callback: Function, scope?: Object) {
     let query = this.addQuery(keyPaths)
 
     query.on('change', callback, scope)
@@ -34,15 +37,11 @@ class CompareTree {
 
   /**
    * Remove a subscription created by .on()
-   * @public
-   * @param {String} keyPaths A list of key paths for the subscription
-   * @param {Function} callback Associated callback function
-   * @param {*} [scope] Associated scope
    */
-  off(keyPaths, callback, scope) {
+  off(keyPaths: string | Array<KeyPath>, callback: Function, scope?: Object) {
     let id = Query.getId(keyPaths)
 
-    let query = this.nodes[id]
+    let query: Query = this.queries[id]
 
     if (query) {
       query.off('change', callback, scope)
@@ -56,10 +55,8 @@ class CompareTree {
   /**
    * Compare a new snapshot to the last snapshot, triggering event
    * subscriptions along the way.
-   * @public
-   * @param {*} state - New snapshot of state
    */
-  update(snapshot) {
+  update(snapshot: Object) {
     let last = this.snapshot
     this.snapshot = snapshot
 
@@ -76,12 +73,8 @@ class CompareTree {
 
   /**
    * Add a node to the tree if it has not otherwise been added.
-   * @private
-   * @param {String} id Identifier for the node.
-   * @param {String} key Each node represents a key in a nested object.
-   * @param {Node} parent Parent to connect this node to.
    */
-  addNode(key, parent) {
+  addNode(key: string, parent: ?Node) {
     let id = Node.getId(key, parent)
 
     if (!this.nodes[id]) {
@@ -95,36 +88,22 @@ class CompareTree {
    * Add a query to the tree if it has not otherwise been
    * added. Queries are leaf nodes responsible for managing
    * subscriptions.
-   * @private
-   * @param {String} id Identifier for the node.
-   * @param {String} keyPaths Each query tracks a list of key paths
    */
-  addQuery(dependencies) {
+  addQuery(dependencies: string | Array<KeyPath>): Query {
     let id = Query.getId(dependencies)
 
-    if (!this.nodes[id]) {
-      this.nodes[id] = new Query(id, dependencies)
+    if (!this.queries[id]) {
+      this.queries[id] = new Query(id, dependencies)
     }
 
-    return this.nodes[id]
-  }
-
-  /**
-   * Remove a node from this tree.
-   * @private
-   * @param {Node} node Node to remove
-   */
-  remove(node) {
-    delete this.nodes[node.id]
+    return this.queries[id]
   }
 
   /**
    * Remove a query, then traverse that queries key paths to remove
    * unused parents.
-   * @private
-   * @param {Query} query Query to remove
    */
-  prune(query) {
+  prune(query: Query) {
     let ids = query.keyPaths.map(getKeyString)
 
     for (var i = 0, len = ids.length; i < len; i++) {
@@ -135,7 +114,7 @@ class CompareTree {
       do {
         if (node.isAlone()) {
           node.orphan()
-          this.remove(node)
+          delete this.nodes[node.id]
         } else {
           break
         }
@@ -144,17 +123,14 @@ class CompareTree {
       } while (node)
     }
 
-    this.remove(query)
+    delete this.queries[query.id]
   }
 
   /**
    * Build up a branch of nodes given a path of keys, appending a query
    * to the end.
-   * @private
-   * @param {String} path A list of keys
-   * @param {Query} query Query to append to the end of the branch
    */
-  addBranch(path, query) {
+  addBranch(path: KeyPath, query: Query) {
     let last = this.addNode(ROOT_PATH, null)
 
     for (var i = 0, len = path.length; i < len; i++) {
@@ -166,12 +142,8 @@ class CompareTree {
 
   /**
    * Traverse the tree of subscriptions, triggering queries along the way
-   * @private
-   * @param {Node} root Starting point to scan
-   * @param {*} from Starting snapshot
-   * @param {*} from Next snapshot
    */
-  scan(node, last, next, queries) {
+  scan(node: Node, last: *, next: *, queries: Array<Query>) {
     if (last !== next) {
       var edges = node.edges
 
@@ -180,7 +152,7 @@ class CompareTree {
 
         if (edge instanceof Query && queries.indexOf(edge) < 0) {
           queries.push(edge)
-        } else {
+        } else if (edge instanceof Node) {
           var edgeLast = last == null ? last : last[edge.key]
           var edgeNext = next == null ? next : next[edge.key]
 
