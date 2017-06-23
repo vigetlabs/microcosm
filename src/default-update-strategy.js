@@ -2,6 +2,7 @@
  * @fileoverview This is the default update strategy for Microcosm. It
  * can be overriden by passing the `updater` option when creating a
  * Microcosm.
+ * @flow
  */
 
 /**
@@ -13,7 +14,14 @@
  * time remaining. Given our usage, we don't need to do that.
  * @private
  */
-const scheduler =
+
+type Updater = (update: Function, options?: Object) => *
+
+type UpdateOptions = {
+  batch: boolean
+}
+
+const scheduler: Updater =
   global.requestIdleCallback || (update => setTimeout(update, 4))
 
 /**
@@ -24,7 +32,7 @@ const scheduler =
  */
 const BATCH_OPTIONS = { timeout: 36 }
 
-export default function defaultUpdateStrategy(options) {
+export default function defaultUpdateStrategy(options: UpdateOptions): Updater {
   return update => {
     if (options.batch === true) {
       scheduler(update, BATCH_OPTIONS)
