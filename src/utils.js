@@ -161,7 +161,7 @@ export function isObject(target: *): boolean {
  * @return {boolean}
  * @private
  */
-export function isFunction(target: *): boolean {
+export function isFunction(target: any): boolean {
   return !!target && typeof target === 'function'
 }
 
@@ -171,7 +171,7 @@ export function isFunction(target: *): boolean {
  * @return {boolean}
  * @private
  */
-export function isString(target: *): boolean {
+export function isString(target: any): boolean {
   return typeof target === 'string'
 }
 
@@ -183,7 +183,7 @@ export function isString(target: *): boolean {
  */
 const $Symbol = typeof Symbol === 'function' ? Symbol : {}
 const toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
-export function toStringTag(value: *): string {
+export function toStringTag(value: any): string {
   if (!value) {
     return ''
   }
@@ -198,14 +198,14 @@ export function toStringTag(value: *): string {
  * @return {boolean}
  * @private
  */
-export function isGeneratorFn(value: *): boolean {
+export function isGeneratorFn(value: any): boolean {
   return toStringTag(value) === 'GeneratorFunction'
 }
 
 /**
  * @private
  */
-export function createOrClone(target: *, options: ?Object, repo: Microcosm) {
+export function createOrClone(target: any, options: ?Object, repo: Microcosm) {
   if (isFunction(target)) {
     return new target(options, repo)
   }
