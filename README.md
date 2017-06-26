@@ -279,9 +279,11 @@ const Messages = {
 
   register () {
     return {
-      [action.open]  : this.setPending,
-      [action.error] : this.setError,
-      [action.done]  : this.addMessage
+      [send]: {
+        open: this.setPending,
+        error: this.setError,
+        done: this.addMessage
+      }
     }
   }
 }
