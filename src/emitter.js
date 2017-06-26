@@ -6,31 +6,20 @@
 
 import { isFunction } from './utils'
 
-class Listener {
-  event: string
-  fn: Function
-  scope: ?Object
+export type Callback = (...args: Array<*>) => any
+
+type Listener = {
+  event: string,
+  fn: Callback,
+  scope: ?Object,
   once: boolean
-
-  constructor(event: string, fn: Function, scope: ?Object, once: boolean) {
-    console.assert(
-      isFunction(fn),
-      `Expected ${event} listener to be function, instead got ${typeof fn}`
-    )
-
-    this.event = event
-    this.fn = fn
-    this.scope = scope
-    this.once = once
-  }
 }
 
 /**
- * An abstract event emitter class. Several modules extend from this class
- * to utilize events.
- * @property {Array.<Listener>} _events A pool of event listeners
+ * An abstract event emitter class. Several modules extend from this
+ * class to utilize events.
  */
-class Emitter {
+class Emitter<Event: string> {
   _events: Array<Listener>
 
   constructor() {
@@ -40,8 +29,13 @@ class Emitter {
   /**
    * Add an event listener.
    */
-  on(event: string, fn: Function, scope?: Object) {
-    let listener = new Listener(event, fn, scope, false)
+  on(event: Event, fn: Callback, scope?: any) {
+    console.assert(
+      isFunction(fn),
+      `Expected ${event} listener to be function, instead got ${typeof fn}`
+    )
+
+    let listener = { event, fn, scope, once: false }
 
     this._events.push(listener)
 
@@ -52,8 +46,13 @@ class Emitter {
    * Adds an `event` listener that will be invoked a single time then
    * automatically removed.
    */
-  once(event: string, fn: Function, scope?: Object) {
-    let listener = new Listener(event, fn, scope, true)
+  once(event: Event, fn: Callback, scope?: any) {
+    console.assert(
+      isFunction(fn),
+      `Expected ${event} listener to be function, instead got ${typeof fn}`
+    )
+
+    let listener = { event, fn, scope, once: true }
 
     this._events.push(listener)
 
@@ -64,7 +63,7 @@ class Emitter {
    * Unsubscribe a callback. If no event is provided, removes all callbacks. If
    * no callback is provided, removes all callbacks for the given type.
    */
-  off(event: string, fn: Function, scope?: Object) {
+  off(event: Event, fn: Callback, scope?: any) {
     var removeAll = fn == null
 
     let i = 0
@@ -93,13 +92,11 @@ class Emitter {
 
   /**
    * Emit `event` with the given args.
-   * @param {string} event Type of event
-   * @param {*} payload Value to send with callback
    */
-  _emit(event: string, ...args: Array<*>) {
+  _emit(event: Event, ...args: Array<*>) {
     let i = 0
     while (i < this._events.length) {
-      var cb = this._events[i]
+      var cb: Listener = this._events[i]
 
       if (cb.event === event) {
         cb.fn.apply(cb.scope || this, args)
@@ -119,7 +116,7 @@ class Emitter {
   /**
    * Remove all events for a given scope
    */
-  _removeScope(scope: Object) {
+  _removeScope(scope: any) {
     let i = 0
     while (i < this._events.length) {
       var cb = this._events[i]

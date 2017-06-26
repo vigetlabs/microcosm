@@ -1,3 +1,7 @@
+/**
+ * @flow
+ */
+
 import { isString } from './utils'
 
 let uid = 0
@@ -5,20 +9,19 @@ const FALLBACK = '_action'
 
 /**
  * Uniquely tag a function. This is used to identify actions.
- * @param {Function} fn The target function to add action identifiers to.
- * @param {String} [name] An override to use instead of `fn.name`.
- * @return {Function} The tagged function (same as `fn`).
  */
-export default function tag(fn, name) {
-  console.assert(fn, `Unable to identify ${fn} action.`)
+export default function tag(fn: Tagged | Command, name?: string): Tagged {
+  console.assert(
+    fn,
+    `Unable to identify ${fn == null ? fn : fn.toString()} action.`
+  )
+
+  if (typeof fn === 'string') {
+    return tag({ toString: () => fn.toString() }, fn.toString())
+  }
 
   if (fn.__tagged === true) {
     return fn
-  }
-
-  if (isString(fn)) {
-    name = fn
-    fn = n => n
   }
 
   /**

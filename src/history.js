@@ -1,23 +1,40 @@
+/*
+ * @fileoverview All Microcosms have a history. This history keeps
+ * track of outstanding actions, working with a Microcosm to determine
+ * the next application state as actions move through different
+ * states.
+ * @flow
+ */
+
 import Action from './action'
 import Emitter from './emitter'
 import defaultUpdateStrategy from './default-update-strategy'
 import { merge } from './utils'
 import { BIRTH, START } from './lifecycle'
+import { type Updater } from './default-update-strategy'
 
-const DEFAULTS = {
+type HistoryOptions = {
+  maxHistory?: number,
+  batch?: boolean,
+  updater?: (options: Object) => Updater
+}
+
+const DEFAULTS: HistoryOptions = {
   maxHistory: 1,
   batch: false,
   updater: defaultUpdateStrategy
 }
 
-/**
- * @fileoverview All Microcosms have a history. This history keeps
- * track of outstanding actions, working with a Microcosm to determine
- * the next application state as actions move through different
- * states.
- */
 class History extends Emitter {
-  constructor(config) {
+  size: number
+  limit: number
+  updater: (options: Object) => Updater
+  releasing: boolean
+  release: () => void
+  head: ?Action
+  root: ?Action
+
+  constructor(config: HistoryOptions) {
     super()
 
     let options = merge(DEFAULTS, config)
@@ -39,9 +56,8 @@ class History extends Emitter {
   /**
    * Set the head of the tree to a target action. This has the effect
    * of controlling time in a Microcosm's history.
-   * @param {Action} action The new head of the tree
    */
-  checkout(action) {
+  checkout(action: ?Action) {
     let sharedRoot = this.sharedRoot(action) || this.head
 
     this.head = action || this.head
@@ -49,28 +65,32 @@ class History extends Emitter {
     // Each action has a "next" property that tells the history how to
     //  move forward. Update that path back to the sharedRoot:
     let cursor = this.head
-    while (cursor != sharedRoot) {
+    while (cursor && cursor != sharedRoot) {
       let parent = cursor.parent
-      parent.next = cursor
+
+      if (parent) {
+        parent.next = cursor
+      }
 
       cursor = parent
     }
 
     this.setSize()
 
-    this.reconcile(sharedRoot)
+    if (sharedRoot) {
+      this.reconcile(sharedRoot)
+    }
 
     return this
   }
 
   /**
    * Toggle actions in bulk, then reconcile from the first action
-   * @param {Action[]} - A list of actions to toggle
    */
-  toggle(actions) {
+  toggle(actions: Action | Array<Action>) {
     let list = [].concat(actions)
 
-    list.forEach(action => action.toggle('silently'))
+    list.forEach(action => action.toggle(true))
 
     // determine oldest active action to reconcile on
     let toReconcile
@@ -96,10 +116,8 @@ class History extends Emitter {
 
   /**
    * Map over the active branch.
-   * @param {Function} fn
-   * @param {*} scope
    */
-  map(fn, scope) {
+  map(fn: (action: Action) => *, scope?: Object) {
     let items = []
     let cursor = this.root
 
@@ -115,9 +133,8 @@ class History extends Emitter {
   /**
    * Return a promise that represents the resolution of all actions in
    * the current branch.
-   * @returns {Promise}
    */
-  wait() {
+  wait(): Promise<*> {
     let actions = this.toArray()
 
     return new Promise((resolve, reject) => {
@@ -146,9 +163,8 @@ class History extends Emitter {
 
   /**
    * Chain off of wait(). Provides a promise interface
-   * @returns {Promise}
    */
-  then(pass, fail) {
+  then(pass?: Function, fail?: Function) {
     return this.wait().then(pass, fail)
   }
 
@@ -163,13 +179,11 @@ class History extends Emitter {
 
   /**
    * Append a new action to the end of history
-   * @param {Function|string} command
-   * @param {string} [status]
    */
-  append(command, status) {
+  append(command: Command | Tagged, status?: ?Status): Action {
     let action = new Action(command, status)
 
-    if (this.size > 0) {
+    if (this.head) {
       this.head.lead(action)
     } else {
       // Always have a parent node, no matter what
@@ -186,15 +200,14 @@ class History extends Emitter {
 
     action.on('change', this.reconcile, this)
 
-    return this.head
+    return action
   }
 
   /**
    * Remove an action from history, connecting adjacent actions
    * together to bridge the gap.
-   * @param {Action} action - Action to remove from history
    */
-  remove(action) {
+  remove(action: Action) {
     if (action.isDisconnected()) {
       return
     }
@@ -220,7 +233,7 @@ class History extends Emitter {
     }
 
     // reconcile history if action was in active history branch
-    if (wasActive && !action.disabled) {
+    if (next && wasActive && !action.disabled) {
       this.reconcile(next)
     }
   }
@@ -228,9 +241,8 @@ class History extends Emitter {
   /**
    * The actual clean up operation that purges an action from both
    * history, and removes all snapshots within tracking repos.
-   * @param {Action} action - Action to clean up
    */
-  clean(action) {
+  clean(action: Action) {
     this.size -= 1
 
     this._emit('remove', action)
@@ -242,11 +254,10 @@ class History extends Emitter {
    * Starting with a given action, emit events such that repos can
    * dispatch actions to domains in a consistent order to build a new
    * state. This is how Microcosm updates state.
-   * @param {Action} action
    */
-  reconcile(action) {
+  reconcile(action: Action) {
     console.assert(this.head, 'History should always have a head node')
-    console.assert(action, 'History should never reconcile ' + action)
+    console.assert(action, 'History should never reconcile ' + typeof action)
 
     let focus = action
 
@@ -297,13 +308,15 @@ class History extends Emitter {
     let size = this.size
     let root = this.root
 
-    while (size > this.limit && root.complete) {
+    while (size > this.limit && root && root.complete) {
       size -= 1
       this._emit('remove', root.parent)
       root = root.next
     }
 
-    root.prune()
+    if (root) {
+      root.prune()
+    }
 
     this.root = root
     this.size = size
@@ -317,7 +330,7 @@ class History extends Emitter {
     let action = this.head
     let size = 1
 
-    while (action !== this.root) {
+    while (action && action !== this.root) {
       action = action.parent
       size += 1
     }
@@ -327,10 +340,10 @@ class History extends Emitter {
 
   /**
    * Determine if provided action is within active history branch
-   * @param {Action} action
    */
-  isActive(action) {
+  isActive(action: Action) {
     let cursor = action
+
     while (cursor) {
       if (cursor === this.head) {
         return true
@@ -345,9 +358,8 @@ class History extends Emitter {
    * Starting with the provided action, navigate up the parent chain
    * until you find an action which is active. That action is the shared
    * root between the provided action and the current head.
-   * @param {Action} action
    */
-  sharedRoot(action) {
+  sharedRoot(action: ?Action) {
     let cursor = action
 
     while (cursor) {
@@ -363,8 +375,8 @@ class History extends Emitter {
    */
   toJSON() {
     return {
-      head: this.head.id,
-      root: this.root.id,
+      head: this.head ? this.head.id : null,
+      root: this.root ? this.root.id : null,
       size: this.size,
       tree: this.root
     }

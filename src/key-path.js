@@ -1,25 +1,20 @@
 /**
+ * @fileoverview A key path is a list of property names that describe
+ * a pathway through a nested javascript object. For example,
+ * `['users', 2]` could represent a path within in `{ users: [{id: 0},
+ * {id: 1}] }`
  * @flow
- * A key path is a list of property names that describe a pathway
- * through a nested javascript object. For example, `['users', 2]`
- * could represent a path within in `{ users: [{id: 0}, {id: 1}] }`
  */
 
-import { isString } from './utils'
+import { isBlank } from './utils'
 
 export type KeyPath = Array<string>
 
 const KEY_DELIMETER = '.'
 const PATH_DELIMETER = ','
 
-function isBlank(value: *): boolean {
-  return value === '' || value === null || value === undefined
-}
-
 /**
  * Ensure a value is a valid key path.
- * @param {*} value Value to convert into a key path
- * @return {Array} List of keys, like ['users', 2]
  * @private
  */
 export function castPath(value: string | KeyPath): KeyPath {
@@ -29,33 +24,27 @@ export function castPath(value: string | KeyPath): KeyPath {
     return []
   }
 
-  return isString(value) ? value.trim().split(KEY_DELIMETER) : [value]
+  return typeof value === 'string' ? value.trim().split(KEY_DELIMETER) : [value]
 }
 
 /**
  * Convert a value into a list of key paths. These paths may be comma
  * separated, which is used in the CompareTree to describe a
  * subscription to multiple pathways in an object.
- * @param {String|String[]} value Comma separated string or array
- * @return {Array} List of paths, like [['users'], ['query', 'focus']]
  * @private
  */
-export function getKeyPaths(value: *): Array<KeyPath> {
+export function getKeyPaths(value: string | Array<KeyPath>): Array<KeyPath> {
   let paths = value
 
-  if (Array.isArray(value) === false) {
-    paths = `${paths}`.split(PATH_DELIMETER)
-  } else if (value.every(Array.isArray)) {
-    return value
+  if (typeof value === 'string') {
+    return `${value}`.split(PATH_DELIMETER).map(castPath)
   }
 
-  return paths.map(castPath)
+  return value.every(Array.isArray) ? value : value.map(castPath)
 }
 
 /**
  * Convert a key path into a string.
- * @param {String[]} value List of keys, like ['query', 'focus']
- * @return {String} Dot separated string, like 'query.focus'
  * @private
  */
 export function getKeyString(value: KeyPath): string {
@@ -64,8 +53,6 @@ export function getKeyString(value: KeyPath): string {
 
 /**
  * Convert a list of keys path into a string.
- * @param {Array} array List of key paths, like [['users'], ['query', 'focus']]
- * @return {Array} Comma key paths, like 'users,query.focus'
  * @private
  */
 export function getKeyStrings(array: Array<KeyPath>): string {

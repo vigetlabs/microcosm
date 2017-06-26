@@ -6,6 +6,7 @@
  *
  * Use Presenters to track changes to a Microcosm, push actions, and
  * manage application flow.
+ * @flow
  */
 
 import React from 'react'
@@ -18,12 +19,19 @@ function passChildren() {
 
 const identity = () => {}
 
-/**
- * @class
- * @extends React.PureComponent
- */
 class Presenter extends React.PureComponent {
-  constructor(props, context) {
+  render: () => *
+  defaultRender: () => *
+  send: *
+  repo: Microcosm
+  mediator: PresenterMediator
+  didFork: boolean
+  props: Object
+  state: Object
+  model: Object
+  view: *
+
+  constructor(props: Object, context: Object) {
     super()
 
     if (this.render !== Presenter.prototype.render) {
@@ -37,7 +45,7 @@ class Presenter extends React.PureComponent {
     this.send = this.send.bind(this)
   }
 
-  _beginSetup(mediator) {
+  _beginSetup(mediator: PresenterMediator) {
     this.repo = mediator.repo
     this.mediator = mediator
 
@@ -52,9 +60,9 @@ class Presenter extends React.PureComponent {
     this.teardown(this.repo, this.props, this.state)
   }
 
-  _requestRepo(contextRepo) {
+  _requestRepo(contextRepo: ?Microcosm) {
     let givenRepo = this.props.repo || contextRepo
-    let workingRepo = this.getRepo(givenRepo, this.props, this.state)
+    let workingRepo = this.getRepo(givenRepo, this.props)
 
     this.didFork = workingRepo !== givenRepo
 
@@ -64,11 +72,8 @@ class Presenter extends React.PureComponent {
   /**
    * Called when a presenter is created, useful any prep work. `setup`
    * runs before the first `getModel` invocation.
-   * @param {Microcosm} repo
-   * @param {Object} props
-   * @param {Object} state
    */
-  setup(repo, props, state) {
+  setup(repo: Microcosm, props: Object, state: Object) {
     // NOOP
   }
 
@@ -76,11 +81,8 @@ class Presenter extends React.PureComponent {
    * Called after the presenter has run `setup` and executed the first
    * `getModel`. This hook is useful for fetching initial data and
    * other start tasks that need access to the model data.
-   * @param {Microcosm} repo
-   * @param {Object} props
-   * @param {Object} state
    */
-  ready(repo, props, state) {
+  ready(repo: Microcosm, props: Object, state: Object) {
     // NOOP
   }
 
@@ -88,22 +90,16 @@ class Presenter extends React.PureComponent {
    * Called when a presenter gets new props. This is useful for secondary
    * data fetching and other work that must happen when a Presenter receives
    * new information.
-   * @param {Microcosm} repo
-   * @param {Object} nextProps
-   * @param {Object} nextState
    */
-  update(repo, nextProps, nextState) {
+  update(repo: Microcosm, nextProps: Object, nextState: Object) {
     // NOOP
   }
 
   /**
    * Runs when the presenter unmounts. Useful for tearing down
    * subscriptions and other setup behavior.
-   * @param {Microcosm} repo
-   * @param {Object} props
-   * @param {Object} state
    */
-  teardown(repo, props, state) {
+  teardown(repo: Microcosm, props: Object, state: Object) {
     // NOOP
   }
 
@@ -113,11 +109,11 @@ class Presenter extends React.PureComponent {
    * designed to improve the ergonomics of presenter/view
    * communication. Data down, actions up.
    */
-  intercept() {
+  intercept(): * {
     return {}
   }
 
-  componentWillUpdate(props, state) {
+  componentWillUpdate(props: Object, state: Object) {
     this.model = this.mediator.updateModel(props, state)
     this.update(this.repo, props, state)
   }
@@ -131,10 +127,8 @@ class Presenter extends React.PureComponent {
    * This provides an opportunity to customize the repo behavior for a
    * particular Presenter. For example, to circumvent the default
    * Presenter forking behavior:
-   * @param {Microcosm} repo
-   * @param {Object} props
    */
-  getRepo(repo, props) {
+  getRepo(repo: ?Microcosm, props: Object): Microcosm {
     return repo ? repo.fork() : new Microcosm()
   }
 
@@ -146,28 +140,24 @@ class Presenter extends React.PureComponent {
    * This works exactly like the `send` property passed into a
    * component that is wrapped in the `withSend` higher order
    * component.
-   * @param {Function|string} action
-   * @param {...*} params
    */
-  send() {
-    return this.mediator.send(...arguments)
+  send(command: Command | Tagged, ...params: Array<*>) {
+    return this.mediator.send(command, ...params)
   }
 
   /**
    * Builds a view model for the current props and state. This must
    * return an object of key/value pairs.
-   * @param {Object} presenterProps
-   * @param {Object} presenterState
    */
-  getModel(presenterProps, presenterState) {
+  getModel(presenterProps: Object, presenterState: Object) {
     return {}
   }
 
   render() {
     return React.createElement(PresenterMediator, {
       presenter: this,
-      parentState: this.state,
-      parentProps: this.props
+      parentObject: this.state,
+      parentObject: this.props
     })
   }
 }
@@ -183,7 +173,12 @@ class PresenterMediator extends React.PureComponent {
     send: identity
   }
 
-  constructor(props, context) {
+  repo: Microcosm
+  send: *
+  presenter: Presenter
+  model: Model
+
+  constructor(props: Object, context: Object) {
     super(props, context)
 
     this.presenter = props.presenter
@@ -195,7 +190,7 @@ class PresenterMediator extends React.PureComponent {
 
     this.model = new Model(this.repo, this.presenter)
 
-    this.model.on('change', this.setState, this)
+    this.model.on('change', this.updateState, this)
   }
 
   getChildContext() {
@@ -226,7 +221,7 @@ class PresenterMediator extends React.PureComponent {
   }
 
   render() {
-    // setState might have been called before the model
+    // setObject might have been called before the model
     // can get assigned
     this.presenter.model = this.state
 
@@ -240,7 +235,11 @@ class PresenterMediator extends React.PureComponent {
     return this.presenter.defaultRender()
   }
 
-  updateModel(props, state) {
+  updateState(state: Object) {
+    this.setState(state)
+  }
+
+  updateModel(props: Object, state: Object) {
     let bindings = this.presenter.getModel(props, state)
 
     this.model.bind(bindings)
@@ -248,13 +247,13 @@ class PresenterMediator extends React.PureComponent {
     return this.model.value
   }
 
-  hasParent() {
+  hasParent(): boolean {
     // Do not allow transfer across repos. Check to for inheritence by comparing
     // the common history object shared between repos
     return get(this.repo, 'history') === get(this.context, ['repo', 'history'])
   }
 
-  send(intent, ...params) {
+  send(intent: Command | Tagged, ...params: Array<*>): * {
     // tag intent first so the interceptor keys off the right key
     let taggedIntent = tag(intent)
 

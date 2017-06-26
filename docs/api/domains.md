@@ -128,15 +128,16 @@ var Planets = {
 }
 ```
 
-### `setup()`
+### `setup(repo, options)`
 
 Setup runs right after a domain is added to a Microcosm, but before it runs
 getInitialState. This is useful for one-time setup instructions.
 
-### `teardown()`
+### `teardown(repo)`
 
-Runs whenever `Microcosm::teardown` is invoked. Useful for cleaning up
-work done in `setup()`.
+Runs whenever a Microcosm is torn down. This usually happens when a
+Presenter component unmounts. Useful for cleaning up work done in
+`setup()`.
 
 ### `serialize(staged)`
 

@@ -15,7 +15,7 @@
  * @private
  */
 
-type Updater = (update: Function, options?: Object) => *
+export type Updater = (update: Function, options: Object) => void | *
 
 type UpdateOptions = {
   batch: boolean

@@ -1,7 +1,9 @@
 /**
  * @fileoverview The Microcosm class provides a centralized place to
  * store application state, dispatch actions, and track changes.
+ * @flow
  */
+
 import Action from './action'
 import Emitter from './emitter'
 import History from './history'
@@ -19,7 +21,6 @@ import { merge, get, set, update, isString } from './utils'
  * Options passed into Microcosm always extend from this object. You
  * can override this value to provide additional defaults for your
  * extension of Microcosm.
- * @private
  */
 const DEFAULTS = {
   maxHistory: 0,
@@ -87,10 +88,21 @@ const DEFAULTS = {
  * @tutorial quickstart
  */
 class Microcosm extends Emitter {
-  constructor(preOptions, state, deserialize) {
+  static defaults: Object
+
+  parent: ?Microcosm
+  initial: Object
+  state: Object
+  history: History
+  archive: Archive
+  domains: DomainEngine
+  effects: EffectEngine
+  changes: CompareTree
+
+  constructor(preOptions?: ?Object, state?: Object, deserialize?: boolean) {
     super()
 
-    let options = merge(DEFAULTS, this.constructor.defaults, preOptions)
+    let options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
 
     this.parent = options.parent
 
@@ -158,7 +170,7 @@ class Microcosm extends Emitter {
    * let repo = new SolarSystem({ test: true })
    * ```
    */
-  setup() {
+  setup(options?: Object) {
     // NOOP
   }
 
@@ -176,24 +188,22 @@ class Microcosm extends Emitter {
     return this.initial == null ? {} : this.initial
   }
 
-  recall(action, fallback) {
+  recall(action: ?Action, fallback: ?*) {
     return this.archive.get(action, fallback)
   }
 
   /**
    * Create the initial state snapshot for an action. This is important so
    * that, when rolling back to this action, it always has a state value.
-   * @param {Action} action - The action to generate a snapshot for
    */
-  createSnapshot(action) {
+  createSnapshot(action: Action) {
     this.archive.create(action)
   }
 
   /**
    * Update the state snapshot for a given action
-   * @param {Action} action - The action to update the snapshot for
    */
-  updateSnapshot(action) {
+  updateSnapshot(action: Action) {
     let next = this.recall(action.parent, this.initial)
 
     if (this.parent) {
@@ -211,13 +221,12 @@ class Microcosm extends Emitter {
 
   /**
    * Remove the snapshot for a given action
-   * @param {Action} action - The action to remove the snapshot for
    */
-  removeSnapshot(action) {
+  removeSnapshot(action: Action) {
     this.archive.remove(action)
   }
 
-  dispatchEffect(action) {
+  dispatchEffect(action: Action) {
     this.effects.dispatch(action)
   }
 
@@ -225,7 +234,7 @@ class Microcosm extends Emitter {
     this.changes.update(this.state)
   }
 
-  on(type, callback, scope) {
+  on(type: *, callback: *, scope?: Object) {
     let [event, meta] = type.split(':', 2)
 
     switch (event) {
@@ -239,7 +248,7 @@ class Microcosm extends Emitter {
     return this
   }
 
-  off(type, callback, scope) {
+  off(type: *, callback: *, scope?: Object) {
     let [event, meta] = type.split(':', 2)
 
     switch (event) {
@@ -270,7 +279,7 @@ class Microcosm extends Emitter {
    * assert.falsy(repo.state.planets.pluto.loading)
    * ```
    */
-  append(command, status) {
+  append(command: Command | Tagged, status?: Status): Action {
     return this.history.append(command, status)
   }
 
@@ -280,10 +289,10 @@ class Microcosm extends Emitter {
    * repo.push(createPlanet, { name: 'Merkur' })
    * ```
    */
-  push(command, ...params) {
+  push(command: Command | Tagged, ...params: Array<mixed>): Action {
     let action = this.append(command)
 
-    coroutine(action, action.command, params, this)
+    coroutine(action, tag(command), params, this)
 
     return action
   }
@@ -292,8 +301,8 @@ class Microcosm extends Emitter {
    * Partially applies push. Successive calls will append new
    * parameters (see push())
    */
-  prepare(...params) {
-    return (...extra) => this.push(...params, ...extra)
+  prepare(command: Command | Tagged, ...params: Array<mixed>) {
+    return (...extra: Array<mixed>) => this.push(command, ...params, ...extra)
   }
 
   /**
@@ -306,7 +315,7 @@ class Microcosm extends Emitter {
    * method and, if using a class, the constructor is instantiated with the
    * provided options and associated repo.
    */
-  addDomain(key, config, options) {
+  addDomain(key: string, config: *, options?: Object) {
     let domain = this.domains.add(key, config, options)
 
     if (domain.getInitialState) {
@@ -324,7 +333,7 @@ class Microcosm extends Emitter {
    * using a class, the constructor is instantiated with the provided
    * options and associated repo.
    */
-  addEffect(config, options) {
+  addEffect(config: *, options?: Object) {
     return this.effects.add(config, options)
   }
 
@@ -334,7 +343,7 @@ class Microcosm extends Emitter {
    * revert to this initial value. If the second argument is true,
    * Microcosm will call deserialize on the data.
    */
-  reset(data, deserialize) {
+  reset(data: string | Object, deserialize?: boolean) {
     return this.push(RESET, data, deserialize)
   }
 
@@ -342,7 +351,7 @@ class Microcosm extends Emitter {
    * Merges a data payload into the existing state. If the second
    * argument is true, Microcosm will call deserialize on the data.
    */
-  patch(data, deserialize) {
+  patch(data: string | Object, deserialize?: boolean) {
     return this.push(PATCH, data, deserialize)
   }
 
@@ -351,12 +360,12 @@ class Microcosm extends Emitter {
    * the deserialize method provided by the domain managing that
    * key. Then fold the deserialized data over the current repo state.
    */
-  deserialize(payload) {
+  deserialize(payload: string | Object) {
     let base = payload
 
     if (this.parent) {
       base = this.parent.deserialize(payload)
-    } else if (isString(base)) {
+    } else if (typeof base === 'string') {
       base = JSON.parse(base)
     }
 
@@ -386,7 +395,7 @@ class Microcosm extends Emitter {
    * by Microcosm. This is useful for undo/redo, or for debugging
    * purposes
    */
-  checkout(action) {
+  checkout(action: Action) {
     this.history.checkout(action)
 
     return this
@@ -405,7 +414,6 @@ class Microcosm extends Emitter {
 
   /**
    * Close out a Microcosm
-   * @private
    */
   shutdown() {
     // Call teardown on the Microcosm
@@ -422,7 +430,7 @@ class Microcosm extends Emitter {
     this.removeAllListeners()
   }
 
-  parallel(actions) {
+  parallel(actions: Array<Action>) {
     return this.append('GROUP').link(actions)
   }
 }

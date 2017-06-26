@@ -7,7 +7,6 @@ import { castPath, type KeyPath } from './key-path'
 
 /**
  * Generate a unique id
- * @private
  */
 let uidStepper = 0
 export function uid(prefix: string): string {
@@ -16,9 +15,8 @@ export function uid(prefix: string): string {
 
 /**
  * Shallow copy an object
- * @private
  */
-export function clone(target: ?Object): Object {
+export function clone<T: { [key: string]: mixed }>(target: T): $Shape<T> {
   if (Array.isArray(target)) {
     return target.slice(0)
   } else if (isObject(target) === false) {
@@ -36,17 +34,16 @@ export function clone(target: ?Object): Object {
 
 /**
  * Merge any number of objects into a provided object.
- * @private
  */
-export function merge(): Object {
+export function merge(...args: Array<Object>): Object {
   let copy = null
   let subject = null
 
-  for (var i = 0, len = arguments.length; i < len; i++) {
-    copy = copy || arguments[i]
+  for (var i = 0, len = args.length; i < len; i++) {
+    copy = copy || args[i]
     subject = subject || copy
 
-    var next = arguments[i]
+    var next = args[i]
 
     for (var key in next) {
       if (copy[key] !== next[key]) {
@@ -65,7 +62,6 @@ export function merge(): Object {
 /**
  * Retrieve a value from an object. If no key is provided, just return the
  * object.
- * @private
  */
 export function get(object: ?Object, keyPath: string | KeyPath, fallback?: *) {
   if (object == null) {
@@ -90,7 +86,6 @@ export function get(object: ?Object, keyPath: string | KeyPath, fallback?: *) {
 /**
  * Non-destructively assign a value to a provided object at a given key. If the
  * value is the same, don't do anything. Otherwise return a new object.
- * @private
  */
 export function set(object: Object, key: string | KeyPath, value: *): Object {
   // Ensure we're working with a key path, like: ['a', 'b', 'c']
@@ -137,9 +132,6 @@ export function set(object: Object, key: string | KeyPath, value: *): Object {
 
 /**
  * Is the provided object a promise?
- * @param {*} obj
- * @return {boolean}
- * @private
  */
 export function isPromise(obj: *): boolean {
   return (isObject(obj) || isFunction(obj)) && isFunction(obj.then)
@@ -147,9 +139,6 @@ export function isPromise(obj: *): boolean {
 
 /**
  * Is a value an object?
- * @param {*} target
- * @return {boolean}
- * @private
  */
 export function isObject(target: *): boolean {
   return !(!target || typeof target !== 'object')
@@ -157,9 +146,6 @@ export function isObject(target: *): boolean {
 
 /**
  * Is a value a function?
- * @param {*} target
- * @return {boolean}
- * @private
  */
 export function isFunction(target: any): boolean {
   return !!target && typeof target === 'function'
@@ -167,19 +153,18 @@ export function isFunction(target: any): boolean {
 
 /**
  * Is a value a string?
- * @param {*} target
- * @return {boolean}
- * @private
  */
 export function isString(target: any): boolean {
   return typeof target === 'string'
 }
 
+export function isBlank(value: any): boolean {
+  return value === '' || value === null || value === undefined
+}
+
 /**
  * Get the toStringTag symbol out of an object, with
  * some legacy support.
- * @param {*} value
- * @return {string}
  */
 const $Symbol = typeof Symbol === 'function' ? Symbol : {}
 const toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
@@ -194,17 +179,11 @@ export function toStringTag(value: any): string {
 /**
  * Is the provided value a generator function? This is largely
  * informed by the regenerator runtime.
- * @param {*} value
- * @return {boolean}
- * @private
  */
 export function isGeneratorFn(value: any): boolean {
   return toStringTag(value) === 'GeneratorFunction'
 }
 
-/**
- * @private
- */
 export function createOrClone(target: any, options: ?Object, repo: Microcosm) {
   if (isFunction(target)) {
     return new target(options, repo)
@@ -215,11 +194,6 @@ export function createOrClone(target: any, options: ?Object, repo: Microcosm) {
 
 /**
  * A helper combination of get and set
- * @param {Object} state
- * @param {Array.<string>|string} keyPath
- * @param {*} updater A function or static value
- * @param {*} fallback value
- * @private
  */
 export function update(
   state: *,

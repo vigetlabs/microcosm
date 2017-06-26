@@ -7,11 +7,8 @@
 import type Action from './action'
 
 class Archive {
-  pool: { [string]: Object }
+  pool: { [key: string]: Object }
 
-  /**
-   * @property {Object} pool An object mapping of action ids to snapshots
-   */
   constructor() {
     this.pool = {}
   }
@@ -19,20 +16,20 @@ class Archive {
   /**
    * Create an initial snapshot for an action by setting it to that of its
    * parent.
-   * @param {Action} action Action to create an initial snapshot for
    */
   create(action: Action) {
-    this.set(action, this.get(action.parent))
+    if (action.parent) {
+      this.set(action, this.get(action.parent))
+    }
   }
 
   /**
    * Access a prior snapshot for a given action
-   * @param {Action} action Action for requested snapshot
    */
-  get(action: Action, fallback: ?Object): Object {
-    console.assert(action, 'Unable to get ' + action + ' action')
+  get(action: ?Action, fallback: ?Object): Object {
+    console.assert(action, 'Unable to get ' + typeof action + ' action')
 
-    if (this.has(action)) {
+    if (action && this.has(action)) {
       return this.pool[action.id]
     }
 
@@ -48,8 +45,6 @@ class Archive {
 
   /**
    * Assign a new snapshot for an action
-   * @param {Action} action Action for requested snapshot
-   * @param {Object} snapshot
    */
   set(action: Action, snapshot: Object) {
     this.pool[action.id] = snapshot
@@ -57,10 +52,9 @@ class Archive {
 
   /**
    * Remove a snapshot for an action.
-   * @param {Action} action Action to eliminate snapshot for
    */
   remove(action: Action) {
-    console.assert(action, 'Unable to remove ' + action + ' action.')
+    console.assert(action, 'Unable to remove ' + typeof action + ' action.')
 
     delete this.pool[action.id]
   }

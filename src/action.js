@@ -1,18 +1,37 @@
 /**
  * @fileoverview Actions encapsulate the process of resolving an
  * action creator. Create an action using `Microcosm::push`:
+ * @flow
  */
 
-import Emitter from './emitter'
+import Emitter, { type Callback } from './emitter'
 import tag from './tag'
 import { isFunction, uid } from './utils'
 
+type ActionUpdater = (payload?: mixed) => *
+
+const ResolutionMap = {
+  inactive: false,
+  open: false,
+  update: false,
+  resolve: true,
+  reject: true,
+  cancel: true
+}
+
 class Action extends Emitter {
-  /**
-   * @param {Function|string} command
-   * @param {string} [status] Starting status
-   */
-  constructor(command, status) {
+  id: string
+  command: Tagged
+  status: Status
+  payload: any
+  disabled: boolean
+  parent: ?Action
+  next: ?Action
+  complete: boolean
+  timestamp: number
+  children: Array<Action>
+
+  constructor(command: Command | Tagged, status: ?Status) {
     super()
 
     this.id = uid('action')
@@ -27,72 +46,40 @@ class Action extends Emitter {
     this.children = []
 
     if (status) {
-      console.assert(this[status], 'Unexpected task status ' + status)
-      this[status]()
+      this.setState(status)
     }
   }
 
-  get type() {
-    return this.command[this.status]
+  get type(): string {
+    return this.command[this.status] || ''
   }
 
-  /**
-   * Open state. The action has started, but has received no response.
-   * @param {*} [nextPayload]
-   */
-  get open() {
-    return createActionUpdater(this, 'open', false)
+  get open(): ActionUpdater {
+    return this.setState.bind(this, 'open')
   }
 
-  /**
-   * Update state. The action has received an update, such as loading progress.
-   * @param {*} [nextPayload]
-   */
-  get update() {
-    return createActionUpdater(this, 'update', false)
+  get update(): ActionUpdater {
+    return this.setState.bind(this, 'update')
   }
 
-  /**
-   * Resolved state. The action has completed successfully.
-   * @param {*} [nextPayload]
-   */
-  get resolve() {
-    return createActionUpdater(this, 'resolve', true)
+  get resolve(): ActionUpdater {
+    return this.setState.bind(this, 'resolve')
   }
 
-  /**
-   * Failure state. The action did not complete successfully.
-   * @param {*} [nextPayload]
-   */
-  get reject() {
-    return createActionUpdater(this, 'reject', true)
+  get reject(): ActionUpdater {
+    return this.setState.bind(this, 'reject')
   }
 
-  /**
-   * Cancelled state. The action was halted, like aborting an HTTP
-   * request.
-   * @param {*} [nextPayload]
-   */
-  get cancel() {
-    return createActionUpdater(this, 'cancel', true)
+  get cancel(): ActionUpdater {
+    return this.setState.bind(this, 'cancel')
   }
 
-  /**
-   * Subscribe to when an action opens.
-   * @param {Function} callback
-   * @param {*} [scope]
-   */
-  onOpen(callback, scope) {
+  onOpen(callback: Callback, scope?: Object): this {
     this._callOrSubscribeOnce('open', callback, scope)
     return this
   }
 
-  /**
-   * Subscribe to when a action updates
-   * @param {Function} callback
-   * @param {*} [scope]
-   */
-  onUpdate(callback, scope) {
+  onUpdate(callback: Callback, scope?: Object): this {
     if (callback) {
       this.on('update', callback, scope)
     }
@@ -100,49 +87,26 @@ class Action extends Emitter {
     return this
   }
 
-  /**
-   * Subscribe to when a action resolves
-   * @param {Function} callback
-   * @param {*} [scope]
-   */
-  onDone(callback, scope) {
+  onDone(callback: Callback, scope?: Object): this {
     this._callOrSubscribeOnce('resolve', callback, scope)
     return this
   }
 
-  /**
-   * Subscribe to when a action rejects
-   * @param {Function} callback
-   * @param {*} [scope]
-   */
-  onError(callback, scope) {
+  onError(callback: Callback, scope?: Object): this {
     this._callOrSubscribeOnce('reject', callback, scope)
     return this
   }
 
-  /**
-   * Subscribe to when a action is cancelled
-   * @param {Function} callback
-   * @param {*} [scope]
-   */
-  onCancel(callback, scope) {
+  onCancel(callback: Callback, scope?: Object): this {
     this._callOrSubscribeOnce('cancel', callback, scope)
     return this
   }
 
-  /**
-   * @param {string} type
-   * @returns {boolean}
-   */
-  is(type) {
+  is(type: Status): boolean {
     return this.command[this.status] === this.command[type]
   }
 
-  /**
-   * @param {boolean} [silent]
-   * @return {this}
-   */
-  toggle(silent) {
+  toggle(silent?: boolean) {
     this.disabled = !this.disabled
 
     if (!silent) {
@@ -155,10 +119,8 @@ class Action extends Emitter {
   /**
    * Set up an action such that it depends on the result of another
    * series of actions.
-   * @param {Array.<Action>} actions
-   * @return {this}
    */
-  link(actions) {
+  link(actions: Array<Action>): this {
     let outstanding = actions.length
 
     const onResolve = () => {
@@ -178,23 +140,14 @@ class Action extends Emitter {
     return this
   }
 
-  /**
-   * @param {?Function} pass
-   * @param {Function} [fail]
-   * @returns {Promise}
-   */
-  then(pass, fail) {
+  then(pass?: Function, fail?: Function): Promise<*> {
     return new Promise((resolve, reject) => {
       this.onDone(resolve)
       this.onError(reject)
     }).then(pass, fail)
   }
 
-  /**
-   * Is this action connected?
-   * @return {boolean}
-   */
-  isDisconnected() {
+  isDisconnected(): boolean {
     return !this.parent
   }
 
@@ -203,15 +156,17 @@ class Action extends Emitter {
    */
   prune() {
     console.assert(this.parent, 'Expected action to have parent')
-    this.parent.parent = null
+
+    if (this.parent) {
+      this.parent.parent = null
+    }
   }
 
   /**
    * Set the next action after this one in the historical tree of
    * actions.
-   * @param {?Action} child Action to follow this one
    */
-  lead(child) {
+  lead(child: ?Action) {
     this.next = child
 
     if (child) {
@@ -221,9 +176,8 @@ class Action extends Emitter {
 
   /**
    * Add action to the list of children
-   * @param {Action} child Action to include in child list
    */
-  adopt(child) {
+  adopt(child: Action) {
     let index = this.children.indexOf(child)
 
     if (index < 0) {
@@ -240,17 +194,17 @@ class Action extends Emitter {
   remove() {
     console.assert(!this.isDisconnected(), 'Action has already been removed.')
 
-    this.parent.abandon(this)
+    if (this.parent) {
+      this.parent.abandon(this)
+    }
 
     this.removeAllListeners()
   }
 
   /**
    * Remove a child action
-   * @param {Action} child Action to remove
-   * @private
    */
-  abandon(child) {
+  abandon(child: Action) {
     let index = this.children.indexOf(child)
 
     if (index >= 0) {
@@ -268,17 +222,13 @@ class Action extends Emitter {
   /**
    * If an action is already a given status, invoke the
    * provided callback. Otherwise setup a one-time listener
-   * @private
-   * @param {string} status
-   * @param {Function} callback
-   * @param {*} scope
    */
-  _callOrSubscribeOnce(status, callback, scope) {
+  _callOrSubscribeOnce(status: Status, callback: Callback, scope: ?Object) {
     if (callback) {
       console.assert(
         isFunction(callback),
         `Expected a function when subscribing to ${status}` +
-          `instead got ${callback}`
+          `instead got ${typeof callback}`
       )
 
       if (this.is(status)) {
@@ -287,6 +237,25 @@ class Action extends Emitter {
         this.once(status, callback, scope)
       }
     }
+  }
+
+  setState(status: Status, payload: mixed) {
+    if (this.complete) {
+      return this
+    }
+
+    this.status = status
+    this.complete = ResolutionMap[status]
+
+    // Check arguments, we want to allow payloads that are undefined
+    if (arguments.length > 1) {
+      this.payload = payload
+    }
+
+    this._emit('change', this)
+    this._emit(status, this.payload)
+
+    return this
   }
 
   toJSON() {
@@ -299,33 +268,6 @@ class Action extends Emitter {
       children: this.children,
       next: this.next && this.next.id
     }
-  }
-}
-
-/**
- * Used to autobind action resolution methods.
- * @param {Action} action
- * @param {string} status
- * @param {boolean} complete
- * @return A function that will update the provided action with a new state
- * @private
- */
-function createActionUpdater(action, status, complete) {
-  return function(payload) {
-    if (action.complete === false) {
-      action.status = status
-      action.complete = complete
-
-      // Check arguments, we want to allow payloads that are undefined
-      if (arguments.length > 0) {
-        action.payload = payload
-      }
-
-      action._emit('change', action)
-      action._emit(status, action.payload)
-    }
-
-    return action
   }
 }
 

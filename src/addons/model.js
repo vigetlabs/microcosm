@@ -1,19 +1,20 @@
 /**
  * @fileoverview A general modelling class used by the Presenter's
  * getModel function.
+ * @flow
  */
 
-import { set, Emitter } from '../microcosm'
+import { type Microcosm, Emitter, set } from '../microcosm'
 
-function isObservable(binding) {
+function isObservable(binding: *): boolean {
   return binding && typeof binding.subscribe === 'function'
 }
 
-function isCallable(binding) {
+function isCallable(binding: *): boolean {
   return binding && typeof binding.call === 'function'
 }
 
-function invoke(binding, repo, scope) {
+function invoke(binding: *, repo: Microcosm, scope: Object): * {
   if (isCallable(binding)) {
     return binding.call(scope, repo.state, repo)
   }
@@ -22,11 +23,13 @@ function invoke(binding, repo, scope) {
 }
 
 export default class Model extends Emitter {
-  /**
-   * @param {Microcosm} repo Track this Microcosm instance for updates
-   * @param {scope} scope Scope to invoke functional bindings
-   */
-  constructor(repo, scope) {
+  repo: Microcosm
+  scope: Object
+  bindings: { [key: string]: * }
+  subscriptions: { [key: string]: * }
+  value: *
+
+  constructor(repo: Microcosm, scope: Object) {
     super()
 
     this.repo = repo
@@ -40,10 +43,8 @@ export default class Model extends Emitter {
 
   /**
    * Track an observable. Sending updates to a given key.
-   * @param {string} key
-   * @param {Observable} observable
    */
-  track(key, observable) {
+  track(key: string, observable: *) {
     let last = this.subscriptions[key]
     let next = observable.subscribe(value => this.set(key, value))
 
@@ -54,10 +55,7 @@ export default class Model extends Emitter {
     }
   }
 
-  /**
-   * @param {Object} bindings A set of key/value pairs for building a model
-   */
-  bind(bindings) {
+  bind(bindings: { [key: string]: * }) {
     this.bindings = {}
 
     for (var key in bindings) {
@@ -75,10 +73,8 @@ export default class Model extends Emitter {
 
   /**
    * Update a specific model key. Emits a change event
-   * @param {string} key
-   * @param {*} value
    */
-  set(key, value) {
+  set(key: string, value: *) {
     let next = set(this.value, key, value)
 
     if (this.value !== next) {

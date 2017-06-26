@@ -10,7 +10,7 @@ import type Microcosm from './microcosm'
 
 class EffectEngine {
   repo: Microcosm
-  effects: Array<Registerable>
+  effects: Array<Effect>
 
   constructor(repo: Microcosm) {
     this.repo = repo
@@ -18,7 +18,7 @@ class EffectEngine {
   }
 
   add(config: Object | Function, options?: Object) {
-    let effect: Registerable = createOrClone(config, options, this.repo)
+    let effect: Effect = createOrClone(config, options, this.repo)
 
     if (effect.setup) {
       effect.setup(this.repo, options)

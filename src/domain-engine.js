@@ -11,7 +11,7 @@ import { castPath, getKeyString, type KeyPath } from './key-path'
 import type Action from './action'
 import type Microcosm from './microcosm'
 
-type DomainList = Array<[KeyPath, Registerable]>
+type DomainList = Array<[KeyPath, Domain]>
 type Registry = { [*]: Registrations }
 
 class DomainEngine {
@@ -33,7 +33,7 @@ class DomainEngine {
 
     let handler = null
 
-    if (this.repo.register) {
+    if ('register' in this.repo) {
       handler = getRegistration(this.repo.register(), command, status)
     }
 
@@ -71,7 +71,7 @@ class DomainEngine {
   }
 
   add(key: string | KeyPath, config: Object | Function, options?: Object) {
-    let domain: Registerable = createOrClone(config, options, this.repo)
+    let domain: Domain = createOrClone(config, options, this.repo)
     let keyPath: KeyPath = castPath(key)
 
     this.domains.push([keyPath, domain])

@@ -183,7 +183,7 @@ work done in `setup()`.
 ### `register()`
 
 Returns an object mapping actions to methods on the effect. This is the
-communication point between a effect and the rest of the system.
+communication point between a effect and the rest of the system. 
 
 ```javascript
 // /src/effects/planets.js

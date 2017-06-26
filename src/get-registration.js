@@ -1,3 +1,4 @@
+// @flow
 import { isObject } from './utils'
 
 export const ALIASES = {
@@ -15,13 +16,8 @@ export const ALIASES = {
 
 /**
  * Gets any registrations that match a given command and status.
- *
- * @param {Object} pool
- * @param {Function|string} command
- * @param {string} status
- * @return {Function|null} Registration for command if it exists within the pool.
  */
-export default function getRegistration(pool, command, status) {
+function getRegistration(pool: Object, command: Tagged, status: Status) {
   let answer = null
   let alias = ALIASES[status]
 
@@ -32,7 +28,7 @@ export default function getRegistration(pool, command, status) {
   )
 
   let nest = pool[command]
-  let type = command[status]
+  let type = command[status] || ''
 
   /**
    * Support nesting, like:
@@ -68,3 +64,5 @@ export default function getRegistration(pool, command, status) {
 
   return answer
 }
+
+export default getRegistration

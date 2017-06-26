@@ -1,21 +1,29 @@
-import { merge } from './utils'
-import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
-
 /**
  * @fileoverview Every Microcosm includes MetaDomain. It provides the
  * plumbing required for lifecycle methods like `reset` and `patch`.
+ * @flow
  */
-class MetaDomain {
-  setup(repo) {
+
+import { merge } from './utils'
+import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
+
+class MetaDomain implements Domain {
+  repo: Microcosm
+
+  getInitialState() {
+    return {}
+  }
+
+  setup(repo: Microcosm) {
     this.repo = repo
   }
 
+  teardown() {}
+
   /**
    * Build a new Microcosm state object.
-   * @param {Object} oldState
-   * @param {Object} newState
    */
-  reset(oldState, newState) {
+  reset(oldState: Object, newState: Object) {
     let filtered = this.repo.domains.sanitize(newState)
 
     return merge(oldState, this.repo.getInitialState(), filtered)
@@ -23,10 +31,8 @@ class MetaDomain {
 
   /**
    * Merge a state object into the current Microcosm state.
-   * @param {Object} oldState
-   * @param {Object} newState
    */
-  patch(oldState, newState) {
+  patch(oldState: Object, newState: Object) {
     let filtered = this.repo.domains.sanitize(newState)
 
     return merge(oldState, filtered)
@@ -35,18 +41,25 @@ class MetaDomain {
   /**
    * Update the initial state whenever a new domain is added to a
    * repo.
-   * @param {Object} oldState
    */
-  addDomain(oldState) {
+  addDomain(oldState: Object) {
     return merge(this.repo.getInitialState(), oldState)
   }
 
   register() {
     return {
-      [RESET]: this.reset,
-      [PATCH]: this.patch,
-      [ADD_DOMAIN]: this.addDomain
+      [RESET.toString()]: this.reset,
+      [PATCH.toString()]: this.patch,
+      [ADD_DOMAIN.toString()]: this.addDomain
     }
+  }
+
+  serialize(data: Object) {
+    return data
+  }
+
+  deserialize(data: *) {
+    return data
   }
 }
 

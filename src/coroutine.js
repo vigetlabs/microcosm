@@ -1,3 +1,8 @@
+/*
+ * @flow
+ */
+
+import type Microcosm from './microcosm'
 import Action from './action'
 import { isFunction, isPromise, isGeneratorFn } from './utils'
 
@@ -6,12 +11,12 @@ import { isFunction, isPromise, isGeneratorFn } from './utils'
  * order.
  * @private
  */
-function processGenerator(action, body, repo) {
+function processGenerator(action: Action, body: Function, repo: Microcosm) {
   action.open()
 
   let iterator = body(repo)
 
-  function step(payload) {
+  function step(payload: mixed) {
     let next = iterator.next(payload)
 
     if (next.done) {
@@ -45,7 +50,16 @@ function processGenerator(action, body, repo) {
  * Coroutine is used by an action to determine how it should resolve
  * the body of their associated command.
  */
-export default function coroutine(action, command, params, repo) {
+export default function coroutine(
+  action: Action,
+  command: Tagged,
+  params: Array<*>,
+  repo: Microcosm
+) {
+  if (typeof command === 'string') {
+    return action.resolve(...params)
+  }
+
   let body = command.apply(null, params)
 
   /**
