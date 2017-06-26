@@ -29,7 +29,7 @@ let repo = new Microcosm()
 function getUser (id) {
   // This will return a promise. Microcosm automatically handles promises.
   // See http://code.viget.com/microcosm/api/actions.html
-  return axios(`/users/#{id}`)
+  return axios(`/users/${id}`)
 }
 
 // Domains define how a Microcosm should turn actions into new state
