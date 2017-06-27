@@ -60,27 +60,22 @@ export function merge(...args: Array<Object>): Object {
 }
 
 /**
- * Retrieve a value from an object. If no key is provided, just return the
- * object.
+ * Retrieve a value from an object. If no key is provided, just return
+ * the object.
  */
-export function get(object: ?Object, keyPath: string | KeyPath, fallback?: *) {
-  if (object == null) {
-    return fallback
-  }
-
+export function get(object: ?Object, keyPath: *, fallback?: *) {
   let path = castPath(keyPath)
+  let value = object
 
   for (var i = 0, len = path.length; i < len; i++) {
-    var value = object == null ? undefined : object[path[i]]
-
-    if (value === undefined) {
-      return fallback
+    if (value == null) {
+      break
     }
 
-    object = value
+    value = value[path[i]]
   }
 
-  return object
+  return value == null ? fallback : value
 }
 
 /**

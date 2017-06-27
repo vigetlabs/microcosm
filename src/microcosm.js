@@ -15,7 +15,7 @@ import coroutine from './coroutine'
 import getRegistration from './get-registration'
 import tag from './tag'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
-import { merge, get, set, update, isString } from './utils'
+import { merge, get, set, update } from './utils'
 
 /**
  * Options passed into Microcosm always extend from this object. You
@@ -87,7 +87,7 @@ const DEFAULTS = {
  * @extends Emitter
  * @tutorial quickstart
  */
-class Microcosm extends Emitter {
+class Microcosm extends Emitter implements Domain {
   static defaults: Object
 
   parent: ?Microcosm
@@ -289,10 +289,10 @@ class Microcosm extends Emitter {
    * repo.push(createPlanet, { name: 'Merkur' })
    * ```
    */
-  push(command: Command | Tagged, ...params: Array<mixed>): Action {
+  push(command: Command, ...params: Array<mixed>): Action {
     let action = this.append(command)
 
-    coroutine(action, tag(command), params, this)
+    coroutine(action, command, params, this)
 
     return action
   }
@@ -301,7 +301,7 @@ class Microcosm extends Emitter {
    * Partially applies push. Successive calls will append new
    * parameters (see push())
    */
-  prepare(command: Command | Tagged, ...params: Array<mixed>) {
+  prepare(command: Command, ...params: Array<mixed>) {
     return (...extra: Array<mixed>) => this.push(command, ...params, ...extra)
   }
 
@@ -353,6 +353,13 @@ class Microcosm extends Emitter {
    */
   patch(data: string | Object, deserialize?: boolean) {
     return this.push(PATCH, data, deserialize)
+  }
+
+  /**
+   * The default registration method for Microcosms
+   */
+  register() {
+    return {}
   }
 
   /**

@@ -4,9 +4,11 @@ test/
 
 [include]
 src/
+examples/ 
 
 [libs]
 flow/
 
 [options]
+experimental.const_params=true
 unsafe.enable_getters_and_setters=true

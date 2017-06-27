@@ -14,7 +14,7 @@ Object {
         "next": null,
         "payload": true,
         "status": "resolve",
-        "type": "action.6",
+        "type": "action.3",
       },
     ],
     "disabled": false,
@@ -22,7 +22,7 @@ Object {
     "next": "action12",
     "payload": undefined,
     "status": "resolve",
-    "type": "$start",
+    "type": "$start.1",
   },
 }
 `;

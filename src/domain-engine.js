@@ -19,9 +19,9 @@ class DomainEngine {
   registry: Registry
   domains: DomainList
 
-  constructor(repo: Microcosm) {
-    this.registry = {}
+  constructor(repo: *) {
     this.repo = repo
+    this.registry = {}
     this.domains = []
 
     // All realms contain a meta domain for basic Microcosm operations
@@ -33,7 +33,7 @@ class DomainEngine {
 
     let handler = null
 
-    if ('register' in this.repo) {
+    if (typeof this.repo.register === 'function') {
       handler = getRegistration(this.repo.register(), command, status)
     }
 
@@ -131,6 +131,7 @@ class DomainEngine {
 
   dispatch(state: Object, action: Action): Object {
     let handlers = this.register(action)
+    let result = state
 
     for (var i = 0, len = handlers.length; i < len; i++) {
       var { key, domain, handler } = handlers[i]
@@ -138,10 +139,10 @@ class DomainEngine {
       var last = get(state, key)
       var next = handler.call(domain, last, action.payload)
 
-      state = set(state, key, next)
+      result = set(state, key, next)
     }
 
-    return state
+    return result
   }
 
   deserialize(payload: Object): Object {

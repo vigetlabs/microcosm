@@ -2,22 +2,20 @@
  * @flow
  */
 
-import { isString } from './utils'
-
 let uid = 0
 const FALLBACK = '_action'
 
 /**
  * Uniquely tag a function. This is used to identify actions.
  */
-export default function tag(fn: Tagged | Command, name?: string): Tagged {
+export default function tag(fn: Command | Tagged, name?: string): Tagged {
   console.assert(
     fn,
     `Unable to identify ${fn == null ? fn : fn.toString()} action.`
   )
 
   if (typeof fn === 'string') {
-    return tag({ toString: () => fn.toString() }, fn.toString())
+    return tag(n => n, fn)
   }
 
   if (fn.__tagged === true) {
@@ -36,25 +34,28 @@ export default function tag(fn: Tagged | Command, name?: string): Tagged {
    */
   const symbol = name || (fn.name || FALLBACK) + '.' + uid
 
-  fn.open = symbol + '.open'
+  // Cast fn to keep Flow happy
+  let cast: Tagged = fn
 
-  fn.loading = symbol + '.loading'
-  fn.update = fn.loading
+  cast.open = symbol + '.open'
 
-  fn.done = symbol // intentional for string actions
-  fn.resolve = fn.done
+  cast.loading = symbol + '.loading'
+  cast.update = cast.loading
 
-  fn.error = symbol + '.error'
-  fn.reject = fn.error
+  cast.done = symbol // intentional for string actions
+  cast.resolve = cast.done
 
-  fn.cancel = symbol + '.cancel'
-  fn.cancelled = fn.cancel
+  cast.error = symbol + '.error'
+  cast.reject = cast.error
+
+  cast.cancel = symbol + '.cancel'
+  cast.cancelled = fn.cancel
 
   // The default state is done
-  fn.toString = () => symbol
+  cast.toString = () => symbol
 
   // Mark the function as tagged so we only do this once
   fn.__tagged = true
 
-  return fn
+  return cast
 }

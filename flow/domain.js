@@ -47,6 +47,6 @@ declare interface Domain {
    * communication point between a domain and the rest of the system.
    */
   register(): {
-    [any]: (last?: *, next?: *) => *
+    [key: string | Function]: (last?: *, next?: *) => *
   }
 }

@@ -156,8 +156,8 @@ class Presenter extends React.PureComponent {
   render() {
     return React.createElement(PresenterMediator, {
       presenter: this,
-      parentObject: this.state,
-      parentObject: this.props
+      parentState: this.state,
+      parentProps: this.props
     })
   }
 }

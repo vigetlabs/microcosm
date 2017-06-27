@@ -12,7 +12,7 @@ class EffectEngine {
   repo: Microcosm
   effects: Array<Effect>
 
-  constructor(repo: Microcosm) {
+  constructor(repo: *) {
     this.repo = repo
     this.effects = []
   }

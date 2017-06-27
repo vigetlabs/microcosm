@@ -23,7 +23,7 @@ class MetaDomain implements Domain {
   /**
    * Build a new Microcosm state object.
    */
-  reset(oldState: Object, newState: Object) {
+  reset(oldState: Object, newState: Object): Object {
     let filtered = this.repo.domains.sanitize(newState)
 
     return merge(oldState, this.repo.getInitialState(), filtered)
@@ -32,7 +32,7 @@ class MetaDomain implements Domain {
   /**
    * Merge a state object into the current Microcosm state.
    */
-  patch(oldState: Object, newState: Object) {
+  patch(oldState: Object, newState: Object): Object {
     let filtered = this.repo.domains.sanitize(newState)
 
     return merge(oldState, filtered)
@@ -42,11 +42,13 @@ class MetaDomain implements Domain {
    * Update the initial state whenever a new domain is added to a
    * repo.
    */
-  addDomain(oldState: Object) {
+  addDomain(oldState: Object): Object {
     return merge(this.repo.getInitialState(), oldState)
   }
 
   register() {
+    // TODO: Flow does not like string coercion. How can we
+    // get Flow type coverage on the register method?
     return {
       [RESET.toString()]: this.reset,
       [PATCH.toString()]: this.patch,

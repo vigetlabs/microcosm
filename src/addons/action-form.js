@@ -1,9 +1,16 @@
+/**
+ * @flow
+ */
+
 import React from 'react'
 import { Action, merge } from '../microcosm'
 import serialize from 'form-serialize'
 
 class ActionForm extends React.PureComponent {
-  constructor(props, context) {
+  send: Function
+  onSubmit: (event: Event) => Action
+
+  constructor(props: Object, context: ?Object) {
     super(props, context)
 
     this.send = this.props.send || this.context.send
@@ -38,12 +45,12 @@ class ActionForm extends React.PureComponent {
     return React.createElement('form', props)
   }
 
-  onSubmit(event) {
+  onSubmit(event: Event) {
     event.preventDefault()
     this.submit(event)
   }
 
-  submit(event) {
+  submit(event: Event) {
     let form = this.refs.form
     let params = this.props.prepare(this.props.serializer(form))
     let action = this.send(this.props.action, params)

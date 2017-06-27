@@ -1,8 +1,15 @@
+/**
+ * @flow
+ */
+
 import React from 'react'
 import { Action, merge } from '../microcosm'
 
 class ActionButton extends React.PureComponent {
-  constructor(props, context) {
+  send: Function
+  click: (event: Event) => Action
+
+  constructor(props: Object, context: ?Object) {
     super(props, context)
 
     this.send = this.props.send || this.context.send
@@ -17,7 +24,7 @@ class ActionButton extends React.PureComponent {
     tag: 'button'
   }
 
-  click(event) {
+  click(event: Event): Action {
     let action = this.send(this.props.action, this.props.value)
 
     if (action && action instanceof Action) {

@@ -1,22 +1,28 @@
+// @flow
 import { addList, removeList } from '../actions/lists'
 
-const Lists = {
+type List = {
+  id: string,
+  name: string
+}
+
+class Lists {
   getInitialState() {
     return []
-  },
+  }
 
-  add(lists, params) {
+  add(lists: List[], params: Object): List[] {
     return lists.concat({ name: 'Unspecified', ...params })
-  },
+  }
 
-  remove(lists, unwanted) {
+  remove(lists: List[], unwanted: string) {
     return lists.filter(i => i.id !== unwanted)
-  },
+  }
 
   register() {
     return {
-      [addList]: Lists.add,
-      [removeList]: Lists.remove
+      [addList.toString()]: this.add,
+      [removeList.toString()]: this.remove
     }
   }
 }

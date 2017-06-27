@@ -34,8 +34,6 @@ export function castPath(value: string | KeyPath): KeyPath {
  * @private
  */
 export function getKeyPaths(value: string | Array<KeyPath>): Array<KeyPath> {
-  let paths = value
-
   if (typeof value === 'string') {
     return `${value}`.split(PATH_DELIMETER).map(castPath)
   }
