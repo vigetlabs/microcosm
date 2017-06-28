@@ -87,7 +87,7 @@ class History extends Emitter {
   /**
    * Toggle actions in bulk, then reconcile from the first action
    */
-  toggle(actions: Action | Array<Action>) {
+  toggle(actions: Action | Action[]) {
     let list = [].concat(actions)
 
     list.forEach(action => action.toggle(true))

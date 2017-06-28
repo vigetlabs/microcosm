@@ -29,7 +29,7 @@ class Action extends Emitter {
   next: ?Action
   complete: boolean
   timestamp: number
-  children: Array<Action>
+  children: Action[]
 
   constructor(command: Command | Tagged, status: ?Status) {
     super()
@@ -120,7 +120,7 @@ class Action extends Emitter {
    * Set up an action such that it depends on the result of another
    * series of actions.
    */
-  link(actions: Array<Action>): this {
+  link(actions: Action[]): this {
     let outstanding = actions.length
 
     const onResolve = () => {
