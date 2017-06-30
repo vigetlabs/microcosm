@@ -49,7 +49,6 @@ class MetaDomain {
       [ADD_DOMAIN.toString()]: this.addDomain
     }
   }
-
 }
 
 export default MetaDomain

@@ -21,7 +21,7 @@ describe('remove', function() {
 
     child.remove()
 
-    expect(function () {
+    expect(function() {
       child.remove()
     }).toThrow('Action has already been removed.')
   })

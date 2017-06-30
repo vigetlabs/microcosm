@@ -158,7 +158,10 @@ class Action extends Emitter {
     if (this.parent) {
       this.parent.parent = null
     } else {
-      console.assert(false, 'Unable to prune action. It is already disconnected.')
+      console.assert(
+        false,
+        'Unable to prune action. It is already disconnected.'
+      )
     }
   }
 
