@@ -31,8 +31,8 @@ class History extends Emitter {
   updater: (options: Object) => Updater
   releasing: boolean
   release: () => void
-  head: ?Action
-  root: ?Action
+  head: Action
+  root: Action
 
   constructor(config: HistoryOptions) {
     super()
@@ -40,7 +40,7 @@ class History extends Emitter {
     let options = merge(DEFAULTS, config)
 
     this.size = 0
-    this.limit = Math.max(1, options.maxHistory)
+    this.limit = Math.max(0, options.maxHistory)
 
     this.updater = options.updater(options)
 
@@ -58,18 +58,18 @@ class History extends Emitter {
    * of controlling time in a Microcosm's history.
    */
   checkout(action: ?Action) {
-    let sharedRoot = this.sharedRoot(action) || this.head
+    let sharedRoot = this.sharedRoot(action)
 
     this.head = action || this.head
 
     // Each action has a "next" property that tells the history how to
     //  move forward. Update that path back to the sharedRoot:
     let cursor = this.head
-    while (cursor && cursor != sharedRoot) {
+    while (cursor && cursor !== sharedRoot) {
       let parent = cursor.parent
 
       if (parent) {
-        parent.next = cursor
+        parent.lead(cursor)
       }
 
       cursor = parent
@@ -77,9 +77,7 @@ class History extends Emitter {
 
     this.setSize()
 
-    if (sharedRoot) {
-      this.reconcile(sharedRoot)
-    }
+    this.reconcile(sharedRoot)
 
     return this
   }
@@ -164,7 +162,7 @@ class History extends Emitter {
   /**
    * Chain off of wait(). Provides a promise interface
    */
-  then(pass?: Function, fail?: Function) {
+  then(pass?: *, fail?: *) {
     return this.wait().then(pass, fail)
   }
 
@@ -173,8 +171,7 @@ class History extends Emitter {
    * starts or restarts history.
    */
   begin() {
-    this.head = this.root = null
-    this.append(START, 'resolve')
+    this.root = this.head = this.append(START, 'resolve')
   }
 
   /**
@@ -226,9 +223,9 @@ class History extends Emitter {
     }
 
     // reset head/root references if necessary
-    if (action === this.head) {
+    if (action === this.head && parent) {
       next = this.head = parent
-    } else if (action === this.root) {
+    } else if (action === this.root && next) {
       this.root = next
     }
 
@@ -308,15 +305,17 @@ class History extends Emitter {
     let size = this.size
     let root = this.root
 
-    while (size > this.limit && root && root.complete) {
+    while (size > this.limit && root.complete) {
       size -= 1
+
       this._emit('remove', root.parent)
-      root = root.next
+
+      if (root.next) {
+        root = root.next
+      }
     }
 
-    if (root) {
-      root.prune()
-    }
+    root.prune()
 
     this.root = root
     this.size = size
@@ -359,7 +358,7 @@ class History extends Emitter {
    * until you find an action which is active. That action is the shared
    * root between the provided action and the current head.
    */
-  sharedRoot(action: ?Action) {
+  sharedRoot(action: ?Action): Action {
     let cursor = action
 
     while (cursor) {
@@ -368,6 +367,8 @@ class History extends Emitter {
       }
       cursor = cursor.parent
     }
+
+    return this.head
   }
 
   /**
@@ -375,8 +376,8 @@ class History extends Emitter {
    */
   toJSON() {
     return {
-      head: this.head ? this.head.id : null,
-      root: this.root ? this.root.id : null,
+      head: this.head.id,
+      root: this.root.id,
       size: this.size,
       tree: this.root
     }

@@ -27,6 +27,12 @@ describe('tag', function() {
     expect(`${tagged}`).toEqual('test')
   })
 
+  it('tagged strings return identity functions', function() {
+    const tagged = tag('test')
+
+    expect(tagged(1)).toBe(1)
+  })
+
   it('is unique', function() {
     let a = tag(function() {}).toString()
     let b = tag(function() {}).toString()

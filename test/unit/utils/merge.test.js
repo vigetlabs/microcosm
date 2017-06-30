@@ -8,6 +8,10 @@ describe('Utils.merge', function() {
     expect(merge(a, b)).toBe(a)
   })
 
+  it('returns an empty object if given no arguments', function() {
+    expect(merge()).toEqual({})
+  })
+
   it('will not merge a undefined into an object', function() {
     const a = {}
     const b = undefined

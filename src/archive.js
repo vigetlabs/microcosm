@@ -18,9 +18,7 @@ class Archive {
    * parent.
    */
   create(action: Action) {
-    if (action.parent) {
-      this.set(action, this.get(action.parent))
-    }
+    this.set(action, this.get(action.parent))
   }
 
   /**

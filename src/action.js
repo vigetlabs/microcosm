@@ -155,10 +155,10 @@ class Action extends Emitter {
    * Remove the grandparent of this action, cutting off history.
    */
   prune() {
-    console.assert(this.parent, 'Expected action to have parent')
-
     if (this.parent) {
       this.parent.parent = null
+    } else {
+      console.assert(false, 'Unable to prune action. It is already disconnected.')
     }
   }
 
@@ -192,10 +192,10 @@ class Action extends Emitter {
    * from history.
    */
   remove() {
-    console.assert(!this.isDisconnected(), 'Action has already been removed.')
-
     if (this.parent) {
       this.parent.abandon(this)
+    } else {
+      console.assert(false, 'Action has already been removed.')
     }
 
     this.removeAllListeners()

@@ -1,7 +1,7 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Microcosm::dispatch', function() {
-  it.only('does not mutate base state on prior dispatches', function() {
+  it('does not mutate base state on prior dispatches', function() {
     const repo = new Microcosm()
     const mutation = () => true
 
@@ -23,15 +23,15 @@ describe('Microcosm::dispatch', function() {
     })
 
     repo.push(mutation)
-    expect(repo.history.size).toEqual(1)
+    expect(repo.history.size).toEqual(0)
     expect(repo).toHaveState('toggled', true)
 
     repo.push(mutation)
-    expect(repo.history.size).toEqual(1)
+    expect(repo.history.size).toEqual(0)
     expect(repo).toHaveState('toggled', false)
 
     repo.push(mutation)
-    expect(repo.history.size).toEqual(1)
+    expect(repo.history.size).toEqual(0)
     expect(repo).toHaveState('toggled', true)
   })
 })

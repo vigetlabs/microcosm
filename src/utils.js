@@ -146,13 +146,6 @@ export function isFunction(target: any): boolean {
   return !!target && typeof target === 'function'
 }
 
-/**
- * Is a value a string?
- */
-export function isString(target: any): boolean {
-  return typeof target === 'string'
-}
-
 export function isBlank(value: any): boolean {
   return value === '' || value === null || value === undefined
 }
@@ -161,8 +154,9 @@ export function isBlank(value: any): boolean {
  * Get the toStringTag symbol out of an object, with
  * some legacy support.
  */
+/* istanbul ignore next */
 const $Symbol = typeof Symbol === 'function' ? Symbol : {}
-const toStringTagSymbol = $Symbol.toStringTag || '@@toStringTag'
+const toStringTagSymbol = get($Symbol, 'toStringTag', '@@toStringTag')
 export function toStringTag(value: any): string {
   if (!value) {
     return ''

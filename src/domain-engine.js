@@ -31,11 +31,7 @@ class DomainEngine {
   getRepoHandlers(action: Action): Registrations {
     let { command, status } = action
 
-    let handler = null
-
-    if (typeof this.repo.register === 'function') {
-      handler = getRegistration(this.repo.register(), command, status)
-    }
+    let handler = getRegistration(this.repo.register(), command, status)
 
     return handler ? [new Registration([], this.repo, handler)] : []
   }

@@ -7,18 +7,12 @@
 import { merge } from './utils'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
 
-class MetaDomain implements Domain {
+class MetaDomain {
   repo: Microcosm
-
-  getInitialState() {
-    return {}
-  }
 
   setup(repo: Microcosm) {
     this.repo = repo
   }
-
-  teardown() {}
 
   /**
    * Build a new Microcosm state object.
@@ -56,13 +50,6 @@ class MetaDomain implements Domain {
     }
   }
 
-  serialize(data: Object) {
-    return data
-  }
-
-  deserialize(data: *) {
-    return data
-  }
 }
 
 export default MetaDomain

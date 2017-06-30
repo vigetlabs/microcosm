@@ -5,6 +5,9 @@
 import React from 'react'
 import { Action, merge } from '../microcosm'
 
+/* istanbul ignore next */
+const identity = () => {}
+
 class ActionButton extends React.PureComponent {
   send: Function
   click: (event: Event) => Action
@@ -17,7 +20,7 @@ class ActionButton extends React.PureComponent {
   }
 
   static contextTypes = {
-    send: () => {}
+    send: identity
   }
 
   static defaultProps = {
@@ -44,7 +47,7 @@ class ActionButton extends React.PureComponent {
   }
 
   render() {
-    const props = merge({}, this.props, { onClick: this.click })
+    const props = merge(this.props, { onClick: this.click })
 
     delete props.tag
     delete props.action

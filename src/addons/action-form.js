@@ -6,6 +6,9 @@ import React from 'react'
 import { Action, merge } from '../microcosm'
 import serialize from 'form-serialize'
 
+/* istanbul ignore next */
+const identity = () => {}
+
 class ActionForm extends React.PureComponent {
   send: Function
   onSubmit: (event: Event) => Action
@@ -18,7 +21,7 @@ class ActionForm extends React.PureComponent {
   }
 
   static contextTypes = {
-    send: () => {}
+    send: identity
   }
 
   static defaultProps = {
@@ -29,7 +32,7 @@ class ActionForm extends React.PureComponent {
   }
 
   render() {
-    let props = merge({}, this.props, { ref: 'form', onSubmit: this.onSubmit })
+    let props = merge(this.props, { ref: 'form', onSubmit: this.onSubmit })
 
     // Remove invalid props to prevent React warnings
     delete props.action

@@ -17,6 +17,7 @@ function passChildren() {
   return this.props.children ? React.Children.only(this.props.children) : null
 }
 
+/* istanbul ignore next */
 const identity = () => {}
 
 class Presenter extends React.PureComponent {
