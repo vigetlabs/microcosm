@@ -45,7 +45,10 @@ module.exports = function(env) {
           exclude: /node_modules/,
           options: {
             cacheDirectory: '.babel-cache',
-            plugins: ['react-hot-loader/babel']
+            plugins: [
+              'react-hot-loader/babel',
+              ['transform-runtime', { polyfill: false }]
+            ]
           }
         }
       ]

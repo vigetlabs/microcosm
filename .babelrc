@@ -11,9 +11,6 @@
     "react",
     "flow"
   ],
-  "plugins": [
-    ["transform-runtime", { "polyfill": false }]
-  ],
   "env": {
     "test": {
       "presets": [

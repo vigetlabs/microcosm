@@ -36,13 +36,13 @@ repo.addDomain('count', {
 })
 
 class CountPresenter extends Presenter {
-  model () {
+  getModel () {
     return {
       count : state => state.count
     }
   }
 
-  view ({ count }) {
+  render ({ count }) {
     return (
       <ActionButton action={increaseCount} value={1}>
         {count}
