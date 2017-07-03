@@ -40,7 +40,7 @@ class History extends Emitter {
     let options = merge(DEFAULTS, config)
 
     this.size = 0
-    this.limit = Math.max(0, options.maxHistory)
+    this.setLimit(options.maxHistory)
 
     this.updater = options.updater(options)
 
@@ -335,6 +335,13 @@ class History extends Emitter {
     }
 
     this.size = size
+  }
+
+  /**
+   * Set the limit of the history object.
+   */
+  setLimit(limit: number) {
+    this.limit = Math.max(0, limit)
   }
 
   /**
