@@ -5,7 +5,8 @@ body {
   width: 100%;
 }
 
-rect, circle {
+rect,
+circle {
   transition: 0.3s fill, 0.3s r;
   cursor: pointer;
 }

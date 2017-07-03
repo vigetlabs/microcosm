@@ -7,7 +7,9 @@ import { removeList } from '../../../actions/lists'
 function List({ id, name, count }) {
   return (
     <li key={id}>
-      <Link to={`/lists/${id}`}>{name} ({count})</Link>
+      <Link to={`/lists/${id}`}>
+        {name} ({count})
+      </Link>
       <ActionButton className="btn" action={removeList} value={id}>
         Delete
       </ActionButton>
@@ -20,5 +22,9 @@ function Empty() {
 }
 
 export default function ListList({ items = [] }) {
-  return items.length ? <ul className="list">{items.map(List)}</ul> : <Empty />
+  return items.length
+    ? <ul className="list">
+        {items.map(List)}
+      </ul>
+    : <Empty />
 }

@@ -56,7 +56,11 @@ describe('::getModel', function() {
       }
 
       view({ greeting }) {
-        return <p>{greeting}</p>
+        return (
+          <p>
+            {greeting}
+          </p>
+        )
       }
     }
 
@@ -108,7 +112,11 @@ describe('::getModel', function() {
         }
       }
       view({ color }) {
-        return <div>{color}</div>
+        return (
+          <div>
+            {color}
+          </div>
+        )
       }
     }
 
@@ -130,7 +138,11 @@ describe('::getModel', function() {
         }
       }
       view({ upper }) {
-        return <p>{upper}</p>
+        return (
+          <p>
+            {upper}
+          </p>
+        )
       }
     }
 
@@ -217,7 +229,11 @@ describe('::getModel', function() {
           }
         }
         view({ name }) {
-          return <p>{name}</p>
+          return (
+            <p>
+              {name}
+            </p>
+          )
         }
       }
 
@@ -303,7 +319,11 @@ describe('::getModel', function() {
       render() {
         const { text } = this.model
 
-        return <p>{text}</p>
+        return (
+          <p>
+            {text}
+          </p>
+        )
       }
     }
 
@@ -395,7 +415,11 @@ describe('::setup', function() {
       }
 
       view({ prop }) {
-        return <p>{prop}</p>
+        return (
+          <p>
+            {prop}
+          </p>
+        )
       }
     }
 
@@ -510,7 +534,11 @@ describe('::update', function() {
       }
     }
 
-    mount(<Test color="red"><p>Hey</p></Test>).setProps({ color: 'blue' })
+    mount(
+      <Test color="red">
+        <p>Hey</p>
+      </Test>
+    ).setProps({ color: 'blue' })
 
     expect(callback).toHaveBeenCalledWith('red', 'blue')
   })
@@ -649,7 +677,11 @@ describe('::view', function() {
   it('views can be stateful react components', function() {
     class MyView extends React.Component {
       render() {
-        return <p>{this.props.message}</p>
+        return (
+          <p>
+            {this.props.message}
+          </p>
+        )
       }
     }
 
@@ -668,7 +700,11 @@ describe('::view', function() {
 
   it('views can be stateless components', function() {
     function MyView({ message }) {
-      return <p>{message}</p>
+      return (
+        <p>
+          {message}
+        </p>
+      )
     }
 
     class MyPresenter extends Presenter {
@@ -687,7 +723,11 @@ describe('::view', function() {
   it('views can be getters', function() {
     class MyView extends React.Component {
       render() {
-        return <p>{this.props.message}</p>
+        return (
+          <p>
+            {this.props.message}
+          </p>
+        )
       }
     }
 
@@ -827,7 +867,11 @@ describe('Efficiency', function() {
       getModel = model
 
       render() {
-        return <p>{this.model.color}</p>
+        return (
+          <p>
+            {this.model.color}
+          </p>
+        )
       }
     }
 
@@ -858,7 +902,11 @@ describe('Efficiency', function() {
 
 describe('::render', function() {
   it('the default render implementation passes children', function() {
-    let wrapper = mount(<Presenter><p>Test</p></Presenter>)
+    let wrapper = mount(
+      <Presenter>
+        <p>Test</p>
+      </Presenter>
+    )
 
     expect(wrapper.text()).toEqual('Test')
   })
@@ -959,14 +1007,22 @@ describe('intercepting actions', function() {
 
     class Parent extends Presenter {
       render() {
-        return <div>{this.props.children}</div>
+        return (
+          <div>
+            {this.props.children}
+          </div>
+        )
       }
     }
 
     let top = new Microcosm({ maxHistory: Infinity })
     let bottom = new Microcosm({ maxHistory: Infinity })
 
-    let wrapper = mount(<Parent repo={top}><Child repo={bottom} /></Parent>)
+    let wrapper = mount(
+      <Parent repo={top}>
+        <Child repo={bottom} />
+      </Parent>
+    )
 
     wrapper.find(View).simulate('click')
 
@@ -984,14 +1040,22 @@ describe('intercepting actions', function() {
         return repo
       }
       render() {
-        return <div>{this.props.children}</div>
+        return (
+          <div>
+            {this.props.children}
+          </div>
+        )
       }
     }
 
     let top = new Microcosm({ maxHistory: Infinity })
     let bottom = new Microcosm({ maxHistory: Infinity })
 
-    let wrapper = mount(<Parent repo={top}><Child repo={bottom} /></Parent>)
+    let wrapper = mount(
+      <Parent repo={top}>
+        <Child repo={bottom} />
+      </Parent>
+    )
 
     wrapper.find(View).simulate('click')
 
@@ -1152,11 +1216,21 @@ describe('forks', function() {
           repo = repo.parent
         }
 
-        return <p>{names.join(', ')}</p>
+        return (
+          <p>
+            {names.join(', ')}
+          </p>
+        )
       }
     }
 
-    const text = mount(<Top><Middle><Bottom /></Middle></Top>).text()
+    const text = mount(
+      <Top>
+        <Middle>
+          <Bottom />
+        </Middle>
+      </Top>
+    ).text()
 
     expect(text).toEqual('bottom, middle, top')
   })
@@ -1189,7 +1263,11 @@ describe('::send', function() {
 
 describe('::children', function() {
   it('re-renders when it gets new children', function() {
-    let wrapper = mount(<Presenter><span>1</span></Presenter>)
+    let wrapper = mount(
+      <Presenter>
+        <span>1</span>
+      </Presenter>
+    )
 
     wrapper.setProps({ children: <span>2</span> })
 
@@ -1198,7 +1276,11 @@ describe('::children', function() {
 
   it('does not re-render when children are the same', function() {
     let children = <span>1</span>
-    let wrapper = mount(<Presenter>{children}</Presenter>)
+    let wrapper = mount(
+      <Presenter>
+        {children}
+      </Presenter>
+    )
 
     let presenter = wrapper.instance()
 

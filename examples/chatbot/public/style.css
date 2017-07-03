@@ -1,14 +1,17 @@
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
 }
 
 body {
-  background: #2196F3;
+  background: #2196f3;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -124,7 +127,7 @@ input[type=text] {
 }
 
 input[type=text]:focus {
-  box-shadow: 0 2px 0 0 #FF9800;
+  box-shadow: 0 2px 0 0 #ff9800;
   border-color: transparent;
   outline: none;
 }

@@ -5,7 +5,9 @@ import { mount } from 'enzyme'
 it('exposes the wrapped component as a static property', function() {
   const Button = function({ send }) {
     return (
-      <button type="button" onClick={() => send('action')}>Click me</button>
+      <button type="button" onClick={() => send('action')}>
+        Click me
+      </button>
     )
   }
 
@@ -17,7 +19,9 @@ it('exposes the wrapped component as a static property', function() {
 it('extracts send from context', function() {
   const Button = withSend(function({ send }) {
     return (
-      <button type="button" onClick={() => send('action')}>Click me</button>
+      <button type="button" onClick={() => send('action')}>
+        Click me
+      </button>
     )
   })
 
@@ -57,7 +61,11 @@ describe('Display name', function() {
       return <button type="button" />
     })
 
-    let wrapper = mount(<div><Button /></div>)
+    let wrapper = mount(
+      <div>
+        <Button />
+      </div>
+    )
 
     expect(wrapper.find('withSend(Button)')).toHaveLength(1)
   })
@@ -71,7 +79,11 @@ describe('Display name', function() {
       }
     )
 
-    let wrapper = mount(<div><Button /></div>)
+    let wrapper = mount(
+      <div>
+        <Button />
+      </div>
+    )
 
     expect(wrapper.find('withSend(Button)')).toHaveLength(1)
   })
