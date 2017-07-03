@@ -1,8 +1,6 @@
 import History from '../../../src/history'
 
 describe('History::setLimit', function() {
-  const action = n => n
-
   it('sets the correct size given Infinity', function() {
     const history = new History()
     history.setLimit(Infinity)
