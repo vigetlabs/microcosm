@@ -1,25 +1,18 @@
-/**
- * @flow
- */
-
-type Collection = Array<Object>
-type Record = Object
-
 class Domain {
-  getInitialState(): Collection {
+  getInitialState() {
     return []
   }
 
-  add(items: Collection, params: Record) {
+  add(items, params) {
     return items.concat(params)
   }
 
-  remove(items: Collection, unwanted: string) {
+  remove(items, unwanted) {
     return items.filter(i => i.id !== unwanted)
   }
 
-  removeBy(key: string) {
-    return (items: Collection, value: *) => {
+  removeBy(key) {
+    return (items, value) => {
       return items.filter(item => item[key] !== value)
     }
   }

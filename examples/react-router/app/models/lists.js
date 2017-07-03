@@ -1,18 +1,7 @@
-/**
- * @flow
- */
+import { set } from 'microcosm'
 
-import type Presenter from 'microcosm/addons/presenter'
-import { set } from 'microcosm' // eslint-ignore-line
-
-type Snapshot = { [string]: * }
-
-interface Model {
-  call(presenter: Presenter, state: Snapshot, repo: Microcosm): *
-}
-
-export class ListsWithCounts implements Model {
-  call(_presenter: Presenter, state: Snapshot) {
+export class ListsWithCounts {
+  call(_presenter, state) {
     const { lists, items } = state
 
     return lists.map(function(list) {
@@ -23,28 +12,24 @@ export class ListsWithCounts implements Model {
   }
 }
 
-export class List implements Model {
-  id: string
-
-  constructor(id: string) {
+export class List {
+  constructor(id) {
     this.id = id
   }
 
-  call(_presenter: Presenter, state: Snapshot) {
+  call(_presenter, state) {
     const { lists } = state
 
     return lists.find(list => list.id === this.id)
   }
 }
 
-export class ListItems implements Model {
-  id: string
-
-  constructor(id: string) {
+export class ListItems {
+  constructor(id) {
     this.id = id
   }
 
-  call(_presenter: Presenter, state: Snapshot) {
+  call(_presenter, state) {
     const { items } = state
 
     return items.filter(item => item.list === this.id)

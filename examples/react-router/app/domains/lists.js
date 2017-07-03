@@ -1,21 +1,12 @@
-/**
- * @flow
- */
-
 import uid from 'uid'
 import Domain from './domain'
 
-export type List = {
-  id?: string,
-  name: string
-}
-
 class Lists extends Domain {
-  static create(params): List {
+  static create(params) {
     return { id: uid(), ...params }
   }
 
-  static destroy(id: string) {
+  static destroy(id) {
     return id
   }
 

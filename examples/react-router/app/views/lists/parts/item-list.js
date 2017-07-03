@@ -1,6 +1,5 @@
 import React from 'react'
 import ActionButton from 'microcosm/addons/action-button'
-
 import { removeItem } from '../../../actions/items'
 
 function Item({ id, name }) {
@@ -19,5 +18,9 @@ function Empty() {
 }
 
 export default function ItemList({ items }) {
-  return items.length ? <ul className="list">{items.map(Item)}</ul> : <Empty />
+  return items.length
+    ? <ul className="list">
+        {items.map(Item)}
+      </ul>
+    : <Empty />
 }
