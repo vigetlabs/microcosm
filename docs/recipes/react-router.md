@@ -4,47 +4,46 @@ For most applications that utilize React Router, having access to
 Microcosm is essential for dispatching actions as route handlers enter
 the stage.
 
-The `Presenter` addon can be used to "frame" an app with a given
-Microcosm in context:
+We recommend mounting a "root" `Presenter`, framing context such that
+child presenters have access to a central Microcosm repo:
 
 ```javascript
-import React     from 'react'
-import DOM       from 'react-dom'
-import Presenter from 'microcosm/addons/presenter'
-import Microcosm from 'microcosm'
-import routes    from './routes'
+import React from 'react'
+import DOM from 'react-dom'
+import { Router } from 'react-router'
+import createBrowserHistory from 'history/createBrowserHistory'
+import { AppContainer } from 'react-hot-loader'
+import Application from './views/layout'
 
-import { Router, browserHistory } from 'react-router'
+const repo = new Microocsm()
 
-const repo = new Microcosm()
-
-DOM.render((
-  <Presenter repo={ repo }>
-    <Router history={ browserHistory } routes={ routes } />
-  </Presenter>
-), document.getElementById('entry-point'))
+DOM.render(
+  <Router>
+    <Application repo={repo} />
+  </Router>,
+  document.getElementById('app')
+)
 ```
 
-`Presenter` accepts an instance of Microcosm, exposing it via
-`context`. From there, other presenters can lean on that context to
-add specific data subscriptions:
+Drawing from the example above, `Application` may look something like:
 
 ```javascript
+import React from 'react'
+import Switch from 'react-router/Switch'
+import Route from 'react-router/Route'
 import Presenter from 'microcosm/addons/presenter'
 
-class Planets extends Presenter {
-  viewModel() {
-    return {
-      planets: state => state.planets
-    }
-  }
-
+class Application extends Presenter {
   render() {
     return (
-      <ul>
-        { this.state.planets.map(planet => (<li>{ planet.name }</li>)) }
-      </ul>
+      <Switch>
+        { /* routes */ }
+      </Switch>
     )
   }
 }
+
+export default Application
 ```
+
+For more information, see the [React Router example app](https://github.com/vigetlabs/microcosm/tree/master/examples/react-router).

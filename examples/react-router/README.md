@@ -7,5 +7,5 @@ A simple Todo app demonstrating the use of Microcosm with React Router.
 ```
 npm install
 make start
-open http://localhost:4000
+open http://localhost:3000
 ```
