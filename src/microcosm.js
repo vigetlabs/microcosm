@@ -289,7 +289,7 @@ class Microcosm extends Emitter implements Domain {
    * repo.push(createPlanet, { name: 'Merkur' })
    * ```
    */
-  push(command: Command, ...params: Array<mixed>): Action {
+  push(command: Command, ...params: *): Action {
     let action = this.append(command)
 
     coroutine(action, command, params, this)
@@ -301,8 +301,8 @@ class Microcosm extends Emitter implements Domain {
    * Partially applies push. Successive calls will append new
    * parameters (see push())
    */
-  prepare(command: Command, ...params: Array<mixed>) {
-    return (...extra: Array<mixed>) => this.push(command, ...params, ...extra)
+  prepare(command: Command, ...params: *) {
+    return (...extra: *) => this.push(command, ...params, ...extra)
   }
 
   /**
@@ -437,7 +437,7 @@ class Microcosm extends Emitter implements Domain {
     this.removeAllListeners()
   }
 
-  parallel(actions: Array<Action>) {
+  parallel(actions: Action[]) {
     return this.append('GROUP').link(actions)
   }
 }

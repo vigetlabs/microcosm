@@ -6,7 +6,7 @@
 
 import Emitter, { type Callback } from './emitter'
 import tag from './tag'
-import { isFunction, uid } from './utils'
+import { uid } from './utils'
 
 type ActionUpdater = (payload?: mixed) => *
 
@@ -140,7 +140,7 @@ class Action extends Emitter {
     return this
   }
 
-  then(pass?: Function, fail?: Function): Promise<*> {
+  then(pass?: *, fail?: *): Promise<*> {
     return new Promise((resolve, reject) => {
       this.onDone(resolve)
       this.onError(reject)
@@ -229,7 +229,7 @@ class Action extends Emitter {
   _callOrSubscribeOnce(status: Status, callback: Callback, scope: ?Object) {
     if (callback) {
       console.assert(
-        isFunction(callback),
+        typeof callback === 'function',
         `Expected a function when subscribing to ${status}` +
           `instead got ${typeof callback}`
       )
