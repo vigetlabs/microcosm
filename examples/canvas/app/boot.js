@@ -62,9 +62,9 @@ function randomMoves(n = 1) {
   }
 }
 
+let label = document.getElementById('label')
 function updateLabel() {
   let events = rows * columns * writes
-  let label
 
   label.innerHTML =
     `${rows}x${columns} (${size}px grid)` +
