@@ -142,7 +142,7 @@ class Presenter extends React.PureComponent {
    * component that is wrapped in the `withSend` higher order
    * component.
    */
-  send(command: Command | Tagged, ...params: Array<*>) {
+  send(command: Command | Tagged, ...params: *[]) {
     return this.mediator.send(command, ...params)
   }
 
@@ -254,7 +254,7 @@ class PresenterMediator extends React.PureComponent {
     return get(this.repo, 'history') === get(this.context, ['repo', 'history'])
   }
 
-  send(intent: Command | Tagged, ...params: Array<*>): * {
+  send(intent: Command | Tagged, ...params: *[]): * {
     // tag intent first so the interceptor keys off the right key
     let taggedIntent = tag(intent)
 

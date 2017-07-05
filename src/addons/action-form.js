@@ -10,7 +10,7 @@ import serialize from 'form-serialize'
 const identity = () => {}
 
 class ActionForm extends React.PureComponent {
-  send: Function
+  send: Sender
   onSubmit: (event: Event) => Action
 
   constructor(props: Object, context: ?Object) {
