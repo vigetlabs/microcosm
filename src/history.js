@@ -132,30 +132,13 @@ class History extends Emitter {
    * Return a promise that represents the resolution of all actions in
    * the current branch.
    */
-  wait(): Promise<*> {
-    let actions = this.toArray()
-
-    return new Promise((resolve, reject) => {
-      const checkStatus = () => {
-        let done = actions.every(action => action.complete)
-        let errors = actions.filter(action => action.is('reject'))
-
-        if (done) {
-          this.off('release', checkStatus)
-
-          if (errors.length) {
-            reject(errors[0].payload)
-          } else {
-            resolve()
-          }
-        }
+  wait(): Promise<void> {
+    return new Action('GROUP').link(this.toArray()).then(() => {
+      if (this.releasing) {
+        return new Promise(resolve => {
+          this.once('release', resolve)
+        })
       }
-
-      if (this.releasing === false) {
-        checkStatus()
-      }
-
-      this.on('release', checkStatus)
     })
   }
 
