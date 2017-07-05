@@ -9,43 +9,33 @@ import { get } from '../utils'
 import { getKeyPaths, getKeyStrings, type KeyPath } from '../key-path'
 
 class Query extends Emitter {
-  static getId(keyPaths: string | Array<KeyPath>) {
+  id: string
+  keyPaths: KeyPath[]
+  size: number
+  params: any[]
+
+  static getId(keyPaths: string | KeyPath[]) {
     return 'query:' + getKeyStrings(getKeyPaths(keyPaths))
   }
 
-  id: string
-  keyPaths: Array<KeyPath>
-
-  constructor(id: string, keys: string | Array<KeyPath>) {
+  constructor(id: string, keys: KeyPath[]) {
     super()
 
     this.id = id
-    this.keyPaths = getKeyPaths(keys)
-  }
-
-  forEachPath(callback: Function, scope?: *) {
-    let paths = this.keyPaths
-
-    for (var i = 0, len = paths.length; i < len; i++) {
-      callback.call(scope, paths[i], this)
-    }
-  }
-
-  extract(state: Object) {
-    let length = this.keyPaths.length
-    let values = Array(length)
-
-    for (var i = 0; i < length; i++) {
-      values[i] = get(state, this.keyPaths[i])
-    }
-
-    return values
+    this.keyPaths = keys
+    this.size = keys.length
   }
 
   trigger(state: Object) {
-    let values = this.extract(state)
+    let args = Array(this.size + 1)
 
-    this._emit('change', ...values)
+    args[0] = 'change'
+
+    for (var i = 0; i < this.size; i++) {
+      args[i + 1] = get(state, this.keyPaths[i])
+    }
+
+    this._emit(...args)
   }
 
   isAlone() {

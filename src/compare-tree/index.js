@@ -5,7 +5,8 @@
 
 import Node from './node'
 import Query from './query'
-import { getKeyString, type KeyPath } from '../key-path'
+import { getKeyString, getKeyPaths, type KeyPath } from '../key-path'
+import { type Callback } from '../emitter'
 
 // The root key is an empty string. This can be a little
 // counter-intuitive, so we keep track of them as a named constant.
@@ -25,12 +26,15 @@ class CompareTree {
   /**
    * Create a subscription to a particular set of key paths.
    */
-  on(keyPaths: Array<KeyPath>, callback: Function, scope?: Object) {
+  on(subscription: *, callback: Callback, scope?: Object) {
+    let keyPaths = getKeyPaths(subscription)
     let query = this.addQuery(keyPaths)
 
-    query.on('change', callback, scope)
+    for (var i = 0, len = keyPaths.length; i < len; i++) {
+      this.addBranch(keyPaths[i], query)
+    }
 
-    query.forEachPath(this.addBranch, this)
+    query.on('change', callback, scope)
 
     return query
   }
@@ -38,7 +42,7 @@ class CompareTree {
   /**
    * Remove a subscription created by .on()
    */
-  off(keyPaths: string | Array<KeyPath>, callback: Function, scope?: Object) {
+  off(keyPaths: string | KeyPath[], callback: Callback, scope?: Object) {
     let id = Query.getId(keyPaths)
 
     let query: Query = this.queries[id]
@@ -89,7 +93,7 @@ class CompareTree {
    * added. Queries are leaf nodes responsible for managing
    * subscriptions.
    */
-  addQuery(dependencies: string | Array<KeyPath>): Query {
+  addQuery(dependencies: KeyPath[]): Query {
     let id = Query.getId(dependencies)
 
     if (!this.queries[id]) {
