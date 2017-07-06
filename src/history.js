@@ -133,7 +133,11 @@ class History extends Emitter {
    * the current branch.
    */
   wait(): Promise<void> {
-    return new Action('GROUP').link(this.toArray()).then(() => {
+    let group = new Action('GROUP')
+
+    group.link(this.toArray())
+
+    return group.then(() => {
       if (this.releasing) {
         return new Promise(resolve => {
           this.once('release', resolve)
