@@ -6,7 +6,7 @@
 
 import Emitter from '../emitter'
 import { get } from '../utils'
-import { getKeyPaths, getKeyStrings, type KeyPath } from '../key-path'
+import { getKeyStrings, type KeyPath } from '../key-path'
 
 class Query extends Emitter {
   id: string
