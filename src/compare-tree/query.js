@@ -11,11 +11,9 @@ import { getKeyPaths, getKeyStrings, type KeyPath } from '../key-path'
 class Query extends Emitter {
   id: string
   keyPaths: KeyPath[]
-  size: number
-  params: any[]
 
-  static getId(keyPaths: string | KeyPath[]) {
-    return 'query:' + getKeyStrings(getKeyPaths(keyPaths))
+  static getId(keyPaths: KeyPath[]) {
+    return 'query:' + getKeyStrings(keyPaths)
   }
 
   constructor(id: string, keys: KeyPath[]) {
@@ -23,15 +21,12 @@ class Query extends Emitter {
 
     this.id = id
     this.keyPaths = keys
-    this.size = keys.length
   }
 
   trigger(state: Object) {
-    let args = Array(this.size + 1)
+    let args = ['change']
 
-    args[0] = 'change'
-
-    for (var i = 0; i < this.size; i++) {
+    for (var i = 0, len = this.keyPaths.length; i < len; i++) {
       args[i + 1] = get(state, this.keyPaths[i])
     }
 

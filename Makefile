@@ -56,6 +56,7 @@ bench: compiled
 	@ $(call PROFILE, bench/dispatch-performance)
 	@ $(call PROFILE, bench/push-performance)
 	@ $(call PROFILE, bench/fork-performance)
+	@ $(call PROFILE, bench/compare-tree-performance)
 
 clean:
 	@ rm -rf build/*

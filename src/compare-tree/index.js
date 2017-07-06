@@ -42,10 +42,11 @@ class CompareTree {
   /**
    * Remove a subscription created by .on()
    */
-  off(keyPaths: string | KeyPath[], callback: Callback, scope?: Object) {
+  off(subscription: *, callback: Callback, scope?: Object) {
+    let keyPaths = getKeyPaths(subscription)
     let id = Query.getId(keyPaths)
 
-    let query: Query = this.queries[id]
+    let query = this.queries[id]
 
     if (query) {
       query.off('change', callback, scope)
@@ -147,7 +148,7 @@ class CompareTree {
   /**
    * Traverse the tree of subscriptions, triggering queries along the way
    */
-  scan(node: Node, last: *, next: *, queries: Array<Query>) {
+  scan(node: Node, last: *, next: *, queries: Query[]) {
     if (last !== next) {
       var edges = node.edges
 
