@@ -3,7 +3,7 @@
 1. [Overview](#overview)
 2. [API](#API)
 
-## Overview
+# Overview
 
 Microcosm requires immutable updates. This makes it easier to track changes,
 support Microcosm's action history, and keep things fast. However the
@@ -58,9 +58,12 @@ let state = {
 let planets = get(state, 'planets')
 console.log(planets) // { earth, mars }
 
-// Or an array of keys to access a deeply nested value
+// an array of keys to access a deeply nested value
 let earth = get(state, ['planets', 'earth'])
 console.log(earth) // { color: 'blue' }
+
+// or a string keypath can also be used to access a deeply nested value
+let earth = get(state, 'planets.earth')
 
 // If a value isn't found
 let color = get(state, ['planets', 'venus', 'color'])
@@ -94,8 +97,12 @@ let state = {
 let next = set(state, 'center', 'sol')
 console.log(next) // { center, planets }
 
-// Or an array of keys to deeply assign a value
+// an array of keys to deeply assign a value
 let next = set(state, ['planets', 'venus'], { color: 'yellow' })
+console.log(state) // { planets: { venus, earth, mars } }
+
+// or a string keypath can be used to deeply assign a value
+let next = set(state, 'planet.venus', {color: 'yellow' })
 console.log(state) // { planets: { venus, earth, mars } }
 
 // If the value is the same, no change will occur
@@ -111,10 +118,25 @@ the result at the same point. This is useful for modifying values in-place:
 ```javascript
 import { update } from 'microcosm'
 
-let votes = { yay: 0, nay: 0 }
-let next = update(votes, 'yay', n => n + 1)
+let state = {
+  population = 7500000000
+  planets: {
+    earth: { mass: 1 },
+    mercury: { mass: 0.055 },
+    jupiter: { mass: 316 },
+  }
+}
 
-console.log(next) // { yay: 1, nay: 0 }
+// Pass a simple string key
+let next = update(state, 'population', n => n + 1)
+
+// an array of keys to update a deeply nested value
+let next = update(state, ['planets', 'jupiter', 'mass'], n => n + 1)
+
+// or a string keypath can be used to do deeply nested updates
+let next = update(state, 'planets.jupiter.mass', n => n + 1)
+
+console.log(next.population) // 7500000001
 ```
 
 `update` also accepts a fallback value. If the provided keypath is missing, the
