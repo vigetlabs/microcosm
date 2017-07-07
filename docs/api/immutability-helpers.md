@@ -3,7 +3,7 @@
 1. [Overview](#overview)
 2. [API](#API)
 
-# Overview
+## Overview
 
 Microcosm requires immutable updates. This makes it easier to track changes,
 support Microcosm's action history, and keep things fast. However the
@@ -58,11 +58,11 @@ let state = {
 let planets = get(state, 'planets')
 console.log(planets) // { earth, mars }
 
-// an array of keys to access a deeply nested value
+// An array of keys to access a deeply nested value
 let earth = get(state, ['planets', 'earth'])
 console.log(earth) // { color: 'blue' }
 
-// or a string keypath can also be used to access a deeply nested value
+// Or a string keypath can also be used to access a deeply nested value
 let earth = get(state, 'planets.earth')
 
 // If a value isn't found
@@ -97,11 +97,11 @@ let state = {
 let next = set(state, 'center', 'sol')
 console.log(next) // { center, planets }
 
-// an array of keys to deeply assign a value
+// An array of keys to deeply assign a value
 let next = set(state, ['planets', 'venus'], { color: 'yellow' })
 console.log(state) // { planets: { venus, earth, mars } }
 
-// or a string keypath can be used to deeply assign a value
+// Or a string keypath can be used to deeply assign a value
 let next = set(state, 'planet.venus', {color: 'yellow' })
 console.log(state) // { planets: { venus, earth, mars } }
 
@@ -130,10 +130,10 @@ let state = {
 // Pass a simple string key
 let next = update(state, 'population', n => n + 1)
 
-// an array of keys to update a deeply nested value
+// An array of keys to update a deeply nested value
 let next = update(state, ['planets', 'jupiter', 'mass'], n => n + 1)
 
-// or a string keypath can be used to do deeply nested updates
+// Or a string keypath can be used to do deeply nested updates
 let next = update(state, 'planets.jupiter.mass', n => n + 1)
 
 console.log(next.population) // 7500000001
