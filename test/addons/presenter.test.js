@@ -1,6 +1,7 @@
 import React from 'react'
 import Microcosm from '../../src/microcosm'
 import Presenter from '../../src/addons/presenter'
+import ActionButton from '../../src/addons/action-button'
 import withSend from '../../src/addons/with-send'
 import { mount } from 'enzyme'
 
@@ -1258,6 +1259,46 @@ describe('::send', function() {
     }
 
     mount(<Test />).find('button').simulate('click')
+  })
+
+  it('dispatches the action using the current repo if nothing else responds', function() {
+    expect.assertions(1)
+
+    class Parent extends Presenter {
+      setup(repo) {
+        repo.addDomain('parent', {
+          getInitialState() {
+            return true
+          }
+        })
+      }
+    }
+
+    class Child extends Presenter {
+      setup(repo) {
+        repo.addDomain('child', {
+          getInitialState() {
+            return true
+          }
+        })
+      }
+    }
+
+    let action = function() {
+      return function(action, repo) {
+        expect(repo.state.child).toBe(true)
+      }
+    }
+
+    let wrapper = mount(
+      <Parent>
+        <Child>
+          <ActionButton action={action} />
+        </Child>
+      </Parent>
+    )
+
+    wrapper.find('ActionButton').simulate('click')
   })
 })
 

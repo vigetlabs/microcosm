@@ -10,7 +10,7 @@
  */
 
 import React from 'react'
-import Microcosm, { get, merge, tag, getRegistration } from '../microcosm'
+import Microcosm, { merge, tag, getRegistration } from '../microcosm'
 import Model from './model'
 
 function passChildren() {
@@ -166,12 +166,14 @@ class Presenter extends React.PureComponent {
 class PresenterMediator extends React.PureComponent {
   static contextTypes = {
     repo: identity,
-    send: identity
+    send: identity,
+    parent: identity
   }
 
   static childContextTypes = {
     repo: identity,
-    send: identity
+    send: identity,
+    parent: identity
   }
 
   repo: Microcosm
@@ -197,7 +199,8 @@ class PresenterMediator extends React.PureComponent {
   getChildContext() {
     return {
       repo: this.repo,
-      send: this.send
+      send: this.send,
+      parent: this
     }
   }
 
@@ -248,33 +251,33 @@ class PresenterMediator extends React.PureComponent {
     return this.model.value
   }
 
-  hasParent(): boolean {
-    // Do not allow transfer across repos. Check to for inheritence by comparing
-    // the common history object shared between repos
-    return get(this.repo, 'history') === get(this.context, ['repo', 'history'])
+  getParent(): ?PresenterMediator {
+    return this.context.parent
   }
 
-  send(intent: Command | Tagged, ...params: *[]): * {
-    // tag intent first so the interceptor keys off the right key
-    let taggedIntent = tag(intent)
-
+  getHandler(intent: Tagged): * {
     let interceptors = this.presenter.intercept()
 
     // A presenter's register goes through the same registration steps
-    let handler = getRegistration(interceptors, taggedIntent, 'resolve')
+    return getRegistration(interceptors, intent, 'resolve')
+  }
 
-    // Does the presenter register to this intent?
-    if (handler) {
-      return handler.call(this.presenter, this.repo, ...params)
-    }
+  send(intent: Command | Tagged, ...params: *[]): * {
+    let taggedIntent = tag(intent)
+    let mediator = this
 
-    // No: try the parent presenter
-    if (this.hasParent()) {
-      return this.context.send.apply(null, arguments)
+    while (mediator) {
+      let handler = mediator.getHandler(taggedIntent)
+
+      if (handler) {
+        return handler.call(mediator, mediator.repo, ...params)
+      }
+
+      mediator = mediator.getParent()
     }
 
     // If we hit the top, push the intent into the Microcosm instance
-    return this.repo.push.apply(this.repo, arguments)
+    return this.repo.push(...arguments)
   }
 }
 
