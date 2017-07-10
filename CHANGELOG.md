@@ -1,6 +1,6 @@
 # Changelog
 
-## 12.9.0 Alpha
+# 12.9.0 (beta)
 
 - Added new `repo.parallel` method. This returns an action that
   represents a group of actions processing in parallel.
@@ -8,11 +8,17 @@
   the same behavior as `repo.parallel`
 - `Presenter::getModel` assignments
   accept [Observables](https://github.com/tc39/proposal-observable).
-- Do not warn in strict mode when attempting to change a complete
+- Do not warn in strict mode when attempting to change a complete 
   action. This allows for use cases like, "Cancel this action, but
   only if it hasn't finished yet."
 - History and Action now serialize to JSON. This supports a new
   [debugger](https://github.com/vigetlabs/microcosm-devtools).
+- `Presenter:send` now pushes to the instance of Microcosm for the
+  Presenter that first sent the action. This prevents `repo.state`
+  from being wrong for a subsection of an application with an action
+  that needs to reference state.
+- Microcosm uses [Flow](flowtype.org). Flow definitions ship with the
+  npm module.
 
 ## 12.8.0
 
