@@ -37,8 +37,11 @@ describe('History::toJSON', function() {
   it('serializes the tree of actions', function() {
     const history = new History({ maxHistory: Infinity })
 
-    history.append(action).resolve(true)
+    let head = history.append(action).resolve(true)
+    let json = JSON.parse(JSON.stringify(history))
 
-    expect(history).toMatchSnapshot()
+    expect(json.head).toEqual(head.id)
+    expect(json.root).toEqual(head.parent.id)
+    expect(json.size).toEqual(2)
   })
 })
