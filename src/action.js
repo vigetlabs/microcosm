@@ -9,6 +9,7 @@ import tag from './tag'
 import { uid } from './utils'
 
 type ActionUpdater = (payload?: mixed) => *
+type Revision = { status: string, payload: *, timestamp: number }
 
 const ResolutionMap = {
   inactive: false,
@@ -30,6 +31,7 @@ class Action extends Emitter {
   complete: boolean
   timestamp: number
   children: Action[]
+  revisions: Revision[]
 
   constructor(command: Command | Tagged, status: ?Status) {
     super()
@@ -44,6 +46,7 @@ class Action extends Emitter {
     this.next = null
     this.timestamp = Date.now()
     this.children = []
+    this.revisions = []
 
     if (status) {
       this.setState(status)
@@ -255,6 +258,12 @@ class Action extends Emitter {
       this.payload = payload
     }
 
+    this.revisions.push({
+      status: this.status,
+      payload: this.payload,
+      timestamp: Date.now()
+    })
+
     this._emit('change', this)
     this._emit(status, this.payload)
 
@@ -269,6 +278,7 @@ class Action extends Emitter {
       payload: this.payload,
       disabled: this.disabled,
       children: this.children,
+      revisions: this.revisions,
       next: this.next && this.next.id
     }
   }

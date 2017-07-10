@@ -13,6 +13,13 @@ Object {
         "id": "action12",
         "next": null,
         "payload": true,
+        "revisions": Array [
+          Object {
+            "payload": true,
+            "status": "resolve",
+            "timestamp": 1499687103553,
+          },
+        ],
         "status": "resolve",
         "type": "action.3",
       },
@@ -21,6 +28,13 @@ Object {
     "id": "action10",
     "next": "action12",
     "payload": undefined,
+    "revisions": Array [
+      Object {
+        "payload": undefined,
+        "status": "resolve",
+        "timestamp": 1499687103553,
+      },
+    ],
     "status": "resolve",
     "type": "$start.1",
   },
