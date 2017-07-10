@@ -1187,6 +1187,26 @@ describe('intercepting actions', function() {
 
     expect(test).toHaveBeenCalled()
   })
+
+  it('shares context between setup() and intercept()', function() {
+    class Parent extends Presenter {
+      setup() {
+        this.foo = 'bar'
+      }
+
+      intercept() {
+        return {
+          'test' : this.assertionFunction
+        }
+      }
+
+      assertionFunction() {
+        expect(this.foo).toEqual('bar')
+      }
+    }
+
+    mount(<Parent />).instance().send('test')
+  })
 })
 
 describe('forks', function() {
