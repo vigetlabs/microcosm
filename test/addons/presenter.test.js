@@ -1196,7 +1196,7 @@ describe('intercepting actions', function() {
 
       intercept() {
         return {
-          'test' : this.assertionFunction
+          test: this.assertionFunction
         }
       }
 
