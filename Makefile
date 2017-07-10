@@ -44,6 +44,7 @@ build/strict/%.js: src/%.js $(SCRIPTS)
 
 build/%.js: src/%.js $(SCRIPTS)
 	@ $(ROLLUP) -c rollup.config.js $< --output $@
+	@ node_modules/.bin/flow gen-flow-files $< > $@.flow
 
 release: clean all
 	npm publish build
