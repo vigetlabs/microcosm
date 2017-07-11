@@ -14,6 +14,7 @@ import CompareTree from './compare-tree'
 import coroutine from './coroutine'
 import getRegistration from './get-registration'
 import tag from './tag'
+import installDevtools from './install-devtools'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
 import { merge, get, set, update } from './utils'
 
@@ -25,7 +26,8 @@ import { merge, get, set, update } from './utils'
 const DEFAULTS = {
   maxHistory: 0,
   parent: null,
-  batch: false
+  batch: false,
+  debug: false
 }
 
 /**
@@ -140,6 +142,10 @@ class Microcosm extends Emitter implements Domain {
     // If given state, reset to that snapshot
     if (state) {
       this.reset(state, deserialize)
+    }
+
+    if (options.debug) {
+      installDevtools(this)
     }
   }
 
