@@ -1207,6 +1207,36 @@ describe('intercepting actions', function() {
 
     mount(<Parent />).instance().send('test')
   })
+
+  it('context is the intercepting presenter', function() {
+    expect.assertions(1)
+
+    class Parent extends Presenter {
+      intercept() {
+        return {
+          test: this.assertionFunction
+        }
+      }
+
+      assertionFunction() {
+        expect(this).toBeInstanceOf(Parent)
+      }
+    }
+
+    class Child extends Presenter {
+      render() {
+        return <ActionButton action="test" />
+      }
+    }
+
+    let wrapper = mount(
+      <Parent>
+        <Child />
+      </Parent>
+    )
+
+    wrapper.find('ActionButton').simulate('click')
+  })
 })
 
 describe('forks', function() {
