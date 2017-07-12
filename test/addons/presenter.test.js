@@ -1189,8 +1189,6 @@ describe('intercepting actions', function() {
   })
 
   it('shares context between setup() and intercept()', function() {
-    expect.assertions(1)
-
     class Parent extends Presenter {
       setup() {
         this.foo = 'bar'
@@ -1208,29 +1206,6 @@ describe('intercepting actions', function() {
     }
 
     mount(<Parent />).instance().send('test')
-  })
-
-  it('receives the repo and arguments', function() {
-    expect.assertions(2)
-
-    class Parent extends Presenter {
-      setup() {
-        this.foo = 'bar'
-      }
-
-      intercept() {
-        return {
-          test: this.assertionFunction
-        }
-      }
-
-      assertionFunction(repo, truth) {
-        expect(repo).toEqual(this.repo)
-        expect(truth).toBe(true)
-      }
-    }
-
-    mount(<Parent />).instance().send('test', true)
   })
 })
 

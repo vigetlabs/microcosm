@@ -270,9 +270,7 @@ class PresenterMediator extends React.PureComponent {
       let handler = mediator.getHandler(taggedIntent)
 
       if (handler) {
-        // Important: We use apply here instead of call because of a wierd
-        // babel transpilation issue
-        return handler.apply(this.presenter, [mediator.repo, ...params])
+        return handler.call(this.presenter, mediator.repo, ...params)
       }
 
       mediator = mediator.getParent()
