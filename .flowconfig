@@ -1,6 +1,7 @@
 [ignore]
-test/
 .*/node_modules/.*
+.*/build/.*
+.*/test/.*
 
 [include]
 src/
