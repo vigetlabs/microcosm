@@ -34,4 +34,39 @@ describe('Microcosm::dispatch', function() {
     expect(repo.history.size).toEqual(0)
     expect(repo).toHaveState('toggled', true)
   })
+
+  it('does not retroactively apply old state to subsequent domain handlers', function() {
+    expect.assertions(2)
+
+    var repo = new Microcosm()
+
+    repo.addDomain('color', {
+      getInitialState() {
+        return 'blue'
+      },
+      register() {
+        return {
+          test: (state, color) => color
+        }
+      }
+    })
+
+    repo.addDomain(null, {
+      register() {
+        return {
+          test: state => {
+            // Assert that domains receive the result of
+            // earlier domain processing
+            expect(state.color).toEqual('purple')
+
+            return state
+          }
+        }
+      }
+    })
+
+    repo.push('test', 'purple')
+
+    expect(repo).toHaveState('color', 'purple')
+  })
 })

@@ -132,10 +132,10 @@ class DomainEngine {
     for (var i = 0, len = handlers.length; i < len; i++) {
       var { key, domain, handler } = handlers[i]
 
-      var last = get(state, key)
+      var last = get(result, key)
       var next = handler.call(domain, last, action.payload)
 
-      result = set(state, key, next)
+      result = set(result, key, next)
     }
 
     return result
