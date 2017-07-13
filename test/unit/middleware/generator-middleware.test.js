@@ -1,6 +1,19 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Generator Middleware', function() {
+  it('opens with the parameters', function() {
+    let repo = new Microcosm()
+
+    function* stall(repo, n) {
+      yield repo.push(() => new Promise(() => {}))
+    }
+
+    let action = repo.push(stall, 2)
+
+    expect(action).toHaveStatus('open')
+    expect(action.payload).toEqual(2)
+  })
+
   it('processes actions sequentially', function() {
     expect.assertions(1)
 
@@ -234,5 +247,29 @@ describe('Generator Middleware', function() {
         expect(repo).toHaveState('count', 2)
       })
     })
+  })
+
+  it('allows the top level action description to be a generator', function() {
+    let count = n => n
+
+    function* sequence(repo, start) {
+      yield repo.push(count, 1)
+      yield repo.push(count, 2)
+      yield repo.push(count, 3)
+    }
+
+    class Repo extends Microcosm {
+      register() {
+        return {
+          [count]: (_last, next) => next
+        }
+      }
+    }
+
+    let repo = new Repo()
+
+    repo.push(sequence, 1)
+
+    expect(repo.state).toEqual(3)
   })
 })

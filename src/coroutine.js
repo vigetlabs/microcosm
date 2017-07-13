@@ -13,11 +13,12 @@ import { isFunction, isPromise, isGeneratorFn } from './utils'
 function processGenerator(
   action: Action,
   body: (repo: Microcosm) => Generator<Action, void, *>,
-  repo: *
+  repo: *,
+  params: *[]
 ) {
-  action.open()
+  action.open(...params)
 
-  let iterator = body(repo)
+  let iterator = body(repo, ...params)
 
   function step(payload: mixed) {
     let next = iterator.next(payload)
@@ -29,21 +30,23 @@ function processGenerator(
     }
   }
 
-  function progress(subAction: Action | Action[]): Action {
+  function progress(subAction): Action {
+    let subject = subAction
+
     if (Array.isArray(subAction)) {
-      return progress(repo.parallel(subAction))
+      subject = repo.parallel(subAction)
     }
 
     console.assert(
-      subAction instanceof Action,
-      `Iteration of generator expected an Action. Instead got ${typeof subAction}`
+      subject instanceof Action,
+      `Iteration of generator expected an Action. Instead got ${typeof subject}`
     )
 
-    subAction.onDone(step)
-    subAction.onCancel(action.cancel, action)
-    subAction.onError(action.reject, action)
+    subject.onDone(step)
+    subject.onCancel(action.cancel, action)
+    subject.onError(action.reject, action)
 
-    return subAction
+    return subject
   }
 
   step()
@@ -63,6 +66,10 @@ export default function coroutine(
 ) {
   if (typeof command === 'string') {
     return action.resolve(...params)
+  }
+
+  if (isGeneratorFn(command)) {
+    return processGenerator(action, command, repo, params)
   }
 
   let body = command.apply(null, params)
@@ -92,7 +99,7 @@ export default function coroutine(
    * in order
    */
   if (isGeneratorFn(body)) {
-    return processGenerator(action, body, repo)
+    return processGenerator(action, body, repo, params)
   }
 
   /**
