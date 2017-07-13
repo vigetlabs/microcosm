@@ -1,6 +1,6 @@
 {
   "name": "microcosm",
-  "version": "12.9.0-beta3",
+  "version": "12.9.0-beta4",
   "private": true,
   "description": "Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease.",
   "main": "microcosm.js",
