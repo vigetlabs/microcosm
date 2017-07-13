@@ -97,9 +97,11 @@ export default function coroutine(
    * Check for thunks. An escape hatch to direction work with an
    * action. It is triggered by returning a function from a
    * command. This middleware will execute that function with the
-   * action as the first argument.
+   * action as the first argument. If the returned function is equal
+   * to one of the action's params, assume it's a value to be returned
+   * instead of a thunk.
    */
-  if (isFunction(body)) {
+  if (isFunction(body) && !params.some(param => param === body)) {
     body(action, repo)
 
     return action
