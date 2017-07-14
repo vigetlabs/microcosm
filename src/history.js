@@ -12,6 +12,7 @@ import defaultUpdateStrategy from './default-update-strategy'
 import { merge } from './utils'
 import { BIRTH, START } from './lifecycle'
 import { type Updater } from './default-update-strategy'
+import { iteratorTag } from './symbols'
 
 type HistoryOptions = {
   maxHistory?: number,
@@ -115,16 +116,36 @@ class History extends Emitter {
   /**
    * Map over the active branch.
    */
-  map(fn: (action: Action) => *, scope?: Object) {
-    let items = []
-    let cursor = this.root
+  // $FlowFixMe
+  [iteratorTag](): Iterator<Action, void> {
+    var cursor = this.root
 
-    while (cursor) {
-      items.push(fn.call(scope, cursor))
+    return {
+      next: () => {
+        var next = cursor
 
-      if (cursor == this.head) break
-      cursor = cursor.next
+        if (next == null) {
+          return { done: true }
+        }
+
+        cursor = next == this.head ? null : cursor.next
+
+        return { value: next, done: false }
+      }
     }
+  }
+
+  map(fn: (action: Action, index: number) => *, scope?: Object) {
+    // $FlowFixMe
+    let iterator = this[iteratorTag]()
+    let next = iterator.next()
+    let items = []
+
+    while (!next.done) {
+      items.push(fn.call(scope, next.value, items.length))
+      next = iterator.next()
+    }
+
     return items
   }
 
@@ -287,6 +308,7 @@ class History extends Emitter {
    * archival process at the end of every reconciliation. If the
    * active branch of history is greater than the `limit` property,
    * signal that the action should be removed.
+   * @private
    */
   archive() {
     let size = this.size

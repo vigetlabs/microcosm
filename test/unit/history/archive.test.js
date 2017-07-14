@@ -68,9 +68,9 @@ describe('History::archive', function() {
   it('archived nodes have no relations', function() {
     const history = new History()
 
-    history.append(action).resolve()
+    history.append('one').resolve()
 
-    history.append(action)
+    history.append('two')
 
     history.archive()
 

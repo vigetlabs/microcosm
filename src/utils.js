@@ -4,6 +4,7 @@
 
 import type Microcosm from './microcosm'
 import { castPath, type KeyPath } from './key-path'
+import { toStringTag } from './symbols'
 
 type MixedObject = { [key: string]: mixed }
 
@@ -173,14 +174,12 @@ export function isBlank(value: any): boolean {
  * some legacy support.
  */
 /* istanbul ignore next */
-const $Symbol = typeof Symbol === 'function' ? Symbol : {}
-const toStringTagSymbol = get($Symbol, 'toStringTag', '@@toStringTag')
-export function toStringTag(value: any): string {
+export function getStringTag(value: any): string {
   if (!value) {
     return ''
   }
 
-  return value[toStringTagSymbol] || ''
+  return value[toStringTag] || ''
 }
 
 /**
@@ -188,7 +187,7 @@ export function toStringTag(value: any): string {
  * informed by the regenerator runtime.
  */
 export function isGeneratorFn(value: any): boolean {
-  return toStringTag(value) === 'GeneratorFunction'
+  return getStringTag(value) === 'GeneratorFunction'
 }
 
 export function createOrClone(target: any, options: ?Object, repo: Microcosm) {
@@ -218,4 +217,11 @@ export function update(
   let next = updater(last)
 
   return set(state, path, next)
+}
+
+/**
+ * A couple of methods use identity functions. This avoids duplication.
+ */
+export function identity<T>(n: T): T {
+  return n
 }
