@@ -227,7 +227,7 @@ describe('CompareTree', function() {
     it('edges can not connect to themselves', function() {
       let node = tree.addNode('node')
 
-      expect(function () {
+      expect(function() {
         node.connect(node)
       }).toThrow('Unable to connect node ' + node.id + ' to self.')
     })
