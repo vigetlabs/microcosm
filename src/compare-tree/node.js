@@ -32,9 +32,17 @@ class Node {
    * the list of edges.
    */
   connect(node: Node | Query) {
-    if (node !== this && this.edges.indexOf(node) < 0) {
-      this.edges.push(node)
-    }
+    console.assert(
+      this.edges.indexOf(node) <= 0,
+      node.id + ' is already connected to ' + this.id
+    )
+
+    console.assert(
+      node !== this,
+      'Unable to connect node ' + node.id + ' to self.'
+    )
+
+    this.edges.push(node)
   }
 
   /**
