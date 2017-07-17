@@ -5,6 +5,8 @@
 import type Microcosm from './microcosm'
 import { castPath, type KeyPath } from './key-path'
 
+type MixedObject = { [key: string]: mixed }
+
 /**
  * Generate a unique id
  */
@@ -14,9 +16,25 @@ export function uid(prefix: string): string {
 }
 
 /**
+ * Merge on object into the next, but only assign keys that are
+ * defined in the base.
+ */
+export function mergeSame<T: MixedObject>(target: T, head: Object): $Shape<T> {
+  let next = {}
+
+  for (var key in head) {
+    if (key in target) {
+      next[key] = head[key]
+    }
+  }
+
+  return next
+}
+
+/**
  * Shallow copy an object
  */
-export function clone<T: { [key: string]: mixed }>(target: T): $Shape<T> {
+export function clone<T: MixedObject>(target: T): $Shape<T> {
   if (Array.isArray(target)) {
     return target.slice(0)
   } else if (isObject(target) === false) {
@@ -82,7 +100,7 @@ export function get(object: ?Object, keyPath: *, fallback?: *) {
  * Non-destructively assign a value to a provided object at a given key. If the
  * value is the same, don't do anything. Otherwise return a new object.
  */
-export function set(object: Object, key: string | KeyPath, value: *): Object {
+export function set(object: Object, key: *, value: *): any {
   // Ensure we're working with a key path, like: ['a', 'b', 'c']
   let path = castPath(key)
 

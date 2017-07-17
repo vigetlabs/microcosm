@@ -6,7 +6,7 @@ import MetaDomain from './meta-domain'
 import Registration from './registration'
 import getRegistration from './get-registration'
 import { get, set, createOrClone } from './utils'
-import { castPath, getKeyString, type KeyPath } from './key-path'
+import { castPath, type KeyPath } from './key-path'
 
 import type Action from './action'
 import type Microcosm from './microcosm'
@@ -86,45 +86,6 @@ class DomainEngine {
     return domain
   }
 
-  reduce(fn: Function, state: Object, scope: *) {
-    let next = state
-
-    // Important: start at 1 to avoid the meta domain
-    for (var i = 1, len = this.domains.length; i < len; i++) {
-      let [key, domain] = this.domains[i]
-
-      next = fn.call(scope, next, key, domain)
-    }
-
-    return next
-  }
-
-  supportsKey(key: string) {
-    if (key in this.repo.state) {
-      return true
-    }
-
-    return this.domains.some(entry => getKeyString(entry[0]) === key)
-  }
-
-  sanitize(data: Object) {
-    let repo = this.repo
-    let parent = repo.parent
-    let next = {}
-
-    for (var key in data) {
-      if (parent && parent.domains.supportsKey(key)) {
-        continue
-      }
-
-      if (this.supportsKey(key)) {
-        next[key] = data[key]
-      }
-    }
-
-    return next
-  }
-
   dispatch(state: Object, action: Action): Object {
     let handlers = this.register(action)
     let result = state
@@ -142,23 +103,31 @@ class DomainEngine {
   }
 
   deserialize(payload: Object): Object {
-    return this.reduce(function(memo, key, domain) {
-      if (domain.deserialize) {
-        return set(memo, key, domain.deserialize(get(payload, key)))
-      }
+    let next = payload
 
-      return memo
-    }, payload)
+    for (var i = 0; i < this.domains.length; i++) {
+      var [key, domain] = this.domains[i]
+
+      if (domain.deserialize) {
+        next = set(next, key, domain.deserialize(get(payload, key)))
+      }
+    }
+
+    return next
   }
 
   serialize(state: Object, payload: Object): Object {
-    return this.reduce(function(memo, key, domain) {
-      if (domain.serialize) {
-        return set(memo, key, domain.serialize(get(state, key)))
-      }
+    let next = payload
 
-      return memo
-    }, payload)
+    for (var i = 0; i < this.domains.length; i++) {
+      var [key, domain] = this.domains[i]
+
+      if (domain.serialize) {
+        next = set(next, key, domain.serialize(get(state, key)))
+      }
+    }
+
+    return next
   }
 }
 

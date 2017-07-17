@@ -323,10 +323,9 @@ class Microcosm extends Emitter implements Domain {
    */
   addDomain(key: string, config: *, options?: Object) {
     let domain = this.domains.add(key, config, options)
+    let initial = domain.getInitialState ? domain.getInitialState() : null
 
-    if (domain.getInitialState) {
-      this.initial = set(this.initial, key, domain.getInitialState())
-    }
+    this.initial = set(this.initial, key, initial)
 
     this.push(ADD_DOMAIN, domain)
 

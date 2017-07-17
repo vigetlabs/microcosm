@@ -4,7 +4,7 @@
  * @flow
  */
 
-import { merge } from './utils'
+import { mergeSame, merge } from './utils'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
 
 class MetaDomain {
@@ -18,7 +18,7 @@ class MetaDomain {
    * Build a new Microcosm state object.
    */
   reset(oldState: Object, newState: Object): Object {
-    let filtered = this.repo.domains.sanitize(newState)
+    let filtered = mergeSame(oldState, newState)
 
     return merge(oldState, this.repo.getInitialState(), filtered)
   }
@@ -27,7 +27,7 @@ class MetaDomain {
    * Merge a state object into the current Microcosm state.
    */
   patch(oldState: Object, newState: Object): Object {
-    let filtered = this.repo.domains.sanitize(newState)
+    let filtered = mergeSame(oldState, newState)
 
     return merge(oldState, filtered)
   }

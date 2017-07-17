@@ -2,6 +2,8 @@
  * @flow
  */
 
+import { mergeSame } from './utils'
+
 import type Action from './action'
 import type Microcosm from './microcosm'
 
@@ -17,12 +19,9 @@ function sandbox(data: Object, deserialize: boolean) {
         throw error
       }
     }
-
     // Strip out keys not managed by this repo. This prevents children from
     // accidentally having their keys reset by parents.
-    let sanitary = repo.domains.sanitize(payload)
-
-    action.resolve(sanitary)
+    action.resolve(mergeSame(repo.state, payload))
   }
 }
 
