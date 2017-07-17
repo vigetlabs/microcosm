@@ -30,7 +30,7 @@ class CompareTree {
     let keyPaths = getKeyPaths(subscription)
     let query = this.addQuery(keyPaths)
 
-    for (var i = 0, len = keyPaths.length; i < len; i++) {
+    for (var i = keyPaths.length - 1; i >= 0; i--) {
       this.addBranch(keyPaths[i], query)
     }
 
@@ -82,7 +82,7 @@ class CompareTree {
   addNode(key: string, parent: ?Node) {
     let id = Node.getId(key, parent)
 
-    if (!this.nodes[id]) {
+    if (this.nodes.hasOwnProperty(id) === false) {
       this.nodes[id] = new Node(id, key, parent)
     }
 
@@ -97,7 +97,7 @@ class CompareTree {
   addQuery(dependencies: KeyPath[]): Query {
     let id = Query.getId(dependencies)
 
-    if (!this.queries[id]) {
+    if (this.queries.hasOwnProperty(id) === false) {
       this.queries[id] = new Query(id, dependencies)
     }
 
