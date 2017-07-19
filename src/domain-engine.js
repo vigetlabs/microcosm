@@ -3,7 +3,6 @@
  */
 
 import MetaDomain from './meta-domain'
-import Registration from './registration'
 import getRegistration from './get-registration'
 import { get, set, createOrClone } from './utils'
 import { castPath, type KeyPath } from './key-path'
@@ -33,7 +32,7 @@ class DomainEngine {
 
     let handler = getRegistration(this.repo.register(), command, status)
 
-    return handler ? [new Registration([], this.repo, handler)] : []
+    return handler ? [{ key: [], source: this.repo, handler }] : []
   }
 
   getHandlers(action: Action): Registrations {
@@ -48,7 +47,7 @@ class DomainEngine {
         var handler = getRegistration(domain.register(), command, status)
 
         if (handler) {
-          handlers.push(new Registration(key, domain, handler))
+          handlers.push({ key, source: domain, handler })
         }
       }
     }
@@ -56,7 +55,7 @@ class DomainEngine {
     return handlers
   }
 
-  register(action: Action): Array<Handler> {
+  register(action: Action): Registrations {
     let type = action.type
 
     if (!this.registry[type]) {
@@ -91,10 +90,10 @@ class DomainEngine {
     let result = state
 
     for (var i = 0, len = handlers.length; i < len; i++) {
-      var { key, domain, handler } = handlers[i]
+      var { key, source, handler } = handlers[i]
 
       var last = get(result, key)
-      var next = handler.call(domain, last, action.payload)
+      var next = handler.call(source, last, action.payload)
 
       result = set(result, key, next)
     }

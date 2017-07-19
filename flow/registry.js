@@ -3,8 +3,14 @@
  */
 
 import type Microcosm from '../src/microcosm'
-import type Registration from '../src/registration'
+import { type KeyPath } from '../src/key-path'
 
-declare type Handler = <T>(last?: T, next?: *) => T
+declare type Handler = (last?: *, next?: *) => *
 
-declare type Registrations = Array<Registration>
+declare type Registration = {
+  key: KeyPath,
+  source: Microcosm | Domain,
+  handler: Handler
+}
+
+declare type Registrations = Registration[]
