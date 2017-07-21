@@ -10,11 +10,9 @@ import { isFunction, isPromise, isGeneratorFn } from './utils'
  * order.
  * @private
  */
-function processGenerator(
-  action: Action,
-  body: (repo: Microcosm) => Generator<Action, void, *>,
-  repo: *
-) {
+type GeneratorAction = (repo: Microcosm) => Generator<Action, void, *>
+
+function processGenerator(action: Action, body: GeneratorAction, repo: *) {
   action.open()
 
   let iterator = body(repo)
