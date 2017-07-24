@@ -198,7 +198,7 @@ class PlanetsList extends Presenter {
 
 ### `update(repo, nextProps, nextState)`
 
-Called when a presenter gets new props. This is useful for secondary
+Called when a presenter _gets new props_. This is useful for secondary
 data fetching and other work that must happen when a Presenter receives
 new information.
 
@@ -222,7 +222,9 @@ class Planet extends Presenter {
 }
 ```
 
-`update` is always executed after the latest model has been calculated.
+In order for this hook to be useful, we ensure that `update` is executed only after the latest model has been calculated.
+
+**NOTE:** `update` is not necessarily always called when the model changes! It only gets called when the `props` sent to Presenter change or when `state` changes within the Presenter.
 
 ### `teardown(repo, props, state)`
 
