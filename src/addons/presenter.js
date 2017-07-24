@@ -49,10 +49,10 @@ class Presenter extends React.PureComponent {
       this.defaultRender = passChildren
     }
 
-    // We need to wrap the children of this presenter in a mediator
-    // "sock". This is so that we can pass along context in browsers
-    // that do not support static inheritence (IE10) and allow overriding
-    // of lifecycle methods
+    // We need to wrap the children of this presenter in a
+    // PresenterMediator component. This ensures that we can pass along
+    // context in browsers that do not support static inheritence (IE10)
+    // and allow overriding of lifecycle methods
     this.render = renderMediator
 
     // Autobind send so that context is maintained when passing send to children
