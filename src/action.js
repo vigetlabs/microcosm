@@ -127,10 +127,10 @@ class Action extends Emitter {
     let outstanding = actions.length
 
     const onResolve = () => {
-      outstanding -= 1
-
-      if (outstanding <= 0) {
+      if (outstanding <= 1) {
         this.resolve()
+      } else {
+        outstanding -= 1
       }
     }
 
@@ -139,6 +139,8 @@ class Action extends Emitter {
       action.onCancel(onResolve)
       action.onError(this.reject)
     })
+
+    onResolve()
 
     return this
   }
@@ -268,6 +270,10 @@ class Action extends Emitter {
     this._emit(status, this.payload)
 
     return this
+  }
+
+  toString() {
+    return this.command.toString()
   }
 
   toJSON() {

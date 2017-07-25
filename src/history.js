@@ -10,7 +10,7 @@ import Action from './action'
 import Emitter from './emitter'
 import defaultUpdateStrategy from './default-update-strategy'
 import { merge } from './utils'
-import { BIRTH, START } from './lifecycle'
+import { BIRTH, START, ADD_DOMAIN } from './lifecycle'
 import { type Updater } from './default-update-strategy'
 import { iteratorTag } from './symbols'
 
@@ -118,9 +118,9 @@ class History extends Emitter {
    */
   // $FlowFixMe
   [iteratorTag](): Iterator<Action, void> {
-    var cursor = this.root
+    let cursor = this.root
 
-    return {
+    let iterator = {
       next: () => {
         var next = cursor
 
@@ -130,9 +130,17 @@ class History extends Emitter {
 
         cursor = next == this.head ? null : cursor.next
 
+        // Ignore certain lifecycle actions that are only for
+        // internal purposes
+        if (next && (next.command === BIRTH || next.command === START || next.command === ADD_DOMAIN)) {
+          return iterator.next()
+        }
+
         return { value: next, done: false }
       }
     }
+
+    return iterator
   }
 
   map(fn: (action: Action, index: number) => *, scope?: Object) {
@@ -385,6 +393,10 @@ class History extends Emitter {
     }
 
     return this.head
+  }
+
+  toString() {
+    return this.toArray().join(', ')
   }
 
   /**

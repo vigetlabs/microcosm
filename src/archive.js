@@ -25,7 +25,7 @@ class Archive {
    * Access a prior snapshot for a given action
    */
   get(action: ?Action, fallback: ?Object): Object {
-    console.assert(action, 'Unable to get ' + typeof action + ' action')
+    console.assert(action, 'Unable to get %s action', action)
 
     if (action && this.has(action)) {
       return this.pool[action.id]
@@ -52,7 +52,7 @@ class Archive {
    * Remove a snapshot for an action.
    */
   remove(action: Action) {
-    console.assert(action, 'Unable to remove ' + typeof action + ' action.')
+    console.assert(action, 'Unable to remove %s action.', action)
 
     delete this.pool[action.id]
   }

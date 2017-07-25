@@ -59,7 +59,7 @@ describe('History updater', function() {
 
     history.on('release', handler)
 
-    history.append('action').resolve()
+    history.append('one').resolve()
 
     await history.wait()
 

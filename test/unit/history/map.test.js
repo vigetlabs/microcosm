@@ -6,12 +6,12 @@ describe('History::map', function() {
   it('provides the index', function() {
     const history = new History({ maxHistory: Infinity })
 
-    history.append(action, 'resolve')
-    history.append(action, 'resolve')
-    history.append(action, 'resolve')
+    history.append('one', 'resolve')
+    history.append('two', 'resolve')
+    history.append('three', 'resolve')
 
     let result = history.map((action, i) => i)
 
-    expect(result).toEqual([0, 1, 2, 3])
+    expect(result).toEqual([0, 1, 2])
   })
 })

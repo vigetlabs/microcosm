@@ -10,7 +10,7 @@ describe('History @@iterator', function() {
 
     let list = Array.from(history)
 
-    expect(list.map(i => i.type)).toEqual(['$start.1', 'one', 'two'])
+    expect(list.map(i => i.type)).toEqual(['one', 'two'])
   })
 
   it('works with for...of', function() {
@@ -25,7 +25,7 @@ describe('History @@iterator', function() {
       list.push(action.type)
     }
 
-    expect(list).toEqual(['$start.1', 'one', 'two'])
+    expect(list).toEqual(['one', 'two'])
   })
 
   it('works with Promise.all', async function() {
