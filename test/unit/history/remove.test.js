@@ -131,7 +131,7 @@ describe('History::remove', function() {
     it('resets the head if removing the head', function() {
       let history = new History({ maxHistory: Infinity })
 
-      let one = history.append('one', 'resolve')
+      history.append('one', 'resolve')
       let two = history.append('two', 'resolve')
       history.append('three', 'resolve')
 
@@ -196,7 +196,7 @@ describe('History::remove', function() {
       let two = history.append('two', 'resolve')
 
       history.checkout(one)
-      let three = history.append('three', 'resolve')
+      history.append('three', 'resolve')
 
       // History tree now looks like this:
       //                |- [two]

@@ -132,7 +132,12 @@ class History extends Emitter {
 
         // Ignore certain lifecycle actions that are only for
         // internal purposes
-        if (next && (next.command === BIRTH || next.command === START || next.command === ADD_DOMAIN)) {
+        if (
+          next &&
+          (next.command === BIRTH ||
+            next.command === START ||
+            next.command === ADD_DOMAIN)
+        ) {
           return iterator.next()
         }
 
