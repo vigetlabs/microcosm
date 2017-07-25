@@ -7,7 +7,6 @@
 import Action from './action'
 import Emitter from './emitter'
 import History from './history'
-import Archive from './archive'
 import DomainEngine from './domain-engine'
 import EffectEngine from './effect-engine'
 import CompareTree from './compare-tree'
@@ -96,7 +95,7 @@ class Microcosm extends Emitter implements Domain {
   initial: Object
   state: Object
   history: History
-  archive: Archive
+  snapshots: { [key: string]: * }
   domains: DomainEngine
   effects: EffectEngine
   changes: CompareTree
@@ -113,7 +112,7 @@ class Microcosm extends Emitter implements Domain {
 
     this.history = this.parent ? this.parent.history : new History(options)
 
-    this.archive = new Archive()
+    this.snapshots = {}
     this.domains = new DomainEngine(this)
     this.effects = new EffectEngine(this)
     this.changes = new CompareTree(this.state)
@@ -194,8 +193,12 @@ class Microcosm extends Emitter implements Domain {
     return this.initial == null ? {} : this.initial
   }
 
-  recall(action: ?Action, fallback: ?*) {
-    return this.archive.get(action, fallback)
+  recall(action: ?Action) {
+    if (action && action.id in this.snapshots) {
+      return this.snapshots[action.id]
+    }
+
+    return this.initial
   }
 
   /**
@@ -203,14 +206,14 @@ class Microcosm extends Emitter implements Domain {
    * that, when rolling back to this action, it always has a state value.
    */
   createSnapshot(action: Action) {
-    this.archive.create(action)
+    this.snapshots[action.id] = this.recall(action.parent)
   }
 
   /**
    * Update the state snapshot for a given action
    */
   updateSnapshot(action: Action) {
-    let next = this.recall(action.parent, this.initial)
+    let next = this.recall(action.parent)
 
     if (this.parent) {
       next = merge(next, this.parent.recall(action))
@@ -220,16 +223,14 @@ class Microcosm extends Emitter implements Domain {
       next = this.domains.dispatch(next, action)
     }
 
-    this.archive.set(action, next)
-
-    this.state = next
+    this.state = this.snapshots[action.id] = next
   }
 
   /**
    * Remove the snapshot for a given action
    */
   removeSnapshot(action: Action) {
-    this.archive.remove(action)
+    delete this.snapshots[action.id]
   }
 
   dispatchEffect(action: Action) {
