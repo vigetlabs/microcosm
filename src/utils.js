@@ -222,6 +222,6 @@ export function update(
 /**
  * A couple of methods use identity functions. This avoids duplication.
  */
-export function identity<T>(n: T): T {
+export function identity(n: *) {
   return n
 }
