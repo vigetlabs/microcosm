@@ -1,6 +1,6 @@
 # Changelog
 
-# 12.9.0 (beta)
+# 12.9.0
 
 - Added new `repo.parallel` method. This returns an action that
   represents a group of actions processing in parallel.
