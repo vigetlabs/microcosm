@@ -27,7 +27,7 @@ minified: $(MINIFIED) build/package.json
 
 docs:
 	@ mkdir -p build
-	@ cp -r CHANGELOG.md README.md LICENSE.md docs build
+	@ cp -r CHANGELOG.md README.md LICENSE docs build
 
 build/package.json: package.json
 	@ mkdir -p build
