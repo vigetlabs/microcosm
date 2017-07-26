@@ -13,11 +13,11 @@ const Messages = {
   },
 
   addLoading(state, params) {
-    return Messages.add(state, { ...params, pending: true })
+    return this.add(state, { ...params, user: 'You', pending: true })
   },
 
   addError(state, params) {
-    return Messages.add(state, { ...params, error: true })
+    return this.add(state, { ...params, error: true })
   },
 
   register() {
