@@ -95,7 +95,7 @@ class Microcosm extends Emitter implements Domain {
   initial: Object
   state: Object
   history: History
-  snapshots: { [key: string]: * }
+  snapshots: { [key: string]: Snapshot }
   domains: DomainEngine
   effects: EffectEngine
   changes: CompareTree
@@ -208,7 +208,7 @@ class Microcosm extends Emitter implements Domain {
   createSnapshot(action: Action) {
     let state = this.recall(action.parent)
 
-    let snapshot = {
+    let snapshot: Snapshot = {
       last: state,
       next: state,
       status: action.status,

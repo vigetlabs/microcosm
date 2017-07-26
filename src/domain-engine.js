@@ -85,7 +85,7 @@ class DomainEngine {
     return domain
   }
 
-  dispatch(action: Action, state: Object, snapshot: Object) {
+  dispatch(action: Action, state: Object, snapshot: Snapshot) {
     let handlers = this.register(action)
     let result = state
 
