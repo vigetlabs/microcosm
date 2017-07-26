@@ -80,7 +80,7 @@ describe('Efficiency', function() {
     two.resolve()
     one.resolve()
 
-    expect(handler).toHaveBeenCalledTimes(3)
+    expect(handler).toHaveBeenCalledTimes(2)
   })
 
   it('does not dispatch a change event if nothing changes on the first reconciliation', () => {

@@ -85,7 +85,7 @@ class DomainEngine {
     return domain
   }
 
-  dispatch(state: Object, action: Action): Object {
+  dispatch(action: Action, state: Object, snapshot: Object) {
     let handlers = this.register(action)
     let result = state
 
@@ -93,9 +93,22 @@ class DomainEngine {
       var { key, source, handler } = handlers[i]
 
       var last = get(result, key)
-      var next = handler.call(source, last, action.payload)
+      var current = get(snapshot.last, key)
 
-      result = set(result, key, next)
+      if (
+        // If the state different
+        last !== current ||
+        // Or the payload is different
+        action.payload !== snapshot.payload ||
+        // or the status is different
+        action.status !== snapshot.status
+      ) {
+        var next = handler.call(source, last, action.payload)
+
+        result = set(result, key, next)
+      } else {
+        result = set(result, key, get(snapshot.next, key))
+      }
     }
 
     return result

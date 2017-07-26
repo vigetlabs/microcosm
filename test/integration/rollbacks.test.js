@@ -24,8 +24,10 @@ describe('rollbacks', function() {
 
       register() {
         return {
-          [send.open]: this.addLoading,
-          [send.done]: this.add
+          [send]: {
+            open: this.addLoading,
+            done: this.add
+          }
         }
       }
     })

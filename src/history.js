@@ -278,15 +278,14 @@ class History extends Emitter {
     console.assert(action, 'History should never reconcile ' + typeof action)
 
     let focus = action
-
     while (focus) {
       this._emit('update', focus)
 
       if (focus === this.head) {
         break
-      } else {
-        focus = focus.next
       }
+
+      focus = focus.next
     }
 
     this.archive()

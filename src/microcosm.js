@@ -195,7 +195,7 @@ class Microcosm extends Emitter implements Domain {
 
   recall(action: ?Action) {
     if (action && action.id in this.snapshots) {
-      return this.snapshots[action.id]
+      return this.snapshots[action.id].next
     }
 
     return this.initial
@@ -206,24 +206,44 @@ class Microcosm extends Emitter implements Domain {
    * that, when rolling back to this action, it always has a state value.
    */
   createSnapshot(action: Action) {
-    this.snapshots[action.id] = this.recall(action.parent)
+    let state = this.recall(action.parent)
+
+    let snapshot = {
+      last: state,
+      next: state,
+      status: action.status,
+      payload: action.payload
+    }
+
+    this.snapshots[action.id] = snapshot
+
+    return snapshot
   }
 
   /**
    * Update the state snapshot for a given action
    */
   updateSnapshot(action: Action) {
-    let next = this.recall(action.parent)
+    // Fall back to creating a snapshot if it does not exist in the event
+    // an action is in progress while a fork is being created
+    let snap = this.snapshots[action.id] || this.createSnapshot(action)
+    let last = this.recall(action.parent)
 
     if (this.parent) {
-      next = merge(next, this.parent.recall(action))
+      last = merge(last, this.parent.recall(action))
     }
 
     if (!action.disabled) {
-      next = this.domains.dispatch(next, action)
+      snap.next = this.domains.dispatch(action, last, snap)
+    } else {
+      snap.next = last
     }
 
-    this.state = this.snapshots[action.id] = next
+    snap.last = last
+    snap.status = action.status
+    snap.payload = action.payload
+
+    this.state = snap.next
   }
 
   /**

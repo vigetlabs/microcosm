@@ -23,6 +23,7 @@ describe('When pushing actions inside of another action', function() {
         expect(repo).toHaveState('data.focus', true)
 
         repo.push(focuser, false)
+        console.log('After push', repo.state)
 
         expect(repo).toHaveState('data.count', 2)
         expect(repo).toHaveState('data.focus', false)
