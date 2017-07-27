@@ -202,6 +202,20 @@ class Microcosm extends Emitter implements Domain {
   }
 
   /**
+   * Get the state prior to a given action, but include any upstream
+   * updates from parent Microcosms.
+   */
+  rebase(action: Action) {
+    let state = this.recall(action.parent)
+
+    if (this.parent) {
+      state = merge(state, this.parent.recall(action))
+    }
+
+    return state
+  }
+
+  /**
    * Create the initial state snapshot for an action. This is important so
    * that, when rolling back to this action, it always has a state value.
    */
@@ -219,11 +233,7 @@ class Microcosm extends Emitter implements Domain {
    */
   updateSnapshot(action: Action) {
     let snap = this.snapshots[action.id]
-    let last = this.recall(action.parent)
-
-    if (this.parent) {
-      last = merge(last, this.parent.recall(action))
-    }
+    let last = this.rebase(action)
 
     if (!action.disabled) {
       snap.next = this.domains.dispatch(action, last, snap)
