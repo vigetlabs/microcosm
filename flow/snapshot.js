@@ -5,12 +5,14 @@
  * @flow
  */
 
-type Snapshot = {
+type State = { [key: string]: * }
+
+declare type Snapshot = {
   // The last state the snapshot was dispatched with. This is used
   // to memoize domain handlers when possible.
-  last: *,
+  last: State,
   // The next state for the snapshot. The outcome of `updateSnapshot`.
-  next: *,
+  next: State,
   // Last known status of the action associated with this snapshot.
   status: Status,
   // Last known payload of the action associated with this snapshot.
