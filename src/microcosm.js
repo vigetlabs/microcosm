@@ -218,8 +218,6 @@ class Microcosm extends Emitter implements Domain {
    * Update the state snapshot for a given action
    */
   updateSnapshot(action: Action) {
-    // Fall back to creating a snapshot if it does not exist in the event
-    // an action is in progress while a fork is being created
     let snap = this.snapshots[action.id]
     let last = this.recall(action.parent)
 
