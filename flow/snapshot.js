@@ -6,8 +6,13 @@
  */
 
 type Snapshot = {
+  // The last state the snapshot was dispatched with. This is used
+  // to memoize domain handlers when possible.
   last: *,
+  // The next state for the snapshot. The outcome of `updateSnapshot`.
   next: *,
+  // Last known status of the action associated with this snapshot.
   status: Status,
+  // Last known payload of the action associated with this snapshot.
   payload: *
 }
