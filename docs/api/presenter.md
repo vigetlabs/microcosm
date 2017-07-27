@@ -224,7 +224,7 @@ class Planet extends Presenter {
 
 In order for this hook to be useful, we ensure that `update` is executed only after the latest model has been calculated.
 
-**NOTE:** `update` is not necessarily always called when the model changes! It only gets called when the `props` sent to Presenter change or when `state` changes within the Presenter.
+**NOTE:** `update` is *not* called every time model changes! It only gets called when the `props` sent to Presenter change or when `state` changes within the Presenter.
 
 ### `teardown(repo, props, state)`
 
