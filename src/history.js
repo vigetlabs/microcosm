@@ -279,7 +279,9 @@ class History extends Emitter {
 
     let focus = action
     while (focus) {
-      this._emit('update', focus)
+      if (focus.command !== START) {
+        this._emit('update', focus)
+      }
 
       if (focus === this.head) {
         break

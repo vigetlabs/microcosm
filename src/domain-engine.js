@@ -92,21 +92,21 @@ class DomainEngine {
     for (var i = 0, len = handlers.length; i < len; i++) {
       var { key, source, handler } = handlers[i]
 
-      var last = get(result, key)
-      var current = get(snapshot.last, key)
+      var base = get(result, key)
+      var head = get(snapshot.last, key)
 
       if (
-        // If the state different
-        last !== current ||
+        // If the reference to the prior state changed
+        base !== head ||
         // Or the payload is different
         action.payload !== snapshot.payload ||
         // or the status is different
         action.status !== snapshot.status
       ) {
-        var next = handler.call(source, last, action.payload)
-
-        result = set(result, key, next)
+        // Yes: recalculate state from the base
+        result = set(result, key, handler.call(source, base, action.payload))
       } else {
+        // No: use the existing snapshot value (memoizing the domain handler)
         result = set(result, key, get(snapshot.next, key))
       }
     }

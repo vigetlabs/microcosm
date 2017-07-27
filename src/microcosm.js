@@ -206,18 +206,12 @@ class Microcosm extends Emitter implements Domain {
    * that, when rolling back to this action, it always has a state value.
    */
   createSnapshot(action: Action) {
-    let state = this.recall(action.parent)
-
-    let snapshot: Snapshot = {
-      last: state,
-      next: state,
+    this.snapshots[action.id] = {
+      last: this.state,
+      next: this.state,
       status: action.status,
       payload: action.payload
     }
-
-    this.snapshots[action.id] = snapshot
-
-    return snapshot
   }
 
   /**
@@ -226,7 +220,7 @@ class Microcosm extends Emitter implements Domain {
   updateSnapshot(action: Action) {
     // Fall back to creating a snapshot if it does not exist in the event
     // an action is in progress while a fork is being created
-    let snap = this.snapshots[action.id] || this.createSnapshot(action)
+    let snap = this.snapshots[action.id]
     let last = this.recall(action.parent)
 
     if (this.parent) {

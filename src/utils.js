@@ -218,10 +218,3 @@ export function update(
 
   return set(state, path, next)
 }
-
-/**
- * A couple of methods use identity functions. This avoids duplication.
- */
-export function identity(n: *) {
-  return n
-}
