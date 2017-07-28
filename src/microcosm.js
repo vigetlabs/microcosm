@@ -17,6 +17,8 @@ import installDevtools from './install-devtools'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
 import { merge, get, set, update } from './utils'
 
+const EMPTY = {}
+
 /**
  * Options passed into Microcosm always extend from this object. You
  * can override this value to provide additional defaults for your
@@ -103,7 +105,7 @@ class Microcosm extends Emitter implements Domain {
   constructor(preOptions?: ?Object, state?: Object, deserialize?: boolean) {
     super()
 
-    let options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
+    let options = merge(DEFAULTS, this.constructor.defaults, preOptions || EMPTY)
 
     this.parent = options.parent
 
@@ -112,7 +114,7 @@ class Microcosm extends Emitter implements Domain {
 
     this.history = this.parent ? this.parent.history : new History(options)
 
-    this.snapshots = {}
+    this.snapshots = Object.create(this.parent ? this.parent.snapshots : null)
     this.domains = new DomainEngine(this)
     this.effects = new EffectEngine(this)
     this.changes = new CompareTree(this.state)
@@ -190,22 +192,22 @@ class Microcosm extends Emitter implements Domain {
    * Generates the starting state for a Microcosm instance. This is the result of dispatching `getInitialState` to all domains. It is pure; calling this function will not update state.
    */
   getInitialState() {
-    return this.initial == null ? {} : this.initial
+    return this.initial == null ? EMPTY : this.initial
   }
 
-  recall(action: ?Action) {
+  recall(action: ?Action): Object {
     if (action && action.id in this.snapshots) {
       return this.snapshots[action.id].next
     }
 
-    return this.initial
+    return this.getInitialState()
   }
 
   /**
    * Get the state prior to a given action, but include any upstream
    * updates from parent Microcosms.
    */
-  rebase(action: Action) {
+  rebase(action: Action): Object {
     let state = this.recall(action.parent)
 
     if (this.parent) {
@@ -219,13 +221,17 @@ class Microcosm extends Emitter implements Domain {
    * Create the initial state snapshot for an action. This is important so
    * that, when rolling back to this action, it always has a state value.
    */
-  createSnapshot(action: Action) {
-    this.snapshots[action.id] = {
-      last: this.state,
+  createSnapshot(action: Action): Snapshot {
+    let snapshot: Snapshot = {
+      last: this.rebase(action),
       next: this.state,
-      status: action.status,
-      payload: action.payload
+      status: null,
+      payload: undefined
     }
+
+    this.snapshots[action.id] = snapshot
+
+    return snapshot
   }
 
   /**
@@ -241,9 +247,7 @@ class Microcosm extends Emitter implements Domain {
       snap.next = last
     }
 
-    snap.last = last
-    snap.status = action.status
-    snap.payload = action.payload
+    this.snapshots[action.id] = merge(snap, { last, status: action.status, payload: action.payload })
 
     this.state = snap.next
   }
@@ -387,7 +391,7 @@ class Microcosm extends Emitter implements Domain {
    * The default registration method for Microcosms
    */
   register() {
-    return {}
+    return EMPTY
   }
 
   /**

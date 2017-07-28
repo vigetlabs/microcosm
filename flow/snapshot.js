@@ -14,7 +14,7 @@ declare type Snapshot = {
   // The next state for the snapshot. The outcome of `updateSnapshot`.
   next: State,
   // Last known status of the action associated with this snapshot.
-  status: Status,
+  status: ?Status,
   // Last known payload of the action associated with this snapshot.
   payload: *
 }

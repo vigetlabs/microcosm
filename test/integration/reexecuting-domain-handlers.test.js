@@ -70,7 +70,6 @@ describe('Re-executing domain handlers', function() {
 
     let child = parent.fork()
 
-    counterTwoCalls += 1
     child.addDomain('counterTwo', {
       getInitialState() {
         return 0
