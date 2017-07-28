@@ -17,8 +17,6 @@ import installDevtools from './install-devtools'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
 import { merge, get, set, update } from './utils'
 
-const EMPTY = {}
-
 /**
  * Options passed into Microcosm always extend from this object. You
  * can override this value to provide additional defaults for your
@@ -105,7 +103,7 @@ class Microcosm extends Emitter implements Domain {
   constructor(preOptions?: ?Object, state?: Object, deserialize?: boolean) {
     super()
 
-    let options = merge(DEFAULTS, this.constructor.defaults, preOptions || EMPTY)
+    let options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
 
     this.parent = options.parent
 
@@ -192,7 +190,7 @@ class Microcosm extends Emitter implements Domain {
    * Generates the starting state for a Microcosm instance. This is the result of dispatching `getInitialState` to all domains. It is pure; calling this function will not update state.
    */
   getInitialState() {
-    return this.initial == null ? EMPTY : this.initial
+    return this.initial == null ? {} : this.initial
   }
 
   recall(action: ?Action): Object {
@@ -223,7 +221,7 @@ class Microcosm extends Emitter implements Domain {
    */
   createSnapshot(action: Action): Snapshot {
     let snapshot: Snapshot = {
-      last: EMPTY,
+      last: this.state,
       next: this.state,
       status: null,
       payload: undefined
@@ -391,7 +389,7 @@ class Microcosm extends Emitter implements Domain {
    * The default registration method for Microcosms
    */
   register() {
-    return EMPTY
+    return {}
   }
 
   /**
