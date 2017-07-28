@@ -245,7 +245,11 @@ class Microcosm extends Emitter implements Domain {
       snap.next = last
     }
 
-    this.snapshots[action.id] = merge(snap, { last, status: action.status, payload: action.payload })
+    this.snapshots[action.id] = merge(snap, {
+      last,
+      status: action.status,
+      payload: action.payload
+    })
 
     this.state = snap.next
   }
