@@ -223,7 +223,7 @@ class Microcosm extends Emitter implements Domain {
    */
   createSnapshot(action: Action): Snapshot {
     let snapshot: Snapshot = {
-      last: this.rebase(action),
+      last: EMPTY,
       next: this.state,
       status: null,
       payload: undefined
