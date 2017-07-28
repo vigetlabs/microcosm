@@ -1,5 +1,6 @@
 import React from 'react'
 import ActionForm from '../../src/addons/action-form'
+import Presenter from '../../src/addons/presenter'
 import mockSend from '../helpers/mock-send'
 import Action from '../../src/action'
 import { mount } from 'enzyme'
@@ -135,9 +136,25 @@ describe('manual operation', function() {
   })
 })
 
-describe('prepare', function() {
-  it('can prepare serialized data', function() {
-    const send = mockSend()
+describe('serialization', function() {
+  it('extracts form data', function() {
+    const action = jest.fn()
+
+    const form = mount(
+      <Presenter>
+        <ActionForm action={action}>
+          <input name="text" defaultValue="Hello, world" />
+        </ActionForm>
+      </Presenter>
+    )
+
+    form.simulate('submit')
+
+    expect(action).toHaveBeenCalledWith({ text: 'Hello, world' })
+  })
+
+  it('can preprocess serialized data', function() {
+    const action = jest.fn()
 
     const prepare = function(params) {
       params.name = 'BILLY'
@@ -145,14 +162,15 @@ describe('prepare', function() {
     }
 
     const form = mount(
-      <ActionForm action="test" prepare={prepare}>
-        <input name="name" defaultValue="Billy" />
-      </ActionForm>,
-      send
+      <Presenter>
+        <ActionForm action={action} prepare={prepare}>
+          <input name="name" defaultValue="Billy" />
+        </ActionForm>
+      </Presenter>
     )
 
     form.simulate('submit')
 
-    expect(send).toHaveBeenCalledWith('test', { name: 'BILLY' })
+    expect(action).toHaveBeenCalledWith({ name: 'BILLY' })
   })
 })
