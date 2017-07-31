@@ -476,9 +476,8 @@ class Microcosm extends Emitter implements Domain {
   }
 }
 
-export default Microcosm
-
 export {
+  Microcosm as default,
   Microcosm,
   Action,
   History,

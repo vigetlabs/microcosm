@@ -1,25 +1,40 @@
 'use strict'
 
-import babel from 'rollup-plugin-babel'
-import strip from 'rollup-plugin-strip'
-import uglify from 'rollup-plugin-uglify'
-import nodeResolve from 'rollup-plugin-node-resolve'
-import path from 'path'
+const rollup = require('rollup')
+const babel = require('rollup-plugin-babel')
+const strip = require('rollup-plugin-strip')
+const uglify = require('rollup-plugin-uglify')
+const node = require('rollup-plugin-node-resolve')
+const path = require('path')
+const minimist = require('minimist')
 
-const config = {
+const options = {
+  strict: false,
+  minify: false,
   format: 'cjs',
-  exports: 'named',
-  external: ['react', 'form-serialize', path.resolve('src/microcosm.js')],
-  plugins: [
-    nodeResolve(),
-    babel({
-      plugins: ['external-helpers']
-    })
-  ]
+  out: 'build'
 }
 
-if (process.env.STRICT !== 'true') {
-  config.plugins.push(
+Object.assign(options, minimist(process.argv.slice(2)))
+
+const plugins = [
+  node(),
+  babel({
+    plugins: ['external-helpers']
+  })
+]
+
+const configs = {
+  Microcosm: path.resolve('src/microcosm.js'),
+  ActionForm: path.resolve('src/addons/action-form.js'),
+  ActionButton: path.resolve('src/addons/action-button.js'),
+  Model: path.resolve('src/addons/model.js'),
+  Presenter: path.resolve('src/addons/presenter.js'),
+  withSend: path.resolve('src/addons/with-send.js')
+}
+
+if (!options.strict) {
+  plugins.push(
     strip({
       debugger: true,
       functions: ['console.*'],
@@ -28,8 +43,8 @@ if (process.env.STRICT !== 'true') {
   )
 }
 
-if (process.env.MINIFY) {
-  config.plugins.push(
+if (options.minify) {
+  plugins.push(
     uglify({
       compress: {
         passes: 2
@@ -41,4 +56,40 @@ if (process.env.MINIFY) {
   )
 }
 
-export default config
+const external = ['react', 'form-serialize']
+
+const globals = {
+  react: 'React',
+  'form-serialize': 'FormSerialize'
+}
+
+Object.keys(configs).forEach(key => {
+  var entry = configs[key]
+
+  globals[entry] = key
+  external.push(entry)
+})
+
+for (let moduleName in configs) {
+  let entry = configs[moduleName]
+  let dest = entry.replace('src', options.out)
+
+  let bundler = rollup.rollup({
+    entry: entry,
+    plugins: plugins,
+    external: external.filter(path => path !== entry)
+  })
+
+  let write = bundler.then(bundle => {
+    return bundle.write({
+      globals: globals,
+      dest: dest,
+      exports: 'named',
+      format: options.format,
+      moduleName: moduleName,
+      sourceMap: true
+    })
+  })
+
+  write.catch(error => console.error(error))
+}

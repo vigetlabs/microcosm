@@ -1,50 +1,31 @@
-ROLLUP := node_modules/.bin/rollup
-SCRIPTS := $(shell find src -name '*.js*')
-MODULES = src/microcosm.js $(wildcard src/addons/*.js)
-
-PROFILE = NODE_ENV=production node --expose-gc $(1)
-# Plain output files, with no frills. No assertions
-COMPILED = $(patsubst src/%.js,build/%.js,$(MODULES))
-# Strict mode output. These files include assertions
-STRICT = $(patsubst src/%.js,build/strict/%.js,$(MODULES))
-# Compressed output
-MINIFIED = $(patsubst src/%.js,build/min/%.js,$(MODULES))
-
-all: javascript docs
-
-javascript: strict minified compiled
+all: build strict min umd es docs
 
 pretty:
 	yarn run pretty
 
-compiled: $(COMPILED) build/package.json
+build: build/package.json
+	@ node rollup.config.js --out=build
 
-strict: $(STRICT) build/package.json
-	@ cp build/package.json build/strict/package.json
+strict: build/package.json
+	@ node rollup.config.js --out=build/strict --strict
+	@ cp build/package.json build/strict
 
-minified: $(MINIFIED) build/package.json
-	@ cp build/package.json build/min/package.json
+min: build/package.json
+	@ node rollup.config.js --out=build/min --minify
+
+umd: build/package.json
+	@ node rollup.config.js --out=build/umd --format=umd
+
+es: build/package.json
+	@ node rollup.config.js --out=build/es --format=es
 
 docs:
 	@ mkdir -p build
-	@ cp -r CHANGELOG.md README.md LICENSE docs build
+	@ cp -r CHANGELOG.md README.md LICENSE build
 
 build/package.json: package.json
 	@ mkdir -p build
 	@ node -p 'p=require("./package");p.private=p.scripts=p.jest=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $@
-
-build/min/%.js: src/%.js $(SCRIPTS)
-	@ MINIFY=true $(ROLLUP) -c rollup.config.js $< --output $@
-	@ echo $@
-	@ gzip -c $@ | wc -c | tr -d '[:space:]'
-	@ echo
-
-build/strict/%.js: src/%.js $(SCRIPTS)
-	@ STRICT=true $(ROLLUP) -c rollup.config.js $< --output $@
-
-build/%.js: src/%.js $(SCRIPTS)
-	@ $(ROLLUP) -c rollup.config.js $< --output $@
-	@ node_modules/.bin/flow gen-flow-files $< > $@.flow
 
 release: clean all
 	npm publish build
@@ -52,14 +33,14 @@ release: clean all
 prerelease: clean all
 	npm publish build --tag beta
 
-bench: compiled
-	@ $(call PROFILE, bench/history-performance)
-	@ $(call PROFILE, bench/dispatch-performance)
-	@ $(call PROFILE, bench/push-performance)
-	@ $(call PROFILE, bench/fork-performance)
-	@ $(call PROFILE, bench/compare-tree-performance)
+bench: build
+	@ NODE_ENV=production node --expose-gc bench/history-performance
+	@ NODE_ENV=production node --expose-gc bench/dispatch-performance
+	@ NODE_ENV=production node --expose-gc bench/push-performance
+	@ NODE_ENV=production node --expose-gc bench/fork-performance
+	@ NODE_ENV=production node --expose-gc bench/compare-tree-performance
 
 clean:
 	@ rm -rf build/*
 
-.PHONY: clean bench release prerelease all docs
+.PHONY: clean bench release prerelease all docs build strict min umd es
