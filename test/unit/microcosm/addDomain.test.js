@@ -75,5 +75,24 @@ describe('Microcosm::addDomain', function() {
       expect(repo).not.toHaveState('b')
       expect(fork).toHaveState('b', 2)
     })
+
+    it('adding a domain to a child does not modify a parent', function() {
+      let repo = new Microcosm()
+      let fork = repo.fork()
+
+      repo.addDomain('a', {
+        getInitialState() {
+          return 0
+        }
+      })
+
+      fork.addDomain('b', {
+        getInitialState() {
+          return 2
+        }
+      })
+
+      expect(repo).not.toHaveState('b')
+    })
   })
 })
