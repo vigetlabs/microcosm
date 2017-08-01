@@ -78,8 +78,8 @@ export default function coroutine(
     action.open(...params)
 
     body.then(
-      result => global.setTimeout(() => action.resolve(result), 0),
-      error => global.setTimeout(() => action.reject(error), 0)
+      result => setTimeout(() => action.resolve(result), 0),
+      error => setTimeout(() => action.reject(error), 0)
     )
 
     return action

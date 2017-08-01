@@ -14,7 +14,6 @@
  * time remaining. Given our usage, we don't need to do that.
  * @private
  */
-
 export type Updater = (update: Function, options: Object) => void | *
 
 type UpdateOptions = {
@@ -22,7 +21,9 @@ type UpdateOptions = {
 }
 
 const scheduler: Updater =
-  global.requestIdleCallback || (update => setTimeout(update, 4))
+  typeof requestIdleCallback !== 'undefined'
+    ? requestIdleCallback
+    : update => setTimeout(update, 4)
 
 /**
  * When using requestIdleCallback, batch together updates until the
