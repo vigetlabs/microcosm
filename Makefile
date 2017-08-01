@@ -1,23 +1,25 @@
+MAKEFLAGS += '-j 4'
+
 all: build strict min umd es docs
 
 pretty:
 	yarn run pretty
 
 build: build/package.json
-	@ node rollup.config.js --out=build
+	@ ./scripts/bundle --out=build
 
 strict: build/package.json
-	@ node rollup.config.js --out=build/strict --strict
+	@ ./scripts/bundle --out=build/strict --strict
 	@ cp build/package.json build/strict
 
 min: build/package.json
-	@ node rollup.config.js --out=build/min --minify
+	@ ./scripts/bundle --out=build/min --minify
 
 umd: build/package.json
-	@ node rollup.config.js --out=build/umd --format=umd
+	@ ./scripts/bundle --out=build/umd --format=umd
 
 es: build/package.json
-	@ node rollup.config.js --out=build/es --format=es
+	@ ./scripts/bundle --out=build/es --format=es
 
 docs:
 	@ mkdir -p build
@@ -44,3 +46,4 @@ clean:
 	@ rm -rf build/*
 
 .PHONY: clean bench release prerelease all docs build strict min umd es
+.SECONDARY: all

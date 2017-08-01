@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 'use strict'
 
 const rollup = require('rollup')
@@ -84,9 +86,9 @@ for (let moduleName in configs) {
     return bundle.write({
       globals: globals,
       dest: dest,
-      exports: 'named',
       format: options.format,
       moduleName: moduleName,
+      moduleID: path.basename(entry, '.js'),
       sourceMap: true
     })
   })
