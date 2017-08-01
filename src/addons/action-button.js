@@ -22,7 +22,8 @@ class ActionButton extends React.PureComponent {
   }
 
   click(event: Event): Action {
-    let action = this.send(this.props.action, this.props.value)
+    let payload = this.props.prepare(this.props.value, event)
+    let action = this.send(this.props.action, payload)
 
     if (action && action instanceof Action) {
       action
@@ -52,6 +53,7 @@ class ActionButton extends React.PureComponent {
     delete props.onCancel
     delete props.onError
     delete props.send
+    delete props.prepare
 
     if (this.props.tag === 'button' && props.type == null) {
       props.type = 'button'
@@ -66,7 +68,8 @@ ActionButton.contextTypes = {
 }
 
 ActionButton.defaultProps = {
-  tag: 'button'
+  tag: 'button',
+  prepare: (value, event) => value
 }
 
 export default ActionButton
