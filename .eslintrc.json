@@ -26,9 +26,9 @@
     }
   },
   "extends": ["eslint:recommended", "plugin:flowtype/recommended"],
-  "plugins": [ "import", "react", "flowtype", "flowtype-errors" ],
+  "plugins": [ "react", "flowtype", "flowtype-errors" ],
   "rules": {
-    "semi": [2, "never"],
+    "semi": [0, "never"],
     "sort-vars": 2,
     "comma-dangle": [2, "never"],
     "no-console": 0,
