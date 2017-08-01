@@ -6,7 +6,7 @@
 import { createElement } from 'react'
 import { merge } from '../microcosm'
 
-export function displayName(Component: Object) {
+function displayName(Component: Object) {
   return Component.displayName || Component.name || 'Component'
 }
 

@@ -1,5 +1,3 @@
-MAKEFLAGS += '-j 4'
-
 all: build strict min umd es docs
 
 pretty:
@@ -46,4 +44,3 @@ clean:
 	@ rm -rf build/*
 
 .PHONY: clean bench release prerelease all docs build strict min umd es
-.SECONDARY: all
