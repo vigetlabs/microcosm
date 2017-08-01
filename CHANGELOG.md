@@ -1,5 +1,9 @@
 # Changelog
 
+# Edge
+
+- Microcosm ships with ES6 and UMD bundles
+
 # 12.9.0
 
 - Added new `repo.parallel` method. This returns an action that
