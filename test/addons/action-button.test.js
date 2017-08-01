@@ -138,6 +138,20 @@ describe('callbacks', function() {
 
     expect(handler).toHaveBeenCalled()
   })
+
+  it('executes prepare with the event and value before pushing the action', function() {
+    let handler = jest.fn()
+
+    let wrapper = mount(<ActionButton prepare={handler} />, {
+      context: {
+        send: () => {}
+      }
+    })
+
+    wrapper.simulate('click')
+
+    expect(handler).toHaveBeenCalled()
+  })
 })
 
 describe('manual operation', function() {
