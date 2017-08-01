@@ -27,9 +27,10 @@ const plugins = [
 ]
 
 const configs = {
-  Microcosm: path.resolve('src/microcosm.js'),
-  ActionForm: path.resolve('src/addons/action-form.js'),
   ActionButton: path.resolve('src/addons/action-button.js'),
+  ActionForm: path.resolve('src/addons/action-form.js'),
+  Indexing: path.resolve('src/addons/indexing.js'),
+  Microcosm: path.resolve('src/microcosm.js'),
   Model: path.resolve('src/addons/model.js'),
   Presenter: path.resolve('src/addons/presenter.js'),
   withSend: path.resolve('src/addons/with-send.js')
