@@ -59,11 +59,15 @@ export function merge(...args: Array<?Object>): Object {
   let subject = null
 
   for (var i = 0, len = args.length; i < len; i++) {
-    copy = copy || args[i] || {}
+    copy = copy || args[i]
+
+    if (copy == null) {
+      continue
+    }
+
     subject = subject || copy
 
     var next = args[i]
-
     for (var key in next) {
       if (copy[key] !== next[key]) {
         if (copy === subject) {
