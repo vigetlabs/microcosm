@@ -20,14 +20,14 @@ declare interface Domain {
    * before it runs getInitialState. This is useful for one-time setup
    * instructions.
    */
-  setup(repo: Microcosm, options: ?Object): void,
+  setup(repo?: Microcosm, options?: Object): void,
 
   /**
    * Runs whenever a Microcosm is torn down. This usually happens when
    * a Presenter component unmounts. Useful for cleaning up work done
    * in `setup()`.
    */
-  teardown(repo: Microcosm): void,
+  teardown(repo?: Microcosm): void,
 
   /**
    * Allows a domain to transform data before it leaves the system. It
