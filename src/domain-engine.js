@@ -4,7 +4,7 @@
 
 import MetaDomain from './meta-domain'
 import getRegistration from './get-registration'
-import { get, set, createOrClone } from './utils'
+import { get, set, merge, createOrClone } from './utils'
 import { castPath, type KeyPath } from './key-path'
 
 import type Action from './action'
@@ -65,8 +65,9 @@ class DomainEngine {
     return this.registry[type]
   }
 
-  add(key: string | KeyPath, config: Object | Function, options?: Object) {
-    let domain: Domain = createOrClone(config, options, this.repo)
+  add(key: string | KeyPath, config: *, options?: Object) {
+    let deepOptions = merge(this.repo.options, config.defaults, options)
+    let domain: Domain = createOrClone(config, deepOptions, this.repo)
     let keyPath: KeyPath = castPath(key)
 
     this.domains.push([keyPath, domain])
@@ -75,7 +76,7 @@ class DomainEngine {
     this.registry = {}
 
     if (domain.setup) {
-      domain.setup(this.repo, options)
+      domain.setup(this.repo, deepOptions)
     }
 
     if (domain.teardown) {

@@ -13,6 +13,9 @@ describe('Domain::setup', function() {
 
     repo.addDomain('count', Counter, { test: true })
 
-    expect(test).toHaveBeenCalledWith(repo, { test: true })
+    expect(test).toHaveBeenCalledWith(
+      repo,
+      expect.objectContaining({ test: true })
+    )
   })
 })

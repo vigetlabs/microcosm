@@ -206,3 +206,34 @@ class Planets {
 repo.addEffect(Planets)
 repo.push(addPlanet, { name: 'earth' }) // this will add Earth
 ```
+
+### `Effect.defaults`
+
+Specifies default options a Effect is instantiated with. This
+provides a concise way to configure sensible defaults for setup
+options:
+
+```javascript
+class AutoSave {
+  static defaults = {
+    saveInterval: 5000
+  }
+
+  setup (repo, { saveInterval }) {
+    console.log(saveInterval) // 5000
+  }
+}
+
+let repo = new Microcosm()
+
+repo.addEffect(AutoSave) // default saveInterval is 5000
+```
+
+When instantiated, default options are determined in the following
+order:
+
+1. Microcosm defaults
+2. Microcosm instantiation options
+3. Effect defaults
+4. Instantiation options
+4. Options passed to `repo.addEffect`.

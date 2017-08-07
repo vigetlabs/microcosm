@@ -202,3 +202,33 @@ const Planets = {
 
 repo.push(Actions.add, { name: 'earth' }) // this will add Earth
 ```
+
+### `Domain.defaults`
+
+Specifies default options a Domain is instantiated with. This
+provides a concise way to configure sensible defaults for setup
+options:
+
+```javascript
+class Counter {
+  static defaults = {
+    start: 0
+  }
+
+  setup (repo, { start }) {
+    console.log(start) // 0
+  }
+}
+
+let repo = new Microcosm()
+
+repo.addDomain('counter', Counter) // default start is 0
+```
+
+When instantiated, default options are determined in the following
+order:
+
+1. Microcosm defaults
+2. Microcosm instantiation options
+3. Domain defaults
+4. Options passed to `repo.addDomain`.

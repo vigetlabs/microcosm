@@ -41,17 +41,71 @@ describe('Domain construction', function() {
     expect(repo).toHaveState('count', 0)
   })
 
-  it('class - extends domain', function() {
+  it('class - with defaults', function() {
+    expect.assertions(1)
+
     const repo = new Microcosm()
 
     class Counter {
-      getInitialState() {
-        return 0
+      static defaults = {
+        start: 0
+      }
+
+      setup(repo, options) {
+        expect(options.start).toBe(0)
       }
     }
 
     repo.addDomain('count', Counter)
+  })
 
-    expect(repo).toHaveState('count', 0)
+  it('class - draw from Microcosm options', function() {
+    expect.assertions(1)
+
+    const repo = new Microcosm({ debug: true })
+
+    class Counter {
+      setup(repo, options) {
+        expect(options.debug).toBe(true)
+      }
+    }
+
+    repo.addDomain('count', Counter)
+  })
+
+  it('class - with defaults override Microcosm options', function() {
+    expect.assertions(1)
+
+    const repo = new Microcosm({ debug: true })
+
+    class Counter {
+      static defaults = {
+        debug: false
+      }
+
+      setup(repo, options) {
+        expect(options.debug).toBe(false)
+      }
+    }
+
+    repo.addDomain('count', Counter)
+  })
+
+  it('class - with passed options override defaults', function() {
+    expect.assertions(1)
+
+    const repo = new Microcosm({ count: 0 })
+
+    class Counter {
+      static defaults = {
+        count: 1
+      }
+
+      setup(repo, options) {
+        expect(options.count).toBe(2)
+      }
+    }
+
+    repo.addDomain('count', Counter, { count: 2 })
   })
 })

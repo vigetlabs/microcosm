@@ -3,6 +3,8 @@
 # Edge
 
 - Microcosm ships with ES6 and UMD bundles
+- Domains and Effects can implement a `defaults` static object to
+  provide default setup options.
 
 # 12.9.0
 

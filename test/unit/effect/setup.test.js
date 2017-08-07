@@ -11,6 +11,9 @@ describe('Effect::setup', function() {
 
     repo.addEffect(Effect, { test: true })
 
-    expect(spy).toHaveBeenCalledWith(repo, { test: true })
+    expect(spy).toHaveBeenCalledWith(
+      repo,
+      expect.objectContaining({ test: true })
+    )
   })
 })

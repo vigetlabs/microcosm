@@ -3,7 +3,7 @@
  */
 
 import getRegistration from './get-registration'
-import { createOrClone } from './utils'
+import { merge, createOrClone } from './utils'
 
 import type Action from './action'
 import type Microcosm from './microcosm'
@@ -18,10 +18,11 @@ class EffectEngine {
   }
 
   add(config: Object | Function, options?: Object) {
-    let effect: Effect = createOrClone(config, options, this.repo)
+    let deepOptions = merge(this.repo.options, config.defaults, options)
+    let effect: Effect = createOrClone(config, deepOptions, this.repo)
 
     if (effect.setup) {
-      effect.setup(this.repo, options)
+      effect.setup(this.repo, deepOptions)
     }
 
     if (effect.teardown) {

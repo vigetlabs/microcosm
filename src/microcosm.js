@@ -103,14 +103,14 @@ class Microcosm extends Emitter implements Domain {
   constructor(preOptions?: ?Object, state?: Object, deserialize?: boolean) {
     super()
 
-    let options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
+    this.options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
 
-    this.parent = options.parent
+    this.parent = this.options.parent
 
     this.initial = this.parent ? this.parent.initial : this.getInitialState()
     this.state = this.parent ? this.parent.state : this.initial
 
-    this.history = this.parent ? this.parent.history : new History(options)
+    this.history = this.parent ? this.parent.history : new History(this.options)
 
     this.snapshots = Object.create(this.parent ? this.parent.snapshots : null)
     this.domains = new DomainEngine(this)
@@ -136,14 +136,14 @@ class Microcosm extends Emitter implements Domain {
     this.history.on('release', this.release, this)
 
     // Microcosm is now ready. Call the setup lifecycle method
-    this.setup(options)
+    this.setup(this.options)
 
     // If given state, reset to that snapshot
     if (state) {
       this.reset(state, deserialize)
     }
 
-    if (options.debug) {
+    if (this.options.debug) {
       installDevtools(this)
     }
   }
