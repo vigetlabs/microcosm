@@ -98,7 +98,11 @@ export function get(object: ?Object, keyPath: *, fallback?: *) {
     value = value[path[i]]
   }
 
-  return value == null ? fallback : value
+  if (value == null) {
+    return arguments.length <= 2 ? value : fallback
+  }
+
+  return value
 }
 
 /**

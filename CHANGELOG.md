@@ -5,6 +5,8 @@
 - Microcosm ships with ES6 and UMD bundles
 - Domains and Effects can implement a `defaults` static object to
   provide default setup options.
+- Do not return undefined when using `get` to retrieve a null value
+  without a fallback.
 
 # 12.9.0
 

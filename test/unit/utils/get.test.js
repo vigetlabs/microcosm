@@ -32,6 +32,18 @@ describe('Utils.get', function() {
     expect(fallback).toBe(true)
   })
 
+  it('returns the value if there is no fallback and the value is null', function() {
+    let value = get({ prop: null }, 'prop')
+
+    expect(value).toBe(null)
+  })
+
+  it('returns the value if there is no fallback and the value is undefined', function() {
+    let value = get({ prop: undefined }, 'prop')
+
+    expect(value).toBe(undefined)
+  })
+
   it('returns the fallback if the key and fallback are null', function() {
     let fallback = get(null, null, true)
 
