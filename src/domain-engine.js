@@ -93,8 +93,8 @@ class DomainEngine {
     for (var i = 0, len = handlers.length; i < len; i++) {
       var { key, source, handler } = handlers[i]
 
-      var base = get(result, key)
-      var head = get(snapshot.last, key)
+      var base = get(result, key, null)
+      var head = get(snapshot.last, key, null)
 
       if (
         // If the reference to the prior state changed

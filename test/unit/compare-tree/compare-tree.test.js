@@ -250,7 +250,7 @@ describe('CompareTree', function() {
         meta: { selected: true }
       })
 
-      expect(handler).toHaveBeenCalledWith(undefined)
+      expect(handler).toHaveBeenCalledWith(null)
     })
 
     it('the root node does not get called twice if subscribing to two children', function() {

@@ -98,7 +98,7 @@ export function get(object: ?Object, keyPath: *, fallback?: *) {
     value = value[path[i]]
   }
 
-  if (value == null) {
+  if (value === undefined || value === null) {
     return arguments.length <= 2 ? value : fallback
   }
 
