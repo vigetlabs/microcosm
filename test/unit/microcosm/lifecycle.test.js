@@ -1,19 +1,48 @@
 import Microcosm from '../../../src/microcosm'
 
-import { BIRTH, START } from '../../../src/lifecycle'
+describe('lifecycle hooks', function() {
+  it('does not call deserialize infinitely', function() {
+    class Repo extends Microcosm {
+      register() {
+        return {}
+      }
+    }
 
-describe('Lifecycle', function() {
-  it('$birth should never be invoked directly', function() {
-    let repo = new Microcosm()
-    let test = repo.prepare(BIRTH)
+    let repo = new Repo()
+    let spy = jest.spyOn(repo, 'deserialize')
 
-    expect(test).toThrow()
+    repo.deserialize()
+
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 
-  it('$start should never be invoked directly', function() {
-    let repo = new Microcosm()
-    let test = repo.prepare(START)
+  it('does not call serialize infinitely', function() {
+    class Repo extends Microcosm {
+      register() {
+        return {}
+      }
+    }
 
-    expect(test).toThrow()
+    let repo = new Repo()
+    let spy = jest.spyOn(repo, 'serialize')
+
+    repo.serialize()
+
+    expect(spy).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not call getInitialState infinitely', function() {
+    class Repo extends Microcosm {
+      register() {
+        return {}
+      }
+    }
+
+    let repo = new Repo()
+    let spy = jest.spyOn(repo, 'getInitialState')
+
+    repo.getInitialState()
+
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 })

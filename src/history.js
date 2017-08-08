@@ -206,6 +206,7 @@ class History extends Emitter {
     } else {
       // Always have a parent node, no matter what
       let birth = new Action(BIRTH, 'resolve')
+
       birth.adopt(action)
 
       this.root = action
@@ -214,9 +215,13 @@ class History extends Emitter {
     this.head = action
     this.size += 1
 
+    action.on('change', this.reconcile, this)
+
     this._emit('append', action)
 
-    action.on('change', this.reconcile, this)
+    if (status && action.command !== START) {
+      this.reconcile(action)
+    }
 
     return action
   }
