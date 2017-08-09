@@ -84,40 +84,21 @@ describe('getRegistration', function() {
     }
   })
 
-  describe('Errors', function() {
-    it('uses the command name when it can', function() {
-      let getUser = n => n
+  it('includes the command name in the error message when a handler is undefined', function() {
+    let getUser = n => n
 
-      class Repo extends Microcosm {
-        register() {
-          return {
-            [getUser]: undefined
-          }
+    class Repo extends Microcosm {
+      register() {
+        return {
+          [getUser]: undefined
         }
       }
+    }
 
-      let repo = new Repo()
+    let repo = new Repo()
 
-      expect(repo.prepare(getUser)).toThrow(
-        'getUser key within a registration is undefined. Is it being referenced correctly?'
-      )
-    })
-  })
-
-  describe('lifecycle hooks', function() {
-    it('does not call deserialize infinitely', function() {
-      class Repo extends Microcosm {
-        register() {
-          return {}
-        }
-      }
-
-      let repo = new Repo()
-      let spy = jest.spyOn(repo, 'deserialize')
-
-      repo.deserialize()
-
-      expect(spy).toHaveBeenCalledTimes(1)
-    })
+    expect(repo.prepare(getUser)).toThrow(
+      'getUser key within a registration is undefined. Is it being referenced correctly?'
+    )
   })
 })
