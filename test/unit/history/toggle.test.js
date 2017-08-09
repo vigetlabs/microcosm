@@ -1,26 +1,26 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History::toggle', function() {
   const action = n => n
 
   it('can toggle a single action', function() {
-    const history = new History({ maxHistory: Infinity })
+    const repo = new Microcosm({ maxHistory: Infinity })
 
-    let one = history.append(action, 'resolve')
+    let one = repo.push(action)
 
-    history.toggle(one)
+    repo.history.toggle(one)
 
     expect(one.disabled).toBe(true)
   })
 
   it('can toggle actions in bulk', function() {
-    const history = new History({ maxHistory: Infinity })
+    const repo = new Microcosm({ maxHistory: Infinity })
 
-    let one = history.append(action, 'resolve')
-    let two = history.append(action, 'resolve')
-    let three = history.append(action, 'resolve')
+    let one = repo.append(action, 'resolve')
+    let two = repo.append(action, 'resolve')
+    let three = repo.append(action, 'resolve')
 
-    history.toggle([one, two, three])
+    repo.history.toggle([one, two, three])
 
     expect(one.disabled).toBe(true)
     expect(two.disabled).toBe(true)
@@ -28,47 +28,50 @@ describe('History::toggle', function() {
   })
 
   it('only reconciles once', function() {
-    const history = new History({ maxHistory: Infinity })
+    const repo = new Microcosm({ maxHistory: Infinity })
 
-    let one = history.append(action, 'resolve')
-    let two = history.append(action, 'resolve')
-    let three = history.append(action, 'resolve')
+    let one = repo.push('one')
+    let two = repo.push('two')
+    let three = repo.push('three')
 
-    jest.spyOn(history, 'reconcile')
+    let spy = jest.spyOn(repo.history, 'reconcile')
 
-    history.toggle([one, two, three])
+    repo.history.toggle([one, two, three])
 
-    expect(history.reconcile).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 
   it('does not reconcile if toggling an inactive action', function() {
-    const history = new History({ maxHistory: Infinity })
+    const repo = new Microcosm({ maxHistory: Infinity })
 
-    let one = history.append(action, 'resolve')
-    let two = history.append(action, 'resolve')
-    history.checkout(one)
-    history.append(action, 'resolve')
+    let one = repo.push('one')
+    let two = repo.push('two')
 
-    jest.spyOn(history, 'reconcile')
+    repo.checkout(one)
+    repo.push('three')
 
-    history.toggle(two)
+    let spy = jest.spyOn(repo.history, 'reconcile')
 
-    expect(history.reconcile).not.toHaveBeenCalled()
+    repo.history.toggle(two)
+
+    expect(spy).not.toHaveBeenCalled()
   })
 
   it('reconciles on the oldest active action', function() {
-    const history = new History({ maxHistory: Infinity })
+    const repo = new Microcosm({ maxHistory: Infinity })
 
-    let one = history.append(action, 'resolve')
-    let two = history.append(action, 'resolve')
-    history.checkout(one)
-    let three = history.append(action, 'resolve')
-    let four = history.append(action, 'resolve')
+    let one = repo.push('one')
+    let two = repo.push('two')
 
-    jest.spyOn(history, 'reconcile')
+    repo.checkout(one)
 
-    history.toggle([four, two, three])
+    let three = repo.push('three')
+    let four = repo.push('four')
 
-    expect(history.reconcile).toHaveBeenCalledWith(three)
+    let spy = jest.spyOn(repo.history, 'reconcile')
+
+    repo.history.toggle([four, two, three])
+
+    expect(spy).toHaveBeenCalledWith(three)
   })
 })

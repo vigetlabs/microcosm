@@ -1,4 +1,4 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History::checkout', function() {
   const action = n => n
@@ -11,23 +11,23 @@ describe('History::checkout', function() {
    *               |- [five] - [*six]
    */
   it('updates the next values of nodes to follow the current branch', function() {
-    let history = new History()
+    let repo = new Microcosm()
 
-    let one = history.append(action)
-    let two = history.append(action)
-    let three = history.append(action)
-    let four = history.append(action)
+    let one = repo.append(action)
+    let two = repo.append(action)
+    let three = repo.append(action)
+    let four = repo.append(action)
 
-    history.checkout(two)
+    repo.checkout(two)
 
-    let five = history.append(action)
-    let six = history.append(action)
+    let five = repo.append(action)
+    let six = repo.append(action)
 
     expect(one.next).toEqual(two)
     expect(two.next).toEqual(five)
     expect(five.next).toEqual(six)
 
-    history.checkout(four)
+    repo.checkout(four)
 
     expect(one.next).toEqual(two)
     expect(two.next).toEqual(three)
@@ -35,61 +35,61 @@ describe('History::checkout', function() {
   })
 
   it('checks out the head if no action is specified', function() {
-    const history = new History()
+    let repo = new Microcosm()
+    let spy = jest.spyOn(repo.history, 'reconcile')
 
-    jest.spyOn(history, 'reconcile')
+    repo.checkout()
 
-    history.checkout()
-
-    expect(history.reconcile).toHaveBeenCalledWith(history.head)
+    expect(spy).toHaveBeenCalledWith(repo.history.head)
   })
 
   it('reconciles on the supplied action if it is active', function() {
-    let history = new History()
+    let repo = new Microcosm()
 
-    let one = history.append(action)
-    history.append(action)
+    let one = repo.append(action)
+    repo.append(action)
 
-    jest.spyOn(history, 'reconcile')
+    let spy = jest.spyOn(repo.history, 'reconcile')
 
-    history.checkout(one)
+    repo.checkout(one)
 
-    expect(history.reconcile).toHaveBeenCalledWith(one)
+    expect(spy).toHaveBeenCalledWith(one)
   })
 
   it('reconciles on the most recent shared node if hopping branches', function() {
-    let history = new History()
+    let repo = new Microcosm()
 
-    let one = history.append(action)
-    let two = history.append(action)
-    history.checkout(one)
-    history.append(action)
+    let one = repo.append(action)
+    let two = repo.append(action)
 
-    jest.spyOn(history, 'reconcile')
+    repo.checkout(one)
+    repo.append(action)
 
-    history.checkout(two)
+    let spy = jest.spyOn(repo.history, 'reconcile')
 
-    expect(history.reconcile).toHaveBeenCalledWith(one)
+    repo.checkout(two)
+
+    expect(spy).toHaveBeenCalledWith(one)
   })
 
   it('properly handles forked branches', function() {
-    let history = new History()
+    let repo = new Microcosm()
 
-    let one = history.append(action)
-    let two = history.append(action)
-    let three = history.append(action)
-    let four = history.append(action)
+    repo.append('one')
+    let two = repo.append('two')
+    repo.append('three')
+    let four = repo.append('four')
 
-    history.archive()
-    history.checkout(two)
+    repo.history.archive()
+    repo.checkout(two)
 
-    let five = history.append(action)
-    let six = history.append(action)
+    repo.append('five')
+    repo.append('six')
 
-    expect(history.toArray()).toEqual([one, two, five, six])
+    expect(`${repo.history.toArray()}`).toEqual('one,two,five,six')
 
-    history.checkout(four)
+    repo.checkout(four)
 
-    expect(history.toArray()).toEqual([one, two, three, four])
+    expect(`${repo.history.toArray()}`).toEqual('one,two,three,four')
   })
 })

@@ -1,10 +1,11 @@
-import Action from '../../../src/action'
+import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
 describe('Action open state', function() {
   it('exposes an open type when opened', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.open()
 
@@ -12,7 +13,8 @@ describe('Action open state', function() {
   })
 
   it('triggers an open event when it opens', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const callback = jest.fn()
 
     action.once('open', callback)
@@ -22,7 +24,8 @@ describe('Action open state', function() {
   })
 
   it('actions are no longer disabled when opened', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.open(true)
 
@@ -31,7 +34,8 @@ describe('Action open state', function() {
   })
 
   it('does not trigger an open event if it is complete', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const spy = jest.fn()
 
     action.on('open', spy)

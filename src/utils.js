@@ -59,11 +59,11 @@ export function merge(...args: Array<?Object>): Object {
   let subject = null
 
   for (var i = 0, len = args.length; i < len; i++) {
-    copy = copy || args[i]
-
-    if (copy == null) {
+    if (isObject(args[i]) === false) {
       continue
     }
+
+    copy = copy || args[i]
 
     subject = subject || copy
 

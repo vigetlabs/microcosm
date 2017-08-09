@@ -1,11 +1,11 @@
-import Action from '../../../src/action'
 import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
 describe('Action promise interop', function() {
   it('actions interop with promises', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.resolve('Test')
 
@@ -13,7 +13,8 @@ describe('Action promise interop', function() {
   })
 
   it('actions interop with async/await', async function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.resolve('Test')
 

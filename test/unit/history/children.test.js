@@ -1,48 +1,49 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History node children', function() {
   const action = n => n
 
   it('can determine children', function() {
-    const history = new History()
-    const a = history.append(action)
-    const b = history.append(action)
+    const repo = new Microcosm()
 
-    history.checkout(a)
+    const a = repo.append(action)
+    const b = repo.append(action)
 
-    const c = history.append(action)
+    repo.checkout(a)
+
+    const c = repo.append(action)
 
     expect(a.children.map(n => n.id)).toEqual([b.id, c.id])
   })
 
   it('does not lose children when checking out nodes on the left', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
-    history.append(action)
+    repo.append(action)
 
-    const b = history.append(action)
-    const c = history.append(action)
+    const b = repo.append(action)
+    const c = repo.append(action)
 
-    history.checkout(b)
+    repo.checkout(b)
 
-    const d = history.append(action)
+    const d = repo.append(action)
 
     expect(b.children).toEqual([c, d])
   })
 
   it('does not lose children when checking out nodes on the right', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
-    history.append(action)
+    repo.append(action)
 
-    const b = history.append(action)
-    const c = history.append(action)
+    const b = repo.append(action)
+    const c = repo.append(action)
 
-    history.checkout(b)
+    repo.checkout(b)
 
-    const d = history.append(action)
+    const d = repo.append(action)
 
-    history.checkout(c)
+    repo.checkout(c)
 
     expect(b.children).toEqual([c, d])
   })

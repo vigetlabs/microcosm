@@ -1,37 +1,35 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History::toArray', function() {
   const action = n => n
 
   it('does not walk past the head', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
-    let one = history.append(action)
+    let one = repo.append('one')
 
-    history.append(action)
-    history.append(action)
-    history.checkout(one)
+    repo.append('two')
+    repo.append('three')
+    repo.checkout(one)
 
-    history.archive()
+    repo.history.archive()
 
-    expect(history.toArray()).toEqual([one])
+    expect(`${repo.history.toArray()}`).toEqual('one')
   })
 
   it('only walks through the main timeline', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
-    const first = history.append(action)
+    const first = repo.append('first')
 
-    history.append(action)
+    repo.append(action)
 
-    history.checkout(first)
+    repo.checkout(first)
 
-    const third = history.append(action)
+    const third = repo.append('second')
 
-    history.archive()
+    repo.history.archive()
 
-    const ids = history.map(n => n.id)
-
-    expect(ids).toEqual([first.id, third.id])
+    expect(`${repo.history.toArray()}`).toEqual('first,second')
   })
 })

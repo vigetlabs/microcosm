@@ -1,8 +1,8 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History::sharedRoot', function() {
   const action = n => n
-  const history = new History()
+  const history = new Microcosm().history
 
   /*
    * Set up the following tree:

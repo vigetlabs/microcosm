@@ -1,14 +1,14 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History::then', function() {
   const action = n => n
 
   it('allows direct interop with promises', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
-    let one = history.append(action)
-    let two = history.append(action)
-    let three = history.append(action)
+    let one = repo.append(action)
+    let two = repo.append(action)
+    let three = repo.append(action)
 
     setTimeout(function() {
       one.resolve()
@@ -18,15 +18,15 @@ describe('History::then', function() {
 
     // This will fail if the promise returned from `history.then`
     // rejects, it will only pass when the promise resolves.
-    return history
+    return repo.history
   })
 
   it('passes a failure callback', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
-    let one = history.append(action)
-    let two = history.append(action)
-    let three = history.append(action)
+    let one = repo.append(action)
+    let two = repo.append(action)
+    let three = repo.append(action)
 
     setTimeout(function() {
       one.resolve()
@@ -34,7 +34,7 @@ describe('History::then', function() {
       three.reject('Error')
     }, 10)
 
-    return history.then(null, function(error) {
+    return repo.history.then(null, function(error) {
       expect(error).toEqual('Error')
     })
   })

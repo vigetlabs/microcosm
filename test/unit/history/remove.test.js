@@ -1,8 +1,10 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History::remove', function() {
   it('resets when there are no actions left', function() {
-    let history = new History({ maxHistory: Infinity })
+    let repo = new Microcosm({ maxHistory: Infinity })
+    let history = repo.history
+
     let root = history.root
 
     expect(history.size).toBe(1)
@@ -15,8 +17,9 @@ describe('History::remove', function() {
   })
 
   it('does not remove the root when given a node outside the tree', function() {
-    let history = new History()
-    let action = history.append('test')
+    let repo = new Microcosm()
+    let history = repo.history
+    let action = repo.append('test')
 
     history.remove(action)
 
@@ -29,11 +32,12 @@ describe('History::remove', function() {
 
   describe('reconciliation', function() {
     it('does not call reconciliation when removing a disabled child', function() {
-      let history = new History()
+      let repo = new Microcosm()
+      let history = repo.history
 
-      history.append('one')
+      repo.append('one')
 
-      let action = history.append('two')
+      let action = repo.append('two')
 
       action.toggle()
 
@@ -47,11 +51,12 @@ describe('History::remove', function() {
 
   describe('removing the head', function() {
     it('adjusts the head to the prior node', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      history.append('one', 'resolve')
-      history.append('two', 'resolve')
-      history.append('three', 'resolve')
+      repo.append('one', 'resolve')
+      repo.append('two', 'resolve')
+      repo.append('three', 'resolve')
 
       let head = history.head
       let prior = head.parent
@@ -62,11 +67,12 @@ describe('History::remove', function() {
     })
 
     it('removes the node from the active branch', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      history.append('one', 'resolve')
-      history.append('two', 'resolve')
-      let three = history.append(function three() {}, 'resolve')
+      repo.append('one', 'resolve')
+      repo.append('two', 'resolve')
+      let three = repo.append(function three() {}, 'resolve')
 
       history.remove(three)
 
@@ -74,11 +80,12 @@ describe('History::remove', function() {
     })
 
     it('removing the head node eliminates the reference to "next"', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      history.append(function one() {}, 'resolve')
-      history.append(function two() {}, 'resolve')
-      let three = history.append(function three() {}, 'resolve')
+      repo.append(function one() {}, 'resolve')
+      repo.append(function two() {}, 'resolve')
+      let three = repo.append(function three() {}, 'resolve')
 
       history.remove(three)
 
@@ -88,11 +95,12 @@ describe('History::remove', function() {
 
   describe('removing the root', function() {
     it('adjusts the root to the next node', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      history.append(function one() {}, 'resolve')
-      history.append(function two() {}, 'resolve')
-      history.append(function three() {}, 'resolve')
+      repo.append(function one() {}, 'resolve')
+      repo.append(function two() {}, 'resolve')
+      repo.append(function three() {}, 'resolve')
 
       let root = history.root
       let next = root.next
@@ -103,11 +111,12 @@ describe('History::remove', function() {
     })
 
     it('updates the active branch', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      history.append('one', 'resolve')
-      history.append('two', 'resolve')
-      history.append('three', 'resolve')
+      repo.append('one', 'resolve')
+      repo.append('two', 'resolve')
+      repo.append('three', 'resolve')
 
       history.remove(history.root)
 
@@ -117,11 +126,12 @@ describe('History::remove', function() {
 
   describe('removing an intermediary node', function() {
     it('joins the parent and child', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      history.append('one', 'resolve')
-      let two = history.append('two', 'resolve')
-      history.append('three', 'resolve')
+      repo.append('one', 'resolve')
+      let two = repo.append('two', 'resolve')
+      repo.append('three', 'resolve')
 
       history.remove(two)
 
@@ -129,24 +139,26 @@ describe('History::remove', function() {
     })
 
     it('resets the head if removing the head', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      history.append('one', 'resolve')
-      let two = history.append('two', 'resolve')
-      history.append('three', 'resolve')
+      repo.append('one', 'resolve')
+      let two = repo.append('two', 'resolve')
+      repo.append('three', 'resolve')
 
-      history.checkout(two)
+      repo.checkout(two)
       history.remove(two)
 
       expect(history.toString()).toEqual('one')
     })
 
     it('reconciles at the next action', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      history.append('one', 'resolve')
-      let two = history.append('two', 'resolve')
-      let three = history.append('three', 'resolve')
+      repo.append('one', 'resolve')
+      let two = repo.append('two', 'resolve')
+      let three = repo.append('three', 'resolve')
 
       jest.spyOn(history, 'reconcile')
 
@@ -156,13 +168,14 @@ describe('History::remove', function() {
     })
 
     it('reconciles at the parent if the action is head of an active branch', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      let one = history.append('one', 'resolve')
-      let two = history.append('two', 'resolve')
-      history.append('three', 'resolve')
+      let one = repo.append('one', 'resolve')
+      let two = repo.append('two', 'resolve')
 
-      history.checkout(two)
+      repo.append('three', 'resolve')
+      repo.checkout(two)
 
       jest.spyOn(history, 'reconcile')
 
@@ -172,13 +185,14 @@ describe('History::remove', function() {
     })
 
     it('does not reconcile if the action is not in active branch', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      history.append('one', 'resolve')
-      let two = history.append('two', 'resolve')
-      let three = history.append('three', 'resolve')
+      repo.append('one', 'resolve')
+      let two = repo.append('two', 'resolve')
+      let three = repo.append('three', 'resolve')
 
-      history.checkout(two)
+      repo.checkout(two)
 
       jest.spyOn(history, 'reconcile')
 
@@ -190,13 +204,14 @@ describe('History::remove', function() {
 
   describe('removing an unfocused branch terminator', function() {
     it('leaves the head reference alone', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      let one = history.append('one', 'resolve')
-      let two = history.append('two', 'resolve')
+      let one = repo.append('one', 'resolve')
+      let two = repo.append('two', 'resolve')
 
-      history.checkout(one)
-      history.append('three', 'resolve')
+      repo.checkout(one)
+      repo.append('three', 'resolve')
 
       // History tree now looks like this:
       //                |- [two]
@@ -211,14 +226,15 @@ describe('History::remove', function() {
 
   describe('children', function() {
     it('eliminates references to removed on the left', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      let one = history.append('one', 'resolve')
-      let two = history.append('two', 'resolve')
+      let one = repo.append('one', 'resolve')
+      let two = repo.append('two', 'resolve')
 
-      history.checkout(one)
+      repo.checkout(one)
 
-      let three = history.append('three', 'resolve')
+      let three = repo.append('three', 'resolve')
 
       history.remove(two)
 
@@ -227,14 +243,15 @@ describe('History::remove', function() {
     })
 
     it('maintains children on the left when the next action is removed', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      let one = history.append('one', 'resolve')
-      let two = history.append('two', 'resolve')
+      let one = repo.append('one', 'resolve')
+      let two = repo.append('two', 'resolve')
 
-      history.checkout(one)
+      repo.checkout(one)
 
-      let three = history.append('three', 'resolve')
+      let three = repo.append('three', 'resolve')
 
       history.remove(three)
 
@@ -242,15 +259,16 @@ describe('History::remove', function() {
     })
 
     it('allows having children, but no next value', function() {
-      let history = new History({ maxHistory: Infinity })
+      let repo = new Microcosm({ maxHistory: Infinity })
+      let history = repo.history
 
-      let one = history.append('one', 'resolve')
+      let one = repo.append('one', 'resolve')
 
-      history.append('two', 'resolve')
+      repo.append('two', 'resolve')
 
-      history.checkout(one)
+      repo.checkout(one)
 
-      let three = history.append('three', 'resolve')
+      let three = repo.append('three', 'resolve')
 
       history.remove(three)
 

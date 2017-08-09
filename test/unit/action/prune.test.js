@@ -1,10 +1,11 @@
-import Action from '../../../src/action'
+import Microcosm from '../../../src/microcosm'
 
 describe('prune', function() {
   it('does not prune non-existing grandparents', function() {
-    const grandparent = new Action(n => n)
-    const parent = new Action(n => n)
-    const child = new Action(n => n)
+    const repo = new Microcosm()
+    const grandparent = repo.append(n => n)
+    const parent = repo.append(n => n)
+    const child = repo.append(n => n)
 
     grandparent.adopt(parent)
     parent.adopt(child)
@@ -16,8 +17,9 @@ describe('prune', function() {
   })
 
   it('warns when pruning a disconnected action', function() {
-    const parent = new Action(n => n)
-    const child = new Action(n => n)
+    const repo = new Microcosm()
+    const parent = repo.append(n => n)
+    const child = repo.append(n => n)
 
     parent.adopt(child)
 

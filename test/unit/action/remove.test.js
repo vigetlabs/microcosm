@@ -1,9 +1,10 @@
-import Action from '../../../src/action'
+import Microcosm from '../../../src/microcosm'
 
 describe('remove', function() {
   it('does not remove non-existent parents', function() {
-    const parent = new Action(n => n)
-    const child = new Action(n => n)
+    const repo = new Microcosm()
+    const parent = repo.append(n => n)
+    const child = repo.append(n => n)
 
     parent.adopt(child)
 
@@ -14,8 +15,9 @@ describe('remove', function() {
   })
 
   it('warns when removing a disconnected action', function() {
-    const parent = new Action(n => n)
-    const child = new Action(n => n)
+    const repo = new Microcosm()
+    const parent = repo.append(n => n)
+    const child = repo.append(n => n)
 
     parent.adopt(child)
 

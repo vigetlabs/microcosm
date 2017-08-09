@@ -1,107 +1,108 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History::archive', function() {
   const action = n => n
 
   it('archive moves all the way up to the head', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
     // One
-    const one = history.append('first')
+    const one = repo.append('first')
 
     // Two
-    const two = history.append('second')
+    const two = repo.append('second')
 
     // Three
-    history.append('third')
+    repo.append('third')
 
-    history.checkout(two)
+    repo.checkout(two)
 
     // Mark for disposal
     one.resolve()
     two.resolve()
 
     // Three should be ignored!
-    history.archive()
+    repo.history.archive()
 
-    expect(history.size).toEqual(1)
-    expect(history.root).toBe(two)
-    // This is two because we checked out two early
-    expect(history.head).toBe(two)
+    expect(repo.history.size).toEqual(1)
+    expect(`${repo.history.root}`).toBe('second')
+
+    // This is two because we checked out two earlier
+    expect(`${repo.history.head}`).toBe('second')
   })
 
   it('will not archive a node if prior nodes are not complete', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
     // one
-    history.append(action)
+    repo.append(action)
 
     // two
-    history.append(action)
+    repo.append(action)
 
     // three
-    history.append(action).resolve()
+    repo.append(action).resolve()
 
-    history.archive()
+    repo.history.archive()
 
-    expect(history.size).toBe(3)
+    expect(repo.history.size).toBe(3)
   })
 
   it('archives all completed actions', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
-    const one = history.append(action)
-    const two = history.append(action)
+    const one = repo.append(action)
+    const two = repo.append(action)
 
     // three
-    history.append(action)
+    repo.append(action)
 
     two.resolve()
     one.resolve()
 
-    history.archive()
+    repo.history.archive()
 
     // 1 because we have an unresolved action remaining
-    expect(history.size).toBe(1)
+    expect(repo.history.size).toBe(1)
   })
 
   it('archived nodes have no relations', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
-    history.append('one').resolve()
+    repo.append('one').resolve()
 
-    history.append('two')
+    repo.append('two')
 
-    history.archive()
+    repo.history.archive()
 
-    expect(history.root.parent.parent).toBe(null)
+    expect(repo.history.root.parent.parent).toBe(null)
   })
 
   it('archiving the entire tree clears cursors', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
     // one
-    history.append(action).resolve()
+    repo.append(action).resolve()
     // two
-    const two = history.append(action).resolve()
+    const two = repo.append(action).resolve()
 
-    history.archive()
+    repo.history.archive()
 
     // We always hold on to the head so that we have something to work with
-    expect(history.root).toBe(two)
-    expect(history.head).toBe(two)
+    expect(repo.history.root).toBe(two)
+    expect(repo.history.head).toBe(two)
   })
 
   it('adjusts the root node', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
-    const a = history.append(action)
+    const a = repo.append(action)
 
-    history.append(action)
-    history.append(action)
+    repo.append(action)
+    repo.append(action)
 
-    history.archive()
+    repo.history.archive()
 
-    expect(history.root).toEqual(a)
+    expect(repo.history.root).toEqual(a)
   })
 })

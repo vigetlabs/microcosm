@@ -1,18 +1,22 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import React from 'react'
 import ActionForm from '../../src/addons/action-form'
 import Presenter from '../../src/addons/presenter'
 import mockSend from '../helpers/mock-send'
-import Action from '../../src/action'
+import Microcosm from '../../src/microcosm'
 import { mount } from 'enzyme'
 
 describe('callbacks', function() {
   it('executes onDone when that action completes', function() {
+    const repo = new Microcosm()
+    const reply = action => repo.push(action, true)
     const onDone = jest.fn()
-    const context = mockSend(n => new Action(n).resolve(true))
 
     const form = mount(
-      <ActionForm action="test" onDone={n => onDone(n)} />,
-      context
+      <ActionForm action="test" onDone={onDone} send={reply} />
     )
 
     form.simulate('submit')
@@ -21,12 +25,12 @@ describe('callbacks', function() {
   })
 
   it('executes onError when that action completes', function() {
+    const repo = new Microcosm()
+    const reply = action => repo.append(action).reject('bad')
     const onError = jest.fn()
-    const context = mockSend(n => new Action(n).reject('bad'))
 
     const form = mount(
-      <ActionForm action="test" onError={n => onError(n)} />,
-      context
+      <ActionForm action="test" onError={onError} send={reply} />
     )
 
     form.simulate('submit')
@@ -35,30 +39,27 @@ describe('callbacks', function() {
   })
 
   it('executes onOpen when that action opens', function() {
+    const repo = new Microcosm()
+    const reply = action => repo.append(action).open('open')
     const onOpen = jest.fn()
-    const action = new Action(n => n)
-    const context = mockSend(n => action)
 
     const form = mount(
-      <ActionForm action="test" onOpen={n => onOpen(n)} />,
-      context
+      <ActionForm action="test" onOpen={onOpen} send={reply} />
     )
 
     form.simulate('submit')
-
-    action.open('open')
 
     expect(onOpen).toHaveBeenCalledWith('open')
   })
 
   it('executes onUpdate when that action sends an update', function() {
+    const repo = new Microcosm()
+    const action = repo.append('test')
+    const reply = () => action
     const onUpdate = jest.fn()
-    const action = new Action(n => n)
-    const context = mockSend(n => action)
 
     const form = mount(
-      <ActionForm action="test" onUpdate={n => onUpdate(n)} />,
-      context
+      <ActionForm action="test" onUpdate={onUpdate} send={reply} />
     )
 
     form.simulate('submit')
@@ -68,57 +69,59 @@ describe('callbacks', function() {
     expect(onUpdate).toHaveBeenCalledWith('loading')
   })
 
-  it('does not execute onDone if not given an action', function() {
+  it('does not execute callbacks if not given an action', function() {
+    const repo = new Microcosm()
     const onDone = jest.fn()
-    const context = mockSend(n => true)
 
     const form = mount(
-      <ActionForm action="test" onDone={n => onDone(n)} />,
-      context
+      <ActionForm action="test" onDone={onDone} send={() => null} />
     )
 
     form.simulate('submit')
 
     expect(onDone).not.toHaveBeenCalled()
   })
+})
 
-  it('does not execute onDone if not given an action', function() {
-    const onError = jest.fn()
-    const context = mockSend(n => true)
+describe('context', function() {
+  it('inherits send from context', function() {
+    const repo = new Microcosm()
+    const onDone = jest.fn()
 
     const form = mount(
-      <ActionForm action="test" onError={n => onError(n)} />,
-      context
+      <ActionForm action="test" onDone={onDone} />,
+      mockSend(action => repo.push(action, true))
     )
 
     form.simulate('submit')
 
-    expect(onError).not.toHaveBeenCalled()
+    expect(onDone).toHaveBeenCalledWith(true)
   })
 
-  it('does not execute onUpdate if not given an action', function() {
-    const onUpdate = jest.fn()
-    const context = mockSend(n => true)
+  it('send as a prop overrides context', function() {
+    const repo = new Microcosm()
+    const reply = action => repo.push(action, 'from-prop')
+    const onDone = jest.fn()
 
     const form = mount(
-      <ActionForm action="test" onUpdate={n => onUpdate(n)} />,
-      context
+      <ActionForm action="test" onDone={onDone} send={reply} />,
+      mockSend(action => repo.push(action, 'from-context'))
     )
 
     form.simulate('submit')
 
-    expect(onUpdate).not.toHaveBeenCalled()
+    expect(onDone).toHaveBeenCalledWith('from-prop')
   })
 })
 
 describe('manual operation', function() {
   it('submit can be called directly on the component instance', function() {
+    const repo = new Microcosm()
+    const reply = action => repo.push(action, true)
     const onDone = jest.fn()
-    const context = mockSend(n => new Action(n => n).resolve(true))
 
     const form = mount(
-      <ActionForm action="test" onDone={n => onDone(n)} />,
-      context
+      <ActionForm action="test" onDone={onDone} send={reply} />
     )
 
     form.instance().submit()

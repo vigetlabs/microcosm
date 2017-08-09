@@ -1,10 +1,11 @@
-import Action from '../../../src/action'
+import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
 describe('Action disabled state', function() {
   it('preserves other states when disabled', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.resolve()
     action.toggle()
@@ -13,7 +14,8 @@ describe('Action disabled state', function() {
   })
 
   it('is toggleable', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.resolve()
     expect(action.disabled).toBe(false)
@@ -23,7 +25,8 @@ describe('Action disabled state', function() {
   })
 
   it('can toggle history without triggering a reconciliation', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const handler = jest.fn()
 
     action.on('change', handler)

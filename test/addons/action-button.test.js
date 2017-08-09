@@ -1,6 +1,10 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import React from 'react'
+import Microcosm from '../../src/microcosm'
 import ActionButton from '../../src/addons/action-button'
-import Action from '../../src/action'
 import { mount } from 'enzyme'
 
 describe('actions', function() {
@@ -17,11 +21,12 @@ describe('actions', function() {
 
 describe('callbacks', function() {
   it('executes onOpen when that action completes', function() {
+    let repo = new Microcosm()
     let onOpen = jest.fn()
 
     let button = mount(<ActionButton action="test" onOpen={n => onOpen(n)} />, {
       context: {
-        send: () => new Action(n => n).open(true)
+        send: () => repo.append(n => n).open(true)
       }
     })
 
@@ -31,11 +36,12 @@ describe('callbacks', function() {
   })
 
   it('executes onDone when that action completes', function() {
+    let repo = new Microcosm()
     let onDone = jest.fn()
 
     let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
-        send: () => new Action(n => n).resolve(true)
+        send: () => repo.append(n => n).resolve(true)
       }
     })
 
@@ -45,13 +51,14 @@ describe('callbacks', function() {
   })
 
   it('executes onError when that action completes', function() {
+    let repo = new Microcosm()
     let onError = jest.fn()
 
     let button = mount(
       <ActionButton action="test" onError={n => onError(n)} />,
       {
         context: {
-          send: () => new Action(n => n).reject('bad')
+          send: () => repo.append(n => n).reject('bad')
         }
       }
     )
@@ -62,8 +69,9 @@ describe('callbacks', function() {
   })
 
   it('executes onUpdate when that action sends an update', function() {
+    let repo = new Microcosm()
     let onUpdate = jest.fn()
-    let action = new Action(n => n)
+    let action = repo.append(n => n)
 
     let button = mount(
       <ActionButton action="test" onUpdate={n => onUpdate(n)} />,
@@ -134,11 +142,12 @@ describe('callbacks', function() {
 
 describe('manual operation', function() {
   it('click can be called directly on the component instance', function() {
+    let repo = new Microcosm()
     let onDone = jest.fn()
 
     let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
       context: {
-        send: () => new Action(n => n).resolve(true)
+        send: () => repo.append(n => n).resolve(true)
       }
     })
 
