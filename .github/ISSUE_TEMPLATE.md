@@ -1,32 +1,9 @@
-<!--
-Before filing an issue please:
+**Is this a feature, bug, or something else?**
 
-- Read the docs (http://code.viget.com/microcosm/)
-- Look for / ask questions on StackOverflow
-- Check existing issues for your issue
--->
+**What is the current behavior?**
 
-**What kind of issue is this?** (check at least one)
+**If the current behavior is a bug, please provide the steps to reproduce and if possible a minimal demo of the problem via https://jsfiddle.net or similar (template: https://jsfiddle.net/w2m0mang/).**
 
-- [ ] Report a bug
-- [ ] Feature Request
-- [ ] Question
-- [ ] Discussion
-- [ ] Documentation
-- [ ] Other, please describe:
+**What is the expected behavior?**
 
-**What version of Microcosm is this for**
-
-<!-- Version number or 'All' -->
-
-**Steps to Reproduce/Example** (if applicable)
-
-<!-- Let us know how we can reproduce the issue or show us an example -->
-
-<!-- What is the expected behaviour? -->
-
-<!-- What is happening instead? -->
-
-**Additional Comments** (optional)
-
-<!-- Any more background or context you would like to share -->
+**Which versions of Microcosm is affected by this issue?**
