@@ -218,8 +218,6 @@ class Action extends Emitter {
     if (index >= 0) {
       this.children.splice(index, 1)
       child.parent = null
-    } else {
-      console.assert(index >= 0, 'Unable to abandon child. This action is not its parent.')
     }
 
     // If the action is the oldest child of a parent, pass
