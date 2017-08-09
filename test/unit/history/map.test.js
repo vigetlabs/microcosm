@@ -1,14 +1,14 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History::map', function() {
   it('provides the index', function() {
-    const history = new History({ maxHistory: Infinity })
+    const repo = new Microcosm({ maxHistory: Infinity })
 
-    history.append('one', 'resolve')
-    history.append('two', 'resolve')
-    history.append('three', 'resolve')
+    repo.push('one')
+    repo.push('two')
+    repo.push('three')
 
-    let result = history.map((action, i) => i)
+    let result = repo.history.map((action, i) => i)
 
     expect(result).toEqual([0, 1, 2])
   })

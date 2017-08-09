@@ -1,37 +1,29 @@
-import { merge } from '../../../src/utils'
+import { merge } from '../../../src/microcosm'
 
 describe('Utils.merge', function() {
-  it('will not merge a null value into an object', function() {
-    const a = {}
-    const b = null
+  let skippable = [true, false, undefined, 0, 10, 'string']
 
-    expect(merge(a, b)).toBe(a)
-  })
+  skippable.forEach(function(type) {
+    describe(`When mixing ${type}`, function() {
+      const subject = { id: 0 }
+      const empty = {}
 
-  it('returns an empty object if given no arguments', function() {
-    expect(merge()).toEqual({})
-  })
+      it(`skips ${type} on the left`, function() {
+        expect(merge(type, type, subject)).toBe(subject)
+      })
 
-  it('will not merge a undefined into an object', function() {
-    const a = {}
-    const b = undefined
+      it(`skips ${type} on the right`, function() {
+        expect(merge(subject, type, type)).toBe(subject)
+      })
 
-    expect(merge(a, b)).toBe(a)
-  })
+      it(`skips ${type} on the both ends`, function() {
+        expect(merge(type, subject, type)).toBe(subject)
+      })
 
-  it('works from the left most non-null value', function() {
-    const a = null
-    const b = {}
-
-    expect(merge(a, b)).toBe(b)
-  })
-
-  it('does not copy even if the left most value is null', function() {
-    const a = null
-    const b = { foo: 'bar' }
-    const c = { foo: 'bar' }
-
-    expect(merge(a, b, c)).toBe(b)
+      it(`skips ${type} when an object has no keys`, function() {
+        expect(merge(type, empty, type)).toBe(empty)
+      })
+    })
   })
 
   it('returns a new copy when the left most value is an empty object', function() {
@@ -44,46 +36,21 @@ describe('Utils.merge', function() {
     expect(answer).toEqual(b)
   })
 
+  it('the same object when merging an empty object', function() {
+    const a = { foo: 'bar' }
+    const b = {}
+
+    const answer = merge(a, b)
+
+    expect(answer).toBe(a)
+  })
+
   it('merges many arguments', function() {
     const a = { red: true }
     const b = { green: true }
     const c = { blue: true }
 
     expect(merge(a, b, c)).toEqual({ red: true, green: true, blue: true })
-  })
-
-  it('ignores falsy middle arguments', function() {
-    const a = { foo: 'bar' }
-    const b = { foo: 'bar' }
-
-    expect(merge(null, a, null, b)).toBe(a)
-  })
-
-  it('copies even with falsy middle arguments', function() {
-    const a = { foo: 'bar' }
-    const b = { foo: 'baz' }
-    const c = merge(null, a, null, b)
-
-    expect(c).toEqual(b)
-  })
-
-  it('handles subsequent null arguments', function() {
-    const a = { foo: 'bar' }
-    const b = { foo: 'baz' }
-    const c = merge(null, null, a, b)
-
-    expect(c).not.toBe(b)
-    expect(c).toEqual(b)
-  })
-
-  it('handles mixtures of undefined and null', function() {
-    const a = { green: true }
-    const b = { blue: true }
-    const c = merge(a, null, b, undefined)
-
-    expect(c).not.toBe(a)
-    expect(c).not.toBe(b)
-    expect(c).toEqual({ green: true, blue: true })
   })
 
   it('when there are no unique keys, it returns the last object', function() {
@@ -144,7 +111,6 @@ describe('Utils.merge', function() {
       let answer = merge([1, 2], [1, 2, 3])
 
       expect(Array.isArray(answer)).toBe(true)
-
       expect(answer).toEqual([1, 2, 3])
     })
 
@@ -152,7 +118,6 @@ describe('Utils.merge', function() {
       let answer = merge([1, 2, 3], [1, 2])
 
       expect(Array.isArray(answer)).toBe(true)
-
       expect(answer).toEqual([1, 2, 3])
     })
   })

@@ -1,10 +1,11 @@
-import Action from '../../../src/action'
+import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
 describe('Action error state', function() {
   it('exposes a error type when rejected', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.reject()
 
@@ -12,7 +13,8 @@ describe('Action error state', function() {
   })
 
   it('triggers a error event when it is rejected', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const callback = jest.fn()
 
     action.once('reject', callback)
@@ -22,7 +24,8 @@ describe('Action error state', function() {
   })
 
   it('listens to failures', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const fn = jest.fn()
 
     action.onError(fn)
@@ -32,7 +35,8 @@ describe('Action error state', function() {
   })
 
   it('immediately invokes onError if the action already failed', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const fn = jest.fn()
 
     action.reject(true)
@@ -42,7 +46,8 @@ describe('Action error state', function() {
   })
 
   it('does not trigger an error event if it is complete', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const spy = jest.fn()
 
     action.on('error', spy)
@@ -53,7 +58,8 @@ describe('Action error state', function() {
   })
 
   it('aliases the done type with reject', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.reject()
 

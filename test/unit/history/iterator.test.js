@@ -1,27 +1,27 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 import Observable from 'zen-observable'
 
 describe('History @@iterator', function() {
   it('works with Array.from', function() {
-    let history = new History({ maxHistory: Infinity })
+    let repo = new Microcosm({ maxHistory: Infinity })
 
-    history.append('one', 'resolve')
-    history.append('two', 'resolve')
+    repo.append('one', 'resolve')
+    repo.append('two', 'resolve')
 
-    let list = Array.from(history)
+    let list = Array.from(repo.history)
 
     expect(list.map(i => i.type)).toEqual(['one', 'two'])
   })
 
   it('works with for...of', function() {
-    let history = new History({ maxHistory: Infinity })
+    let repo = new Microcosm({ maxHistory: Infinity })
 
-    history.append('one', 'resolve')
-    history.append('two', 'resolve')
+    repo.append('one', 'resolve')
+    repo.append('two', 'resolve')
 
     let list = []
 
-    for (var action of history) {
+    for (var action of repo.history) {
       list.push(action.type)
     }
 
@@ -29,32 +29,32 @@ describe('History @@iterator', function() {
   })
 
   it('works with Promise.all', async function() {
-    let history = new History({ maxHistory: Infinity })
+    let repo = new Microcosm({ maxHistory: Infinity })
 
-    let one = history.append('one', 'resolve')
-    let two = history.append('two', 'resolve')
+    let one = repo.push('one')
+    let two = repo.push('two')
 
-    let promise = Promise.all(history)
+    let promise = Promise.all(repo.history)
 
     one.resolve()
     two.resolve()
 
     // Basically, this should complete
     await promise.then(() => {
-      for (var action of history) {
+      for (var action of repo.history) {
         expect(action).toHaveStatus('resolve')
       }
     })
   })
 
   it('works with Observable.of', function() {
-    let history = new History({ maxHistory: Infinity })
+    let repo = new Microcosm({ maxHistory: Infinity })
 
-    let one = history.append('one', 'resolve')
-    let two = history.append('two', 'resolve')
+    let one = repo.push('one')
+    let two = repo.push('two')
     let complete = jest.fn()
 
-    Observable.of(history).subscribe({ complete })
+    Observable.of(repo.history).subscribe({ complete })
 
     one.resolve()
     two.resolve()

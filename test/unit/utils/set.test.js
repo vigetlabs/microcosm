@@ -1,4 +1,4 @@
-import { set } from '../../../src/utils'
+import { set } from '../../../src/microcosm'
 
 describe('Utils.set', function() {
   const subject = {
@@ -64,6 +64,12 @@ describe('Utils.set', function() {
 
     expect(subject.styles.color).toBe('blue')
     expect(next.styles.color).toBe('red')
+  })
+
+  it('assigns over an existing nested object', function() {
+    let next = set({ root: true }, ['root', 'segment'], true)
+
+    expect(next.root).toEqual({ segment: true })
   })
 
   describe('arrays', function() {

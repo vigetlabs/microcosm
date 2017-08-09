@@ -1,11 +1,11 @@
-import Action from '../../../src/action'
 import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
 describe('Action done state', function() {
   it('exposes a done type when completed', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.resolve()
 
@@ -13,7 +13,8 @@ describe('Action done state', function() {
   })
 
   it('triggers a done event when it resolves', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const callback = jest.fn()
 
     action.once('resolve', callback)
@@ -23,7 +24,8 @@ describe('Action done state', function() {
   })
 
   it('immediately invokes onDone if the action already closed', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const callback = jest.fn()
 
     action.resolve(true)
@@ -33,7 +35,8 @@ describe('Action done state', function() {
   })
 
   it('actions are no longer open when they complete', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.open(true)
     action.update(true)
@@ -55,7 +58,8 @@ describe('Action done state', function() {
   })
 
   it('aliases the done type with resolve', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.resolve()
 

@@ -69,15 +69,16 @@ describe('Reconciliation', function() {
   it('archived actions are removed from the archive', function() {
     const repo = new Microcosm()
 
-    let one = repo.append('a')
-    let two = repo.append('b')
-    let three = repo.append('c')
+    let one = repo.append('one')
+    let two = repo.append('two')
+    let three = repo.append('three')
 
     three.resolve()
     two.resolve()
     one.resolve()
 
-    expect(Object.keys(repo.snapshots)).toEqual([three.id])
+    // Two is in here because it is the  parent of three, which we need as a "base state"
+    expect(Object.keys(repo.snapshots)).toEqual([two.id, three.id])
   })
 
   it('pushing actions while the root is "open" does not result in extra invocations', function() {

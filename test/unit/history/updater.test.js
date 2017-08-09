@@ -1,91 +1,91 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History updater', function() {
   it('provides a default batching method', function(done) {
-    const history = new History({
+    const repo = new Microcosm({
       batch: true
     })
 
     let spy = jest.fn()
 
-    history.on('release', spy)
+    repo.history.on('release', spy)
 
-    history.on('release', () => {
+    repo.history.on('release', () => {
       expect(spy).toHaveBeenCalledTimes(1)
       done()
     })
 
-    history.append('action').resolve()
-    history.append('action').resolve()
-    history.append('action').resolve()
+    repo.append('action', 'resolve')
+    repo.append('action', 'resolve')
+    repo.append('action', 'resolve')
   })
 
   it('allows manual control over updates', function(done) {
-    const history = new History({
+    const repo = new Microcosm({
       updater: function() {
         return update => setTimeout(update, 10)
       }
     })
 
-    history.on('release', () => done())
+    repo.history.on('release', () => done())
 
-    history.append('action').resolve()
+    repo.append('action', 'resolve')
   })
 
   it('does not emit an update if update is not called', function() {
-    const history = new History({
+    const repo = new Microcosm({
       updater: function() {
         return update => {}
       }
     })
 
-    const spy = jest.spyOn(history, 'release')
+    repo.history.on('release', () => {
+      throw new Error('Release should never have been called.')
+    })
 
-    history.append('action').resolve()
-    history.append('action').resolve()
-    history.append('action').resolve()
-
-    expect(spy).not.toHaveBeenCalled()
+    repo.append('action', 'resolve')
+    repo.append('action', 'resolve')
+    repo.append('action', 'resolve')
   })
 
   it('.wait() waits for the updater', async function() {
-    const history = new History({
+    const repo = new Microcosm({
       updater: function() {
-        return update => setTimeout(update, 10)
+        return update => setTimeout(update, 0)
       }
     })
 
     let handler = jest.fn()
 
-    history.on('release', handler)
+    repo.history.on('release', handler)
 
-    history.append('one').resolve()
+    repo.append('one').resolve()
 
-    await history.wait()
+    await repo.history.wait()
 
     expect(handler).toHaveBeenCalled()
   })
 
   it('.wait() ignores the updater when there is nothing to do', async function() {
-    const history = new History({
+    const repo = new Microcosm({
       updater: function() {
         return update => setTimeout(update, 10)
       }
     })
 
-    await history.wait()
+    await repo.history.wait()
   })
 
   it('.wait() waits for the updater even on rejection', function() {
-    const history = new History({
+    const repo = new Microcosm({
       updater: function() {
-        return update => setTimeout(update, 10)
+        return update => setTimeout(update, 0)
       }
     })
 
-    let action = history.append('action')
+    let action = repo.append('action')
 
-    let promise = history.wait()
+    let promise = repo.history.wait()
 
     action.reject('error')
 

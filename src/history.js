@@ -20,7 +20,7 @@ type HistoryOptions = {
   updater?: (options: Object) => Updater
 }
 
-const DEFAULTS: HistoryOptions = {
+const DEFAULTS = {
   maxHistory: 1,
   batch: false,
   updater: defaultUpdateStrategy
@@ -343,9 +343,11 @@ class History extends Emitter {
       }
     }
 
-    root.prune()
+    if (root !== this.root) {
+      this.root = root
+      root.prune()
+    }
 
-    this.root = root
     this.size = size
   }
 
@@ -369,7 +371,7 @@ class History extends Emitter {
    * Set the limit of the history object.
    */
   setLimit(limit: number) {
-    this.limit = Math.max(0, limit)
+    this.limit = Math.max(DEFAULTS.maxHistory, limit)
   }
 
   /**

@@ -24,7 +24,7 @@ const results = SIZES.map(function (SIZE) {
 
   var action  = () => {}
   var stats   = { build: 0, root: 0, merge: 0, size: 0, rollforward: 0, memory: 0 }
-  var history = new History()
+  var history = new History({ maxHistory: Infinity })
 
   var memoryBefore = process.memoryUsage().heapUsed
 
@@ -54,6 +54,7 @@ const results = SIZES.map(function (SIZE) {
    * the side effect of helping to test memory leakage later.
    */
   var now = process.hrtime()
+  history.setLimit(1)
   history.reconcile(history.root)
   var end = process.hrtime(now)[1]
   stats.rollforward = (end / 1000000)

@@ -1,0 +1,12 @@
+{
+  "testURL": "http://localhost:3000",
+  "testEnvironment": "node",
+  "setupTestFrameworkScriptFile": "./helpers/setup.js",
+  "moduleNameMapper": {
+    ".*?/src/(.*)": "<rootDir>/../build/strict/$1"
+  },
+  "testPathIgnorePatterns": [
+    "node_modules",
+    "unit/key-path"
+  ]
+}

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import React from 'react'
 import withSend from '../../src/addons/with-send'
 import { mount } from 'enzyme'

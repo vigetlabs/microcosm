@@ -1,11 +1,11 @@
-import Action from '../../../src/action'
 import Microcosm from '../../../src/microcosm'
 
 const identity = n => n
 
 describe('Action update state', function() {
   it('exposes a loading type when in progress', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.update()
 
@@ -13,7 +13,8 @@ describe('Action update state', function() {
   })
 
   it('listens to progress updates', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const fn = jest.fn()
 
     action.onUpdate(fn)
@@ -23,7 +24,8 @@ describe('Action update state', function() {
   })
 
   it('does not trigger onUpdate if in progress', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const fn = jest.fn()
 
     action.update(true)
@@ -33,7 +35,8 @@ describe('Action update state', function() {
   })
 
   it('actions are no longer open when in progress', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.open(true)
     action.update(true)
@@ -43,7 +46,8 @@ describe('Action update state', function() {
   })
 
   it('triggers an update event when it updates', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const callback = jest.fn()
 
     action.once('update', callback)
@@ -53,7 +57,8 @@ describe('Action update state', function() {
   })
 
   it('does not trigger an update event if it is complete', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
     const spy = jest.fn()
 
     action.on('update', spy)
@@ -64,7 +69,8 @@ describe('Action update state', function() {
   })
 
   it('aliases the loading type with update', function() {
-    const action = new Action(identity)
+    const repo = new Microcosm()
+    const action = repo.append(identity)
 
     action.update()
 

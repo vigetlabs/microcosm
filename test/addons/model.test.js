@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import Microcosm from '../../src/microcosm'
 import Model from '../../src/addons/model'
 import Observable from 'zen-observable'

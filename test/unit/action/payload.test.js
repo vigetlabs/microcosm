@@ -1,12 +1,14 @@
-import Action from '../../../src/action'
+import Microcosm from '../../../src/microcosm'
 
 describe('action.payload', function() {
   it('an action can intentionally be set to undefined', function() {
-    const action = new Action('test')
+    const repo = new Microcosm()
+    const action = repo.append('test')
 
     action.open(true)
-    action.resolve(undefined)
+    expect(action.payload).toBe(true)
 
+    action.resolve(undefined)
     expect(action.payload).toBe(undefined)
   })
 })

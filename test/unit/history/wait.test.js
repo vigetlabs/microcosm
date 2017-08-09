@@ -1,14 +1,14 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History::wait', function() {
   const action = n => n
 
   it('resolves when every action completes successfully', function() {
-    const history = new History()
+    const repo = new Microcosm()
 
-    let one = history.append(action)
-    let two = history.append(action)
-    let three = history.append(action)
+    let one = repo.append(action)
+    let two = repo.append(action)
+    let three = repo.append(action)
 
     setTimeout(function() {
       one.resolve()
@@ -16,15 +16,15 @@ describe('History::wait', function() {
       three.resolve()
     }, 10)
 
-    return history.wait()
+    return repo.history.wait()
   })
 
   it('fails when an action rejects', async function() {
-    const history = new History({ maxHistory: Infinity })
+    const repo = new Microcosm({ maxHistory: Infinity })
 
-    let one = history.append(action)
-    let two = history.append(action)
-    let three = history.append(action)
+    let one = repo.append(action)
+    let two = repo.append(action)
+    let three = repo.append(action)
 
     setTimeout(function() {
       one.resolve()
@@ -33,18 +33,18 @@ describe('History::wait', function() {
     }, 10)
 
     try {
-      await history.wait()
+      await repo.history.wait()
     } catch (error) {
       expect(error).toEqual('Wut')
     }
   })
 
   it('ignores cancelled actions', function() {
-    const history = new History({ maxHistory: Infinity })
+    const repo = new Microcosm({ maxHistory: Infinity })
 
-    let one = history.append(action)
-    let two = history.append(action)
-    let three = history.append(action)
+    let one = repo.append(action)
+    let two = repo.append(action)
+    let three = repo.append(action)
 
     setTimeout(function() {
       one.resolve()
@@ -54,6 +54,6 @@ describe('History::wait', function() {
 
     // This will fail if the promise returned from `wait()` rejects, and
     // it will only pass when the promise resolves.
-    return history.wait()
+    return repo.history.wait()
   })
 })

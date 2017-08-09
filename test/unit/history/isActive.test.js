@@ -1,8 +1,9 @@
-import History from '../../../src/history'
+import Microcosm from '../../../src/microcosm'
 
 describe('History::isActive', function() {
   const action = n => n
-  const history = new History()
+  const repo = new Microcosm()
+  const history = repo.history
 
   /*
    * Set up the following tree:
