@@ -17,6 +17,7 @@ test:
   override:
     - yarn flow
     - yarn test:cov
+    - yarn test:prod
     - yarn lint
   post:
     - yarn report-coverage
