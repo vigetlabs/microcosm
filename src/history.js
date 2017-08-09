@@ -20,7 +20,7 @@ type HistoryOptions = {
   updater?: (options: Object) => Updater
 }
 
-const DEFAULTS: HistoryOptions = {
+const DEFAULTS = {
   maxHistory: 1,
   batch: false,
   updater: defaultUpdateStrategy

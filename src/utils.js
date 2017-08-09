@@ -63,7 +63,7 @@ export function merge(...args: Array<?Object>): Object {
       continue
     }
 
-    copy = copy || args[i]
+    copy = copy || args[i] || {}
 
     subject = subject || copy
 
