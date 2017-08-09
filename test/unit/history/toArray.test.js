@@ -22,14 +22,14 @@ describe('History::toArray', function() {
 
     const first = repo.append('first')
 
-    repo.append(action)
+    repo.append('second')
 
     repo.checkout(first)
 
-    const third = repo.append('second')
+    repo.append('third')
 
     repo.history.archive()
 
-    expect(`${repo.history.toArray()}`).toEqual('first,second')
+    expect(`${repo.history.toArray()}`).toEqual('first,third')
   })
 })

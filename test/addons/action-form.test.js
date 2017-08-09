@@ -70,7 +70,6 @@ describe('callbacks', function() {
   })
 
   it('does not execute callbacks if not given an action', function() {
-    const repo = new Microcosm()
     const onDone = jest.fn()
 
     const form = mount(
