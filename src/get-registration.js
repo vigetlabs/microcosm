@@ -1,7 +1,7 @@
 // @flow
 import { isObject } from './utils'
 
-export const ALIASES = {
+export const STATUSES = {
   inactive: 'inactive',
   open: 'open',
   update: 'loading',
@@ -19,7 +19,7 @@ export const ALIASES = {
  */
 function getRegistration(pool: Object, command: Tagged, status: Status) {
   let answer = null
-  let alias = ALIASES[status]
+  let alias = STATUSES[status]
 
   console.assert(alias, 'Invalid action status ' + status)
   console.assert(
