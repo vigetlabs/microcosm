@@ -1,8 +1,6 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('History::toArray', function() {
-  const action = n => n
-
   it('does not walk past the head', function() {
     const repo = new Microcosm()
 
