@@ -9,13 +9,13 @@ import { Action, merge } from '../microcosm'
 const identity = () => {}
 
 class ActionButton extends React.PureComponent {
-  static defaultProps;
+  static defaultProps: Object
 
   send: Sender
   click: (event: Event) => Action
 
   constructor(props: Object, context: Object) {
-    super(props)
+    super(props, context)
 
     this.send = this.props.send || this.context.send
     this.click = this.click.bind(this)
