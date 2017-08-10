@@ -3,7 +3,8 @@
 'use strict'
 
 const rollup = require('rollup')
-const babel = require('rollup-plugin-babel')
+const buble = require('rollup-plugin-buble')
+const flow = require('rollup-plugin-flow')
 const strip = require('rollup-plugin-strip')
 const uglify = require('rollup-plugin-uglify')
 const node = require('rollup-plugin-node-resolve')
@@ -20,10 +21,9 @@ const options = {
 Object.assign(options, minimist(process.argv.slice(2)))
 
 const plugins = [
-  node(),
-  babel({
-    plugins: ['external-helpers']
-  })
+  flow(),
+  buble(),
+  node()
 ]
 
 const configs = {
@@ -54,7 +54,11 @@ if (options.minify) {
         passes: 2
       },
       mangle: {
-        toplevel: true
+        toplevel: true,
+        // https://github.com/mishoo/UglifyJS2#mangle-properties-options
+        properties: {
+          regex: /^_/
+        }
       }
     })
   )
@@ -95,5 +99,5 @@ for (let moduleName in configs) {
     })
   })
 
-  write.catch(error => console.error(error))
+  write.catch(error => console.error(error.toString()))
 }

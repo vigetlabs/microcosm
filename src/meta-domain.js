@@ -43,11 +43,13 @@ class MetaDomain {
   register() {
     // TODO: Flow does not like string coercion. How can we
     // get Flow type coverage on the register method?
-    return {
+    var registry = {
       [RESET.toString()]: this.reset,
       [PATCH.toString()]: this.patch,
       [ADD_DOMAIN.toString()]: this.addDomain
     }
+
+    return registry
   }
 }
 

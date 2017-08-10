@@ -169,18 +169,6 @@ class Presenter extends React.PureComponent {
 }
 
 class PresenterMediator extends React.PureComponent {
-  static contextTypes = {
-    repo: identity,
-    send: identity,
-    parent: identity
-  }
-
-  static childContextTypes = {
-    repo: identity,
-    send: identity,
-    parent: identity
-  }
-
   repo: Microcosm
   send: *
   presenter: Presenter
@@ -284,6 +272,18 @@ class PresenterMediator extends React.PureComponent {
     // If we hit the top, push the intent into the Microcosm instance
     return this.repo.push(...arguments)
   }
+}
+
+PresenterMediator.contextTypes = {
+  repo: identity,
+  send: identity,
+  parent: identity
+}
+
+PresenterMediator.childContextTypes = {
+  repo: identity,
+  send: identity,
+  parent: identity
 }
 
 export default Presenter

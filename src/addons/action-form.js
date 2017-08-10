@@ -20,17 +20,6 @@ class ActionForm extends React.PureComponent {
     this.onSubmit = this.onSubmit.bind(this)
   }
 
-  static contextTypes = {
-    send: identity
-  }
-
-  static defaultProps = {
-    action: null,
-    serializer: form => serialize(form, { hash: true, empty: true }),
-    prepare: n => n,
-    onSubmit: n => n
-  }
-
   render() {
     let props = merge(this.props, { ref: 'form', onSubmit: this.onSubmit })
 
@@ -69,6 +58,17 @@ class ActionForm extends React.PureComponent {
 
     this.props.onSubmit(event, action)
   }
+}
+
+ActionForm.contextTypes = {
+  send: identity
+}
+
+ActionForm.defaultProps = {
+  action: null,
+  serializer: form => serialize(form, { hash: true, empty: true }),
+  prepare: n => n,
+  onSubmit: n => n
 }
 
 export default ActionForm

@@ -19,14 +19,6 @@ class ActionButton extends React.PureComponent {
     this.click = this.click.bind(this)
   }
 
-  static contextTypes = {
-    send: identity
-  }
-
-  static defaultProps = {
-    tag: 'button'
-  }
-
   click(event: Event): Action {
     let action = this.send(this.props.action, this.props.value)
 
@@ -65,6 +57,14 @@ class ActionButton extends React.PureComponent {
 
     return React.createElement(this.props.tag, props)
   }
+}
+
+ActionButton.contextTypes = {
+  send: identity
+}
+
+ActionButton.defaultProps = {
+  tag: 'button'
 }
 
 export default ActionButton
