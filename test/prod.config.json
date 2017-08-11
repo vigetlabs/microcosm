@@ -3,7 +3,7 @@
   "testEnvironment": "node",
   "setupTestFrameworkScriptFile": "./helpers/setup.js",
   "moduleNameMapper": {
-    ".*?/src/(.*)": "<rootDir>/../build/strict/$1"
+    ".*?/src/(.*)": "<rootDir>/../build/min/$1"
   },
   "testPathIgnorePatterns": [
     "node_modules",

@@ -1239,7 +1239,7 @@ describe('intercepting actions', function() {
       </Parent>
     )
 
-    wrapper.find('ActionButton').simulate('click')
+    wrapper.find(ActionButton).simulate('click')
   })
 })
 
@@ -1352,7 +1352,7 @@ describe('::send', function() {
       </Parent>
     )
 
-    wrapper.find('ActionButton').simulate('click')
+    wrapper.find(ActionButton).simulate('click')
   })
 })
 

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import Microcosm from '../../src/microcosm'
+import { Microcosm } from '../../src/microcosm'
 import Model from '../../src/addons/model'
 import Observable from 'zen-observable'
 
@@ -31,7 +31,6 @@ describe('Model', function() {
   describe('callables', function() {
     it('bindings can be invokable functions', function() {
       let repo = new Repo()
-
       let model = new Model(repo)
 
       model.bind({
@@ -83,24 +82,28 @@ describe('Model', function() {
       let repo = new Repo()
       let model = new Model(repo)
 
-      jest.spyOn(model, 'set')
+      let handler = jest.fn()
+
+      model.on('change', handler)
 
       model.bind({
         count: Observable.of(1, 2, 3)
       })
 
-      expect(model.set).toHaveBeenCalledWith('count', 1)
-      expect(model.set).toHaveBeenCalledWith('count', 2)
-      expect(model.set).toHaveBeenCalledWith('count', 3)
+      expect(handler).toHaveBeenCalledWith({ count: 1 })
+      expect(handler).toHaveBeenCalledWith({ count: 2 })
+      expect(handler).toHaveBeenCalledWith({ count: 3 })
 
-      expect(model.set).toHaveBeenCalledTimes(3)
+      expect(handler).toHaveBeenCalledTimes(3)
     })
 
     it('gets the current observable value', function() {
       let repo = new Repo()
       let model = new Model(repo)
 
-      jest.spyOn(model, 'set')
+      let handler = jest.fn()
+
+      model.on('change', handler)
 
       let delayed = new Observable(observer => {
         observer.next(1)
@@ -115,25 +118,26 @@ describe('Model', function() {
         count: delayed
       })
 
-      expect(model.set).toHaveBeenCalledWith('count', 1)
-      expect(model.set).not.toHaveBeenCalledWith('count', 2)
-      expect(model.set).toHaveBeenCalledTimes(2)
+      expect(handler).toHaveBeenCalledWith({ count: 1 })
+      expect(handler).not.toHaveBeenCalledWith({ count: 2 })
+      expect(handler).toHaveBeenCalledTimes(1)
     })
 
     it('gets observable values right away', function() {
       let repo = new Repo()
       let model = new Model(repo)
-
-      jest.spyOn(model, 'set')
+      let handler = jest.fn()
 
       let count = new Observable(observer => {
         observer.next(1)
         observer.complete()
       })
 
+      model.on('change', handler)
+
       model.bind({ count })
 
-      expect(model.set).toHaveBeenCalledWith('count', 1)
+      expect(handler).toHaveBeenCalledWith({ count: 1 })
     })
 
     it('updates when an observable changes', function() {
@@ -174,6 +178,7 @@ describe('Model', function() {
       model.bind({ test })
 
       updater(2)
+
       expect(model.value.test).toEqual(2)
 
       model.teardown()

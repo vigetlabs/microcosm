@@ -1,6 +1,6 @@
 import { Emitter } from '../../src/microcosm'
 
-describe('Emitter', function() {
+describe.dev('Emitter', function() {
   it('adds listeners', function() {
     const emitter = new Emitter()
     const calls = []

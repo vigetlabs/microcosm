@@ -8,6 +8,9 @@ const flow = require('rollup-plugin-flow')
 const strip = require('rollup-plugin-strip')
 const uglify = require('rollup-plugin-uglify')
 const node = require('rollup-plugin-node-resolve')
+const filesize = require('rollup-plugin-filesize')
+const { Dictionary } = require('uglify-js')
+
 const path = require('path')
 const minimist = require('minimist')
 
@@ -23,7 +26,8 @@ Object.assign(options, minimist(process.argv.slice(2)))
 const plugins = [
   flow(),
   buble(),
-  node()
+  node(),
+  filesize()
 ]
 
 const configs = {
@@ -41,7 +45,7 @@ if (!options.strict) {
   plugins.push(
     strip({
       debugger: true,
-      functions: ['console.*'],
+      functions: ['console.assert'],
       sourceMap: true
     })
   )
@@ -55,9 +59,12 @@ if (options.minify) {
       },
       mangle: {
         toplevel: true,
-        // https://github.com/mishoo/UglifyJS2#mangle-properties-options
         properties: {
-          regex: /^_/
+          regex: /^_/,
+          cache: {
+            cname: -1,
+            props: new Dictionary()
+          }
         }
       }
     })
