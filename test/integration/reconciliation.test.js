@@ -77,8 +77,12 @@ describe('Reconciliation', function() {
     two.resolve()
     one.resolve()
 
-    // Two is in here because it is the  parent of three, which we need as a "base state"
-    expect(Object.keys(repo.snapshots)).toEqual([two.id, three.id])
+    // Recalling one will find nothing, so the repo returns initial state
+    expect(repo.recall(one)).toEqual(repo.getInitialState())
+
+    // Two is in here because it is the parent of three, which we need as a "base state"
+    expect(repo.recall(two)).toBeDefined()
+    expect(repo.recall(three)).toBeDefined()
   })
 
   it('pushing actions while the root is "open" does not result in extra invocations', function() {

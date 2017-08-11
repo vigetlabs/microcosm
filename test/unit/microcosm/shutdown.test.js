@@ -27,15 +27,15 @@ describe('Microcosm::shutdown', function() {
 
   it('removes the microcosm from its history', function() {
     const repo = new Microcosm()
-    const child = repo.fork()
+    const register = jest.fn()
 
-    child.shutdown()
+    repo.addEffect({ register })
 
-    jest.spyOn(child, 'release')
+    repo.push('test')
+    repo.shutdown()
+    repo.push('test')
 
-    repo.push(n => n)
-
-    expect(child.release).not.toHaveBeenCalled()
+    expect(register).toHaveBeenCalledTimes(1)
   })
 
   describe('forks', function() {

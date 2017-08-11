@@ -14,7 +14,7 @@ describe('remove', function() {
     expect(parent.next).toEqual(null)
   })
 
-  it('warns when removing a disconnected action', function() {
+  it.strict('warns when removing a disconnected action', function() {
     const repo = new Microcosm()
     const parent = repo.append(n => n)
     const child = repo.append(n => n)

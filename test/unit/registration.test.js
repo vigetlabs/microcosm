@@ -24,7 +24,7 @@ describe('getRegistration', function() {
     expect(handler).toHaveBeenCalled()
   })
 
-  it('throws if given an invalid status', function() {
+  it.strict('throws if given an invalid status', function() {
     let repo = new Microcosm()
 
     let fail = function() {
@@ -84,21 +84,24 @@ describe('getRegistration', function() {
     }
   })
 
-  it('includes the command name in the error message when a handler is undefined', function() {
-    let getUser = n => n
+  it.strict(
+    'prints the action name in the warning when a handler is undefined',
+    function() {
+      let getUser = n => n
 
-    class Repo extends Microcosm {
-      register() {
-        return {
-          [getUser]: undefined
+      class Repo extends Microcosm {
+        register() {
+          return {
+            [getUser]: undefined
+          }
         }
       }
+
+      let repo = new Repo()
+
+      expect(repo.prepare(getUser)).toThrow(
+        'getUser key within a registration is undefined. Is it being referenced correctly?'
+      )
     }
-
-    let repo = new Repo()
-
-    expect(repo.prepare(getUser)).toThrow(
-      'getUser key within a registration is undefined. Is it being referenced correctly?'
-    )
-  })
+  )
 })

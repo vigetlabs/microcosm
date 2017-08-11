@@ -97,7 +97,7 @@ describe('compute', function() {
     expect(value).toEqual('RED')
   })
 
-  it('raises an exception if an index is missing', function() {
+  it.strict('raises an exception if an index is missing', function() {
     let repo = new Microcosm()
 
     expect(function() {

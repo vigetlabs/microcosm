@@ -193,7 +193,7 @@ describe('CompareTree', function() {
   })
 
   describe('::connect', function() {
-    it('edges can not connect to themselves', function() {
+    it.strict('edges can not connect to themselves', function() {
       let node = tree.addNode('node')
 
       expect(function() {

@@ -13,7 +13,7 @@ describe('History::remove', function() {
 
     expect(history.root).not.toEqual(root)
 
-    expect(history.root.command.name).toEqual('$start')
+    expect(history.size).toEqual(1)
   })
 
   it('does not remove the root when given a node outside the tree', function() {
