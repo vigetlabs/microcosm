@@ -100,7 +100,7 @@ class Microcosm extends Emitter implements Domain {
   effects: EffectEngine
   changes: CompareTree
   options: Object
-  active: Boolean
+  active: boolean
 
   constructor(preOptions?: ?Object, state?: Object, deserialize?: boolean) {
     super()
