@@ -7,7 +7,7 @@ describe('Microcosm::shutdown', function() {
     repo.addDomain('colors', {
       register() {
         return {
-          'setColor': (a, b) => b
+          setColor: (a, b) => b
         }
       }
     })

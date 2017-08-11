@@ -335,7 +335,7 @@ class Microcosm extends Emitter implements Domain {
     console.assert(
       this.active,
       'Pushed "%s" action, however this Microcosm has been shutdown. ' +
-      "It's possible that an event subscription was not cleaned up.",
+        "It's possible that an event subscription was not cleaned up.",
       action
     )
 
