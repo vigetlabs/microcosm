@@ -16,7 +16,7 @@ Microcosm is a state management tool for [React](https://github.com/facebook/rea
 - [Split up application state in large apps](./docs/api/microcosm.md#fork) while still sharing common data
 - [Painless optimistic updates](./docs/recipes/ajax.md)
 - Track changes and handle business logic with [Presenter components](./docs/api/presenter.md)
-- 5kb gzipped (~15kb minified)
+- 5.5kb gzipped (~18kb minified)
 
 ## At a glance
 
