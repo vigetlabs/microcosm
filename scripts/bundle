@@ -9,6 +9,7 @@ const strip = require('rollup-plugin-strip')
 const uglify = require('rollup-plugin-uglify')
 const node = require('rollup-plugin-node-resolve')
 const filesize = require('rollup-plugin-filesize')
+const { Dictionary } = require('uglify-js')
 
 const path = require('path')
 const minimist = require('minimist')
@@ -57,7 +58,15 @@ if (options.minify) {
         passes: 2
       },
       mangle: {
-        toplevel: true
+        toplevel: true,
+        properties: {
+          regex: /^_/,
+          reserved: ['_emit'],
+          cache: {
+            cname: -1,
+            props: new Dictionary()
+          }
+        }
       }
     })
   )
