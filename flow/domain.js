@@ -46,7 +46,7 @@ declare interface Domain {
    * Returns an object mapping actions to methods on the domain. This is the
    * communication point between a domain and the rest of the system.
    */
-  register(): {
+  register(): ?{
     [key: string | Function]: (last?: *, next?: *) => *
   }
 }

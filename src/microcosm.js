@@ -394,7 +394,7 @@ class Microcosm extends Emitter implements Domain {
    * The default registration method for Microcosms
    */
   register() {
-    return {}
+    return null
   }
 
   /**

@@ -17,8 +17,13 @@ export const STATUSES = {
 /**
  * Gets any registrations that match a given command and status.
  */
-function getRegistration(pool: Object, command: Tagged, status: Status) {
+function getRegistration(pool: ?Object, command: Tagged, status: Status) {
   let answer = null
+
+  if (pool == null) {
+    return answer
+  }
+
   let alias = STATUSES[status]
 
   console.assert(alias, 'Invalid action status ' + status)
