@@ -4,7 +4,13 @@ describe('Microcosm::shutdown', function() {
   it('removes all listeners', function() {
     const repo = new Microcosm()
 
-    repo.addDomain('colors', {})
+    repo.addDomain('colors', {
+      register() {
+        return {
+          'setColor': (a, b) => b
+        }
+      }
+    })
 
     const listener = jest.fn()
 
@@ -12,7 +18,7 @@ describe('Microcosm::shutdown', function() {
 
     repo.shutdown()
 
-    repo.patch({ colors: 'blue' })
+    repo.append('setColor').resolve('blue')
 
     expect(listener).not.toHaveBeenCalled()
   })
@@ -35,7 +41,8 @@ describe('Microcosm::shutdown', function() {
 
     repo.push('test')
     repo.shutdown()
-    repo.push('test')
+
+    repo.append('test', 'resolve')
 
     expect(register).toHaveBeenCalledTimes(1)
   })

@@ -146,4 +146,15 @@ describe('Microcosm::push', function() {
       expect(left.state.color).toEqual('blue')
     })
   })
+
+  it.dev('warns when pushing an action from a torn down Microcosm', function() {
+    let repo = new Microcosm()
+
+    repo.shutdown()
+
+    expect(repo.prepare('test')).toThrow(
+      'Pushed "test" action, however this Microcosm has been shutdown. ' +
+        "It's possible that an event subscription was not cleaned up."
+    )
+  })
 })

@@ -100,6 +100,7 @@ class Microcosm extends Emitter implements Domain {
   effects: EffectEngine
   changes: CompareTree
   options: Object
+  active: Boolean
 
   constructor(preOptions?: ?Object, state?: Object, deserialize?: boolean) {
     super()
@@ -117,6 +118,7 @@ class Microcosm extends Emitter implements Domain {
     this.domains = new DomainEngine(this)
     this.effects = new EffectEngine(this)
     this.changes = new CompareTree(this.state)
+    this.active = true
 
     // History moves through a set lifecycle. As that lifecycle occurs,
     // save snapshots of new state:
@@ -330,6 +332,13 @@ class Microcosm extends Emitter implements Domain {
 
     coroutine(action, command, params, this)
 
+    console.assert(
+      this.active,
+      'Pushed "%s" action, however this Microcosm has been shutdown. ' +
+      "It's possible that an event subscription was not cleaned up.",
+      action
+    )
+
     return action
   }
 
@@ -458,6 +467,8 @@ class Microcosm extends Emitter implements Domain {
    * Close out a Microcosm
    */
   shutdown() {
+    this.active = false
+
     // Call teardown on the Microcosm
     this.teardown()
 
