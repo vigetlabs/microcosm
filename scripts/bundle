@@ -61,7 +61,6 @@ if (options.minify) {
         toplevel: true,
         properties: {
           regex: /^_/,
-          reserved: ['_emit'],
           cache: {
             cname: -1,
             props: new Dictionary()

@@ -22,7 +22,7 @@ describe('Generator Middleware', function() {
     })
   })
 
-  it.strict('throws if yielding a non-action value', function() {
+  it.dev('throws if yielding a non-action value', function() {
     expect.assertions(1)
 
     let repo = new Microcosm()

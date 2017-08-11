@@ -24,7 +24,7 @@ describe('getRegistration', function() {
     expect(handler).toHaveBeenCalled()
   })
 
-  it.strict('throws if given an invalid status', function() {
+  it.dev('throws if given an invalid status', function() {
     let repo = new Microcosm()
 
     let fail = function() {
@@ -84,7 +84,7 @@ describe('getRegistration', function() {
     }
   })
 
-  it.strict(
+  it.dev(
     'prints the action name in the warning when a handler is undefined',
     function() {
       let getUser = n => n

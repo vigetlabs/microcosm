@@ -13,11 +13,11 @@ describe('tag', function() {
     expect(`${tagged}`).toContain('_action')
   })
 
-  it.strict('will not tag a null action', function() {
+  it.dev('will not tag a null action', function() {
     expect(() => tag(null)).toThrow(/Unable to identify null action/)
   })
 
-  it.strict('will not tag an undefined action', function() {
+  it.dev('will not tag an undefined action', function() {
     expect(() => tag(undefined), /Unable to identify undefined action/)
   })
 

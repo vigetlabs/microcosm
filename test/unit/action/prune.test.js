@@ -16,7 +16,7 @@ describe('prune', function() {
     expect(parent.parent).toEqual(null)
   })
 
-  it.strict('warns when pruning a disconnected action', function() {
+  it.dev('warns when pruning a disconnected action', function() {
     const repo = new Microcosm()
     const parent = repo.append(n => n)
     const child = repo.append(n => n)
