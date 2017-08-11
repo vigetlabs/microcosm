@@ -4,13 +4,15 @@ describe('Microcosm::shutdown', function() {
   it('removes all listeners', function() {
     const repo = new Microcosm()
 
+    repo.addDomain('colors', {})
+
     const listener = jest.fn()
 
     repo.on('change', listener)
 
     repo.shutdown()
 
-    repo._emit('change')
+    repo.patch({ colors: 'blue' })
 
     expect(listener).not.toHaveBeenCalled()
   })

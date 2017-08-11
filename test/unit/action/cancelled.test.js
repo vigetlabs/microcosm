@@ -32,7 +32,7 @@ describe('Action cancelled state', function() {
     expect(action).toHaveStatus('cancel')
   })
 
-  it('onCancel is a one time binding', function() {
+  it.dev('onCancel is a one time binding', function() {
     const repo = new Microcosm()
     const action = repo.append(identity)
     const callback = jest.fn()
@@ -40,7 +40,6 @@ describe('Action cancelled state', function() {
     action.onCancel(callback)
 
     action.cancel()
-
     action._emit('cancel')
 
     expect(callback).toHaveBeenCalledTimes(1)
