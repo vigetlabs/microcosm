@@ -112,18 +112,12 @@ describe('Domain construction', function() {
   it('passes the mount key to options', function() {
     expect.assertions(1)
 
-    const repo = new Microcosm({ count: 0 })
+    const repo = new Microcosm()
 
-    class Counter {
-      static defaults = {
-        count: 1
-      }
-
+    repo.addDomain('count', {
       setup(repo, options) {
         expect(options.key).toBe('count')
       }
-    }
-
-    repo.addDomain('count', Counter, { count: 2 })
+    })
   })
 })
