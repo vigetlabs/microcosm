@@ -133,6 +133,22 @@ var Planets = {
 Setup runs right after a domain is added to a Microcosm, but before it runs
 getInitialState. This is useful for one-time setup instructions.
 
+Options are passed from the second argument of
+`repo.addDomain`. Additionally, `options.key` indicates the key where
+the domain was mounted:
+
+```javascript
+let repo = new Microcosm()
+
+class Planets {
+  setup(repo, options) {
+    console.log(options.key) // "planets"
+  }
+}
+
+repo.addDomain('planets', Planets)
+```
+
 ### `teardown(repo)`
 
 Runs whenever a Microcosm is torn down. This usually happens when a
