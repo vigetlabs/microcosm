@@ -66,7 +66,7 @@ class DomainEngine {
   }
 
   add(key: string | KeyPath, config: *, options?: Object) {
-    let deepOptions = merge(this.repo.options, config.defaults, options)
+    let deepOptions = merge(this.repo.options, config.defaults, { key }, options)
     let domain: Domain = createOrClone(config, deepOptions, this.repo)
     let keyPath: KeyPath = castPath(key)
 

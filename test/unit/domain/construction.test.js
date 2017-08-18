@@ -108,4 +108,22 @@ describe('Domain construction', function() {
 
     repo.addDomain('count', Counter, { count: 2 })
   })
+
+  it('passes the mount key to options', function() {
+    expect.assertions(1)
+
+    const repo = new Microcosm({ count: 0 })
+
+    class Counter {
+      static defaults = {
+        count: 1
+      }
+
+      setup(repo, options) {
+        expect(options.key).toBe('count')
+      }
+    }
+
+    repo.addDomain('count', Counter, { count: 2 })
+  })
 })
