@@ -52,6 +52,12 @@ class ActionForm extends React.PureComponent {
 
   submit(event: Event) {
     let form = this.form
+
+    console.assert(
+      form,
+      'ActionForm submit was called before this component was mounted.'
+    )
+
     let params = this.props.prepare(this.props.serializer(form))
     let action = this.send(this.props.action, params)
 
