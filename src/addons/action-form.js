@@ -15,7 +15,7 @@ class ActionForm extends React.PureComponent {
   send: Sender
   form: ?Element
   onSubmit: (event: Event) => Action
-  assignForm: (Element) => void
+  assignForm: Element => void
 
   constructor(props: Object, context: Object) {
     super(props, context)
@@ -23,7 +23,9 @@ class ActionForm extends React.PureComponent {
     this.form = null
     this.send = this.props.send || this.context.send
     this.onSubmit = this.onSubmit.bind(this)
-    this.assignForm = el => { this.form = el }
+    this.assignForm = el => {
+      this.form = el
+    }
   }
 
   render() {
