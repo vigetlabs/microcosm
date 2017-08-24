@@ -176,7 +176,7 @@ describe('serialization', function() {
     expect(action).toHaveBeenCalledWith({ name: 'BILLY' })
   })
 
-  it('will not submit an unmounted form', function() {
+  it.dev('will not submit an unmounted form', function() {
     const form = mount(<ActionForm send={jest.fn()} />)
 
     let instance = form.instance()
