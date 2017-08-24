@@ -13,17 +13,23 @@ class ActionForm extends React.PureComponent {
   static defaultProps: Object
 
   send: Sender
+  form: Element
   onSubmit: (event: Event) => Action
 
   constructor(props: Object, context: Object) {
     super(props, context)
 
+    this.form = null
     this.send = this.props.send || this.context.send
     this.onSubmit = this.onSubmit.bind(this)
+    this.assignForm = el => (this.form = el)
   }
 
   render() {
-    let props = merge(this.props, { ref: 'form', onSubmit: this.onSubmit })
+    let props = merge(this.props, {
+      ref: this.assignForm,
+      onSubmit: this.onSubmit
+    })
 
     // Remove invalid props to prevent React warnings
     delete props.action
@@ -45,7 +51,7 @@ class ActionForm extends React.PureComponent {
   }
 
   submit(event: Event) {
-    let form = this.refs.form
+    let form = this.form
     let params = this.props.prepare(this.props.serializer(form))
     let action = this.send(this.props.action, params)
 
