@@ -55,7 +55,8 @@ class ActionForm extends React.PureComponent {
 
     console.assert(
       form,
-      'ActionForm submit was called before this component was mounted.'
+      'ActionForm has no form reference and can not submit. This can happen',
+      'if submit() is called after the parent component has unmounted.'
     )
 
     let params = this.props.prepare(this.props.serializer(form))
