@@ -1,4 +1,14 @@
-# Changelog
+# Changelog 
+
+# 12.11.0
+
+- Removed string `ref` in ActionForm, avoiding some edge cases and
+  allowing usage with React 16.
+- Fix boolean flow type
+- Warn when pushing actions on a torn down Microcosm instance
+- register() can return null
+- Pass `context` to ActionForm constructor, fixing a bug with context
+- Use buble instead of babel for production builds, decreasing build size
 
 # 12.10.0
 
