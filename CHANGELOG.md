@@ -1,5 +1,10 @@
 # Changelog 
 
+## Edge
+
+- Domain::setup and constructors receive the key they were mounted at via
+  `options.key`.
+
 # 12.11.0
 
 - Removed string `ref` in ActionForm, avoiding some edge cases and
@@ -9,12 +14,6 @@
 - register() can return null
 - Pass `context` to ActionForm constructor, fixing a bug with context
 - Use buble instead of babel for production builds, decreasing build size
-
-## Edge
-
-- Domain::setup and constructors receive the key they were mounted at via
-  `options.key`.
-
 
 ## 12.10.0
 
