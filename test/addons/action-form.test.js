@@ -175,4 +175,16 @@ describe('serialization', function() {
 
     expect(action).toHaveBeenCalledWith({ name: 'BILLY' })
   })
+
+  it('will not submit an unmounted form', function() {
+    const form = mount(<ActionForm send={jest.fn()} />)
+
+    let instance = form.instance()
+
+    form.unmount()
+
+    expect(function() {
+      instance.submit()
+    }).toThrow(/ActionForm has no form reference and can not submit/)
+  })
 })
