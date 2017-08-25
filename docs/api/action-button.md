@@ -76,6 +76,12 @@ should render with.
 
 The parameters that should be passed when broadcasting the provided action.
 
+### prepare(value, event)
+
+Called after the button is clicked but before the action is broadcasted.
+This provides an opportunity to alter the action payload (e.g. based on
+the event object) before it gets dispatched.
+
 ### onClick(event, action)
 
 An event callback executed immediately after the button clicks and the

@@ -4,6 +4,9 @@
 
 - Domain::setup and constructors receive the key they were mounted at via
   `options.key`.
+- Added `prepare` prop for `ActionButton` that allows developers to specify
+  an extra transformation of the underlying value (e.g. based on the `event`
+  object) before the action gets dispatched.
 
 # 12.11.0
 
