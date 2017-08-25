@@ -252,7 +252,8 @@ class PresenterMediator extends React.PureComponent {
     let interceptors = this.presenter.intercept()
 
     // A presenter's register goes through the same registration steps
-    return getRegistration(interceptors, intent, 'resolve')
+    // Get the first index because Presenters can not chain
+    return getRegistration(interceptors, intent, 'resolve')[0]
   }
 
   send(intent: Command | Tagged, ...params: *[]): * {
@@ -260,21 +261,10 @@ class PresenterMediator extends React.PureComponent {
     let mediator = this
 
     while (mediator) {
-      let handlers = mediator.getHandler(taggedIntent)
-      let size = handlers.length
+      let handler = mediator.getHandler(taggedIntent)
 
-      if (size) {
-        let payload = handlers[0].call(
-          mediator.presenter,
-          mediator.repo,
-          ...params
-        )
-
-        for (var i = 1; i < size; i++) {
-          payload = handlers[i].call(mediator.presenter, mediator.repo, payload)
-        }
-
-        return payload
+      if (handler) {
+        return handler.call(mediator.presenter, mediator.repo, ...params)
       }
 
       mediator = mediator.getParent()
