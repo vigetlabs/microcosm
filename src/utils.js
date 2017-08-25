@@ -226,3 +226,18 @@ export function update(
 
   return set(state, path, next)
 }
+
+/**
+ * Reduce down a list of values.
+ */
+export function pipeline(steps: Handler[], payload: *, start: *, scope: any) {
+  var next = start
+
+  for (var i = 0, len = steps.length; i < len; i++) {
+    var step = steps[i]
+
+    next = step.call(scope, next, payload)
+  }
+
+  return next
+}

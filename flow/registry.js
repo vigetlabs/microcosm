@@ -9,8 +9,8 @@ declare type Handler = (last?: *, next?: *) => *
 
 declare type Registration = {
   key: KeyPath,
-  source: Microcosm | Domain,
-  handler: Handler
+  steps: Handler[],
+  scope: any
 }
 
 declare type Registrations = Registration[]

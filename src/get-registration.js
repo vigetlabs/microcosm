@@ -14,11 +14,15 @@ export const STATUSES = {
   cancelled: 'cancel'
 }
 
+function isPlainObject(value) {
+  return !Array.isArray(value) && isObject(value)
+}
+
 /**
  * Gets any registrations that match a given command and status.
  */
 function getRegistration(pool: ?Object, command: Tagged, status: Status) {
-  let answer = null
+  let answer = []
 
   if (pool == null) {
     return answer
@@ -38,7 +42,7 @@ function getRegistration(pool: ?Object, command: Tagged, status: Status) {
   /**
    * Support nesting, like:
    */
-  if (isObject(nest)) {
+  if (isPlainObject(nest)) {
     answer = nest[alias] || nest[status]
 
     /**
@@ -67,7 +71,11 @@ function getRegistration(pool: ?Object, command: Tagged, status: Status) {
     )
   }
 
-  return answer
+  if (answer) {
+    return Array.isArray(answer) ? answer : [answer]
+  }
+
+  return []
 }
 
 export default getRegistration

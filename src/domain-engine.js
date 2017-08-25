@@ -4,21 +4,21 @@
 
 import MetaDomain from './meta-domain'
 import getRegistration from './get-registration'
-import { get, set, merge, createOrClone } from './utils'
+import { get, set, merge, createOrClone, pipeline } from './utils'
 import { castPath, type KeyPath } from './key-path'
 
 import type Action from './action'
 import type Microcosm from './microcosm'
 
 type DomainList = Array<[KeyPath, Domain]>
-type Registry = { [*]: Registrations }
+type Registry = { [action: string]: Registrations }
 
 class DomainEngine {
   repo: Microcosm
   registry: Registry
   domains: DomainList
 
-  constructor(repo: *) {
+  constructor(repo: Microcosm) {
     this.repo = repo
     this.registry = {}
     this.domains = []
@@ -30,9 +30,9 @@ class DomainEngine {
   getRepoHandlers(action: Action): Registrations {
     let { command, status } = action
 
-    let handler = getRegistration(this.repo.register(), command, status)
+    let steps = getRegistration(this.repo.register(), command, status)
 
-    return handler ? [{ key: [], source: this.repo, handler }] : []
+    return steps.length ? [{ key: [], scope: this.repo, steps }] : []
   }
 
   getHandlers(action: Action): Registrations {
@@ -40,14 +40,14 @@ class DomainEngine {
 
     let { command, status } = action
 
-    for (var i = 0, len = this.domains.length; i < len; i++) {
-      var [key, domain] = this.domains[i]
+    for (var i = 0; i < this.domains.length; i++) {
+      var [key, scope] = this.domains[i]
 
-      if (domain.register) {
-        var handler = getRegistration(domain.register(), command, status)
+      if (scope.register) {
+        let steps = getRegistration(scope.register(), command, status)
 
-        if (handler) {
-          handlers.push({ key, source: domain, handler })
+        if (steps.length) {
+          handlers.push({ key, scope, steps })
         }
       }
     }
@@ -95,8 +95,8 @@ class DomainEngine {
     let handlers = this.register(action)
     let result = state
 
-    for (var i = 0, len = handlers.length; i < len; i++) {
-      var { key, source, handler } = handlers[i]
+    for (var i = 0; i < handlers.length; i++) {
+      var { key, scope, steps } = handlers[i]
 
       var base = get(result, key, null)
       var head = get(snapshot.last, key, null)
@@ -110,7 +110,8 @@ class DomainEngine {
         action.status !== snapshot.status
       ) {
         // Yes: recalculate state from the base
-        result = set(result, key, handler.call(source, base, action.payload))
+        var next = pipeline(steps, action.payload, base, scope)
+        result = set(result, key, next)
       } else {
         // No: use the existing snapshot value (memoizing the domain handler)
         result = set(result, key, get(snapshot.next, key))
