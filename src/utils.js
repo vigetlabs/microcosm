@@ -234,9 +234,7 @@ export function pipeline(steps: Handler[], payload: *, start: *, scope: any) {
   var next = start
 
   for (var i = 0, len = steps.length; i < len; i++) {
-    var step = steps[i]
-
-    next = step.call(scope, next, payload)
+    next = steps[i].call(scope, next, payload)
   }
 
   return next
