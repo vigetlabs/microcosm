@@ -12,7 +12,7 @@ class EffectEngine {
   repo: Microcosm
   effects: Array<Effect>
 
-  constructor(repo: *) {
+  constructor(repo: Microcosm) {
     this.repo = repo
     this.effects = []
   }
@@ -37,14 +37,14 @@ class EffectEngine {
   dispatch(action: Action) {
     let { command, payload, status } = action
 
-    for (var i = 0, len = this.effects.length; i < len; i++) {
+    for (var i = 0; i < this.effects.length; i++) {
       var effect = this.effects[i]
 
       if (effect.register) {
-        let handler = getRegistration(effect.register(), command, status)
+        let handlers = getRegistration(effect.register(), command, status)
 
-        if (handler) {
-          handler.call(effect, this.repo, payload)
+        for (var j = 0; j < handlers.length; j++) {
+          handlers[j].call(effect, this.repo, payload)
         }
       }
     }

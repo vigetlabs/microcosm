@@ -260,10 +260,21 @@ class PresenterMediator extends React.PureComponent {
     let mediator = this
 
     while (mediator) {
-      let handler = mediator.getHandler(taggedIntent)
+      let handlers = mediator.getHandler(taggedIntent)
+      let size = handlers.length
 
-      if (handler) {
-        return handler.call(mediator.presenter, mediator.repo, ...params)
+      if (size) {
+        let payload = handlers[0].call(
+          mediator.presenter,
+          mediator.repo,
+          ...params
+        )
+
+        for (var i = 1; i < size; i++) {
+          payload = handlers[i].call(mediator.presenter, mediator.repo, payload)
+        }
+
+        return payload
       }
 
       mediator = mediator.getParent()

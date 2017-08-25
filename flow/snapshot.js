@@ -16,5 +16,5 @@ declare type Snapshot = {
   // Last known status of the action associated with this snapshot.
   status: Status,
   // Last known payload of the action associated with this snapshot.
-  payload: *
+  payload: any
 }

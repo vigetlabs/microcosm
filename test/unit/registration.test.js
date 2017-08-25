@@ -24,6 +24,48 @@ describe('getRegistration', function() {
     expect(handler).toHaveBeenCalled()
   })
 
+  it('can chain domain handlers', function() {
+    let format = text => text
+
+    let repo = new Microcosm()
+
+    repo.addDomain('word', {
+      register() {
+        return {
+          [format]: [
+            (state, string) => string,
+            string => string.slice(0, 4),
+            string => string.toUpperCase()
+          ]
+        }
+      }
+    })
+
+    repo.push(format, 'test-string')
+
+    expect(repo).toHaveState('word', 'TEST')
+  })
+
+  it('can chain effect handlers', function() {
+    let a = jest.fn()
+    let b = jest.fn()
+
+    let repo = new Microcosm()
+
+    repo.addEffect({
+      register() {
+        return {
+          test: [a, b]
+        }
+      }
+    })
+
+    let action = repo.push('test', 'foobar')
+
+    expect(a).toHaveBeenCalledWith(repo, 'foobar')
+    expect(b).toHaveBeenCalledWith(repo, 'foobar')
+  })
+
   it.dev('throws if given an invalid status', function() {
     let repo = new Microcosm()
 
