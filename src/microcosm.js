@@ -15,7 +15,7 @@ import getRegistration from './get-registration'
 import tag from './tag'
 import installDevtools from './install-devtools'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
-import { merge, get, set, update } from './utils'
+import { merge, get, set, update, pipeline } from './utils'
 
 /**
  * Options passed into Microcosm always extend from this object. You
@@ -499,5 +499,6 @@ export {
   set,
   update,
   merge,
+  pipeline,
   getRegistration
 }
