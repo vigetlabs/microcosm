@@ -117,6 +117,38 @@ function readPlanets () {
 repo.push(readPlanets)
 ```
 
+**Heads up:** Sometimes you want an action to return a function that isn't 
+executed as a thunk. If you pass a function as an action argument and return 
+that function in the action body, Microcosm _will not_ treat this as a thunk.
+
+```javascript
+function noThunk(fn) {
+  return fn // will not be called as a thunk by Microcosm
+}
+```
+
+If you need to return a function from an action body consider wrapping it in a 
+thunk:
+
+```javascript
+function actionReturnsFunction () {
+  return function (action) {
+    action.resolve(x => x) // the action's payload will be this inner function
+  }
+}
+```
+
+Alternatively, if you want Microcosm to treat your function action argument as 
+a thunk, you can wrap it in an anonymous function first.
+
+```javascript
+function maybeThunk(thunkFn, shouldThunk) {
+  if (shouldThunk) {
+    return (action, repo) => thunkFn(action, repo)
+  }
+}
+```
+
 ### Return a generator
 
 **Heads up:** Generators are a new feature included in the JS2015

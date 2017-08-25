@@ -94,7 +94,7 @@ export default function coroutine(
   }
 
   /**
-   * Check for thunks. An escape hatch to direction work with an
+   * Check for thunks. An escape hatch to directly work with an
    * action. It is triggered by returning a function from a
    * command. This middleware will execute that function with the
    * action as the first argument. If the returned function is equal

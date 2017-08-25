@@ -9,6 +9,10 @@
   object) before the action gets dispatched.
 - Domain and effect registration handlers can be an array of functions that are processed sequentially.
 
+- Tweaked internal processing of actions to allow function arguments
+  to be returned from actions without being treated as a thunk. See
+  the docs for Actions for more information.
+
 # 12.11.0
 
 - Removed string `ref` in ActionForm, avoiding some edge cases and
