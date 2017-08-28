@@ -60,7 +60,7 @@ describe('getRegistration', function() {
       }
     })
 
-    let action = repo.push('test', 'foobar')
+    repo.push('test', 'foobar')
 
     expect(a).toHaveBeenCalledWith(repo, 'foobar')
     expect(b).toHaveBeenCalledWith(repo, 'foobar')
