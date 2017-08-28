@@ -1,14 +1,14 @@
 # Changelog 
 
-## Edge
+## 12.12.0
 
 - Domain::setup and constructors receive the key they were mounted at via
   `options.key`.
 - Added `prepare` prop for `ActionButton` that allows developers to specify
   an extra transformation of the underlying value (e.g. based on the `event`
   object) before the action gets dispatched.
-- Domain and effect registration handlers can be an array of functions that are processed sequentially.
-
+- Domain and effect registration handlers can be an array of functions
+  that are processed sequentially.
 - Tweaked internal processing of actions to allow function arguments
   to be returned from actions without being treated as a thunk. See
   the docs for Actions for more information.
