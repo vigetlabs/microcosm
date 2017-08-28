@@ -219,6 +219,34 @@ const Planets = {
 repo.push(Actions.add, { name: 'earth' }) // this will add Earth
 ```
 
+#### Multiple handlers for the same action
+
+You can assign multiple handlers to an action by passing an array:
+
+```javascript
+import { addPlanet } from '../actions/planets'
+import { sortBy } from 'lodash'
+
+const Planets = {
+  //...
+  register () {
+    return {
+      [addPlanet]: [this.append, this.sort]
+    }
+  },
+  append (planets, params) {
+    return planets.concat(params)
+  },
+  sort (planets) {
+    return sortBy(planets, 'name')
+  }
+}
+
+repo.push(Actions.add, { name: 'earth' }) // this will add Earth
+```
+
+These handlers are processed from left to right, receiving the result of the prior handler as the first argument.
+
 ### `Domain.defaults`
 
 Specifies default options a Domain is instantiated with. This

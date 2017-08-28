@@ -151,6 +151,36 @@ repo.addEffect(Planets)
 repo.push(addPlanet, { name: 'earth' }) // this will add Earth
 ```
 
+#### Multiple handlers for the same action
+
+You can assign multiple handlers to an action by passing an array:
+
+```javascript
+// /src/effects/planets.js
+
+import { addPlanet } from '../actions/planets'
+
+class Planets {
+  //...
+  register () {
+    return {
+      [addPlanet.error]: [this.alert, this.trackError]
+    }
+  }
+
+  alert (repo, error) {
+    alert('There was an issue!)
+  }
+  
+  trackError (repo, error) {
+    myLogService.trackError(error)
+  }
+}
+
+repo.addEffect(Planets)
+repo.push(addPlanet, { name: 'earth' })
+```
+
 ### `Effect.defaults`
 
 Specifies default options a Effect is instantiated with. This
