@@ -9,7 +9,6 @@ describe('Thunk middleware', function() {
     expect(spy).toHaveBeenCalledWith(action, repo)
   })
 
-
   it('does not treat function action arguments as thunks when they are directly returned', function() {
     expect.assertions(2)
 
