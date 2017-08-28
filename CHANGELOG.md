@@ -7,6 +7,7 @@
 - Added `prepare` prop for `ActionButton` that allows developers to specify
   an extra transformation of the underlying value (e.g. based on the `event`
   object) before the action gets dispatched.
+- Domain and effect registration handlers can be an array of functions that are processed sequentially.
 
 # 12.11.0
 

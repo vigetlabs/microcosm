@@ -4,7 +4,7 @@
 
 import MetaDomain from './meta-domain'
 import getRegistration from './get-registration'
-import { get, set, merge, createOrClone, pipeline } from './utils'
+import { get, set, merge, createOrClone } from './utils'
 import { castPath, type KeyPath } from './key-path'
 
 import type Action from './action'
@@ -12,6 +12,19 @@ import type Microcosm from './microcosm'
 
 type DomainList = Array<[KeyPath, Domain]>
 type Registry = { [action: string]: Registrations }
+
+/**
+ * Reduce down a list of values.
+ */
+function reduce(steps: Handler[], payload: *, start: *, scope: any) {
+  var next = start
+
+  for (var i = 0, len = steps.length; i < len; i++) {
+    next = steps[i].call(scope, next, payload)
+  }
+
+  return next
+}
 
 class DomainEngine {
   repo: Microcosm
@@ -110,8 +123,7 @@ class DomainEngine {
         action.status !== snapshot.status
       ) {
         // Yes: recalculate state from the base
-        var next = pipeline(steps, action.payload, base, scope)
-        result = set(result, key, next)
+        result = set(result, key, reduce(steps, action.payload, base, scope))
       } else {
         // No: use the existing snapshot value (memoizing the domain handler)
         result = set(result, key, get(snapshot.next, key))
