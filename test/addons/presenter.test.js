@@ -132,7 +132,7 @@ describe('::getModel', function() {
 
     repo.patch({ color: 'red' })
 
-    await timer(10)
+    await timer(100)
 
     const text = presenter.text()
 
@@ -911,7 +911,7 @@ describe('Efficiency', function() {
 
     repo.patch({ color: 'green' })
 
-    await timer(10)
+    await timer(100)
 
     expect(model).toHaveBeenCalledTimes(1)
     expect(wrapper.text()).toEqual('green')
@@ -1048,7 +1048,7 @@ describe('Efficiency', function() {
     wrapper.setProps({ foo: 'baz' })
 
     // Wait for the animation frame to fire
-    await timer(10)
+    await timer(100)
 
     // The frame should have been cancelled, so render is called three times:
     // for the initial render, and the two property injections
