@@ -78,10 +78,12 @@ class DomainEngine {
     return this.registry[type]
   }
 
-  add(key: string, config: *, options?: Object) {
+  add(key: string | KeyPath, config: *, options?: Object) {
+    let keyPath: KeyPath = castPath(key)
+
     console.assert(
       !options || options.constructor === Object,
-      `repo.addDomain("${key}", domain, options) expected a plain object.`,
+      `repo.addDomain("${keyPath.join('.')}", domain, options) expected a plain object.`,
       'Instead got',
       get(options, 'constructor.name', 'Unknown')
     )
@@ -92,8 +94,8 @@ class DomainEngine {
       { key },
       options
     )
+
     let domain: Domain = createOrClone(config, deepOptions, this.repo)
-    let keyPath: KeyPath = castPath(key)
 
     this.domains.push([keyPath, domain])
 
