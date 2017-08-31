@@ -13,7 +13,7 @@ const View = withSend(function({ send }) {
   return <button id="button" onClick={() => send('test', true)} />
 })
 
-const timer = time => new Promise(resolve => setTimeout(resolve), time)
+const timer = time => new Promise(resolve => setTimeout(resolve, time))
 
 class Repo extends Microcosm {
   getInitialState() {

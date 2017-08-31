@@ -192,6 +192,7 @@ class PresenterMediator extends React.Component {
   model: Model
   _lastRevision: number
   _scheduledFrame: *
+  _scheduleUpdate: *
 
   constructor(props: Object, context: Object) {
     super(props, context)
@@ -255,6 +256,26 @@ class PresenterMediator extends React.Component {
     return this.presenter.defaultRender()
   }
 
+  send(intent: Command | Tagged, ...params: *[]): * {
+    let taggedIntent = tag(intent)
+    let mediator = this
+
+    while (mediator) {
+      let handler = mediator._getHandler(taggedIntent)
+
+      if (handler) {
+        return handler.call(mediator.presenter, mediator.repo, ...params)
+      }
+
+      mediator = mediator._getParent()
+    }
+
+    // If we hit the top, push the intent into the Microcosm instance
+    return this.repo.push(...arguments)
+  }
+
+  // Private
+
   _scheduleUpdate() {
     if (this.model.revision > this._lastRevision) {
       this.forceUpdate()
@@ -289,24 +310,6 @@ class PresenterMediator extends React.Component {
     // A presenter's register goes through the same registration steps
     // Get the first index because Presenters can not chain
     return getRegistration(interceptors, intent, 'resolve')[0]
-  }
-
-  send(intent: Command | Tagged, ...params: *[]): * {
-    let taggedIntent = tag(intent)
-    let mediator = this
-
-    while (mediator) {
-      let handler = mediator._getHandler(taggedIntent)
-
-      if (handler) {
-        return handler.call(mediator.presenter, mediator.repo, ...params)
-      }
-
-      mediator = mediator._getParent()
-    }
-
-    // If we hit the top, push the intent into the Microcosm instance
-    return this.repo.push(...arguments)
   }
 }
 

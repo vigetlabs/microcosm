@@ -77,7 +77,8 @@ export default class Model extends Emitter {
     if (value !== this.value) {
       this.value = value
       this.revision += 1
-      this._emit('change', value)
+
+      this._emit('change', this.value)
     }
 
     return value
