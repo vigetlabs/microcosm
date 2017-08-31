@@ -12,7 +12,7 @@
 import React from 'react'
 import Microcosm, { merge, tag, getRegistration } from '../microcosm'
 import Model from './model'
-import shallowDiff from './shallow-diff'
+import shouldModelUpdate from './should-model-update'
 import { requestFrame, cancelFrame } from './frame'
 
 function passChildren() {
