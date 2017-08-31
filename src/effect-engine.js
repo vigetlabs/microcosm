@@ -20,7 +20,7 @@ class EffectEngine {
   add(config: Object | Function, options?: Object) {
     console.assert(
       !options || options.constructor === Object,
-      'repo.addEffect(Effect, options) expected a plain object. Instead got',
+      'addEffect expected a plain object as the second argument. Instead got',
       get(options, 'constructor.name', 'Unknown')
     )
 

@@ -5,7 +5,9 @@ describe('Domain construction', function() {
     expect(function() {
       let repo = new Microcosm()
       repo.addDomain('foo', {}, new Microcosm())
-    }).toThrow(/expected a plain object\. Instead got Microcosm/)
+    }).toThrow(
+      /expected a plain object as the second argument\. Instead got Microcosm/
+    )
   })
 
   it('object - primitive', function() {
