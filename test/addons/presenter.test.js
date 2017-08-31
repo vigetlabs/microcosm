@@ -396,6 +396,22 @@ describe('::getModel', function() {
 })
 
 describe('::setup', function() {
+  it('the model is not available in setup', function() {
+    expect.assertions(1)
+
+    class MyPresenter extends Presenter {
+      setup() {
+        expect(this.model).toEqual({})
+      }
+
+      getModel() {
+        return { foo: 'bar' }
+      }
+    }
+
+    mount(<MyPresenter />)
+  })
+
   it('runs a setup function when created', function() {
     const test = jest.fn()
 
@@ -911,6 +927,132 @@ describe('Efficiency', function() {
     mount(<Test />).setState({ test: true })
 
     expect(spy).toHaveBeenCalledTimes(2)
+  })
+
+  it('should re-render when a property is added', function() {
+    const spy = jest.fn(() => null)
+
+    class Test extends Presenter {
+      view = spy
+    }
+
+    mount(<Test />).setProps({ another: true })
+
+    expect(spy).toHaveBeenCalledTimes(2)
+  })
+
+  it('should re-render when a property is removed', function() {
+    const spy = jest.fn(() => null)
+
+    class Test extends Presenter {
+      view = spy
+    }
+
+    mount(<Test prop />).setProps({})
+
+    expect(spy).toHaveBeenCalledTimes(2)
+  })
+
+  it('cancels pending updates when unmounted', async function() {
+    let spy = jest.fn(() => <p>Test</p>)
+
+    class Test extends Presenter {
+      getModel() {
+        return {
+          anything: state => Math.random()
+        }
+      }
+
+      view = spy
+    }
+
+    let repo = new Repo({ batch: true })
+    let wrapper = mount(<Test repo={repo} />)
+
+    // Cause a change
+    repo.patch({ color: 'teal' })
+
+    // Wait for history to reconcile, this will trigger a change
+    // that activates the model
+    await repo.history
+
+    // Unmounting should kill all outstanding update frames
+    wrapper.unmount()
+
+    // Wait for the animation frame to fire
+    await timer(10)
+
+    // The frame should have been cancelled, so render is called once
+    expect(spy).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not render again if forced to render in the meantime', async function() {
+    let spy = jest.fn(() => <p>Test</p>)
+
+    class Test extends Presenter {
+      getModel() {
+        return {
+          anything: state => Math.random()
+        }
+      }
+
+      view = spy
+    }
+
+    let repo = new Repo({ batch: true })
+    let wrapper = mount(<Test repo={repo} />)
+
+    // Cause a change
+    repo.patch({ color: 'teal' })
+
+    // Wait for history to reconcile, this will trigger a change
+    // that activates the model
+    await repo.history
+
+    // Now send new properties in, which forces a render
+    wrapper.setProps({ foo: 'bar' })
+
+    // Wait for the animation frame to fire
+    await timer(10)
+
+    // The frame should have been cancelled, so render is called twice:
+    // for the initial render, and new props
+    expect(spy).toHaveBeenCalledTimes(2)
+  })
+
+  it('batches pending updates', async function() {
+    let spy = jest.fn(() => <p>Test</p>)
+
+    class Test extends Presenter {
+      getModel() {
+        return {
+          anything: state => Math.random()
+        }
+      }
+
+      view = spy
+    }
+
+    let repo = new Repo({ batch: true })
+    let wrapper = mount(<Test repo={repo} />)
+
+    // Cause a change
+    repo.patch({ color: 'teal' })
+
+    // Wait for history to reconcile, this will trigger a change
+    // that activates the model
+    await repo.history
+
+    // Now send new properties in, which forces a render
+    wrapper.setProps({ foo: 'bar' })
+    wrapper.setProps({ foo: 'baz' })
+
+    // Wait for the animation frame to fire
+    await timer(10)
+
+    // The frame should have been cancelled, so render is called three times:
+    // for the initial render, and the two property injections
+    expect(spy).toHaveBeenCalledTimes(3)
   })
 })
 

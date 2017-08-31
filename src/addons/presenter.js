@@ -13,6 +13,7 @@ import React from 'react'
 import Microcosm, { merge, tag, getRegistration } from '../microcosm'
 import Model from './model'
 import shallowDiff from './shallow-diff'
+import { requestFrame, cancelFrame } from './frame'
 
 function passChildren() {
   return this.props.children ? React.Children.only(this.props.children) : null
@@ -24,10 +25,6 @@ function renderMediator() {
     presenterProps: this.props
   })
 }
-
-const hasFrame = typeof requestAnimationFrame !== 'undefined'
-const requestFrame = hasFrame ? requestAnimationFrame : fn => setTimeout(fn)
-const cancelFrame = hasFrame ? cancelAnimationFrame : time => clearTimeout(time)
 
 /* istanbul ignore next */
 const identity = () => {}
@@ -65,14 +62,7 @@ class Presenter extends React.Component {
   }
 
   get model(): * {
-    return this.mediator ? this.mediator.model.value : {}
-  }
-
-  componentWillUpdate(props: Object, state: Object) {
-    if (shallowDiff(props, this.props) || shallowDiff(state, this.state)) {
-      this._updateModel(props, state)
-      this.update(this.repo, props, state)
-    }
+    return this.mediator.model.value
   }
 
   /**
@@ -90,6 +80,13 @@ class Presenter extends React.Component {
    */
   ready(repo: Microcosm, props: Object, state: Object) {
     // NOOP
+  }
+
+  componentWillUpdate(props: Object, state: Object) {
+    if (shallowDiff(this.props, props) || shallowDiff(this.state, state)) {
+      this._updateModel(props, state)
+      this.update(this.repo, props, state)
+    }
   }
 
   /**
@@ -297,6 +294,7 @@ class PresenterMediator extends React.Component {
   _stopUpdate() {
     if (this._scheduledFrame) {
       cancelFrame(this._scheduledFrame)
+      this._scheduledFrame = null
     }
   }
 

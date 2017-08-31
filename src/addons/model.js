@@ -74,10 +74,10 @@ export default class Model extends Emitter {
   }
 
   publish(value: *) {
+
     if (value !== this.value) {
       this.value = value
       this.revision += 1
-
       this._emit('change', this.value)
     }
 
@@ -98,6 +98,7 @@ export default class Model extends Emitter {
   compute() {
     let last = this.value
     let next = last
+
     for (var key in this.bindings) {
       var value = invoke(this.bindings[key], this.repo, this.scope)
 
