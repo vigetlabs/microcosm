@@ -1,7 +1,7 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Domain construction', function() {
-  it('errors when given non-POJO options', function() {
+  it.dev('errors when given non-POJO options', function() {
     expect(function() {
       let repo = new Microcosm()
       repo.addDomain('foo', {}, new Microcosm())

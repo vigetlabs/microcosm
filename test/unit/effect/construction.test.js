@@ -23,7 +23,7 @@ describe('Effect construction', function() {
     expect(spy).toHaveBeenCalledWith(repo, true)
   })
 
-  it('errors when given non-POJO options', function() {
+  it.dev('errors when given non-POJO options', function() {
     expect(function() {
       let repo = new Microcosm()
       repo.addEffect({}, new Microcosm())
