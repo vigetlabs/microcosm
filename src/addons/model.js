@@ -74,7 +74,6 @@ export default class Model extends Emitter {
   }
 
   publish(value: *) {
-
     if (value !== this.value) {
       this.value = value
       this.revision += 1

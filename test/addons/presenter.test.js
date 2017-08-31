@@ -948,7 +948,7 @@ describe('Efficiency', function() {
       view = spy
     }
 
-    mount(<Test prop />).setProps({})
+    mount(<Test prop="true" />).setProps({ prop: null })
 
     expect(spy).toHaveBeenCalledTimes(2)
   })

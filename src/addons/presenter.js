@@ -22,14 +22,15 @@ function passChildren() {
 function renderMediator() {
   return React.createElement(PresenterMediator, {
     presenter: this,
-    presenterProps: this.props
+    presenterProps: this.props,
+    presenterState: this.state
   })
 }
 
 /* istanbul ignore next */
 const identity = () => {}
 
-class Presenter extends React.Component {
+class Presenter extends React.PureComponent {
   render: () => *
   defaultRender: () => *
   send: *
@@ -182,7 +183,7 @@ class Presenter extends React.Component {
   }
 }
 
-class PresenterMediator extends React.Component {
+class PresenterMediator extends React.PureComponent {
   repo: Microcosm
   send: *
   presenter: Presenter
