@@ -75,34 +75,6 @@ class Presenter extends React.Component {
     }
   }
 
-  _updateModel(props: Object, state: Object) {
-    return this.mediator.model.bind(this.getModel(props, state))
-  }
-
-  _beginSetup(mediator: PresenterMediator) {
-    this.repo = mediator.repo
-    this.mediator = mediator
-
-    this.setup(this.repo, this.props, this.state)
-
-    this._updateModel(this.props, this.state)
-
-    this.ready(this.repo, this.props, this.state)
-  }
-
-  _beginTeardown() {
-    this.teardown(this.repo, this.props, this.state)
-  }
-
-  _requestRepo(contextRepo: ?Microcosm) {
-    let givenRepo = this.props.repo || contextRepo
-    let workingRepo = this.getRepo(givenRepo, this.props)
-
-    this.didFork = workingRepo !== givenRepo
-
-    return workingRepo
-  }
-
   /**
    * Called when a presenter is created, useful any prep work. `setup`
    * runs before the first `getModel` invocation.
@@ -181,6 +153,36 @@ class Presenter extends React.Component {
   getModel(presenterProps: Object, presenterState: Object) {
     return {}
   }
+
+  // Private
+
+  _updateModel(props: Object, state: Object) {
+    return this.mediator.model.bind(this.getModel(props, state))
+  }
+
+  _beginSetup(mediator: PresenterMediator) {
+    this.repo = mediator.repo
+    this.mediator = mediator
+
+    this.setup(this.repo, this.props, this.state)
+
+    this._updateModel(this.props, this.state)
+
+    this.ready(this.repo, this.props, this.state)
+  }
+
+  _beginTeardown() {
+    this.teardown(this.repo, this.props, this.state)
+  }
+
+  _requestRepo(contextRepo: ?Microcosm) {
+    let givenRepo = this.props.repo || contextRepo
+    let workingRepo = this.getRepo(givenRepo, this.props)
+
+    this.didFork = workingRepo !== givenRepo
+
+    return workingRepo
+  }
 }
 
 class PresenterMediator extends React.Component {
@@ -188,22 +190,21 @@ class PresenterMediator extends React.Component {
   send: *
   presenter: Presenter
   model: Model
-  lastRevision: number
-  scheduleUpdate: *
-  scheduledFrame: *
+  _lastRevision: number
+  _scheduledFrame: *
 
   constructor(props: Object, context: Object) {
     super(props, context)
 
     this.presenter = props.presenter
     this.repo = this.presenter._requestRepo(context.repo)
-    this.lastRevision = -Infinity
+    this._lastRevision = -Infinity
 
     this.model = new Model(this.repo, this.presenter)
 
     // The following methods are autobound to protect scope
     this.send = this.send.bind(this)
-    this.scheduleUpdate = this.scheduleUpdate.bind(this)
+    this._scheduleUpdate = this._scheduleUpdate.bind(this)
   }
 
   getChildContext() {
@@ -220,7 +221,7 @@ class PresenterMediator extends React.Component {
 
   componentDidMount() {
     this.presenter.refs = this.refs
-    this.model.on('change', this.queueUpdate, this)
+    this.model.on('change', this._queueUpdate, this)
   }
 
   componentWillUnmount() {
@@ -234,7 +235,7 @@ class PresenterMediator extends React.Component {
 
     this.presenter._beginTeardown()
 
-    this.stopUpdate()
+    this._stopUpdate()
   }
 
   render() {
@@ -242,7 +243,7 @@ class PresenterMediator extends React.Component {
     const { model, view } = this.presenter
     const { presenterProps } = this.props
 
-    this.lastRevision = this.model.revision
+    this._lastRevision = this.model.revision
 
     if (view != null) {
       return React.createElement(
@@ -254,35 +255,35 @@ class PresenterMediator extends React.Component {
     return this.presenter.defaultRender()
   }
 
-  scheduleUpdate() {
-    if (this.model.revision > this.lastRevision) {
+  _scheduleUpdate() {
+    if (this.model.revision > this._lastRevision) {
       this.forceUpdate()
     }
 
-    this.scheduledFrame = null
+    this._scheduledFrame = null
   }
 
-  queueUpdate() {
+  _queueUpdate() {
     if (this.repo.history.batch) {
-      if (!this.scheduledFrame) {
-        this.scheduledFrame = requestFrame(this.scheduleUpdate)
+      if (!this._scheduledFrame) {
+        this._scheduledFrame = requestFrame(this._scheduleUpdate)
       }
     } else {
       this.forceUpdate()
     }
   }
 
-  stopUpdate() {
-    if (this.scheduledFrame) {
-      cancelFrame(this.scheduledFrame)
+  _stopUpdate() {
+    if (this._scheduledFrame) {
+      cancelFrame(this._scheduledFrame)
     }
   }
 
-  getParent(): ?PresenterMediator {
+  _getParent(): ?PresenterMediator {
     return this.context.parent
   }
 
-  getHandler(intent: Tagged): * {
+  _getHandler(intent: Tagged): * {
     let interceptors = this.presenter.intercept()
 
     // A presenter's register goes through the same registration steps
@@ -295,13 +296,13 @@ class PresenterMediator extends React.Component {
     let mediator = this
 
     while (mediator) {
-      let handler = mediator.getHandler(taggedIntent)
+      let handler = mediator._getHandler(taggedIntent)
 
       if (handler) {
         return handler.call(mediator.presenter, mediator.repo, ...params)
       }
 
-      mediator = mediator.getParent()
+      mediator = mediator._getParent()
     }
 
     // If we hit the top, push the intent into the Microcosm instance
