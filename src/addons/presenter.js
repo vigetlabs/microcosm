@@ -12,7 +12,6 @@
 import React from 'react'
 import Microcosm, { merge, tag, getRegistration } from '../microcosm'
 import Model from './model'
-import shouldModelUpdate from './should-model-update'
 import { requestFrame, cancelFrame } from './frame'
 
 function passChildren() {
@@ -84,10 +83,8 @@ class Presenter extends React.PureComponent {
   }
 
   componentWillUpdate(props: Object, state: Object) {
-    if (shallowDiff(this.props, props) || shallowDiff(this.state, state)) {
-      this._updateModel(props, state)
-      this.update(this.repo, props, state)
-    }
+    this._updateModel(props, state)
+    this.update(this.repo, props, state)
   }
 
   /**
