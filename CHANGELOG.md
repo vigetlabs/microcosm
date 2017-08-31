@@ -1,5 +1,9 @@
 # Changelog 
 
+## Edge
+
+- In batching mode, Presenter model updates are asynchronous. 
+
 ## 12.12.0
 
 - Domain::setup and constructors receive the key they were mounted at via
