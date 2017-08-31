@@ -27,6 +27,7 @@ export default class Model extends Emitter {
   scope: Object
   bindings: { [key: string]: * }
   subscriptions: { [key: string]: * }
+  revision: number
   value: *
 
   constructor(repo: Microcosm, scope: Object) {
@@ -37,6 +38,7 @@ export default class Model extends Emitter {
     this.bindings = {}
     this.subscriptions = {}
     this.value = {}
+    this.revision = 0
 
     this.repo.on('change', this.compute, this)
   }
@@ -71,16 +73,21 @@ export default class Model extends Emitter {
     this.compute()
   }
 
+  publish(value: *) {
+    if (value !== this.value) {
+      this.value = value
+      this.revision += 1
+      this._emit('change', value)
+    }
+
+    return value
+  }
+
   /**
    * Update a specific model key. Emits a change event
    */
   set(key: string, value: *) {
-    let next = set(this.value, key, value)
-
-    if (this.value !== next) {
-      this.value = next
-      this._emit('change', this.value)
-    }
+    return this.publish(set(this.value, key, value))
   }
 
   /**
@@ -96,10 +103,7 @@ export default class Model extends Emitter {
       next = set(next, key, value)
     }
 
-    if (last !== next) {
-      this.value = next
-      this._emit('change', next)
-    }
+    return this.publish(next)
   }
 
   /**

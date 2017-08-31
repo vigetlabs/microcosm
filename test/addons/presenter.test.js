@@ -13,6 +13,8 @@ const View = withSend(function({ send }) {
   return <button id="button" onClick={() => send('test', true)} />
 })
 
+const timer = time => new Promise(resolve => setTimeout(resolve), time)
+
 class Repo extends Microcosm {
   getInitialState() {
     return { color: 'yellow' }
@@ -109,7 +111,7 @@ describe('::getModel', function() {
     mount(<Test repo={repo} />)
   })
 
-  it('builds the view model into state', function() {
+  it('builds the view model into state', async function() {
     class MyPresenter extends Presenter {
       getModel() {
         return {
@@ -125,10 +127,12 @@ describe('::getModel', function() {
       }
     }
 
-    const repo = new Repo()
+    const repo = new Repo({ batch: true })
     const presenter = mount(<MyPresenter repo={repo} />)
 
     repo.patch({ color: 'red' })
+
+    await timer(10)
 
     const text = presenter.text()
 
@@ -349,12 +353,15 @@ describe('::getModel', function() {
     })
 
     it('does not recalculate the model when state is the same', function() {
-      const spy = jest.fn(function() {
-        return <p>Test</p>
+      const spy = jest.fn(() => {
+        return {}
       })
 
       class TrackedNamer extends Namer {
-        view = spy
+        getModel = spy
+        render() {
+          return <p>Test</p>
+        }
       }
 
       const wrapper = mount(<TrackedNamer name="Colonel" />)
@@ -448,7 +455,7 @@ describe('::setup', function() {
 
     class Test extends Presenter {
       setup() {
-        expect(this.model).not.toBeDefined()
+        expect(this.model).toEqual({})
       }
       getModel() {
         return {
@@ -859,8 +866,8 @@ describe('Efficiency', function() {
     expect(repo.on).not.toHaveBeenCalled()
   })
 
-  it('child view model is not recalculated when parent repos cause them to re-render', function() {
-    const repo = new Repo()
+  it('child view model is not recalculated when parent repos cause them to re-render', async function() {
+    const repo = new Repo({ batch: true })
 
     const model = jest.fn(function() {
       return {
@@ -887,6 +894,8 @@ describe('Efficiency', function() {
     let wrapper = mount(<Parent repo={repo} />)
 
     repo.patch({ color: 'green' })
+
+    await timer(10)
 
     expect(model).toHaveBeenCalledTimes(1)
     expect(wrapper.text()).toEqual('green')
@@ -1369,20 +1378,18 @@ describe('::children', function() {
     expect(wrapper.text()).toEqual('2')
   })
 
-  it('does not re-render when children are the same', function() {
+  it('does not recalculate the model when receiving new children', function() {
+    let spy = jest.fn()
+
+    class Test extends Presenter {
+      getModel = spy
+    }
+
     let children = <span>1</span>
-    let wrapper = mount(
-      <Presenter>
-        {children}
-      </Presenter>
-    )
-
-    let presenter = wrapper.instance()
-
-    jest.spyOn(presenter, 'render')
+    let wrapper = mount(<Test children={children} />)
 
     wrapper.setProps({ children })
 
-    expect(presenter.render).not.toHaveBeenCalled()
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 })

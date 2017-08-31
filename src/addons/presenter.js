@@ -12,6 +12,7 @@
 import React from 'react'
 import Microcosm, { merge, tag, getRegistration } from '../microcosm'
 import Model from './model'
+import shallowDiff from './shallow-diff'
 
 function passChildren() {
   return this.props.children ? React.Children.only(this.props.children) : null
@@ -20,15 +21,18 @@ function passChildren() {
 function renderMediator() {
   return React.createElement(PresenterMediator, {
     presenter: this,
-    parentState: this.state,
-    parentProps: this.props
+    presenterProps: this.props
   })
 }
+
+const hasFrame = typeof requestAnimationFrame !== 'undefined'
+const requestFrame = hasFrame ? requestAnimationFrame : fn => setTimeout(fn)
+const cancelFrame = hasFrame ? cancelAnimationFrame : time => clearTimeout(time)
 
 /* istanbul ignore next */
 const identity = () => {}
 
-class Presenter extends React.PureComponent {
+class Presenter extends React.Component {
   render: () => *
   defaultRender: () => *
   send: *
@@ -57,6 +61,22 @@ class Presenter extends React.PureComponent {
 
     // Autobind send so that context is maintained when passing send to children
     this.send = this.send.bind(this)
+    this.state = {}
+  }
+
+  get model(): * {
+    return this.mediator ? this.mediator.model.value : {}
+  }
+
+  componentWillUpdate(props: Object, state: Object) {
+    if (shallowDiff(props, this.props) || shallowDiff(state, this.state)) {
+      this._updateModel(props, state)
+      this.update(this.repo, props, state)
+    }
+  }
+
+  _updateModel(props: Object, state: Object) {
+    return this.mediator.model.bind(this.getModel(props, state))
   }
 
   _beginSetup(mediator: PresenterMediator) {
@@ -65,7 +85,7 @@ class Presenter extends React.PureComponent {
 
     this.setup(this.repo, this.props, this.state)
 
-    this.model = this.mediator.updateModel(this.props, this.state)
+    this._updateModel(this.props, this.state)
 
     this.ready(this.repo, this.props, this.state)
   }
@@ -124,12 +144,7 @@ class Presenter extends React.PureComponent {
    * communication. Data down, actions up.
    */
   intercept(): * {
-    return {}
-  }
-
-  componentWillUpdate(props: Object, state: Object) {
-    this.model = this.mediator.updateModel(props, state)
-    this.update(this.repo, props, state)
+    return null
   }
 
   /**
@@ -168,25 +183,27 @@ class Presenter extends React.PureComponent {
   }
 }
 
-class PresenterMediator extends React.PureComponent {
+class PresenterMediator extends React.Component {
   repo: Microcosm
   send: *
   presenter: Presenter
   model: Model
+  lastRevision: number
+  scheduleUpdate: *
+  scheduledFrame: *
 
   constructor(props: Object, context: Object) {
     super(props, context)
 
     this.presenter = props.presenter
-
     this.repo = this.presenter._requestRepo(context.repo)
-    this.send = this.send.bind(this)
-
-    this.state = { repo: this.repo, send: this.send }
+    this.lastRevision = -Infinity
 
     this.model = new Model(this.repo, this.presenter)
 
-    this.model.on('change', this.updateState, this)
+    // The following methods are autobound to protect scope
+    this.send = this.send.bind(this)
+    this.scheduleUpdate = this.scheduleUpdate.bind(this)
   }
 
   getChildContext() {
@@ -203,6 +220,7 @@ class PresenterMediator extends React.PureComponent {
 
   componentDidMount() {
     this.presenter.refs = this.refs
+    this.model.on('change', this.queueUpdate, this)
   }
 
   componentWillUnmount() {
@@ -215,33 +233,49 @@ class PresenterMediator extends React.PureComponent {
     this.model.teardown()
 
     this.presenter._beginTeardown()
+
+    this.stopUpdate()
   }
 
   render() {
-    // setObject might have been called before the model
-    // can get assigned
-    this.presenter.model = this.state
-
     // Views can be getters, so pluck it out so that it is only evaluated once
-    const view = this.presenter.view
+    const { model, view } = this.presenter
+    const { presenterProps } = this.props
+
+    this.lastRevision = this.model.revision
 
     if (view != null) {
-      return React.createElement(view, merge(this.presenter.props, this.state))
+      return React.createElement(
+        view,
+        merge(presenterProps, { repo: this.repo, send: this.send }, model)
+      )
     }
 
     return this.presenter.defaultRender()
   }
 
-  updateState(state: Object) {
-    this.setState(state)
+  scheduleUpdate() {
+    if (this.model.revision > this.lastRevision) {
+      this.forceUpdate()
+    }
+
+    this.scheduledFrame = null
   }
 
-  updateModel(props: Object, state: Object) {
-    let bindings = this.presenter.getModel(props, state)
+  queueUpdate() {
+    if (this.repo.history.batch) {
+      if (!this.scheduledFrame) {
+        this.scheduledFrame = requestFrame(this.scheduleUpdate)
+      }
+    } else {
+      this.forceUpdate()
+    }
+  }
 
-    this.model.bind(bindings)
-
-    return this.model.value
+  stopUpdate() {
+    if (this.scheduledFrame) {
+      cancelFrame(this.scheduledFrame)
+    }
   }
 
   getParent(): ?PresenterMediator {

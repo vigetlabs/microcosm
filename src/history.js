@@ -34,6 +34,7 @@ class History extends Emitter {
   release: () => void
   head: Action
   root: Action
+  batch: boolean
 
   constructor(config: HistoryOptions) {
     super()
@@ -42,6 +43,7 @@ class History extends Emitter {
 
     this.size = 0
     this.setLimit(options.maxHistory)
+    this.batch = options.batch
 
     this.updater = options.updater(options)
 
