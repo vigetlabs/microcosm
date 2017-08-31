@@ -1,6 +1,13 @@
 import Microcosm from '../../../src/microcosm'
 
 describe('Domain construction', function() {
+  it('errors when given non-POJO options', function() {
+    expect(function() {
+      let repo = new Microcosm()
+      repo.addDomain('foo', {}, new Microcosm())
+    }).toThrow(/expected a plain object\. Instead got Microcosm/)
+  })
+
   it('object - primitive', function() {
     const repo = new Microcosm()
 

@@ -3,6 +3,7 @@
 ## Edge
 
 - In batching mode, Presenter model updates are asynchronous. 
+- Warn when a non-POJO is passed as effect/domain options
 
 ## 12.12.0
 

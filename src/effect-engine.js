@@ -3,7 +3,7 @@
  */
 
 import getRegistration from './get-registration'
-import { merge, createOrClone } from './utils'
+import { get, merge, createOrClone } from './utils'
 
 import type Action from './action'
 import type Microcosm from './microcosm'
@@ -18,6 +18,12 @@ class EffectEngine {
   }
 
   add(config: Object | Function, options?: Object) {
+    console.assert(
+      !options || options.constructor === Object,
+      'repo.addEffect(Effect, options) expected a plain object. Instead got',
+      get(options, 'constructor.name', 'Unknown')
+    )
+
     let deepOptions = merge(this.repo.options, config.defaults, options)
     let effect: Effect = createOrClone(config, deepOptions, this.repo)
 

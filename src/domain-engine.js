@@ -78,7 +78,14 @@ class DomainEngine {
     return this.registry[type]
   }
 
-  add(key: string | KeyPath, config: *, options?: Object) {
+  add(key: string, config: *, options?: Object) {
+    console.assert(
+      !options || options.constructor === Object,
+      `repo.addDomain("${key}", domain, options) expected a plain object.`,
+      'Instead got',
+      get(options, 'constructor.name', 'Unknown')
+    )
+
     let deepOptions = merge(
       this.repo.options,
       config.defaults,
