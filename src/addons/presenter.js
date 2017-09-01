@@ -26,9 +26,6 @@ function renderMediator() {
   })
 }
 
-/* istanbul ignore next */
-const identity = () => {}
-
 type Props = Object
 type State = Object
 
@@ -310,16 +307,19 @@ class PresenterMediator extends React.PureComponent<Props> {
   }
 }
 
+/* istanbul ignore next */
+const noop = () => {}
+
 PresenterMediator.contextTypes = {
-  repo: identity,
-  send: identity,
-  parent: identity
+  repo: noop,
+  send: noop,
+  parent: noop
 }
 
 PresenterMediator.childContextTypes = {
-  repo: identity,
-  send: identity,
-  parent: identity
+  repo: noop,
+  send: noop,
+  parent: noop
 }
 
 export default Presenter
