@@ -4,7 +4,7 @@
  * @flow
  */
 
-import { type Microcosm, Emitter, set, merge } from '../microcosm'
+import { type Microcosm, Emitter, merge } from '../microcosm'
 
 function isObservable(binding: *): boolean {
   return binding && typeof binding.subscribe === 'function'
@@ -100,18 +100,19 @@ export default class Model extends Emitter {
    * for their associated keys.
    */
   compute() {
-    let last = this.value
     let patch = {}
+    let dirty = false
 
     for (var key in this.bindings) {
       var value = invoke(this.bindings[key], this.repo, this.scope)
 
       if (this.value[key] !== value) {
         patch[key] = value
+        dirty = true
       }
     }
 
-    return this.publish(patch)
+    return dirty ? this.publish(patch) : this.value
   }
 
   /**
