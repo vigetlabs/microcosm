@@ -18,9 +18,5 @@ function Empty() {
 }
 
 export default function ItemList({ items }) {
-  return items.length
-    ? <ul className="list">
-        {items.map(Item)}
-      </ul>
-    : <Empty />
+  return items.length ? <ul className="list">{items.map(Item)}</ul> : <Empty />
 }

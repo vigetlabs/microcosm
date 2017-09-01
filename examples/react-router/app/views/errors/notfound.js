@@ -5,9 +5,7 @@ export default function NotFound({ resource = 'Page' }) {
   return (
     <div>
       <header className="header">
-        <h1 className="text-display container">
-          {resource} Not Found
-        </h1>
+        <h1 className="text-display container">{resource} Not Found</h1>
       </header>
 
       <main role="main" className="container">

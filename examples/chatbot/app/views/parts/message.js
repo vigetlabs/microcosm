@@ -16,15 +16,11 @@ class Message extends React.PureComponent {
 
     return (
       <li className={pending ? 'loading' : error ? 'error' : null}>
-        <b>
-          {user}{' '}
-        </b>
+        <b>{user} </b>
         <time dateTime={safeTime.toString()}>
           {safeTime.toDateString()} {status}
         </time>
-        <blockquote>
-          {message}
-        </blockquote>
+        <blockquote>{message}</blockquote>
       </li>
     )
   }

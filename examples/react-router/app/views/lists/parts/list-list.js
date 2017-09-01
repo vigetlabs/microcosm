@@ -21,9 +21,5 @@ function Empty() {
 }
 
 export default function ListList({ items = [] }) {
-  return items.length
-    ? <ul className="list">
-        {items.map(List)}
-      </ul>
-    : <Empty />
+  return items.length ? <ul className="list">{items.map(List)}</ul> : <Empty />
 }
