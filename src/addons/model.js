@@ -4,7 +4,7 @@
  * @flow
  */
 
-import { type Microcosm, Emitter, set } from '../microcosm'
+import { type Microcosm, Emitter, set, merge } from '../microcosm'
 
 function isObservable(binding: *): boolean {
   return binding && typeof binding.subscribe === 'function'
@@ -73,21 +73,26 @@ export default class Model extends Emitter {
     this.compute()
   }
 
-  publish(value: *) {
-    if (value !== this.value) {
-      this.value = value
+  publish(patch: *) {
+    let next = merge(this.value, patch)
+
+    if (next !== this.value) {
+      this._emit('will-change', next, patch)
+
+      this.value = next
       this.revision += 1
+
       this._emit('change', this.value)
     }
 
-    return value
+    return this.value
   }
 
   /**
    * Update a specific model key. Emits a change event
    */
   set(key: string, value: *) {
-    return this.publish(set(this.value, key, value))
+    return this.publish({ [key]: value })
   }
 
   /**
@@ -96,15 +101,17 @@ export default class Model extends Emitter {
    */
   compute() {
     let last = this.value
-    let next = last
+    let patch = {}
 
     for (var key in this.bindings) {
       var value = invoke(this.bindings[key], this.repo, this.scope)
 
-      next = set(next, key, value)
+      if (this.value[key] !== value) {
+        patch[key] = value
+      }
     }
 
-    return this.publish(next)
+    return this.publish(patch)
   }
 
   /**

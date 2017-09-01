@@ -95,6 +95,13 @@ class Presenter extends React.PureComponent<Props, State> {
   }
 
   /**
+   * Called before a model will change.
+   */
+  modelWillUpdate(repo: Microcosm, nextModel: Object, patch: Object) {
+    // NOOP
+  }
+
+  /**
    * Runs when the presenter unmounts. Useful for tearing down
    * subscriptions and other setup behavior.
    */
@@ -215,7 +222,9 @@ class PresenterMediator extends React.PureComponent<Props> {
 
   componentDidMount() {
     this.presenter.refs = this.refs
+
     this.model.on('change', this._queueUpdate, this)
+    this.model.on('will-change', this._preUpdate, this)
   }
 
   componentWillUnmount() {
@@ -269,6 +278,10 @@ class PresenterMediator extends React.PureComponent<Props> {
 
   // Private
 
+  _preUpdate(value: Object, patch: Object) {
+    this.presenter.modelWillUpdate(this.repo, value, patch)
+  }
+
   _scheduleUpdate() {
     if (this.model.revision > this._lastRevision) {
       this.forceUpdate()
@@ -278,12 +291,10 @@ class PresenterMediator extends React.PureComponent<Props> {
   }
 
   _queueUpdate() {
-    if (this.repo.history.batch) {
-      if (!this._scheduledFrame) {
-        this._scheduledFrame = requestFrame(this._scheduleUpdate)
-      }
+    if (this.repo.history.batch && !this._scheduledFrame) {
+      this._scheduledFrame = requestFrame(this._scheduleUpdate)
     } else {
-      this.forceUpdate()
+      this._scheduleUpdate()
     }
   }
 

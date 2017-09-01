@@ -1499,3 +1499,61 @@ describe('::children', function() {
     expect(spy).toHaveBeenCalledTimes(1)
   })
 })
+
+describe('::modelWillUpdate', function() {
+  it('does not invoke on the first model calculation', () => {
+    let spy = jest.fn()
+
+    class Test extends Presenter {
+      getModel(props) {
+        return {
+          id: props.id
+        }
+      }
+
+      modelWillUpdate = spy
+    }
+
+    mount(<Test id="2" />)
+
+    expect(spy).not.toHaveBeenCalled()
+  })
+
+  it('is invoked before the new model is assigned', () => {
+    expect.assertions(2)
+
+    class Test extends Presenter {
+      getModel(props) {
+        return {
+          id: props.id
+        }
+      }
+
+      modelWillUpdate(repo, model) {
+        expect(this.model.id).toBe('2')
+        expect(model.id).toBe('3')
+      }
+    }
+
+    mount(<Test id="2" />).setProps({ id: '3' })
+  })
+
+  it('provides a patch of the difference', () => {
+    expect.assertions(1)
+
+    class Test extends Presenter {
+      getModel(props) {
+        return {
+          static: true,
+          dynamic: props.id
+        }
+      }
+
+      modelWillUpdate(repo, model, patch) {
+        expect(patch).toEqual({ dynamic: '3' })
+      }
+    }
+
+    mount(<Test id="2" />).setProps({ id: '3' })
+  })
+})

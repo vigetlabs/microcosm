@@ -224,7 +224,33 @@ class Planet extends Presenter {
 
 In order for this hook to be useful, we ensure that `update` is executed only after the latest model has been calculated.
 
-**NOTE:** `update` is *not* called every time model changes! It only gets called when the `props` sent to Presenter change or when `state` changes within the Presenter.
+**NOTE:** `update` is *not* called every time model changes! It only gets called when the `props` sent to Presenter change or when `state` changes within the Presenter. If this is what you need, see `modelWillUpdate`.
+
+### `modelWillUpdate(repo, nextModel, changeset)`
+
+Called right before a presenter's model changes. The third argument, `changeset`, provides the subset of the model that changed. This is useful for determining when to fetch new data:
+
+```javascript
+import { getPlanet } from '../actions/planets'
+import { find } from 'lodash'
+
+class Planet extends Presenter {
+  getModel(props) {
+    let { id } = props.location.query
+
+    return {
+      id: id,
+      planet: state => find(state.planets, { id })
+    }
+  }
+  modelWillUpdate(repo, nextModel, changeset) {
+    if ('id' in changeset)
+      repo.push(getPlanet, changeset.id)
+    }
+  }
+  // ...
+}
+```
 
 ### `teardown(repo, props, state)`
 
