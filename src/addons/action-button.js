@@ -6,39 +6,62 @@ import React from 'react'
 import { Action, merge } from '../microcosm'
 
 /* istanbul ignore next */
-const identity = () => {}
+const identity = n => n
+/* istanbul ignore next */
+const noop = () => {}
 
-class ActionButton extends React.PureComponent {
-  static defaultProps: Object
+type Props = {
+  action: *,
+  onCancel: ?Callback,
+  onClick: (event?: Event, Action?: *) => *,
+  onDone: ?Callback,
+  onError: ?Callback,
+  onOpen: ?Callback,
+  onUpdate: ?Callback,
+  prepare: (value?: *, event?: Event) => *,
+  send: ?Sender,
+  tag: string | React$ElementType,
+  value: *
+}
+
+type Context = {
+  send: ?Sender
+}
+
+class ActionButton extends React.PureComponent<Props> {
+  static defaultProps: Props
+  static contextTypes: Context
 
   send: Sender
   click: (event: Event) => Action
 
-  constructor(props: Object, context: Object) {
+  constructor(props: Props, context: Context) {
     super(props, context)
 
     this.send = this.props.send || this.context.send
     this.click = this.click.bind(this)
   }
 
-  click(event: Event): Action {
+  click(event: Event) {
     let payload = this.props.prepare(this.props.value, event)
-    let action = this.send(this.props.action, payload)
+    let action = null
 
-    if (action && action instanceof Action) {
-      action
-        .onOpen(this.props.onOpen)
-        .onUpdate(this.props.onUpdate)
-        .onCancel(this.props.onCancel)
-        .onDone(this.props.onDone)
-        .onError(this.props.onError)
+    if (this.props.action) {
+      action = this.send(this.props.action, payload)
+
+      if (action && action instanceof Action) {
+        action
+          .onOpen(this.props.onOpen)
+          .onUpdate(this.props.onUpdate)
+          .onCancel(this.props.onCancel)
+          .onDone(this.props.onDone)
+          .onError(this.props.onError)
+      }
     }
 
     if (this.props.onClick) {
       this.props.onClick(event, action)
     }
-
-    return action
   }
 
   render() {
@@ -64,12 +87,21 @@ class ActionButton extends React.PureComponent {
 }
 
 ActionButton.contextTypes = {
-  send: identity
+  send: noop
 }
 
 ActionButton.defaultProps = {
+  action: null,
+  onCancel: null,
+  onClick: identity,
+  onDone: null,
+  onError: null,
+  onOpen: null,
+  onUpdate: null,
+  prepare: identity,
+  send: null,
   tag: 'button',
-  prepare: (value, event) => value
+  value: null
 }
 
 export default ActionButton

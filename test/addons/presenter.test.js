@@ -63,11 +63,7 @@ describe('::getModel', function() {
       }
 
       view({ greeting }) {
-        return (
-          <p>
-            {greeting}
-          </p>
-        )
+        return <p>{greeting}</p>
       }
     }
 
@@ -119,11 +115,7 @@ describe('::getModel', function() {
         }
       }
       view({ color }) {
-        return (
-          <div>
-            {color}
-          </div>
-        )
+        return <div>{color}</div>
       }
     }
 
@@ -147,11 +139,7 @@ describe('::getModel', function() {
         }
       }
       view({ upper }) {
-        return (
-          <p>
-            {upper}
-          </p>
-        )
+        return <p>{upper}</p>
       }
     }
 
@@ -238,11 +226,7 @@ describe('::getModel', function() {
           }
         }
         view({ name }) {
-          return (
-            <p>
-              {name}
-            </p>
-          )
+          return <p>{name}</p>
         }
       }
 
@@ -328,11 +312,7 @@ describe('::getModel', function() {
       render() {
         const { text } = this.model
 
-        return (
-          <p>
-            {text}
-          </p>
-        )
+        return <p>{text}</p>
       }
     }
 
@@ -443,11 +423,7 @@ describe('::setup', function() {
       }
 
       view({ prop }) {
-        return (
-          <p>
-            {prop}
-          </p>
-        )
+        return <p>{prop}</p>
       }
     }
 
@@ -705,11 +681,7 @@ describe('::view', function() {
   it('views can be stateful react components', function() {
     class MyView extends React.Component {
       render() {
-        return (
-          <p>
-            {this.props.message}
-          </p>
-        )
+        return <p>{this.props.message}</p>
       }
     }
 
@@ -728,11 +700,7 @@ describe('::view', function() {
 
   it('views can be stateless components', function() {
     function MyView({ message }) {
-      return (
-        <p>
-          {message}
-        </p>
-      )
+      return <p>{message}</p>
     }
 
     class MyPresenter extends Presenter {
@@ -751,11 +719,7 @@ describe('::view', function() {
   it('views can be getters', function() {
     class MyView extends React.Component {
       render() {
-        return (
-          <p>
-            {this.props.message}
-          </p>
-        )
+        return <p>{this.props.message}</p>
       }
     }
 
@@ -895,11 +859,7 @@ describe('Efficiency', function() {
       getModel = model
 
       render() {
-        return (
-          <p>
-            {this.model.color}
-          </p>
-        )
+        return <p>{this.model.color}</p>
       }
     }
 
@@ -1151,7 +1111,9 @@ describe('intercepting actions', function() {
       }
     }
 
-    mount(<MyPresenter />).find(View).simulate('click')
+    mount(<MyPresenter />)
+      .find(View)
+      .simulate('click')
 
     expect(test.mock.calls[0][1]).toEqual(true)
   })
@@ -1163,11 +1125,7 @@ describe('intercepting actions', function() {
 
     class Parent extends Presenter {
       render() {
-        return (
-          <div>
-            {this.props.children}
-          </div>
-        )
+        return <div>{this.props.children}</div>
       }
     }
 
@@ -1196,11 +1154,7 @@ describe('intercepting actions', function() {
         return repo
       }
       render() {
-        return (
-          <div>
-            {this.props.children}
-          </div>
-        )
+        return <div>{this.props.children}</div>
       }
     }
 
@@ -1228,7 +1182,9 @@ describe('intercepting actions', function() {
 
     const repo = new Microcosm({ maxHistory: 1 })
 
-    mount(<MyPresenter repo={repo} />).find(View).simulate('click')
+    mount(<MyPresenter repo={repo} />)
+      .find(View)
+      .simulate('click')
 
     expect(repo.history.head.command.toString()).toEqual('test')
   })
@@ -1252,7 +1208,9 @@ describe('intercepting actions', function() {
       }
     }
 
-    mount(<Parent repo={new Microcosm()} />).find(View).simulate('click')
+    mount(<Parent repo={new Microcosm()} />)
+      .find(View)
+      .simulate('click')
 
     expect(test).not.toHaveBeenCalled()
     expect(intercepted).toHaveBeenCalledWith(true)
@@ -1277,7 +1235,9 @@ describe('intercepting actions', function() {
       }
     }
 
-    mount(<Parent repo={new Microcosm()} />).find(Child).simulate('click')
+    mount(<Parent repo={new Microcosm()} />)
+      .find(Child)
+      .simulate('click')
 
     expect(test).not.toHaveBeenCalled()
     expect(intercepted).toHaveBeenCalledWith(true)
@@ -1307,7 +1267,9 @@ describe('intercepting actions', function() {
       }
     }
 
-    mount(<Test />).find(TestView).simulate('click')
+    mount(<Test />)
+      .find(TestView)
+      .simulate('click')
 
     expect(spy).not.toHaveBeenCalled()
   })
@@ -1338,7 +1300,9 @@ describe('intercepting actions', function() {
       }
     }
 
-    mount(<Parent />).instance().send('test', true)
+    mount(<Parent />)
+      .instance()
+      .send('test', true)
 
     expect(test).toHaveBeenCalled()
   })
@@ -1360,7 +1324,9 @@ describe('intercepting actions', function() {
       }
     }
 
-    mount(<Parent />).instance().send('test')
+    mount(<Parent />)
+      .instance()
+      .send('test')
   })
 
   it('context is the intercepting presenter', function() {
@@ -1422,11 +1388,7 @@ describe('forks', function() {
           repo = repo.parent
         }
 
-        return (
-          <p>
-            {names.join(', ')}
-          </p>
-        )
+        return <p>{names.join(', ')}</p>
       }
     }
 
@@ -1463,7 +1425,9 @@ describe('::send', function() {
       }
     }
 
-    mount(<Test />).find('button').simulate('click')
+    mount(<Test />)
+      .find('button')
+      .simulate('click')
   })
 
   it('dispatches the action using the current repo if nothing else responds', function() {

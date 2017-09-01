@@ -29,19 +29,20 @@ function renderMediator() {
 /* istanbul ignore next */
 const identity = () => {}
 
-class Presenter extends React.PureComponent {
+type Props = Object
+type State = Object
+
+class Presenter extends React.PureComponent<Props, State> {
   render: () => *
   defaultRender: () => *
   send: *
   repo: Microcosm
   mediator: PresenterMediator
   didFork: boolean
-  props: Object
-  state: Object
   model: Object
   view: *
 
-  constructor(props: Object, context: Object) {
+  constructor(props: Props, context: Object) {
     super()
 
     if (this.render) {
@@ -69,7 +70,7 @@ class Presenter extends React.PureComponent {
    * Called when a presenter is created, useful any prep work. `setup`
    * runs before the first `getModel` invocation.
    */
-  setup(repo: Microcosm, props: Object, state: Object) {
+  setup(repo: Microcosm, props: Props, state: State) {
     // NOOP
   }
 
@@ -78,11 +79,11 @@ class Presenter extends React.PureComponent {
    * `getModel`. This hook is useful for fetching initial data and
    * other start tasks that need access to the model data.
    */
-  ready(repo: Microcosm, props: Object, state: Object) {
+  ready(repo: Microcosm, props: Props, state: State) {
     // NOOP
   }
 
-  componentWillUpdate(props: Object, state: Object) {
+  componentWillUpdate(props: Props, state: State) {
     this._updateModel(props, state)
     this.update(this.repo, props, state)
   }
@@ -92,7 +93,7 @@ class Presenter extends React.PureComponent {
    * data fetching and other work that must happen when a Presenter receives
    * new information.
    */
-  update(repo: Microcosm, nextProps: Object, nextState: Object) {
+  update(repo: Microcosm, nextProps: Props, nextState: State) {
     // NOOP
   }
 
@@ -100,7 +101,7 @@ class Presenter extends React.PureComponent {
    * Runs when the presenter unmounts. Useful for tearing down
    * subscriptions and other setup behavior.
    */
-  teardown(repo: Microcosm, props: Object, state: Object) {
+  teardown(repo: Microcosm, props: Props, state: State) {
     // NOOP
   }
 
@@ -124,7 +125,7 @@ class Presenter extends React.PureComponent {
    * particular Presenter. For example, to circumvent the default
    * Presenter forking behavior:
    */
-  getRepo(repo: ?Microcosm, props: Object): Microcosm {
+  getRepo(repo: ?Microcosm, props: Props): Microcosm {
     return repo ? repo.fork() : new Microcosm()
   }
 
@@ -145,13 +146,13 @@ class Presenter extends React.PureComponent {
    * Builds a view model for the current props and state. This must
    * return an object of key/value pairs.
    */
-  getModel(presenterProps: Object, presenterState: Object) {
+  getModel(presenterProps: Props, presenterState: State) {
     return {}
   }
 
   // Private
 
-  _updateModel(props: Object, state: Object) {
+  _updateModel(props: Props, state: State) {
     return this.mediator.model.bind(this.getModel(props, state))
   }
 
@@ -180,7 +181,7 @@ class Presenter extends React.PureComponent {
   }
 }
 
-class PresenterMediator extends React.PureComponent {
+class PresenterMediator extends React.PureComponent<Props> {
   repo: Microcosm
   send: *
   presenter: Presenter
@@ -189,7 +190,7 @@ class PresenterMediator extends React.PureComponent {
   _scheduledFrame: *
   _scheduleUpdate: *
 
-  constructor(props: Object, context: Object) {
+  constructor(props: Props, context: Object) {
     super(props, context)
 
     this.presenter = props.presenter

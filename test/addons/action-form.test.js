@@ -130,7 +130,7 @@ describe('manual operation', function() {
 
   it('can pass in send manually', function() {
     const send = jest.fn()
-    const form = mount(<ActionForm send={send} />)
+    const form = mount(<ActionForm action="test" send={send} />)
 
     form.instance().submit()
 

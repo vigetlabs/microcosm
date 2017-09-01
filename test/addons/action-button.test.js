@@ -172,7 +172,7 @@ describe('manual operation', function() {
 
   it('can pass in send manually', function() {
     const send = jest.fn()
-    const button = mount(<ActionButton send={send} />)
+    const button = mount(<ActionButton action="test" send={send} />)
 
     button.simulate('click')
 

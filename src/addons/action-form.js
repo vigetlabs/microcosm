@@ -7,20 +7,39 @@ import { Action, merge } from '../microcosm'
 import serialize from 'form-serialize'
 
 /* istanbul ignore next */
-const identity = () => {}
+const identity = n => n
+/* istanbul ignore next */
+const noop = () => {}
 
-class ActionForm extends React.PureComponent {
-  static defaultProps: Object
+type Props = {
+  action: *,
+  onOpen: ?Callback,
+  onUpdate: ?Callback,
+  onError: ?Callback,
+  onCancel: ?Callback,
+  onDone: ?Callback,
+  onSubmit: (event: Event, Action: *) => *,
+  prepare: (data: Object) => Object,
+  send: ?Sender,
+  serializer: (form: Element) => Object
+}
+
+type Context = {
+  send: ?Sender
+}
+
+class ActionForm extends React.PureComponent<Props> {
+  static defaultProps: Props
+  static contextTypes: Context
 
   send: Sender
-  form: ?Element
-  onSubmit: (event: Event) => Action
+  form: Element
+  onSubmit: *
   assignForm: Element => void
 
-  constructor(props: Object, context: Object) {
+  constructor(props: Props, context: Context) {
     super(props, context)
 
-    this.form = null
     this.send = this.props.send || this.context.send
     this.onSubmit = this.onSubmit.bind(this)
     this.assignForm = el => {
@@ -63,15 +82,19 @@ class ActionForm extends React.PureComponent {
     )
 
     let params = this.props.prepare(this.props.serializer(form))
-    let action = this.send(this.props.action, params)
+    let action = null
 
-    if (action && action instanceof Action) {
-      action
-        .onOpen(this.props.onOpen)
-        .onUpdate(this.props.onUpdate)
-        .onCancel(this.props.onCancel)
-        .onDone(this.props.onDone)
-        .onError(this.props.onError)
+    if (this.props.action) {
+      action = this.send(this.props.action, params)
+
+      if (action && action instanceof Action) {
+        action
+          .onOpen(this.props.onOpen)
+          .onUpdate(this.props.onUpdate)
+          .onCancel(this.props.onCancel)
+          .onDone(this.props.onDone)
+          .onError(this.props.onError)
+      }
     }
 
     this.props.onSubmit(event, action)
@@ -79,14 +102,20 @@ class ActionForm extends React.PureComponent {
 }
 
 ActionForm.contextTypes = {
-  send: identity
+  send: noop
 }
 
 ActionForm.defaultProps = {
   action: null,
-  serializer: form => serialize(form, { hash: true, empty: true }),
-  prepare: n => n,
-  onSubmit: n => n
+  onOpen: null,
+  onUpdate: null,
+  onCancel: null,
+  onError: null,
+  onDone: null,
+  onSubmit: noop,
+  prepare: identity,
+  send: null,
+  serializer: form => serialize(form, { hash: true, empty: true })
 }
 
 export default ActionForm
