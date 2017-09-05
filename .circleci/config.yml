@@ -8,6 +8,7 @@ version: 2
 
 jobs:
   build:
+    <<: *defaults
     working_directory: ~/microcosm
     steps:
       - checkout
