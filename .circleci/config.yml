@@ -2,7 +2,7 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 version: 2
 jobs:
-  build:
+  setup:
     docker:
       - image: circleci/node:7.10
     working_directory: ~/repo
@@ -18,10 +18,28 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      # run tests!
-      - run: yarn test
+  audit:
+    steps:
       - run: yarn flow
-      - run: yarn test:cov
-      - run: yarn test:prod
       - run: yarn lint
+  test:
+    steps:
+      - run: yarn test:cov
       - run: yarn report-coverage
+  test-prod:
+    steps:
+      - run: yarn test:prod
+workflows:
+  version: 2
+  setup-and-test:
+    jobs:
+      - setup
+      - audit:
+          requires:
+            - setup
+      - test:
+          requires:
+            - setup
+      - test-prod:
+          requires:
+            - setup
