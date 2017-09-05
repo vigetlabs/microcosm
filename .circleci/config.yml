@@ -1,7 +1,6 @@
 # Javascript Node CircleCI 2.0 configuration file
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 defaults: &defaults
-  working_directory: /tmp
   docker:
     - image: circleci/node:7.10
 
@@ -9,7 +8,7 @@ version: 2
 
 jobs:
   build:
-    <<: *defaults
+    working_directory: ~/microcosm
     steps:
       - checkout
       - restore_cache:
@@ -22,32 +21,21 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_directory
-          root: workspace
-          # Must be relative path from root
-          paths:
-            - echo-output
   audit:
     <<: *defaults
     steps:
-      - attach_workspace:
-          at: /tmp
       - run: yarn flow
       - run: yarn lint
   test:
     <<: *defaults
     steps:
-      - attach_workspace:
-          at: /tmp
       - run: yarn test:cov
       - run: yarn report-coverage
   test-prod:
     <<: *defaults
     steps:
-      - attach_workspace:
-          at: /tmp
       - run: yarn test:prod
+
 workflows:
   version: 2
   build-and-test:
