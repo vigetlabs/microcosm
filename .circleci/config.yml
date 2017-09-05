@@ -25,16 +25,19 @@ jobs:
   audit:
     <<: *defaults
     steps:
+      - checkout
       - run: yarn flow
       - run: yarn lint
   test:
     <<: *defaults
     steps:
+      - checkout
       - run: yarn test:cov
       - run: yarn report-coverage
   test-prod:
     <<: *defaults
     steps:
+      - checkout
       - run: yarn test:prod
 
 workflows:
