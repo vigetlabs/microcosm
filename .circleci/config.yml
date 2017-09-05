@@ -1,15 +1,11 @@
 # Javascript Node CircleCI 2.0 configuration file
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
-defaults: &defaults
-  docker:
-    - image: circleci/node:7.10
-
 version: 2
-
 jobs:
-  build:
-    <<: *defaults
-    working_directory: ~/microcosm
+  setup:
+    docker:
+      - image: circleci/node:7.10
+    working_directory: ~/repo
     steps:
       - checkout
       - restore_cache:
@@ -22,35 +18,8 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-  audit:
-    <<: *defaults
-    steps:
-      - checkout
       - run: yarn flow
       - run: yarn lint
-  test:
-    <<: *defaults
-    steps:
-      - checkout
       - run: yarn test:cov
       - run: yarn report-coverage
-  test-prod:
-    <<: *defaults
-    steps:
-      - checkout
       - run: yarn test:prod
-
-workflows:
-  version: 2
-  build-and-test:
-    jobs:
-      - build
-      - audit:
-          requires:
-            - build
-      - test:
-          requires:
-            - build
-      - test-prod:
-          requires:
-            - build
