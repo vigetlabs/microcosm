@@ -10,7 +10,7 @@ defaults: &defaults
 restore-npm-cache: &restore-npm-cache
   restore_cache:
     keys:
-      - v1-dependencies-{{ checksum "yarn.lock" }}
+      - v1-dependencies-{{ checksum "package.json" }}
       - v1-dependencies-
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "yarn.lock" }}
+          key: v1-dependencies-{{ checksum "package.json" }}
   audit:
     <<: *defaults
     steps:
