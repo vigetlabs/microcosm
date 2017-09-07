@@ -3,7 +3,8 @@
 version: 2
 defaults: &defaults
   docker:
-    - image: circleci/node:7.10
+    - image: circleci/node:7
+  working_directory: ~/repo
 jobs:
   build:
     <<: *defaults
@@ -23,9 +24,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        keys:
-          - v1-dependencies-{{ checksum "yarn.lock" }}
-          - v1-dependencies-
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+            - v1-dependencies-
       - run: yarn flow
       - run: yarn lint
   test-dev:
