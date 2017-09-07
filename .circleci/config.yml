@@ -1,11 +1,9 @@
 # Javascript Node CircleCI 2.0 configuration file
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 version: 2
-
 defaults: &defaults
   docker:
     - image: circleci/node:7.10
-  working_directory: ~/repo
 jobs:
   setup:
     <<: *defaults
