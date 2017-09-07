@@ -1,25 +1,62 @@
 # Javascript Node CircleCI 2.0 configuration file
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 version: 2
+defaults: &defaults
+  docker:
+    - image: circleci/node:7.10
+  working_directory: ~/repo
+
 jobs:
-  build:
-    docker:
-      - image: circleci/node:7.10
-    working_directory: ~/repo
+  setup:
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "yarn.lock" }}
-          # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
       - run: yarn install
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "yarn.lock" }}
+  audit:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "yarn.lock" }}
+          - v1-dependencies-
       - run: yarn flow
       - run: yarn lint
+  test-dev:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "yarn.lock" }}
+          - v1-dependencies-
       - run: yarn test:cov
       - run: yarn report-coverage
+  test-prod:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "yarn.lock" }}
+          - v1-dependencies-
       - run: yarn test:prod
+
+workflows:
+  microcosm:
+    jobs:
+      - setup
+      - audit:
+          requires: [setup]
+      - test-div:
+          requires: [setup]
+      - test-prod:
+          requires: [setup]
