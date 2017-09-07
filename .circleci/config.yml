@@ -46,11 +46,10 @@ jobs:
       - run: yarn test:prod
   website:
     <<: *defaults
-    working_directory: ~/repo/site
     steps:
       - checkout
       - <<: *restore-npm-cache
-      - make publish
+      - cd site && make publish
 
 workflows:
   version: 2
@@ -66,10 +65,9 @@ workflows:
       - test-prod:
           requires:
             - build
-      - should-publish-website:
-         type: approval
       - website:
-          type: approval
+          filters:
+            branches:
+              only: master
           requires:
             - build
-            - should-publish-website
