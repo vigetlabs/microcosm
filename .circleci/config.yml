@@ -21,6 +21,7 @@ jobs:
   audit:
     <<: *defaults
     steps:
+      - checkout
       - restore_cache:
         keys:
           - v1-dependencies-{{ checksum "yarn.lock" }}
@@ -30,6 +31,7 @@ jobs:
   test-dev:
     <<: *defaults
     steps:
+      - checkout
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "yarn.lock" }}
@@ -39,6 +41,7 @@ jobs:
   test-prod:
     <<: *defaults
     steps:
+      - checkout
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "yarn.lock" }}
