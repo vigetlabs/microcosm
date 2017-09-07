@@ -44,6 +44,13 @@ jobs:
       - checkout
       - <<: *restore-npm-cache
       - run: yarn test:prod
+  website:
+    <<: *defaults
+    working_directory: ~/repo/site
+    steps:
+      - checkout
+      - <<: *restore-npm-cache
+      - make publish
 
 workflows:
   version: 2
@@ -57,5 +64,9 @@ workflows:
           requires:
             - build
       - test-prod:
+          requires:
+            - build
+      - website:
+          type: approval
           requires:
             - build
