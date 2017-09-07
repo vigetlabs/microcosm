@@ -1,9 +1,10 @@
 # Changelog 
 
-## Edge
+## 12.13.0 (Release Candidate)
 
 - In batching mode, Presenter model updates are asynchronous. 
 - Warn when a non-POJO is passed as effect/domain options
+- Added lifecycle method for when a Presenter model changes: `modelDidUpdate`. See the docs for more information.
 
 ## 12.12.0
 
