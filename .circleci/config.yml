@@ -5,7 +5,7 @@ defaults: &defaults
   docker:
     - image: circleci/node:7.10
 jobs:
-  setup:
+  build:
     <<: *defaults
     steps:
       - checkout
@@ -50,10 +50,10 @@ jobs:
 workflows:
   microcosm:
     jobs:
-      - setup
+      - build
       - audit:
-          requires: [setup]
+          requires: [build]
       - test-dev:
-          requires: [setup]
+          requires: [build]
       - test-prod:
-          requires: [setup]
+          requires: [build]
