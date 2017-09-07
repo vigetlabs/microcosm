@@ -49,7 +49,7 @@ jobs:
     steps:
       - checkout
       - <<: *restore-npm-cache
-      - cd site && make publish
+      - run: cd site && make publish
 
 workflows:
   version: 2
