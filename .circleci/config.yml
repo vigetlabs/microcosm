@@ -44,12 +44,6 @@ jobs:
       - checkout
       - <<: *restore-npm-cache
       - run: yarn test:prod
-  website:
-    <<: *defaults
-    steps:
-      - checkout
-      - <<: *restore-npm-cache
-      - run: cd site && make publish
 
 workflows:
   version: 2
@@ -63,11 +57,5 @@ workflows:
           requires:
             - build
       - test-prod:
-          requires:
-            - build
-      - website:
-          filters:
-            branches:
-              only: master
           requires:
             - build
