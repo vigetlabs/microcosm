@@ -1,11 +1,11 @@
 # Javascript Node CircleCI 2.0 configuration file
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 version: 2
+
 defaults: &defaults
   docker:
     - image: circleci/node:7.10
   working_directory: ~/repo
-
 jobs:
   setup:
     <<: *defaults
@@ -49,14 +49,13 @@ jobs:
           - v1-dependencies-{{ checksum "yarn.lock" }}
           - v1-dependencies-
       - run: yarn test:prod
-
 workflows:
   microcosm:
     jobs:
       - setup
       - audit:
           requires: [setup]
-      - test-div:
+      - test-dev:
           requires: [setup]
       - test-prod:
           requires: [setup]
