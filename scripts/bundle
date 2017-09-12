@@ -8,6 +8,7 @@ const flow = require('rollup-plugin-flow')
 const strip = require('rollup-plugin-strip')
 const uglify = require('rollup-plugin-uglify')
 const node = require('rollup-plugin-node-resolve')
+const json = require('rollup-plugin-json')
 const filesize = require('rollup-plugin-filesize')
 const { Dictionary } = require('uglify-js')
 
@@ -25,6 +26,9 @@ Object.assign(options, minimist(process.argv.slice(2)))
 
 const plugins = [
   flow(),
+  json({
+    preferConst: true
+  }),
   buble(),
   node(),
   filesize()

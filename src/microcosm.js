@@ -16,6 +16,7 @@ import tag from './tag'
 import installDevtools from './install-devtools'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
 import { merge, get, set, update } from './utils'
+import { version } from '../package.json'
 
 /**
  * Options passed into Microcosm always extend from this object. You
@@ -90,6 +91,7 @@ const DEFAULTS = {
  */
 class Microcosm extends Emitter implements Domain {
   static defaults: Object
+  static version: String
 
   parent: ?Microcosm
   initial: Object
@@ -486,6 +488,8 @@ class Microcosm extends Emitter implements Domain {
     return this.append('GROUP').link(actions)
   }
 }
+
+Microcosm.version = version
 
 export {
   Microcosm as default,
