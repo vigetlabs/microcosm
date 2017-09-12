@@ -1,6 +1,6 @@
 # Changelog 
 
-## 12.13.0 (Release Candidate)
+## 12.13.0
 
 - In batching mode, Presenter model updates are asynchronous. 
 - Warn when a non-POJO is passed as effect/domain options
