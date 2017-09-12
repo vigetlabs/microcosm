@@ -4,7 +4,7 @@
 
 import MetaDomain from './meta-domain'
 import getRegistration from './get-registration'
-import { get, set, merge, createOrClone } from './utils'
+import { get, set, merge, result, createOrClone } from './utils'
 import { castPath, type KeyPath } from './key-path'
 
 import type Action from './action'
@@ -43,7 +43,7 @@ class DomainEngine {
   getRepoHandlers(action: Action): Registrations {
     let { command, status } = action
 
-    let steps = getRegistration(this.repo.register(), command, status)
+    let steps = getRegistration(result(this.repo, 'register'), command, status)
 
     return steps.length ? [{ key: [], scope: this.repo, steps }] : []
   }
@@ -57,7 +57,7 @@ class DomainEngine {
       var [key, scope] = this.domains[i]
 
       if (scope.register) {
-        let steps = getRegistration(scope.register(), command, status)
+        let steps = getRegistration(result(scope, 'register'), command, status)
 
         if (steps.length) {
           handlers.push({ key, scope, steps })

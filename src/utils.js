@@ -226,3 +226,13 @@ export function update(
 
   return set(state, path, next)
 }
+
+export function result(target: *, keyPath: string | keyPath) {
+  let value = get(target, keyPath)
+
+  if (isFunction(value)) {
+    return value.call(target)
+  }
+
+  return value
+}

@@ -98,6 +98,7 @@ class Microcosm extends Emitter implements Domain {
   state: Object
   history: History
   snapshots: { [key: string]: Snapshot }
+  actions: { [key: string]: Function }
   domains: DomainEngine
   effects: EffectEngine
   changes: CompareTree
@@ -116,6 +117,7 @@ class Microcosm extends Emitter implements Domain {
 
     this.history = this.parent ? this.parent.history : new History(this.options)
 
+    this.actions = Object.create(this.parent ? this.parent.actions : null)
     this.snapshots = Object.create(this.parent ? this.parent.snapshots : null)
     this.domains = new DomainEngine(this)
     this.effects = new EffectEngine(this)
@@ -320,6 +322,15 @@ class Microcosm extends Emitter implements Domain {
    * ```
    */
   append(command: Command | Tagged, status?: Status): Action {
+    if (command in this.actions) {
+      return this.history.append(this.actions[command], status)
+    } else {
+      console.assert(
+        typeof command !== 'string',
+        `Unknown action type "${command.toString()}".`
+      )
+    }
+
     return this.history.append(command, status)
   }
 
@@ -332,7 +343,7 @@ class Microcosm extends Emitter implements Domain {
   push(command: Command, ...params: *): Action {
     let action = this.append(command)
 
-    coroutine(action, command, params, this)
+    coroutine(action, action.command, params, this)
 
     console.assert(
       this.active,
@@ -366,6 +377,12 @@ class Microcosm extends Emitter implements Domain {
     let initial = domain.getInitialState ? domain.getInitialState() : null
 
     this.initial = set(this.initial, key, initial)
+
+    for (var key in domain.actions) {
+      var action = tag(domain.actions[key], key)
+
+      this.actions[key] = action
+    }
 
     this.push(ADD_DOMAIN, domain)
 

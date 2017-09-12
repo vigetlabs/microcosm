@@ -8,6 +8,8 @@
 import type Microcosm from '../src/microcosm'
 
 declare interface Domain {
+  actions: Object
+
   /**
    * Generate the starting value for the particular state this domain is
    * managing. This will be called by the Microcosm using this domain when
