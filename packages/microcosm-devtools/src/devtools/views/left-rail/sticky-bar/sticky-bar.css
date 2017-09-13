@@ -1,0 +1,28 @@
+.container {
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-shrink: 0;
+  padding: 2px;
+}
+
+.action {
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.54);
+  margin: 2px 2px;
+  padding: 2px 10px;
+  text-align: center;
+  transition: 0.15s all;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  transition: 0.3s all;
+}
+
+.action:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.88);
+}

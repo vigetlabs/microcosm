@@ -1,0 +1,6 @@
+query Posts {
+  posts {
+    title,
+    author
+  }
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Microcosm Preact</title>
+    <style>
+      body {
+        margin: 0 auto;
+        padding: 24px;
+        font-family: sans-serif;
+        text-align: center;
+      }
+
+      .pixel {
+        position: absolute;
+        background: #eee;
+        width: 3px;
+        height: 3px;
+      }
+
+      .pixel[data-active='1'] {
+        background: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="vendor.js"></script>
+    <script src="bundle.js"></script>
+  </body>
+</html>

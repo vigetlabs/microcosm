@@ -1,0 +1,16 @@
+.container {
+  font-size: 12px;
+  height: 100%;
+  min-width: 200px;
+  max-width: 500px;
+  overflow: auto;
+  user-select: none;
+}
+
+.resizer {
+  background: transparent;
+  cursor: col-resize;
+  height: 100%;
+  width: 4px;
+  z-index: 2;
+}

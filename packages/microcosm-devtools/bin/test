@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Perform code formatting checks and execute the test suite.
+#
+# Run this command with:
+#   ./bin/test
+# Or
+#   ./bin/test URL
+
+set -e
+
+# load the .env file
+if [ ! "$CIRCLECI" == true ]; then
+  source .env
+fi
+
+yarn lint
+
+yarn test

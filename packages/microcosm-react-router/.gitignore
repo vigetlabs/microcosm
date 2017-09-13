@@ -1,0 +1,8 @@
+coverage
+stats.json
+node_modules
+npm-debug.log
+.DS_Store
+.babel-cache
+es/*
+lib/*

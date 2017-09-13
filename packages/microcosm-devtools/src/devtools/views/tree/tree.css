@@ -1,0 +1,36 @@
+.container {
+  background: linear-gradient(
+      90deg,
+      transparent 7px,
+      rgba(151, 151, 212, 0.12) 8px
+    ),
+    linear-gradient(180deg, transparent 7px, rgba(151, 151, 212, 0.12) 8px),
+    #1d1d2d;
+  background-size: 8px 8px;
+  overflow: auto;
+  padding: 0 40px;
+  flex-grow: 1;
+}
+
+.graphic {
+  display: block;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.node {
+  cursor: pointer;
+  font-family: var(--font-code);
+}
+
+.clipping {
+  fill: rgba(0, 0, 10, 0.05);
+  stroke-opacity: 0.2;
+  transition: 0.3s all;
+}
+
+.node:hover .clipping {
+  fill: rgba(200, 200, 255, 0.05);
+  stroke-opacity: 0.4;
+  transition: 0.1s all;
+}

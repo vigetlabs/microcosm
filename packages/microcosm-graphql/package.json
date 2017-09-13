@@ -1,0 +1,44 @@
+{
+  "main": "build/index.js",
+  "private": true,
+  "scripts": {
+    "build": "webpack -p --config example/webpack.config.js --hide-modules",
+    "watch":
+      "webpack --watch --config example/webpack.config.js --hide-modules",
+    "server": "nodemon example/build/server.js",
+    "test": "jest"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-graphql-tag": "^1.1.1",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "body-parser": "^1.18.0",
+    "express": "^4.15.4",
+    "graphql-server-express": "^1.1.2",
+    "graphql-tag": "^2.4.2",
+    "graphql-tools": "^1.2.2",
+    "html-webpack-plugin": "^2.30.1",
+    "jest": "^21.0.2",
+    "morgan": "^1.8.2",
+    "nodemon": "^1.12.0",
+    "webpack": "^3.5.6"
+  },
+  "babel": {
+    "presets": ["flow", "env", "stage-2"]
+  },
+  "dependencies": {
+    "faker": "^4.1.0",
+    "microcosm": "^12.12.0"
+  },
+  "jest": {
+    "watchPathIgnorePatterns": ["example"]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "tags": {
+    "allowUnknownTags": [],
+    "dictionaries": ["jsdoc", "closure"]
+  },
+  "plugins": [
+    "plugins/markdown",
+    "node_modules/jsdoc-babel"
+  ],
+  "babel": {
+    "presets": [
+      "stage-2",
+      "react"
+    ],
+    "babelrc": false
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  },
+  "opts": {
+    "destination": "./build/",
+    "template": "jsdoc/templates/microcosm",
+    "tutorials": "jsdoc/tutorials",
+    "recurse": true,
+    "readme": "./jsdoc/README.md"
+  }
+}

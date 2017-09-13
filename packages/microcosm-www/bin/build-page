@@ -1,0 +1,6 @@
+#!/bin/bash
+
+OPTIONS="-s --smart --from=markdown-implicit_figures --var=base_url:$BASE_URL"
+TEMPLATE=src/layouts/$3.html
+
+pandoc $OPTIONS --template=$TEMPLATE $1 | sed "s:\\.md:\\.html:g" > $2

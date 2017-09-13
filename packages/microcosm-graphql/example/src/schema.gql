@@ -1,0 +1,44 @@
+type Author {
+  id: ID
+  name: String
+}
+
+type Post {
+  id: ID
+  title: String
+  author: ID
+}
+
+type Comment {
+  id: ID
+  post: Post
+  content: String
+}
+
+type UI {
+  menuOpen: Boolean
+}
+
+type Query {
+  author(id: ID): Author
+  authors(id: ID, name: String): [Author]
+  comment(id: ID): Comment
+  comments(id: ID): [Comment]
+  post(id: ID): Post
+  posts(id: ID): [Post]
+  ui: UI
+}
+
+type Mutation {
+  addAuthor(name: String): Author
+  updateAuthor(id: ID, name: String): Author
+  deleteAuthor(id: ID, name: String): Author
+
+  addPost(title: String, author: ID): Post
+  updatePost(id: ID, title: String, author: ID): Post
+  deletePost(id: ID, title: String, author: ID): Post
+
+  addComment(content: String, post: ID): Comment
+  updateComment(id: ID, content: String, post: ID): Comment
+  deleteComment(id: ID): Comment
+}

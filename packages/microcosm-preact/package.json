@@ -1,0 +1,23 @@
+{
+  "name": "microcosm-preact",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "author": "Nathan Hunzaker <nate.hunzaker@viget.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "build": "NODE_ENV=production webpack -p --hide-modules"
+  },
+  "repository": "https://github.com/vigetlabs/microcosm-preact",
+  "devDependencies": {
+    "babel-loader": "^7.1.1",
+    "microcosm": "^12.9.0",
+    "preact": "^8.2.1",
+    "webpack": "^3.3.0",
+    "webpack-dev-server": "^2.6.1"
+  },
+  "dependencies": {
+    "form-serialize": "^0.7.1"
+  }
+}

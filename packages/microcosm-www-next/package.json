@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "jsdoc ../microcosm/src -c jsdoc/conf.json && jsdoc ../microcosm/src -c jsdoc/conf.json --package package.json"
+  },
+  "dependencies": {
+    "jsdoc": "^3.5.4",
+    "jsdoc-babel": "^0.3.0"
+  }
+}

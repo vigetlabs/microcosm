@@ -1,0 +1,26 @@
+{
+  "name": "microcosm-react-router",
+  "version": "0.0.1",
+  "description": "React Router bindings for Microcosm",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "license": "MIT",
+  "files": [
+    "package.json",
+    "lib/index.js",
+    "umd/index.js",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "scripts": {
+    "prepublish": "./bin/build"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "buble": "^0.15.2",
+    "eslint": "^4.5.0",
+    "history": "^4.6.3",
+    "microcosm": "^12.10.0",
+    "rollup": "^0.48.2"
+  }
+}

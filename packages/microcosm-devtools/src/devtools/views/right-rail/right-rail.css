@@ -1,0 +1,81 @@
+.pane {
+  background: linear-gradient(#ffffff 70%, #f9f9f9 100%);
+  font-size: 12px;
+  height: 100%;
+}
+
+.header {
+  align-items: center;
+  background-color: #f3f3f3;
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid #dadada;
+  display: flex;
+  height: 24px;
+  overflow: hidden;
+  padding: 0 5px;
+  position: relative;
+  white-space: nowrap;
+  margin-top: -1px;
+}
+
+.well {
+  border-top: 1px solid #dadada;
+}
+
+.section {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 16px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 0;
+  margin: 2px 0 0 2px;
+}
+
+.subtitle {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 16px;
+  margin: 0 0 12px;
+}
+
+.revisions {
+  border-top: 1px solid #dadada;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+}
+
+.revisions > li {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 0 0 8px 0;
+}
+
+.revision {
+  padding: 4px 8px 0;
+  margin-bottom: -8px;
+}
+
+.table {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 8px;
+  vertical-align: top;
+  width: 100%;
+}
+
+.table th {
+  padding-right: 8px;
+  text-align: right;
+  vertical-align: top;
+}
+
+.table td {
+  text-align: left;
+  width: 100%;
+  vertical-align: top;
+}

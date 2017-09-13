@@ -1,0 +1,22 @@
+#!/bin/bash
+
+export BASE_URL=$(node -p 'require("../package").homepage')
+
+make all
+
+# Clean up pesky files
+rm -rf ./**/.DS_Store
+
+cd ..
+git checkout -B gh-pages
+git add -f site/public
+git commit -am "[skip ci] Rebuild website"
+git filter-branch -f --prune-empty --subdirectory-filter site/public
+git push -f origin gh-pages
+git checkout -
+cd site
+
+echo ""
+echo "Published to:"
+echo "$BASE_URL"
+echo ""

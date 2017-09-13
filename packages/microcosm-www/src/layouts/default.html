@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>$if(title)$$title$ – $endif$Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="$base_url$" />
+    <meta property="og:image" content="$base_url$/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="$base_url$/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="$base_url$">
+          <img src="$base_url$/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="$base_url$/api/">API</a>
+          <a href="$base_url$/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="$base_url$/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="$base_url$/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="$base_url$/guides/installation.html">Installation</a></li>
+            <li><a href="$base_url$/guides/architecture.html">Architecture</a></li>
+            <li><a href="$base_url$/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="$base_url$/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="$base_url$/api/microcosm.html">Microcosm</a></li>
+            <li><a href="$base_url$/api/domains.html">Domains</a></li>
+            <li><a href="$base_url$/api/actions.html">Actions</a></li>
+            <li><a href="$base_url$/api/effects.html">Effects</a></li>
+            <li><a href="$base_url$/api/history.html">History</a></li>
+            <li><a href="$base_url$/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="$base_url$/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="$base_url$/api/presenter.html">Presenter</a></li>
+            <li><a href="$base_url$/api/action-form.html">ActionForm</a></li>
+            <li><a href="$base_url$/api/action-button.html">ActionButton</a></li>
+            <li><a href="$base_url$/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="$base_url$/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="$base_url$/testing/overview.html">Overview</a></li>
+            <li><a href="$base_url$/testing/domains.html">Domains</a></li>
+            <li><a href="$base_url$/testing/effects.html">Effects</a></li>
+            <li><a href="$base_url$/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="$base_url$/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="$base_url$/recipes/ajax.html">AJAX</a></li>
+            <li><a href="$base_url$/recipes/react-router.html">React Router</a></li>
+            <li><a href="$base_url$/recipes/preact.html">Preact</a></li>
+            <li><a href="$base_url$/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="$base_url$/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content">$body$</div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="$base_url$/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>
