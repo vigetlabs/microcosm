@@ -19,7 +19,7 @@
     "monospaceLinks": false
   },
   "opts": {
-    "destination": "./new_site/",
+    "destination": "./build/",
     "template": "jsdoc/templates/microcosm",
     "tutorials": "jsdoc/tutorials",
     "recurse": true,

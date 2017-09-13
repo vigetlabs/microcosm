@@ -8,7 +8,6 @@
   "homepage": "http://code.viget.com/microcosm",
   "scripts": {
     "build": "make all",
-    "docs": "jsdoc src -c jsdoc/conf.json && jsdoc src -c jsdoc/conf.json --package package.json",
     "release": "make release"
   },
   "repository": {
@@ -37,9 +36,6 @@
     "enzyme": "^2.9.1",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^2.30.1",
-    "jsdoc": "^3.5.4",
-    "jsdoc-babel": "^0.3.0",
-    "microcosm-debugger": "^3.0.0",
     "minimist": "^1.2.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",

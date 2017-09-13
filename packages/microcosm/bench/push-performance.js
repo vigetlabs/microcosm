@@ -7,21 +7,23 @@
 
 const { Microcosm } = require('../build/microcosm')
 
-const SIZES = [ 1000, 10000, 50000, 100000 ]
+const SIZES = [1000, 10000, 50000, 100000]
 
 console.log('\nConducting push benchmark...\n')
 
-var results = SIZES.map(function (SIZE) {
+var results = SIZES.map(function(SIZE) {
   var repo = new Microcosm()
 
-  var action = function test () {}
-  action.toString = function () { return 'test' }
+  var action = function test() {}
+  action.toString = function() {
+    return 'test'
+  }
 
   var Domain = {
     getInitialState: () => 0,
     register() {
       return {
-        test: (n) => n + 1
+        test: n => n + 1
       }
     }
   }
@@ -31,11 +33,11 @@ var results = SIZES.map(function (SIZE) {
    * applications. Otherwise, efficiencies are obtained enumerating over
    * very few keys. This is never the case in real-world applications.
    */
-  repo.addDomain('one',   Domain)
-  repo.addDomain('two',   Domain)
+  repo.addDomain('one', Domain)
+  repo.addDomain('two', Domain)
   repo.addDomain('three', Domain)
-  repo.addDomain('four',  Domain)
-  repo.addDomain('five',  Domain)
+  repo.addDomain('four', Domain)
+  repo.addDomain('five', Domain)
 
   var then = process.hrtime()
 
@@ -51,14 +53,14 @@ var results = SIZES.map(function (SIZE) {
   }
   var endMemory = process.memoryUsage().heapUsed
 
-  var total   = process.hrtime(then)[1] / 1000000
+  var total = process.hrtime(then)[1] / 1000000
   var average = total / SIZE
 
   return {
-    'Volume' : SIZE.toLocaleString(),
-    'Total' : total.toLocaleString() + 'ms',
-    'Average' : average.toLocaleString() + 'ms',
-    'Memory Usage' : ((endMemory - startMemory) / 1000000).toFixed(2) + 'mbs'
+    Volume: SIZE.toLocaleString(),
+    Total: total.toLocaleString() + 'ms',
+    Average: average.toLocaleString() + 'ms',
+    'Memory Usage': ((endMemory - startMemory) / 1000000).toFixed(2) + 'mbs'
   }
 })
 

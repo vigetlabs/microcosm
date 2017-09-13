@@ -5,12 +5,12 @@
   },
   "scripts": {
     "bootstrap": "yarn && lerna bootstrap",
-    "format": "prettier --write ./packages/**/*.js",
+    "format": "./bin/format",
     "build": "lerna run --parallel build",
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:prod": "yarn build && BUNDLED=true jest",
-    "lint": "eslint .",
+    "lint": "./bin/lint",
     "flow": "flow",
     "report-coverage": "codecov coverage/lcov.info"
   },

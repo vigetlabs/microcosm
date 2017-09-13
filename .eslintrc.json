@@ -25,17 +25,34 @@
       "onlyFilesWithFlowAnnotation": true
     }
   },
-  "extends": ["eslint:recommended", "plugin:flowtype/recommended"],
-  "plugins": [ "react", "flowtype", "flowtype-errors" ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:flowtype/recommended"
+  ],
+  "plugins": [
+    "react",
+    "flowtype",
+    "flowtype-errors"
+  ],
   "rules": {
-    "semi": [0, "never"],
-    "sort-vars": 2,
-    "comma-dangle": [2, "never"],
+    "sort-vars": 0,
     "no-console": 0,
-    "quotes": [2, "single", { "avoidEscape": true }],
-    "no-unused-vars" : [2, { "args": "none" }],
-    "react/jsx-equals-spacing": ["warn", "never"],
-    "react/jsx-no-duplicate-props": ["warn", { "ignoreCase": true }],
+    "no-unused-vars": [
+      2,
+      {
+        "args": "none"
+      }
+    ],
+    "react/jsx-equals-spacing": [
+      "warn",
+      "never"
+    ],
+    "react/jsx-no-duplicate-props": [
+      "warn",
+      {
+        "ignoreCase": true
+      }
+    ],
     "react/jsx-no-undef": "error",
     "react/jsx-pascal-case": [
       "warn",
@@ -50,7 +67,6 @@
     "react/no-deprecated": "warn",
     "react/no-direct-mutation-state": "warn",
     "react/no-is-mounted": "warn",
-    "react/react-in-jsx-scope": "error",
     "react/require-render-return": "warn",
     "react/style-prop-object": "warn"
   }

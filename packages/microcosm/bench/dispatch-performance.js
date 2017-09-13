@@ -11,7 +11,7 @@
 
 const { Microcosm } = require('../build/microcosm')
 
-const SIZES   = [ 1000, 10000, 50000, 100000 ]
+const SIZES = [1000, 10000, 50000, 100000]
 
 console.log('\nConducting dispatch benchmark...\n')
 
@@ -21,12 +21,12 @@ const Domain = {
   getInitialState: () => 0,
   register() {
     return {
-      [action]: (n) => n + 1
+      [action]: n => n + 1
     }
   }
 }
 
-var results = SIZES.map(function (SIZE) {
+var results = SIZES.map(function(SIZE) {
   /**
    * Force garbage collection. This is exposed by invoking
    * node with --expose-gc. This allows us to record heap usage
@@ -41,11 +41,11 @@ var results = SIZES.map(function (SIZE) {
    * applications. Otherwise, efficiencies are obtained enumerating over
    * very few keys. This is never the case in real-world applications.
    */
-  repo.addDomain('one',   Domain)
-  repo.addDomain('two',   Domain)
+  repo.addDomain('one', Domain)
+  repo.addDomain('two', Domain)
   repo.addDomain('three', Domain)
-  repo.addDomain('four',  Domain)
-  repo.addDomain('five',  Domain)
+  repo.addDomain('four', Domain)
+  repo.addDomain('five', Domain)
 
   var cost = 0
   var min = Infinity
@@ -62,11 +62,11 @@ var results = SIZES.map(function (SIZE) {
   }
 
   return {
-    'Actions' : SIZE.toLocaleString(),
-    'Slowest' : max.toLocaleString() + 'ms',
-    'Fastest' : min.toLocaleString() + 'ms',
-    'Average' : (cost / SIZE).toLocaleString() + 'ms',
-    'Total'   : cost.toLocaleString() + 'ms'
+    Actions: SIZE.toLocaleString(),
+    Slowest: max.toLocaleString() + 'ms',
+    Fastest: min.toLocaleString() + 'ms',
+    Average: (cost / SIZE).toLocaleString() + 'ms',
+    Total: cost.toLocaleString() + 'ms'
   }
 })
 

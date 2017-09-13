@@ -8,7 +8,7 @@
 
 const { Microcosm } = require('../build/microcosm')
 
-const SIZES = [ 1000, 10000, 50000, 100000 ]
+const SIZES = [1000, 10000, 50000, 100000]
 
 console.log('\nConducting fork benchmark...\n')
 
@@ -23,7 +23,7 @@ var Domain = {
   }
 }
 
-var results = SIZES.map(function (SIZE) {
+var results = SIZES.map(function(SIZE) {
   var repo = new Microcosm()
 
   repo.addDomain('one', Domain)
@@ -40,9 +40,9 @@ var results = SIZES.map(function (SIZE) {
   var push = process.hrtime(then)[1] / 1000000
 
   return {
-    'Count'  : SIZE.toLocaleString(),
-    'Setup'  : setup.toLocaleString() + 'ms',
-    'Push'   : push.toLocaleString() + 'ms'
+    Count: SIZE.toLocaleString(),
+    Setup: setup.toLocaleString() + 'ms',
+    Push: push.toLocaleString() + 'ms'
   }
 })
 

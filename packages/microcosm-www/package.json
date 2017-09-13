@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "homepage": "http://code.viget.com/microcosm",
+  "scripts": {
+    "start": "make server",
+    "build": "make all",
+    "release": "make publish"
+  },
+  "dependencies": {
+    "browser-sync": "^2.18.13"
+  }
+}

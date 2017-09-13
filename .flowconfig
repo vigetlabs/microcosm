@@ -1,0 +1,21 @@
+[ignore]
+.*/node_modules/.*
+.*/build/.*
+.*/test/.*
+# TODO: Remove these
+.*/packages/microcosm-devtools/.*
+.*/packages/microcosm-graphql/.*
+.*/packages/microcosm-preact/.*
+.*/packages/microcosm-react-router/.*
+.*/packages/microcosm-www/.*
+.*/packages/microcosm-www-next/.*
+
+[include]
+packages/microcosm/src
+
+[libs]
+packages/microcosm/flow
+
+[options]
+experimental.const_params=true
+unsafe.enable_getters_and_setters=true

@@ -529,12 +529,12 @@ exports.publish = function(taffyData, opts, tutorials) {
   if (conf.default.staticFiles) {
     // The canonical property name is `include`. We accept `paths` for backwards compatibility
     // with a bug in JSDoc 3.2.x.
-    staticFilePaths = conf.default.staticFiles.include ||
-    conf.default.staticFiles.paths || []
-    staticFileFilter = new (require('jsdoc/src/filter').Filter)(
+    staticFilePaths =
+      conf.default.staticFiles.include || conf.default.staticFiles.paths || []
+    staticFileFilter = new (require('jsdoc/src/filter')).Filter(
       conf.default.staticFiles
     )
-    staticFileScanner = new (require('jsdoc/src/scanner').Scanner)()
+    staticFileScanner = new (require('jsdoc/src/scanner')).Scanner()
 
     staticFilePaths.forEach(function(filePath) {
       var extraStaticFiles
@@ -609,10 +609,8 @@ exports.publish = function(taffyData, opts, tutorials) {
   members.tutorials = tutorials.children
 
   // output pretty-printed source files by default
-  var outputSourceFiles = conf.default &&
-    conf.default.outputSourceFiles !== false
-    ? true
-    : false
+  var outputSourceFiles =
+    conf.default && conf.default.outputSourceFiles !== false ? true : false
 
   // add template helpers
   view.find = find
