@@ -17,7 +17,7 @@ jobs:
     steps:
       - checkout
       - <<: *restore-npm-cache
-      - run: yarn install
+      - run: yarn bootstrap
       - save_cache:
           paths:
             - node_modules
