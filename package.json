@@ -1,5 +1,8 @@
 {
   "private": true,
+  "engines": {
+    "node": ">= 6.10"
+  },
   "scripts": {
     "bootstrap": "yarn && lerna bootstrap",
     "format": "prettier --write ./packages/**/*.js",
