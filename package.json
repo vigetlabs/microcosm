@@ -10,7 +10,7 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:prod": "yarn build && BUNDLED=true jest",
-    "lint": "eslint ./packages/**/*.js",
+    "lint": "eslint .",
     "flow": "flow",
     "report-coverage": "codecov coverage/lcov.info"
   },
@@ -29,6 +29,7 @@
     "eslint": "^4.5.0",
     "eslint-plugin-flowtype": "^2.35.0",
     "eslint-plugin-flowtype-errors": "^3.3.1",
+    "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-react": "^7.3.0",
     "flow-bin": "^0.53.1",
     "jest": "^21.0.2",
@@ -44,7 +45,10 @@
     "testURL": "http://localhost:3000",
     "projects": [
       "<rootDir>/packages/microcosm",
-      "<rootDir>/packages/microcosm-preact"
+      "<rootDir>/packages/microcosm-preact",
+      "<rootDir>/packages/microcosm-react-router",
+      "<rootDir>/packages/microcosm-graphql",
+      "<rootDir>/packages/microcosm-devtools"
     ],
     "verbose": true
   }
