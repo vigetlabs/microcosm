@@ -98,7 +98,7 @@ class Microcosm extends Emitter implements Domain {
   state: Object
   history: History
   snapshots: { [key: string]: Snapshot }
-  actions: { [key: string]: * }
+  actions: Object
   domains: DomainEngine
   effects: EffectEngine
   changes: CompareTree
