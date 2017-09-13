@@ -59,10 +59,6 @@ export default function coroutine(
   params: *[],
   repo: any
 ) {
-  if (typeof command === 'string') {
-    return action.resolve(...params)
-  }
-
   let body = command.apply(null, params)
 
   /**
