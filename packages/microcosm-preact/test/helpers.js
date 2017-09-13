@@ -1,10 +1,10 @@
 import { render } from 'preact'
 
-export function unmount (el) {
+export function unmount(el) {
   return render('', el, el)
 }
 
-export function mount (...args) {
+export function mount(...args) {
   return render(...args)
 }
 

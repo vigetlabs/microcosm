@@ -47,9 +47,7 @@ class Item extends React.Component {
             className={action.disabled ? css.show : css.hide}
             onClick={stop}
           >
-            <span>
-              {action.disabled ? 'enable' : 'disable'}
-            </span>
+            <span>{action.disabled ? 'enable' : 'disable'}</span>
           </ActionButton>
 
           <ActionButton

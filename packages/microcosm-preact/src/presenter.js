@@ -29,9 +29,9 @@ function renderMediator() {
 const identity = () => {}
 
 function shallowDiffers(a, b) {
-	for (let key in a) if (a[key]!==b[key]) return true;
-	for (let key in b) if (!(key in a)) return true;
-	return false;
+  for (let key in a) if (a[key] !== b[key]) return true
+  for (let key in b) if (!(key in a)) return true
+  return false
 }
 
 class Presenter extends Component {
@@ -55,7 +55,9 @@ class Presenter extends Component {
   }
 
   shouldComponentUpdate(props, state) {
-    return shallowDiffers(props, this.props) || shallowDiffers(state, this.state);
+    return (
+      shallowDiffers(props, this.props) || shallowDiffers(state, this.state)
+    )
   }
 
   _beginSetup(mediator) {

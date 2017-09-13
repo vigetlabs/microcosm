@@ -19,7 +19,7 @@ class ActionFocus extends Presenter {
 
         <ul className={css.revisions}>
           {action.revisions
-            .map((entry, i) =>
+            .map((entry, i) => (
               <li key={i}>
                 <div className={css.revision}>
                   <b>{entry.status}</b> at{' '}
@@ -28,7 +28,7 @@ class ActionFocus extends Presenter {
 
                 <DataView data={{ payload: entry.payload }} hideRoot />
               </li>
-            )
+            ))
             .reverse()}
         </ul>
       </section>

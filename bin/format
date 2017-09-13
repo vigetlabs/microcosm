@@ -8,7 +8,7 @@
 PATH=$(yarn bin):$PATH
 
 # Run prettier on these files:
-SRC=$(git ls-files | grep -v "^\." | grep ".js\$")
+SRC=$(git ls-files | grep -v "^\." | grep ".jsx*\$")
 
 # Prettier is an automated code formatter.
 # https://github.com/prettier/prettier

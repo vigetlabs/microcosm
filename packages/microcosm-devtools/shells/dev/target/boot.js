@@ -63,9 +63,7 @@ class App extends Presenter {
     return (
       <main>
         <h1>This is a test</h1>
-        <p>
-          Count: {this.model.count}
-        </p>
+        <p>Count: {this.model.count}</p>
         <footer>
           <ActionButton action={decrease} value={1}>
             Down

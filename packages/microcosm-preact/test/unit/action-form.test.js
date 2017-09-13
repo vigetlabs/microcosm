@@ -8,9 +8,7 @@ describe('callbacks', function() {
     const onDone = jest.fn()
     const send = n => new Action(n).resolve(true)
 
-    const form = mount(
-      <ActionForm action="test" onDone={onDone} send={send} />
-    )
+    const form = mount(<ActionForm action="test" onDone={onDone} send={send} />)
 
     form.dispatchEvent(new Event('submit'))
 
@@ -35,9 +33,7 @@ describe('callbacks', function() {
     const action = new Action(n => n)
     const send = n => action
 
-    const form = mount(
-      <ActionForm action="test" onOpen={onOpen} send={send} />
-    )
+    const form = mount(<ActionForm action="test" onOpen={onOpen} send={send} />)
 
     form.dispatchEvent(new Event('submit'))
 
@@ -66,9 +62,7 @@ describe('callbacks', function() {
     const onDone = jest.fn()
     const send = n => true
 
-    const form = mount(
-      <ActionForm action="test" onDone={onDone} send={send} />
-    )
+    const form = mount(<ActionForm action="test" onDone={onDone} send={send} />)
 
     form.dispatchEvent(new Event('submit'))
 
@@ -107,9 +101,7 @@ describe('manual operation', function() {
     const onDone = jest.fn()
     const send = n => new Action(n => n).resolve(true)
 
-    const form = mount(
-      <ActionForm action="test" onDone={onDone} send={send} />
-    )
+    const form = mount(<ActionForm action="test" onDone={onDone} send={send} />)
 
     form.dispatchEvent(new Event('submit'))
 
