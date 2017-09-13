@@ -9,7 +9,6 @@ const strip = require('rollup-plugin-strip')
 const uglify = require('rollup-plugin-uglify')
 const node = require('rollup-plugin-node-resolve')
 const json = require('rollup-plugin-json')
-const filesize = require('rollup-plugin-filesize')
 const { Dictionary } = require('uglify-js')
 
 const path = require('path')
@@ -30,8 +29,7 @@ const plugins = [
     preferConst: true
   }),
   buble(),
-  node(),
-  filesize()
+  node()
 ]
 
 const configs = {
@@ -96,7 +94,13 @@ for (let name in configs) {
   let bundler = rollup.rollup({
     input: input,
     plugins: plugins,
-    external: external.filter(path => path !== input)
+    external: external.filter(path => path !== input),
+    onwarn: function(error) {
+      // Do not raise warnings for named exports
+      if (error.code !== 'MIXED_EXPORTS') {
+        console.warn(error.toString())
+      }
+    }
   })
 
   let write = bundler.then(bundle => {

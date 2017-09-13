@@ -4,20 +4,20 @@ pretty:
 	yarn run pretty
 
 build: build/package.json
-	@ ./scripts/bundle --out=build
+	@ ./bin/bundle --out=build
 
 strict: build/package.json
-	@ ./scripts/bundle --out=build/strict --strict
+	@ ./bin/bundle --out=build/strict --strict
 	@ cp build/package.json build/strict
 
 min: build/package.json
-	@ ./scripts/bundle --out=build/min --minify
+	@ ./bin/bundle --out=build/min --minify
 
 umd: build/package.json
-	@ ./scripts/bundle --out=build/umd --format=umd
+	@ ./bin/bundle --out=build/umd --format=umd
 
 es: build/package.json
-	@ ./scripts/bundle --out=build/es --format=es
+	@ ./bin/bundle --out=build/es --format=es
 
 docs:
 	@ mkdir -p build

@@ -8,4 +8,3 @@ tmp
 npm-debug.log
 .DS_Store
 .babel-cache
-lerna-debug.log

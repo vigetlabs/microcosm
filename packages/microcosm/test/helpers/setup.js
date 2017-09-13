@@ -2,7 +2,7 @@ import '../../src/addons/jest-matchers'
 
 // Make a strict-only test flag
 it.dev = function(description, test) {
-  if (!process.env.NO_ASSERTS) {
+  if (!process.env.BUNDLED) {
     return it(description, test)
   }
 
@@ -10,7 +10,7 @@ it.dev = function(description, test) {
 }
 
 describe.dev = function(description, suite) {
-  if (!process.env.NO_ASSERTS) {
+  if (!process.env.BUNDLED) {
     return describe(description, test)
   }
 
