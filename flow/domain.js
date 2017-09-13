@@ -8,7 +8,7 @@
 import type Microcosm from '../src/microcosm'
 
 declare interface Domain {
-  actions: Object,
+  actions: ?Object,
 
   /**
    * Generate the starting value for the particular state this domain is
