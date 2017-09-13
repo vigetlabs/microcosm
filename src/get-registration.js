@@ -21,7 +21,7 @@ function isPlainObject(value) {
 /**
  * Gets any registrations that match a given command and status.
  */
-function getRegistration(pool: ?Object, command: Tagged, status: Status) {
+function getRegistration(pool: any, command: Tagged, status: Status) {
   let answer = []
 
   if (pool == null) {

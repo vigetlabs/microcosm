@@ -227,10 +227,10 @@ export function update(
   return set(state, path, next)
 }
 
-export function result(target: *, keyPath: string | keyPath) {
+export function result(target: *, keyPath: string | KeyPath): * {
   let value = get(target, keyPath)
 
-  if (isFunction(value)) {
+  if (typeof value === 'function') {
     return value.call(target)
   }
 

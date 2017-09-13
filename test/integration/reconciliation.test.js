@@ -66,7 +66,7 @@ describe('Reconciliation', function() {
     expect(repo).toHaveState('count', 6)
   })
 
-  it('archived actions are removed from the archive', function() {
+  it.dev('archived actions are removed from the archive', function() {
     const repo = new Microcosm()
 
     let one = repo.append('one')
@@ -78,11 +78,11 @@ describe('Reconciliation', function() {
     one.resolve()
 
     // Recalling one will find nothing, so the repo returns initial state
-    expect(repo.recall(one)).toEqual(repo.getInitialState())
+    expect(repo._recall(one)).toEqual(repo.getInitialState())
 
     // Two is in here because it is the parent of three, which we need as a "base state"
-    expect(repo.recall(two)).toBeDefined()
-    expect(repo.recall(three)).toBeDefined()
+    expect(repo._recall(two)).toBeDefined()
+    expect(repo._recall(three)).toBeDefined()
   })
 
   it('pushing actions while the root is "open" does not result in extra invocations', function() {

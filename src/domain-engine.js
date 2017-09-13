@@ -56,12 +56,10 @@ class DomainEngine {
     for (var i = 0; i < this.domains.length; i++) {
       var [key, scope] = this.domains[i]
 
-      if (scope.register) {
-        let steps = getRegistration(result(scope, 'register'), command, status)
+      let steps = getRegistration(result(scope, 'register'), command, status)
 
-        if (steps.length) {
-          handlers.push({ key, scope, steps })
-        }
+      if (steps.length) {
+        handlers.push({ key, scope, steps })
       }
     }
 

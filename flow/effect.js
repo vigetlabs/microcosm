@@ -6,6 +6,8 @@ import type Microcosm from '../src/microcosm'
 import type Action from '../src/action'
 
 declare interface Effect {
+  actions: ?Object,
+
   /**
    * Setup runs right after an effect is added to a Microcosm. It
    * receives that repo and any options passed as the second argument.

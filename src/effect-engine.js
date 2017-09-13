@@ -3,7 +3,7 @@
  */
 
 import getRegistration from './get-registration'
-import { get, merge, createOrClone } from './utils'
+import { get, merge, result, createOrClone } from './utils'
 
 import type Action from './action'
 import type Microcosm from './microcosm'
@@ -44,14 +44,12 @@ class EffectEngine {
     let { command, payload, status } = action
 
     for (var i = 0; i < this.effects.length; i++) {
-      var effect = this.effects[i]
+      let effect = this.effects[i]
+      let registry = result(effect, 'register')
+      let handlers = getRegistration(registry, command, status)
 
-      if (effect.register) {
-        let handlers = getRegistration(effect.register(), command, status)
-
-        for (var j = 0; j < handlers.length; j++) {
-          handlers[j].call(effect, this.repo, payload)
-        }
+      for (var j = 0; j < handlers.length; j++) {
+        handlers[j].call(effect, this.repo, payload)
       }
     }
   }

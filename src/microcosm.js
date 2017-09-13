@@ -98,7 +98,7 @@ class Microcosm extends Emitter implements Domain {
   state: Object
   history: History
   snapshots: { [key: string]: Snapshot }
-  actions: { [key: string]: Function }
+  actions: { [key: string]: * }
   domains: DomainEngine
   effects: EffectEngine
   changes: CompareTree
@@ -128,19 +128,19 @@ class Microcosm extends Emitter implements Domain {
     // save snapshots of new state:
 
     // When an action is first created
-    this.history.on('append', this.createSnapshot, this)
+    this.history.on('append', this._createSnapshot, this)
 
     // When an action snapshot needs updating
-    this.history.on('update', this.updateSnapshot, this)
+    this.history.on('update', this._updateSnapshot, this)
 
     // When an action snapshot should be removed
-    this.history.on('remove', this.removeSnapshot, this)
+    this.history.on('remove', this._removeSnapshot, this)
 
     // When an action changes, it causes a reconcilation
-    this.history.on('reconcile', this.dispatchEffect, this)
+    this.history.on('reconcile', this._dispatchEffect, this)
 
     // A history is done reconciling and is ready for a release
-    this.history.on('release', this.release, this)
+    this.history.on('release', this._release, this)
 
     // Microcosm is now ready. Call the setup lifecycle method
     this.setup(this.options)
@@ -200,82 +200,6 @@ class Microcosm extends Emitter implements Domain {
     return this.initial == null ? {} : this.initial
   }
 
-  recall(action: ?Action): Object {
-    if (action && action.id in this.snapshots) {
-      return this.snapshots[action.id].next
-    }
-
-    return this.getInitialState()
-  }
-
-  /**
-   * Get the state prior to a given action, but include any upstream
-   * updates from parent Microcosms.
-   */
-  rebase(action: Action): Object {
-    let state = this.recall(action.parent)
-
-    if (this.parent) {
-      state = merge(state, this.parent.recall(action))
-    }
-
-    return state
-  }
-
-  /**
-   * Create the initial state snapshot for an action. This is important so
-   * that, when rolling back to this action, it always has a state value.
-   */
-  createSnapshot(action: Action): Snapshot {
-    let snapshot: Snapshot = {
-      last: this.state,
-      next: this.state,
-      status: 'inactive',
-      payload: undefined
-    }
-
-    this.snapshots[action.id] = snapshot
-
-    return snapshot
-  }
-
-  /**
-   * Update the state snapshot for a given action
-   */
-  updateSnapshot(action: Action) {
-    let snap = this.snapshots[action.id]
-    let last = this.rebase(action)
-
-    if (!action.disabled) {
-      snap.next = this.domains.dispatch(action, last, snap)
-    } else {
-      snap.next = last
-    }
-
-    this.snapshots[action.id] = merge(snap, {
-      last,
-      status: action.status,
-      payload: action.payload
-    })
-
-    this.state = snap.next
-  }
-
-  /**
-   * Remove the snapshot for a given action
-   */
-  removeSnapshot(action: Action) {
-    delete this.snapshots[action.id]
-  }
-
-  dispatchEffect(action: Action) {
-    this.effects.dispatch(action)
-  }
-
-  release() {
-    this.changes.update(this.state)
-  }
-
   on(type: *, callback: *, scope?: Object) {
     let [event, meta] = type.split(':', 2)
 
@@ -321,14 +245,9 @@ class Microcosm extends Emitter implements Domain {
    * assert.falsy(repo.state.planets.pluto.loading)
    * ```
    */
-  append(command: Command | Tagged, status?: Status): Action {
+  append(command: *, status?: Status): Action {
     if (command in this.actions) {
       return this.history.append(this.actions[command], status)
-    } else {
-      console.assert(
-        typeof command !== 'string',
-        `Unknown action type "${command.toString()}".`
-      )
     }
 
     return this.history.append(command, status)
@@ -340,7 +259,7 @@ class Microcosm extends Emitter implements Domain {
    * repo.push(createPlanet, { name: 'Merkur' })
    * ```
    */
-  push(command: Command, ...params: *): Action {
+  push(command: any, ...params: *): Action {
     let action = this.append(command)
 
     coroutine(action, action.command, params, this)
@@ -378,11 +297,7 @@ class Microcosm extends Emitter implements Domain {
 
     this.initial = set(this.initial, key, initial)
 
-    for (var key in domain.actions) {
-      var action = tag(domain.actions[key], key)
-
-      this.actions[key] = action
-    }
+    this._alias(domain.actions)
 
     this.push(ADD_DOMAIN, domain)
 
@@ -396,7 +311,11 @@ class Microcosm extends Emitter implements Domain {
    * options and associated repo.
    */
   addEffect(config: *, options?: Object) {
-    return this.effects.add(config, options)
+    let effect = this.effects.add(config, options)
+
+    this._alias(effect.actions)
+
+    return effect
   }
 
   /**
@@ -503,6 +422,80 @@ class Microcosm extends Emitter implements Domain {
 
   parallel(actions: Action[]) {
     return this.append('GROUP').link(actions)
+  }
+
+  /* Private ------------------------------------------------------ */
+
+  _dispatchEffect(action: Action) {
+    this.effects.dispatch(action)
+  }
+
+  _release() {
+    this.changes.update(this.state)
+  }
+
+  _createSnapshot(action: Action): Snapshot {
+    let snapshot: Snapshot = {
+      last: this.state,
+      next: this.state,
+      status: 'inactive',
+      payload: undefined
+    }
+
+    this.snapshots[action.id] = snapshot
+
+    return snapshot
+  }
+
+  _updateSnapshot(action: Action) {
+    let snap = this.snapshots[action.id]
+    let last = this._rebase(action)
+
+    if (!action.disabled) {
+      snap.next = this.domains.dispatch(action, last, snap)
+    } else {
+      snap.next = last
+    }
+
+    this.snapshots[action.id] = merge(snap, {
+      last,
+      status: action.status,
+      payload: action.payload
+    })
+
+    this.state = snap.next
+  }
+
+  _removeSnapshot(action: Action) {
+    delete this.snapshots[action.id]
+  }
+
+  _recall(action: ?Action): Object {
+    if (action && action.id in this.snapshots) {
+      return this.snapshots[action.id].next
+    }
+
+    return this.getInitialState()
+  }
+
+  /**
+   * Get the state prior to a given action, but include any upstream
+   * updates from parent Microcosms.
+   */
+  _rebase(action: Action): Object {
+    let state = this._recall(action.parent)
+
+    if (this.parent) {
+      state = merge(state, this.parent._recall(action))
+    }
+
+    return state
+  }
+
+  _alias(actions: ?Object) {
+    for (var name in actions) {
+      this.actions[name] = tag(actions[name], name)
+    }
   }
 }
 
