@@ -23,10 +23,11 @@ All commands should be run using yarn. If you haven't switched to [yarn](https:/
 
 > If you are familiar with npm then using yarn should be a breeze. You can keep using npm if you'd prefer but you will miss out on the safety and security of yarn
 
-You can install dependencies with:
+Microcosm must manage multiple projects. To do that, we use [Lerna](https://lernajs.io). Setup the project with:
+
 
 ```bash
-yarn install
+yarn bootstrap
 ```
 
 ### Examples
@@ -35,47 +36,23 @@ The [examples section](examples) showcase Microcosm features. These may be helpf
 
 ### Docs
 
-Documentation found on the [Microcosm site](http://code.viget.com/microcosm) is generated from markdown files in the [docs section](docs).
+Documentation found on the [Microcosm site](http://code.viget.com/microcosm) is generated from markdown files in the [docs section](./packages/microcosm/docs).
 
 > We would love your help in improving documentation. Get involved by creating a pull request addressing an issue with the label `documentation`, by creating a documentation issue, or contributing to the conversation on existing [issues](https://github.com/vigetlabs/microcosm/issues?q=is%3Aissue+is%3Aopen+label%3Adocumentation).
 
 ### Site
 
-You may want to run what you see on [code.viget.com/microcosm](http://code.viget.com/microcosm) locally. To do so head over the [site section of this repo](site).
+You may want to run what you see on [code.viget.com/microcosm](http://code.viget.com/microcosm) locally. To do so head over the [site section of this repo](./packages/microcosm-www).
 
 ## Prettier
 
 We are using [prettier](https://github.com/prettier/prettier) combined with [eslint](http://eslint.org/) to keep formatting and format linting easy. We do that by running:
 
 ```bash
-yarn run pretty
-```
-
-or
-
-```bash
-make pretty
+yarn format
 ```
 
 These will first run `prettier` to format our code and then run `eslint --fix` to make additional style changes and fixes.
-
-### Things to note about the prettier/eslint combo
-
-We are defaulting to prettier's opinions on some things (the ones it forces us to). Most notably single quotes. Prettiers **will** use double quotes (even in single quote mode) when it is "prettier" to do so.
-
-ie:
-```javascript
-// prettier will do this (what we chose to do)
-"I am using double quotes because it's prettier"
-
-// eslint --fix would do this
-'I am using single quotes because it\'s eslint --fix'
-```
-
-We are letting this happen for two reasons:
-
-1. Write whatever you want, prettier will fix it, that's the point
-2. Our `yarn run lint` task would error out if we did a `eslint --fix`. There is no way to turn change prettier's behaviour but we can turn off the offending eslint rule
 
 ## Testing
 
@@ -134,5 +111,4 @@ for style:
 
 ### Reviews
 
-All changes should be submitted through pull request. Ideally, at
-least two :+1:s should be given before a pull request is merge.
+All changes should be submitted through pull request. Ideally, at least two :+1:s should be given before a pull request is merge.
