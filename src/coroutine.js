@@ -55,7 +55,7 @@ function processGenerator(action: Action, body: GeneratorAction, repo: *) {
  */
 export default function coroutine(
   action: Action,
-  command: any,
+  command: Command,
   params: *[],
   repo: any
 ) {

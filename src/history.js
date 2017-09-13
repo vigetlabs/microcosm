@@ -200,7 +200,7 @@ class History extends Emitter {
   /**
    * Append a new action to the end of history
    */
-  append(command: Command | Tagged, status?: ?Status): Action {
+  append(command: string | Command, status?: ?Status): Action {
     let action = new Action(command, status)
 
     if (this.head) {

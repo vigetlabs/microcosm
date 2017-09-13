@@ -258,7 +258,7 @@ class PresenterMediator extends React.PureComponent<Props> {
     return this.presenter.defaultRender()
   }
 
-  send(intent: Command | Tagged, ...params: *[]): * {
+  send(intent: Command, ...params: *[]): * {
     let taggedIntent = tag(intent)
     let mediator = this
 

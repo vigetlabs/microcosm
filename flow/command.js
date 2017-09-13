@@ -7,7 +7,7 @@
  * invoked, it processes a given command, returning an action to
  * represent the resolution of that command.
  */
-declare type Command = Function | string
+declare type Command = (...args: *[]) => *
 
 declare type Tagged = {
   name?: string,

@@ -8,7 +8,7 @@ const FALLBACK = '_action'
 /**
  * Uniquely tag a function. This is used to identify actions.
  */
-export default function tag(fn: Command | Tagged, name?: string): Tagged {
+export default function tag(fn: string | Command, name?: string): Command {
   console.assert(
     fn,
     `Unable to identify ${fn == null ? fn : fn.toString()} action.`
@@ -57,5 +57,5 @@ export default function tag(fn: Command | Tagged, name?: string): Tagged {
   // Mark the function as tagged so we only do this once
   fn.__tagged = true
 
-  return cast
+  return fn
 }

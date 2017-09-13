@@ -22,7 +22,7 @@ const ResolutionMap = {
 
 class Action extends Emitter {
   id: string
-  command: Tagged
+  command: Function
   status: Status
   payload: any
   disabled: boolean
@@ -33,7 +33,7 @@ class Action extends Emitter {
   children: Action[]
   revisions: Revision[]
 
-  constructor(command: Command | Tagged, status: ?Status) {
+  constructor(command: string | Command, status: ?Status) {
     super()
 
     this.id = uid('action')
