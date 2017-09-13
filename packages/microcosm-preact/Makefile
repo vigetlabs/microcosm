@@ -1,4 +1,3 @@
-ROLLUP := node_modules/.bin/rollup
 BABEL := node_modules/.bin/babel
 MODULES = $(wildcard src/*.js)
 

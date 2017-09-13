@@ -1,7 +1,7 @@
 {
   "presets": [
     [
-      "es2015",
+      "env",
       {
         "loose": true,
         "modules": false
@@ -14,7 +14,7 @@
   "env": {
     "test": {
       "presets": [
-        "es2015",
+        "env",
         "stage-2",
         "react"
       ]

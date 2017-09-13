@@ -1,4 +1,5 @@
 {
+  "name": "microcosm-www",
   "private": true,
   "homepage": "http://code.viget.com/microcosm",
   "scripts": {

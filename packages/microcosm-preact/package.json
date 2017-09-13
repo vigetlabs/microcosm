@@ -7,10 +7,13 @@
   "license": "MIT",
   "scripts": {
     "start": "webpack-dev-server",
-    "build": "NODE_ENV=production webpack -p --hide-modules"
+    "build": "make all",
+    "release": "make release"
   },
   "repository": "https://github.com/vigetlabs/microcosm-preact",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
     "babel-loader": "^7.1.1",
     "microcosm": "^12.9.0",
     "preact": "^8.2.1",

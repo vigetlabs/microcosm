@@ -2,7 +2,8 @@
   "globals": {
     "Promise": true,
     "jest": true,
-    "expect": true
+    "expect": true,
+    "chrome": true
   },
   "env": {
     "browser": true,

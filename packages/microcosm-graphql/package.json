@@ -1,10 +1,10 @@
 {
+  "name": "microcosm-graphql",
   "main": "build/index.js",
   "private": true,
   "scripts": {
     "build": "webpack -p --config example/webpack.config.js --hide-modules",
-    "watch":
-      "webpack --watch --config example/webpack.config.js --hide-modules",
+    "watch": "webpack --watch --config example/webpack.config.js --hide-modules",
     "server": "nodemon example/build/server.js",
     "test": "jest"
   },
@@ -32,13 +32,19 @@
     "webpack": "^3.5.6"
   },
   "babel": {
-    "presets": ["flow", "env", "stage-2"]
+    "presets": [
+      "flow",
+      "env",
+      "stage-2"
+    ]
   },
   "dependencies": {
     "faker": "^4.1.0",
     "microcosm": "^12.12.0"
   },
   "jest": {
-    "watchPathIgnorePatterns": ["example"]
+    "watchPathIgnorePatterns": [
+      "example"
+    ]
   }
 }
