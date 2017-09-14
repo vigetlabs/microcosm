@@ -4,10 +4,9 @@
   "main": "build/index.js",
   "private": true,
   "scripts": {
+    "start": "nodemon example/build/server.js",
     "build": "webpack -p --config example/webpack.config.js --display errors-only",
-    "watch": "webpack --watch --config example/webpack.config.js --display minimal",
-    "server": "nodemon example/build/server.js",
-    "test": "jest"
+    "watch": "webpack --watch --config example/webpack.config.js --display minimal"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -23,7 +22,6 @@
     "graphql-tag": "^2.4.2",
     "graphql-tools": "^1.2.2",
     "html-webpack-plugin": "^2.30.1",
-    "jest": "^21.0.2",
     "morgan": "^1.8.2",
     "nodemon": "^1.12.0",
     "webpack": "^3.5.6"
