@@ -17,6 +17,7 @@ jobs:
     steps:
       - checkout
       - <<: *restore-npm-cache
+      - run: yarn config set workspaces-experimental true
       - run: yarn bootstrap
       - save_cache:
           paths:
