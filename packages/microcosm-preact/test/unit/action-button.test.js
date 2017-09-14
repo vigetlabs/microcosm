@@ -71,7 +71,7 @@ describe('callbacks', function() {
     let onDone = jest.fn()
     let send = () => true
     let button = mount(
-      <ActionButton action="test" onDone={onDone} send={true} />
+      <ActionButton action="test" onDone={onDone} send={send} />
     )
 
     button.click()
@@ -82,7 +82,9 @@ describe('callbacks', function() {
   it('does not execute onError if not given an action', function() {
     let onError = jest.fn()
     let send = () => true
-    let button = mount(<ActionButton action="test" onError={onError} />)
+    let button = mount(
+      <ActionButton action="test" onError={onError} send={send} />
+    )
 
     button.click()
 

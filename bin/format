@@ -7,12 +7,7 @@
 
 set -e
 
-# Only run prettier on changed files if there are unstaged changes
-if [[ -z $(git status -s) ]]; then
-  SRC=$(git ls-files | grep -v "^\." | grep ".jsx*\$")
-else
-  SRC=$(git diff --name-only HEAD | grep -v "^\." | grep ".jsx*\$")
-fi
+SRC=$(git ls-files | grep -v "^\." | grep ".jsx*\$")
 
 # Prettier is an automated code formatter.
 # https://github.com/prettier/prettier

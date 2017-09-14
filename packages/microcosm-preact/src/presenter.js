@@ -11,6 +11,7 @@
 import { h, Component } from 'preact'
 import Microcosm, { merge, tag, getRegistration } from 'microcosm'
 import Model from 'microcosm/addons/model'
+import { requestFrame, cancelFrame } from './frame'
 
 function passChildren() {
   return this.props.children[0]

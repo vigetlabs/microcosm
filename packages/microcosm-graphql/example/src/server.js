@@ -2,7 +2,6 @@
 
 import express from 'express'
 import bodyParser from 'body-parser'
-import { get } from 'microcosm'
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express'
 import { makeExecutableSchema } from 'graphql-tools'
 import { makeRepo } from './repo'
