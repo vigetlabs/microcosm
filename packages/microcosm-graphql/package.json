@@ -9,10 +9,6 @@
     "server": "nodemon example/build/server.js",
     "test": "jest"
   },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true
-  },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
@@ -35,10 +31,5 @@
   "dependencies": {
     "faker": "^4.1.0",
     "microcosm": "^12.12.0"
-  },
-  "jest": {
-    "watchPathIgnorePatterns": [
-      "example"
-    ]
   }
 }

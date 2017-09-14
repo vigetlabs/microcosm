@@ -3,7 +3,10 @@
 const HTMLPlugin = require('html-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
-const nodeModules = require('fs').readdirSync(__dirname + '/../node_modules')
+const nodeModules = [].concat(
+  require('fs').readdirSync(__dirname + '/../node_modules'),
+  require('fs').readdirSync(__dirname + '/../../../node_modules')
+)
 
 module.exports = function() {
   return [
@@ -54,8 +57,7 @@ const modules = {
   rules: [
     {
       test: /\.gql$/,
-      use: ['graphql-tag/loader'],
-      exclude: /node_modules/
+      use: ['graphql-tag/loader']
     },
     {
       test: /\.js$/,
@@ -68,6 +70,6 @@ const modules = {
 const resolve = {
   alias: {
     'microcosm-graphql$': path.resolve(__dirname, '../src/index.js'),
-    microcosm: path.resolve(__dirname, '../../microcosm/build/')
+    microcosm: path.resolve(__dirname, '../../microcosm/build')
   }
 }
