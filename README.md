@@ -79,7 +79,7 @@ This project uses [Lerna](https://github.com/lerna/lerna), a way to manage multi
 - [microcosm-devtools](./packages/microcosm-devtools) - Developer tools
 - [microcosm-graphql](./packages/microcosm-graphql) - Experimental [GraphQL](https://graphql.org) support
 - [microcosm-react-router](./packages/microcosm-react-router) - Experimental [ReactRouter](https://github.com/ReactTraining/react-router) support
-- [microcosm-www](./packages/microcosm-www) - The [website](https://code.viget.com/microcosm)
+- [microcosm-www](./packages/microcosm-www) - The [website](http://code.viget.com/microcosm)
 - [microcosm-www-next](./packages/microcosm-www-next) - Ongoing work on the next website
 
 Be sure to check out our [contributing guide](./CONTRIBUTING.md) for instructions on getting started.
