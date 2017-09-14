@@ -46,11 +46,7 @@
     "testEnvironment": "node",
     "testURL": "http://localhost:3000",
     "projects": [
-      "<rootDir>/packages/microcosm",
-      "<rootDir>/packages/microcosm-preact",
-      "<rootDir>/packages/microcosm-react-router",
-      "<rootDir>/packages/microcosm-graphql",
-      "<rootDir>/packages/microcosm-devtools"
+      "<rootDir>/packages/*"
     ]
   },
   "workspaces": [
