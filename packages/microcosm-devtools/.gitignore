@@ -1,8 +1,0 @@
-node_modules
-.DS_Store
-build
-*.zip
-tests_output
-selenium-debug.log
-TODOs.md
-.babel-cache

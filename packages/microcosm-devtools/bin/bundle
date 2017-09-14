@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+# build
+NODE_ENV=production webpack --config shells/chrome/webpack.config.js --display errors-only
+
+# zip will fail if we don't ensure we have a directory
+mkdir -p build
+
+# clean
+rm -f build/*
+
+# The Chrome extension store accepts zip files
+zip -r ./build/chrome.zip shells/chrome -x *src/* -x *webpack.config.js -q

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Build before publishing to NPM
+#
+# Run this command with:
+#   ./bin/build
+
+PATH=$(yarn bin):$PATH
+
+mkdir -p es
+mkdir -p lib
+
+rm -rf es/*
+rm -rf lib/*
+
+rollup --output.format es src/index.js | buble --no modules > es/index.js
+
+rollup --output.format cjs src/index.js | buble > lib/index.js
+
+rollup --output.format umd --name MicrocosmReactRouter src/index.js | buble > lib/index.js

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "webpack-dev-server --config shells/dev/webpack.config.js",
     "dev:chrome": "webpack --watch --hide-modules --config shells/chrome/webpack.config.js",
-    "build": "make build",
+    "build": "./bin/bundle",
     "release": "yarn build && yarn zip"
   },
   "keywords": [
