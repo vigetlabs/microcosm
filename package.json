@@ -51,8 +51,7 @@
       "<rootDir>/packages/microcosm-react-router",
       "<rootDir>/packages/microcosm-graphql",
       "<rootDir>/packages/microcosm-devtools"
-    ],
-    "verbose": true
+    ]
   },
   "workspaces": [
     "packages/*"

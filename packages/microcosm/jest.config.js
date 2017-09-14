@@ -1,15 +1,7 @@
 const config = {
   setupTestFrameworkScriptFile: './test/helpers/setup.js',
-  moduleDirectories: ['node_modules', '.'],
-  modulePathIgnorePatterns: [
-    'build',
-    'coverage',
-    'examples',
-    'site',
-    'new_site'
-  ],
-  coveragePathIgnorePatterns: ['test', 'examples'],
-  testPathIgnorePatterns: ['node_modules'],
+  modulePathIgnorePatterns: ['build', 'coverage', 'examples'],
+  coveragePathIgnorePatterns: ['build', 'examples', 'test'],
   moduleNameMapper: {}
 }
 

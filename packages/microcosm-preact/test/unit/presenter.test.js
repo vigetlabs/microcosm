@@ -985,10 +985,6 @@ describe('intercepting actions', function() {
     let top = new Microcosm({ maxHistory: Infinity })
     let bottom = new Microcosm({ maxHistory: Infinity })
 
-    bottom.history.on('append', function(action) {
-      console.log('action', action.command)
-    })
-
     mount(
       <Presenter repo={top}>
         <Presenter repo={bottom}>

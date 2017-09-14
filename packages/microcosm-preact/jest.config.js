@@ -1,8 +1,7 @@
 module.exports = {
   setupFiles: ['./test/setup.js'],
-  moduleDirectories: ['node_modules', '.'],
-  modulePathIgnorePatterns: ['build', 'coverage', 'example'],
-  coveragePathIgnorePatterns: ['test', 'example'],
+  modulePathIgnorePatterns: ['build', 'example'],
+  coveragePathIgnorePatterns: ['build', 'examples', 'test'],
   moduleNameMapper: {
     '.*?microcosm$': '<rootDir>../microcosm/build/microcosm.js',
     '.*?microcosm/(.*)': '<rootDir>../microcosm/build/$1'
