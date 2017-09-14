@@ -12,13 +12,12 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
+            - ls -laR node_modules > deps_checksum
       - run: yarn bootstrap
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: {{ checksum "deps_checksum" }}
       - persist_to_workspace: 
           root: /home/circleci
           paths:
