@@ -12,12 +12,12 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - ls -laR node_modules > deps_checksum
+            - yarn-cache-{{ checksum "yarn.lock" }}
       - run: yarn bootstrap
       - save_cache:
           paths:
             - node_modules
-          key: {{ checksum "deps_checksum" }}
+          key: yarn-cache-{{ checksum "yarn.lock" }}
       - persist_to_workspace: 
           root: /home/circleci
           paths:
