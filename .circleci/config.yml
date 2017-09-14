@@ -1,46 +1,48 @@
 version: 2
 
 defaults: &defaults
+  working_directory: /home/circleci/microcosm
   docker:
     - image: circleci/node:latest
-  working_directory: ~/repo
-
-restore-npm-cache: &restore-npm-cache
-  restore_cache:
-    keys:
-      - v1-dependencies-{{ checksum "package.json" }}
-      - v1-dependencies-
 
 jobs:
   build:
     <<: *defaults
     steps:
       - checkout
-      - <<: *restore-npm-cache
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
       - run: yarn bootstrap
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+      - persist_to_workspace: 
+          root: /home/circleci
+          paths:
+            - microcosm
   audit:
     <<: *defaults
     steps:
-      - checkout
-      - <<: *restore-npm-cache
+      - attach_workspace:
+          at: /home/circleci
       - run: yarn flow
       - run: yarn lint
   test-dev:
     <<: *defaults
     steps:
-      - checkout
-      - <<: *restore-npm-cache
+      - attach_workspace:
+          at: /home/circleci
+      - run: yarn build --include
       - run: yarn test:cov
       - run: yarn report-coverage
   test-prod:
     <<: *defaults
     steps:
-      - checkout
-      - <<: *restore-npm-cache
+      - attach_workspace:
+          at: /home/circleci
       - run: yarn test:prod
 
 workflows:
