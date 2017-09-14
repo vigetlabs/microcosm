@@ -15,7 +15,7 @@ You use the same node version we are developing with by running
 nvm use
 ```
 
-> You may need to run `nvm install` if you haven't installed the node version on `.nvmrc`
+> You may need to run `nvm install` if you haven't installed the node version we require.
 
 ## Getting Started
 
@@ -30,13 +30,11 @@ Microcosm must manage multiple projects. To do that, we use [Lerna](https://lern
 yarn bootstrap
 ```
 
-### Examples
-
-The [examples section](examples) showcase Microcosm features. These may be helpful as you develop new features or improve existing ones. Check out the [examples section of this repo](examples) to get started running the examples.
+This will install dependencies for all packages in this repo.
 
 ### Docs
 
-Documentation found on the [Microcosm site](http://code.viget.com/microcosm) is generated from markdown files in the [docs section](./packages/microcosm/docs).
+Documentation found on the [Microcosm site](http://code.viget.com/microcosm) is generated from markdown files in the [docs section of the `microcosm` package](./packages/microcosm/docs).
 
 > We would love your help in improving documentation. Get involved by creating a pull request addressing an issue with the label `documentation`, by creating a documentation issue, or contributing to the conversation on existing [issues](https://github.com/vigetlabs/microcosm/issues?q=is%3Aissue+is%3Aopen+label%3Adocumentation).
 
@@ -46,18 +44,24 @@ You may want to run what you see on [code.viget.com/microcosm](http://code.viget
 
 ## Prettier
 
-We are using [prettier](https://github.com/prettier/prettier) combined with [eslint](http://eslint.org/) to keep formatting and format linting easy. We do that by running:
+We use [prettier](https://github.com/prettier/prettier) to ensure consistent style across all packages. Automated tests continually check that code formatting is consistent, failing the build if it is not. Make sure this doesn't happen by running:
 
 ```bash
 yarn format
 ```
 
-These will first run `prettier` to format our code and then run `eslint --fix` to make additional style changes and fixes.
+This will run `prettier` on all relevant fils in the repo.
 
 ## Testing
 
 ```bash
 yarn test
+```
+
+This run tests for every package. That's a lot of tests! To reduce down the number of tests that execute, consider running the test command with a filter:
+
+```bash
+yarn test microcosm-preact
 ```
 
 For test coverage:
@@ -67,8 +71,7 @@ yarn run test:cov
 open ./coverage/index.html
 ```
 
-> Be sure to check the `./coverage` folder to verify all code paths are
-touched.
+> Be sure to check the `./coverage` folder to verify all code paths are touched.
 
 ## Deployment
 
@@ -92,22 +95,6 @@ with:
 ```bash
 make prerelease
 ```
-
-## Conventions
-
-**Consider master unsafe**, use [`npm`](https://www.npmjs.com/package/microcosm) for the latest stable version.
-
-### Javascript
-
-Microcosm uses ES6 Javascript (compiled using [Babel](babeljs.io)). As
-for style:
-
-- No semicolons (enforced by `.eslintrc.json`)
-- 2 spaces for indentation (no tabs) (enforced by `.editorconfig`)
-- Prefer ' over ", use string interpolation (enforced by `.eslintrc.json`)
-- 80 character line length (enforced by `.editorconfig`)
-
-> We recommend using an [editorconfig](http://editorconfig.org/), a [eslint](http://eslint.org/) plugin, and [prettier](https://github.com/prettier/prettier) integration for your editor during development to ensure standards are met.
 
 ### Reviews
 

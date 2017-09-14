@@ -1,9 +1,29 @@
 {
   "presets": [
-    "es2015",
-    "stage-2"
+    [
+      "env",
+      {
+        "loose": true,
+        "modules": false
+      }
+    ],
+    "stage-2",
+    "flow"
   ],
   "plugins": [
-    ["transform-react-jsx", { "pragma": "h" }]
-  ]
+    [
+      "transform-react-jsx",
+      {
+        "pragma": "h"
+      }
+    ]
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        "env",
+        "stage-2"
+      ]
+    }
+  }
 }

@@ -1,5 +1,5 @@
 // Place setup behavior here
 // Force sync rendering in Preact
-import { options } from 'preact'
+const { options } = require('preact')
 
 options.debounceRendering = update => update()

@@ -67,6 +67,7 @@ const modules = {
 
 const resolve = {
   alias: {
-    'microcosm-graphql$': path.resolve(__dirname, '../src/index.js')
+    'microcosm-graphql$': path.resolve(__dirname, '../src/index.js'),
+    microcosm: path.resolve(__dirname, '../../microcosm/build/')
   }
 }

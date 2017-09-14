@@ -8,6 +8,7 @@
   "homepage": "http://code.viget.com/microcosm",
   "scripts": {
     "build": "make all",
+    "watch": "make watch",
     "release": "make release"
   },
   "repository": {

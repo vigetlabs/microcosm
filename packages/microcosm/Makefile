@@ -1,7 +1,6 @@
-all: build strict min umd es docs
+MAKEFLAGS += '-j 4'
 
-pretty:
-	yarn run pretty
+all: build strict min umd es docs
 
 build: build/package.json
 	@ ./bin/bundle --out=build
@@ -45,4 +44,13 @@ bench: build
 clean:
 	@ rm -rf build/*
 
-.PHONY: clean bench release prerelease all docs build strict min umd es
+watch-build:
+	@ echo "[i] Rebuilding microcosm..."
+	@ make build
+	@ echo "[+] Rebuilt microcosm..."
+
+watch:
+	@ echo "Watching microcosm..."
+	@ fswatch -o src | xargs -n1 -I{} make watch-build
+
+.PHONY: clean bench release prerelease all docs build strict min umd es watch watch-build

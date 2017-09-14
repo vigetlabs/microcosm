@@ -70,6 +70,20 @@ action.onError(function () {
 
 Checkout the [installation guide](http://code.viget.com/microcosm/guides/installation.html), then dive into [our quickstart](http://code.viget.com/microcosm/guides/quickstart.html)!
 
+## Contributing
+
+This project uses [Lerna](https://github.com/lerna/lerna), a way to manage multiple JavaScript projects in the same repo. Projects include:
+
+- [microcosm](./packages/microcosm) - The core project
+- [microcosm-preact](./packages/microcosm-preact) - [Preact](https://github.com/developit/preact/) bindings
+- [microcosm-devtools](./packages/microcosm-devtools) - Developer tools
+- [microcosm-graphql](./packages/microcosm-graphql) - Experimental [GraphQL](https://graphql.org) support
+- [microcosm-react-router](./packages/microcosm-react-router) - Experimental [ReactRouter](https://github.com/ReactTraining/react-router) support
+- [microcosm-www](./packages/microcosm-www) - The [website](https://code.viget.com/microcosm)
+- [microcosm-www-next](./packages/microcosm-www-next) - Ongoing work on the next website
+
+Be sure to check out our [contributing guide](./CONTRIBUTING.md) for instructions on getting started.
+
 ---
 
 <a href="http://code.viget.com">

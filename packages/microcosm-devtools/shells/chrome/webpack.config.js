@@ -20,7 +20,7 @@ module.exports = {
   },
 
   resolve: {
-    alias
+    alias: alias
   },
 
   module: {
@@ -64,9 +64,11 @@ module.exports = {
       }
     ]
   },
+
   performance: {
     hints: false
   },
+
   devtool: process.env.NODE_ENV !== 'production' ? '#inline-source-map' : false
 }
 

@@ -1,9 +1,15 @@
-BABEL := node_modules/.bin/babel
-MODULES = $(wildcard src/*.js)
+MAKEFLAGS += '-j 4'
 
-all: javascript docs build/package.json
+all: build umd es docs
 
-javascript: $(patsubst src/%,build/%,$(MODULES))
+build: build/package.json
+	@ ./bin/bundle --out=build
+
+umd: build/package.json
+	@ ./bin/bundle --out=build/umd --format=umd
+
+es: build/package.json
+	@ ./bin/bundle --out=build/es --format=es
 
 docs:
 	@ mkdir -p build
@@ -12,10 +18,6 @@ docs:
 build/package.json: package.json
 	@ mkdir -p build
 	@ node -p 'p=require("./package");p.private=p.scripts=p.jest=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $@
-
-build/%.js: src/%.js $(MODULES)
-	@ mkdir -p $(@D)
-	@ $(BABEL) $< > $@
 
 release: clean all
 	npm publish build
@@ -26,4 +28,13 @@ prerelease: clean all
 clean:
 	@ rm -rf build/*
 
-.PHONY: clean release prerelease all javascript docs
+watch-build:
+	@ echo "[i] Rebuilding microcosm-preact..."
+	@ make build
+	@ echo "[+] Rebuilt microcosm-preact..."
+
+watch:
+	@ echo "Watching microcosm-preact..."
+	@ fswatch -o src | xargs -n1 -I{} make watch-build
+
+.PHONY: clean release prerelease all build umd es docs watch watch-build

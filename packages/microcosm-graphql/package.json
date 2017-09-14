@@ -3,8 +3,8 @@
   "main": "build/index.js",
   "private": true,
   "scripts": {
-    "build": "webpack -p --config example/webpack.config.js --hide-modules",
-    "watch": "webpack --watch --config example/webpack.config.js --hide-modules",
+    "build": "webpack -p --config example/webpack.config.js --display errors-only",
+    "watch": "webpack --watch --config example/webpack.config.js --display minimal",
     "server": "nodemon example/build/server.js",
     "test": "jest"
   },
@@ -30,13 +30,6 @@
     "morgan": "^1.8.2",
     "nodemon": "^1.12.0",
     "webpack": "^3.5.6"
-  },
-  "babel": {
-    "presets": [
-      "flow",
-      "env",
-      "stage-2"
-    ]
   },
   "dependencies": {
     "faker": "^4.1.0",

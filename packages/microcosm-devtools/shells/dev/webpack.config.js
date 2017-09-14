@@ -10,14 +10,17 @@ module.exports = {
     hook: './src/hook.js',
     target: './target/index.js'
   },
+
   output: {
     path: __dirname + '/build',
     publicPath: '/build/',
     filename: '[name].js'
   },
+
   resolve: {
     alias: alias
   },
+
   module: {
     rules: [
       {
@@ -60,13 +63,17 @@ module.exports = {
       }
     ]
   },
+
   performance: {
     hints: false
   },
+
   devtool: '#cheap-eval-source-map',
+
   devServer: {
     quiet: true,
     contentBase: __dirname
   },
+
   plugins: [new FriendlyErrorsPlugin()]
 }

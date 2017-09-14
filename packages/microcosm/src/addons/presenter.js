@@ -154,7 +154,7 @@ class Presenter extends React.PureComponent<Props, State> {
     return {}
   }
 
-  // Private
+  /* Private ------------------------------------------------------ */
 
   _updateModel(props: Props, state: State) {
     return this.mediator.model.bind(this.getModel(props, state))
@@ -276,7 +276,7 @@ class PresenterMediator extends React.PureComponent<Props> {
     return this.repo.push(...arguments)
   }
 
-  // Private
+  /* Private ------------------------------------------------------ */
 
   _preUpdate(value: Object, patch: Object) {
     this.presenter.modelWillUpdate(this.repo, value, patch)

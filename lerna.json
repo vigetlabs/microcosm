@@ -1,7 +1,11 @@
 {
   "lerna": "2.1.2",
   "packages": [
-    "packages/*"
+    "packages/microcosm",
+    "packages/microcosm-preact",
+    "packages/microcosm-react-router",
+    "packages/microcosm-graphql",
+    "packages/microcosm-devtools"
   ],
   "npmClient": "yarn",
   "version": "independent"
