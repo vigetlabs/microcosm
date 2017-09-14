@@ -6,10 +6,8 @@
   "scripts": {
     "dev": "webpack-dev-server --config shells/dev/webpack.config.js",
     "dev:chrome": "webpack --watch --hide-modules --config shells/chrome/webpack.config.js",
-    "build": "./bin/build",
-    "test": "echo WRITE TESTS; exit 0",
-    "zip": "cd shells && zip -r -FS ../dist/chrome.zip chrome -x *src/* -x *webpack.config.js",
-    "release": "npm run test && npm run build && npm run zip"
+    "build": "make build",
+    "release": "yarn build && yarn zip"
   },
   "keywords": [
     "microcosm",
@@ -25,8 +23,8 @@
     "friendly-errors-webpack-plugin": "^1.6.1",
     "microcosm": "^12.9.0",
     "paths-js": "^0.4.5",
-    "react": "^16.0.0-rc.2",
-    "react-dom": "^16.0.0-rc.2",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
     "react-hot-loader": "3.0.0-beta.6",
     "react-json-tree": "^0.10.9",
     "style-loader": "^0.18.1",
