@@ -8,18 +8,20 @@
 
 set -e
 
-PATH=$(yarn bin):$PATH
-
-# Check these files for mistakes:
-SRC=$(git ls-files | grep -v "^\." | grep ".js\$")
+# Only run lint on changed files if there are unstaged changes
+if [[ -z $(git status -s) ]]; then
+  SRC=$(git ls-files | grep -v "^\." | grep ".jsx*\$")
+else
+  SRC=$(git diff --name-only HEAD | grep -v "^\." | grep ".jsx*\$")
+fi
 
 # Prettier is an automated code formatter.
 # https://github.com/prettier/prettier
-if ! prettier --list-different $SRC; then
+if ! node_modules/.bin/prettier --list-different $SRC; then
   echo "Auto-formatting is out of sync. Please run yarn format and commit the result."
   exit 1
 fi
 
 # Eslint checks for common issues in JavaScript code.
 # http://eslint.org/
-eslint $SRC
+node_modules/.bin/eslint $SRC

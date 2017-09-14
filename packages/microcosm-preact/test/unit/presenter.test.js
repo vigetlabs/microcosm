@@ -24,11 +24,7 @@ describe('::getModel', function() {
       }
 
       view({ greeting }) {
-        return (
-          <p>
-            {greeting}
-          </p>
-        )
+        return <p>{greeting}</p>
       }
     }
 
@@ -80,11 +76,7 @@ describe('::getModel', function() {
         }
       }
       view({ color }) {
-        return (
-          <div>
-            {color}
-          </div>
-        )
+        return <div>{color}</div>
       }
     }
 
@@ -103,11 +95,7 @@ describe('::getModel', function() {
         }
       }
       view({ upper }) {
-        return (
-          <p>
-            {upper}
-          </p>
-        )
+        return <p>{upper}</p>
       }
     }
 
@@ -194,11 +182,7 @@ describe('::getModel', function() {
           }
         }
         render() {
-          return (
-            <p>
-              {this.model.name}
-            </p>
-          )
+          return <p>{this.model.name}</p>
         }
       }
 
@@ -288,11 +272,7 @@ describe('::getModel', function() {
       render() {
         const { text } = this.model
 
-        return (
-          <button onClick={() => this.updateState()}>
-            {text}
-          </button>
-        )
+        return <button onClick={() => this.updateState()}>{text}</button>
       }
     }
 
@@ -380,11 +360,7 @@ describe('::setup', function() {
       }
 
       view({ prop }) {
-        return (
-          <p>
-            {prop}
-          </p>
-        )
+        return <p>{prop}</p>
       }
     }
 
@@ -691,11 +667,7 @@ describe('::view', function() {
   it('views can be stateful react components', function() {
     class MyView extends Component {
       render() {
-        return (
-          <p>
-            {this.props.message}
-          </p>
-        )
+        return <p>{this.props.message}</p>
       }
     }
 
@@ -714,11 +686,7 @@ describe('::view', function() {
 
   it('views can be stateless components', function() {
     function MyView({ message }) {
-      return (
-        <p>
-          {message}
-        </p>
-      )
+      return <p>{message}</p>
     }
 
     class MyPresenter extends Presenter {
@@ -737,11 +705,7 @@ describe('::view', function() {
   it('views can be getters', function() {
     class MyView extends Component {
       render() {
-        return (
-          <p>
-            {this.props.message}
-          </p>
-        )
+        return <p>{this.props.message}</p>
       }
     }
 
@@ -880,11 +844,7 @@ describe('Efficiency', function() {
       getModel = model
 
       render() {
-        return (
-          <p>
-            {this.model.color}
-          </p>
-        )
+        return <p>{this.model.color}</p>
       }
     }
 
@@ -1220,11 +1180,7 @@ describe('forks', function() {
           repo = repo.parent
         }
 
-        return (
-          <p>
-            {names.join(', ')}
-          </p>
-        )
+        return <p>{names.join(', ')}</p>
       }
     }
 
@@ -1291,17 +1247,8 @@ describe('::children', function() {
     }
 
     let children = <span>1</span>
-    let wrapper = mount(
-      <Test>
-        {children}
-      </Test>
-    )
+    let wrapper = mount(<Test>{children}</Test>)
 
-    remount(
-      <Test>
-        {children}
-      </Test>,
-      wrapper
-    )
+    remount(<Test>{children}</Test>, wrapper)
   })
 })

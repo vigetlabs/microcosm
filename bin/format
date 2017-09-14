@@ -5,11 +5,15 @@
 # Run this command with:
 #   ./bin/format
 
-PATH=$(yarn bin):$PATH
+set -e
 
-# Run prettier on these files:
-SRC=$(git ls-files | grep -v "^\." | grep ".jsx*\$")
+# Only run prettier on changed files if there are unstaged changes
+if [[ -z $(git status -s) ]]; then
+  SRC=$(git ls-files | grep -v "^\." | grep ".jsx*\$")
+else
+  SRC=$(git diff --name-only HEAD | grep -v "^\." | grep ".jsx*\$")
+fi
 
 # Prettier is an automated code formatter.
 # https://github.com/prettier/prettier
-prettier --write $SRC
+node_modules/.bin/prettier --write $SRC
