@@ -5,15 +5,8 @@
   },
   "plugins": [
     "plugins/markdown",
-    "node_modules/jsdoc-babel"
+    "jsdoc-babel"
   ],
-  "babel": {
-    "presets": [
-      "stage-2",
-      "react"
-    ],
-    "babelrc": false
-  },
   "templates": {
     "cleverLinks": false,
     "monospaceLinks": false

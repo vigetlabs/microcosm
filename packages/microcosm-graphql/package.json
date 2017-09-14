@@ -1,5 +1,6 @@
 {
   "name": "microcosm-graphql",
+  "version": "0.0.0",
   "main": "build/index.js",
   "private": true,
   "scripts": {

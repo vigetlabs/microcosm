@@ -4,7 +4,7 @@
     "node": ">= 6.10"
   },
   "scripts": {
-    "bootstrap": "yarn && lerna bootstrap",
+    "bootstrap": "yarn && lerna bootstrap && yarn build",
     "format": "./bin/format",
     "build": "lerna run build",
     "watch": "lerna run --parallel watch",
@@ -13,9 +13,10 @@
     "test:prod": "yarn build && BUNDLED=true jest",
     "lint": "./bin/lint",
     "flow": "flow",
+    "clean": "lerna clean",
     "report-coverage": "codecov coverage/lcov.info"
   },
-  "dependencies": {
+  "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-jest": "^21.0.2",
@@ -52,5 +53,8 @@
       "<rootDir>/packages/microcosm-devtools"
     ],
     "verbose": true
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

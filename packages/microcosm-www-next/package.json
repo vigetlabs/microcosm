@@ -1,8 +1,10 @@
 {
   "name": "microcosm-www-next",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "jsdoc ../microcosm/src -c jsdoc/conf.json && jsdoc ../microcosm/src -c jsdoc/conf.json --package ../microcosm/package.json"
+    "build": "make build",
+    "start": "make server"
   },
   "dependencies": {
     "jsdoc": "^3.5.4",

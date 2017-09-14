@@ -2,18 +2,18 @@
 
 'use strict'
 
-var bs = require("browser-sync").create()
+var bs = require('browser-sync').create()
 var exec = require('child_process').exec
 
 // .init starts the server
 bs.init({
-  port   : process.env.PORT || 4000,
-  open   : false,
-  server : "./public"
+  port: process.env.PORT || 4000,
+  open: false,
+  server: './public'
 })
 
-function make () {
-  exec('make -sj', function (error, stdout, stderr) {
+function make() {
+  exec('make -sj', function(error, stdout, stderr) {
     if (error) {
       console.error(`exec error: ${error}`)
       return
@@ -30,7 +30,6 @@ function make () {
     bs.reload()
   })
 }
-
 
 bs.watch('../**/*.md').on('change', make)
 bs.watch('./src/**/*').on('change', make)

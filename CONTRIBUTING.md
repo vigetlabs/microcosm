@@ -54,6 +54,22 @@ This will run `prettier` on all relevant fils in the repo.
 
 ## Testing
 
+A few of our packages depend on the built output of other packages. For example, `microcosm-preact` depends on a production build of `microcosm`. When working locally, incrementally build all packages by running the `watch` command. 
+
+First make sure you have fswatch:
+
+```bash
+brew install fswatch
+```
+
+Then execute:
+
+```bash
+yarn watch
+```
+
+Then in another terminal, run:
+
 ```bash
 yarn test
 ```
