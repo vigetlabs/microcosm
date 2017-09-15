@@ -1,4 +1,4 @@
-import Microcosm, { merge } from '../../src/microcosm'
+import Microcosm, { merge } from 'microcosm'
 
 describe('rollbacks', function() {
   it('does not rollforward the same actions twice', function() {

@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 const states = ['open', 'update', 'resolve', 'reject', 'cancel']
 

@@ -1,4 +1,4 @@
-import Microcosm from '../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Re-executing domain handlers', function() {
   it('does not re-invoke a domain handler if it would result in no change', function() {

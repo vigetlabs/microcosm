@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Domain construction', function() {
   it.dev('errors when given non-POJO options', function() {

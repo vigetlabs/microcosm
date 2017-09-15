@@ -1,4 +1,4 @@
-import { Emitter } from '../../src/microcosm'
+import { Emitter } from 'microcosm'
 
 describe.dev('Emitter', function() {
   it('adds listeners', function() {

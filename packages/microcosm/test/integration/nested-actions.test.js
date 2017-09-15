@@ -5,7 +5,7 @@
  * data using another action.
  */
 
-import Microcosm, { update } from '../../src/microcosm'
+import Microcosm, { update } from 'microcosm'
 
 describe('When pushing actions inside of another action', function() {
   it('does not return to an old state when pushing the second action', function() {

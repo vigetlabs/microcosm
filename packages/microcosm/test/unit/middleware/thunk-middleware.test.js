@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Thunk middleware', function() {
   it('passes the action and repo as arguments', function() {

@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import { Action, merge } from '../microcosm'
+import { Action, merge } from '../index'
 
 /* istanbul ignore next */
 const identity = n => n

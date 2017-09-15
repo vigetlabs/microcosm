@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 import Observable from 'zen-observable'
 
 describe('History @@iterator', function() {

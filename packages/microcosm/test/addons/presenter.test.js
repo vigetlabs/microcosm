@@ -3,10 +3,10 @@
  */
 
 import React from 'react'
-import Microcosm from '../../src/microcosm'
-import Presenter from '../../src/addons/presenter'
-import ActionButton from '../../src/addons/action-button'
-import withSend from '../../src/addons/with-send'
+import Microcosm from 'microcosm'
+import Presenter from 'microcosm/addons/presenter'
+import ActionButton from 'microcosm/addons/action-button'
+import withSend from 'microcosm/addons/with-send'
 import { mount } from 'enzyme'
 
 const View = withSend(function({ send }) {

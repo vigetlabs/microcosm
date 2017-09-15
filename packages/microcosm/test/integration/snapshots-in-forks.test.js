@@ -1,4 +1,4 @@
-import Microcosm from '../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Snapshots', function() {
   it('forks accommodate actions that were pushed before the parent was forked', function() {

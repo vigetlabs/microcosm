@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Action::teardown', function() {
   it('does not lose an onDone subscription when it resolves', function(done) {

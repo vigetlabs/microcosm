@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('action.payload', function() {
   it('an action can intentionally be set to undefined', function() {

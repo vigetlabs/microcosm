@@ -41,7 +41,7 @@ const configs = {
   ActionForm: path.resolve('src/addons/action-form.js'),
   Indexing: path.resolve('src/addons/indexing.js'),
   JestMatchers: path.resolve('src/addons/jest-matchers.js'),
-  Microcosm: path.resolve('src/microcosm.js'),
+  Microcosm: path.resolve('src/index.js'),
   Model: path.resolve('src/addons/model.js'),
   Presenter: path.resolve('src/addons/presenter.js'),
   withSend: path.resolve('src/addons/with-send.js')

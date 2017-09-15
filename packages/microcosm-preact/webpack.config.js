@@ -16,8 +16,8 @@ module.exports = {
   resolve: {
     alias: {
       'microcosm-preact': path.resolve(__dirname, 'src/index.js'),
-      microcosm$: path.resolve(__dirname, '../microcosm/src/microcosm'),
-      'microcosm/': path.resolve(__dirname, '../microcosm/src/')
+      microcosm$: path.resolve(__dirname, '../microcosm'),
+      'microcosm/addons': path.resolve(__dirname, '../microcosm/src/addons')
     }
   },
 

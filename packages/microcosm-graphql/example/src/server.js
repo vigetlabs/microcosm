@@ -15,12 +15,13 @@ const app = express()
 const port = process.env.PORT || 4000
 
 app.use(express.static('example/build'))
-
 app.set('json spaces', 2)
-
 app.use(bodyParser.json())
-
 app.use(morgan('tiny'))
+
+app.get('/favicon.ico', (req, res) => {
+  res.status(404).send('Not found')
+})
 
 app.use(
   '/graphql',

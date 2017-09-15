@@ -5,6 +5,6 @@ module.exports = {
   modulePathIgnorePatterns: ['build', 'coverage', 'examples'],
   coveragePathIgnorePatterns: ['build', 'examples', 'test'],
   moduleNameMapper: {
-    '.*?/src/(.*)': `<rootDir>/${MICROCOSM_DIR}/$1`
+    '.*?microcosm(/.+|$)': `<rootDir>../microcosm/${MICROCOSM_DIR}$1`
   }
 }

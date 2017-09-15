@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Microcosm::setup', function() {
   it('extends defaults with options passed from instantiation', function() {

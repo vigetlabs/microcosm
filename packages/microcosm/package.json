@@ -3,7 +3,7 @@
   "version": "12.13.0",
   "private": true,
   "description": "Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease.",
-  "main": "src/microcosm.js",
+  "main": "src/index.js",
   "module": "es/index.js",
   "homepage": "http://code.viget.com/microcosm",
   "scripts": {

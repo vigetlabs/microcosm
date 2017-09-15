@@ -1,4 +1,4 @@
-import Microcosm, { STATUS } from '../../src/microcosm'
+import Microcosm, { STATUS } from 'microcosm'
 
 const action = n => n
 

@@ -1,4 +1,4 @@
-import Microcosm from '../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('When a domain includes an actions object', () => {
   let repo = null

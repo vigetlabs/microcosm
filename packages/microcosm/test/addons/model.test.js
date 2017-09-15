@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { Microcosm } from '../../src/microcosm'
-import Model from '../../src/addons/model'
+import { Microcosm } from 'microcosm'
+import Model from 'microcosm/addons/model'
 import Observable from 'zen-observable'
 
 class Repo extends Microcosm {

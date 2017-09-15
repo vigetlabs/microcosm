@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Domain::setup', function() {
   it('is invoked with a reference to the repo and options', function() {

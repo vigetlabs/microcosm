@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Microcosm::release', function() {
   it('will not emit a change if state is shallowly equal', function() {

@@ -11,12 +11,10 @@ import DomainEngine from './domain-engine'
 import EffectEngine from './effect-engine'
 import CompareTree from './compare-tree'
 import coroutine from './coroutine'
-import getRegistration from './get-registration'
 import tag from './tag'
 import installDevtools from './install-devtools'
-import STATUS from './status'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
-import { merge, get, set, update } from './utils'
+import { merge, set } from './utils'
 import { version } from '../package.json'
 
 /**
@@ -502,17 +500,4 @@ class Microcosm extends Emitter implements Domain {
 
 Microcosm.version = version
 
-export {
-  Microcosm as default,
-  Microcosm,
-  Action,
-  History,
-  Emitter,
-  tag,
-  get,
-  set,
-  update,
-  merge,
-  getRegistration,
-  STATUS
-}
+export default Microcosm

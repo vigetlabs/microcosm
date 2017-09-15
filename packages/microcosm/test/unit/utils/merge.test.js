@@ -1,4 +1,4 @@
-import { merge } from '../../../src/microcosm'
+import { merge } from 'microcosm'
 
 describe('Utils.merge', function() {
   let skippable = [true, false, undefined, 0, 10, 'string']

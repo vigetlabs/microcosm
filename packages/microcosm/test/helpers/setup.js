@@ -1,4 +1,4 @@
-import '../../src/addons/jest-matchers'
+import 'microcosm/addons/jest-matchers'
 
 // Make a strict-only test flag
 it.dev = function(description, test) {

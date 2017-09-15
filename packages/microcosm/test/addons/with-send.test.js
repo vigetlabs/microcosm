@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import withSend from '../../src/addons/with-send'
+import withSend from 'microcosm/addons/with-send'
 import { mount } from 'enzyme'
 
 it('exposes the wrapped component as a static property', function() {

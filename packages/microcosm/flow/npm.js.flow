@@ -16,3 +16,5 @@ declare module 'form-serialize' {
 declare module 'on-idle' {
   declare module.exports: () => Updater
 }
+
+declare var expect: any

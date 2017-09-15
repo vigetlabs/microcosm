@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('String middleware', function() {
   it('passes strings through as identify functions', function() {

@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('prune', function() {
   it('does not prune non-existing grandparents', function() {

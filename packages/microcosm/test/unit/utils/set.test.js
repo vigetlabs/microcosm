@@ -1,4 +1,4 @@
-import { set } from '../../../src/microcosm'
+import { set } from 'microcosm'
 
 describe('Utils.set', function() {
   const subject = {

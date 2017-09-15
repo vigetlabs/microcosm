@@ -1,4 +1,4 @@
-import { tag } from '../../src/microcosm'
+import { tag } from 'microcosm'
 
 describe('tag', function() {
   it('includes the function name', function() {

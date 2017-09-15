@@ -1,4 +1,4 @@
-import Microcosm, { set } from '../../../src/microcosm'
+import Microcosm, { set } from 'microcosm'
 import SOLAR_SYSTEM from './fixtures/solar-system'
 
 class Repo extends Microcosm {

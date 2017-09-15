@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import { Action, merge } from '../microcosm'
+import { Action, merge } from '../index'
 import serialize from 'form-serialize'
 
 /* istanbul ignore next */

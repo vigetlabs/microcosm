@@ -1,4 +1,8 @@
-import Microcosm, { Action, tag, get, getRegistration } from '../microcosm'
+/**
+ * @flow weak
+ */
+
+import Microcosm, { Action, tag, get, getRegistration } from '../index'
 
 expect.extend({
   toRegister(entity, command, status = 'done') {

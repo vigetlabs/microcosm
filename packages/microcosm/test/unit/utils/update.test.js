@@ -1,4 +1,4 @@
-import { update } from '../../../src/microcosm'
+import { update } from 'microcosm'
 
 describe('Utils.update', function() {
   const subject = {

@@ -1,9 +1,10 @@
 /**
  * This is a compatability model for the experimental indexing feature in 11.x
  * This is not for public consumption!
+ * @flow weak
  */
 
-import Microcosm, { get, set } from '../microcosm'
+import Microcosm, { get, set } from '../index'
 import { getKeyPaths } from '../key-path'
 
 /**

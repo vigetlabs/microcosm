@@ -1,4 +1,4 @@
-import { get } from '../../../src/microcosm'
+import { get } from 'microcosm'
 
 describe('Utils.get', function() {
   const subject = {
