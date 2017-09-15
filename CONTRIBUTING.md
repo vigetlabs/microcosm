@@ -25,7 +25,6 @@ All commands should be run using yarn. If you haven't switched to [yarn](https:/
 
 Microcosm must manage multiple projects. To do that, we use [Lerna](https://lernajs.io). Setup the project with:
 
-
 ```bash
 yarn bootstrap
 ```

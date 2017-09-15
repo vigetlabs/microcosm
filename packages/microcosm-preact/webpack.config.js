@@ -9,7 +9,7 @@ module.exports = {
 
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'example')
+    path: resolve(__dirname, 'example')
   },
 
   resolve: {
@@ -35,6 +35,6 @@ module.exports = {
 
   devServer: {
     port: 3000,
-    contentBase: path.resolve(__dirname, 'example')
+    contentBase: resolve(__dirname, 'example')
   }
 }
