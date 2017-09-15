@@ -5,25 +5,15 @@
  * @flow
  */
 
-/**
- * requestIdleCallback isn't supported everywhere and is hard to
- * polyfill. For environments that do not support it, just use a
- * setTimeout.
- *
- * Note: To be fully compliant, we would invoke the callback with the
- * time remaining. Given our usage, we don't need to do that.
- * @private
- */
+import onIdle from 'on-idle'
+
 export type Updater = (update: Function, options: Object) => void | *
 
 type UpdateOptions = {
   batch: boolean
 }
 
-const scheduler: Updater =
-  typeof requestIdleCallback !== 'undefined'
-    ? requestIdleCallback
-    : update => setTimeout(update, 4)
+const scheduler: Updater = onIdle
 
 /**
  * When using requestIdleCallback, batch together updates until the
