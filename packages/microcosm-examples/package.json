@@ -1,0 +1,21 @@
+{
+  "name": "microcosm-examples",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "babel-loader": "^7.1.2",
+    "body-parser": "^1.17.2",
+    "console.table": "^0.9.1",
+    "elizabot": "^0.0.2",
+    "friendly-errors-webpack-plugin": "^1.6.1",
+    "html-webpack-plugin": "^2.30.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-router-dom": "^4.2.2",
+    "uid": "^0.0.2",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.6.1"
+  }
+}

@@ -12,9 +12,3 @@ declare module 'uid' {
 declare module 'form-serialize' {
   declare module.exports: (form: Object, options?: Object) => Object
 }
-
-declare module 'on-idle' {
-  declare module.exports: () => Updater
-}
-
-declare var expect: any

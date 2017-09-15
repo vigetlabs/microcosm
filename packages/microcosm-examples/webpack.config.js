@@ -1,8 +1,3 @@
-/**
- * Follows
- * https://webpack.js.org/guides/hmr-react/
- */
-
 const Webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { resolve } = require('path')
@@ -32,8 +27,7 @@ module.exports = function(env) {
 
     resolve: {
       alias: {
-        microcosm$: resolve(__dirname, '../src.js'),
-        microcosm: resolve(__dirname, '../src/')
+        microcosm: resolve(__dirname, '../microcosm/src')
       }
     },
 
@@ -45,11 +39,12 @@ module.exports = function(env) {
           exclude: /node_modules/,
           options: {
             cacheDirectory: '.babel-cache',
-            plugins: [
-              'react-hot-loader/babel',
-              ['transform-runtime', { polyfill: false }]
-            ]
+            plugins: [['transform-runtime', { polyfill: false }]]
           }
+        },
+        {
+          test: /\.json/,
+          loader: 'json-loader'
         }
       ]
     },

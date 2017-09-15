@@ -5,15 +5,16 @@
  * @flow
  */
 
-import onIdle from 'on-idle'
-
 export type Updater = (update: Function, options: Object) => void | *
 
 type UpdateOptions = {
   batch: boolean
 }
 
-const scheduler: Updater = onIdle
+const scheduler: Updater =
+  typeof requestIdleCallback !== 'undefined'
+    ? /* istanbul-ignore-next */ requestIdleCallback
+    : (updater, options) => setTimeout(updater, options.timeout)
 
 /**
  * When using requestIdleCallback, batch together updates until the

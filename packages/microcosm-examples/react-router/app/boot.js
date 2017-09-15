@@ -13,10 +13,11 @@ import Application from './views/application'
 const browserHistory = createBrowserHistory()
 
 const repo = new Repo({ browserHistory })
+const el = document.getElementById('app')
 
 DOM.render(
   <Router history={browserHistory}>
     <Application repo={repo} />
   </Router>,
-  document.getElementById('app')
+  el
 )

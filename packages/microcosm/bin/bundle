@@ -8,7 +8,6 @@ const flow = require('rollup-plugin-flow')
 const strip = require('rollup-plugin-strip')
 const uglify = require('rollup-plugin-uglify')
 const node = require('rollup-plugin-node-resolve')
-const commonjs = require('rollup-plugin-commonjs')
 const json = require('rollup-plugin-json')
 const { Dictionary } = require('uglify-js')
 
@@ -32,8 +31,7 @@ const plugins = [
   buble(),
   node({
     preferBuiltins: true
-  }),
-  commonjs()
+  })
 ]
 
 const configs = {

@@ -4,6 +4,8 @@
 
 import Microcosm, { Action, tag, get, getRegistration } from '../index'
 
+declare var expect: any
+
 expect.extend({
   toRegister(entity, command, status = 'done') {
     let tagged = tag(command)

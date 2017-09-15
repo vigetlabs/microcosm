@@ -1,11 +1,10 @@
-var path = require('path')
+const { resolve } = require('path')
 
 module.exports = {
   devtool: 'inline-sourcemap',
 
   entry: {
-    bundle: './example/example.js',
-    vendor: ['microcosm', 'preact']
+    bundle: './example/example.js'
   },
 
   output: {
@@ -15,18 +14,21 @@ module.exports = {
 
   resolve: {
     alias: {
-      'microcosm-preact': path.resolve(__dirname, 'src/index.js'),
-      microcosm$: path.resolve(__dirname, '../microcosm'),
-      'microcosm/addons': path.resolve(__dirname, '../microcosm/src/addons')
+      'microcosm-preact': resolve(__dirname, 'src/index.js'),
+      microcosm: resolve(__dirname, '../microcosm/src/')
     }
   },
 
   module: {
     loaders: [
       {
-        test: /\.jsx*/,
+        test: /\.js/,
         loader: 'babel-loader',
         exclude: /node_modules/
+      },
+      {
+        test: /\.json/,
+        loader: 'json-loader'
       }
     ]
   },

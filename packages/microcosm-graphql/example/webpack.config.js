@@ -59,16 +59,19 @@ const modules = {
       loader: 'graphql-tag/loader'
     },
     {
-      test: /\.jsx*$/,
+      test: /\.js$/,
       loader: 'babel-loader',
       exclude: /node_modules/
+    },
+    {
+      test: /\.json/,
+      loader: 'json-loader'
     }
   ]
 }
-console.log(path.resolve(__dirname, '../../microcosm/src/'))
+
 const resolve = {
   alias: {
-    microcosm$: path.resolve(__dirname, '../../microcosm'),
-    'microcosm/addons': path.resolve(__dirname, '../../microcosm/src/addons')
+    microcosm: path.resolve(__dirname, '../../microcosm/src/')
   }
 }
