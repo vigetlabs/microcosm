@@ -1,25 +1,27 @@
+import React from 'react'
+import DOM from 'react-dom'
 import { resolve } from 'microcosm-graphql'
 import { makeRepo } from './repo'
 import postsQuery from './posts.gql'
 
 let repo = makeRepo()
+let el = document.createElement('div')
+
+document.body.appendChild(el)
 
 function render() {
-  let { posts } = resolve(postsQuery, repo.state, {}, repo.resolvers)
+  let { posts } = repo.query(postsQuery)
 
-  console.clear()
-  console.table(posts)
-
-  document.body.innerHTML = `
-<ul>
-  ${posts.map(a => `<li>${a.title}</li>`).join('\n')}
-</ul>
-`
+  DOM.render(<ul>{posts.map(a => <li key={a.id}>{a.title}</li>)}</ul>, el)
 }
 
 repo.on('change', render)
+
 render()
 
 setTimeout(function() {
-  repo.push('addPost', { id: 1, title: 'OH YEAH', author: '2' })
+  repo.push('addPost', {
+    title: 'How the Empire Struck Back',
+    author: '2'
+  })
 }, 1000)

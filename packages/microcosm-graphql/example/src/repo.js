@@ -1,4 +1,4 @@
-import { GraphMicrocosm } from 'microcosm-graphql'
+import { GraphMicrocosm } from '../../src/index'
 import schema from './schema.gql'
 
 export function makeRepo() {
