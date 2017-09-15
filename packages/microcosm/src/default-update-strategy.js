@@ -13,7 +13,7 @@ type UpdateOptions = {
 
 const scheduler: Updater =
   typeof requestIdleCallback !== 'undefined'
-    ? /* istanbul-ignore-next */ requestIdleCallback
+    ? /* istanbul ignore next */ requestIdleCallback
     : (updater, options) => setTimeout(updater, options.timeout)
 
 /**
