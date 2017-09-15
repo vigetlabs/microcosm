@@ -1,5 +1,4 @@
-import Microcosm from '../../src/microcosm'
-import { STATUSES } from '../../src/get-registration'
+import Microcosm, { STATUS } from '../../src/microcosm'
 
 const action = n => n
 
@@ -77,12 +76,12 @@ describe('getRegistration', function() {
   })
 
   describe('Action aliasing', function() {
-    for (let status in STATUSES) {
+    for (let status in STATUS) {
       if (status === 'inactive') {
         continue
       }
 
-      let alias = STATUSES[status]
+      let alias = STATUS[status]
 
       it(`can inspect the ${status} status`, function() {
         let handler = jest.fn()

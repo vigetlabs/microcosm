@@ -150,6 +150,7 @@ describe('CompareTree', function() {
 
       let next = set(repo.state, ['meta', 'selected'], {})
 
+      repo.on('change:meta.selected', one)
       repo.on('change:meta.selected', two)
 
       repo.off('change:meta.selected', one)

@@ -1,18 +1,6 @@
 // @flow
 import { isObject } from './utils'
-
-export const STATUSES = {
-  inactive: 'inactive',
-  open: 'open',
-  update: 'loading',
-  loading: 'update',
-  done: 'resolve',
-  resolve: 'done',
-  reject: 'error',
-  error: 'reject',
-  cancel: 'cancelled',
-  cancelled: 'cancel'
-}
+import STATUS from './status'
 
 function isPlainObject(value) {
   return !Array.isArray(value) && isObject(value)
@@ -28,7 +16,7 @@ function getRegistration(pool: any, command: Tagged, status: Status) {
     return answer
   }
 
-  let alias = STATUSES[status]
+  let alias = STATUS[status]
 
   console.assert(alias, 'Invalid action status ' + status)
   console.assert(

@@ -12,6 +12,17 @@ export type KeyPath = Array<string>
 
 const KEY_DELIMETER = '.'
 const PATH_DELIMETER = ','
+const EMPTY = []
+
+function clean(value: string | number | boolean) {
+  console.assert(value != null, 'keyPath should never be null.')
+  console.assert(
+    value !== null && typeof value !== 'object',
+    'keyPath should never be an object or array'
+  )
+
+  return value.toString().trim()
+}
 
 /**
  * Ensure a value is a valid key path.
@@ -20,11 +31,13 @@ const PATH_DELIMETER = ','
 export function castPath(value: string | KeyPath): KeyPath {
   if (Array.isArray(value)) {
     return value
-  } else if (isBlank(value)) {
-    return []
   }
 
-  return typeof value === 'string' ? value.trim().split(KEY_DELIMETER) : [value]
+  if (isBlank(value)) {
+    return EMPTY
+  }
+
+  return clean(value).split(KEY_DELIMETER)
 }
 
 /**
@@ -33,12 +46,10 @@ export function castPath(value: string | KeyPath): KeyPath {
  * subscription to multiple pathways in an object.
  * @private
  */
-export function getKeyPaths(value: string | Array<KeyPath>): Array<KeyPath> {
-  if (typeof value === 'string') {
-    return `${value}`.split(PATH_DELIMETER).map(castPath)
-  }
-
-  return value.every(Array.isArray) ? value : value.map(castPath)
+export function getKeyPaths(value: *): Array<KeyPath> {
+  return clean(value)
+    .split(PATH_DELIMETER)
+    .map(castPath)
 }
 
 /**

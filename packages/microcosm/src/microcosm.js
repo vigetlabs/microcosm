@@ -14,6 +14,7 @@ import coroutine from './coroutine'
 import getRegistration from './get-registration'
 import tag from './tag'
 import installDevtools from './install-devtools'
+import STATUS from './status'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
 import { merge, get, set, update } from './utils'
 import { version } from '../package.json'
@@ -512,5 +513,6 @@ export {
   set,
   update,
   merge,
-  getRegistration
+  getRegistration,
+  STATUS
 }

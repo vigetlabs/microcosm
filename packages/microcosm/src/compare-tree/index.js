@@ -97,7 +97,7 @@ class CompareTree {
   addQuery(dependencies: KeyPath[]): Query {
     let id = Query.getId(dependencies)
 
-    if (this.queries.hasOwnProperty(id) === false) {
+    if (typeof this.queries[id] === 'undefined') {
       this.queries[id] = new Query(id, dependencies)
     }
 

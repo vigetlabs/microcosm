@@ -15,9 +15,13 @@ const ResolutionMap = {
   inactive: false,
   open: false,
   update: false,
+  loading: false,
+  done: true,
   resolve: true,
+  error: true,
   reject: true,
-  cancel: true
+  cancel: true,
+  cancelled: true
 }
 
 class Action extends Emitter {
