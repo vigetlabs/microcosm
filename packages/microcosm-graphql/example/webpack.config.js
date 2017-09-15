@@ -3,9 +3,8 @@
 const HTMLPlugin = require('html-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
-const nodeModules = [].concat(
-  require('fs').readdirSync(__dirname + '/../node_modules'),
-  require('fs').readdirSync(__dirname + '/../../../node_modules')
+const nodeModules = require('fs').readdirSync(
+  __dirname + '/../../../node_modules'
 )
 
 module.exports = function() {
@@ -32,7 +31,7 @@ module.exports = function() {
       module: modules,
       resolve: resolve,
       externals: nodeModules.reduce(function(memo, next) {
-        if (next.indexOf('.bin') < 0) {
+        if (next.indexOf('.bin') < 0 && next.indexOf('microcosm') < 0) {
           memo[next] = 'commonjs ' + next
         }
         return memo
@@ -57,19 +56,22 @@ const modules = {
   rules: [
     {
       test: /\.gql$/,
-      use: ['graphql-tag/loader']
+      loader: 'graphql-tag/loader'
     },
     {
-      test: /\.js$/,
-      use: ['babel-loader'],
+      test: /\.jsx*$/,
+      loader: 'babel-loader',
       exclude: /node_modules/
     }
   ]
 }
 
+console.log(path.resolve(__dirname, '../../microcosm/src/'))
+
 const resolve = {
   alias: {
-    'microcosm-graphql$': path.resolve(__dirname, '../src/index.js'),
-    microcosm: path.resolve(__dirname, '../../microcosm/build')
+    'microcosm-graphql': path.resolve(__dirname, '../src/index.js'),
+    microcosm$: path.resolve(__dirname, '../../microcosm/src/microcosm'),
+    'microcosm/': path.resolve(__dirname, '../../microcosm/src/')
   }
 }

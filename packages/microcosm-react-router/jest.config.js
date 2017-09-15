@@ -1,8 +1,9 @@
+const MICROCOSM_DIR = process.env.BUNDLED ? 'build/min' : 'src'
+
 module.exports = {
-  modulePathIgnorePatterns: ['es', 'lib'],
   coveragePathIgnorePatterns: ['build', 'test'],
   moduleNameMapper: {
-    '.*?microcosm$': '<rootDir>../microcosm/build/microcosm.js',
-    '.*?microcosm/(.*)': '<rootDir>../microcosm/build/$1'
+    '.*?microcosm$': `<rootDir>../microcosm/${MICROCOSM_DIR}/microcosm.js`,
+    '.*?microcosm/(.*)': `<rootDir>../microcosm/${MICROCOSM_DIR}/$1`
   }
 }

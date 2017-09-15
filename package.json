@@ -4,7 +4,7 @@
     "node": ">= 6.10"
   },
   "scripts": {
-    "bootstrap": "yarn && lerna bootstrap && yarn build",
+    "bootstrap": "yarn && lerna bootstrap",
     "format": "./bin/format",
     "build": "lerna run build",
     "watch": "lerna run --parallel watch",
@@ -42,14 +42,12 @@
     "semi": false,
     "singleQuote": true
   },
-  "jest": {
-    "testEnvironment": "node",
-    "testURL": "http://localhost:3000",
-    "projects": [
-      "<rootDir>/packages/*"
-    ]
-  },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "jest": {
+    "projects": [
+      "./packages/*"
+    ]
+  }
 }

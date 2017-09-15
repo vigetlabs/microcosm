@@ -1,13 +1,10 @@
-const config = {
+const MICROCOSM_DIR = process.env.BUNDLED ? 'build/min' : 'src'
+
+module.exports = {
   setupTestFrameworkScriptFile: './test/helpers/setup.js',
   modulePathIgnorePatterns: ['build', 'coverage', 'examples'],
   coveragePathIgnorePatterns: ['build', 'examples', 'test'],
-  moduleNameMapper: {}
+  moduleNameMapper: {
+    '.*?/src/(.*)': `<rootDir>/${MICROCOSM_DIR}/$1`
+  }
 }
-
-if (process.env.BUNDLED) {
-  config.moduleNameMapper['.*?/src/(.*)'] = '<rootDir>/build/min/$1'
-  config.testPathIgnorePatterns.push('unit/key-path', 'unit/registration')
-}
-
-module.exports = config
