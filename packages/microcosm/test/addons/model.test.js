@@ -79,7 +79,7 @@ describe('Model', function() {
     it('does not duplicate listening to the same handlers', function() {
       let repo = new Repo()
       let model = new Model(repo)
-      let handler = jest.fn()
+      let handler = jest.fn(n => true)
 
       model.bind({ handler })
       model.bind({ handler })

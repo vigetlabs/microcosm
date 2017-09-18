@@ -26,7 +26,6 @@ export default class Model extends Emitter {
   _publish: () => void
   _patch: Answer
   _watching: Boolean
-  _ready: Boolean
 
   value: Answer
 
@@ -41,7 +40,6 @@ export default class Model extends Emitter {
     this._publish = this._publish.bind(this)
     this._pendingUpdate = null
     this._watching = false
-    this._ready = false
 
     this.value = {}
   }
@@ -54,36 +52,38 @@ export default class Model extends Emitter {
       let callback = bindings[key]
 
       if (isObservable(callback)) {
+        // Presenters support observables. Updates to observables
+        // assign to a single key/value pair
         this._track(key, callback)
       } else if (isCallable(callback)) {
+        // Presenters will "call" anything that looks like it's a function.
+        // It does this by checking the "call" property.
+        //
+        // If the binding is new, rebind! Otherwise we don't want to
+        // recalculate this model if nothing has changed.
         if (this._bindings[key] !== callback) {
           recompute = true
           nextBindings = nextBindings || {}
           nextBindings[key] = callback
         }
       } else if (this.value[key] !== callback) {
+        // Otherwise we just have a primitive value. If the value is
+        // different, push the key/value pair into the next patch and
+        // queue a recompute.
         recompute = true
         this._patch[key] = callback
       }
     }
 
-    if (nextBindings) {
-      this._bindings = nextBindings
-      this._watchRepo()
-    } else {
-      this._ignoreRepo()
-    }
+    this._rebind(nextBindings)
 
     if (recompute) {
       this._compute()
     }
 
-    if (this._ready) {
-      this._publish()
-    } else {
-      this._ready = true
-      this._commit(merge(this.value, this._patch))
-    }
+    // If we've recalculated the model and it resulted in a change to the value,
+    // we need to publish a change. This powers Presenter::modelWillUpdate
+    this._publish(merge(this.value, this._patch))
   }
 
   /**
@@ -101,6 +101,15 @@ export default class Model extends Emitter {
   }
 
   /* Private ------------------------------------------------------ */
+
+  _rebind(bindings) {
+    if (bindings) {
+      this._bindings = bindings
+      this._watchRepo()
+    } else {
+      this._ignoreRepo()
+    }
+  }
 
   _watchRepo() {
     if (!this._watching) {
