@@ -2,9 +2,6 @@ import { h, Component } from 'preact'
 import { Action, merge } from 'microcosm'
 import serialize from 'form-serialize'
 
-/* istanbul ignore next */
-const identity = () => {}
-
 class ActionForm extends Component {
   constructor(props, context) {
     super(props, context)
@@ -44,20 +41,11 @@ class ActionForm extends Component {
     let action = this.send(this.props.action, params)
 
     if (action && action instanceof Action) {
-      action
-        .onOpen(this.props.onOpen)
-        .onUpdate(this.props.onUpdate)
-        .onCancel(this.props.onCancel)
-        .onDone(this.props.onDone)
-        .onError(this.props.onError)
+      action.subscribe(this.props)
     }
 
     this.props.onSubmit(event, action)
   }
-}
-
-ActionForm.contextTypes = {
-  send: identity
 }
 
 ActionForm.defaultProps = {

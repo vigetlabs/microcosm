@@ -1,6 +1,6 @@
 import { h, Component } from 'preact'
 import { mount } from '../helpers'
-import withSend from '../../src/with-send'
+import { withSend } from '../../src'
 
 it('exposes the wrapped component as a static property', function() {
   const Button = function({ send }) {

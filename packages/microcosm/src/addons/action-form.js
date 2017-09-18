@@ -6,10 +6,7 @@ import React from 'react'
 import { Action, merge } from '../index'
 import serialize from 'form-serialize'
 
-/* istanbul ignore next */
 const identity = n => n
-/* istanbul ignore next */
-const noop = () => {}
 
 type Props = {
   action: *,
@@ -73,6 +70,8 @@ class ActionForm extends React.PureComponent<Props> {
   }
 
   submit(event: Event) {
+    const { onSubmit, prepare, serializer, action } = this.props
+
     let form = this.form
 
     console.assert(
@@ -81,28 +80,23 @@ class ActionForm extends React.PureComponent<Props> {
       'if submit() is called after the parent component has unmounted.'
     )
 
-    let params = this.props.prepare(this.props.serializer(form))
-    let action = null
+    let params = prepare(serializer(form))
+    let result = null
 
-    if (this.props.action) {
-      action = this.send(this.props.action, params)
+    if (action) {
+      result = this.send(action, params)
 
-      if (action && action instanceof Action) {
-        action
-          .onOpen(this.props.onOpen)
-          .onUpdate(this.props.onUpdate)
-          .onCancel(this.props.onCancel)
-          .onDone(this.props.onDone)
-          .onError(this.props.onError)
+      if (result && result instanceof Action) {
+        result.subscribe(this.props)
       }
     }
 
-    this.props.onSubmit(event, action)
+    onSubmit(event, action)
   }
 }
 
 ActionForm.contextTypes = {
-  send: noop
+  send: () => {}
 }
 
 ActionForm.defaultProps = {
@@ -112,7 +106,7 @@ ActionForm.defaultProps = {
   onCancel: null,
   onError: null,
   onDone: null,
-  onSubmit: noop,
+  onSubmit: identity,
   prepare: identity,
   send: null,
   serializer: form => serialize(form, { hash: true, empty: true })

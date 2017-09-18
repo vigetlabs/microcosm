@@ -1,9 +1,6 @@
 import { h, Component } from 'preact'
 import { Action, merge } from 'microcosm'
 
-/* istanbul ignore next */
-const identity = () => {}
-
 class ActionButton extends Component {
   constructor(props, context) {
     super(props, context)
@@ -16,12 +13,7 @@ class ActionButton extends Component {
     let action = this.send(this.props.action, this.props.value)
 
     if (action && action instanceof Action) {
-      action
-        .onOpen(this.props.onOpen)
-        .onUpdate(this.props.onUpdate)
-        .onCancel(this.props.onCancel)
-        .onDone(this.props.onDone)
-        .onError(this.props.onError)
+      action.subscribe(this.props)
     }
 
     if (this.props.onClick) {
@@ -50,10 +42,6 @@ class ActionButton extends Component {
 
     return h(this.props.tag, props)
   }
-}
-
-ActionButton.contextTypes = {
-  send: identity
 }
 
 ActionButton.defaultProps = {

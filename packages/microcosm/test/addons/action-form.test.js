@@ -82,6 +82,19 @@ describe('callbacks', function() {
   })
 })
 
+describe('action submission', function() {
+  describe('when there is no action', function() {
+    it('does not execute send', function() {
+      const send = jest.fn()
+      const form = mount(<ActionForm send={send} />)
+
+      form.simulate('submit')
+
+      expect(send).not.toHaveBeenCalled()
+    })
+  })
+})
+
 describe('context', function() {
   it('inherits send from context', function() {
     const repo = new Microcosm()
@@ -135,56 +148,5 @@ describe('manual operation', function() {
     form.instance().submit()
 
     expect(send).toHaveBeenCalled()
-  })
-})
-
-describe('serialization', function() {
-  it('extracts form data', function() {
-    const action = jest.fn()
-
-    const form = mount(
-      <Presenter>
-        <ActionForm action={action}>
-          <input name="text" defaultValue="Hello, world" />
-        </ActionForm>
-      </Presenter>
-    )
-
-    form.simulate('submit')
-
-    expect(action).toHaveBeenCalledWith({ text: 'Hello, world' })
-  })
-
-  it('can preprocess serialized data', function() {
-    const action = jest.fn()
-
-    const prepare = function(params) {
-      params.name = 'BILLY'
-      return params
-    }
-
-    const form = mount(
-      <Presenter>
-        <ActionForm action={action} prepare={prepare}>
-          <input name="name" defaultValue="Billy" />
-        </ActionForm>
-      </Presenter>
-    )
-
-    form.simulate('submit')
-
-    expect(action).toHaveBeenCalledWith({ name: 'BILLY' })
-  })
-
-  it.dev('will not submit an unmounted form', function() {
-    const form = mount(<ActionForm send={jest.fn()} />)
-
-    let instance = form.instance()
-
-    form.unmount()
-
-    expect(function() {
-      instance.submit()
-    }).toThrow(/ActionForm has no form reference and can not submit/)
   })
 })

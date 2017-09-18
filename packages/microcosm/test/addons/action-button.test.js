@@ -89,6 +89,24 @@ describe('callbacks', function() {
     expect(onUpdate).toHaveBeenCalledWith('loading')
   })
 
+  it('executes onCancel when that action completes', function() {
+    let repo = new Microcosm()
+    let onCancel = jest.fn()
+
+    let button = mount(
+      <ActionButton action="test" onCancel={n => onCancel(n)} />,
+      {
+        context: {
+          send: () => repo.append(n => n).cancel('nevermind')
+        }
+      }
+    )
+
+    button.simulate('click')
+
+    expect(onCancel).toHaveBeenCalledWith('nevermind')
+  })
+
   it('does not execute onDone if not given an action', function() {
     let onDone = jest.fn()
 

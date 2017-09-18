@@ -1,7 +1,29 @@
 import { h } from 'preact'
 import { mount } from '../helpers'
-import ActionButton from '../../src/action-button'
+import { ActionButton, Presenter } from '../../src/index'
 import { Action } from 'microcosm'
+
+describe('context', function() {
+  it('collects send from a presenter', function() {
+    expect.assertions(1)
+
+    const test = jest.fn()
+
+    class TestCase extends Presenter {
+      intercept() {
+        return { test }
+      }
+
+      render() {
+        return <ActionButton action="test" />
+      }
+    }
+
+    mount(<TestCase />).click()
+
+    expect(test).toHaveBeenCalled()
+  })
+})
 
 describe('actions', function() {
   it('passes the value property as parameters into the action', function() {
