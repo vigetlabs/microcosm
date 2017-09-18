@@ -5,6 +5,7 @@
  */
 
 import { type Microcosm, Emitter, merge } from '../index'
+import { type Job } from '../default-update-strategy'
 
 function isObservable(binding: *): boolean {
   return binding && typeof binding.subscribe === 'function'
@@ -25,138 +26,137 @@ function invoke(binding: *, repo: Microcosm, scope: Object): * {
 type Answer = { [string]: * }
 
 export default class Model extends Emitter {
-  repo: Microcosm
-  scope: Object
-  bindings: *[]
-  subscriptions: { [string]: * }
-  pendingUpdate: Job
-  publish: () => void
-  patch: Answer
+  _scope: Object
+  _repo: Microcosm
+  _bindings: *[]
+  _subscriptions: { [string]: * }
+  _pendingUpdate: ?Job
+  _publish: () => void
+  _patch: Answer
+
   value: Answer
 
   constructor(repo: Microcosm, scope: Object) {
     super()
 
-    this.repo = repo
-    this.scope = scope
-    this.bindings = []
-    this.subscriptions = {}
+    this._repo = repo
+    this._scope = scope
+    this._bindings = []
+    this._subscriptions = {}
+    this._patch = {}
+    this._publish = this._publish.bind(this)
+    this._pendingUpdate = null
+
     this.value = {}
-    this.patch = {}
-    this.publish = this.publish.bind(this)
-    this.pendingUpdate = null
+  }
+
+  bind(bindings: Object) {
+    this._bindings.length = 0
+
+    for (var key in bindings) {
+      let callback = bindings[key]
+
+      if (isObservable(callback)) {
+        this._track(key, callback)
+      } else {
+        this._bindings.push({ key, callback })
+      }
+    }
+
+    if (this._bindings.length) {
+      this._repo.on('change', this._compute, this)
+    } else {
+      this._repo.off('change', this._compute, this)
+    }
+
+    this._compute()
+    this._commit(merge(this.value, this._patch))
+  }
+
+  /**
+   * Dispose a model, removing all _subscriptions and unsubscribing
+   * from the repo.
+   */
+  teardown() {
+    for (var key in this._subscriptions) {
+      this._subscriptions[key].unsubscribe()
+    }
+
+    this._empty()
+
+    this._repo.off('change', this._compute, this)
+  }
+
+  /* Private ------------------------------------------------------ */
+
+  _enqueue() {
+    if (!this._pendingUpdate) {
+      this._pendingUpdate = this._repo.history.updater(this._publish)
+    }
+  }
+
+  _set(key: string, value: *) {
+    if (this.value[key] !== value) {
+      this._patch[key] = value
+      this._enqueue()
+    }
+  }
+
+  _publish() {
+    let next = merge(this.value, this._patch)
+
+    this._emit('will-change', next, this._patch)
+    this._commit(next)
+    this._emit('change', next)
+  }
+
+  _commit(value: Answer) {
+    this.value = value
+    this._empty()
+  }
+
+  _empty() {
+    this._patch = {}
+
+    if (this._pendingUpdate) {
+      this._pendingUpdate.cancel()
+      this._pendingUpdate = null
+    }
   }
 
   /**
    * Track an observable. Sending updates to a given key.
    */
-  track(key: string, observable: *) {
-    let last = this.subscriptions[key]
-    let next = observable.subscribe(value => this.set(key, value))
+  _track(key: string, observable: *) {
+    let last = this._subscriptions[key]
+    let next = observable.subscribe(value => this._set(key, value))
 
-    this.subscriptions[key] = next
+    this._subscriptions[key] = next
 
     if (last) {
       last.unsubscribe()
     }
   }
 
-  bind(bindings: Object) {
-    this.bindings.length = 0
-
-    for (var key in bindings) {
-      let binding = bindings[key]
-
-      if (isObservable(binding)) {
-        this.track(key, binding)
-      } else {
-        this.bindings.push({ key, callback: binding })
-      }
-    }
-
-    if (this.bindings.length) {
-      this.repo.on('change', this.compute, this)
-    } else {
-      this.repo.off('change', this.compute, this)
-    }
-
-    this.compute()
-    this.commit(merge(this.value, this.patch))
-  }
-
-  empty() {
-    this.patch = {}
-
-    if (this.pendingUpdate) {
-      this.pendingUpdate.cancel()
-      this.pendingUpdate = null
-    }
-  }
-
-  commit(value: Answer) {
-    this.value = value
-    this.empty()
-  }
-
-  publish() {
-    let next = merge(this.value, this.patch)
-
-    this._emit('will-change', next, this.patch)
-    this.commit(next)
-    this._emit('change', next)
-  }
-
-  enqueue() {
-    const { batch, updater } = this.repo.history
-
-    if (!this.pendingUpdate) {
-      this.pendingUpdate = updater(this.publish)
-    }
-  }
-
   /**
-   * Update a specific model key. Emits a change event
+   * Run through each invokable binding, recomputing the model for
+   * their associated keys.
    */
-  set(key: string, value: *) {
-    if (this.value[key] !== value) {
-      this.patch[key] = value
-      this.enqueue()
-    }
-  }
-
-  /**
-   * Run through each invokable binding, recomputing the model
-   * for their associated keys.
-   */
-  compute() {
+  _compute() {
     let dirty = false
-    for (var i = 0; i < this.bindings.length; i++) {
-      var { key, callback } = this.bindings[i]
+    for (var i = 0; i < this._bindings.length; i++) {
+      var { key, callback } = this._bindings[i]
 
-      var value = invoke(callback, this.repo, this.scope)
+      var value = invoke(callback, this._repo, this._scope)
 
       if (this.value[key] !== value) {
-        this.patch[key] = value
+        this._patch[key] = value
         dirty = true
       }
     }
 
     if (dirty) {
-      this.enqueue()
+      this._enqueue()
     }
-  }
-
-  /**
-   * Dispose a model, removing all subscriptions and unsubscribing
-   * from the repo.
-   */
-  teardown() {
-    for (var key in this.subscriptions) {
-      this.subscriptions[key].unsubscribe()
-    }
-
-    this.empty()
-
-    this.repo.off('change', this.compute, this)
   }
 }
