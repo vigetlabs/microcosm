@@ -6,7 +6,7 @@
 
 import { isFunction } from './utils'
 
-export type Callback = (...args: *[]) => *
+export type Callback = (...args: any[]) => any
 
 type Listener = {
   event: string,

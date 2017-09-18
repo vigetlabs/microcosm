@@ -39,17 +39,23 @@ class Planets {
 
 repo.addDomain('planets', Planets)
 
-// Basic POST
+
+// POST
+// action, body, query, options
 repo.push('createPlanet', { name: 'Pluto' })
+
+
+// GET
+// action, params, query, options
 
 // Automatic action cancellation given a unique token
 let token = generateToken()
 
-let getOne = repo.push('readPlanet', { params: { id: 0 } }, { token })
+let getOne = repo.push('readPlanet', { id: 0 }, null, { token })
 
 // This will cancel the request above because they use the same token
 // this says "I don't care about that other request"
-let getTwo = repo.push('readPlanet', { params: { id: 1 } }, { token })
+let getTwo = repo.push('readPlanet', { id: 1 }, null, { token })
 
 console.log(getOne.status) // "cancel"
 ```

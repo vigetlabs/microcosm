@@ -1,5 +1,21 @@
 {
   "name": "microcosm-http",
   "version": "0.0.0",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "axios": "^0.16.2",
+    "html-webpack-plugin": "^2.30.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  },
+  "scripts": {
+    "start": "webpack-dev-server",
+    "build": "webpack -p src/http.js build/microcosm-http.js"
+  },
+  "devDependencies": {
+    "body-parser": "^1.18.1",
+    "multer": "^1.3.0",
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.8.2"
+  }
 }
