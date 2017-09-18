@@ -25,7 +25,7 @@ export default class Model extends Emitter {
   _pendingUpdate: ?Job
   _publish: () => void
   _patch: Answer
-  _watching: Boolean
+  _watching: boolean
 
   value: Answer
 
@@ -83,7 +83,7 @@ export default class Model extends Emitter {
 
     // If we've recalculated the model and it resulted in a change to the value,
     // we need to publish a change. This powers Presenter::modelWillUpdate
-    this._publish(merge(this.value, this._patch))
+    this._publish()
   }
 
   /**
@@ -102,7 +102,7 @@ export default class Model extends Emitter {
 
   /* Private ------------------------------------------------------ */
 
-  _rebind(bindings) {
+  _rebind(bindings: ?Object) {
     if (bindings) {
       this._bindings = bindings
       this._watchRepo()
