@@ -45,11 +45,11 @@ export default class Model extends Emitter {
   }
 
   bind(bindings: Object) {
-    let nextBindings = null
+    let next = null
     let recompute = false
 
     for (var key in bindings) {
-      let callback = bindings[key]
+      var callback = bindings[key]
 
       if (isObservable(callback)) {
         // Presenters support observables. Updates to observables
@@ -63,8 +63,12 @@ export default class Model extends Emitter {
         // recalculate this model if nothing has changed.
         if (this._bindings[key] !== callback) {
           recompute = true
-          nextBindings = nextBindings || {}
-          nextBindings[key] = callback
+
+          if (next == null) {
+            next = {}
+          }
+
+          next[key] = callback
         }
       } else if (this.value[key] !== callback) {
         // Otherwise we just have a primitive value. If the value is
@@ -75,7 +79,7 @@ export default class Model extends Emitter {
       }
     }
 
-    this._rebind(nextBindings)
+    this._rebind(next)
 
     if (recompute) {
       this._compute()
