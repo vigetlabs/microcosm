@@ -4,7 +4,6 @@
 
 import React from 'react'
 import ActionForm from 'microcosm/addons/action-form'
-import Presenter from 'microcosm/addons/presenter'
 import mockSend from '../helpers/mock-send'
 import Microcosm from 'microcosm'
 import { mount } from 'enzyme'
