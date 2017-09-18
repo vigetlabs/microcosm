@@ -75,6 +75,20 @@ describe('Model', function() {
 
       repo.patch({ style: { color: 'red' } })
     })
+
+    it('does not duplicate listening to the same handlers', function() {
+      let repo = new Repo()
+      let model = new Model(repo)
+      let handler = jest.fn()
+
+      model.bind({ handler })
+      model.bind({ handler })
+      model.bind({ handler })
+
+      repo.patch({ style: { color: 'red' } })
+
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('Observables', function() {

@@ -15,24 +15,18 @@ function isCallable(binding: *): boolean {
   return binding && typeof binding.call === 'function'
 }
 
-function invoke(binding: *, repo: Microcosm, scope: Object): * {
-  if (isCallable(binding)) {
-    return binding.call(scope, repo.state, repo)
-  }
-
-  return binding
-}
-
 type Answer = { [string]: * }
 
 export default class Model extends Emitter {
   _scope: Object
   _repo: Microcosm
-  _bindings: *[]
+  _bindings: *
   _subscriptions: { [string]: * }
   _pendingUpdate: ?Job
   _publish: () => void
   _patch: Answer
+  _watching: Boolean
+  _ready: Boolean
 
   value: Answer
 
@@ -41,36 +35,55 @@ export default class Model extends Emitter {
 
     this._repo = repo
     this._scope = scope
-    this._bindings = []
+    this._bindings = {}
     this._subscriptions = {}
     this._patch = {}
     this._publish = this._publish.bind(this)
     this._pendingUpdate = null
+    this._watching = false
+    this._ready = false
 
     this.value = {}
   }
 
   bind(bindings: Object) {
-    this._bindings.length = 0
+    let nextBindings = null
+    let recompute = false
 
     for (var key in bindings) {
       let callback = bindings[key]
 
       if (isObservable(callback)) {
         this._track(key, callback)
-      } else {
-        this._bindings.push({ key, callback })
+      } else if (isCallable(callback)) {
+        if (this._bindings[key] !== callback) {
+          recompute = true
+          nextBindings = nextBindings || {}
+          nextBindings[key] = callback
+        }
+      } else if (this.value[key] !== callback) {
+        recompute = true
+        this._patch[key] = callback
       }
     }
 
-    if (this._bindings.length) {
-      this._repo.on('change', this._compute, this)
+    if (nextBindings) {
+      this._bindings = nextBindings
+      this._watchRepo()
     } else {
-      this._repo.off('change', this._compute, this)
+      this._ignoreRepo()
     }
 
-    this._compute()
-    this._commit(merge(this.value, this._patch))
+    if (recompute) {
+      this._compute()
+    }
+
+    if (this._ready) {
+      this._publish()
+    } else {
+      this._ready = true
+      this._commit(merge(this.value, this._patch))
+    }
   }
 
   /**
@@ -89,6 +102,20 @@ export default class Model extends Emitter {
 
   /* Private ------------------------------------------------------ */
 
+  _watchRepo() {
+    if (!this._watching) {
+      this._repo.on('change', this._compute, this)
+      this._watching = true
+    }
+  }
+
+  _ignoreRepo() {
+    if (this._watching) {
+      this._repo.off('change', this._compute, this)
+      this._watching = false
+    }
+  }
+
   _enqueue() {
     if (!this._pendingUpdate) {
       this._pendingUpdate = this._repo.history.updater(this._publish)
@@ -105,9 +132,11 @@ export default class Model extends Emitter {
   _publish() {
     let next = merge(this.value, this._patch)
 
-    this._emit('will-change', next, this._patch)
-    this._commit(next)
-    this._emit('change', next)
+    if (next !== this.value) {
+      this._emit('will-change', next, this._patch)
+      this._commit(next)
+      this._emit('change', next)
+    }
   }
 
   _commit(value: Answer) {
@@ -139,15 +168,15 @@ export default class Model extends Emitter {
   }
 
   /**
-   * Run through each invokable binding, recomputing the model for
+   * Run through each callable binding, recomputing the model for
    * their associated keys.
    */
   _compute() {
     let dirty = false
-    for (var i = 0; i < this._bindings.length; i++) {
-      var { key, callback } = this._bindings[i]
 
-      var value = invoke(callback, this._repo, this._scope)
+    for (var key in this._bindings) {
+      var callback = this._bindings[key]
+      var value = callback.call(this._scope, this._repo.state, this._repo)
 
       if (this.value[key] !== value) {
         this._patch[key] = value
