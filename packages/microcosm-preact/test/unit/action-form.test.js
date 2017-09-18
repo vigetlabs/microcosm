@@ -1,7 +1,29 @@
 import { h } from 'preact'
 import { mount } from '../helpers'
 import { Action } from 'microcosm'
-import ActionForm from '../../src/action-form'
+import { ActionForm, Presenter } from '../../src'
+
+describe('context', function() {
+  it('collects send from presenter', function() {
+    expect.assertions(1)
+
+    const test = jest.fn()
+
+    class TestCase extends Presenter {
+      intercept() {
+        return { test }
+      }
+
+      render() {
+        return <ActionForm action="test" />
+      }
+    }
+
+    mount(<TestCase />).dispatchEvent(new Event('submit'))
+
+    expect(test).toHaveBeenCalled()
+  })
+})
 
 describe('callbacks', function() {
   it('executes onDone when that action completes', function() {

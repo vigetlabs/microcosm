@@ -5,10 +5,7 @@
 import React from 'react'
 import { Action, merge } from '../index'
 
-/* istanbul ignore next */
 const identity = n => n
-/* istanbul ignore next */
-const noop = () => {}
 
 type Props = {
   action: *,
@@ -43,25 +40,20 @@ class ActionButton extends React.PureComponent<Props> {
   }
 
   click(event: Event) {
-    let payload = this.props.prepare(this.props.value, event)
-    let action = null
+    const { action, onClick, prepare, value } = this.props
 
-    if (this.props.action) {
-      action = this.send(this.props.action, payload)
+    let params = prepare(value, event)
+    let result = null
 
-      if (action && action instanceof Action) {
-        action
-          .onOpen(this.props.onOpen)
-          .onUpdate(this.props.onUpdate)
-          .onCancel(this.props.onCancel)
-          .onDone(this.props.onDone)
-          .onError(this.props.onError)
+    if (action) {
+      result = this.send(action, params)
+
+      if (result && result instanceof Action) {
+        result.subscribe(this.props)
       }
     }
 
-    if (this.props.onClick) {
-      this.props.onClick(event, action)
-    }
+    onClick(event, action)
   }
 
   render() {
@@ -87,7 +79,7 @@ class ActionButton extends React.PureComponent<Props> {
 }
 
 ActionButton.contextTypes = {
-  send: noop
+  send: () => {}
 }
 
 ActionButton.defaultProps = {

@@ -53,7 +53,7 @@ class Action extends Emitter {
     this.revisions = []
 
     if (status) {
-      this.setState(status)
+      this._setState(status)
     }
   }
 
@@ -62,23 +62,23 @@ class Action extends Emitter {
   }
 
   get open(): ActionUpdater {
-    return this.setState.bind(this, 'open')
+    return this._setState.bind(this, 'open')
   }
 
   get update(): ActionUpdater {
-    return this.setState.bind(this, 'update')
+    return this._setState.bind(this, 'update')
   }
 
   get resolve(): ActionUpdater {
-    return this.setState.bind(this, 'resolve')
+    return this._setState.bind(this, 'resolve')
   }
 
   get reject(): ActionUpdater {
-    return this.setState.bind(this, 'reject')
+    return this._setState.bind(this, 'reject')
   }
 
   get cancel(): ActionUpdater {
-    return this.setState.bind(this, 'cancel')
+    return this._setState.bind(this, 'cancel')
   }
 
   onOpen(callback: Callback, scope?: Object): this {
@@ -121,6 +121,28 @@ class Action extends Emitter {
     }
 
     return this
+  }
+
+  subscribe(callbacks: Object, scope: *) {
+    if (callbacks.onOpen) {
+      this.onOpen(callbacks.onOpen, scope)
+    }
+
+    if (callbacks.onUpdate) {
+      this.onUpdate(callbacks.onUpdate, scope)
+    }
+
+    if (callbacks.onCancel) {
+      this.onCancel(callbacks.onCancel, scope)
+    }
+
+    if (callbacks.onDone) {
+      this.onDone(callbacks.onDone, scope)
+    }
+
+    if (callbacks.onError) {
+      this.onError(callbacks.onError, scope)
+    }
   }
 
   /**
@@ -251,7 +273,7 @@ class Action extends Emitter {
     }
   }
 
-  setState(status: Status, payload: mixed) {
+  _setState(status: Status, payload: mixed) {
     if (this.complete) {
       return this
     }
