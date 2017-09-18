@@ -24,7 +24,7 @@ docs:
 
 build/package.json: package.json
 	@ mkdir -p build
-	@ node -p 'p=require("./package");p.main="./microcosm.js";p.private=p.scripts=p.jest=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $@
+	@ node -p 'p=require("./package");p.main="./index.js";p.private=p.scripts=p.jest=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $@
 
 release: clean all
 	yarn test:prod
