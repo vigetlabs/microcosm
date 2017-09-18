@@ -65,6 +65,9 @@ describe('Microcosm::shutdown', function() {
       parent.patch({ color: 'blue' })
 
       expect(parent.state.color).toEqual('blue')
+
+      // Despite not sending out a change, state should be in sync
+      expect(child.state.color).toEqual('blue')
     })
   })
 })

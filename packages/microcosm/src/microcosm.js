@@ -109,34 +109,18 @@ class Microcosm extends Emitter implements Domain {
 
     this.options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
 
-    this.parent = this.options.parent
-
-    this.initial = this.parent ? this.parent.initial : this.getInitialState()
-    this.state = this.parent ? this.parent.state : this.initial
-
-    this.history = this.parent ? this.parent.history : new History(this.options)
-
-    this.actions = Object.create(this.parent ? this.parent.actions : null)
-    this.snapshots = Object.create(this.parent ? this.parent.snapshots : null)
-    this.domains = new DomainEngine(this)
-    this.effects = new EffectEngine(this)
-    this.changes = new CompareTree(this.state)
     this.active = true
+    this.parent = this.options.parent
+    this.initial = this.parent ? this.parent.initial : this.getInitialState()
+    this.snapshots = Object.create(this.parent ? this.parent.snapshots : null)
+    this.history = this.parent ? this.parent.history : new History(this.options)
+    this.actions = Object.create(this.parent ? this.parent.actions : null)
+    this.changes = new CompareTree(this.initial)
 
-    // History moves through a set lifecycle. As that lifecycle occurs,
-    // save snapshots of new state:
-
-    // When an action is first created
-    this.history.on('append', this._createSnapshot, this)
-
-    // When an action snapshot needs updating
-    this.history.on('update', this._updateSnapshot, this)
-
-    // When an action snapshot should be removed
-    this.history.on('remove', this._removeSnapshot, this)
-
-    // When an action changes, it causes a reconcilation
-    this.history.on('reconcile', this._dispatchEffect, this)
+    if (!this.parent) {
+      this._enableDomains()
+      this._enableEffects()
+    }
 
     // A history is done reconciling and is ready for a release
     this.history.on('release', this._release, this)
@@ -152,6 +136,10 @@ class Microcosm extends Emitter implements Domain {
     if (this.options.debug) {
       installDevtools(this)
     }
+  }
+
+  get state(): Object {
+    return this._recall(this.history.head)
   }
 
   /**
@@ -291,6 +279,8 @@ class Microcosm extends Emitter implements Domain {
    * provided options and associated repo.
    */
   addDomain(key: string, config: *, options?: Object) {
+    this._enableDomains()
+
     let domain = this.domains.add(key, config, options)
     let initial = domain.getInitialState ? domain.getInitialState() : null
 
@@ -310,6 +300,8 @@ class Microcosm extends Emitter implements Domain {
    * options and associated repo.
    */
   addEffect(config: *, options?: Object) {
+    this._enableEffects()
+
     let effect = this.effects.add(config, options)
 
     this._alias(effect.actions)
@@ -434,9 +426,11 @@ class Microcosm extends Emitter implements Domain {
   }
 
   _createSnapshot(action: Action): Snapshot {
+    let state = this._recall(action.parent)
+
     let snapshot: Snapshot = {
-      last: this.state,
-      next: this.state,
+      last: state,
+      next: state,
       status: 'inactive',
       payload: undefined
     }
@@ -457,12 +451,10 @@ class Microcosm extends Emitter implements Domain {
     }
 
     this.snapshots[action.id] = merge(snap, {
-      last,
+      last: last,
       status: action.status,
       payload: action.payload
     })
-
-    this.state = snap.next
   }
 
   _removeSnapshot(action: Action) {
@@ -470,7 +462,7 @@ class Microcosm extends Emitter implements Domain {
   }
 
   _recall(action: ?Action): Object {
-    if (action && action.id in this.snapshots) {
+    if (action && this.snapshots[action.id]) {
       return this.snapshots[action.id].next
     }
 
@@ -495,6 +487,34 @@ class Microcosm extends Emitter implements Domain {
     for (var name in actions) {
       this.actions[name] = tag(actions[name], name)
     }
+  }
+
+  _enableDomains() {
+    if (this.domains) {
+      return
+    }
+
+    this.domains = new DomainEngine(this)
+
+    // When an action is first created
+    this.history.on('append', this._createSnapshot, this)
+
+    // When an action snapshot needs updating
+    this.history.on('update', this._updateSnapshot, this)
+
+    // When an action snapshot should be removed
+    this.history.on('remove', this._removeSnapshot, this)
+  }
+
+  _enableEffects() {
+    if (this.effects) {
+      return
+    }
+
+    this.effects = new EffectEngine(this)
+
+    // When an action changes, it causes a reconcilation
+    this.history.on('reconcile', this._dispatchEffect, this)
   }
 }
 
