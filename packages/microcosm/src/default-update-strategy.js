@@ -7,8 +7,8 @@
  * "batching".
  *
  * When using batching, Microcosm leans on the requestIdleCallback
- * browser API. This batches together updates . It is configured with
- * a timeout such that a user never waits longer than 36 milliseconds
+ * browser API. This batches together updates. It is configured with a
+ * timeout such that a user never waits longer than 36 milliseconds
  * for an update.
  *
  * @private
