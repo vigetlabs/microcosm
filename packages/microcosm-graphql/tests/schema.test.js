@@ -1,4 +1,4 @@
-import Schema from '../schema'
+import Schema from '../src/schema'
 import gql from 'graphql-tag'
 
 let document = gql`

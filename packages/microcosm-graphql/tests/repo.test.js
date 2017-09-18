@@ -1,4 +1,4 @@
-import Repo from '../repo'
+import Repo from '../src/repo'
 import gql from 'graphql-tag'
 
 it('generates a domain for each field in the Query type', () => {

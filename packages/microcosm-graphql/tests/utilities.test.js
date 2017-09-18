@@ -1,4 +1,4 @@
-import { find, filter, matches, reject } from '../utilities'
+import { find, filter, matches, reject } from '../src/utilities'
 
 describe('matches', function() {
   it('returns true if there are no criteria', function() {
