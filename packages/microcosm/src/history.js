@@ -308,7 +308,7 @@ class History extends Emitter {
    * Batch releases by "queuing" an update. See `closeRelease`.
    */
   queueRelease() {
-    if (this.releasing === false) {
+    if (!this.releasing) {
       this.releasing = true
       this.updater(this.release)
     }
@@ -320,6 +320,11 @@ class History extends Emitter {
    * enabled, it will be asynchronous.
    */
   closeRelease() {
+    console.assert(
+      this.releasing,
+      'Close release should never be called when not releasing.'
+    )
+
     this.releasing = false
     this._emit('release')
   }

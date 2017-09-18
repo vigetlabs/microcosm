@@ -22,25 +22,29 @@ function invoke(binding: *, repo: Microcosm, scope: Object): * {
   return binding
 }
 
+type Answer = { [string]: * }
+
 export default class Model extends Emitter {
   repo: Microcosm
   scope: Object
-  bindings: { [key: string]: * }
-  subscriptions: { [key: string]: * }
-  revision: number
-  value: *
+  bindings: *[]
+  subscriptions: { [string]: * }
+  pendingUpdate: Job
+  publish: () => void
+  patch: Answer
+  value: Answer
 
   constructor(repo: Microcosm, scope: Object) {
     super()
 
     this.repo = repo
     this.scope = scope
-    this.bindings = {}
+    this.bindings = []
     this.subscriptions = {}
     this.value = {}
-    this.revision = 0
-
-    this.repo.on('change', this.compute, this)
+    this.patch = {}
+    this.publish = this.publish.bind(this)
+    this.pendingUpdate = null
   }
 
   /**
@@ -57,8 +61,8 @@ export default class Model extends Emitter {
     }
   }
 
-  bind(bindings: { [key: string]: * }) {
-    this.bindings = {}
+  bind(bindings: Object) {
+    this.bindings.length = 0
 
     for (var key in bindings) {
       let binding = bindings[key]
@@ -66,33 +70,58 @@ export default class Model extends Emitter {
       if (isObservable(binding)) {
         this.track(key, binding)
       } else {
-        this.bindings[key] = binding
+        this.bindings.push({ key, callback: binding })
       }
     }
 
-    this.compute()
-  }
-
-  publish(patch: *) {
-    let next = merge(this.value, patch)
-
-    if (next !== this.value) {
-      this._emit('will-change', next, patch)
-
-      this.value = next
-      this.revision += 1
-
-      this._emit('change', this.value)
+    if (this.bindings.length) {
+      this.repo.on('change', this.compute, this)
+    } else {
+      this.repo.off('change', this.compute, this)
     }
 
-    return this.value
+    this.compute()
+    this.commit(merge(this.value, this.patch))
+  }
+
+  empty() {
+    this.patch = {}
+
+    if (this.pendingUpdate) {
+      this.pendingUpdate.cancel()
+      this.pendingUpdate = null
+    }
+  }
+
+  commit(value: Answer) {
+    this.value = value
+    this.empty()
+  }
+
+  publish() {
+    let next = merge(this.value, this.patch)
+
+    this._emit('will-change', next, this.patch)
+    this.commit(next)
+    this._emit('change', next)
+  }
+
+  enqueue() {
+    const { batch, updater } = this.repo.history
+
+    if (!this.pendingUpdate) {
+      this.pendingUpdate = updater(this.publish)
+    }
   }
 
   /**
    * Update a specific model key. Emits a change event
    */
   set(key: string, value: *) {
-    return this.publish({ [key]: value })
+    if (this.value[key] !== value) {
+      this.patch[key] = value
+      this.enqueue()
+    }
   }
 
   /**
@@ -100,19 +129,21 @@ export default class Model extends Emitter {
    * for their associated keys.
    */
   compute() {
-    let patch = {}
     let dirty = false
+    for (var i = 0; i < this.bindings.length; i++) {
+      var { key, callback } = this.bindings[i]
 
-    for (var key in this.bindings) {
-      var value = invoke(this.bindings[key], this.repo, this.scope)
+      var value = invoke(callback, this.repo, this.scope)
 
       if (this.value[key] !== value) {
-        patch[key] = value
+        this.patch[key] = value
         dirty = true
       }
     }
 
-    return dirty ? this.publish(patch) : this.value
+    if (dirty) {
+      this.enqueue()
+    }
   }
 
   /**
@@ -123,6 +154,8 @@ export default class Model extends Emitter {
     for (var key in this.subscriptions) {
       this.subscriptions[key].unsubscribe()
     }
+
+    this.empty()
 
     this.repo.off('change', this.compute, this)
   }

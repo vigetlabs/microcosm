@@ -12,7 +12,6 @@
 import React from 'react'
 import { Microcosm, merge, tag, getRegistration } from '../index'
 import Model from './model'
-import { requestFrame, cancelFrame } from './frame'
 
 function passChildren() {
   return this.props.children ? React.Children.only(this.props.children) : null
@@ -185,27 +184,22 @@ class Presenter extends React.PureComponent<Props, State> {
   }
 }
 
-class PresenterMediator extends React.PureComponent<Props> {
+class PresenterMediator extends React.Component<Props> {
   repo: Microcosm
   send: *
   presenter: Presenter
   model: Model
-  _lastRevision: number
-  _scheduledFrame: *
-  _scheduleUpdate: *
 
   constructor(props: Props, context: Object) {
     super(props, context)
 
     this.presenter = props.presenter
     this.repo = this.presenter._requestRepo(context.repo)
-    this._lastRevision = -Infinity
 
     this.model = new Model(this.repo, this.presenter)
 
     // The following methods are autobound to protect scope
     this.send = this.send.bind(this)
-    this._scheduleUpdate = this._scheduleUpdate.bind(this)
   }
 
   getChildContext() {
@@ -223,8 +217,8 @@ class PresenterMediator extends React.PureComponent<Props> {
   componentDidMount() {
     this.presenter.refs = this.refs
 
-    this.model.on('change', this._queueUpdate, this)
-    this.model.on('will-change', this._preUpdate, this)
+    this.model.on('change', this._modelDidUpdate, this)
+    this.model.on('will-change', this._modelWillUpdate, this)
   }
 
   componentWillUnmount() {
@@ -237,16 +231,12 @@ class PresenterMediator extends React.PureComponent<Props> {
     this.model.teardown()
 
     this.presenter._beginTeardown()
-
-    this._stopUpdate()
   }
 
   render() {
     // Views can be getters, so pluck it out so that it is only evaluated once
     const { model, view } = this.presenter
     const { presenterProps } = this.props
-
-    this._lastRevision = this.model.revision
 
     if (view != null) {
       return React.createElement(
@@ -278,31 +268,12 @@ class PresenterMediator extends React.PureComponent<Props> {
 
   /* Private ------------------------------------------------------ */
 
-  _preUpdate(value: Object, patch: Object) {
+  _modelWillUpdate(value: Object, patch: Object) {
     this.presenter.modelWillUpdate(this.repo, value, patch)
   }
 
-  _scheduleUpdate() {
-    if (this.model.revision > this._lastRevision) {
-      this.forceUpdate()
-    }
-
-    this._scheduledFrame = null
-  }
-
-  _queueUpdate() {
-    if (this.repo.history.batch && !this._scheduledFrame) {
-      this._scheduledFrame = requestFrame(this._scheduleUpdate)
-    } else {
-      this._scheduleUpdate()
-    }
-  }
-
-  _stopUpdate() {
-    if (this._scheduledFrame) {
-      cancelFrame(this._scheduledFrame)
-      this._scheduledFrame = null
-    }
+  _modelDidUpdate() {
+    this.forceUpdate()
   }
 
   _getParent(): ?PresenterMediator {
@@ -318,7 +289,6 @@ class PresenterMediator extends React.PureComponent<Props> {
   }
 }
 
-/* istanbul ignore next */
 const noop = () => {}
 
 PresenterMediator.contextTypes = {

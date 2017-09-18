@@ -81,13 +81,30 @@ describe('Model', function() {
     it('binds to observables', function() {
       let repo = new Repo()
       let model = new Model(repo)
-
       let handler = jest.fn()
 
       model.on('change', handler)
 
       model.bind({
         count: Observable.of(1, 2, 3)
+      })
+
+      expect(handler).toHaveBeenCalledWith({ count: 1 })
+      expect(handler).toHaveBeenCalledWith({ count: 2 })
+      expect(handler).toHaveBeenCalledWith({ count: 3 })
+
+      expect(handler).toHaveBeenCalledTimes(3)
+    })
+
+    it('does not trigger on duplicate updates', function() {
+      let repo = new Repo()
+      let model = new Model(repo)
+      let handler = jest.fn()
+
+      model.on('change', handler)
+
+      model.bind({
+        count: Observable.of(1, 1, 1, 2, 2, 3, 3, 3)
       })
 
       expect(handler).toHaveBeenCalledWith({ count: 1 })

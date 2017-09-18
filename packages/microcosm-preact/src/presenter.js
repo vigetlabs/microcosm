@@ -11,7 +11,6 @@
 import { h, Component } from 'preact'
 import Microcosm, { merge, tag, getRegistration } from 'microcosm'
 import Model from 'microcosm/addons/model'
-import { requestFrame, cancelFrame } from './frame'
 
 function passChildren() {
   return this.props.children[0]
@@ -139,13 +138,11 @@ class PresenterMediator extends Component {
 
     this.presenter = props.presenter
     this.repo = this.presenter._requestRepo(context.repo)
-    this._lastRevision = -Infinity
 
     this.model = new Model(this.repo, this.presenter)
 
     // The following methods are autobound to protect scope
     this.send = this.send.bind(this)
-    this._scheduleUpdate = this._scheduleUpdate.bind(this)
   }
 
   getChildContext() {
@@ -163,8 +160,8 @@ class PresenterMediator extends Component {
   componentDidMount() {
     this.presenter.refs = this.refs
 
-    this.model.on('change', this._queueUpdate, this)
-    this.model.on('will-change', this._preUpdate, this)
+    this.model.on('change', this._modelDidUpdate, this)
+    this.model.on('will-change', this._modelWillUpdate, this)
   }
 
   componentWillUnmount() {
@@ -177,16 +174,12 @@ class PresenterMediator extends Component {
     this.model.teardown()
 
     this.presenter._beginTeardown()
-
-    this._stopUpdate()
   }
 
   render() {
     // Views can be getters, so pluck it out so that it is only evaluated once
     const { model, view } = this.presenter
     const { presenterProps } = this.props
-
-    this._lastRevision = this.model.revision
 
     if (view != null) {
       return h(
@@ -222,31 +215,12 @@ class PresenterMediator extends Component {
 
   /* Private ------------------------------------------------------ */
 
-  _preUpdate(value, patch) {
+  _modelWillUpdate(value, patch) {
     this.presenter.modelWillUpdate(this.repo, value, patch)
   }
 
-  _scheduleUpdate() {
-    if (this.model.revision > this._lastRevision) {
-      this.forceUpdate()
-    }
-
-    this._scheduledFrame = null
-  }
-
-  _queueUpdate() {
-    if (this.repo.history.batch && !this._scheduledFrame) {
-      this._scheduledFrame = requestFrame(this._scheduleUpdate)
-    } else {
-      this._scheduleUpdate()
-    }
-  }
-
-  _stopUpdate() {
-    if (this._scheduledFrame) {
-      cancelFrame(this._scheduledFrame)
-      this._scheduledFrame = null
-    }
+  _modelDidUpdate() {
+    this.forceUpdate()
   }
 
   _getParent() {

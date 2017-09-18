@@ -4,6 +4,7 @@
 
 import React from 'react'
 import Microcosm from 'microcosm'
+import Observable from 'zen-observable'
 import Presenter from 'microcosm/addons/presenter'
 import ActionButton from 'microcosm/addons/action-button'
 import withSend from 'microcosm/addons/with-send'
@@ -1555,5 +1556,73 @@ describe('::modelWillUpdate', function() {
     }
 
     mount(<Test id="2" />).setProps({ id: '3' })
+  })
+})
+describe('::batching', function() {
+  it('bundles together repo actions when in batch mode', done => {
+    let repo = new Repo({ batch: true })
+
+    class Test extends Presenter {
+      getModel() {
+        return {
+          color: state => state.color
+        }
+      }
+
+      modelWillUpdate(repo, state, change) {
+        if (change.color === 'pink') {
+          done()
+        } else {
+          done(new Error('Expected color to be pink'))
+        }
+      }
+
+      render() {
+        return <p>{this.model.color}</p>
+      }
+    }
+
+    mount(<Test repo={repo} />)
+
+    repo.patch({ color: 'red' })
+    repo.patch({ color: 'blue' })
+    repo.patch({ color: 'pink' })
+  })
+
+  it('bundles together model calls in batch mode', done => {
+    let repo = new Repo({ batch: true })
+
+    class Test extends Presenter {
+      getModel() {
+        return {
+          color: new Observable(observer => {
+            observer.next('red')
+
+            setTimeout(function() {
+              observer.next('blue')
+              observer.next('pink')
+            })
+          })
+        }
+      }
+
+      modelWillUpdate(repo, state, { color }) {
+        if (color === 'pink') {
+          done()
+        } else {
+          done(new Error('Expected color to be pink instead of ' + color))
+        }
+      }
+
+      render() {
+        return <p>{this.model.color}</p>
+      }
+    }
+
+    let text = mount(<Test repo={repo} />).text()
+
+    if (text !== 'red') {
+      throw new Error('Expected initial text to be red instead of ' + text)
+    }
   })
 })

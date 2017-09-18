@@ -2,34 +2,49 @@
  * @fileoverview This is the default update strategy for Microcosm. It
  * can be overriden by passing the `updater` option when creating a
  * Microcosm.
+ *
+ * The two types of updating provided by Microcosm are "immediate" and
+ * "batching".
+ *
+ * When using batching, Microcosm leans on the requestIdleCallback
+ * browser API. This batches together updates . It is configured with
+ * a timeout such that a user never waits longer than 36 milliseconds
+ * for an update.
+ *
+ * @private
  * @flow
  */
 
+import { merge } from './utils'
+import { hasWindow, hasIdle } from './env'
+
 export type Updater = (update: Function, options: Object) => void | *
 
-type UpdateOptions = {
-  batch: boolean
-}
+export type Job = { cancel: () => void }
 
-const scheduler: Updater =
-  typeof requestIdleCallback !== 'undefined'
-    ? /* istanbul ignore next */ requestIdleCallback
-    : (updater, options) => setTimeout(updater, options.timeout)
-
-/**
- * When using requestIdleCallback, batch together updates until the
- * browser is ready for them, but never make the user wait longer than
- * 36 milliseconds.
- * @private
- */
 const BATCH_OPTIONS = { timeout: 36 }
 
-export default function defaultUpdateStrategy(options: UpdateOptions): Updater {
-  return update => {
-    if (options.batch === true) {
-      scheduler(update, BATCH_OPTIONS)
-    } else {
-      update()
+function schedule(callback, options): ?Job {
+  if (options.batch !== true) {
+    callback()
+    return null
+  }
+
+  if (hasWindow && hasIdle) {
+    let job = window.requestIdleCallback(callback, options)
+
+    return {
+      cancel: window.cancelIdleCallback.bind(null, job)
     }
   }
+
+  return {
+    cancel: clearTimeout.bind(null, setTimeout(callback))
+  }
+}
+
+export default function defaultUpdateStrategy(options: Object): Updater {
+  let settings = merge(BATCH_OPTIONS, options)
+
+  return update => schedule(update, settings)
 }
