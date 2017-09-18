@@ -44,10 +44,5 @@
   },
   "workspaces": [
     "packages/*"
-  ],
-  "jest": {
-    "projects": [
-      "./packages/*"
-    ]
-  }
+  ]
 }
