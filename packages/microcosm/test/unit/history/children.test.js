@@ -47,4 +47,20 @@ describe('History node children', function() {
 
     expect(b.children).toEqual([c, d])
   })
+
+  it('will not remove a child it does not own', function() {
+    const repo = new Microcosm()
+
+    const a = repo.append(action)
+    const b = repo.append(action)
+
+    repo.checkout(a)
+
+    const c = repo.append(action)
+
+    // Note: This does not work
+    b.abandon(c)
+
+    expect(c.parent).toBe(a)
+  })
 })

@@ -18,7 +18,8 @@ function clean(value: string | number | boolean) {
   console.assert(value != null, 'keyPath should never be null.')
   console.assert(
     value !== null && typeof value !== 'object',
-    'keyPath should never be an object or array'
+    'keyPath should never be an object or array. Given:',
+    value
   )
 
   return value.toString().trim()
