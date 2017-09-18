@@ -2,26 +2,24 @@
  * @flow weak
  */
 
-import Microcosm, { Action, tag, get, getRegistration } from '../index'
+import Microcosm, { Action, tag, get, result, getRegistration } from '../index'
 
 declare var expect: any
 
 expect.extend({
   toRegister(entity, command, status = 'done') {
     let tagged = tag(command)
-    let name = command.name || tagged.toString()
+    let name = tagged.toString()
 
-    let operator = this.isNot ? 'not to' : 'to'
-    let pass = false
-
-    if (entity.register) {
-      pass = getRegistration(entity.register(), command, status) != null
-    } else {
-      throw new TypeError(`${entity.constructor.name} has no register method`)
+    if (entity.register == null) {
+      throw new TypeError(`${entity.constructor.name} has no register method.`)
     }
 
+    let operator = this.isNot ? 'not to' : 'to'
+    let registry = result(entity, 'register')
+
     return {
-      pass: pass,
+      pass: getRegistration(registry, command, status).length > 0,
       message: () => {
         return `Expected entity ${operator} register to the '${status}' state of ${name}.`
       }
@@ -30,11 +28,7 @@ expect.extend({
 
   toHaveStatus(action, status) {
     if (action instanceof Action === false) {
-      throw new TypeError(
-        'toHaveStatus expects an Action. Received ' +
-          (action != null ? 'a ' + action.constructor.name : action) +
-          '.'
-      )
+      throw new TypeError('toHaveStatus expects an action.')
     }
 
     let operator = this.isNot ? 'not to' : 'to'
@@ -43,18 +37,14 @@ expect.extend({
     return {
       pass: pass,
       message: () => {
-        return `Expected action ${operator} to be'${status}'.`
+        return `Expected action ${operator} be '${status}'.`
       }
     }
   },
 
   toHaveState(repo, key, value) {
     if (repo instanceof Microcosm === false) {
-      throw new TypeError(
-        'toHaveState expects a Microcosm. Received ' +
-          (repo != null ? 'a ' + repo.constructor.name : repo) +
-          '.'
-      )
+      throw new TypeError('toHaveState expects a Microcosm.')
     }
 
     let operator = this.isNot ? 'not to' : 'to'
