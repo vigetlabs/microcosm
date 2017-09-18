@@ -1,4 +1,4 @@
-const { Microcosm, update } = require('../build/microcosm')
+const { Microcosm, update } = require('../build')
 
 let repo = new Microcosm()
 

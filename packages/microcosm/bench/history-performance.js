@@ -4,7 +4,7 @@
 
 'use strict'
 
-const { History } = require('../build/microcosm')
+const { History } = require('../build')
 
 const SIZES = [1000, 50000, 100000]
 

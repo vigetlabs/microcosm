@@ -6,7 +6,7 @@
 
 'use strict'
 
-const { Microcosm } = require('../build/microcosm')
+const { Microcosm } = require('../build')
 
 const SIZES = [1000, 10000, 50000, 100000]
 
@@ -30,7 +30,7 @@ var results = SIZES.map(function(SIZE) {
 
   var then = process.hrtime()
   for (var i = 0; i < SIZE; i++) {
-    repo.fork().on('change', () => {})
+    repo.fork()
   }
 
   var setup = process.hrtime(then)[1] / 1000000
