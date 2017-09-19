@@ -46,7 +46,6 @@ export default class Model extends Emitter {
 
   bind(bindings: Object) {
     let next = null
-    let recompute = false
 
     for (var key in bindings) {
       var callback = bindings[key]
@@ -56,38 +55,19 @@ export default class Model extends Emitter {
         // assign to a single key/value pair
         this._track(key, callback)
       } else if (isCallable(callback)) {
-        // Presenters will "call" anything that looks like it's a function.
-        // It does this by checking the "call" property.
-        //
-        // If the binding is new, rebind! Otherwise we don't want to
-        // recalculate this model if nothing has changed.
-        if (this._bindings[key] !== callback) {
-          recompute = true
-
-          if (next == null) {
-            next = {}
-          }
-
-          next[key] = callback
+        if (next === null) {
+          next = {}
         }
+
+        next[key] = callback
       } else if (this.value[key] !== callback) {
-        // Otherwise we just have a primitive value. If the value is
-        // different, push the key/value pair into the next patch and
-        // queue a recompute.
-        recompute = true
         this._patch[key] = callback
       }
     }
 
     this._rebind(next)
 
-    if (recompute) {
-      this._compute()
-    }
-
-    // If we've recalculated the model and it resulted in a change to the value,
-    // we need to publish a change. This powers Presenter::modelWillUpdate
-    this._publish()
+    this._computeNow()
   }
 
   /**
@@ -100,8 +80,7 @@ export default class Model extends Emitter {
     }
 
     this._empty()
-
-    this._repo.off('change', this._compute, this)
+    this._ignoreRepo()
   }
 
   /* Private ------------------------------------------------------ */
@@ -111,20 +90,21 @@ export default class Model extends Emitter {
       this._bindings = bindings
       this._watchRepo()
     } else {
+      this._bindings = {}
       this._ignoreRepo()
     }
   }
 
   _watchRepo() {
     if (!this._watching) {
-      this._repo.on('change', this._compute, this)
+      this._repo.on('change', this._computeEventually, this)
       this._watching = true
     }
   }
 
   _ignoreRepo() {
     if (this._watching) {
-      this._repo.off('change', this._compute, this)
+      this._repo.off('change', this._computeEventually, this)
       this._watching = false
     }
   }
@@ -184,7 +164,7 @@ export default class Model extends Emitter {
    * Run through each callable binding, recomputing the model for
    * their associated keys.
    */
-  _compute() {
+  _compute(silent) {
     let dirty = false
 
     for (var key in this._bindings) {
@@ -197,7 +177,16 @@ export default class Model extends Emitter {
       }
     }
 
-    if (dirty) {
+    return dirty
+  }
+
+  _computeNow() {
+    this._compute()
+    this._publish()
+  }
+
+  _computeEventually() {
+    if (this._compute()) {
       this._enqueue()
     }
   }
