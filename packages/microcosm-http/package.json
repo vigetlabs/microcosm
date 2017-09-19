@@ -6,8 +6,7 @@
     "axios": "^0.16.2"
   },
   "scripts": {
-    "start": "webpack-dev-server",
-    "build": "webpack -p src/http.js build/microcosm-http.js"
+    "start": "webpack-dev-server"
   },
   "devDependencies": {
     "body-parser": "^1.18.1",
