@@ -164,7 +164,7 @@ export default class Model extends Emitter {
    * Run through each callable binding, recomputing the model for
    * their associated keys.
    */
-  _compute(silent) {
+  _compute() {
     let dirty = false
 
     for (var key in this._bindings) {
