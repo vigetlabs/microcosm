@@ -109,6 +109,26 @@ class Action extends Emitter {
     return this
   }
 
+  onNext(callback: Callback, scope?: Object): this {
+    let iterator = () => {
+      let size = this.revisions.length
+
+      if (size > 0) {
+        callback.call(scope, this.revisions[size - 1])
+      }
+
+      if (this.complete) {
+        this.off('change', iterator)
+      }
+    }
+
+    iterator()
+
+    this.on('change', iterator)
+
+    return this
+  }
+
   is(type: Status): boolean {
     return this.command[this.status] === this.command[type]
   }
@@ -124,6 +144,10 @@ class Action extends Emitter {
   }
 
   subscribe(callbacks: Object, scope: *) {
+    if (callbacks.onNext) {
+      this.onNext(callbacks.onNext, scope)
+    }
+
     if (callbacks.onOpen) {
       this.onOpen(callbacks.onOpen, scope)
     }
@@ -261,8 +285,7 @@ class Action extends Emitter {
     if (callback) {
       console.assert(
         typeof callback === 'function',
-        `Expected a function when subscribing to ${status}` +
-          `instead got ${typeof callback}`
+        `Expected a function when subscribing to ${status} instead got ${typeof callback}`
       )
 
       if (this.is(status)) {

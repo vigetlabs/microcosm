@@ -13,6 +13,7 @@ type Props = {
   onClick: (event?: Event, Action?: *) => *,
   onDone: ?Callback,
   onError: ?Callback,
+  onNext: ?Callback,
   onOpen: ?Callback,
   onUpdate: ?Callback,
   prepare: (value?: *, event?: Event) => *,
@@ -67,6 +68,7 @@ class ActionButton extends React.PureComponent<Props> {
     delete props.onUpdate
     delete props.onCancel
     delete props.onError
+    delete props.onNext
     delete props.send
     delete props.prepare
 
@@ -88,6 +90,7 @@ ActionButton.defaultProps = {
   onClick: identity,
   onDone: null,
   onError: null,
+  onNext: null,
   onOpen: null,
   onUpdate: null,
   prepare: identity,

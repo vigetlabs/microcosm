@@ -6,7 +6,7 @@ module.exports = {
     './packages/microcosm-preact',
     './packages/microcosm-graphql',
     './packages/microcosm-react-router',
-    './packages/microcosm-http',
+    './packages/microcosm-http'
   ],
   collectCoverageFrom: ['**/src/**/*.js'],
   moduleNameMapper: {

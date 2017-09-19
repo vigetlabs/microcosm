@@ -15,6 +15,7 @@ type Props = {
   onError: ?Callback,
   onCancel: ?Callback,
   onDone: ?Callback,
+  onNext: ?Callback,
   onSubmit: (event: Event, Action: *) => *,
   prepare: (data: Object) => Object,
   send: ?Sender,
@@ -39,6 +40,7 @@ class ActionForm extends React.PureComponent<Props> {
 
     this.send = this.props.send || this.context.send
     this.onSubmit = this.onSubmit.bind(this)
+
     this.assignForm = el => {
       this.form = el
     }
@@ -59,6 +61,7 @@ class ActionForm extends React.PureComponent<Props> {
     delete props.onUpdate
     delete props.onCancel
     delete props.onError
+    delete props.onNext
     delete props.send
 
     return React.createElement('form', props)
@@ -106,6 +109,7 @@ ActionForm.defaultProps = {
   onCancel: null,
   onError: null,
   onDone: null,
+  onNext: null,
   onSubmit: identity,
   prepare: identity,
   send: null,
