@@ -1,24 +1,39 @@
 import DOM from 'react-dom'
 import React from 'react'
 import Microcosm from 'microcosm'
+import Presenter from 'microcosm/addons/presenter'
 import Circle from './domains/circle'
 import Logo from './views/logo'
 import { animate } from './actions/animate'
 
-let repo = new Microcosm()
-let el = document.getElementById('app')
+class LogoPresenter extends Presenter {
+  getModel() {
+    return {
+      circle: state => state.circle
+    }
+  }
 
-repo.addDomain('circle', Circle)
+  setup(repo) {
+    repo.addDomain('circle', Circle)
+  }
 
-repo.on('change', function(state) {
-  DOM.render(<Logo {...state} />, el)
-})
+  loop({ time }) {
+    this.repo.push(animate, time).onDone(this.loop, this)
+  }
 
-function loop({ time = Date.now() } = {}) {
-  repo.push(animate, time, 1000).onDone(loop)
+  ready(repo) {
+    this.loop({ time: Date.now() })
+  }
+
+  render() {
+    return <Logo circle={this.model.circle} />
+  }
 }
 
-loop()
+DOM.render(
+  <LogoPresenter repo={new Microcosm({ batch: true })} />,
+  document.getElementById('app')
+)
 
 if (module.hot) {
   module.hot.accept()
