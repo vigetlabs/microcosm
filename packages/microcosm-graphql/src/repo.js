@@ -3,7 +3,7 @@ import Microcosm, { set } from 'microcosm'
 import Schema from './schema'
 import { domainFactory } from './domains'
 import { createAccessor, createRelationship } from './queries'
-import refine from './resolve'
+import { select } from './resolve'
 
 class GraphMicrocosm extends Microcosm {
   setup({ schema }) {
@@ -64,7 +64,7 @@ class GraphMicrocosm extends Microcosm {
 
     let entry = document.definitions[0]
 
-    return refine(this.state, this.schema, entry, context, 'Query')
+    return select(this.state, this.schema, entry, context, 'Query')
   }
 }
 

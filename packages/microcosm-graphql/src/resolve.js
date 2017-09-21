@@ -1,7 +1,7 @@
 import { parseArguments } from './arguments'
 import { getName } from './utilities'
 
-export default function refine(state, schema, entry, context, type) {
+export function select(state, schema, entry, context, type) {
   if (!entry.selectionSet) {
     return state
   }
@@ -15,7 +15,7 @@ export default function refine(state, schema, entry, context, type) {
   }, {})
 }
 
-function resolve(state, schema, entry, context, type, field) {
+export function resolve(state, schema, entry, context, type, field) {
   let resolver = context.resolvers[type][field]
 
   let args = parseArguments(entry.arguments, context.variables)
@@ -23,8 +23,8 @@ function resolve(state, schema, entry, context, type, field) {
   let nextType = schema.returnType(type, field)
 
   if (Array.isArray(value)) {
-    return value.map(item => refine(item, schema, entry, context, nextType))
+    return value.map(item => select(item, schema, entry, context, nextType))
   }
 
-  return refine(value, schema, entry, context, nextType)
+  return select(value, schema, entry, context, nextType)
 }
