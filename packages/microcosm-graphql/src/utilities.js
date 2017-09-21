@@ -1,5 +1,5 @@
 export function getName(obj) {
-  return obj.name.value
+  return obj.alias ? obj.alias.value : obj.name.value
 }
 
 export function getValue(obj) {

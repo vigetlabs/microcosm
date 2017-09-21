@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { get, update } from 'microcosm'
 import { getName, getType, values } from './utilities'
 
@@ -17,7 +18,7 @@ class Schema {
     }
   }
 
-  scan(def) {
+  addType(def) {
     let singular = isSingular(def)
     let key = getName(def)
 
@@ -32,6 +33,17 @@ class Schema {
 
       return memo
     }, {})
+  }
+
+  scan(def) {
+    switch (def.kind) {
+      case 'ObjectTypeDefinition':
+        return this.addType(def)
+      case 'OperationDefinition':
+        throw new TypeError(
+          `Unable to process ${def.operation} ${getName(def)}.`
+        )
+    }
   }
 
   mutations() {
@@ -55,11 +67,30 @@ class Schema {
   }
 
   shape(type) {
-    return get(this._shapes, type)
+    return this._shapes[type]
   }
 
-  structure(type) {
-    return get(this._structure, type, null)
+  has(name) {
+    return typeof this._structure[name] !== 'undefined'
+  }
+
+  definition(name) {
+    assert(this.has(name), `Schema has no definition for ${name}`)
+
+    return this._structure[name]
+  }
+
+  field(type, key) {
+    let definition = this.definition(type)
+
+    let answer = definition[key]
+    assert(answer, `${type} has no definition for ${key}`)
+
+    return answer
+  }
+
+  returnType(name, key) {
+    return this.field(name, key).type
   }
 }
 

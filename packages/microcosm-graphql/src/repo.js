@@ -1,8 +1,9 @@
+import assert from 'assert'
 import Microcosm, { set } from 'microcosm'
 import Schema from './schema'
 import { domainFactory } from './domains'
 import { createAccessor, createRelationship } from './queries'
-import resolve from './resolve'
+import refine from './resolve'
 
 class GraphMicrocosm extends Microcosm {
   setup({ schema }) {
@@ -34,12 +35,13 @@ class GraphMicrocosm extends Microcosm {
       this.addDomain(type, Domain)
     }
 
-    let structure = this.schema.structure(type)
+    let def = this.schema.definition(type)
 
-    for (let key in structure) {
-      let entry = structure[key]
+    for (let key in def) {
+      let entry = def[key]
+      let related = this.schema.has(entry.type)
 
-      if (this.schema.structure(entry.type)) {
+      if (related) {
         this.resolve(
           [type, key],
           createRelationship(this, this.schema, key, type, entry)
@@ -55,7 +57,14 @@ class GraphMicrocosm extends Microcosm {
   }
 
   query(document, variables) {
-    return resolve(this.schema, document, this.state, variables, this.resolvers)
+    let context = { variables, resolvers: this.resolvers }
+
+    assert(document.definitions.length, 'This GraphQL document has no queries.')
+    assert(document.definitions.length <= 1, 'Too many query definitions.')
+
+    let entry = document.definitions[0]
+
+    return refine(this.state, this.schema, entry, context, 'Query')
   }
 }
 

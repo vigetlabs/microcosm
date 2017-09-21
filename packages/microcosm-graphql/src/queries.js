@@ -24,7 +24,9 @@ export function createRelationship(repo, schema, key, type, attribute) {
     return createFinder(repo, attribute, type)
   }
 
-  let relation = find(values(get(schema.structure(attribute.type))), { type })
+  let relation = find(values(get(schema.definition(attribute.type))), {
+    type
+  })
 
   if (!relation && attribute.list) {
     badOneToMany(key, type, attribute.type)

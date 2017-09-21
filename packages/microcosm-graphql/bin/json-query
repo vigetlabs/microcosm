@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Take a GraphQL schema and turn it into JSON.
+#
+# Usage:
+#   json-query <input>
+
+SCHEMA=$(cat $1)
+
+node -p "JSON.stringify(require('graphql-tag')(\`$SCHEMA\`), null, 2)"

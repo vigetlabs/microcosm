@@ -23,7 +23,7 @@ describe('Type scanning', function() {
   })
 
   it('builds type for singular data', () => {
-    expect(schema.structure('Author.id')).toEqual({
+    expect(schema.field('Author', 'id')).toEqual({
       type: 'ID',
       name: 'id',
       list: false
@@ -31,7 +31,7 @@ describe('Type scanning', function() {
   })
 
   it('builds type for list data', () => {
-    expect(schema.structure('Author.posts')).toEqual({
+    expect(schema.field('Author', 'posts')).toEqual({
       type: 'Post',
       name: 'posts',
       list: true

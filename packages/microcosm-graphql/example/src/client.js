@@ -1,39 +1,35 @@
 import React from 'react'
 import DOM from 'react-dom'
-import Presenter from 'microcosm/addons/presenter'
+import GraphPresenter from './graph-presenter'
+import Model from './model.gql'
 import { makeRepo } from './repo'
-import postsQuery from './posts.gql'
 
-let repo = makeRepo()
-let el = document.createElement('div')
-
-document.body.appendChild(el)
-
-class Example extends Presenter {
-  getModel() {
-    return {
-      posts: () => this.repo.query(postsQuery).posts
-    }
-  }
-
-  ready(repo) {
-    const post = {
-      title: 'How the Empire Struck Back',
-      author: '2'
-    }
-
-    setTimeout(repo.prepare('addPost', post), 1000)
-  }
+class Example extends GraphPresenter {
+  model = Model
 
   renderItem(item) {
-    return <li key={item.id}>{item.title}</li>
+    return (
+      <li key={item.id}>
+        {item.title} by {item.author.name}
+      </li>
+    )
   }
 
   render() {
-    const { posts } = this.model
+    const { posts } = this.state.model
 
     return <ul>{posts.map(this.renderItem, this)}</ul>
   }
 }
 
+let el = document.createElement('div')
+let repo = makeRepo()
+
+document.body.appendChild(el)
+
 DOM.render(<Example repo={repo} />, el)
+
+requestAnimationFrame(function loop() {
+  requestAnimationFrame(loop)
+  repo.push('updatePost', { id: '2', title: Math.random() * 10000 })
+})
