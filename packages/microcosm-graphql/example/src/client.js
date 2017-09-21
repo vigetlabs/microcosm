@@ -29,7 +29,6 @@ document.body.appendChild(el)
 
 DOM.render(<Example repo={repo} />, el)
 
-requestAnimationFrame(function loop() {
-  requestAnimationFrame(loop)
-  repo.push('updatePost', { id: '2', title: Math.random() * 10000 })
-})
+setTimeout(function() {
+  repo.push('addPost', { author: '2', title: 'How to rule the universe' })
+}, 1000)
