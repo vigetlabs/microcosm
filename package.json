@@ -4,7 +4,7 @@
     "node": ">= 6.10"
   },
   "scripts": {
-    "bootstrap": "yarn && lerna bootstrap && yarn build",
+    "bootstrap": "yarn install && lerna bootstrap",
     "format": "./bin/format",
     "build": "lerna run build",
     "watch": "lerna run --parallel watch",
