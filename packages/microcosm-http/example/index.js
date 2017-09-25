@@ -9,7 +9,7 @@ let repo = new Microcosm()
 
 repo.addDomain('files', {
   actions: {
-    uploadFile: http({ method: 'post', url: '/files' })
+    uploadFile: http.prepare({ method: 'post', url: '/files' })
   }
 })
 

@@ -1,6 +1,7 @@
 {
   "name": "microcosm-http",
   "version": "0.0.0",
+  "main": "src/http.js",
   "private": true,
   "dependencies": {
     "axios": "^0.16.2"

@@ -6,19 +6,19 @@ An AJAX library for Microcosm.
 
 ## Design Goals
 
-- [ ] Small, no dependency on Promises. Actions can turn into Promises if need be.
-- [ ] File uploads
-- [ ] Server-side rendering
-- [ ] Request cancellation
+- [x] File uploads
+- [x] Isomorphic
+- [x] Request cancellation
 - [ ] Automatic request cancellation based on a token
 - [ ] A consistent data format for progress
 - [ ] A consistent data format for errors
-- [ ] Error localization
+- [x] Error localization
 
 ## Things to figure out
 
 - [ ] How to cleanly distinguish between URL parameters and query strings?
 - [ ] Is the cancellation token concept sound?
+- [ ] Find a good, small client that isn't based on promises. 
 
 ## Pseudo Code
 

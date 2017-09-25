@@ -4,9 +4,10 @@ import http from '../src/http'
 it('fetches', async () => {
   let repo = new Microcosm()
 
-  let getPosts = http({
-    url: 'https://jsonplaceholder.typicode.com/posts'
-  })
+  let getPosts = () =>
+    http({
+      url: 'https://jsonplaceholder.typicode.com/posts'
+    })
 
   let posts = await repo.push(getPosts)
 
@@ -16,9 +17,10 @@ it('fetches', async () => {
 it('cancels', () => {
   let repo = new Microcosm()
 
-  let getPosts = http({
-    url: 'https://jsonplaceholder.typicode.com/posts'
-  })
+  let getPosts = () =>
+    http({
+      url: 'https://jsonplaceholder.typicode.com/posts'
+    })
 
   let action = repo.push(getPosts)
 
