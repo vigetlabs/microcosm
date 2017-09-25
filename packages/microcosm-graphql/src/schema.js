@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { get, update } from 'microcosm'
+import { update } from 'microcosm'
 import { getName, getType, values } from './utilities'
 
 function isSingular(def) {
