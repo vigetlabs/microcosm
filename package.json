@@ -36,7 +36,8 @@
     "flow-bin": "^0.53.1",
     "jest": "^21.0.2",
     "lerna": "^2.1.2",
-    "prettier": "^1.6.1"
+    "prettier": "^1.6.1",
+    "raf": "^3.3.2"
   },
   "prettier": {
     "semi": false,

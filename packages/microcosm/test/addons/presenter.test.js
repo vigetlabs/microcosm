@@ -22,38 +22,6 @@ class Repo extends Microcosm {
   }
 }
 
-describe('refs', function() {
-  it('should support string refs', function() {
-    class MyPresenter extends Presenter {
-      render() {
-        return <p ref="container">Test</p>
-      }
-    }
-
-    let wrapper = mount(<MyPresenter />)
-
-    expect(wrapper.ref('container').length).toEqual(1)
-  })
-
-  it('updates the ref when the component unmounts', function() {
-    var count = 0
-
-    class MyPresenter extends Presenter {
-      render() {
-        return <p ref={() => (this.foo = count++)}>Test</p>
-      }
-    }
-
-    let wrapper = mount(<MyPresenter />)
-
-    expect(wrapper.get(0).foo).toEqual(0)
-
-    wrapper.unmount()
-
-    expect(wrapper.get(0).foo).toEqual(1)
-  })
-})
-
 describe('::getModel', function() {
   it('passes data to the view ', function() {
     class Hello extends Presenter {
