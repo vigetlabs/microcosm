@@ -1,4 +1,8 @@
+import { configure } from 'enzyme'
+import Adapter from 'enzyme-adapter-react-16'
 import 'microcosm/addons/jest-matchers'
+
+configure({ adapter: new Adapter() })
 
 // Make a strict-only test flag
 it.dev = function(description, test) {
