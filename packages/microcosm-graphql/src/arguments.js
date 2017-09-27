@@ -3,28 +3,35 @@
  * https://facebook.github.io/graphql/#sec-Language.Arguments
  */
 
-import { getName, getValue } from './utilities'
+import { reduceName } from './utilities'
 
-function parseArgument(arg, variables) {
+function parseArgument(arg, _name, variables) {
+  // Input values:
+  // https://facebook.github.io/graphql/#sec-Input-Values
   switch (arg.value.kind) {
     case 'Variable':
-      return variables[getName(arg)]
+      // TODO: Default values:
+      // http://graphql.org/learn/queries/#default-variables
+      return variables[arg.value.name.value]
     case 'IntValue':
     case 'FloatValue':
     case 'BooleanValue':
-      return JSON.parse(getValue(arg))
+      return JSON.parse(arg.value.value)
     default:
-      return getValue(arg)
+      return arg.value.value
   }
 }
 
-export function parseArguments(args, variables) {
-  let answer = {}
+const NO_ARGS = {}
 
-  for (var i = 0; i < args.length; i++) {
-    var arg = args[i]
-    answer[getName(arg)] = parseArgument(arg, variables)
+export function emptyArgs(args) {
+  return args === NO_ARGS
+}
+
+export function parseArguments(args, variables) {
+  if (args.length <= 0) {
+    return NO_ARGS
   }
 
-  return answer
+  return reduceName(args, parseArgument, variables)
 }

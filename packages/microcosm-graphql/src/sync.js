@@ -2,30 +2,48 @@
  * Sync - Microcosm GraphQL provides default implementations of mutations.
  */
 
-import { spawner, passThrough, append, remove, update } from './mutations'
+import http from 'microcosm-http'
+import { record, passThrough, append, remove, update } from './mutations'
 
 const tokenize = string => string.split(/([A-Z].+$)/)
 
 export function sync(mutation) {
   let [method, resource] = tokenize(mutation)
+  let url = '/' + resource.toLowerCase()
+  let action = null
+  let handler = null
 
   switch (method) {
     case 'add':
-      return { action: spawner(mutation, resource), handler: append }
+      action = record(mutation, resource)
+      handler = append
+      break
     case 'create':
-      // TODO: This should POST
-      return { action: spawner(mutation, resource), handler: append }
+      action = args => http({ url, data: args, method: 'post' })
+      handler = append
+      break
+    case 'read':
+      action = () => http({ url })
+      handler = append
+      break
     case 'remove':
-      return { action: passThrough(mutation), handler: remove }
+      action = passThrough(mutation)
+      handler = remove
+      break
     case 'delete':
-      // TODO: This should DELETE
-      return { action: passThrough(mutation, resource), handler: remove }
+      action = args => http({ url: url + '/' + args.id, method: 'delete' })
+      handler = remove
+      break
     case 'update':
-      return { action: passThrough(mutation), handler: update }
+      action = passThrough(mutation)
+      handler = update
+      break
     case 'patch':
-      // TODO: This should PATCH
-      return { action: passThrough(mutation, resource), handler: update }
+      action = data => http({ url: url + '/' + data.id, data, method: 'patch' })
+      handler = update
+      break
     default:
-      return { action: passThrough(mutation, resource), handler: null }
   }
+
+  return { name: mutation, action, handler }
 }

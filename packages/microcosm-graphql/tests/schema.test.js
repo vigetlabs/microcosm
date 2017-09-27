@@ -1,4 +1,4 @@
-import Schema from '../src/schema'
+import { getQueries } from '../src/schema'
 import gql from 'graphql-tag'
 
 let document = gql`
@@ -19,22 +19,22 @@ describe('Type scanning', function() {
   let schema = null
 
   beforeEach(() => {
-    schema = new Schema(document)
+    schema = getQueries(document)
   })
 
   it('builds type for singular data', () => {
-    expect(schema.field('Author', 'id')).toEqual({
+    expect(schema.Author.fields['id']).toMatchObject({
       type: 'ID',
       name: 'id',
-      list: false
+      isList: false
     })
   })
 
   it('builds type for list data', () => {
-    expect(schema.field('Author', 'posts')).toEqual({
+    expect(schema.Author.fields['posts']).toMatchObject({
       type: 'Post',
       name: 'posts',
-      list: true
+      isList: true
     })
   })
 })

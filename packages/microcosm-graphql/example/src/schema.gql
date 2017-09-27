@@ -1,6 +1,7 @@
 type Author {
   id: ID
   name: String
+  posts: [Post]
 }
 
 type Post {
@@ -31,10 +32,12 @@ type Query {
 
 type Mutation {
   addAuthor(name: String): Author
+  createAuthor(name: String): Author
   updateAuthor(id: ID, name: String): Author
   deleteAuthor(id: ID, name: String): Author
   addPost(title: String, author: ID): Post
   updatePost(id: ID, title: String, author: ID): Post
+  createPost(title: String, author: ID): Post
   deletePost(id: ID, title: String, author: ID): Post
   addComment(content: String, post: ID): Comment
   updateComment(id: ID, content: String, post: ID): Comment

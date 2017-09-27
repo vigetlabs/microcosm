@@ -1,9 +1,0 @@
-query ExampleModel {
-  posts {
-    id
-    title
-    author {
-      name
-    }
-  }
-}

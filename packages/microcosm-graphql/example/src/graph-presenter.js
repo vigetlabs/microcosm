@@ -3,27 +3,26 @@ import React from 'react'
 export default class GraphPresenter extends React.Component {
   constructor(props, context) {
     super(props, context)
-
     this.state = { model: {} }
-
-    this.props.repo.on('change', this.tick, this)
-  }
-
-  rollforward(state) {
-    var model = this.props.repo.query(this.model)
-
-    if (model !== state.model) {
-      return { model }
-    }
-
-    return null
-  }
-
-  tick() {
-    this.setState(this.rollforward)
   }
 
   componentWillMount() {
     this.tick()
+    this.query = this.props.repo.compile(this.model)
+    this.props.repo.on('change', this.tick, this)
+  }
+
+  get variables() {
+    return {}
+  }
+
+  rollforward() {
+    let model = this.query(this.props.repo.state, this.variables)
+
+    return { model }
+  }
+
+  tick() {
+    this.setState(this.rollforward)
   }
 }

@@ -5,7 +5,7 @@ import Microcosm from './microcosm'
 import getRegistration from './get-registration'
 import tag from './tag'
 import STATUS from './status'
-import { merge, get, set, update, result } from './utils'
+import { clone, merge, get, set, update, result } from './utils'
 
 export {
   Microcosm as default,
@@ -18,6 +18,7 @@ export {
   set,
   update,
   merge,
+  clone,
   result,
   getRegistration,
   STATUS

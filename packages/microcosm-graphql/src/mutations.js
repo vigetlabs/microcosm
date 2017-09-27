@@ -3,19 +3,20 @@
  * http://facebook.github.io/graphql/#sec-Mutation
  */
 
-import { tag, set, merge } from 'microcosm'
+import { set, merge } from 'microcosm'
 import { reject } from './utilities'
 
-function uid() {
-  return Math.floor(Math.random() * 100000000).toString(16)
+let count = 0
+function uid(prefix) {
+  return `${prefix}-${count++}`
 }
 
-export function spawner(name) {
-  return tag(args => merge({ id: uid() }, args), name)
+export function record(name) {
+  return args => merge({ id: uid(name) }, args)
 }
 
 export function passThrough(name) {
-  return tag(n => n, name)
+  return n => n
 }
 
 export function append(list, item) {
@@ -33,5 +34,5 @@ export function update(list, record) {
     }
   }
 
-  return list.concat(record)
+  return append(list, record)
 }

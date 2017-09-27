@@ -1,6 +1,6 @@
 import { sync } from './sync'
 
-function tableFactory(repo, mutationDefs = []) {
+function tableFactory(repo, type, mutationDefs = []) {
   let Domain = {
     actions: {},
     register: {},
@@ -9,12 +9,17 @@ function tableFactory(repo, mutationDefs = []) {
     }
   }
 
+  const reader = sync('read' + type)
+
+  Domain.actions[reader.name] = reader.action
+  Domain.register[reader.name] = reader.handler
+
   mutationDefs.forEach(mutation => {
-    const { action, handler } = sync(mutation.name)
+    const { name, action, handler } = sync(mutation.name)
 
     if (action) {
-      Domain.actions[action] = action
-      Domain.register[action] = handler
+      Domain.actions[name] = action
+      Domain.register[name] = handler
     }
   })
 
@@ -29,10 +34,10 @@ function recordFactory() {
   }
 }
 
-export function domainFactory(repo, shape, mutations) {
-  if (shape === 'single') {
-    return recordFactory(repo, mutations)
+export function domainFactory(repo, type, mutations) {
+  if (type.isSingular) {
+    return recordFactory(repo, type.name, mutations)
   }
 
-  return tableFactory(repo, mutations)
+  return tableFactory(repo, type.name, mutations)
 }

@@ -98,6 +98,7 @@ class Microcosm extends Emitter {
   history: History
   snapshots: Object
   actions: Object
+  queries: Object
   domains: DomainEngine
   effects: EffectEngine
   options: Object
@@ -113,6 +114,7 @@ class Microcosm extends Emitter {
     this.snapshots = this.parent ? Object.create(this.parent.snapshots) : {}
     this.history = this.parent ? this.parent.history : new History(this.options)
     this.actions = this.parent ? Object.create(this.parent.actions) : {}
+    this.queries = Object.create(this.parent ? this.parent.queries : null)
 
     if (!this.parent) {
       this._enableDomains()
@@ -199,8 +201,10 @@ class Microcosm extends Emitter {
    * ```
    */
   append(command: *, status?: Status): Action {
-    if (command in this.actions) {
-      return this.history.append(this.actions[command], status, this)
+    if (typeof command === 'string') {
+      if (command in this.actions) {
+        return this.history.append(this.actions[command], status)
+      }
     }
 
     return this.history.append(command, status, this)
@@ -373,6 +377,10 @@ class Microcosm extends Emitter {
 
   parallel(actions: Action[]) {
     return this.append('GROUP').link(actions)
+  }
+
+  addQuery(resource: string, field: string, resolver) {
+    this.queries = set(this.queries, [resource, field], resolver)
   }
 
   /* Private ------------------------------------------------------ */

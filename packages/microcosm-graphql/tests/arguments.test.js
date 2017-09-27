@@ -15,7 +15,7 @@ const schema = gql`
 `
 
 describe('Arguments', function() {
-  it('swaps out variables', async () => {
+  it('swaps out variables', () => {
     let repo = new Repo({ schema })
 
     repo.reset({
@@ -40,7 +40,7 @@ describe('Arguments', function() {
     expect(planet.name).toEqual('Venus')
   })
 
-  it('parses numbers', async () => {
+  it('parses numbers', () => {
     let repo = new Repo({ schema })
 
     repo.reset({
@@ -60,7 +60,7 @@ describe('Arguments', function() {
     expect(planet.name).toEqual('Mercury')
   })
 
-  it('parses single word', async () => {
+  it('parses single word', () => {
     let repo = new Repo({ schema })
 
     repo.reset({
@@ -80,7 +80,7 @@ describe('Arguments', function() {
     expect(planet.name).toEqual('Mercury')
   })
 
-  it('parses multi-word strings with quotes', async () => {
+  it('parses multi-word strings with quotes', () => {
     let repo = new Repo({ schema })
 
     repo.reset({
@@ -98,5 +98,30 @@ describe('Arguments', function() {
     )
 
     expect(planet.name).toEqual('Yavin 4')
+  })
+
+  it('swaps out variables of different names', () => {
+    let repo = new Repo({ schema })
+
+    repo.reset({
+      Planet: [
+        { id: 0, name: 'Mercury' },
+        { id: 1, name: 'Venus' },
+        { id: 2, name: 'Earth' }
+      ]
+    })
+
+    let { planet } = repo.query(
+      gql`
+        query Planet {
+          planet(name: $planet) {
+            name
+          }
+        }
+      `,
+      { planet: 'Venus' }
+    )
+
+    expect(planet).toHaveProperty('name', 'Venus')
   })
 })

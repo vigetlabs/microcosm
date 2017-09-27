@@ -31,22 +31,26 @@ describe('Relationships', function() {
       Post: [{ id: 'p0', author: 'a0', title: 'Johns Post' }]
     })
 
-    let { post } = repo.query(
-      gql`
-        query PostsWithAuthors {
-          post(id: p0) {
-            author {
-              name
-              posts(id: p1) {
-                id
-              }
-            }
+    let answer = repo.query(gql`
+      {
+        posts(id: p0) {
+          title
+          author {
+            name
           }
         }
-      `
-    )
+      }
+    `)
 
-    expect(post.author.name).toEqual('John')
-    expect(post.author.posts[0].id).toEqual('p0')
+    expect(answer).toMatchObject({
+      posts: [
+        {
+          title: 'Johns Post',
+          author: {
+            name: 'John'
+          }
+        }
+      ]
+    })
   })
 })

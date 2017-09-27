@@ -1,0 +1,107 @@
+#!/usr/bin/env node
+
+'use strict'
+
+const rollup = require('rollup')
+const buble = require('rollup-plugin-buble')
+const strip = require('rollup-plugin-strip')
+const uglify = require('rollup-plugin-uglify')
+const node = require('rollup-plugin-node-resolve')
+const { Dictionary } = require('uglify-js')
+
+const path = require('path')
+const minimist = require('minimist')
+
+const options = {
+  strict: false,
+  minify: false,
+  format: 'cjs',
+  out: 'build'
+}
+
+Object.assign(options, minimist(process.argv.slice(2)))
+
+const plugins = [
+  buble(),
+  node({
+    preferBuiltins: true
+  })
+]
+
+const configs = {
+  MicrocosmGraphQL: path.resolve('src/index.js')
+}
+
+if (!options.strict) {
+  plugins.push(
+    strip({
+      debugger: true,
+      functions: ['console.assert', 'assert'],
+      sourceMap: true
+    })
+  )
+}
+
+if (options.minify) {
+  plugins.push(
+    uglify({
+      compress: {
+        passes: 2
+      },
+      mangle: {
+        toplevel: true,
+        properties: {
+          regex: /^_/,
+          cache: {
+            cname: -1,
+            props: new Dictionary()
+          }
+        }
+      }
+    })
+  )
+}
+
+const external = ['microcosm', 'microcosm-http']
+
+const globals = {
+  microcosm: 'Microcosm',
+  'microcosm-http': 'MicrocosmHTTP'
+}
+
+Object.keys(configs).forEach(key => {
+  var entry = configs[key]
+
+  globals[entry] = key
+  external.push(entry)
+})
+
+for (let name in configs) {
+  let input = configs[name]
+  let file = input.replace('src', options.out)
+
+  let bundler = rollup.rollup({
+    input: input,
+    plugins: plugins,
+    external: external.filter(path => path !== input),
+    onwarn: function(error) {
+      // Do not raise warnings for named exports
+      if (error.code !== 'MIXED_EXPORTS') {
+        console.warn(error.toString())
+      }
+    }
+  })
+
+  let write = bundler.then(bundle => {
+    return bundle.write({
+      globals: globals,
+      file: file,
+      format: options.format,
+      name: name,
+      moduleID: path.basename(input, '.js'),
+      sourcemap: true
+    })
+  })
+
+  write.catch(error => console.error(error.toString()))
+}

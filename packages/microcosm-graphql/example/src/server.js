@@ -9,7 +9,7 @@ import { stringify } from 'querystring'
 import typeDefs from './schema.gql'
 import gql from 'graphql-tag'
 import morgan from 'morgan'
-const repo = makeRepo()
+const repo = makeRepo(true)
 const schema = makeExecutableSchema({ typeDefs, resolvers: repo.resolvers })
 const app = express()
 const port = process.env.PORT || 4000
@@ -49,31 +49,38 @@ function getFields(fields) {
   return fields ? `{${fields}}` : ''
 }
 
-app.get('/:query', (req, res) => {
-  let args = getArguments(req.query.args)
-  let fields = getFields(req.query.fields)
-  let query = gql`query {
-    ${req.params.query}${args}${fields}
-  }`
-
-  res.json(repo.query(query))
-})
-
-const methodMap = {
-  add: 'post',
+const restMap = {
   create: 'post',
-  remove: 'delete',
   delete: 'delete',
   update: 'patch'
 }
 
+const crudMap = {
+  post: 'add',
+  patch: 'update',
+  delete: 'remove'
+}
+
+for (let key in repo.state) {
+  app.get('/' + key.toLowerCase(), function(req, res) {
+    res.json(repo.state[key])
+  })
+}
+
 for (let key in repo.mutations) {
   repo.mutations[key].forEach(function({ operation, name, resource }) {
-    let method = methodMap[operation]
+    if (operation in restMap === false) {
+      return
+    }
 
-    app[method](resource.toLowerCase(), (req, res) => {
-      var action = repo.push(name, req.body)
-      action.then(data => res.json(data), res.error)
+    let method = restMap[operation]
+    let action = crudMap[method] + resource
+    let url = `/${resource.toLowerCase()}`
+
+    app[method](url, (req, res) => {
+      repo.push(action, req.body).then(data => {
+        res.json(data)
+      }, res.error)
     })
   })
 }

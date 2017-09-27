@@ -1,34 +1,79 @@
 import React from 'react'
 import DOM from 'react-dom'
 import GraphPresenter from './graph-presenter'
-import Model from './model.gql'
+import { get } from 'microcosm'
+import PostForm from './post-form'
+import gql from 'graphql-tag'
 import { makeRepo } from './repo'
 
 class Example extends GraphPresenter {
-  model = Model
+  model = gql`
+    query {
+      posts {
+        id
+        title
+        author {
+          name
+        }
+      }
+      authors {
+        id
+        name
+      }
+    }
+  `
 
   renderItem(item) {
     return (
       <li key={item.id}>
-        {item.title} by {item.author.name}
+        <i>{item.title}</i> by{' '}
+        {get(item, 'author.name', '...Someone. Hold on a sec!')}
       </li>
     )
   }
 
-  render() {
-    const { posts } = this.state.model
+  send = (action, payload) => {
+    return this.props.repo.push(action, payload)
+  }
 
-    return <ul>{posts.map(this.renderItem, this)}</ul>
+  render() {
+    const { posts, authors } = this.state.model
+
+    return (
+      <div>
+        <ul className="post-list">{posts.map(this.renderItem, this)}</ul>
+        <hr />
+        <PostForm authors={authors} send={this.send} />
+      </div>
+    )
   }
 }
 
 let el = document.createElement('div')
 let repo = makeRepo()
 
-document.body.appendChild(el)
+repo.addQuery('Query', 'posts', {
+  setup(repo) {
+    return repo.push('readPost')
+  },
+  resolver(state) {
+    return state.Post
+  }
+})
 
-DOM.render(<Example repo={repo} />, el)
+repo.addQuery('Post', 'author', {
+  setup(repo, args) {
+    return repo.push('readAuthor')
+  },
+  resolver(post) {
+    return repo.state.Author.find(author => author.id === post.author)
+  }
+})
 
-setTimeout(function() {
-  repo.push('addPost', { author: '2', title: 'How to rule the universe' })
-}, 1000)
+DOM.render(<Example repo={repo} />, document.getElementById('app'))
+
+requestAnimationFrame(function loop() {
+  repo._emit('change', repo.state)
+
+  requestAnimationFrame(loop)
+})

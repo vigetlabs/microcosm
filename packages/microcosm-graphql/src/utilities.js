@@ -1,27 +1,31 @@
+import { clone } from 'microcosm'
+
+/**
+ * Immutably update an object, but do not clone if the base reference
+ * has changed.
+ */
+export function assign(target, key, value, original) {
+  if (!original || (target === original && original[key] !== value)) {
+    target = clone(target)
+  }
+
+  target[key] = value
+
+  return target
+}
+
 export function getName(obj) {
   return obj.alias ? obj.alias.value : obj.name.value
 }
 
-export function getValue(obj) {
-  return obj.value.value
-}
+export function getType(field) {
+  let type = field.type
 
-export function getType(type) {
   if (type.kind === 'ListType') {
     return getName(type.type)
   }
 
   return getName(type)
-}
-
-export function values(obj) {
-  let values = Object.keys(obj)
-
-  for (var i = 0; i < values.length; i++) {
-    values[i] = obj[values[i]]
-  }
-
-  return values
 }
 
 export function matches(item, matchers) {
@@ -37,7 +41,7 @@ export function matches(item, matchers) {
 export function filter(list, matchers) {
   let allowed = []
 
-  for (var i = 0; i < list.length; i++) {
+  for (var i = 0, len = list.length; i < len; i++) {
     let item = list[i]
 
     if (matches(item, matchers) === true) {
@@ -51,7 +55,7 @@ export function filter(list, matchers) {
 export function reject(list, matchers) {
   let allowed = []
 
-  for (var i = 0; i < list.length; i++) {
+  for (var i = 0, len = list.length; i < len; i++) {
     let item = list[i]
 
     if (matches(item, matchers) === false) {
@@ -63,7 +67,7 @@ export function reject(list, matchers) {
 }
 
 export function find(list, matchers) {
-  for (var i = 0; i < list.length; i++) {
+  for (var i = 0, len = list.length; i < len; i++) {
     let item = list[i]
 
     if (matches(item, matchers) === true) {
@@ -72,4 +76,15 @@ export function find(list, matchers) {
   }
 
   return null
+}
+
+export function reduceName(list, callback, extra) {
+  let answer = {}
+
+  for (var i = 0, len = list.length; i < len; i++) {
+    var name = getName(list[i])
+    answer[name] = callback(list[i], name, extra)
+  }
+
+  return answer
 }

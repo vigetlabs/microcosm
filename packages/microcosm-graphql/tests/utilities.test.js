@@ -1,4 +1,4 @@
-import { find, filter, matches, reject } from '../src/utilities'
+import { assign, find, filter, matches, reject } from '../src/utilities'
 
 describe('matches', function() {
   it('returns true if there are no criteria', function() {
@@ -54,5 +54,29 @@ describe('reject', function() {
 
   it('returns no items are no criteria', function() {
     expect(reject([bill, fred])).toEqual([])
+  })
+})
+
+describe('assign', function() {
+  let bill = { id: 0, gender: 'M', name: 'Bill' }
+
+  it('assigns fields', function() {
+    let next = assign(bill, 'name', 'Robert')
+
+    expect(next).toHaveProperty('name', 'Robert')
+  })
+
+  it('creates a new object', function() {
+    let next = assign(bill, 'name', 'Robert')
+
+    expect(next).not.toBe(bill)
+  })
+
+  it('only creates a new object if it is different than a reference', function() {
+    let one = assign(bill, 'name', 'Robert')
+    let two = assign(one, 'name', 'Billy', bill)
+
+    expect(two).toHaveProperty('name', 'Billy')
+    expect(two).toBe(one)
   })
 })

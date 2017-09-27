@@ -15,8 +15,13 @@ const CONTEXT_TYPES = {
 }
 
 export default function withSend(Component: *): * {
-  function withSend(props: Object, context: Object) {
+  function Sender(props: Object, context: Object) {
     let send = props.send || context.send
+
+    console.assert(
+      this.send,
+      `${Sender.displayName} was not given \`send\` via context or props. Was this component mounted within a Presenter?`
+    )
 
     return createElement(Component, merge({ send }, props))
   }

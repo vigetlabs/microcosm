@@ -1,10 +1,11 @@
 import { GraphMicrocosm } from '../../src/index'
 import schema from './schema.gql'
 
-export function makeRepo() {
-  return new GraphMicrocosm(
-    { schema, debug: true },
-    {
+export function makeRepo(seed) {
+  let repo = new GraphMicrocosm({ schema, debug: true, batch: true })
+
+  if (seed) {
+    repo.reset({
       Author: [
         { id: '0', name: 'Han Solo' },
         { id: '1', name: 'Princess Leia ' },
@@ -23,6 +24,8 @@ export function makeRepo() {
       UI: {
         menuOpen: false
       }
-    }
-  )
+    })
+  }
+
+  return repo
 }

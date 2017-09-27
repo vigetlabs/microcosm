@@ -1,70 +1,69 @@
-import assert from 'assert'
 import Microcosm, { set } from 'microcosm'
-import Schema from './schema'
+import { getQueries, getMutations } from './schema'
 import { domainFactory } from './domains'
-import { createAccessor, createRelationship } from './queries'
-import { select } from './resolve'
+import { createRelationship, createFinder } from './default-resolvers'
+import { execute, compile } from './execute'
 
 class GraphMicrocosm extends Microcosm {
   setup({ schema }) {
-    this.schema = new Schema(schema)
-    this.mutations = this.schema.mutations()
-    this.resolvers = { Query: {}, Mutation: {} }
+    this.schema = getQueries(schema)
+    this.mutations = getMutations(this.schema)
 
-    this.schema.types().forEach(this.addResource, this)
+    for (var name in this.schema) {
+      this.addResource(this.schema[name])
+    }
 
     for (var key in this.mutations) {
       this.mutations[key].forEach(mutation => {
         const { name } = mutation
 
-        this.resolvers.Mutation[name] = (_root, args) => this.push(name, args)
+        this.addQuery('Mutation', name, (_root, args) => this.push(name, args))
       })
     }
   }
 
-  addResource(type) {
-    if (type === 'Mutation') {
+  get resolvers() {
+    return this.queries
+  }
+
+  addResource(definition) {
+    const { name, fields } = definition
+
+    if (name === 'Mutation' || name === 'Query') {
       return
     }
 
-    if (type !== 'Query') {
-      let mutations = this.mutations[type]
-      let shape = this.schema.shape(type)
-      let Domain = domainFactory(this, shape, mutations)
+    let mutations = this.mutations[name]
 
-      this.addDomain(type, Domain)
-    }
+    this.addDomain(name, domainFactory(this, definition, mutations))
 
-    let def = this.schema.definition(type)
-
-    for (let key in def) {
-      let entry = def[key]
-      let related = this.schema.has(entry.type)
+    for (let key in fields) {
+      let field = fields[key]
+      let related = this.schema[field.type]
 
       if (related) {
-        this.resolve(
-          [type, key],
-          createRelationship(this, this.schema, key, type, entry)
-        )
-      } else {
-        this.resolve([type, key], createAccessor(key))
+        this.addQuery(name, key, {
+          resolver: createRelationship(related, field, key, name)
+        })
       }
     }
   }
 
-  resolve(path, resolver) {
-    this.resolvers = set(this.resolvers, path, resolver)
+  compile(document) {
+    console.assert(
+      document.definitions.length,
+      'This GraphQL document has no queries.'
+    )
+    console.assert(
+      document.definitions.length <= 1,
+      'Too many query definitions.'
+    )
+
+    return compile(this, this.schema, document.definitions[0], this.queries)
   }
 
   query(document, variables) {
-    let context = { variables, resolvers: this.resolvers }
-
-    assert(document.definitions.length, 'This GraphQL document has no queries.')
-    assert(document.definitions.length <= 1, 'Too many query definitions.')
-
-    let entry = document.definitions[0]
-
-    return select(this.state, this.schema, entry, context, 'Query')
+    return this.compile(document)(this.state, variables)
   }
 }
 
