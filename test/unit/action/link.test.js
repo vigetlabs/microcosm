@@ -18,4 +18,14 @@ describe('Action link', function() {
 
     expect(payload).toEqual([1, 2, 3])
   })
+
+  it('resolves empty', async function() {
+    const repo = new Microcosm()
+
+    const action = repo.parallel([])
+
+    let payload = await action
+
+    expect(payload).toEqual([])
+  })
 })
