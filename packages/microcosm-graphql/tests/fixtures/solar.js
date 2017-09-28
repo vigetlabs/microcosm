@@ -15,7 +15,7 @@ export const SOLAR_SCHEMA = gql`
   }
 
   type Query {
-    planet(id: ID): Planet
+    planet(id: ID, name: String): Planet
     planets(name: String, weight: Int): [Planet]
   }
 `

@@ -12,7 +12,7 @@ import EffectEngine from './effect-engine'
 import tag from './tag'
 import installDevtools from './install-devtools'
 import { RESET, PATCH } from './lifecycle'
-import { merge } from './utils'
+import { merge, update } from './utils'
 import { version } from '../package.json'
 
 /**
@@ -379,8 +379,10 @@ class Microcosm extends Emitter {
     return this.append('GROUP').link(actions)
   }
 
-  addQuery(resource: string, field: string, resolver) {
-    this.queries = set(this.queries, [resource, field], resolver)
+  addQuery(keyPath, resolver) {
+    this.queries = update(this.queries, keyPath, value =>
+      merge(value, resolver)
+    )
   }
 
   /* Private ------------------------------------------------------ */

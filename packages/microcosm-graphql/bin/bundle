@@ -7,6 +7,7 @@ const buble = require('rollup-plugin-buble')
 const strip = require('rollup-plugin-strip')
 const uglify = require('rollup-plugin-uglify')
 const node = require('rollup-plugin-node-resolve')
+const filesize = require('rollup-plugin-filesize')
 const { Dictionary } = require('uglify-js')
 
 const path = require('path')
@@ -25,7 +26,8 @@ const plugins = [
   buble(),
   node({
     preferBuiltins: true
-  })
+  }),
+  filesize()
 ]
 
 const configs = {

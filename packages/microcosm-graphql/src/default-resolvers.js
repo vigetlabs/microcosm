@@ -35,18 +35,16 @@ export function createRelationship(definition, field, foreignKey, type) {
     `${type}.${foreignKey}: Unable to resolve one-to-many resolver. Add a field to ${field.type} with a type of ${type}.`
   )
 
-  return (record, args, state) => {
-    let pool = state[field.type]
-
+  return (record, args, related) => {
     console.assert(
       Array.isArray(record) === false,
       `${type}.${foreignKey}: Unable to resolve one-to-many resolver. ${field.type} is not an array.`
     )
 
     if (field.isList) {
-      return filter(pool, { [relation.name]: record.id })
+      return filter(related, { [relation.name]: record.id })
     } else {
-      return find(pool, { id: record[foreignKey] })
+      return find(related, { id: record[foreignKey] })
     }
   }
 }

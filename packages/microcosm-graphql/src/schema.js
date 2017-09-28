@@ -1,6 +1,6 @@
 import { get, update, merge } from 'microcosm'
-import { ROOT_QUERY, OBJECT_DEF } from './constants'
-import { filter, getName, getType, reduceName } from './utilities'
+import { ROOT_QUERY, OBJECT_DEF, TYPE_NAME, LIST } from './constants'
+import { filter, reduceName } from './utilities'
 import { isSingular } from './directives'
 
 export function makeType(definition, key) {
@@ -9,11 +9,10 @@ export function makeType(definition, key) {
     root: key === ROOT_QUERY,
     isSingular: isSingular(definition),
     fields: reduceName(definition.fields, (field, name) => {
-      return {
-        name: name,
-        type: getType(field),
-        isList: field.type.kind === 'ListType'
-      }
+      let isList = field.type.kind === LIST
+      let type = isList ? field.type.type.name.value : field.type.name.value
+
+      return { name, type, isList }
     })
   }
 }
@@ -33,7 +32,9 @@ export function getMutations(schema) {
     return update(
       memo,
       resource,
-      list => list.concat(merge(fields[next], { operation, resource })),
+      list => {
+        return list.concat(merge(fields[next], { operation, resource }))
+      },
       []
     )
   }, {})

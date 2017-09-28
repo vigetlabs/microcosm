@@ -37,16 +37,20 @@ class GraphMicrocosm extends Microcosm {
 
     this.addDomain(name, domainFactory(this, definition, mutations))
 
+    let resolvers = {}
+
     for (let key in fields) {
       let field = fields[key]
       let related = this.schema[field.type]
 
       if (related) {
-        this.addQuery(name, key, {
+        resolvers[key] = {
           resolver: createRelationship(related, field, key, name)
-        })
+        }
       }
     }
+
+    this.addQuery(name, resolvers)
   }
 
   compile(document) {

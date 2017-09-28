@@ -52,21 +52,25 @@ class Example extends GraphPresenter {
 let el = document.createElement('div')
 let repo = makeRepo()
 
-repo.addQuery('Query', 'posts', {
-  setup(repo) {
-    return repo.push('readPost')
-  },
-  resolver(state) {
-    return state.Post
+repo.addQuery('Query', {
+  posts: {
+    setup(repo) {
+      return repo.push('readPost')
+    },
+    resolver(state) {
+      return state.Post
+    }
   }
 })
 
-repo.addQuery('Post', 'author', {
-  setup(repo, args) {
-    return repo.push('readAuthor')
-  },
-  resolver(post) {
-    return repo.state.Author.find(author => author.id === post.author)
+repo.addQuery('Post', {
+  author: {
+    setup(repo, args) {
+      return repo.push('readAuthor')
+    },
+    resolver(post) {
+      return repo.state.Author.find(author => author.id === post.author)
+    }
   }
 })
 

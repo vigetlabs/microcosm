@@ -23,7 +23,7 @@ describe('Relationships', function() {
     }
   `
 
-  it('can reference other resources', async () => {
+  it.only('can reference other resources', () => {
     let repo = new Repo({ schema })
 
     repo.reset({

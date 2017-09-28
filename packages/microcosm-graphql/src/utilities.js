@@ -14,20 +14,6 @@ export function assign(target, key, value, original) {
   return target
 }
 
-export function getName(obj) {
-  return obj.alias ? obj.alias.value : obj.name.value
-}
-
-export function getType(field) {
-  let type = field.type
-
-  if (type.kind === 'ListType') {
-    return getName(type.type)
-  }
-
-  return getName(type)
-}
-
 export function matches(item, matchers) {
   for (var key in matchers) {
     if (item[key] !== matchers[key]) {
@@ -82,8 +68,10 @@ export function reduceName(list, callback, extra) {
   let answer = {}
 
   for (var i = 0, len = list.length; i < len; i++) {
-    var name = getName(list[i])
-    answer[name] = callback(list[i], name, extra)
+    var item = list[i]
+    let name = item.alias ? item.alias.value : item.name.value
+
+    answer[name] = callback(item, name, extra)
   }
 
   return answer

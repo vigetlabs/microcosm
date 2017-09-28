@@ -31,6 +31,8 @@
     "webpack": "^3.5.6"
   },
   "dependencies": {
-    "microcosm": "^12.12.0"
+    "is-generator-function": "^1.0.6",
+    "microcosm": "^12.12.0",
+    "rollup-plugin-filesize": "^1.4.2"
   }
 }
