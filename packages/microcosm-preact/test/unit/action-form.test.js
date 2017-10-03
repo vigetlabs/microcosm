@@ -134,11 +134,9 @@ describe('callbacks', function() {
   })
 
   it('does not push empty actions', function() {
-    const send = n => true
+    const send = jest.fn()
 
-    const form = mount(
-      <ActionForm send={send} />
-    )
+    const form = mount(<ActionForm send={send} />)
 
     form.dispatchEvent(new Event('submit'))
 
