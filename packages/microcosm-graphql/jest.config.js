@@ -1,6 +1,7 @@
 const { moduleNameMapper } = require('../../jest.config')
 
 module.exports = {
-  modulePathIgnorePatterns: ['<rootDir/build/', '<rootDir>/example/'],
+  testEnvironment: 'node',
+  modulePathIgnorePatterns: ['<rootDir/build/'],
   moduleNameMapper: moduleNameMapper
 }
