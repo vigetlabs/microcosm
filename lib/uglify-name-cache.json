@@ -1,6 +1,6 @@
 {
   "props": {
-    "cname": 43,
+    "cname": 52,
     "props": {
       "$_updateModel": "a",
       "$_beginSetup": "b",
@@ -44,7 +44,16 @@
       "$_createSnapshot": "O",
       "$_updateSnapshot": "P",
       "$_rebase": "Q",
-      "$_removeSnapshot": "R"
+      "$_removeSnapshot": "R",
+      "$_onSubmit": "S",
+      "$_assignForm": "T",
+      "$_form": "U",
+      "$_onNext": "V",
+      "$_onOpen": "W",
+      "$_onUpdate": "X",
+      "$_onDone": "Y",
+      "$_onError": "Z",
+      "$_onCancel": "$"
     }
   }
 }
