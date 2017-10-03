@@ -1,5 +1,9 @@
 # Changelog
 
+## Edge
+
+- ActionForm action callbacks are given the related form as the second argument.
+
 ## 1.0.0
 
 - Update to conform to the Microcosm 12.x addon APIs.

@@ -6,20 +6,18 @@ import React from 'react'
 import { Action, merge } from '../index'
 import serialize from 'form-serialize'
 
-const identity = n => n
-
 type Props = {
-  action: *,
-  onOpen: ?Callback,
-  onUpdate: ?Callback,
-  onError: ?Callback,
-  onCancel: ?Callback,
-  onDone: ?Callback,
-  onNext: ?Callback,
-  onSubmit: (event: Event, Action: *) => *,
-  prepare: (data: Object) => Object,
-  send: ?Sender,
-  serializer: (form: Element) => Object
+  action?: string | Command,
+  onCancel: ActionFormCallback,
+  onDone: ActionFormCallback,
+  onError: ActionFormCallback,
+  onNext: ActionFormCallback,
+  onOpen: ActionFormCallback,
+  onSubmit: ActionFormSubmit,
+  onUpdate: ActionFormCallback,
+  prepare: ActionFormPreparer,
+  send?: Sender,
+  serializer: ActionFormSerializer
 }
 
 type Context = {
@@ -31,25 +29,26 @@ class ActionForm extends React.PureComponent<Props> {
   static contextTypes: Context
 
   send: Sender
-  form: Element
-  onSubmit: *
-  assignForm: Element => void
+
+  _form: HTMLFormElement
+  _assignForm: HTMLFormElement => void
+  _onSubmit: *
 
   constructor(props: Props, context: Context) {
     super(props, context)
 
     this.send = this.props.send || this.context.send
-    this.onSubmit = this.onSubmit.bind(this)
+    this._onSubmit = this._onSubmit.bind(this)
 
-    this.assignForm = el => {
-      this.form = el
+    this._assignForm = el => {
+      this._form = el
     }
   }
 
   render() {
     let props = merge(this.props, {
-      ref: this.assignForm,
-      onSubmit: this.onSubmit
+      ref: this._assignForm,
+      onSubmit: this._onSubmit
     })
 
     // Remove invalid props to prevent React warnings
@@ -67,15 +66,10 @@ class ActionForm extends React.PureComponent<Props> {
     return React.createElement('form', props)
   }
 
-  onSubmit(event: Event) {
-    event.preventDefault()
-    this.submit(event)
-  }
-
   submit(event: Event) {
     const { onSubmit, prepare, serializer, action } = this.props
 
-    let form = this.form
+    let form = this._form
 
     console.assert(
       form,
@@ -90,29 +84,70 @@ class ActionForm extends React.PureComponent<Props> {
       result = this.send(action, params)
 
       if (result && result instanceof Action) {
-        result.subscribe(this.props)
+        result.subscribe(
+          {
+            onNext: this._onNext,
+            onOpen: this._onOpen,
+            onUpdate: this._onUpdate,
+            onDone: this._onDone,
+            onError: this._onError,
+            onCancel: this._onCancel
+          },
+          this
+        )
       }
     }
 
     onSubmit(event, action)
   }
+
+  /* Private ------------------------------------------------------ */
+
+  _onSubmit(event: Event) {
+    event.preventDefault()
+    this.submit(event)
+  }
+
+  _onNext(action: *) {
+    this.props.onNext(action, this._form)
+  }
+
+  _onOpen(payload: *) {
+    this.props.onOpen(payload, this._form)
+  }
+
+  _onUpdate(payload: *) {
+    this.props.onUpdate(payload, this._form)
+  }
+
+  _onError(payload: *) {
+    this.props.onError(payload, this._form)
+  }
+
+  _onDone(payload: *) {
+    this.props.onDone(payload, this._form)
+  }
+
+  _onCancel(payload: *) {
+    this.props.onCancel(payload, this._form)
+  }
 }
 
+const identity = (n: any) => n
+
 ActionForm.contextTypes = {
-  send: () => {}
+  send: () => null
 }
 
 ActionForm.defaultProps = {
-  action: null,
-  onOpen: null,
-  onUpdate: null,
-  onCancel: null,
-  onError: null,
-  onDone: null,
-  onNext: null,
+  onOpen: identity,
+  onUpdate: identity,
+  onCancel: identity,
+  onError: identity,
+  onDone: identity,
+  onNext: identity,
   onSubmit: identity,
   prepare: identity,
-  send: null,
   serializer: form => serialize(form, { hash: true, empty: true })
 }
 

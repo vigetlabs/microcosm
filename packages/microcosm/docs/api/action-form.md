@@ -6,11 +6,7 @@
 
 ## Overview
 
-ActionForm is a wrapper around a standard `form` tag that provides a method of
-broadcasting an action to associated Presenters (see
-[`./presenter.md`](./presenter.md)). This attempts to more closely model the
-way forms traditionally work, however within the context of a JavaScript
-application.
+ActionForm is a wrapper around a standard `form` tag that provides a method of broadcasting an action to associated Presenters (see [`./presenter.md`](./presenter.md)). This attempts to more closely model the way forms traditionally work, however within the context of a JavaScript application.
 
 ```javascript
 import React from 'react'
@@ -47,13 +43,15 @@ function StepperForm ({ count }) {
 }
 
 class CountPresenter extends Presenter {
-  model () {
+  getModel () {
     return {
       count : state => state.count
     }
   }
 
-  view ({ count }) {
+  render () {
+    const { count } = this.model
+
     return <StepperForm count={ count } />
   }
 }
@@ -68,21 +66,15 @@ ActionForm inputs are serialized to JSON upon submission using
 
 ### action
 
-A string value to send to Presenters. If a Presenter is registered to
-that string via its `intercept()` method, it will execute the
-associated callback.
+A string value to send to Presenters. If a Presenter is registered to that string via its `intercept()` method, it will execute the associated callback.
 
 ### serializer(form)
 
-The serialization function. By default this uses
-[`form-serialize`](https://github.com/defunctzombie/form-serialize). On
-submission, this function is given the associated form HTML element.
+The serialization function. By default this uses [`form-serialize`](https://github.com/defunctzombie/form-serialize). On submission, this function is given the associated form HTML element.
 
 ### prepare(params)
 
-Executed after serialization to allow for extra parameter
-manipulation. This is useful for ensuring proper date formats, or
-other data formats that may come directly from a form input.
+Executed after serialization to allow for extra parameter manipulation. This is useful for ensuring proper date formats, or other data formats that may come directly from a form input.
 
 ```javascript
 class MyForm extends React.Component {
@@ -109,31 +101,24 @@ class MyForm extends React.Component {
 
 ### onSubmit(event, action)
 
-An event callback executed immediately after the form submits and the
-action is broadcasted.
+An event callback executed immediately after the form submits and the action is broadcasted.
 
-### onOpen(payload)
+### onOpen(payload, form)
 
-After broadcasting, if the dispatched action returns a Microcosm
-action, this callback will execute when the action opens.
+After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute when the action opens.
 
-### onDone(payload)
+### onDone(payload, form)
 
-After broadcasting, if the dispatched action returns a Microcosm
-action, this callback will execute if the action completes successfully.
+After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute if the action completes successfully.
 
-### onError(payload)
+### onError(payload, form)
 
-After broadcasting, if the dispatched action returns a Microcosm
-action, this callback will execute if the action is rejected.
+After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute if the action is rejected.
 
-### onCancel(payload)
+### onCancel(payload, form)
 
-After broadcasting, if the dispatched action returns a Microcosm
-action, this callback will execute when the action is cancelled.
+After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute when the action is cancelled.
 
-### onUpdate(payload)
+### onUpdate(payload, form)
 
-After broadcasting, if the dispatched action returns a Microcosm
-action, this callback will execute when the action emits a progress
-update.
+After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute when the action emits a progress update.

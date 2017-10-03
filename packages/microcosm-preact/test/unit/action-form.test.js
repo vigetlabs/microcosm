@@ -34,7 +34,7 @@ describe('callbacks', function() {
 
     form.dispatchEvent(new Event('submit'))
 
-    expect(onDone).toHaveBeenCalledWith(true)
+    expect(onDone).toHaveBeenCalledWith(true, form)
   })
 
   it('executes onError when that action completes', function() {
@@ -47,7 +47,7 @@ describe('callbacks', function() {
 
     form.dispatchEvent(new Event('submit'))
 
-    expect(onError).toHaveBeenCalledWith('bad')
+    expect(onError).toHaveBeenCalledWith('bad', form)
   })
 
   it('executes onOpen when that action opens', function() {
@@ -61,7 +61,7 @@ describe('callbacks', function() {
 
     action.open('open')
 
-    expect(onOpen).toHaveBeenCalledWith('open')
+    expect(onOpen).toHaveBeenCalledWith('open', form)
   })
 
   it('executes onUpdate when that action sends an update', function() {
@@ -77,7 +77,7 @@ describe('callbacks', function() {
 
     action.update('loading')
 
-    expect(onUpdate).toHaveBeenCalledWith('loading')
+    expect(onUpdate).toHaveBeenCalledWith('loading', form)
   })
 
   it('does not execute onDone if not given an action', function() {
@@ -127,12 +127,12 @@ describe('manual operation', function() {
 
     form.dispatchEvent(new Event('submit'))
 
-    expect(onDone).toHaveBeenCalledWith(true)
+    expect(onDone).toHaveBeenCalledWith(true, form)
   })
 
   it('can pass in send manually', function() {
     const send = jest.fn()
-    const form = mount(<ActionForm send={send} />)
+    const form = mount(<ActionForm send={send} action="test" />)
 
     form.dispatchEvent(new Event('submit'))
 

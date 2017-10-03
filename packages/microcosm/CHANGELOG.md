@@ -1,5 +1,9 @@
 # Changelog 
 
+## Edge
+
+- ActionForm action callbacks are given the related form as the second argument.
+
 ## 12.13.0
 
 - In batching mode, Presenter model updates are asynchronous. 

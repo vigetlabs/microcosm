@@ -249,7 +249,7 @@ class Microcosm extends Emitter implements Domain {
   push(command: any, ...params: *): Action {
     let action = this.append(command)
 
-    coroutine(action, action.command, params, this)
+    coroutine(action, params, this)
 
     console.assert(
       this.active,

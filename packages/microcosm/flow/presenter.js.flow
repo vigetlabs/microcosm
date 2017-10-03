@@ -2,4 +2,6 @@
  * @flow
  */
 
-declare type Sender = (intent: Command | Tagged, ...params: *[]) => *
+declare type Intent = string | Command
+
+declare type Sender = (intent: Intent, ...params: *[]) => *

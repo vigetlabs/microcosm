@@ -1,0 +1,11 @@
+/**
+ * @flow
+ */
+
+type ActionFormCallback = (payload?: *, form?: HTMLFormElement) => void
+
+type ActionFormSerializer = (form: HTMLFormElement) => Object
+
+type ActionFormPreparer = (data: Object) => Object
+
+type ActionFormSubmit = (event?: Event, Action?: *) => void

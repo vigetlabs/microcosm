@@ -53,13 +53,8 @@ function processGenerator(action: Action, body: GeneratorAction, repo: *) {
  * Coroutine is used by an action to determine how it should resolve
  * the body of their associated command.
  */
-export default function coroutine(
-  action: Action,
-  command: Command,
-  params: *[],
-  repo: any
-) {
-  let body = command.apply(null, params)
+export default function coroutine(action: Action, params: *[], repo: any) {
+  let body = action.command.apply(null, params)
 
   /**
    * Provide support for Promises:
