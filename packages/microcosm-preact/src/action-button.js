@@ -6,13 +6,14 @@ class ActionButton extends Component {
     super(props, context)
 
     this.send = this.props.send || this.context.send
+
     this.click = this.click.bind(this)
   }
 
   click(event) {
     let action = this.send(this.props.action, this.props.value)
 
-    if (action && action instanceof Action) {
+    if (action instanceof Action) {
       action.subscribe(this.props)
     }
 
