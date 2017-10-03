@@ -5,6 +5,7 @@
 const rollup = require('rollup')
 const buble = require('rollup-plugin-buble')
 const node = require('rollup-plugin-node-resolve')
+const uglify = require('rollup-plugin-uglify')
 
 const path = require('path')
 const minimist = require('minimist')
@@ -19,7 +20,19 @@ Object.assign(options, minimist(process.argv.slice(2)))
 
 const plugins = [
   buble(),
-  node()
+  node(),
+  uglify({
+    compress: {
+      passes: 2
+    },
+    mangle: {
+      toplevel: true
+    },
+    nameCache: '../../lib/uglify-name-cache.json',
+    mangleProperties: {
+      regex: /^_/
+    }
+  })
 ]
 
 const configs = {

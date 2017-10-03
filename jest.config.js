@@ -1,4 +1,4 @@
-const MICROCOSM_DIR = process.env.BUNDLED ? 'build/min' : 'src'
+const isBundled = process.env.BUNDLED
 
 module.exports = {
   projects: [
@@ -11,6 +11,11 @@ module.exports = {
   collectCoverageFrom: ['**/src/**/*.js', '!example/**/*.js'],
   modulePathIgnorePatterns: ['example', 'build'],
   moduleNameMapper: {
-    '^microcosm(/.+|$)': `<rootDir>/../microcosm/${MICROCOSM_DIR}$1`
+    '^microcosm(/.+|$)': `<rootDir>/../microcosm/${isBundled
+      ? 'build/min'
+      : 'src'}$1`,
+    '^microcosm-preact(/.+|$)': `<rootDir>/../microcosm-preact/${isBundled
+      ? 'build'
+      : 'src'}$1`
   }
 }
