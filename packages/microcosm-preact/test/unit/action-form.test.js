@@ -80,7 +80,23 @@ describe('callbacks', function() {
     expect(onUpdate).toHaveBeenCalledWith('loading', form)
   })
 
-  it('does not execute onDone if not given an action', function() {
+  it('executes onCancel when that action sends an update', function() {
+    const onCancel = jest.fn()
+    const action = new Action(n => n)
+    const send = n => action
+
+    const form = mount(
+      <ActionForm action="test" onCancel={onCancel} send={send} />
+    )
+
+    form.dispatchEvent(new Event('submit'))
+
+    action.cancel('sorry')
+
+    expect(onCancel).toHaveBeenCalledWith('sorry', form)
+  })
+
+  it('does not execute onDone if send returns no action', function() {
     const onDone = jest.fn()
     const send = n => true
 
@@ -91,7 +107,7 @@ describe('callbacks', function() {
     expect(onDone).not.toHaveBeenCalled()
   })
 
-  it('does not execute onDone if not given an action', function() {
+  it('does not execute onDone if send returns no action', function() {
     const onError = jest.fn()
     const send = n => true
 
@@ -104,7 +120,7 @@ describe('callbacks', function() {
     expect(onError).not.toHaveBeenCalled()
   })
 
-  it('does not execute onUpdate if not given an action', function() {
+  it('does not execute onUpdate if send returns no action', function() {
     const onUpdate = jest.fn()
     const send = n => true
 
@@ -115,6 +131,18 @@ describe('callbacks', function() {
     form.dispatchEvent(new Event('submit'))
 
     expect(onUpdate).not.toHaveBeenCalled()
+  })
+
+  it('does not push empty actions', function() {
+    const send = n => true
+
+    const form = mount(
+      <ActionForm send={send} />
+    )
+
+    form.dispatchEvent(new Event('submit'))
+
+    expect(send).not.toHaveBeenCalled()
   })
 })
 
