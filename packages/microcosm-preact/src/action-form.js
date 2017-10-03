@@ -7,13 +7,17 @@ class ActionForm extends Component {
     super(props, context)
 
     this.send = this.props.send || this.context.send
-    this.onSubmit = this.onSubmit.bind(this)
+    this._onSubmit = this._onSubmit.bind(this)
+
+    this._assignForm = el => {
+      this._form = el
+    }
   }
 
   render() {
     let props = merge(this.props, {
-      ref: el => (this.form = el),
-      onSubmit: this.onSubmit
+      ref: this._assignForm,
+      onSubmit: this._onSubmit
     })
 
     // Remove invalid props to prevent React warnings
@@ -30,29 +34,82 @@ class ActionForm extends Component {
     return h('form', props)
   }
 
-  onSubmit(event) {
+  submit(event) {
+    const { onSubmit, prepare, serializer, action } = this.props
+
+    let form = this._form
+
+    console.assert(
+      form,
+      'ActionForm has no form reference and can not submit. This can happen',
+      'if submit() is called after the parent component has unmounted.'
+    )
+
+    if (action) {
+      let result = this.send(action, prepare(serializer(form)))
+
+      if (result instanceof Action) {
+        result.subscribe(
+          {
+            onNext: this._onNext,
+            onOpen: this._onOpen,
+            onUpdate: this._onUpdate,
+            onDone: this._onDone,
+            onError: this._onError,
+            onCancel: this._onCancel
+          },
+          this
+        )
+      }
+    }
+
+    onSubmit(event, action)
+  }
+
+  /* Private ------------------------------------------------------ */
+
+  _onSubmit(event) {
     event.preventDefault()
     this.submit(event)
   }
 
-  submit(event) {
-    let form = this.form
-    let params = this.props.prepare(this.props.serializer(form))
-    let action = this.send(this.props.action, params)
+  _onNext(action) {
+    this.props.onNext(action, this._form)
+  }
 
-    if (action && action instanceof Action) {
-      action.subscribe(this.props)
-    }
+  _onOpen(payload) {
+    this.props.onOpen(payload, this._form)
+  }
 
-    this.props.onSubmit(event, action)
+  _onUpdate(payload) {
+    this.props.onUpdate(payload, this._form)
+  }
+
+  _onError(payload) {
+    this.props.onError(payload, this._form)
+  }
+
+  _onDone(payload) {
+    this.props.onDone(payload, this._form)
+  }
+
+  _onCancel(payload) {
+    this.props.onCancel(payload, this._form)
   }
 }
 
+const identity = n => n
+
 ActionForm.defaultProps = {
-  action: null,
-  serializer: form => serialize(form, { hash: true, empty: true }),
-  prepare: n => n,
-  onSubmit: n => n
+  onCancel: identity,
+  onDone: identity,
+  onError: identity,
+  onNext: identity,
+  onOpen: identity,
+  onSubmit: identity,
+  onUpdate: identity,
+  prepare: identity,
+  serializer: form => serialize(form, { hash: true, empty: true })
 }
 
 export default ActionForm

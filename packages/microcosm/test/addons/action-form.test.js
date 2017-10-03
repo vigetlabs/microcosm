@@ -20,7 +20,7 @@ describe('callbacks', function() {
 
     form.simulate('submit')
 
-    expect(onDone).toHaveBeenCalledWith(true)
+    expect(onDone).toHaveBeenCalledWith(true, form.getDOMNode())
   })
 
   it('executes onError when that action completes', function() {
@@ -34,7 +34,7 @@ describe('callbacks', function() {
 
     form.simulate('submit')
 
-    expect(onError).toHaveBeenCalledWith('bad')
+    expect(onError).toHaveBeenCalledWith('bad', form.getDOMNode())
   })
 
   it('executes onOpen when that action opens', function() {
@@ -48,7 +48,7 @@ describe('callbacks', function() {
 
     form.simulate('submit')
 
-    expect(onOpen).toHaveBeenCalledWith('open')
+    expect(onOpen).toHaveBeenCalledWith('open', form.getDOMNode())
   })
 
   it('executes onUpdate when that action sends an update', function() {
@@ -65,7 +65,7 @@ describe('callbacks', function() {
 
     action.update('loading')
 
-    expect(onUpdate).toHaveBeenCalledWith('loading')
+    expect(onUpdate).toHaveBeenCalledWith('loading', form.getDOMNode())
   })
 
   it('does not execute callbacks if not given an action', function() {
@@ -106,7 +106,7 @@ describe('context', function() {
 
     form.simulate('submit')
 
-    expect(onDone).toHaveBeenCalledWith(true)
+    expect(onDone).toHaveBeenCalledWith(true, form.getDOMNode())
   })
 
   it('send as a prop overrides context', function() {
@@ -121,7 +121,7 @@ describe('context', function() {
 
     form.simulate('submit')
 
-    expect(onDone).toHaveBeenCalledWith('from-prop')
+    expect(onDone).toHaveBeenCalledWith('from-prop', form.getDOMNode())
   })
 })
 
@@ -137,7 +137,7 @@ describe('manual operation', function() {
 
     form.instance().submit()
 
-    expect(onDone).toHaveBeenCalledWith(true)
+    expect(onDone).toHaveBeenCalledWith(true, form.getDOMNode())
   })
 
   it('can pass in send manually', function() {
