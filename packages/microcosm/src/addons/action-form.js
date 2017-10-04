@@ -3,8 +3,9 @@
  */
 
 import React from 'react'
-import { Action, merge } from '../index'
 import serialize from 'form-serialize'
+import { Action, merge } from '../index'
+import ActionQueue from './action-queue'
 
 type Props = {
   action?: string | Command,
@@ -32,17 +33,24 @@ class ActionForm extends React.PureComponent<Props> {
 
   _form: HTMLFormElement
   _assignForm: HTMLFormElement => void
+  _queue: ActionQueue
   _onSubmit: *
 
   constructor(props: Props, context: Context) {
     super(props, context)
 
     this.send = this.props.send || this.context.send
+
     this._onSubmit = this._onSubmit.bind(this)
+    this._queue = new ActionQueue(this)
 
     this._assignForm = el => {
       this._form = el
     }
+  }
+
+  componentWillUnmount() {
+    this._queue.empty()
   }
 
   render() {
@@ -51,7 +59,6 @@ class ActionForm extends React.PureComponent<Props> {
       onSubmit: this._onSubmit
     })
 
-    // Remove invalid props to prevent React warnings
     delete props.action
     delete props.prepare
     delete props.serializer
@@ -84,17 +91,14 @@ class ActionForm extends React.PureComponent<Props> {
       result = this.send(action, params)
 
       if (result && result instanceof Action) {
-        result.subscribe(
-          {
-            onNext: this._onNext,
-            onOpen: this._onOpen,
-            onUpdate: this._onUpdate,
-            onDone: this._onDone,
-            onError: this._onError,
-            onCancel: this._onCancel
-          },
-          this
-        )
+        this._queue.push(result, {
+          onNext: this._onNext,
+          onOpen: this._onOpen,
+          onUpdate: this._onUpdate,
+          onDone: this._onDone,
+          onError: this._onError,
+          onCancel: this._onCancel
+        })
       }
     }
 

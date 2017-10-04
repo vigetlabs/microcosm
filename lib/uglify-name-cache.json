@@ -1,6 +1,6 @@
 {
   "props": {
-    "cname": 52,
+    "cname": 56,
     "props": {
       "$_updateModel": "a",
       "$_beginSetup": "b",
@@ -53,7 +53,11 @@
       "$_onUpdate": "X",
       "$_onDone": "Y",
       "$_onError": "Z",
-      "$_onCancel": "$"
+      "$_onCancel": "$",
+      "$_queue": "_",
+      "$_clean": "aa",
+      "$_remove": "ba",
+      "$_origin": "ca"
     }
   }
 }

@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import { mount } from '../helpers'
+import { mount, unmount } from '../helpers'
 import { ActionButton, Presenter } from '../../src/index'
 import { Action } from 'microcosm'
 
@@ -133,6 +133,27 @@ describe('callbacks', function() {
     button.click()
 
     expect(handler).toHaveBeenCalled()
+  })
+
+  it('removes action callbacks when the component unmounts', async function() {
+    const action = new Action(() => Promise.resolve(true))
+    const send = jest.fn(() => action)
+    const onDone = jest.fn()
+
+    const button = mount(
+      <ActionButton action="test" onDone={onDone} send={send} />
+    )
+
+    button.click()
+
+    expect(send).toHaveBeenCalled()
+
+    unmount(button)
+
+    await action.execute()
+
+    expect(action.status).toBe('resolve')
+    expect(onDone).not.toHaveBeenCalled()
   })
 })
 

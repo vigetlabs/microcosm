@@ -1,6 +1,7 @@
 import { h, Component } from 'preact'
-import { Action, merge } from 'microcosm'
 import serialize from 'form-serialize'
+import { Action, merge } from 'microcosm'
+import ActionQueue from 'microcosm/addons/action-queue'
 
 class ActionForm extends Component {
   constructor(props, context) {
@@ -8,10 +9,15 @@ class ActionForm extends Component {
 
     this.send = this.props.send || this.context.send
     this._onSubmit = this._onSubmit.bind(this)
+    this._queue = new ActionQueue(this)
 
     this._assignForm = el => {
       this._form = el
     }
+  }
+
+  componentWillUnmount() {
+    this._queue.empty()
   }
 
   render() {
@@ -49,17 +55,14 @@ class ActionForm extends Component {
       let result = this.send(action, prepare(serializer(form)))
 
       if (result instanceof Action) {
-        result.subscribe(
-          {
-            onNext: this._onNext,
-            onOpen: this._onOpen,
-            onUpdate: this._onUpdate,
-            onDone: this._onDone,
-            onError: this._onError,
-            onCancel: this._onCancel
-          },
-          this
-        )
+        this._queue.push(result, {
+          onNext: this._onNext,
+          onOpen: this._onOpen,
+          onUpdate: this._onUpdate,
+          onDone: this._onDone,
+          onError: this._onError,
+          onCancel: this._onCancel
+        })
       }
     }
 

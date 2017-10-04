@@ -11,3 +11,7 @@ export function mount(...args) {
 export function remount(component, el) {
   return mount(component, el, el.firstChild)
 }
+
+export function submit(form) {
+  return form.dispatchEvent(new Event('submit'))
+}

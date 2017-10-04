@@ -5,7 +5,7 @@
 import React from 'react'
 import ActionForm from 'microcosm/addons/action-form'
 import mockSend from '../helpers/mock-send'
-import Microcosm from 'microcosm'
+import Microcosm, { Action } from 'microcosm'
 import { mount } from 'enzyme'
 
 describe('callbacks', function() {
@@ -77,6 +77,25 @@ describe('callbacks', function() {
 
     form.simulate('submit')
 
+    expect(onDone).not.toHaveBeenCalled()
+  })
+
+  it('removes action callbacks when the component unmounts', async function() {
+    const action = new Action(() => Promise.resolve(true))
+    const send = jest.fn(() => action)
+    const onDone = jest.fn()
+
+    const form = mount(<ActionForm action="test" onDone={onDone} send={send} />)
+
+    form.simulate('submit')
+
+    expect(send).toHaveBeenCalled()
+
+    form.unmount()
+
+    await action.execute()
+
+    expect(action).toHaveStatus('resolve')
     expect(onDone).not.toHaveBeenCalled()
   })
 })

@@ -10,7 +10,6 @@ import History from './history'
 import DomainEngine from './domain-engine'
 import EffectEngine from './effect-engine'
 import CompareTree from './compare-tree'
-import coroutine from './coroutine'
 import tag from './tag'
 import installDevtools from './install-devtools'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
@@ -234,10 +233,10 @@ class Microcosm extends Emitter implements Domain {
    */
   append(command: *, status?: Status): Action {
     if (command in this.actions) {
-      return this.history.append(this.actions[command], status)
+      return this.history.append(this.actions[command], status, this)
     }
 
-    return this.history.append(command, status)
+    return this.history.append(command, status, this)
   }
 
   /**
@@ -249,15 +248,13 @@ class Microcosm extends Emitter implements Domain {
   push(command: any, ...params: *): Action {
     let action = this.append(command)
 
-    coroutine(action, params, this)
-
     console.assert(
       this.active,
       `Pushed "${action.toString()}" action, however this Microcosm has been shutdown. ` +
         "It's possible that an event subscription was not cleaned up."
     )
 
-    return action
+    return action.execute(...params)
   }
 
   /**
