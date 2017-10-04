@@ -155,6 +155,15 @@ describe('callbacks', function() {
     expect(action.status).toBe('resolve')
     expect(onDone).not.toHaveBeenCalled()
   })
+
+  it('does not invoke send if there is no action', function() {
+    const send = jest.fn()
+    const button = mount(<ActionButton send={send} />)
+
+    button.click()
+
+    expect(send).not.toHaveBeenCalled()
+  })
 })
 
 describe('manual operation', function() {
@@ -173,7 +182,7 @@ describe('manual operation', function() {
 
   it('can pass in send manually', function() {
     const send = jest.fn()
-    const button = mount(<ActionButton send={send} />)
+    const button = mount(<ActionButton action="test" send={send} />)
 
     button.click()
 

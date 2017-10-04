@@ -84,6 +84,8 @@ class ActionButton extends React.PureComponent<Props> {
     }
 
     onClick(event, action)
+
+    return result
   }
 }
 
