@@ -78,7 +78,7 @@ class ActionButton extends React.PureComponent<Props> {
     if (action) {
       result = this.send(action, params)
 
-      if (result && result instanceof Action) {
+      if (result instanceof Action) {
         this._queue.push(result, this.props)
       }
     }
