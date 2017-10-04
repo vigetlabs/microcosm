@@ -36,6 +36,7 @@ const plugins = [
 const configs = {
   ActionButton: path.resolve('src/addons/action-button.js'),
   ActionForm: path.resolve('src/addons/action-form.js'),
+  ActionQueue: path.resolve('src/addons/action-queue.js'),
   Indexing: path.resolve('src/addons/indexing.js'),
   JestMatchers: path.resolve('src/addons/jest-matchers.js'),
   Microcosm: path.resolve('src/index.js'),

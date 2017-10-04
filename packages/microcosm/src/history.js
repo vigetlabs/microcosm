@@ -200,8 +200,12 @@ class History extends Emitter {
   /**
    * Append a new action to the end of history
    */
-  append(command: string | Command, status?: ?Status): Action {
-    let action = new Action(command, status)
+  append(
+    command: string | Command,
+    status?: ?Status,
+    origin: Microcosm
+  ): Action {
+    let action = new Action(command, status, origin)
 
     if (this.head) {
       this.head.lead(action)

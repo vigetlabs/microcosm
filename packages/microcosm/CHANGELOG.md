@@ -3,6 +3,7 @@
 ## Edge
 
 - ActionForm action callbacks are given the related form as the second argument.
+- ActionForm and ActionButton action callbacks are automatically unsubscribe on unmount
 
 ## 12.13.0
 

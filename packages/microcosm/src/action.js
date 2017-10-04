@@ -4,6 +4,7 @@
  * @flow
  */
 
+import coroutine from './coroutine'
 import Emitter, { type Callback } from './emitter'
 import tag from './tag'
 import { uid } from './utils'
@@ -37,7 +38,9 @@ class Action extends Emitter {
   children: Action[]
   revisions: Revision[]
 
-  constructor(command: string | Command, status: ?Status) {
+  _origin: Microcosm
+
+  constructor(command: string | Command, status: ?Status, origin: Microcosm) {
     super()
 
     this.id = uid('action')
@@ -51,6 +54,8 @@ class Action extends Emitter {
     this.timestamp = Date.now()
     this.children = []
     this.revisions = []
+
+    this._origin = origin
 
     if (status) {
       this._setState(status)
@@ -79,6 +84,11 @@ class Action extends Emitter {
 
   get cancel(): ActionUpdater {
     return this._setState.bind(this, 'cancel')
+  }
+
+  execute(...params) {
+    coroutine(this, params, this._origin)
+    return this
   }
 
   onOpen(callback: Callback, scope?: Object): this {
@@ -310,6 +320,7 @@ class Action extends Emitter {
     }
 
     this.revisions.push({
+      complete: this.complete,
       status: this.status,
       payload: this.payload,
       timestamp: Date.now()

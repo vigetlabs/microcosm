@@ -4,6 +4,7 @@
 
 import React from 'react'
 import { Action, merge } from '../index'
+import ActionQueue from './action-queue'
 
 const identity = n => n
 
@@ -32,29 +33,18 @@ class ActionButton extends React.PureComponent<Props> {
 
   send: Sender
   click: (event: Event) => Action
+  _queue: ActionQueue
 
   constructor(props: Props, context: Context) {
     super(props, context)
 
     this.send = this.props.send || this.context.send
     this.click = this.click.bind(this)
+    this._queue = new ActionQueue(this)
   }
 
-  click(event: Event) {
-    const { action, onClick, prepare, value } = this.props
-
-    let params = prepare(value, event)
-    let result = null
-
-    if (action) {
-      result = this.send(action, params)
-
-      if (result && result instanceof Action) {
-        result.subscribe(this.props)
-      }
-    }
-
-    onClick(event, action)
+  componentWillUnmount() {
+    this._queue.empty()
   }
 
   render() {
@@ -77,6 +67,23 @@ class ActionButton extends React.PureComponent<Props> {
     }
 
     return React.createElement(this.props.tag, props)
+  }
+
+  click(event: Event) {
+    const { action, onClick, prepare, value } = this.props
+
+    let params = prepare(value, event)
+    let result = null
+
+    if (action) {
+      result = this.send(action, params)
+
+      if (result && result instanceof Action) {
+        this._queue.push(result, this.props)
+      }
+    }
+
+    onClick(event, action)
   }
 }
 

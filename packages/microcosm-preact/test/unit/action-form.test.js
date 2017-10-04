@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import { mount } from '../helpers'
+import { mount, unmount, submit } from '../helpers'
 import { Action } from 'microcosm'
 import { ActionForm, Presenter } from '../../src'
 
@@ -32,7 +32,7 @@ describe('callbacks', function() {
 
     const form = mount(<ActionForm action="test" onDone={onDone} send={send} />)
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     expect(onDone).toHaveBeenCalledWith(true, form)
   })
@@ -45,7 +45,7 @@ describe('callbacks', function() {
       <ActionForm action="test" onError={onError} send={send} />
     )
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     expect(onError).toHaveBeenCalledWith('bad', form)
   })
@@ -57,7 +57,7 @@ describe('callbacks', function() {
 
     const form = mount(<ActionForm action="test" onOpen={onOpen} send={send} />)
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     action.open('open')
 
@@ -73,7 +73,7 @@ describe('callbacks', function() {
       <ActionForm action="test" onUpdate={onUpdate} send={send} />
     )
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     action.update('loading')
 
@@ -89,7 +89,7 @@ describe('callbacks', function() {
       <ActionForm action="test" onCancel={onCancel} send={send} />
     )
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     action.cancel('sorry')
 
@@ -102,7 +102,7 @@ describe('callbacks', function() {
 
     const form = mount(<ActionForm action="test" onDone={onDone} send={send} />)
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     expect(onDone).not.toHaveBeenCalled()
   })
@@ -115,7 +115,7 @@ describe('callbacks', function() {
       <ActionForm action="test" onError={onError} send={send} />
     )
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     expect(onError).not.toHaveBeenCalled()
   })
@@ -128,7 +128,7 @@ describe('callbacks', function() {
       <ActionForm action="test" onUpdate={onUpdate} send={send} />
     )
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     expect(onUpdate).not.toHaveBeenCalled()
   })
@@ -138,9 +138,28 @@ describe('callbacks', function() {
 
     const form = mount(<ActionForm send={send} />)
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     expect(send).not.toHaveBeenCalled()
+  })
+
+  it('removes action callbacks when the component unmounts', async function() {
+    const action = new Action(() => Promise.resolve(true))
+    const send = jest.fn(() => action)
+    const onDone = jest.fn()
+
+    const form = mount(<ActionForm action="test" onDone={onDone} send={send} />)
+
+    submit(form)
+
+    expect(send).toHaveBeenCalled()
+
+    unmount(form)
+
+    await action.execute()
+
+    expect(action.status).toBe('resolve')
+    expect(onDone).not.toHaveBeenCalled()
   })
 })
 
@@ -151,7 +170,7 @@ describe('manual operation', function() {
 
     const form = mount(<ActionForm action="test" onDone={onDone} send={send} />)
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     expect(onDone).toHaveBeenCalledWith(true, form)
   })
@@ -160,7 +179,7 @@ describe('manual operation', function() {
     const send = jest.fn()
     const form = mount(<ActionForm send={send} action="test" />)
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     expect(send).toHaveBeenCalled()
   })
@@ -181,7 +200,7 @@ describe('prepare', function() {
       </ActionForm>
     )
 
-    form.dispatchEvent(new Event('submit'))
+    submit(form)
 
     expect(send).toHaveBeenCalledWith('test', { name: 'BILLY' })
   })

@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import Microcosm from 'microcosm'
+import Microcosm, { Action } from 'microcosm'
 import ActionButton from 'microcosm/addons/action-button'
 import { mount } from 'enzyme'
 
@@ -169,6 +169,27 @@ describe('callbacks', function() {
     wrapper.simulate('click')
 
     expect(handler).toHaveBeenCalled()
+  })
+
+  it('removes action callbacks when the component unmounts', async function() {
+    const action = new Action(() => Promise.resolve(true))
+    const send = jest.fn(() => action)
+    const onDone = jest.fn()
+
+    const button = mount(
+      <ActionButton action="test" onDone={onDone} send={send} />
+    )
+
+    button.simulate('click')
+
+    expect(send).toHaveBeenCalled()
+
+    button.unmount()
+
+    await action.execute()
+
+    expect(action).toHaveStatus('resolve')
+    expect(onDone).not.toHaveBeenCalled()
   })
 })
 
