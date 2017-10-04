@@ -37,22 +37,31 @@ class ActionButton extends Component {
   }
 
   click(event) {
-    let action = this.send(this.props.action, this.props.value)
+    const { action, onClick, prepare, value } = this.props
 
-    if (action instanceof Action) {
-      this._queue.push(action, this.props)
+    let params = prepare(value, event)
+    let result = null
+
+    if (action) {
+      result = this.send(action, params)
+
+      if (result && result instanceof Action) {
+        this._queue.push(result, this.props)
+      }
     }
 
-    if (this.props.onClick) {
-      this.props.onClick(event, action)
-    }
+    onClick(event, result)
 
-    return action
+    return result
   }
 }
 
+const identity = n => n
+
 ActionButton.defaultProps = {
-  tag: 'button'
+  tag: 'button',
+  prepare: identity,
+  onClick: identity
 }
 
 export default ActionButton
