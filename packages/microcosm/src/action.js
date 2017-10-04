@@ -320,7 +320,6 @@ class Action extends Emitter {
     }
 
     this.revisions.push({
-      complete: this.complete,
       status: this.status,
       payload: this.payload,
       timestamp: Date.now()
