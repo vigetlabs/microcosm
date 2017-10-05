@@ -4,6 +4,7 @@
 
 - ActionForm action callbacks are given the related form as the second argument.
 - ActionForm and ActionButton action callbacks are automatically unsubscribe on unmount
+- Internal updates to improve the efficiency of forks
 
 ## 12.13.0
 
