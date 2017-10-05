@@ -25,10 +25,10 @@ build/package.json: package.json
 	@ node -p 'p=require("./package");p.main="./index.js";p.private=p.scripts=p.jest=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $@
 
 release: clean all
-	npm publish build
+	@ npm publish build
 
 prerelease: clean all
-	npm publish build --tag beta
+	@ npm publish build --tag beta
 
 bench: build
 	@ NODE_ENV=production node --expose-gc bench/history-performance
