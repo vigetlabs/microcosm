@@ -13,7 +13,7 @@
     "test:prod": "yarn build && BUNDLED=true jest --maxWorkers=2",
     "lint": "./bin/lint",
     "flow": "flow",
-    "clean": "lerna clean",
+    "clean": "rm -rf coverage && rm -rf packages/*/{build,node_modules}",
     "report-coverage": "codecov coverage/lcov.info"
   },
   "devDependencies": {
