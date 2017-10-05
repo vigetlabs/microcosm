@@ -1,5 +1,3 @@
-MAKEFLAGS += '-j 4'
-
 all: build strict min umd es docs
 
 build: build/package.json
