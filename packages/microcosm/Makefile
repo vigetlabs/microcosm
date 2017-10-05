@@ -25,11 +25,9 @@ build/package.json: package.json
 	@ node -p 'p=require("./package");p.main="./index.js";p.private=p.scripts=p.jest=p.devDependencies=undefined;JSON.stringify(p,null,2)' > $@
 
 release: clean all
-	yarn test:prod
 	npm publish build
 
 prerelease: clean all
-	yarn test:prod
 	npm publish build --tag beta
 
 bench: build
