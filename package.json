@@ -6,7 +6,7 @@
   "scripts": {
     "bootstrap": "yarn install && lerna bootstrap",
     "format": "./bin/format",
-    "build": "lerna run build",
+    "build": "lerna run build --concurrency 1",
     "watch": "lerna run --parallel watch",
     "test": "NODE_ENV=test jest",
     "test:cov": "jest --coverage --maxWorkers=2",
@@ -43,6 +43,7 @@
     "singleQuote": true
   },
   "workspaces": [
+    "packages/microcosm",
     "packages/*"
   ]
 }

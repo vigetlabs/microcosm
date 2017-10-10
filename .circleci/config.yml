@@ -18,7 +18,7 @@ jobs:
           paths:
             - node_modules
           key: yarn-cache-{{ checksum "yarn.lock" }}
-      - persist_to_workspace: 
+      - persist_to_workspace:
           root: /home/circleci
           paths:
             - microcosm
