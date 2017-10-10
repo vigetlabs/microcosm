@@ -1,6 +1,5 @@
 const { Microcosm, update } = require('../build')
-
-let repo = new Microcosm()
+const CompareTree = require('../build/addons/compare-tree')
 
 let advance = (x, y) => ({ x, y })
 
@@ -8,6 +7,8 @@ let SAMPLES = [25, 50, 100, 200]
 let WRITES = 50
 
 let results = SAMPLES.map(function(SIZE) {
+  let repo = new Microcosm()
+  let tree = new CompareTree()
   let stats = {}
 
   repo.addDomain('pixels', {
@@ -27,6 +28,8 @@ let results = SAMPLES.map(function(SIZE) {
     }
   })
 
+  repo.on('change', tree.update, tree)
+
   global.gc()
 
   var memoryBefore = process.memoryUsage().heapUsed
@@ -34,7 +37,7 @@ let results = SAMPLES.map(function(SIZE) {
   var then = process.hrtime()
   for (let x = 0; x < SIZE; x++) {
     for (let y = 0; y < SIZE; y++) {
-      repo.on(`change:pixels.${x}.${y}`, hue => {})
+      tree.on(`pixels.${x}.${y}`, hue => {})
     }
   }
 

@@ -9,7 +9,6 @@ import Emitter from './emitter'
 import History from './history'
 import DomainEngine from './domain-engine'
 import EffectEngine from './effect-engine'
-import CompareTree from './compare-tree'
 import tag from './tag'
 import installDevtools from './install-devtools'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
@@ -99,7 +98,6 @@ class Microcosm extends Emitter implements Domain {
   actions: Object
   domains: DomainEngine
   effects: EffectEngine
-  changes: CompareTree
   options: Object
   active: boolean
 
@@ -114,7 +112,6 @@ class Microcosm extends Emitter implements Domain {
     this.snapshots = Object.create(this.parent ? this.parent.snapshots : null)
     this.history = this.parent ? this.parent.history : new History(this.options)
     this.actions = Object.create(this.parent ? this.parent.actions : null)
-    this.changes = new CompareTree(this.initial)
 
     if (!this.parent) {
       this._enableDomains()
@@ -184,34 +181,6 @@ class Microcosm extends Emitter implements Domain {
    */
   getInitialState() {
     return this.initial == null ? {} : this.initial
-  }
-
-  on(type: *, callback: *, scope?: Object) {
-    let [event, meta] = type.split(':', 2)
-
-    switch (event) {
-      case 'change':
-        this.changes.on(meta || '', callback, scope)
-        break
-      default:
-        Emitter.prototype.on.apply(this, arguments)
-    }
-
-    return this
-  }
-
-  off(type: *, callback: *, scope?: Object) {
-    let [event, meta] = type.split(':', 2)
-
-    switch (event) {
-      case 'change':
-        this.changes.off(meta || '', callback, scope)
-        break
-      default:
-        Emitter.prototype.off.apply(this, arguments)
-    }
-
-    return this
   }
 
   /**
@@ -419,7 +388,9 @@ class Microcosm extends Emitter implements Domain {
   }
 
   _release() {
-    this.changes.update(this.state)
+    if (this._didChange()) {
+      this._emit('change', this.state)
+    }
   }
 
   _createSnapshot(action: Action): Snapshot {
@@ -456,6 +427,13 @@ class Microcosm extends Emitter implements Domain {
 
   _removeSnapshot(action: Action) {
     delete this.snapshots[action.id]
+  }
+
+  _didChange(): boolean {
+    let head = this.history.head
+    let snap = this.snapshots[head.id]
+
+    return snap && snap.last !== snap.next
   }
 
   _recall(action: ?Action): Object {

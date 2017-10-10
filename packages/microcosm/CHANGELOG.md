@@ -1,5 +1,9 @@
 # Changelog 
 
+## Master (13.x)
+
+- Moved internal state tree diffing tool to addon. 
+
 ## 12.14.0 (beta)
 
 - ActionForm action callbacks are given the related form as the second argument.

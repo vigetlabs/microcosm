@@ -1,4 +1,5 @@
-import Microcosm, { set } from 'microcosm'
+import { Microcosm, set } from 'microcosm'
+import CompareTree from 'microcosm/addons/compare-tree'
 import SOLAR_SYSTEM from './fixtures/solar-system'
 
 class Repo extends Microcosm {
@@ -17,7 +18,9 @@ describe('CompareTree', function() {
 
   beforeEach(function() {
     repo = new Repo()
-    tree = repo.changes
+    tree = new CompareTree(repo.state)
+
+    repo.on('change', tree.update, tree)
   })
 
   describe('::on', function() {
@@ -27,7 +30,7 @@ describe('CompareTree', function() {
       let next = set(SOLAR_SYSTEM, ['meta', 'selected'], 'jupiter')
       let handler = jest.fn()
 
-      repo.on('change:meta.selected', handler)
+      tree.on('meta.selected', handler)
       repo.reset(next)
 
       expect(handler).toHaveBeenCalledWith('jupiter')
@@ -39,7 +42,7 @@ describe('CompareTree', function() {
       let next = set(SOLAR_SYSTEM, ['meta', 'selected'], 'jupiter')
       let handler = jest.fn()
 
-      repo.on('change:meta.selected,planets', handler)
+      tree.on('meta.selected,planets', handler)
       repo.reset(next)
 
       expect(handler).toHaveBeenCalledWith('jupiter', SOLAR_SYSTEM.planets)
@@ -51,7 +54,7 @@ describe('CompareTree', function() {
 
       let handler = jest.fn()
 
-      repo.on('change:meta.selected,meta.focused', handler)
+      tree.on('meta.selected,meta.focused', handler)
       repo.reset(b)
 
       expect(handler).toHaveBeenCalledTimes(1)
@@ -62,7 +65,7 @@ describe('CompareTree', function() {
 
       let next = set(SOLAR_SYSTEM, ['planets', 3], false)
 
-      repo.on('change:planets.3', planet => {
+      tree.on('planets.3', planet => {
         expect(planet).toBe(false)
       })
 
@@ -74,7 +77,7 @@ describe('CompareTree', function() {
 
       repo.reset({})
 
-      repo.on('change:planets.3', planet => {
+      tree.on('planets.3', planet => {
         expect(planet).toBe(SOLAR_SYSTEM.planets[3])
       })
 
@@ -87,8 +90,8 @@ describe('CompareTree', function() {
       let handler = jest.fn()
       let next = set(tree.snapshot, 'meta', {})
 
-      repo.on('change:meta', handler)
-      repo.off('change:meta', handler)
+      tree.on('meta', handler)
+      tree.off('meta', handler)
 
       repo.reset(next)
 
@@ -96,23 +99,23 @@ describe('CompareTree', function() {
     })
 
     it('gracefully ignores removing a missing listener', function() {
-      repo.off('change:meta', n => n)
+      tree.off('meta', n => n)
     })
 
     it('removes the query node if there are no callbacks left', function() {
       let handler = jest.fn()
-      let query = repo.on('change:meta', handler)
+      let query = tree.on('meta', handler)
 
-      repo.off('change:meta', handler)
+      tree.off('meta', handler)
 
       expect(query.id in tree.queries).toBe(false)
     })
 
     it('removes nodes without edges up the chain', function() {
       let handler = jest.fn()
-      let query = repo.on('change:meta.selected', handler)
+      let query = tree.on('meta.selected', handler)
 
-      repo.off('change:meta.selected', handler)
+      tree.off('meta.selected', handler)
 
       expect(tree.nodes['meta.selected']).toBeUndefined()
       expect(tree.nodes['meta']).toBeUndefined()
@@ -121,10 +124,10 @@ describe('CompareTree', function() {
 
     it('does not remove parents with other compares', function() {
       let handler = jest.fn()
-      let query = repo.on('change:meta.selected', handler)
+      let query = tree.on('meta.selected', handler)
 
-      repo.on('change:meta.focused', handler)
-      repo.off('change:meta.selected', handler)
+      tree.on('meta.focused', handler)
+      tree.off('meta.selected', handler)
 
       expect(tree.nodes['meta.selected']).toBeUndefined()
       expect(tree.nodes['meta.focused']).toBeDefined()
@@ -135,11 +138,11 @@ describe('CompareTree', function() {
     it('removes the root node when there are no subscriptions', function() {
       let handler = jest.fn()
 
-      repo.on('change:meta.selected', handler)
+      tree.on('meta.selected', handler)
 
       expect('' in tree.nodes).toBe(true)
 
-      repo.off('change:meta.selected', handler)
+      tree.off('meta.selected', handler)
 
       expect('' in tree.nodes).toBe(false)
     })
@@ -150,10 +153,10 @@ describe('CompareTree', function() {
 
       let next = set(repo.state, ['meta', 'selected'], {})
 
-      repo.on('change:meta.selected', one)
-      repo.on('change:meta.selected', two)
+      tree.on('meta.selected', one)
+      tree.on('meta.selected', two)
 
-      repo.off('change:meta.selected', one)
+      tree.off('meta.selected', one)
 
       repo.reset(next)
 
@@ -165,14 +168,14 @@ describe('CompareTree', function() {
       let one = n => n
       let two = n => n
 
-      repo.on('change:a.b.c', one)
+      tree.on('a.b.c', one)
 
-      let query = repo.on('change:a.b', two)
+      let query = tree.on('a.b', two)
 
       let aB = tree.nodes['a.b.c']
       aB.edges = aB.edges.filter(e => e === query)
 
-      repo.off('change:a.b.c', one)
+      tree.off('a.b.c', one)
 
       expect('a' in tree.nodes).toBe(true)
       expect('a.b' in tree.nodes).toBe(true)
@@ -183,8 +186,8 @@ describe('CompareTree', function() {
     it('gracefully handles nodes that do not exist', function() {
       let callback = n => n
 
-      repo.on('change:a.b.c', callback)
-      repo.off('change:a.b.c', callback)
+      tree.on('a.b.c', callback)
+      tree.off('a.b.c', callback)
 
       expect('a' in tree.nodes).toBe(false)
       expect('a.b' in tree.nodes).toBe(false)
@@ -205,14 +208,14 @@ describe('CompareTree', function() {
 
   describe('::update', function() {
     it('can traverse compares for missing keys', function() {
-      repo.on('change:a.b.c', n => n)
+      tree.on('a.b.c', n => n)
       repo.reset({})
     })
 
     it('can traverse missing state keys', function() {
       let handler = jest.fn()
 
-      repo.on('change:meta.selected', handler)
+      tree.on('meta.selected', handler)
 
       repo.reset({ meta: null })
 
@@ -229,9 +232,9 @@ describe('CompareTree', function() {
       let a = set(repo.state, ['meta', 'selected'], 'jupiter')
       let b = set(a, ['meta', 'focused'], false)
 
-      repo.on('change:meta.selected,meta.focused', () => {})
+      tree.on('meta.selected,meta.focused', () => {})
 
-      repo.on('change:meta', function(meta) {
+      tree.on('meta', function(meta) {
         expect(meta).toBe(b.meta)
       })
 
