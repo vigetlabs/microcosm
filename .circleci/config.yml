@@ -34,7 +34,6 @@ jobs:
     steps:
       - attach_workspace:
           at: /home/circleci
-      - run: yarn build
       - run: yarn test:cov --ci
       - run: yarn report-coverage
   test-prod:
