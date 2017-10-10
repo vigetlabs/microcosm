@@ -1,13 +1,17 @@
 import Microcosm, { update } from 'microcosm'
+import CompareTree from 'microcosm/addons/compare-tree'
 import prepareCanvas from './prepare-canvas'
 
 let repo = new Microcosm({ batch: true })
+let tree = new CompareTree()
+
+repo.on('change', tree.update, tree)
 
 let size = 20
 let limit = Infinity
 let rows = Math.min((window.innerWidth / size) | 0, limit)
 let columns = Math.min((window.innerHeight / size) | 0, limit)
-let writes = size * 25
+let writes = size * 50
 
 let advance = (x, y) => ({ x, y })
 
@@ -39,7 +43,7 @@ context.scale(size, size)
 
 for (let x = 0; x < rows; x++) {
   for (let y = 0; y < columns; y++) {
-    repo.on(`change:pixels.${x}.${y}`, hue => {
+    tree.on(`pixels.${x}.${y}`, hue => {
       context.fillStyle = `hsl(${hue}, 70%, 60%)`
       context.fillRect(x, y, 1, 1)
     })
