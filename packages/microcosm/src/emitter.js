@@ -15,11 +15,13 @@ type Listener = {
   once: boolean
 }
 
+type Event = string
+
 /**
  * An abstract event emitter class. Several modules extend from this
  * class to utilize events.
  */
-class Emitter<Event: string> {
+class Emitter {
   _events: Array<Listener>
 
   constructor() {

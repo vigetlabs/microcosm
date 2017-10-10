@@ -168,7 +168,7 @@ class History extends Emitter {
    * Return a promise that represents the resolution of all actions in
    * the current branch.
    */
-  wait(): Promise<void> {
+  wait(): Promise<*> {
     let group = new Action('GROUP')
 
     group.link(this.toArray())
@@ -185,7 +185,7 @@ class History extends Emitter {
   /**
    * Chain off of wait(). Provides a promise interface
    */
-  then(pass?: *, fail?: *) {
+  then(pass?: Function, fail?: Function): Promise<*> {
     return this.wait().then(pass, fail)
   }
 
