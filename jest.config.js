@@ -14,8 +14,8 @@ module.exports = {
     '^microcosm(/.+|$)': `<rootDir>/../microcosm/${isBundled
       ? 'build/min'
       : 'src'}$1`,
-    '^microcosm-preact(/.+|$)': `<rootDir>/../microcosm-preact/${isBundled
+    '^microcosm-preact$': `<rootDir>/../microcosm-preact/${isBundled
       ? 'build'
-      : 'src'}$1`
+      : 'src'}`
   }
 }
