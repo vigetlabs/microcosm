@@ -22,7 +22,30 @@ describe('Microcosm::addDomain', function() {
     expect(repo).toHaveState('b', 1)
   })
 
+  it('can not add domains to the root', function() {
+    let repo = new Microcosm()
+
+    expect(() => repo.addDomain('', {})).toThrow(
+      'Can not add domain to root level.'
+    )
+  })
+
   describe('forks', function() {
+    it('receives initial state from parents', function() {
+      let repo = new Microcosm()
+
+      repo.addDomain('a', {
+        getInitialState() {
+          return 0
+        }
+      })
+
+      let fork = repo.fork()
+
+      expect(repo).toHaveState('a', 0)
+      expect(fork).toHaveState('a', 0)
+    })
+
     it('adding a domain to a fork does not reset all state', function() {
       let repo = new Microcosm()
 
@@ -93,6 +116,17 @@ describe('Microcosm::addDomain', function() {
       })
 
       expect(repo).not.toHaveState('b')
+    })
+
+    it('can not add domains to keys managed by parents', function() {
+      let repo = new Microcosm()
+      let fork = repo.fork()
+
+      repo.addDomain('test', {})
+
+      expect(() => fork.addDomain('test', {})).toThrow(
+        'Can not add domain for "test". This state is already managed.'
+      )
     })
   })
 })

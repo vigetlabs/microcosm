@@ -50,13 +50,13 @@ export default function() {
       }, answer)
     }
 
-    this.indexes = set(this.indexes || {}, name, query)
+    this.indexes = set(this.indexes, name, query)
 
     return query
   }
 
   Microcosm.prototype.lookup = function(name) {
-    let index = get(this.indexes, name)
+    let index = get(this.indexes, name, null)
 
     if (index == null) {
       if (this.parent) {

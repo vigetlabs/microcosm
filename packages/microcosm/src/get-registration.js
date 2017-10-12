@@ -19,6 +19,7 @@ function getRegistration(pool: any, command: Tagged, status: Status) {
   let alias = STATUS[status]
 
   console.assert(alias, 'Invalid action status ' + status)
+
   console.assert(
     command.__tagged,
     `Unable to register ${command.name || 'action'}(). It has not been tagged.`
@@ -54,8 +55,7 @@ function getRegistration(pool: any, command: Tagged, status: Status) {
      */
     console.assert(
       !(type in pool) || answer !== undefined,
-      `${command.name ||
-        'action'} key within a registration is ${answer}. Is it being referenced correctly?`
+      `${command.toString()} key within a registration is ${answer}. Is it being referenced correctly?`
     )
   }
 

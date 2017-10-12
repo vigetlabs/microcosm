@@ -17,8 +17,12 @@ const View = withSend(function({ send }) {
 const timer = time => new Promise(resolve => setTimeout(resolve, time))
 
 class Repo extends Microcosm {
-  getInitialState() {
-    return { color: 'yellow' }
+  setup() {
+    this.addDomain('color', {
+      getInitialState() {
+        return 'yellow'
+      }
+    })
   }
 }
 

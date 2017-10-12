@@ -17,22 +17,6 @@ export function uid(prefix: string): string {
 }
 
 /**
- * Merge on object into the next, but only assign keys that are
- * defined in the base.
- */
-export function mergeSame<T: MixedObject>(target: T, head: Object): $Shape<T> {
-  let next = {}
-
-  for (var key in head) {
-    if (key in target) {
-      next[key] = head[key]
-    }
-  }
-
-  return next
-}
-
-/**
  * Shallow copy an object
  */
 export function clone<T: MixedObject>(target: T): $Shape<T> {

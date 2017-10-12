@@ -11,8 +11,8 @@ import DomainEngine from './domain-engine'
 import EffectEngine from './effect-engine'
 import tag from './tag'
 import installDevtools from './install-devtools'
-import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
-import { merge, set } from './utils'
+import { RESET, PATCH } from './lifecycle'
+import { merge } from './utils'
 import { version } from '../package.json'
 
 /**
@@ -26,6 +26,8 @@ const DEFAULTS = {
   batch: false,
   debug: false
 }
+
+const EMPTY = {}
 
 /**
  * # Overview
@@ -86,7 +88,7 @@ const DEFAULTS = {
  * @extends Emitter
  * @tutorial quickstart
  */
-class Microcosm extends Emitter implements Domain {
+class Microcosm extends Emitter {
   static defaults: Object
   static version: String
 
@@ -108,7 +110,6 @@ class Microcosm extends Emitter implements Domain {
 
     this.active = true
     this.parent = this.options.parent
-    this.initial = this.parent ? this.parent.initial : this.getInitialState()
     this.snapshots = Object.create(this.parent ? this.parent.snapshots : null)
     this.history = this.parent ? this.parent.history : new History(this.options)
     this.actions = Object.create(this.parent ? this.parent.actions : null)
@@ -180,7 +181,9 @@ class Microcosm extends Emitter implements Domain {
    * Generates the starting state for a Microcosm instance. This is the result of dispatching `getInitialState` to all domains. It is pure; calling this function will not update state.
    */
   getInitialState() {
-    return this.initial == null ? {} : this.initial
+    let base = this.domains ? this.domains.getInitialState() : EMPTY
+
+    return this.parent ? merge(this.parent.getInitialState(), base) : base
   }
 
   /**
@@ -245,16 +248,19 @@ class Microcosm extends Emitter implements Domain {
    * provided options and associated repo.
    */
   addDomain(key: string, config: *, options?: Object) {
+    if (key in this.state) {
+      throw new Error(
+        `Can not add domain for "${key}". This state is already managed.`
+      )
+    }
+
     this._enableDomains()
 
     let domain = this.domains.add(key, config, options)
-    let initial = domain.getInitialState ? domain.getInitialState() : null
-
-    this.initial = set(this.initial, key, initial)
 
     this._alias(domain.actions)
 
-    this.push(ADD_DOMAIN, domain)
+    this.history.refresh()
 
     return domain
   }
@@ -291,13 +297,6 @@ class Microcosm extends Emitter implements Domain {
    */
   patch(data: string | Object, deserialize?: boolean) {
     return this.push(PATCH, data, deserialize)
-  }
-
-  /**
-   * The default registration method for Microcosms
-   */
-  register() {
-    return null
   }
 
   /**
@@ -411,18 +410,18 @@ class Microcosm extends Emitter implements Domain {
   _updateSnapshot(action: Action) {
     let snap = this.snapshots[action.id]
     let last = this._rebase(action)
+    let next = last
 
     if (!action.disabled) {
-      snap.next = this.domains.dispatch(action, last, snap)
-    } else {
-      snap.next = last
+      next = this.domains.dispatch(action, last, snap)
     }
 
-    this.snapshots[action.id] = merge(snap, {
+    this.snapshots[action.id] = {
+      next: next,
       last: last,
       status: action.status,
       payload: action.payload
-    })
+    }
   }
 
   _removeSnapshot(action: Action) {

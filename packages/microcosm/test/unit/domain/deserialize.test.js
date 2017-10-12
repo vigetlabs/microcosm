@@ -46,22 +46,5 @@ describe('Domain::deserialize', function() {
 
       expect(data).toEqual({ fiz: 'fiz', buzz: 'buzz' })
     })
-
-    it('deserializing a child with the same key works from serialization', function() {
-      const parent = new Microcosm()
-      const child = parent.fork()
-
-      parent.addDomain('fiz', {
-        deserialize: word => word + '-first'
-      })
-
-      child.addDomain('fiz', {
-        deserialize: word => word + '-second'
-      })
-
-      const data = child.deserialize({ fiz: 'fiz' })
-
-      expect(data).toEqual({ fiz: 'fiz-first-second' })
-    })
   })
 })

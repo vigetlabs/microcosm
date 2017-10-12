@@ -2,7 +2,6 @@
  * @flow
  */
 
-import { mergeSame } from './utils'
 import tag from './tag'
 
 import type Action from './action'
@@ -20,22 +19,19 @@ function sandbox(data: Object, deserialize: boolean) {
         throw error
       }
     }
-    // Strip out keys not managed by this repo. This prevents children from
-    // accidentally having their keys reset by parents.
-    action.resolve(mergeSame(repo.state, payload))
+
+    action.resolve({ repo, payload: payload || {} })
   }
 }
 
-export const RESET = function $reset(data: Object, deserialize: boolean) {
+export const RESET = tag(function $reset(data: Object, deserialize: boolean) {
   return sandbox(data, deserialize)
-}
+}, '$reset')
 
-export const PATCH = function $patch(data: Object, deserialize: boolean) {
+export const PATCH = tag(function $patch(data: Object, deserialize: boolean) {
   return sandbox(data, deserialize)
-}
+}, '$patch')
 
 export const BIRTH = tag('$birth')
 
 export const START = tag('$start')
-
-export const ADD_DOMAIN = tag('$addDomain')

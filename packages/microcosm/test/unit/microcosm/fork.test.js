@@ -1,38 +1,20 @@
 import Microcosm from 'microcosm'
 
 describe('Microcosm::fork', function() {
-  it('forks do not own state of parents', () => {
+  it('forks can not manage state owned by parents', () => {
     const parent = new Microcosm()
     const child = parent.fork()
 
-    const add = n => n
+    parent.addDomain('counter', {})
 
-    parent.addDomain('counter', {
-      getInitialState() {
-        return 0
-      },
-      register() {
-        return {
-          [add]: (a, b) => a + b
-        }
-      }
-    })
-
-    child.addDomain('counter', {
-      register() {
-        return {
-          [add]: (a, b) => a * 2
-        }
-      }
-    })
-
-    parent.push(add, 2)
-
-    expect(parent.state.counter).toEqual(2)
-    expect(child.state.counter).toEqual(4)
+    expect(function() {
+      child.addDomain('counter', {})
+    }).toThrow(
+      'Can not add domain for "counter". This state is already managed.'
+    )
   })
 
-  it('forks continue to get updates from their parents when there is no archive', () => {
+  it('recieve upstream state updates when they push actions', () => {
     const parent = new Microcosm({ maxHistory: Infinity })
     const child = parent.fork()
 
@@ -49,64 +31,14 @@ describe('Microcosm::fork', function() {
       }
     })
 
-    child.addDomain('counter', {
-      register() {
-        return {
-          [add](a) {
-            return a * 2
-          }
-        }
-      }
-    })
-
     child.push(add, 2)
     child.push(add, 4)
 
-    expect(parent.state.counter).toEqual(6)
-
-    // If this is 24, then multiplcation applied twice on 6,
-    // rather than multiply 6 by 2
-    expect(child.state.counter).toEqual(12)
+    expect(parent).toHaveState('counter', 6)
+    expect(child).toHaveState('counter', 6)
   })
 
-  it('forks handle async', () => {
-    const parent = new Microcosm()
-    const child = parent.fork()
-
-    const add = n => n
-
-    parent.addDomain('counter', {
-      getInitialState() {
-        return 0
-      },
-      register() {
-        return {
-          [add]: (a, b) => a + b
-        }
-      }
-    })
-
-    child.addDomain('counter', {
-      register() {
-        return {
-          [add](a) {
-            return a * 2
-          }
-        }
-      }
-    })
-
-    child.push(add, 2)
-    child.push(add, 4)
-
-    expect(parent.state.counter).toEqual(6)
-
-    // If this is 24, then multiplcation applied twice on 6,
-    // rather than multiply 6 by 2
-    expect(child.state.counter).toEqual(12)
-  })
-
-  it('forks handle cases where they are lostlost during a reconcilation', function() {
+  it('forks handle cases where they are lost during a reconcilation', function() {
     const parent = new Microcosm()
     const child = parent.fork()
 

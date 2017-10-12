@@ -82,7 +82,7 @@ describe('indexing', function() {
     let a = repo.compute('styles')
     let b = child.compute('styles')
 
-    expect(a).toBe(b)
+    expect(a).toEqual(b)
   })
 })
 

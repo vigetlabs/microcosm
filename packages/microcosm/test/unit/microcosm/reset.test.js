@@ -51,7 +51,7 @@ describe('Microcosm::reset', function() {
 
     // This is invalid
     try {
-      repo.reset('{ test: deserialize }', true)
+      repo.reset('{ test: badJson }', true)
     } catch (x) {
       // do not handle this error
     }

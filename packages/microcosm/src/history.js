@@ -10,7 +10,7 @@ import Action from './action'
 import Emitter from './emitter'
 import defaultUpdateStrategy from './default-update-strategy'
 import { merge } from './utils'
-import { BIRTH, START, ADD_DOMAIN } from './lifecycle'
+import { BIRTH, START } from './lifecycle'
 import { type Updater } from './default-update-strategy'
 import { iteratorTag } from './symbols'
 
@@ -134,12 +134,7 @@ class History extends Emitter {
 
         // Ignore certain lifecycle actions that are only for
         // internal purposes
-        if (
-          next &&
-          (next.command === BIRTH ||
-            next.command === START ||
-            next.command === ADD_DOMAIN)
-        ) {
+        if (next && (next.command === BIRTH || next.command === START)) {
           return iterator.next()
         }
 
@@ -277,6 +272,13 @@ class History extends Emitter {
     this._emit('remove', action)
 
     action.remove()
+  }
+
+  /**
+   * Re-reconcile the last action. Used by Microcosms to "refresh" their snapshot
+   */
+  refresh() {
+    this.reconcile(this.head)
   }
 
   /**

@@ -57,21 +57,5 @@ describe('Domain::serialize', function() {
 
       expect(child.serialize()).toEqual({ fiz: 'FIZ', buzz: 'BUZZ' })
     })
-
-    it('serializing a child with the same key works from that state', function() {
-      const parent = new Microcosm()
-      const child = parent.fork()
-
-      parent.addDomain('fiz', {
-        getInitialState: () => 'fiz',
-        serialize: word => word + '-first'
-      })
-
-      child.addDomain('fiz', {
-        serialize: word => word + '-second'
-      })
-
-      expect(child.serialize()).toEqual({ fiz: 'fiz-second' })
-    })
   })
 })

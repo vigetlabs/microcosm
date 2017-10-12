@@ -5,12 +5,12 @@ describe('Mutations', function() {
     const identity = function() {}
     const repo = new Microcosm({ maxHistory: Infinity })
 
-    repo.addDomain(null, {
+    repo.addDomain('test', {
       getInitialState() {
-        return { test: false }
+        return { key: false }
       },
       mutate(state) {
-        state.test = true
+        state.key = true
         return state
       },
       register() {
@@ -22,6 +22,6 @@ describe('Mutations', function() {
 
     repo.push(identity, true)
 
-    expect(repo).toHaveState('test', true)
+    expect(repo).toHaveState('test.key', true)
   })
 })

@@ -7,8 +7,6 @@ class Repo extends Microcosm {
     this.addDomain('meta', {})
     this.addDomain('planets', {})
     this.addDomain('physics', {})
-
-    this.reset(SOLAR_SYSTEM)
   }
 }
 
@@ -17,7 +15,7 @@ describe('CompareTree', function() {
   let repo = null
 
   beforeEach(function() {
-    repo = new Repo()
+    repo = new Repo({}, SOLAR_SYSTEM)
     tree = new CompareTree(repo.state)
 
     repo.on('change', tree.update, tree)
@@ -219,11 +217,13 @@ describe('CompareTree', function() {
 
       repo.reset({ meta: null })
 
+      expect(handler).toHaveBeenCalledWith(null)
+
       repo.reset({
         meta: { selected: true }
       })
 
-      expect(handler).toHaveBeenCalledWith(null)
+      expect(handler).toHaveBeenCalledWith(true)
     })
 
     it('the root node does not get called twice if subscribing to two children', function() {

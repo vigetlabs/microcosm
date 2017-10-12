@@ -7,18 +7,20 @@ describe('getRegistration', function() {
     let handler = jest.fn()
 
     class Repo extends Microcosm {
-      register() {
-        return {
-          [action]: {
-            reject: handler
+      setup() {
+        this.addDomain('test', {
+          register: {
+            action: {
+              reject: handler
+            }
           }
-        }
+        })
       }
     }
 
     let repo = new Repo()
 
-    repo.append(action).reject()
+    repo.append('action').reject()
 
     expect(handler).toHaveBeenCalled()
   })
@@ -68,11 +70,15 @@ describe('getRegistration', function() {
   it.dev('throws if given an invalid status', function() {
     let repo = new Microcosm()
 
-    let fail = function() {
-      repo.append(action, 'totally-missing')
-    }
+    // Registration does not happen if there are no registerable
+    // domains
+    repo.addDomain('test', {
+      register: {}
+    })
 
-    expect(fail).toThrow('Invalid action status totally-missing')
+    expect(() => {
+      repo.append(action, 'totally-missing')
+    }).toThrow('Invalid action status totally-missing')
   })
 
   describe('Action aliasing', function() {
@@ -87,18 +93,20 @@ describe('getRegistration', function() {
         let handler = jest.fn()
 
         class Repo extends Microcosm {
-          register() {
-            return {
-              [action]: {
-                [status]: handler
+          setup() {
+            this.addDomain('test', {
+              register: {
+                action: {
+                  [status]: handler
+                }
               }
-            }
+            })
           }
         }
 
         let repo = new Repo()
 
-        repo.append(action, status)
+        repo.append('action', status)
 
         expect(handler).toHaveBeenCalled()
       })
@@ -107,18 +115,20 @@ describe('getRegistration', function() {
         let handler = jest.fn()
 
         class Repo extends Microcosm {
-          register() {
-            return {
-              [action]: {
-                [alias]: handler
+          setup() {
+            this.addDomain('test', {
+              register: {
+                action: {
+                  [status]: handler
+                }
               }
-            }
+            })
           }
         }
 
         let repo = new Repo()
 
-        repo.append(action, status)
+        repo.append('action', status)
 
         expect(handler).toHaveBeenCalled()
       })
@@ -128,19 +138,19 @@ describe('getRegistration', function() {
   it.dev(
     'prints the action name in the warning when a handler is undefined',
     function() {
-      let getUser = n => n
-
       class Repo extends Microcosm {
-        register() {
-          return {
-            [getUser]: undefined
-          }
+        setup() {
+          this.addDomain('test', {
+            register: {
+              getUser: undefined
+            }
+          })
         }
       }
 
       let repo = new Repo()
 
-      expect(repo.prepare(getUser)).toThrow(
+      expect(repo.prepare('getUser')).toThrow(
         'getUser key within a registration is undefined. Is it being referenced correctly?'
       )
     }

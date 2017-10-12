@@ -5,7 +5,7 @@ describe('Microcosm::dispatch', function() {
     const repo = new Microcosm()
     const mutation = () => true
 
-    repo.addDomain(null, {
+    repo.addDomain('ui', {
       getInitialState() {
         return {
           toggled: false
@@ -24,15 +24,15 @@ describe('Microcosm::dispatch', function() {
 
     repo.push(mutation)
     expect(repo.history.size).toEqual(1)
-    expect(repo).toHaveState('toggled', true)
+    expect(repo).toHaveState('ui.toggled', true)
 
     repo.push(mutation)
     expect(repo.history.size).toEqual(1)
-    expect(repo).toHaveState('toggled', false)
+    expect(repo).toHaveState('ui.toggled', false)
 
     repo.push(mutation)
     expect(repo.history.size).toEqual(1)
-    expect(repo).toHaveState('toggled', true)
+    expect(repo).toHaveState('ui.toggled', true)
   })
 
   it('does not retroactively apply old state to subsequent domain handlers', function() {
@@ -51,15 +51,13 @@ describe('Microcosm::dispatch', function() {
       }
     })
 
-    repo.addDomain(null, {
+    repo.addEffect({
       register() {
         return {
-          test: state => {
+          test: repo => {
             // Assert that domains receive the result of
             // earlier domain processing
-            expect(state.color).toEqual('purple')
-
-            return state
+            expect(repo).toHaveState('color', 'purple')
           }
         }
       }

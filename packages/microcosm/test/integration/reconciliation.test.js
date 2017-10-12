@@ -3,7 +3,7 @@ import Microcosm from 'microcosm'
 describe('Reconciliation', function() {
   const action = n => n
 
-  it('only interates over the point of reconciliation', function() {
+  it('only iterates over the point of reconciliation', function() {
     const repo = new Microcosm({ maxHistory: Infinity })
     const handler = jest.fn((a, b) => a + b)
 
@@ -23,6 +23,7 @@ describe('Reconciliation', function() {
     expect(repo).toHaveState('count', 0)
 
     one.resolve(1)
+
     expect(repo).toHaveState('count', 1)
 
     two.resolve(2)
