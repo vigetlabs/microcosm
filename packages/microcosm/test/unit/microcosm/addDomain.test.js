@@ -22,7 +22,7 @@ describe('Microcosm::addDomain', function() {
     expect(repo).toHaveState('b', 1)
   })
 
-  it('can not add domains to the root', function() {
+  it.dev('can not add domains to the root', function() {
     let repo = new Microcosm()
 
     expect(() => repo.addDomain('', {})).toThrow(
