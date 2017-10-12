@@ -37,8 +37,7 @@ class Action extends Emitter {
   timestamp: number
   children: Action[]
   revisions: Revision[]
-
-  _origin: Microcosm
+  origin: Microcosm
 
   constructor(command: string | Command, status: ?Status, origin: Microcosm) {
     super()
@@ -54,8 +53,7 @@ class Action extends Emitter {
     this.timestamp = Date.now()
     this.children = []
     this.revisions = []
-
-    this._origin = origin
+    this.origin = origin
 
     if (status) {
       this._setState(status)
@@ -87,7 +85,7 @@ class Action extends Emitter {
   }
 
   execute(...params: *[]): this {
-    coroutine(this, params, this._origin)
+    coroutine(this, params, this.origin)
     return this
   }
 

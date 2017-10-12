@@ -20,17 +20,13 @@ function sandbox(data: Object, deserialize: boolean) {
       }
     }
 
-    action.resolve({ repo, payload: payload || {} })
+    action.resolve(payload || {})
   }
 }
 
-export const RESET = tag(function $reset(data: Object, deserialize: boolean) {
-  return sandbox(data, deserialize)
-}, '$reset')
+export const RESET = tag(sandbox.bind(null), '$reset')
 
-export const PATCH = tag(function $patch(data: Object, deserialize: boolean) {
-  return sandbox(data, deserialize)
-}, '$patch')
+export const PATCH = tag(sandbox.bind(null), '$patch')
 
 export const BIRTH = tag('$birth')
 

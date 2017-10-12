@@ -9,8 +9,7 @@ import { RESET, PATCH } from './lifecycle'
 import type Action from './action'
 import type Microcosm from './microcosm'
 
-type DomainList = Array<[string, Domain]>
-type Registry = { [action: string]: Registrations }
+type DomainList = { [key: string]: Domain }
 
 /**
  * Reduce down a list of values.
@@ -33,11 +32,11 @@ class DomainEngine {
 
   constructor(repo: Microcosm) {
     this.repo = repo
-    this.domains = Object.create(null)
-    this.lifecycle = Object.create(null)
+    this.domains = {}
+    this.lifecycle = {}
 
-    this.lifecycle[RESET] = []
-    this.lifecycle[PATCH] = []
+    this.lifecycle[RESET.toString()] = []
+    this.lifecycle[PATCH.toString()] = []
 
     this.registry = Object.create(this.lifecycle)
   }
@@ -53,7 +52,7 @@ class DomainEngine {
       let steps = getRegistration(result(scope, 'register'), command, status)
 
       if (steps.length) {
-        handlers.push({ key, scope, steps })
+        handlers.push({ key, scope, steps, local: false })
       }
     }
 
@@ -89,32 +88,26 @@ class DomainEngine {
 
     this.domains[key] = domain
 
-    this.lifecycle[RESET].push({
+    this.lifecycle[RESET.toString()].push({
       key: key,
       scope: domain,
+      local: true,
       steps: [
-        (state, { repo, payload }) => {
-          if (repo.domains !== this) {
-            return state
-          }
-
-          return payload[key] !== undefined
-            ? payload[key]
-            : result(domain, 'getInitialState', null)
+        (state: *, data: any) => {
+          return data[key] !== undefined
+            ? data[key]
+            : result(domain, 'getInitialState')
         }
       ]
     })
 
-    this.lifecycle[PATCH].push({
+    this.lifecycle[PATCH.toString()].push({
       key: key,
       scope: domain,
+      local: true,
       steps: [
-        (state, { repo, payload }) => {
-          if (repo.domains !== this) {
-            return state
-          }
-
-          return payload[key] !== undefined ? payload[key] : state
+        (state: *, data: any) => {
+          return data[key] !== undefined ? data[key] : state
         }
       ]
     })
@@ -137,7 +130,11 @@ class DomainEngine {
     let answer = state
 
     for (var i = 0; i < handlers.length; i++) {
-      var { key, scope, steps } = handlers[i]
+      var { local, key, scope, steps } = handlers[i]
+
+      if (local && action.origin !== this.repo) {
+        continue
+      }
 
       var last = answer[key]
       var head = snapshot.last[key]
@@ -165,22 +162,22 @@ class DomainEngine {
     return answer
   }
 
-  deserialize(payload: Object): Object {
-    let next = clone(payload)
+  deserialize(data: Object): Object {
+    let next = clone(data)
 
     for (var key in this.domains) {
       var domain = this.domains[key]
 
       if (domain.deserialize) {
-        next[key] = domain.deserialize(payload[key])
+        next[key] = domain.deserialize(data[key])
       }
     }
 
     return next
   }
 
-  serialize(state: Object, payload: Object): Object {
-    let next = clone(payload)
+  serialize(state: Object, data: Object): Object {
+    let next = clone(data)
 
     for (var key in this.domains) {
       var domain = this.domains[key]
@@ -197,7 +194,7 @@ class DomainEngine {
     let next = {}
 
     for (var key in this.domains) {
-      next[key] = result(this.domains[key], 'getInitialState', null)
+      next[key] = result(this.domains[key], 'getInitialState')
     }
 
     return next

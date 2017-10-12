@@ -2,15 +2,15 @@
  * @flow
  */
 
-import type Microcosm from '../src/microcosm'
-import { type KeyPath } from '../src/key-path'
-
-declare type Handler = (last?: *, next?: *) => *
+declare type Handler = (last?: mixed, next?: any) => *
 
 declare type Registration = {
-  key: KeyPath,
+  key: string,
   steps: Handler[],
-  scope: any
+  scope: any,
+  local: boolean
 }
 
 declare type Registrations = Registration[]
+
+declare type Registry = { [action: string]: Registrations }
