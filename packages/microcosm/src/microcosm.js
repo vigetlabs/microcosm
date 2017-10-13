@@ -6,7 +6,7 @@
 
 import Action from './action'
 import Emitter from './emitter'
-import History from './history'
+import History, { HISTORY_DEFAULTS } from './history'
 import DomainEngine from './domain-engine'
 import EffectEngine from './effect-engine'
 import tag from './tag'
@@ -21,10 +21,10 @@ import { version } from '../package.json'
  * extension of Microcosm.
  */
 const DEFAULTS = {
-  maxHistory: 0,
-  parent: null,
-  batch: false,
-  debug: false
+  batch: HISTORY_DEFAULTS.batch,
+  debug: false,
+  maxHistory: HISTORY_DEFAULTS.maxHistory,
+  parent: null
 }
 
 const EMPTY = {}
@@ -103,7 +103,7 @@ class Microcosm extends Emitter {
   options: Object
   active: boolean
 
-  constructor(preOptions?: ?Object, state?: Object, deserialize?: boolean) {
+  constructor(preOptions?: ?Object) {
     super()
 
     this.options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
@@ -124,11 +124,6 @@ class Microcosm extends Emitter {
 
     // Microcosm is now ready. Call the setup lifecycle method
     this.setup(this.options)
-
-    // If given state, reset to that snapshot
-    if (state) {
-      this.reset(state, deserialize)
-    }
 
     if (this.options.debug) {
       installDevtools(this)

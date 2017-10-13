@@ -6,8 +6,8 @@ describe('Microcosm::setup', function() {
 
     class Repo extends Microcosm {
       setup(options) {
-        expect(options.foo).toEqual('bar')
-        expect(options.maxHistory).toEqual(0)
+        expect(options).toHaveProperty('foo', 'bar')
+        expect(options).toHaveProperty('maxHistory')
       }
     }
 
@@ -19,7 +19,7 @@ describe('Microcosm::setup', function() {
 
     class Repo extends Microcosm {
       setup(options) {
-        expect(options).toBeDefined()
+        expect(options).toBe(this.options)
       }
     }
 

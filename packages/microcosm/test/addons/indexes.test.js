@@ -167,7 +167,9 @@ describe('memo', function() {
   })
 
   it('the result of processing one memo does not effect another', function() {
-    let repo = new Repo({}, { styles: { color: 'blue' } })
+    let repo = new Repo()
+
+    repo.reset({ styles: { color: 'blue' } })
 
     repo.index('color', 'styles.color', state => state.styles.color)
 

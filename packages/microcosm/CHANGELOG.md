@@ -4,6 +4,7 @@
 
 - Moved internal state tree diffing tool to addon. 
 - Removed support for root level domains, forks can not add keys managed by parents. Repos can not add domains to the same key name.
+- Removed feature to instantiate a Microcosm with an initial state using the second argument of the constructor.
 
 ## 12.14.0 (beta)
 

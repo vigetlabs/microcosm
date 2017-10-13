@@ -1,115 +1,40 @@
 import Microcosm from 'microcosm'
 
 describe('Microcosm constructor', function() {
-  it('can seed initial state', function() {
-    class Repo extends Microcosm {
-      setup() {
-        this.addDomain('foo', {})
-      }
-    }
+  describe('maxHistory option', function() {
+    it('controls history size', function() {
+      const repo = new Microcosm({ maxHistory: 5 })
 
-    const repo = new Repo({}, { foo: 'bar' })
-
-    expect(repo).toHaveState('foo', 'bar')
+      expect(repo.history).toHaveProperty('limit', 5)
+    })
   })
 
-  it('can deserialize the seed', function() {
-    class Repo extends Microcosm {
-      setup() {
-        this.addDomain('foo', {})
+  describe('extending options', function() {
+    it('extends custom defaults with Microcosm defaults', function() {
+      class Repo extends Microcosm {
+        static defaults = {
+          test: true
+        }
       }
-    }
 
-    let raw = JSON.stringify({ foo: 'bar' })
+      let repo = new Repo()
 
-    let repo = new Repo({}, raw, true)
-
-    expect(repo).toHaveState('foo', 'bar')
-  })
-
-  describe('options', function() {
-    describe('parent', function() {
-      it('has no parent by default', function() {
-        expect.assertions(1)
-
-        class Repo extends Microcosm {
-          setup({ parent }) {
-            expect(parent).toEqual(null)
-          }
-        }
-
-        new Repo()
-      })
+      expect(repo.options).toHaveProperty('test', true)
+      expect(repo.options).toHaveProperty('batch', false)
     })
 
-    describe('maxHistory', function() {
-      it('has no history by default', function() {
-        expect.assertions(1)
-
-        class Repo extends Microcosm {
-          setup({ maxHistory }) {
-            expect(maxHistory).toEqual(0)
-          }
+    it('extends custom defaults with passed arguments', function() {
+      class Repo extends Microcosm {
+        static defaults = {
+          test: true
         }
+      }
 
-        new Repo()
-      })
+      let repo = new Repo({ maxHistory: 10, instantiated: true })
 
-      it('controls how many transactions are merged', function() {
-        const repo = new Microcosm({ maxHistory: 5 })
-        const identity = n => n
-
-        repo.push(identity, 1)
-        repo.push(identity, 2)
-        repo.push(identity, 3)
-        repo.push(identity, 4)
-        repo.push(identity, 5)
-
-        expect(repo.history.size).toEqual(5)
-
-        repo.push(identity, 6)
-
-        expect(repo.history.size).toEqual(5)
-        expect(repo.history.root.payload).toEqual(2)
-        expect(repo.history.head.payload).toEqual(6)
-      })
-    })
-
-    describe('extension', function() {
-      it('extends custom defaults with Microcosm defaults', function() {
-        expect.assertions(2)
-
-        class Repo extends Microcosm {
-          static defaults = {
-            test: true
-          }
-
-          setup(options) {
-            expect(options.maxHistory).toBe(0)
-            expect(options.test).toBe(true)
-          }
-        }
-
-        new Repo()
-      })
-
-      it('extends custom defaults with passed arguments', function() {
-        expect.assertions(3)
-
-        class Repo extends Microcosm {
-          static defaults = {
-            test: true
-          }
-
-          setup(options) {
-            expect(options.maxHistory).toBe(10)
-            expect(options.test).toBe(true)
-            expect(options.instantiated).toBe(true)
-          }
-        }
-
-        new Repo({ maxHistory: 10, instantiated: true })
-      })
+      expect(repo.options).toHaveProperty('maxHistory', 10)
+      expect(repo.options).toHaveProperty('test', true)
+      expect(repo.options).toHaveProperty('instantiated', true)
     })
   })
 })
