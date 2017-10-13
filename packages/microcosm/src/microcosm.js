@@ -226,7 +226,7 @@ class Microcosm extends Emitter {
         "It's possible that an event subscription was not cleaned up."
     )
 
-    return action.execute(...params)
+    return action.execute(params)
   }
 
   /**
