@@ -417,6 +417,22 @@ class Microcosm extends Emitter {
       status: action.status,
       payload: action.payload
     }
+
+    return snap.next !== next
+  }
+
+  _reconcileChangeset(action: Action, changeset: Action[]) {
+    for (var i = 0, len = changeset.length; i < len; i++) {
+      var changed = this._updateSnapshot(changeset[i])
+
+      if (changed === false) {
+        break
+      }
+    }
+
+    if (this.effects) {
+      this._dispatchEffect(action)
+    }
   }
 
   _removeSnapshot(action: Action) {
@@ -473,8 +489,8 @@ class Microcosm extends Emitter {
     // When an action is first created
     this.history.on('append', this._createSnapshot, this)
 
-    // When an action snapshot needs updating
-    this.history.on('update', this._updateSnapshot, this)
+    // When an action snapshot range needs updating
+    this.history.on('change', this._reconcileChangeset, this)
 
     // When an action snapshot should be removed
     this.history.on('remove', this._removeSnapshot, this)
@@ -486,9 +502,6 @@ class Microcosm extends Emitter {
     }
 
     this.effects = new EffectEngine(this)
-
-    // When an action changes, it causes a reconcilation
-    this.history.on('reconcile', this._dispatchEffect, this)
   }
 }
 

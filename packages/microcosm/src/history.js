@@ -290,10 +290,12 @@ class History extends Emitter {
     console.assert(this.head, 'History should always have a head node')
     console.assert(action, 'History should never reconcile ' + typeof action)
 
+    let changeset = []
+
     let focus = action
     while (focus) {
       if (focus.command !== START) {
-        this._emit('update', focus)
+        changeset.push(focus)
       }
 
       if (focus === this.head) {
@@ -303,9 +305,9 @@ class History extends Emitter {
       focus = focus.next
     }
 
-    this.archive()
+    this._emit('change', action, changeset)
 
-    this._emit('reconcile', action)
+    this.archive()
 
     this.queueRelease()
   }
