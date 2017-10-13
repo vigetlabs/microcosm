@@ -421,17 +421,20 @@ class Microcosm extends Emitter {
     return snap.next !== next
   }
 
-  _reconcileChangeset(action: Action, changeset: Action[]) {
-    for (var i = 0, len = changeset.length; i < len; i++) {
-      var changed = this._updateSnapshot(changeset[i])
+  _updateSnapshotRange(source: Action, end: Action) {
+    let focus = source
+    while (focus) {
+      var changed = this._updateSnapshot(focus)
 
-      if (changed === false) {
+      if (changed === false || focus === end) {
         break
       }
+
+      focus = focus.next
     }
 
     if (this.effects) {
-      this._dispatchEffect(action)
+      this._dispatchEffect(source)
     }
   }
 
@@ -490,7 +493,7 @@ class Microcosm extends Emitter {
     this.history.on('append', this._createSnapshot, this)
 
     // When an action snapshot range needs updating
-    this.history.on('change', this._reconcileChangeset, this)
+    this.history.on('change', this._updateSnapshotRange, this)
 
     // When an action snapshot should be removed
     this.history.on('remove', this._removeSnapshot, this)
