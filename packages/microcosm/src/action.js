@@ -84,7 +84,7 @@ class Action extends Emitter {
     return this._setState.bind(this, 'cancel')
   }
 
-  execute(...params: *[]): this {
+  execute(params: *[]): this {
     coroutine(this, params, this.origin)
     return this
   }
@@ -305,7 +305,7 @@ class Action extends Emitter {
   }
 
   _setState(status: Status, payload: mixed) {
-    if (this.complete) {
+    if (this.complete === true) {
       return this
     }
 

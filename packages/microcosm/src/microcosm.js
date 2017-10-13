@@ -429,10 +429,15 @@ class Microcosm extends Emitter {
   }
 
   _didChange(): boolean {
-    let head = this.history.head
-    let snap = this.snapshots[head.id]
+    let key = this.history.head.id
 
-    return snap && snap.last !== snap.next
+    if (key in this.snapshots) {
+      let snap = this.snapshots[key]
+
+      return snap.last !== snap.next
+    }
+
+    return false
   }
 
   _recall(action: ?Action): Object {
