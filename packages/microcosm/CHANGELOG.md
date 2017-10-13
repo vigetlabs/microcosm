@@ -3,6 +3,7 @@
 ## Master (13.x)
 
 - Moved internal state tree diffing tool to addon. 
+- Removed support for root level domains, forks can not add keys managed by parents. Repos can not add domains to the same key name.
 
 ## 12.14.0 (beta)
 
