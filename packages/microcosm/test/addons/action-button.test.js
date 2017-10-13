@@ -186,7 +186,7 @@ describe('callbacks', function() {
 
     button.unmount()
 
-    await action.execute()
+    await action.execute([])
 
     expect(action).toHaveStatus('resolve')
     expect(onDone).not.toHaveBeenCalled()

@@ -150,7 +150,7 @@ describe('callbacks', function() {
 
     unmount(button)
 
-    await action.execute()
+    await action.execute([])
 
     expect(action.status).toBe('resolve')
     expect(onDone).not.toHaveBeenCalled()
