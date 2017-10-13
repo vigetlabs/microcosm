@@ -85,7 +85,10 @@ class Action extends Emitter {
   }
 
   execute(params: *[]): this {
-    console.assert(Array.isArray(params), 'Action.execute must receive array of arguments.')
+    console.assert(
+      Array.isArray(params),
+      'Action.execute must receive array of arguments.'
+    )
 
     coroutine(this, params, this.origin)
 
