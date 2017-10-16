@@ -110,9 +110,9 @@ class Microcosm extends Emitter {
 
     this.active = true
     this.parent = this.options.parent
-    this.snapshots = Object.create(this.parent ? this.parent.snapshots : null)
+    this.snapshots = this.parent ? Object.create(this.parent.snapshots) : {}
     this.history = this.parent ? this.parent.history : new History(this.options)
-    this.actions = Object.create(this.parent ? this.parent.actions : null)
+    this.actions = this.parent ? Object.create(this.parent.actions) : {}
 
     if (!this.parent) {
       this._enableDomains()
@@ -387,12 +387,14 @@ class Microcosm extends Emitter {
     }
   }
 
-  _createSnapshot(action: Action): Snapshot {
-    let state = this._recall(action.parent)
+  _ensureSnapshot(action: Action): Snapshot {
+    if (this.snapshots.hasOwnProperty(action.id)) {
+      return this.snapshots[action.id]
+    }
 
     let snapshot: Snapshot = {
-      last: state,
-      next: state,
+      last: this._recall(action.parent),
+      next: this._recall(action),
       status: 'inactive',
       payload: undefined
     }
@@ -403,7 +405,7 @@ class Microcosm extends Emitter {
   }
 
   _updateSnapshot(action: Action) {
-    let snap = this.snapshots[action.id]
+    let snap = this._ensureSnapshot(action)
     let last = this._rebase(action)
     let next = last
 
@@ -455,8 +457,13 @@ class Microcosm extends Emitter {
   }
 
   _recall(action: ?Action): Object {
-    if (action && this.snapshots[action.id]) {
-      return this.snapshots[action.id].next
+    let focus = action
+    while (focus) {
+      if (focus.id in this.snapshots) {
+        return this.snapshots[focus.id].next
+      }
+
+      focus = focus.parent
     }
 
     return this.getInitialState()
@@ -488,9 +495,6 @@ class Microcosm extends Emitter {
     }
 
     this.domains = new DomainEngine(this)
-
-    // When an action is first created
-    this.history.on('append', this._createSnapshot, this)
 
     // When an action snapshot range needs updating
     this.history.on('change', this._updateSnapshotRange, this)

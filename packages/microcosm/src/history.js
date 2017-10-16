@@ -218,8 +218,6 @@ class History extends Emitter {
 
     action.on('change', this.reconcile, this)
 
-    this._emit('append', action)
-
     if (status && action.command !== START) {
       this.reconcile(action)
     }

@@ -22,17 +22,4 @@ describe('History::append', function() {
     expect(two.parent).toEqual(one)
     expect(three.parent).toEqual(two)
   })
-
-  it('emits an append event with the latest action', function() {
-    expect.assertions(1)
-
-    const repo = new Microcosm()
-    const type = n => n
-
-    repo.history.on('append', function(action) {
-      expect(action.command).toBe(type)
-    })
-
-    repo.append(type)
-  })
 })
