@@ -434,10 +434,6 @@ class Microcosm extends Emitter {
 
       focus = focus.next
     }
-
-    if (this.effects) {
-      this._dispatchEffect(source)
-    }
   }
 
   _removeSnapshot(action: Action) {
@@ -509,6 +505,8 @@ class Microcosm extends Emitter {
     }
 
     this.effects = new EffectEngine(this)
+
+    this.history.on('change', this._dispatchEffect, this)
   }
 }
 
