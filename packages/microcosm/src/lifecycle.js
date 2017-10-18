@@ -28,6 +28,4 @@ export const RESET = tag(sandbox.bind(null), '$reset')
 
 export const PATCH = tag(sandbox.bind(null), '$patch')
 
-export const BIRTH = tag('$birth')
-
 export const START = tag('$start')

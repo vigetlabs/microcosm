@@ -10,7 +10,7 @@ import Action from './action'
 import Emitter from './emitter'
 import defaultUpdateStrategy from './default-update-strategy'
 import { merge } from './utils'
-import { BIRTH, START } from './lifecycle'
+import { START } from './lifecycle'
 import { type Updater } from './default-update-strategy'
 import { iteratorTag } from './symbols'
 
@@ -134,7 +134,7 @@ class History extends Emitter {
 
         // Ignore certain lifecycle actions that are only for
         // internal purposes
-        if (next && (next.command === BIRTH || next.command === START)) {
+        if (next && next.command === START) {
           return iterator.next()
         }
 
@@ -205,11 +205,6 @@ class History extends Emitter {
     if (this.head) {
       this.head.lead(action)
     } else {
-      // Always have a parent node, no matter what
-      let birth = new Action(BIRTH, 'resolve')
-
-      birth.adopt(action)
-
       this.root = action
     }
 
@@ -230,7 +225,7 @@ class History extends Emitter {
    * together to bridge the gap.
    */
   remove(action: Action) {
-    if (action.isDisconnected()) {
+    if (action.connected === false) {
       return
     }
 
@@ -267,7 +262,7 @@ class History extends Emitter {
   clean(action: Action) {
     this.size -= 1
 
-    this._emit('remove', action)
+    this._emit('remove', action, action)
 
     action.remove()
   }
@@ -291,8 +286,6 @@ class History extends Emitter {
     if (action.command !== START) {
       this._emit('change', action, this.head)
     }
-
-    this.archive()
 
     this.queueRelease()
   }
@@ -319,7 +312,10 @@ class History extends Emitter {
     )
 
     this.releasing = false
+
     this._emit('release')
+
+    this.archive()
   }
 
   /**
@@ -336,11 +332,13 @@ class History extends Emitter {
     while (size > this.limit && root.complete) {
       size -= 1
 
-      this._emit('remove', root.parent)
-
       if (root.next) {
         root = root.next
       }
+    }
+
+    if (root.parent) {
+      this._emit('remove', root.parent.parent, null)
     }
 
     if (root !== this.root) {

@@ -423,12 +423,12 @@ class Microcosm extends Emitter {
     return snap.next !== next
   }
 
-  _updateSnapshotRange(source: Action, end: Action) {
-    let focus = source
+  _updateSnapshotRange(start: Action, stop: Action) {
+    let focus = start
     while (focus) {
       var changed = this._updateSnapshot(focus)
 
-      if (changed === false || focus === end) {
+      if (changed === false || focus === stop) {
         break
       }
 
@@ -436,8 +436,17 @@ class Microcosm extends Emitter {
     }
   }
 
-  _removeSnapshot(action: Action) {
-    delete this.snapshots[action.id]
+  _removeSnapshotRange(start: Action, stop: ?Action) {
+    let focus = start
+    while (focus) {
+      delete this.snapshots[focus.id]
+
+      if (stop != null && focus !== stop) {
+        break
+      }
+
+      focus = focus.parent
+    }
   }
 
   _didChange(): boolean {
@@ -496,7 +505,7 @@ class Microcosm extends Emitter {
     this.history.on('change', this._updateSnapshotRange, this)
 
     // When an action snapshot should be removed
-    this.history.on('remove', this._removeSnapshot, this)
+    this.history.on('remove', this._removeSnapshotRange, this)
   }
 
   _enableEffects() {

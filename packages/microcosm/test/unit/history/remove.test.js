@@ -98,16 +98,15 @@ describe('History::remove', function() {
       let repo = new Microcosm({ maxHistory: Infinity })
       let history = repo.history
 
-      repo.append(function one() {}, 'resolve')
+      let one = repo.append(function one() {}, 'resolve')
       repo.append(function two() {}, 'resolve')
       repo.append(function three() {}, 'resolve')
 
       let root = history.root
-      let next = root.next
 
       history.remove(root)
 
-      expect(history.root.id).toBe(next.id)
+      expect(history.root.id).toBe(one.id)
     })
 
     it('updates the active branch', function() {

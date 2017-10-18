@@ -13,7 +13,7 @@ type MixedObject = { [key: string]: mixed }
  */
 let uidStepper = 0
 export function uid(prefix: string): string {
-  return `${prefix}${uidStepper++}`
+  return `${prefix}/${uidStepper++}`
 }
 
 /**

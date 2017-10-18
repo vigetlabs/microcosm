@@ -38,13 +38,14 @@ class Action extends Emitter {
   children: Action[]
   revisions: Revision[]
   origin: Microcosm
+  connected: boolean
 
   constructor(command: string | Command, status: ?Status, origin: Microcosm) {
     super()
 
-    this.id = uid('action')
     this.command = tag(command)
     this.status = 'inactive'
+    this.id = uid(this.toString())
     this.payload = undefined
     this.disabled = false
     this.complete = false
@@ -54,6 +55,7 @@ class Action extends Emitter {
     this.children = []
     this.revisions = []
     this.origin = origin
+    this.connected = true
 
     if (status) {
       this._setState(status)
@@ -216,10 +218,6 @@ class Action extends Emitter {
     }).then(pass, fail)
   }
 
-  isDisconnected(): boolean {
-    return !this.parent
-  }
-
   /**
    * Remove the grandparent of this action, cutting off history.
    */
@@ -264,10 +262,18 @@ class Action extends Emitter {
    * from history.
    */
   remove() {
+    console.assert(this.connected, 'Action has already been removed.')
+
+    this.connected = false
+
+    this.children.length = 0
+
     if (this.parent) {
       this.parent.abandon(this)
-    } else {
-      console.assert(false, 'Action has already been removed.')
+    }
+
+    if (this.next) {
+      this.abandon(this.next)
     }
 
     this.removeAllListeners()
