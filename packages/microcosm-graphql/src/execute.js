@@ -3,7 +3,7 @@
  * Note: This does not handle mutations. Queries only
  */
 
-import { get } from 'microcosm'
+import { get, set } from 'microcosm'
 import { parseArguments } from './arguments'
 import { assign } from './utilities'
 import { createFinder } from './default-resolvers'
@@ -11,67 +11,48 @@ import { ROOT_QUERY, TYPE_NAME } from './constants'
 
 const noop = n => n
 
-const $Symbol = typeof Symbol === 'function' ? Symbol : {}
+function zipObject(keys, values) {
+  let obj = {}
 
-export const toStringTag: * = get($Symbol, 'toStringTag', '@@toStringTag')
-
-export function getStringTag(value: any): string {
-  if (!value) {
-    return ''
+  for (var i = 0; i < keys.length; i++) {
+    obj[keys[i]] = values[i]
   }
 
-  return value[toStringTag] || ''
-}
-
-function isGeneratorFn(value) {
-  return getStringTag(value) === 'GeneratorFunction'
+  return obj
 }
 
 class RecordLink {
   constructor(entry, field, resolver) {
-    this.key = entry.name.value
-    this.args = entry.arguments
+    this.key = entry.name ? entry.name.value : null
+    this.args = entry.arguments || []
     this.field = field
     this.resolver = resolver
-    this.upstream = {}
     this.downstream = {}
   }
 
   resolve(root, context) {
     let args = parseArguments(this.args, context.variables)
+    let state = context.state[this.field.type]
 
-    return this.resolver(root, args, context.state[this.field.type])
+    return Promise.resolve(this.resolver(root, args, state))
   }
 
   push(root, context) {
-    let answer = this.resolve(root, context)
-
-    if (isGeneratorFn(this.resolver)) {
-      for (var value of answer) {
-        this.trickle(value, context)
-      }
-    } else {
-      this.trickle(answer, context)
-    }
-  }
-
-  bubble(key, result) {
-    for (var id in this.upstream) {
-      this.upstream[id].bubble(key, result)
-    }
+    return this.resolve(root, context).then(value =>
+      this.trickle(value, context)
+    )
   }
 
   trickle(root, context) {
-    let result = {}
+    let keys = []
+    let result = []
+
     for (var key in this.downstream) {
-      result[key] = this.downstream[key].push(root, context)
+      keys.push(key)
+      result.push(this.downstream[key].push(root, context))
     }
 
-    this.bubble(this.key, result)
-  }
-
-  subscribe(link) {
-    this.upstream[link.key] = link
+    return Promise.all(result).then(values => zipObject(keys, values))
   }
 
   pipe(link) {
@@ -79,52 +60,23 @@ class RecordLink {
   }
 }
 
+class RootLink extends RecordLink {
+  push(root, context) {
+    return this.trickle(root, context)
+  }
+}
+
 class Leaf extends RecordLink {
   push(root, context) {
-    let answer = this.resolve(root, context)
-
-    if (isGeneratorFn(this.resolver)) {
-      let next = answer.next()
-
-      if (!next.done) {
-        this.bubble(this.key, next.value)
-
-        let loop = () => {
-          let next = answer.next()
-
-          if (!next.done) {
-            this.bubble(this.key, next.value)
-            setTimeout(loop)
-          }
-        }
-
-        setTimeout(loop)
-      }
-    } else {
-      this.bubble(this.key, value)
-    }
+    return Promise.resolve(this.resolve(root, context))
   }
 }
 
 class CollectionLink extends RecordLink {
   push(root, context) {
-    let answer = this.resolve(root, context)
-
-    if (isGeneratorFn(this.resolver)) {
-      for (var value of answer) {
-        let next = []
-        for (var i = 0, len = value.length; i < len; i++) {
-          next[i] = this.trickle(value[i], context)
-        }
-      }
-    } else {
-      let next = []
-      for (var i = 0, len = answer.length; i < len; i++) {
-        next[i] = this.trickle(answer[i], context)
-      }
-    }
-
-    return next
+    return this.resolve(root, context).then(value => {
+      return Promise.all(value.map(i => this.trickle(i, context)))
+    })
   }
 }
 
@@ -149,46 +101,21 @@ function scan(entry, schema, resolvers, definition, parent) {
 
   let link = new LinkType(entry, field, resolver)
 
-  if (parent) {
-    parent.pipe(link)
-    link.subscribe(parent)
-  }
-
   for (var i = 0; i < selections.length; i++) {
     scan(selections[i], schema, resolvers, schema[field.type], link)
   }
+
+  parent.pipe(link)
 
   return link
 }
 
 export function compile(repo, schema, entry, resolvers) {
-  let top = {
-    key: 'top',
-    bubble: function(key, value) {
-      console.log('Change!', key, value)
-    }
-  }
+  let top = new RootLink(entry)
 
-  let work = entry.selectionSet.selections.map(selection => {
-    let link = scan(selection, schema, resolvers, schema.Query, null)
-
-    link.subscribe(top)
-
-    return link
+  entry.selectionSet.selections.forEach(selection => {
+    scan(selection, schema, resolvers, schema.Query, top)
   })
 
-  return function(state, context) {
-    return work.map(link => link.push(state, context))
-  }
-}
-
-export function execute(repo, work, cache, state, variables) {
-  let context = { repo, variables, state, cache }
-  let answer = {}
-
-  for (var i = 0, len = work.length; i < len; i++) {
-    answer[work[i].name] = resolve(state, work[i], context)
-  }
-
-  return answer
+  return (state, context) => top.push(state, context)
 }

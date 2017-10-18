@@ -2,8 +2,8 @@ import Repo from '../src/repo'
 import { SOLAR_SCHEMA, SOLAR_DATA } from './fixtures/solar'
 import gql from 'graphql-tag'
 
-function delay(n) {
-  return new Promise(resolve => setTimeout(resolve, n))
+function delay(n, payload) {
+  return new Promise(resolve => setTimeout(() => resolve(payload), n))
 }
 
 describe('Execute', function() {
@@ -148,12 +148,17 @@ describe('Execute', function() {
   it.only('link test', async () => {
     let repo = new Repo({ schema: SOLAR_SCHEMA }, SOLAR_DATA)
 
+    repo.addQuery('Query', {
+      planets: {
+        resolver: root => {
+          return delay(500, root.Planet)
+        }
+      }
+    })
+
     repo.addQuery('Planet', {
       name: {
-        resolver: function* generator(root) {
-          yield root.name
-          yield root.name.toUpperCase()
-        }
+        resolver: root => root.name
       }
     })
 
@@ -163,15 +168,16 @@ describe('Execute', function() {
           planet(name: Venus) {
             name
           }
+          planets {
+            name
+          }
         }
       `
     )
 
     let context = { repo, variables: { name: 'Venus' }, state: repo.state }
 
-    let answer = query(repo.state, context)
-
-    await delay(1000)
+    let answer = await query(repo.state, context)
 
     console.dir(answer, { colors: true, depth: null })
   })

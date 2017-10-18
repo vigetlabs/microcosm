@@ -12,18 +12,6 @@ class GraphMicrocosm extends Microcosm {
     for (var name in this.schema) {
       this.addResource(this.schema[name])
     }
-
-    for (var key in this.mutations) {
-      this.mutations[key].forEach(mutation => {
-        const { name } = mutation
-
-        this.addQuery('Mutation', name, (_root, args) => this.push(name, args))
-      })
-    }
-  }
-
-  get resolvers() {
-    return this.queries
   }
 
   addResource(definition) {
