@@ -1,22 +1,6 @@
-import { clone } from 'microcosm'
-
-/**
- * Immutably update an object, but do not clone if the base reference
- * has changed.
- */
-export function assign(target, key, value, original) {
-  if (!original || (target === original && original[key] !== value)) {
-    target = clone(target)
-  }
-
-  target[key] = value
-
-  return target
-}
-
 export function matches(item, matchers) {
   for (var key in matchers) {
-    if (item[key] !== matchers[key]) {
+    if (item.hasOwnProperty(key) === false || item[key] !== matchers[key]) {
       return false
     }
   }
@@ -25,31 +9,11 @@ export function matches(item, matchers) {
 }
 
 export function filter(list, matchers) {
-  let allowed = []
-
-  for (var i = 0, len = list.length; i < len; i++) {
-    let item = list[i]
-
-    if (matches(item, matchers) === true) {
-      allowed.push(item)
-    }
-  }
-
-  return allowed
+  return list.filter(item => matches(item, matchers))
 }
 
 export function reject(list, matchers) {
-  let allowed = []
-
-  for (var i = 0, len = list.length; i < len; i++) {
-    let item = list[i]
-
-    if (matches(item, matchers) === false) {
-      allowed.push(item)
-    }
-  }
-
-  return allowed
+  return list.filter(item => !matches(item, matchers))
 }
 
 export function find(list, matchers) {
@@ -64,12 +28,17 @@ export function find(list, matchers) {
   return null
 }
 
-export function reduceName(list, callback, extra) {
+export function getName(item) {
+  return item.alias ? item.alias.value : item.name.value
+}
+
+type NameReducer = (arg: Argument, name: string, variables: object) => *
+export function reduceName(list: Arguments[], callback: NameReducer, extra: *) {
   let answer = {}
 
   for (var i = 0, len = list.length; i < len; i++) {
     var item = list[i]
-    let name = item.alias ? item.alias.value : item.name.value
+    let name = getName(item)
 
     answer[name] = callback(item, name, extra)
   }

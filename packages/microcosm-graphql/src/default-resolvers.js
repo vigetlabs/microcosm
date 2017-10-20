@@ -1,19 +1,32 @@
+/**
+ * @flow
+ */
 import { find, filter } from './utilities'
-import { emptyArgs } from './arguments'
 import { ROOT_QUERY } from './constants'
 
-export function createFinder(definition, field) {
-  let key = definition.name === ROOT_QUERY ? field.type : field.name
-  let search = field.isList ? filter : find
+export function createFinder(
+  schema: Schema,
+  definition: Definition,
+  field: Field
+) {
+  const { name } = definition
+
+  let isRoot = definition.name === ROOT_QUERY
+  let attribute = isRoot ? field.type : field.name
+  let related = schema[field.type]
+
+  if (isRoot === false && related) {
+    return createRelationship(related, field, attribute, definition.name)
+  }
 
   return (state, args) => {
-    let value = state[key]
+    let value = state[attribute]
 
-    if (Array.isArray(value) === false || emptyArgs(args)) {
+    if (Array.isArray(value) === false) {
       return value
     }
 
-    return search(value, args)
+    return field.isList ? filter(value, args) : find(value, args)
   }
 }
 
@@ -27,24 +40,14 @@ function relatedField(definition, type) {
   return null
 }
 
-export function createRelationship(definition, field, foreignKey, type) {
+export function createRelationship(definition, field, attribute, type) {
   let relation = relatedField(definition, type)
 
-  console.assert(
-    relation || field.isList === false,
-    `${type}.${foreignKey}: Unable to resolve one-to-many resolver. Add a field to ${field.type} with a type of ${type}.`
-  )
-
   return (record, args, related) => {
-    console.assert(
-      Array.isArray(record) === false,
-      `${type}.${foreignKey}: Unable to resolve one-to-many resolver. ${field.type} is not an array.`
-    )
-
     if (field.isList) {
       return filter(related, { [relation.name]: record.id })
     } else {
-      return find(related, { id: record[foreignKey] })
+      return find(related, { id: record[attribute] })
     }
   }
 }

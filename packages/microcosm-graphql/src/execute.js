@@ -5,11 +5,12 @@
 
 import { get, set } from 'microcosm'
 import { parseArguments } from './arguments'
-import { assign } from './utilities'
+import { hashcode, generateKey } from './hash'
 import { createFinder } from './default-resolvers'
-import { ROOT_QUERY, TYPE_NAME } from './constants'
+import { getName } from './utilities'
+import { ROOT_QUERY } from './constants'
 
-const noop = n => n
+const identity = n => n
 
 function zipObject(keys, values) {
   let obj = {}
@@ -21,35 +22,54 @@ function zipObject(keys, values) {
   return obj
 }
 
-class RecordLink {
-  constructor(entry, field, resolver) {
-    this.key = entry.name ? entry.name.value : null
-    this.args = entry.arguments || []
-    this.field = field
+class Link {
+  constructor(entry, type, resolver) {
+    this.key = getName(entry)
+    this.args = entry.arguments
+    this.type = type
     this.resolver = resolver
     this.downstream = {}
   }
 
-  resolve(root, context) {
-    let args = parseArguments(this.args, context.variables)
-    let state = context.state[this.field.type]
-
-    return Promise.resolve(this.resolver(root, args, state))
+  parameterize(context) {
+    return parseArguments(this.args, context.variables)
   }
 
-  push(root, context) {
-    return this.resolve(root, context).then(value =>
-      this.trickle(value, context)
-    )
+  toHash(root, context, cache) {
+    return [
+      generateKey(this.resolver, cache.pool),
+      generateKey(root, cache.pool),
+      hashcode(context.variables, cache.pool)
+    ].join('/')
   }
 
-  trickle(root, context) {
+  resolve(root, context, cache) {
+    let code = this.toHash(root, context, cache)
+
+    if (code in cache.answers) {
+      return cache.answers[code]
+    }
+
+    let args = this.parameterize(context)
+    let pool = context.state[this.type]
+    let raw = this.resolver(root, args, pool)
+
+    cache.answers[code] = Promise.resolve(raw)
+
+    return cache.answers[code]
+  }
+
+  push(root, context, cache) {
+    throw new Error('Implement push.')
+  }
+
+  trickle(root, context, cache) {
     let keys = []
     let result = []
 
     for (var key in this.downstream) {
       keys.push(key)
-      result.push(this.downstream[key].push(root, context))
+      result.push(this.downstream[key].push(root, context, cache))
     }
 
     return Promise.all(result).then(values => zipObject(keys, values))
@@ -60,50 +80,63 @@ class RecordLink {
   }
 }
 
-class RootLink extends RecordLink {
-  push(root, context) {
-    return this.trickle(root, context)
+class LeafLink extends Link {
+  push(root, context, cache) {
+    return this.resolve(root, context, cache)
   }
 }
 
-class Leaf extends RecordLink {
-  push(root, context) {
-    return Promise.resolve(this.resolve(root, context))
+class RecordLink extends Link {
+  push(root, context, cache) {
+    return this.resolve(root, context, cache).then(value =>
+      this.trickle(value, context, cache)
+    )
   }
 }
 
-class CollectionLink extends RecordLink {
-  push(root, context) {
-    return this.resolve(root, context).then(value => {
-      return Promise.all(value.map(i => this.trickle(i, context)))
+class CollectionLink extends Link {
+  push(root, context, cache) {
+    return this.resolve(root, context, cache).then(value => {
+      return Promise.all(value.map(i => this.trickle(i, context, cache)))
     })
   }
 }
 
-function getResolver(resolvers, definition, field, key) {
-  let resource = definition.name
+class RootLink extends Link {
+  constructor() {
+    super({ name: { value: 'Root' } }, {}, identity)
+  }
 
-  let resolver = get(resolvers, [resource, key, 'resolver'], null)
+  push(root, context, cache) {
+    return this.trickle(root, context, cache)
+  }
+}
 
-  return resolver || createFinder(definition, field)
+function linkForField(field, selections) {
+  if (field.isList) {
+    return CollectionLink
+  }
+
+  return selections.length ? RecordLink : LeafLink
 }
 
 function scan(entry, schema, resolvers, definition, parent) {
   const name = entry.name.value
   const field = definition.fields[name]
 
-  let selections = get(entry, ['selectionSet', 'selections'], [])
-  let resolver = getResolver(resolvers, definition, field, name)
+  const resolver = get(
+    resolvers,
+    [definition.name, field.name],
+    createFinder(schema, definition, field)
+  )
 
-  let LinkType = field.isList
-    ? CollectionLink
-    : selections.length ? RecordLink : Leaf
+  const selections = get(entry, ['selectionSet', 'selections'], [])
+  const LinkType = linkForField(field, selections)
+  const link = new LinkType(entry, field.type, resolver)
 
-  let link = new LinkType(entry, field, resolver)
-
-  for (var i = 0; i < selections.length; i++) {
-    scan(selections[i], schema, resolvers, schema[field.type], link)
-  }
+  selections.forEach(selection => {
+    scan(selection, schema, resolvers, schema[field.type], link)
+  })
 
   parent.pipe(link)
 
@@ -112,10 +145,13 @@ function scan(entry, schema, resolvers, definition, parent) {
 
 export function compile(repo, schema, entry, resolvers) {
   let top = new RootLink(entry)
+  let cache = { pool: new Map(), answers: {} }
 
   entry.selectionSet.selections.forEach(selection => {
     scan(selection, schema, resolvers, schema.Query, top)
   })
 
-  return (state, context) => top.push(state, context)
+  return (state, context) => {
+    return top.push(state, context, cache)
+  }
 }

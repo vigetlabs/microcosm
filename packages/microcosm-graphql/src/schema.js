@@ -1,16 +1,15 @@
 import { get, update, merge } from 'microcosm'
-import { ROOT_QUERY, OBJECT_DEF, TYPE_NAME, LIST } from './constants'
-import { filter, reduceName } from './utilities'
+import { ROOT_QUERY, OBJECT_DEF, LIST } from './constants'
+import { filter, reduceName, getName } from './utilities'
 import { isSingular } from './directives'
 
-export function makeType(definition, key) {
+export function makeType(definition, name) {
   return {
-    name: key,
-    root: key === ROOT_QUERY,
+    name: name,
     isSingular: isSingular(definition),
     fields: reduceName(definition.fields, (field, name) => {
       let isList = field.type.kind === LIST
-      let type = isList ? field.type.type.name.value : field.type.name.value
+      let type = isList ? getName(field.type.type) : getName(field.type)
 
       return { name, type, isList }
     })

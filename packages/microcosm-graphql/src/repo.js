@@ -1,7 +1,6 @@
-import Microcosm, { set } from 'microcosm'
+import Microcosm from 'microcosm'
 import { getQueries, getMutations } from './schema'
 import { domainFactory } from './domains'
-import { createRelationship, createFinder } from './default-resolvers'
 import { execute, compile } from './execute'
 
 class GraphMicrocosm extends Microcosm {
@@ -21,24 +20,7 @@ class GraphMicrocosm extends Microcosm {
       return
     }
 
-    let mutations = this.mutations[name]
-
-    this.addDomain(name, domainFactory(this, definition, mutations))
-
-    let resolvers = {}
-
-    for (let key in fields) {
-      let field = fields[key]
-      let related = this.schema[field.type]
-
-      if (related) {
-        resolvers[key] = {
-          resolver: createRelationship(related, field, key, name)
-        }
-      }
-    }
-
-    this.addQuery(name, resolvers)
+    this.addDomain(name, domainFactory(this, definition, this.mutations[name]))
   }
 
   compile(document) {

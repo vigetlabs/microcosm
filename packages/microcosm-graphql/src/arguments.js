@@ -1,11 +1,12 @@
 /**
  * Arguments
  * https://facebook.github.io/graphql/#sec-Language.Arguments
+ * @flow
  */
 
 import { reduceName } from './utilities'
 
-function parseArgument(arg, _name, variables) {
+function parseArgument(arg: Argument, _name: string, variables: Variables): * {
   // Input values:
   // https://facebook.github.io/graphql/#sec-Input-Values
   switch (arg.value.kind) {
@@ -22,15 +23,11 @@ function parseArgument(arg, _name, variables) {
   }
 }
 
-const NO_ARGS = {}
-
-export function emptyArgs(args) {
-  return args === NO_ARGS
-}
-
-export function parseArguments(args, variables) {
-  if (args.length <= 0) {
-    return NO_ARGS
+// Sharing an "empty" arguments object makes hashing easier
+const EMPTY = {}
+export function parseArguments(args: ?(Arguments[]), variables: Variables): * {
+  if (!args || args.length <= 0) {
+    return EMPTY
   }
 
   return reduceName(args, parseArgument, variables)
