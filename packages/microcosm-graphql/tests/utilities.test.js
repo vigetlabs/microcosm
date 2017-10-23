@@ -1,4 +1,5 @@
-import { find, filter, matches, reject } from '../src/utilities'
+import Observable from 'zen-observable'
+import { find, filter, matches, reject, observerHash } from '../src/utilities'
 
 describe('matches', function() {
   it('returns true if there are no criteria', function() {
@@ -42,6 +43,10 @@ describe('filter', function() {
   it('returns an empty list when there is no match', function() {
     expect(filter([bill, fred], { id: 2 })).toEqual([])
   })
+
+  it('returns an empty list when there are no items or match', function() {
+    expect(filter([], null)).toEqual([])
+  })
 })
 
 describe('reject', function() {
@@ -54,5 +59,46 @@ describe('reject', function() {
 
   it('returns no items are no criteria', function() {
     expect(reject([bill, fred])).toEqual([])
+  })
+})
+
+describe('hashObserverable', function() {
+  function count(end) {
+    let start = 0
+    return new Observable(observer => {
+      while (start <= end) {
+        observer.next(start++)
+      }
+      observer.complete()
+    })
+  }
+
+  it('builds an array', function() {
+    let handler = jest.fn()
+
+    observerHash([count(2), count(2)]).subscribe(handler)
+
+    expect(handler).toHaveBeenCalledWith([0])
+    expect(handler).toHaveBeenCalledWith([1])
+    expect(handler).toHaveBeenCalledWith([2])
+    expect(handler).toHaveBeenCalledWith([2, 0])
+    expect(handler).toHaveBeenCalledWith([2, 1])
+    expect(handler).toHaveBeenCalledWith([2, 2])
+  })
+
+  it('builds an object', function() {
+    let handler = jest.fn()
+
+    observerHash({
+      one: count(2),
+      two: count(2)
+    }).subscribe(handler)
+
+    expect(handler).toHaveBeenCalledWith({ one: 0 })
+    expect(handler).toHaveBeenCalledWith({ one: 1 })
+    expect(handler).toHaveBeenCalledWith({ one: 2 })
+    expect(handler).toHaveBeenCalledWith({ one: 2, two: 0 })
+    expect(handler).toHaveBeenCalledWith({ one: 2, two: 1 })
+    expect(handler).toHaveBeenCalledWith({ one: 2, two: 2 })
   })
 })

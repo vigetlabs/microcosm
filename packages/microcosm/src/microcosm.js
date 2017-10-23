@@ -4,6 +4,7 @@
  * @flow
  */
 
+import Observable from 'zen-observable'
 import Action from './action'
 import Emitter from './emitter'
 import History, { HISTORY_DEFAULTS } from './history'
@@ -383,6 +384,17 @@ class Microcosm extends Emitter {
     this.queries = update(this.queries, keyPath, value =>
       merge(value, resolver)
     )
+  }
+
+  observe() {
+    return new Observable(observer => {
+      this.on('change', observer.next, observer)
+      this.on('teardown', observer.complete, observer)
+
+      observer.next(this.state)
+
+      return () => this._removeScope(observer)
+    })
   }
 
   /* Private ------------------------------------------------------ */

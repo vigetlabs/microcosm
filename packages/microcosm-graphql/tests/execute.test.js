@@ -1,14 +1,25 @@
-import Repo from '../src/repo'
-import { SOLAR_SCHEMA, SOLAR_DATA } from './fixtures/solar'
+import { SolarSystem } from './fixtures/solar'
 import gql from 'graphql-tag'
 
-function delay(n, payload) {
-  return new Promise(resolve => setTimeout(() => resolve(payload), n))
+function finish(observable) {
+  let result = null
+
+  return new Promise(function(resolve, reject) {
+    observable.subscribe({
+      next: value => {
+        result = value
+      },
+      complete() {
+        resolve(result)
+      },
+      error: reject
+    })
+  })
 }
 
 describe('Execute', function() {
-  it.skip('provides the type name', async () => {
-    let repo = new Repo({ schema: SOLAR_SCHEMA })
+  it.skip('provides the type name', () => {
+    let repo = new SolarSystem({ schema: SOLAR_SCHEMA })
 
     repo.reset(SOLAR_DATA)
 
@@ -22,155 +33,53 @@ describe('Execute', function() {
       `
     )
 
-    let context = { repo, variables: {}, state: repo.state }
-    let answer = await query(repo.state, context)
+    let answer = query({ state: repo.state })
 
     expect(query).toHaveProperty('planet.__typename', 'Planet')
   })
 
-  it.only('caches lookups', async () => {
-    let repo = new Repo({ schema: SOLAR_SCHEMA })
-
-    let getStar = jest.fn((planet, args, stars) => {
-      return stars.find(star => star.id === planet.star)
-    })
-
-    repo.addQuery('Planet', {
-      star: getStar
-    })
-
-    repo.reset(SOLAR_DATA)
+  it('streams answers', async () => {
+    let repo = new SolarSystem()
 
     let query = repo.compile(
       gql`
         {
+          planet(name: Venus) {
+            name
+          }
+        }
+      `
+    )
+
+    let result = query({ repo, state: repo.state })
+    let update = jest.fn()
+
+    result.subscribe(update)
+
+    await finish(result)
+
+    expect(update).toHaveBeenCalledTimes(2)
+
+    expect(update).toHaveBeenCalledWith({ planet: { __missing: true } })
+    expect(update).toHaveBeenCalledWith({ planet: { name: 'Venus' } })
+  })
+
+  it('caches lookups', async () => {
+    let repo = new SolarSystem()
+
+    // A and B should not be the same query, but have the same
+    // planets answer
+    let query = repo.compile(
+      gql`
+        {
           a: planets(name: Venus) {
+            name
             star {
               name
             }
           }
           b: planets(name: Venus) {
-            star {
-              name
-            }
-          }
-        }
-      `
-    )
-
-    let answer = await query(repo.state, {
-      repo,
-      variables: {},
-      state: repo.state
-    })
-
-    expect(getStar).toHaveBeenCalledTimes(1)
-
-    expect(answer).toHaveProperty('a')
-    expect(answer).toHaveProperty('b')
-
-    expect(answer.a).toBe(answer.b)
-  })
-
-  // TODO: With the same identifier, could this be cached?
-  it('does not cache lookups for different arguments', () => {
-    let repo = new Repo({ schema: SOLAR_SCHEMA }, SOLAR_DATA)
-    let getStar = jest.fn((root, args, stars) => {
-      return stars.find(star => star.id === root.star)
-    })
-
-    repo.addQuery('Planet', {
-      star: { resolver: getStar }
-    })
-
-    repo.query(
-      gql`
-        {
-          a: planets(name: Venus) {
-            star {
-              name
-            }
-          }
-          b: planets(name: Earth) {
-            star {
-              name
-            }
-          }
-        }
-      `
-    )
-
-    expect(getStar).toHaveBeenCalledTimes(2)
-  })
-
-  it('caches nested lookups', () => {
-    let repo = new Repo({ schema: SOLAR_SCHEMA }, SOLAR_DATA)
-    let getStar = jest.fn((root, args, stars) => {
-      return stars.find(star => star.id === root.star)
-    })
-
-    let getStarPlanets = jest.fn((root, args, planets) => {
-      return planets.find(planet => planet.star === root.id)
-    })
-
-    repo.addQuery('Planet', {
-      star: {
-        resolver: getStar
-      }
-    })
-
-    repo.addQuery('Star', {
-      planets: {
-        resolver: getStarPlanets
-      }
-    })
-
-    repo.query(
-      gql`
-        {
-          planets {
-            star {
-              planets {
-                star {
-                  name
-                }
-              }
-            }
-          }
-        }
-      `
-    )
-
-    // Once for each planet
-    expect(getStar).toHaveBeenCalledTimes(3)
-    expect(getStarPlanets).toHaveBeenCalledTimes(1)
-  })
-
-  it('builds relationships for single fields', () => {
-    let repo = new Repo({ schema: SOLAR_SCHEMA }, SOLAR_DATA)
-
-    let answer = repo.query(
-      gql`
-        {
-          planet(name: Venus) {
-            star {
-              name
-            }
-          }
-        }
-      `
-    )
-
-    expect(answer.planet.star.name).toEqual('Sol')
-  })
-
-  it('link test', async () => {
-    let repo = new Repo({ schema: SOLAR_SCHEMA }, SOLAR_DATA)
-
-    let query = repo.compile(
-      gql`
-        {
-          planet(name: Venus) {
+            id
             name
             star {
               name
@@ -180,12 +89,214 @@ describe('Execute', function() {
       `
     )
 
-    let context = { repo, variables: { name: 'Venus' }, state: repo.state }
+    let result = query({ repo, state: repo.state })
+    let answer = await finish(result)
 
-    var then = process.hrtime()
-    let answer = await query(repo.state, context)
-    console.log(process.hrtime(then)[1] / 1000000)
+    expect(repo.queries.Query.planets.prepare).toHaveBeenCalledTimes(2)
+    expect(repo.queries.Planet.star.prepare).toHaveBeenCalledTimes(2)
 
-    expect(answer.planet).toHaveProperty('star.name', 'Sol')
+    expect(answer).toHaveProperty('a')
+    expect(answer).toHaveProperty('b')
+
+    // The actual queries themselves have different selections. They should not
+    // cache
+    expect(answer.a).not.toEqual(answer.b)
+  })
+
+  it('gracefully handles missing lists', async () => {
+    let repo = new SolarSystem()
+
+    let query = repo.compile(
+      gql`
+        {
+          planets(name: "Alpha Centari") {
+            name
+            star {
+              name
+            }
+          }
+        }
+      `
+    )
+
+    let result = query({ repo, state: repo.state })
+    let answer = await finish(result)
+
+    expect(answer).toHaveProperty('planets', [])
+  })
+
+  it('gracefully handles missing objects', async () => {
+    let repo = new SolarSystem()
+
+    let query = repo.compile(
+      gql`
+        {
+          planet(name: "Meteor") {
+            name
+            star {
+              name
+            }
+          }
+        }
+      `
+    )
+
+    let result = query({ repo, state: repo.state })
+    let answer = await finish(result)
+
+    expect(answer).toHaveProperty('planet', { __missing: true })
+  })
+
+  it('gracefully handles missing relationships', async () => {
+    let repo = new SolarSystem()
+
+    let query = repo.compile(
+      gql`
+        {
+          planet(name: "Meteor") {
+            name
+            star {
+              name
+            }
+          }
+        }
+      `
+    )
+
+    let result = query({ repo, state: repo.state })
+    let answer = await finish(result)
+
+    expect(answer).toHaveProperty('planet', { __missing: true })
+  })
+
+  it('gracefully handles missing nested relationships', async () => {
+    let repo = new SolarSystem()
+
+    let query = repo.compile(
+      gql`
+        {
+          star(name: "Sol") {
+            name
+            planets(name: "Meteor") {
+              name
+            }
+          }
+        }
+      `
+    )
+
+    let result = query({ repo, state: repo.state })
+    let answer = await finish(result)
+
+    expect(answer).toHaveProperty('star.planets', [])
+  })
+
+  it('does not cache lookups for different arguments', async () => {
+    let repo = new SolarSystem()
+
+    let query = repo.compile(
+      gql`
+        {
+          venus: planet(name: Venus) {
+            name
+            star {
+              name
+            }
+          }
+          earth: planet(name: Earth) {
+            name
+            star {
+              name
+            }
+          }
+        }
+      `
+    )
+
+    let result = query({ repo, state: repo.state })
+    let answer = await finish(result)
+
+    expect(answer.venus.name).toBe('Venus')
+    expect(answer.earth.name).toBe('Earth')
+
+    // TODO: Why two requests?
+    expect(repo.queries.Query.planet.prepare).toHaveBeenCalledTimes(2)
+    expect(repo.queries.Query.planet.resolver).toHaveBeenCalledTimes(4)
+
+    // 1. Venus initializes
+    // 2. Earth initializes
+    // 3. Venus loads
+    // 4. Earth loads
+    // 5. Venus star loads
+    // 6. Earth star loads
+    // TODO: This should not fire twice
+    expect(repo.queries.Planet.star.prepare).toHaveBeenCalledTimes(2)
+    expect(repo.queries.Planet.star.resolver).toHaveBeenCalledTimes(6)
+  })
+
+  it('does not cache lookups for records in a list', async () => {
+    let repo = new SolarSystem()
+
+    let query = repo.compile(
+      gql`
+        {
+          planets {
+            name
+          }
+        }
+      `
+    )
+
+    let result = query({ repo, state: repo.state })
+    let answer = await finish(result)
+
+    let names = answer.planets.map(p => p.name)
+
+    expect(names).toEqual(['Mercury', 'Venus', 'Earth'])
+  })
+
+  it('builds relationships for single fields', async () => {
+    let repo = new SolarSystem()
+
+    let query = repo.compile(
+      gql`
+        {
+          planet(name: Venus) {
+            star {
+              name
+            }
+          }
+        }
+      `
+    )
+
+    let result = query({ repo, state: repo.state })
+    let answer = await finish(result)
+
+    expect(answer.planet.star.name).toEqual('Sol')
+  })
+
+  it('uses variables', async () => {
+    let repo = new SolarSystem()
+
+    let query = repo.compile(
+      gql`
+        {
+          planet(name: $name) {
+            name
+          }
+        }
+      `
+    )
+
+    let result = await query({
+      repo: repo,
+      state: repo.state,
+      variables: { name: 'Venus' }
+    })
+
+    let answer = await finish(result)
+
+    expect(answer.planet.name).toEqual('Venus')
   })
 })

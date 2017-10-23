@@ -43,7 +43,9 @@ function relatedField(definition, type) {
 export function createRelationship(definition, field, attribute, type) {
   let relation = relatedField(definition, type)
 
-  return (record, args, related) => {
+  return (record, args, state) => {
+    let related = state[type]
+
     if (field.isList) {
       return filter(related, { [relation.name]: record.id })
     } else {

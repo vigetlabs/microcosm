@@ -4,8 +4,10 @@ import { domainFactory } from './domains'
 import { execute, compile } from './execute'
 
 class GraphMicrocosm extends Microcosm {
-  setup({ schema }) {
-    this.schema = getQueries(schema)
+  constructor(options) {
+    super(options)
+
+    this.schema = getQueries(this.options.schema)
     this.mutations = getMutations(this.schema)
 
     for (var name in this.schema) {
@@ -33,7 +35,7 @@ class GraphMicrocosm extends Microcosm {
       'Too many query definitions.'
     )
 
-    return compile(this, this.schema, document.definitions[0], this.queries)
+    return compile(this.schema, document.definitions[0], this.queries)
   }
 
   query(document, variables) {

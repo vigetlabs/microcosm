@@ -1,3 +1,6 @@
+import { set } from 'microcosm'
+import Observable from 'zen-observable'
+
 export function matches(item, matchers) {
   for (var key in matchers) {
     if (item.hasOwnProperty(key) === false || item[key] !== matchers[key]) {
@@ -44,4 +47,47 @@ export function reduceName(list: Arguments[], callback: NameReducer, extra: *) {
   }
 
   return answer
+}
+
+export function zipObject(keys: string[], values: mixed[]) {
+  let obj = {}
+
+  for (var i = keys.length - 1; i >= 0; i--) {
+    obj[keys[i]] = values[i]
+  }
+
+  return obj
+}
+
+export function promiseHash(obj: { [string]: Promise<*, *> }) {
+  let keys = []
+  let work = []
+
+  for (var key in obj) {
+    keys.push(key)
+    work.push(obj[key])
+  }
+
+  return Promise.all(work).then(results => zipObject(keys, results))
+}
+
+export function observerHash(obj) {
+  return new Observable(observer => {
+    let keys = Object.keys(obj)
+    let answer = Array.isArray(obj) ? [] : {}
+
+    if (keys.length <= 0) {
+      observer.next(answer)
+    }
+
+    Observable.of(...keys)
+      .flatMap(key => {
+        return obj[key].map(value => ({ key, value }))
+      })
+      .map(next => {
+        answer = set(answer, next.key, next.value)
+        return answer
+      })
+      .subscribe(observer)
+  })
 }
