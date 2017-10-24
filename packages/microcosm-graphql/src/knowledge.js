@@ -1,23 +1,39 @@
 import Observable from 'zen-observable'
 import { get, set, clone } from 'microcosm'
 import { createFinder } from './default-resolvers'
-import { getName, promiseHash, observerHash } from './utilities'
+import { getName, observerHash } from './utilities'
 import { parseArguments } from './arguments'
 
 const noop = () => {}
 
+function defaultHashing(root, args) {
+  let code = ''
+
+  if (root && 'id' in root) {
+    code += root.id
+  }
+
+  for (var key in args) {
+    code += key + ':' + args[key] + '|'
+  }
+
+  return code
+}
+
 class Answer {
-  constructor(id, preparer, resolver) {
+  constructor(id, preparer, resolver, hasher) {
     this.id = id
+
     this.preparer = preparer || (() => Promise.resolve())
     this.resolver = resolver || noop
+    this.hasher = hasher || defaultHashing
 
     this.prepareCache = {}
     this.resolveCache = {}
   }
 
   prepare(repo, args) {
-    let key = this.toHash(null, args)
+    let key = this.hasher(null, args)
 
     if (key in this.prepareCache === false) {
       this.prepareCache[key] = this.preparer(repo, args)
@@ -27,7 +43,7 @@ class Answer {
   }
 
   resolve(repo, args, root) {
-    let key = this.toHash(root, args)
+    let key = this.hasher(root, args)
 
     if (key in this.resolveCache === false) {
       this.resolveCache[key] = new Observable(observer => {
@@ -56,20 +72,6 @@ class Answer {
     }
 
     return this.resolveCache[key]
-  }
-
-  toHash(root, args) {
-    let code = this.id + ':'
-
-    if (root && 'id' in root) {
-      code += '/id:' + root.id + '/'
-    }
-
-    for (var key in args) {
-      code += key + ':' + args[key] + '/'
-    }
-
-    return code
   }
 }
 

@@ -49,28 +49,6 @@ export function reduceName(list: Arguments[], callback: NameReducer, extra: *) {
   return answer
 }
 
-export function zipObject(keys: string[], values: mixed[]) {
-  let obj = {}
-
-  for (var i = keys.length - 1; i >= 0; i--) {
-    obj[keys[i]] = values[i]
-  }
-
-  return obj
-}
-
-export function promiseHash(obj: { [string]: Promise<*, *> }) {
-  let keys = []
-  let work = []
-
-  for (var key in obj) {
-    keys.push(key)
-    work.push(obj[key])
-  }
-
-  return Promise.all(work).then(results => zipObject(keys, results))
-}
-
 export function observerHash(obj) {
   return new Observable(observer => {
     let keys = Object.keys(obj)
