@@ -8,44 +8,61 @@ import { parseArguments } from './arguments'
 const noop = () => {}
 
 class Answer {
-  constructor(id, prep, resolver) {
+  constructor(id, preparer, resolver) {
     this.id = id
-    this.prepare = prep || noop
+    this.preparer = preparer || (() => Promise.resolve())
     this.resolver = resolver || noop
 
-    this.cache = {}
+    this.prepareCache = {}
+    this.resolveCache = {}
+
     this.pool = new Map()
+  }
+
+  prepare(repo, args) {
+    let key = this.toHash(null, args)
+
+    if (key in this.prepareCache === false) {
+      this.prepareCache[key] = this.preparer(repo, args)
+    }
+
+    return this.prepareCache[key]
   }
 
   resolve(repo, args, root) {
     let key = this.toHash(root, args)
 
-    if (key in this.cache === false) {
-      this.cache[key] = new Observable(observer => {
+    if (key in this.resolveCache === false) {
+      this.resolveCache[key] = new Observable(observer => {
         let prep = this.prepare(repo, args)
+        let last = undefined
 
         let sub = repo.observe().subscribe(state => {
-          observer.next(this.resolver(root, args, state))
+          let next = this.resolver(root, args, state)
+
+          if (next !== last) {
+            last = next
+            observer.next(next)
+          }
         })
 
-        if (prep) {
-          Promise.resolve(prep).then(
-            () => observer.complete(),
-            err => observer.error()
-          )
-        } else {
-          observer.complete()
-        }
+        prep.then(() => observer.complete(), err => observer.error())
 
-        return () => sub.unsubscribe()
+        return () => {
+          sub.unsubscribe()
+
+          last = null
+          prep = null
+          sub = null
+        }
       })
     }
 
-    return this.cache[key]
+    return this.resolveCache[key]
   }
 
   toHash(root, args) {
-    let code = this.id + ': '
+    let code = this.id + ':'
 
     if (root && 'id' in root) {
       code += '/id:' + root.id + '/'

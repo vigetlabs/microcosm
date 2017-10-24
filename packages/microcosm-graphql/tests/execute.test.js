@@ -74,13 +74,42 @@ describe('Execute', function() {
         {
           a: planets(name: Venus) {
             name
-            star {
-              name
-            }
           }
           b: planets(name: Venus) {
             id
             name
+          }
+        }
+      `
+    )
+
+    let result = query({ repo, state: repo.state })
+    let answer = await finish(result)
+
+    expect(repo.queries.Query.planets.prepare).toHaveBeenCalledTimes(1)
+
+    expect(answer).toHaveProperty('a')
+    expect(answer).toHaveProperty('b')
+
+    // The actual queries themselves have different selections. They should not
+    // cache
+    expect(answer.a).not.toEqual(answer.b)
+  })
+
+  it('caches nested lookups to the same relationship', async () => {
+    let repo = new SolarSystem()
+
+    // A and B should not be the same query, but have the same
+    // planets answer
+    let query = repo.compile(
+      gql`
+        {
+          a: planets(name: Venus) {
+            star {
+              name
+            }
+          }
+          b: planets(name: Earth) {
             star {
               name
             }
@@ -92,15 +121,10 @@ describe('Execute', function() {
     let result = query({ repo, state: repo.state })
     let answer = await finish(result)
 
-    expect(repo.queries.Query.planets.prepare).toHaveBeenCalledTimes(2)
-    expect(repo.queries.Planet.star.prepare).toHaveBeenCalledTimes(2)
+    expect(repo.queries.Planet.star.prepare).toHaveBeenCalledTimes(1)
 
     expect(answer).toHaveProperty('a')
     expect(answer).toHaveProperty('b')
-
-    // The actual queries themselves have different selections. They should not
-    // cache
-    expect(answer.a).not.toEqual(answer.b)
   })
 
   it('gracefully handles missing lists', async () => {
@@ -219,7 +243,6 @@ describe('Execute', function() {
     expect(answer.venus.name).toBe('Venus')
     expect(answer.earth.name).toBe('Earth')
 
-    // TODO: Why two requests?
     expect(repo.queries.Query.planet.prepare).toHaveBeenCalledTimes(2)
     expect(repo.queries.Query.planet.resolver).toHaveBeenCalledTimes(4)
 
@@ -229,8 +252,7 @@ describe('Execute', function() {
     // 4. Earth loads
     // 5. Venus star loads
     // 6. Earth star loads
-    // TODO: This should not fire twice
-    expect(repo.queries.Planet.star.prepare).toHaveBeenCalledTimes(2)
+    expect(repo.queries.Planet.star.prepare).toHaveBeenCalledTimes(1)
     expect(repo.queries.Planet.star.resolver).toHaveBeenCalledTimes(6)
   })
 
