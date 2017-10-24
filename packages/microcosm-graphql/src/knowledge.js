@@ -1,7 +1,6 @@
 import Observable from 'zen-observable'
 import { get, set, clone } from 'microcosm'
 import { createFinder } from './default-resolvers'
-import { hashcode, generateKey } from './hash'
 import { getName, promiseHash, observerHash } from './utilities'
 import { parseArguments } from './arguments'
 
@@ -15,8 +14,6 @@ class Answer {
 
     this.prepareCache = {}
     this.resolveCache = {}
-
-    this.pool = new Map()
   }
 
   prepare(repo, args) {
@@ -66,8 +63,6 @@ class Answer {
 
     if (root && 'id' in root) {
       code += '/id:' + root.id + '/'
-    } else {
-      code += generateKey(root, this.pool) + '/'
     }
 
     for (var key in args) {
