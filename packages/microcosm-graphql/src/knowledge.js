@@ -50,19 +50,22 @@ class Answer {
         let prep = this.prepare(repo, args)
         let last = undefined
 
-        let sub = repo.observe().subscribe(state => {
-          let next = this.resolver(root, args, state)
+        /* let sub = repo.observe().subscribe(state => {
+         *   let next = this.resolver(root, args, state)
 
-          if (next !== last) {
-            last = next
-            observer.next(next)
-          }
-        })
+         *   if (next !== last) {
+         *     last = next
+         *     observer.next(next)
+         *   }
+         * })*/
 
-        prep.then(() => observer.complete(), err => observer.error())
+        prep.then((payload) => {
+          observer.next(this.resolver(root, args, repo.state, payload))
+          observer.complete()
+        }, err => observer.error())
 
         return () => {
-          sub.unsubscribe()
+//          sub.unsubscribe()
 
           last = null
           prep = null
@@ -84,7 +87,6 @@ export class Knowledge {
   }
 
   resolve(key, definition, field) {
-    // TODO: Could we guess root level queries?
     console.assert(
       field,
       `Missing "${key}". \n\nIs ${key} defined in your schema?`

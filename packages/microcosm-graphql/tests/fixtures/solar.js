@@ -1,6 +1,7 @@
 import gql from 'graphql-tag'
 import Repo from '../../src/repo'
 import { find, filter } from '../../src/utilities'
+import { uniqBy } from 'lodash'
 
 export const SOLAR_SCHEMA = gql`
   type Star {
@@ -21,6 +22,7 @@ export const SOLAR_SCHEMA = gql`
     planets(name: String, weight: Int): [Planet]
     star(id: ID, name: String): Star
     stars(name: String): [Star]
+    paginatedPlanets(limit: Int, offset: Int): [Planet]
   }
 `
 
@@ -41,8 +43,10 @@ export class SolarSystem extends Repo {
   setup() {
     this.addDomain('Planet', {
       actions: {
-        getPlanets: () => {
-          return Promise.resolve(SOLAR_DATA.Planet)
+        getPlanets: ({ limit = Infinity, offset = 0 } = {}) => {
+          return Promise.resolve(
+            SOLAR_DATA.Planet.slice(offset, offset + limit)
+          )
         }
       },
       getInitialState() {
@@ -50,7 +54,9 @@ export class SolarSystem extends Repo {
       },
       register() {
         return {
-          getPlanets: (old, next) => next
+          getPlanets: (old, next) => {
+            return uniqBy(old.concat(next), 'id')
+          }
         }
       }
     })
@@ -87,6 +93,16 @@ export class SolarSystem extends Repo {
         resolver: jest.fn((_, args, { Planet }) => {
           return filter(Planet, args)
         })
+      },
+      paginatedPlanets: {
+        prepare: (repo, args) => {
+          return repo.push('getPlanets', args)
+        },
+        resolver: (_, args, { Planet }, result = []) => {
+          return result.map(item => {
+            return find(Planet, { id: item.id })
+          })
+        }
       },
       star: {
         prepare: jest.fn((repo, args) => {

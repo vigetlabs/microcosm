@@ -311,7 +311,7 @@ describe('Execute', function() {
       `
     )
 
-    let result = await query({
+    let result = query({
       repo: repo,
       state: repo.state,
       variables: { name: 'Venus' }
@@ -320,5 +320,25 @@ describe('Execute', function() {
     let answer = await finish(result)
 
     expect(answer.planet.name).toEqual('Venus')
+  })
+
+  it.only('can paginate results', async () => {
+    let repo = new SolarSystem()
+
+    let query = repo.compile(
+      gql`
+        {
+          paginatedPlanets(offset: 2, limit: 1) {
+            name
+          }
+        }
+      `
+    )
+
+    let result = query({ repo, state: repo.state })
+
+    let answer = await finish(result)
+
+    expect(answer.paginatedPlanets).toEqual([{ name: 'Earth' }])
   })
 })
