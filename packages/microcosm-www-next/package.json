@@ -6,7 +6,8 @@
   "dependencies": {
     "gatsby": "^1.9.73",
     "gatsby-link": "^1.6.22",
-    "gatsby-plugin-react-helmet": "^1.0.8"
+    "gatsby-plugin-react-helmet": "^1.0.8",
+    "gatsby-plugin-sass": "^1.0.12"
   },
   "keywords": [
     "gatsby"
@@ -20,6 +21,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "babel-preset-env": "^1.6.1",
     "prettier": "^1.7.4"
   }
 }
