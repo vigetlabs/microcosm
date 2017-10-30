@@ -1,0 +1,60 @@
+/*
+  media query breakpoints loosely modeled after material design breakpoints
+  https://material.io/guidelines/layout/responsive-ui.html#responsive-ui-breakpoints
+
+  0          360          400         600         720         840          960         1280         ...
+  | sm mobile | med mobile | lg mobile | sm tablet | lg tablet | sm desktop | md desktop | lg desktop |
+  =====================================================================================================
+*/
+
+
+// Variables
+
+$breakpoints : (
+  small-mobile-down  : 'max-width: 359px',
+  medium-mobile-up   : 'min-width: 360px',
+  medium-mobile-down : 'max-width: 399px',
+  large-mobile-up    : 'min-width: 400px',
+  large-mobile-down  : 'max-width: 599px',
+  small-tablet-up    : 'min-width: 600px',
+  small-tablet-down  : 'max-width: 719px',
+  large-tablet-up    : 'min-width: 720px',
+  large-tablet-down  : 'max-width: 839px',
+  small-desktop-up   : 'min-width: 840px',
+  small-desktop-down : 'max-width: 959px',
+  medium-desktop-up  : 'min-width: 960px',
+  large-desktop-up   : 'min-width: 1280px',
+);
+
+
+// Mixins
+
+@mixin breakpoint($expression) {
+  @if (str-index($expression, 'landscape')) {
+    @media (bp($expression)) and (orientation: landscape) {
+      @content;
+    }
+  } @else {
+    @media (bp($expression)) {
+      @content;
+    }
+  }
+}
+
+@mixin range($start, $end) {
+  @media (bp($start)) and (bp($end)) {
+    @content;
+  }
+}
+
+
+// Functions
+
+@function bp($key) {
+  @if map-has-key($breakpoints, $key) {
+    @return map-get($breakpoints, $key);
+  }
+
+  @warn "Unkown '#{$key}' in $breakpoints.";
+  @return null;
+}

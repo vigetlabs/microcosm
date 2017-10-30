@@ -1,0 +1,14 @@
+// utility classes for centering and controling maximum width
+// usage: <div class="wrapper">
+
+.wrapper {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: $page-gutter;
+  padding-right: $page-gutter;
+  width: 100%;
+
+  @include breakpoint(medium-desktop-up) {
+    max-width: 1040px;
+  }
+}

@@ -1,0 +1,5 @@
+@mixin hover {
+  [data-whatintent="mouse"] &:hover {
+    @content;
+  }
+}

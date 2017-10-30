@@ -1,0 +1,48 @@
+@-ms-viewport{
+  width: device-width;
+}
+
+[tabindex="-1"]:focus,
+[data-whatinput="mouse"] *:focus,
+[data-whatinput="touch"] *:focus {
+  outline: none;
+}
+
+html {
+  background-color: #fff;
+  min-height: 100%;
+}
+
+body {
+  color: color(text);
+  @include font-family-regular;
+  min-height: 100%;
+  position: relative;
+}
+
+cite {
+  font-style: normal;
+}
+
+img {
+  -ms-interpolation-mode: bicubic;
+  height: auto;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+svg {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+
+// box-sizing -- http://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/
+
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}

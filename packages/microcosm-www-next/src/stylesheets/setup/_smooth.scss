@@ -1,0 +1,13 @@
+// antialised text for use on dark backgrounds
+// http://usabilitypost.com/2012/11/05/stop-fixing-font-smoothing/
+@mixin smooth {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smoothing: antialiased;
+}
+
+@mixin unsmooth {
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+  font-smoothing: auto;
+}

@@ -1,0 +1,24 @@
+// setup (variables, mixins, functions)
+@import 'setup/breakpoints';
+@import 'setup/dimensions';
+@import 'setup/colors';
+@import 'setup/focus';
+@import 'setup/fonts';
+@import 'setup/grid';
+@import 'setup/hover';
+@import 'setup/smooth';
+@import 'setup/units';
+
+// base (base elements, resets, etc)
+@import 'base/resets';
+@import 'base/elements';
+
+// utility (generic utility classes)
+@import 'utility/screenreader';
+@import 'utility/wrapper';
+
+// structure (header and footer)
+@import 'structure/header';
+
+// components (page level blocks and components)
+// @import 'components/*';

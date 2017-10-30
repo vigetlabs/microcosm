@@ -1,0 +1,54 @@
+// Imports
+@mixin font-face($name, $filename, $style: normal, $weight: normal) {
+  @font-face {
+    font-family: #{$name};
+    font-style: $style;
+    font-weight: $weight;
+    src: url('../fonts/#{$name}/#{$filename}.eot');
+    src: url('../fonts/#{$name}/#{$filename}.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/#{$name}/#{$filename}.woff2') format('woff2'),
+         url('../fonts/#{$name}/#{$filename}.woff') format('woff'),
+         url('../fonts/#{$name}/#{$filename}.ttf') format('truetype'),
+         url('../fonts/#{$name}/#{$filename}.svg#nowaybold') format('svg');
+  }
+}
+
+@include font-face('Noway Bold', 'noway-bold-webfont');
+@include font-face('Noway Medium', 'noway-medium-webfont');
+@include font-face('Noway Regular', 'noway-regular-webfont');
+
+// Variables
+
+// $base-font-size   : 18px;
+// $base-line-height : 1.8;
+// $font-size-tiny: 14px;
+// $font-size-small: 16px;
+// $font-size-large: 22px;
+// $font-size-larger: 24px;
+// $font-size-xlarge: 30px;
+// $font-spacing-narrow: 0.15em;
+// $font-spacing-wide: 0.2em;
+
+
+// Mixins
+@mixin font-family-bold {
+  font-family: 'Noway Bold', 'Arial', san-serif;
+}
+
+@mixin font-family-medium {
+  font-family: 'Noway Medium', 'Arial', san-serif;
+}
+
+@mixin font-family-regular {
+  font-family: 'Noway Regular', 'Arial', san-serif;
+}
+
+// @mixin font-family-geo-book {
+//   font-family: 'geomanist-book', 'Arial', san-serif;
+// }
+
+// @mixin font-smoothing {
+//   -moz-osx-font-smoothing: grayscale;
+//   -webkit-font-smoothing: antialiased;
+// }
+
