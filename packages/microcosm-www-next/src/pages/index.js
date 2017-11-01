@@ -1,9 +1,9 @@
 import React from 'react'
 
 const IndexPage = () => (
-  <section>
+  <section className="section">
     <div className="wrapper">
-      <h2>
+      <h2 className="section-title">
         <span>01.</span>
         Rendering a View
       </h2>

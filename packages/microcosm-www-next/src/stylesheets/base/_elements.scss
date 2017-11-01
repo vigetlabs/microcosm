@@ -16,6 +16,7 @@ html {
 body {
   color: color(text);
   @include font-family-regular;
+  letter-spacing: 0.02em;
   min-height: 100%;
   position: relative;
 }

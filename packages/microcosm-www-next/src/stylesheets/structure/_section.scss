@@ -1,0 +1,23 @@
+.section {
+  padding: ($nav-height + 50px) 0;
+  background: darkslateblue;
+}
+
+.section-title {
+  font-size: rem(30);
+
+  span {
+    @include font-family-bold;
+    font-size: rem(14);
+  }
+}
+
+.figure__content__text {
+  font-size: rem(18);
+  line-height: rem(27);
+}
+
+.figure__content__header {
+  @include font-family-medium;
+  text-transform: uppercase;
+}
