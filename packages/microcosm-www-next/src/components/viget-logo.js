@@ -4,8 +4,8 @@ const VigetLogo = ({ fill }) => (
   <svg
     fill={fill}
     xmlns="http://www.w3.org/2000/svg"
-    width="89"
-    height="31"
+    width="95"
+    height="35"
     viewBox="0 0 500 181.079"
     preserveAspectRatio
   >

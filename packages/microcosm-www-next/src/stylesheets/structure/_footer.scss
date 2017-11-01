@@ -1,16 +1,26 @@
+$cta-border-height: 3px;
+$cta-bottom-padding: 6px;
+
 .footer {
   align-items: center;
-  background: lightgray;
   display: flex;
-  height: 167px;
+  height: $footer-height;
   justify-content: center;
+
+  .wrapper {
+    padding-bottom: $cta-border-height + $cta-bottom-padding + 3px;
+  }
 
   .viget-logo {
     display: block;
+    margin-bottom: 5px;
   }
 }
 
 .footer__cta {
+  border-bottom: $cta-border-height solid;
   font-size: rem(14);
+  padding-bottom: $cta-bottom-padding;
+  text-decoration: none;
   text-transform: uppercase;
 }

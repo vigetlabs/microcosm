@@ -26,7 +26,11 @@ const Footer = () => (
         <VigetLogo fill="blue" />
       </Link>
 
-      <Link to="http://code.viget.com/microcosm/" className="footer__cta" target="_blank">
+      <Link
+        to="http://code.viget.com/microcosm/"
+        className="footer__cta"
+        target="_blank"
+      >
         Learn more at code.viget.com/microcosm
       </Link>
     </div>
