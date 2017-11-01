@@ -49,13 +49,18 @@ $right-graphic-height: 600px;
   }
 }
 
-.figure__content__text {
-  font-size: rem(18);
-  line-height: rem(27);
+.figure__content {
+  padding: 0 rem(40);
+
+  .figure__content__text {
+    font-size: rem(18);
+    line-height: rem(27);
+  }
+
+  .figure__content__header {
+    @include font-family-medium;
+    text-transform: uppercase;
+    margin-bottom: rem(12);
+  }
 }
 
-.figure__content__header {
-  @include font-family-medium;
-  text-transform: uppercase;
-  margin-bottom: rem(12);
-}
