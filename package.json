@@ -44,6 +44,12 @@
   },
   "workspaces": [
     "packages/microcosm",
-    "packages/*"
+    "packages/microcosm-devtools",
+    "packages/microcosm-examples",
+    "packages/microcosm-graphql",
+    "packages/microcosm-http",
+    "packages/microcosm-preact",
+    "packages/microcosm-react-router",
+    "packages/microcosm-www"
   ]
 }
