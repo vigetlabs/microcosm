@@ -17,8 +17,9 @@
 @import 'utility/screenreader';
 @import 'utility/wrapper';
 
-// structure (header and footer)
+// structure (header, footer, etc)
 @import 'structure/nav';
+@import 'structure/main';
 @import 'structure/footer';
 
 // components (page level blocks and components)

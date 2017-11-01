@@ -2,23 +2,18 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Link from 'gatsby-link'
 import Helmet from 'react-helmet'
+import VigetLogo from '../components/viget-logo'
 
 import '../stylesheets/app.scss'
 
 const Navigation = () => (
   <nav className="navigation">
     <div className='wrapper'>
-      {/* <h1>
-        <Link
-          to="/"
-          style={{
-            color: 'black',
-            textDecoration: 'none',
-          }}
-        >
-          Microcosm
-        </Link>
-      </h1> */}
+      <Link to="/">
+        <img src="./static/images/logo.png" alt="Microcosm" />
+      </Link>
+
+      <img src="./static/images/menu.png" alt="menu" />
     </div>
   </nav>
 )
@@ -26,6 +21,13 @@ const Navigation = () => (
 const Footer = () => (
   <footer className="footer">
     <div className='wrapper'>
+      <Link to="https://www.viget.com/" className="viget-logo" target="_blank">
+        <VigetLogo fill="blue" />
+      </Link>
+
+      <Link to="http://code.viget.com/microcosm/" target="_blank">
+        Learn more at code.viget.com/microcosm
+      </Link>
     </div>
   </footer>
 )
@@ -42,7 +44,7 @@ const PageWrapper = ({ children }) => (
 
     <Navigation />
 
-    <main>
+    <main className="main">
       { children() }
     </main>
 

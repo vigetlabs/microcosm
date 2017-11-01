@@ -1,4 +1,11 @@
 .footer {
+  align-items: center;
+  background: lightgray;
+  display: flex;
   height: 167px;
-  background: blue;
+  justify-content: center;
+
+  .viget-logo {
+    display: block;
+  }
 }
