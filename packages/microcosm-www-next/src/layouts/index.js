@@ -8,10 +8,11 @@ import '../stylesheets/app.scss'
 
 const Navigation = () => (
   <nav className="navigation">
-    <div className='wrapper'>
-      <Link to="/">
-        <img src="./static/images/logo.png" alt="Microcosm" />
-      </Link>
+    <div className="wrapper">
+      <h1>
+        <span className="screenreader-only">Microcosm</span>
+        <img src="./static/images/microcosm-logo.png" alt="" />
+      </h1>
 
       <img src="./static/images/menu.png" alt="menu" />
     </div>
@@ -20,7 +21,7 @@ const Navigation = () => (
 
 const Footer = () => (
   <footer className="footer">
-    <div className='wrapper'>
+    <div className="wrapper">
       <Link to="https://www.viget.com/" className="viget-logo" target="_blank">
         <VigetLogo fill="blue" />
       </Link>
@@ -38,22 +39,20 @@ const PageWrapper = ({ children }) => (
       title="Microcosm"
       meta={[
         { name: 'description', content: 'Sample' },
-        { name: 'keywords', content: 'sample, something' },
+        { name: 'keywords', content: 'sample, something' }
       ]}
     />
 
     <Navigation />
 
-    <main className="main">
-      { children() }
-    </main>
+    <main className="main">{children()}</main>
 
     <Footer />
   </div>
 )
 
 PageWrapper.propTypes = {
-  children: PropTypes.func,
+  children: PropTypes.func
 }
 
 export default PageWrapper
