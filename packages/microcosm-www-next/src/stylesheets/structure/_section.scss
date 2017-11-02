@@ -1,6 +1,10 @@
 $section-top-padding-mobile: $nav-height + 49px;
 $section-top-padding-desktop: $nav-height + 110px;
 
+main {
+  min-height: 100vh;
+}
+
 .section {
   padding-top: $section-top-padding-mobile;
 
