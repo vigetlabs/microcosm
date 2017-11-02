@@ -26,7 +26,11 @@ const Footer = () => (
         <VigetLogo fill="blue" />
       </Link>
 
-      <Link to="http://code.viget.com/microcosm/" target="_blank">
+      <Link
+        className="footer__cta"
+        target="_blank"
+        to="http://code.viget.com/microcosm/"
+      >
         Learn more at code.viget.com/microcosm
       </Link>
     </div>
@@ -45,7 +49,7 @@ const PageWrapper = ({ children }) => (
 
     <Navigation />
 
-    <main className="main">{children()}</main>
+    <main>{children()}</main>
 
     <Footer />
   </div>

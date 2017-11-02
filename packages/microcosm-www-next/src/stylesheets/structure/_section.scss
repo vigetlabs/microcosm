@@ -1,0 +1,68 @@
+$left-graphic-height: 367px;
+$right-graphic-height: 600px;
+
+.section {
+  background: darkslateblue; //TODO - change later on scroll
+  min-height: calc(100vh - #{$footer-height});
+  padding: ($nav-height + 50px) 0 100px;
+}
+
+.section-title {
+  font-size: rem(30);
+
+  span {
+    @include font-family-bold;
+    display: block;
+    font-size: rem(14);
+    margin-bottom: rem(5);
+  }
+}
+
+.figure-container {
+  @include breakpoint(small-desktop-up) {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.figure {
+  @include breakpoint(small-desktop-up) {
+    &.-left {
+      width: 36%;
+      padding-top: $right-graphic-height - $left-graphic-height;
+    }
+
+    &.-right {
+      width: 60%;
+    }
+  }
+}
+
+.figure__graphic {
+  width: 100%;
+  height: $right-graphic-height;
+  background: lightblue;
+  margin-bottom: rem(28);
+
+  .-left & {
+    height: $left-graphic-height;
+  }
+}
+
+.figure__content {
+  @include breakpoint(small-desktop-up) {
+    padding: 0 rem(40);
+  }
+
+  .figure__content__text {
+    font-size: rem(18);
+    line-height: rem(27);
+  }
+
+  .figure__content__header {
+    @include font-family-medium;
+    text-transform: uppercase;
+    margin-bottom: rem(12);
+  }
+}
+
