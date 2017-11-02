@@ -51,7 +51,7 @@ const PageWrapper = ({ children }) => (
 
     <main>{children()}</main>
 
-    <Footer />
+    {/* <Footer /> */}
   </div>
 )
 

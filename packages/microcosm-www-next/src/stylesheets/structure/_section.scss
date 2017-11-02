@@ -1,10 +1,19 @@
 $left-graphic-height: 367px;
 $right-graphic-height: 600px;
 
+main {
+  min-height: 100vh;
+}
+
 .section {
   background: darkslateblue; //TODO - change later on scroll
-  min-height: calc(100vh - #{$footer-height});
-  padding: ($nav-height + 50px) 0 100px;
+  min-height: inherit;
+  overflow: auto;
+  // padding-top: ($nav-height + 50px);
+
+  .wrapper {
+    min-height: inherit;
+  }
 }
 
 .section-title {
@@ -21,37 +30,51 @@ $right-graphic-height: 600px;
 .figure-container {
   @include breakpoint(small-desktop-up) {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
   }
 }
 
 .figure {
   @include breakpoint(small-desktop-up) {
     &.-left {
-      width: 36%;
-      padding-top: $right-graphic-height - $left-graphic-height;
+      // width: 36%;
+      // padding-top: 10vh;
+      // height: 100vh;
+      // position: fixed;
+      // left: 0;
+      // top: 0;
     }
 
     &.-right {
-      width: 60%;
+      // width: 60%;
     }
   }
 }
 
 .figure__graphic {
-  width: 100%;
-  height: $right-graphic-height;
   background: lightblue;
   margin-bottom: rem(28);
 
   .-left & {
-    height: $left-graphic-height;
+    height: 50vh;
+    width: 50vh;
+    max-height: 367px;
+    max-width: 361px;
+  }
+
+  .-right & {
+    min-height: 400px;
+    min-width: 400px;
+    height: 50vh;
+    width: 50vh;
+    max-height: 600px;
+    max-width: 600px;
   }
 }
 
 .figure__content {
   @include breakpoint(small-desktop-up) {
-    padding: 0 rem(40);
+    //padding: 0 rem(40);
   }
 
   .figure__content__text {
@@ -63,6 +86,42 @@ $right-graphic-height: 600px;
     @include font-family-medium;
     text-transform: uppercase;
     margin-bottom: rem(12);
+  }
+}
+
+
+
+
+.col-left, .col-right {
+  // min-height: inherit;
+  width: 50%;
+  margin-top: ($nav-height + 50px);
+  float: left;
+}
+
+.wrapper2 {
+  max-width: 520px;
+  // min-height: inherit;
+  padding-left: 20px;
+}
+
+.col-left {
+  position: fixed;
+  height: calc(100vh - #{($nav-height + 50px)});
+  top: 0;
+  left: 0;
+
+  .wrapper2 {
+    margin: 0 0 0 auto;
+  }
+}
+
+.col-right {
+  margin-left: 50%;
+
+ .wrapper2 {
+    padding-left: 0px;
+    padding-right: 20px;
   }
 }
 
