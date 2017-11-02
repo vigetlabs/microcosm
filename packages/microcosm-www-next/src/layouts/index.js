@@ -27,9 +27,9 @@ const Footer = () => (
       </Link>
 
       <Link
-        to="http://code.viget.com/microcosm/"
         className="footer__cta"
         target="_blank"
+        to="http://code.viget.com/microcosm/"
       >
         Learn more at code.viget.com/microcosm
       </Link>

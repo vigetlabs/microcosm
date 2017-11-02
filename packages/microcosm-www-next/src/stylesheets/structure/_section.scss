@@ -50,7 +50,9 @@ $right-graphic-height: 600px;
 }
 
 .figure__content {
-  padding: 0 rem(40);
+  @include breakpoint(small-desktop-up) {
+    padding: 0 rem(40);
+  }
 
   .figure__content__text {
     font-size: rem(18);
