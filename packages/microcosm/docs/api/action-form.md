@@ -23,7 +23,7 @@ repo.addDomain('count', {
   getInitialState () {
     return 0
   },
-  increase (count, amount) {
+  increase (count, { amount }) {
     return count + amount
   },
   register () {
