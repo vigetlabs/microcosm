@@ -32,8 +32,7 @@ class ActionForm extends React.PureComponent<Props> {
 
   send: Sender
 
-  _form: HTMLFormElement
-  _assignForm: HTMLFormElement => void
+  _form: *
   _queue: ActionQueue
   _onSubmit: *
 
@@ -51,8 +50,8 @@ class ActionForm extends React.PureComponent<Props> {
   }
 
   componentWillUnmount() {
-    this._form = null
     this._queue.empty()
+    this._form = null
   }
 
   render() {
