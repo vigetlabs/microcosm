@@ -1,6 +1,6 @@
 {
   "props": {
-    "cname": 57,
+    "cname": 59,
     "props": {
       "$_updateModel": "a",
       "$_beginSetup": "b",
@@ -58,7 +58,9 @@
       "$_clean": "aa",
       "$_remove": "ba",
       "$_origin": "ca",
-      "$_didChange": "da"
+      "$_didChange": "da",
+      "$_ensureSnapshot": "ea",
+      "$_updateSnapshotRange": "fa"
     }
   }
 }
