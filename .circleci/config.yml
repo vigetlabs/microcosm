@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: /home/circleci/microcosm
   docker:
-    - image: circleci/node:latest
+    - image: circleci/node:8.0
 
 jobs:
   build:
