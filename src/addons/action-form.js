@@ -3,6 +3,7 @@
  */
 
 import React from 'react'
+import DOM from 'react-dom'
 import { Action, merge } from '../microcosm'
 import serialize from 'form-serialize'
 
@@ -42,14 +43,18 @@ class ActionForm extends React.PureComponent<Props> {
 
     this.send = this.props.send || this.context.send
     this.onSubmit = this.onSubmit.bind(this)
-    this.assignForm = el => {
-      this.form = el
-    }
+  }
+
+  componentDidMount() {
+    this.form = DOM.findDOMNode(this)
+  }
+
+  componentWillUnmount() {
+    this.form = null
   }
 
   render() {
     let props = merge(this.props, {
-      ref: this.assignForm,
       onSubmit: this.onSubmit
     })
 
