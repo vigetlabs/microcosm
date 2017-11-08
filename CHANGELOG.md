@@ -1,5 +1,9 @@
 # Changelog 
 
+## 12.13.2
+
+- Properly externalize ReactDOM in build
+
 ## 12.13.1
 
 - Fix a ref issue with ActionForms and ActionButtons
