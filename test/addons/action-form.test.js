@@ -188,3 +188,27 @@ describe('serialization', function() {
     }).toThrow(/ActionForm has no form reference and can not submit/)
   })
 })
+
+describe('refs', function() {
+  it('can be referenced as a ref', function() {
+    let send = jest.fn()
+
+    class Test extends React.Component {
+      render() {
+        return (
+          <ActionForm
+            ref={form => (this.form = form)}
+            action="test"
+            send={send}
+          />
+        )
+      }
+    }
+
+    let el = mount(<Test />)
+
+    el.instance().form.submit()
+
+    expect(send).toHaveBeenCalledWith('test', {})
+  })
+})

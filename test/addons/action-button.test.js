@@ -199,3 +199,27 @@ describe('rendering', function() {
     expect(wrapper.getDOMNode().getAttribute('type')).toBe(null)
   })
 })
+
+describe('refs', function() {
+  it('can be referenced as a ref', function() {
+    let send = jest.fn()
+
+    class Test extends React.Component {
+      render() {
+        return (
+          <ActionButton
+            ref={button => (this.button = button)}
+            action="test"
+            send={send}
+          />
+        )
+      }
+    }
+
+    let el = mount(<Test />)
+
+    el.instance().button.click()
+
+    expect(send).toHaveBeenCalledWith('test', undefined)
+  })
+})
