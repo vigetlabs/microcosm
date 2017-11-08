@@ -75,7 +75,7 @@ if (options.minify) {
   )
 }
 
-const external = ['react', 'form-serialize']
+const external = ['react', 'react-dom', 'form-serialize']
 
 const globals = {
   react: 'React',
