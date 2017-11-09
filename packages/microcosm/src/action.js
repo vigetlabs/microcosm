@@ -189,22 +189,26 @@ class Action extends Emitter {
    */
   link(actions: Action[]): this {
     let outstanding = actions.length
+    let answers = []
 
-    const onResolve = () => {
-      if (outstanding <= 1) {
-        this.resolve()
-      } else {
-        outstanding -= 1
-      }
+    if (actions.length === 0) {
+      return this.resolve(answers)
     }
 
     actions.forEach(action => {
+      let onResolve = answer => {
+        answers[actions.indexOf(action)] = answer
+        outstanding -= 1
+
+        if (outstanding <= 0) {
+          this.resolve(answers)
+        }
+      }
+
       action.onDone(onResolve)
       action.onCancel(onResolve)
       action.onError(this.reject)
     })
-
-    onResolve()
 
     return this
   }

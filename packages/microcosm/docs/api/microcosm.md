@@ -333,7 +333,9 @@ fork.push(getPeople)
 
 Create a new "group" action bound to the resolution of a list of
 actions. If all actions resolve or cancel, the group action will
-resolve. If any action is rejected, the group action fails:
++resolve. If any action is rejected, the group action fails. If all
+actions resolve, their respective payloads will be available in the
+`onDone` callback:
 
 ```javascript
 let group = repo.parallel([
@@ -341,8 +343,8 @@ let group = repo.parallel([
   repo.push(actionTwo)
 ])
 
-group.onDone(function () {
-  console.log('hurrah!')
+group.onDone(function ([answer1, answer2]) {
+  console.log('hurrah!', answer1, answer2)
 })
 ```
 
