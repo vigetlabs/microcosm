@@ -16,7 +16,7 @@
 
 - Properly externalize ReactDOM in build
 
-## 12.13.1
+## 12.13.1 
 
 - Fix issue where refs passed to ActionForm would raise warning in React
 
@@ -33,6 +33,14 @@
 ## 12.12.3
 
 - Fix issue where refs passed to ActionForm would raise warning in React
+
+## 12.12.2
+
+- Fix bad release
+
+## 12.12.1
+
+- `repo.parallel` returns an array of payloads when all related actions complete
 
 ## 12.12.0
 
