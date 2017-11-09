@@ -1,5 +1,9 @@
 # Changelog 
 
+## 12.13.3
+
+- Upstream repo.parallel fix from 12.12.x
+
 ## 12.13.2
 
 - Properly externalize ReactDOM in build
