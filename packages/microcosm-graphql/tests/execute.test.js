@@ -213,7 +213,7 @@ describe('Execute', function() {
     expect(answer).toHaveProperty('star.planets', [])
   })
 
-  it.skip('does not cache lookups for different arguments', async () => {
+  it('does not cache lookups for different arguments', async () => {
     let repo = new SolarSystem()
 
     let query = repo.compile(
@@ -242,7 +242,7 @@ describe('Execute', function() {
     expect(answer.earth.name).toBe('Earth')
 
     expect(repo.queries.Query.planet.prepare).toHaveBeenCalledTimes(2)
-    expect(repo.queries.Query.planet.resolver).toHaveBeenCalledTimes(4)
+    expect(repo.queries.Query.planet.resolver).toHaveBeenCalledTimes(2)
 
     // 1. Venus initializes
     // 2. Earth initializes
@@ -251,7 +251,7 @@ describe('Execute', function() {
     // 5. Venus star loads
     // 6. Earth star loads
     expect(repo.queries.Planet.star.prepare).toHaveBeenCalledTimes(1)
-    expect(repo.queries.Planet.star.resolver).toHaveBeenCalledTimes(6)
+    expect(repo.queries.Planet.star.resolver).toHaveBeenCalledTimes(2)
   })
 
   it.skip('does not cache lookups for records in a list', async () => {
