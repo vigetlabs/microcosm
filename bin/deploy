@@ -24,4 +24,18 @@ aws s3 sync public/ s3://$AWS_BUCKET/$BRANCH_NAME
 
 popd > /dev/null
 
-echo "\nDeployed to http://$AWS_BUCKET.s3-website-$AWS_DEFAULT_REGION.amazonaws.com/$BRANCH_NAME\n"
+PUBLIC_PATH=http://$AWS_BUCKET.s3-website-$AWS_DEFAULT_REGION.amazonaws.com/$BRANCH_NAME
+
+echo "\nDeployed to $PUBLIC_PATH\n"
+
+if [ "$SLACK_HOOK" ]; then
+  curl -X POST -d "{\"text\":\"I just deployed $BRANCH_NAME\", \"attachments\": [\
+    {\
+      \"title\": \"Microcosm\",\
+      \"text\": \"$PUBLIC_PATH\",\
+      \"footer\":\"$CIRCLE_COMPARE_URL\"
+    }
+  ] }" "$SLACK_HOOK"
+else
+  echo -e "\n[!] Ignoring Slack hook. Set the SLACK_HOOK environment variable.\n"
+fi
