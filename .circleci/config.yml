@@ -33,7 +33,7 @@ jobs:
     <<: *defaults
     steps:
       - run: sudo apt-get -y -qq install awscli
-      - run: ./bin/deploy
+      - run: yarn deploy
   test-dev:
     <<: *defaults
     steps:
