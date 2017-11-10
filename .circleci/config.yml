@@ -32,6 +32,8 @@ jobs:
   website:
     <<: *defaults
     steps:
+      - attach_workspace:
+          at: /home/circleci
       - run: sudo apt-get -y -qq install awscli
       - run: yarn deploy
   test-dev:
