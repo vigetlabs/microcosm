@@ -21,25 +21,11 @@ function defaultHashing(root, args) {
 }
 
 class Answer {
-  constructor(id, preparer, resolver, hasher) {
+  constructor(id, resolver, hasher) {
     this.id = id
-
-    this.preparer = preparer || (() => Promise.resolve())
     this.resolver = resolver || noop
     this.hasher = hasher || defaultHashing
-
-    this.prepareCache = {}
     this.resolveCache = {}
-  }
-
-  prepare(repo, args) {
-    let key = this.hasher(null, args)
-
-    if (key in this.prepareCache === false) {
-      this.prepareCache[key] = this.preparer(repo, args)
-    }
-
-    return this.prepareCache[key]
   }
 
   resolve(repo, args, root) {
@@ -47,19 +33,12 @@ class Answer {
 
     if (key in this.resolveCache === false) {
       this.resolveCache[key] = new Observable(observer => {
-        let prep = this.prepare(repo, args)
-
-        prep.then(
-          payload => {
-            observer.next(this.resolver(root, args, repo.state, payload))
+        Promise.resolve(this.resolver(root, args, repo))
+          .then(computer => {
+            observer.next(computer)
             observer.complete()
-          },
-          error => observer.error(error)
-        )
-
-        return () => {
-          prep = null
-        }
+          })
+          .catch(error => observer.error(error))
       })
     }
 
@@ -86,7 +65,6 @@ export class Knowledge {
 
       this.answers[key] = new Answer(
         key,
-        existing.prepare,
         existing.resolver || createFinder(this.schema, definition, field)
       )
     }

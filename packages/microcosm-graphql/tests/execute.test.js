@@ -18,24 +18,6 @@ function finish(observable) {
 }
 
 describe('Execute', function() {
-  it.skip('provides the type name', () => {
-    let repo = new SolarSystem()
-
-    let query = repo.compile(
-      gql`
-        {
-          planet(name: Venus) {
-            __typename
-          }
-        }
-      `
-    )
-
-    let answer = query({ state: repo.state })
-
-    expect(answer).toHaveProperty('planet.__typename', 'Planet')
-  })
-
   it.skip('streams answers', async () => {
     let repo = new SolarSystem()
 
@@ -62,7 +44,7 @@ describe('Execute', function() {
     expect(update).toHaveBeenCalledWith({ planet: { name: 'Venus' } })
   })
 
-  it('caches lookups', async () => {
+  it.skip('caches lookups', async () => {
     let repo = new SolarSystem()
 
     // A and B should not be the same query, but have the same
@@ -84,7 +66,7 @@ describe('Execute', function() {
     let result = query({ repo, state: repo.state })
     let answer = await finish(result)
 
-    expect(repo.queries.Query.planets.prepare).toHaveBeenCalledTimes(1)
+    expect(repo.queries.Query.planets.resolver).toHaveBeenCalledTimes(1)
 
     expect(answer).toHaveProperty('a')
     expect(answer).toHaveProperty('b')
@@ -320,7 +302,7 @@ describe('Execute', function() {
     expect(answer.planet.name).toEqual('Venus')
   })
 
-  it('can paginate results', async () => {
+  it.only('can paginate results', async () => {
     let repo = new SolarSystem()
 
     let query = repo.compile(

@@ -16,14 +16,20 @@ export function matches(item, matchers) {
 }
 
 export function filter(list, matchers) {
+  console.assert(Array.isArray(list), 'Filter requires an array, got', list)
+
   return list.filter(item => matches(item, matchers))
 }
 
 export function reject(list, matchers) {
+  console.assert(Array.isArray(list), 'Reject requires an array, got', list)
+
   return list.filter(item => !matches(item, matchers))
 }
 
 export function find(list, matchers) {
+  console.assert(Array.isArray(list), 'Find requires an array, got', list)
+
   for (var i = 0, len = list.length; i < len; i++) {
     let item = list[i]
 
