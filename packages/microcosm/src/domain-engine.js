@@ -4,7 +4,7 @@
 
 import getRegistration from './get-registration'
 import { clone, merge, result, createOrClone } from './utils'
-import { RESET, PATCH } from './lifecycle'
+import { RESET, PATCH, FETCH } from './lifecycle'
 
 import type Action from './action'
 import type Microcosm from './microcosm'

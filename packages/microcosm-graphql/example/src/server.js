@@ -7,7 +7,6 @@ import { makeExecutableSchema } from 'graphql-tools'
 import { makeRepo } from './repo'
 import { stringify } from 'querystring'
 import typeDefs from './schema.gql'
-import gql from 'graphql-tag'
 import morgan from 'morgan'
 const repo = makeRepo(true)
 const schema = makeExecutableSchema({ typeDefs, resolvers: repo.resolvers })
@@ -34,20 +33,6 @@ app.use(
 )
 
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }))
-
-function getArguments(args) {
-  if (args) {
-    return `(${stringify(args, ',', ':', {
-      encodeURIComponent: n => n
-    })})`
-  }
-
-  return ''
-}
-
-function getFields(fields) {
-  return fields ? `{${fields}}` : ''
-}
 
 const restMap = {
   create: 'post',

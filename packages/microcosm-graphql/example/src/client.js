@@ -49,7 +49,6 @@ class Example extends GraphPresenter {
   }
 }
 
-let el = document.createElement('div')
 let repo = makeRepo()
 
 repo.addQuery('Query', {

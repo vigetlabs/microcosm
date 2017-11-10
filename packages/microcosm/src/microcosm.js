@@ -12,8 +12,8 @@ import DomainEngine from './domain-engine'
 import EffectEngine from './effect-engine'
 import tag from './tag'
 import installDevtools from './install-devtools'
-import { RESET, PATCH } from './lifecycle'
-import { merge, update } from './utils'
+import { RESET, PATCH, FETCH } from './lifecycle'
+import { get, merge, update } from './utils'
 import { version } from '../package.json'
 
 /**
@@ -485,6 +485,19 @@ class Microcosm extends Emitter {
     }
 
     return this.getInitialState()
+  }
+
+  fetch(path, ...args) {
+    let method = get(this.domains.domains, path)
+
+    console.assert(
+      typeof method === 'function',
+      `Unable to fetch. ${path} not found.`
+    )
+
+    //    tag(method, FETCH)
+
+    return this.push(method, ...args)
   }
 
   /**

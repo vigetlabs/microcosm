@@ -7,22 +7,16 @@ export default class GraphPresenter extends React.Component {
   }
 
   componentWillMount() {
-    this.tick()
-    this.query = this.props.repo.compile(this.model)
-    this.props.repo.on('change', this.tick, this)
+    const { repo } = this.props
+
+    this.query = repo.compile(this.model)
+
+    this.query({ repo, state: repo.state }).subscribe(model => {
+      this.setState({ model })
+    })
   }
 
   get variables() {
     return {}
-  }
-
-  rollforward() {
-    let model = this.query(this.props.repo.state, this.variables)
-
-    return { model }
-  }
-
-  tick() {
-    this.setState(this.rollforward)
   }
 }

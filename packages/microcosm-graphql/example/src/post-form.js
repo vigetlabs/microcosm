@@ -2,7 +2,7 @@ import React from 'react'
 import ActionForm from 'microcosm/addons/action-form'
 
 class PostForm extends React.Component {
-  onDone(_payload, form) { 
+  onDone(_payload, form) {
     form.reset()
   }
 

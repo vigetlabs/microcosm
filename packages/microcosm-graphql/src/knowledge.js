@@ -1,5 +1,5 @@
 import Observable from 'zen-observable'
-import { get, set, clone } from 'microcosm'
+import { get } from 'microcosm'
 import { createFinder } from './default-resolvers'
 import { getName, observerHash } from './utilities'
 import { parseArguments } from './arguments'
@@ -48,28 +48,17 @@ class Answer {
     if (key in this.resolveCache === false) {
       this.resolveCache[key] = new Observable(observer => {
         let prep = this.prepare(repo, args)
-        let last = undefined
 
-        /* let sub = repo.observe().subscribe(state => {
-         *   let next = this.resolver(root, args, state)
-
-         *   if (next !== last) {
-         *     last = next
-         *     observer.next(next)
-         *   }
-         * })*/
-
-        prep.then((payload) => {
-          observer.next(this.resolver(root, args, repo.state, payload))
-          observer.complete()
-        }, err => observer.error())
+        prep.then(
+          payload => {
+            observer.next(this.resolver(root, args, repo.state, payload))
+            observer.complete()
+          },
+          error => observer.error(error)
+        )
 
         return () => {
-//          sub.unsubscribe()
-
-          last = null
           prep = null
-          sub = null
         }
       })
     }

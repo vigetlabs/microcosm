@@ -99,9 +99,11 @@ export class SolarSystem extends Repo {
           return repo.push('getPlanets', args)
         },
         resolver: (_, args, { Planet }, result = []) => {
-          return result.map(item => {
-            return find(Planet, { id: item.id })
-          })
+          return result
+            .map(item => {
+              return find(Planet, { id: item.id })
+            })
+            .filter(Boolean)
         }
       },
       star: {

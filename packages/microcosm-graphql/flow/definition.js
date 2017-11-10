@@ -1,3 +1,7 @@
+/**
+ * @flow
+ */
+
 type Schema = {
   [string]: Definition
 }

@@ -1,3 +1,7 @@
+/**
+ * @flow
+ */
+
 import { set } from 'microcosm'
 import Observable from 'zen-observable'
 
@@ -59,9 +63,7 @@ export function observerHash(obj) {
     }
 
     Observable.of(...keys)
-      .flatMap(key => {
-        return obj[key].map(value => ({ key, value }))
-      })
+      .flatMap(key => obj[key].map(value => ({ key, value })))
       .map(next => {
         answer = set(answer, next.key, next.value)
         return answer

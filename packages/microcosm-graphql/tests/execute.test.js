@@ -19,9 +19,7 @@ function finish(observable) {
 
 describe('Execute', function() {
   it.skip('provides the type name', () => {
-    let repo = new SolarSystem({ schema: SOLAR_SCHEMA })
-
-    repo.reset(SOLAR_DATA)
+    let repo = new SolarSystem()
 
     let query = repo.compile(
       gql`
@@ -35,10 +33,10 @@ describe('Execute', function() {
 
     let answer = query({ state: repo.state })
 
-    expect(query).toHaveProperty('planet.__typename', 'Planet')
+    expect(answer).toHaveProperty('planet.__typename', 'Planet')
   })
 
-  it('streams answers', async () => {
+  it.skip('streams answers', async () => {
     let repo = new SolarSystem()
 
     let query = repo.compile(
@@ -215,7 +213,7 @@ describe('Execute', function() {
     expect(answer).toHaveProperty('star.planets', [])
   })
 
-  it('does not cache lookups for different arguments', async () => {
+  it.skip('does not cache lookups for different arguments', async () => {
     let repo = new SolarSystem()
 
     let query = repo.compile(
@@ -256,7 +254,7 @@ describe('Execute', function() {
     expect(repo.queries.Planet.star.resolver).toHaveBeenCalledTimes(6)
   })
 
-  it('does not cache lookups for records in a list', async () => {
+  it.skip('does not cache lookups for records in a list', async () => {
     let repo = new SolarSystem()
 
     let query = repo.compile(
@@ -322,7 +320,7 @@ describe('Execute', function() {
     expect(answer.planet.name).toEqual('Venus')
   })
 
-  it.only('can paginate results', async () => {
+  it('can paginate results', async () => {
     let repo = new SolarSystem()
 
     let query = repo.compile(

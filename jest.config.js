@@ -15,6 +15,7 @@ module.exports = {
       : 'src'}$1`,
     '^microcosm-preact$': `<rootDir>/../microcosm-preact/${isBundled
       ? 'build'
-      : 'src'}`
+      : 'src'}`,
+    '^microcosm-http$': `<rootDir>/../microcosm-http/src/http.js`
   }
 }

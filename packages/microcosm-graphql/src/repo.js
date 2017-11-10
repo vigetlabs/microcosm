@@ -1,28 +1,11 @@
 import Microcosm from 'microcosm'
-import { getQueries, getMutations } from './schema'
-import { domainFactory } from './domains'
-import { execute, compile } from './execute'
+import { getQueries } from './schema'
+import { compile } from './execute'
 
 class GraphMicrocosm extends Microcosm {
   constructor(options) {
     super(options)
-
     this.schema = getQueries(this.options.schema)
-    this.mutations = getMutations(this.schema)
-
-    for (var name in this.schema) {
-      this.addResource(this.schema[name])
-    }
-  }
-
-  addResource(definition) {
-    const { name, fields } = definition
-
-    if (name === 'Mutation' || name === 'Query') {
-      return
-    }
-
-    this.addDomain(name, domainFactory(this, definition, this.mutations[name]))
   }
 
   compile(document) {

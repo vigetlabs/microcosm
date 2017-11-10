@@ -4,6 +4,8 @@
  * @flow
  */
 
+import $observable from 'symbol-observable'
+import Observable from 'zen-observable'
 import coroutine from './coroutine'
 import Emitter, { type Callback } from './emitter'
 import tag from './tag'
@@ -359,6 +361,22 @@ class Action extends Emitter {
       revisions: this.revisions,
       next: this.next && this.next.id
     }
+  }
+
+  [$observable]() {
+    return new Observable(observer => {
+      let updater = payload => {
+        observer.next(payload)
+
+        if (this.complete) {
+          observer.complete()
+        }
+      }
+
+      this.onNext(updater, observer)
+
+      return () => this._removeScope(observer)
+    })
   }
 }
 

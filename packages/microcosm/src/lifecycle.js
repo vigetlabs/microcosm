@@ -31,3 +31,5 @@ export const PATCH = tag(sandbox.bind(null), '$patch')
 export const BIRTH = tag('$birth')
 
 export const START = tag('$start')
+
+export const FETCH = tag('$fetch')

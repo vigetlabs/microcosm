@@ -26,11 +26,11 @@ export default function withSend(Component: *): * {
     return createElement(Component, merge({ send }, props))
   }
 
-  withSend.displayName = 'withSend(' + displayName(Component) + ')'
+  Sender.displayName = 'withSend(' + displayName(Component) + ')'
 
-  withSend.contextTypes = CONTEXT_TYPES
+  Sender.contextTypes = CONTEXT_TYPES
 
-  withSend.WrappedComponent = Component
+  Sender.WrappedComponent = Component
 
-  return withSend
+  return Sender
 }

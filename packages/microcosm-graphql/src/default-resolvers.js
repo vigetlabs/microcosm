@@ -1,6 +1,7 @@
 /**
  * @flow
  */
+
 import { find, filter } from './utilities'
 import { ROOT_QUERY } from './constants'
 
@@ -9,8 +10,6 @@ export function createFinder(
   definition: Definition,
   field: Field
 ) {
-  const { name } = definition
-
   let isRoot = definition.name === ROOT_QUERY
   let attribute = isRoot ? field.type : field.name
   let related = schema[field.type]
