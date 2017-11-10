@@ -33,14 +33,7 @@ jobs:
     <<: *defaults
     steps:
       - run: sudo apt-get -y -qq install awscli
-      - restore_cache:
-          keys:
-            - website-cache-{{ checksum "packages/microcosm-www-next/yarn.lock" }}
       - run: ./bin/deploy
-      - save_cache:
-          paths:
-            - packages/microcosm-www-next/node_modules
-          key: website-cache-{{ checksum "packages/microcosm-www-next/yarn.lock" }}
   test-dev:
     <<: *defaults
     steps:
