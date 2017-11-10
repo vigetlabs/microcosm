@@ -14,6 +14,7 @@ jobs:
           keys:
             - yarn-cache-{{ checksum "yarn.lock" }}
       - run: yarn bootstrap
+      - run: sudo apt-get -y -qq install awscli
       - save_cache:
           paths:
             - node_modules
@@ -29,6 +30,12 @@ jobs:
           at: /home/circleci
       - run: yarn flow
       - run: yarn lint
+  website:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /home/circleci
+      - run: ./bin/deploy
   test-dev:
     <<: *defaults
     steps:
@@ -48,6 +55,7 @@ workflows:
   microcosm:
     jobs:
       - build
+      - website
       - audit:
           requires:
             - build

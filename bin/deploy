@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# This script performs a production build and deploys to an AWS S3
+# Bucket
+#
+# Run this command with:
+#   ./bin/deploy 
+# Or
+#   ./bin/deploy BRANCH_NAME
+set -e
+
+BRANCH_NAME=$CIRCLE_BRANCH
+
+if [ "$CIRCLE_BRANCH" == "master" ]; then
+  BRANCH_NAME=""
+fi
+
+pushd packages/microcosm-www-next > /dev/null
+
+yarn install
+yarn build
+
+aws s3 sync public/ s3://$AWS_BUCKET/$BRANCH_NAME
+
+popd > /dev/null
+
+echo "\nDeployed to http://$AWS_BUCKET.s3-website-$AWS_DEFAULT_REGION.amazonaws.com/$BRANCH_NAME\n"
