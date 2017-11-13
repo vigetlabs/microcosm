@@ -235,4 +235,36 @@ describe('Generator Middleware', function() {
       })
     })
   })
+
+  describe('when yielding an object', function() {
+    it('waits for all items to complete', function() {
+      expect.assertions(2)
+
+      let add = n => n
+      let repo = new Microcosm()
+
+      repo.addDomain('count', {
+        getInitialState() {
+          return 0
+        },
+        register() {
+          return {
+            [add]: (a, b) => a + b
+          }
+        }
+      })
+
+      function testReturnValue() {
+        return function*(repo) {
+          yield { one: repo.push(add, 1), two: repo.push(add, 2) }
+        }
+      }
+
+      repo.push(testReturnValue).onDone(payload => {
+        expect(repo).toHaveState('count', 3)
+
+        expect(payload).toEqual({ one: 1, two: 2 })
+      })
+    })
+  })
 })

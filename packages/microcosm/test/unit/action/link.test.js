@@ -60,4 +60,20 @@ describe('Action link', function() {
 
     expect(action.status).toEqual('reject')
   })
+
+  describe('when given an object', function() {
+    it('returns an object', async function() {
+      let repo = new Microcosm()
+
+      let action = repo.parallel({
+        one: repo.push(() => delay(1, 20)),
+        two: repo.push(() => delay(2, 10)),
+        three: repo.push(() => delay(3, 15))
+      })
+
+      let payload = await action
+
+      expect(payload).toEqual({ one: 1, two: 2, three: 3 })
+    })
+  })
 })
