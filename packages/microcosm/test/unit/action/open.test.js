@@ -9,7 +9,7 @@ describe('Action open state', function() {
 
     action.open()
 
-    expect(action).toHaveStatus('open')
+    expect(action).toHaveStatus('start')
   })
 
   it('triggers an open event when it opens', function() {
@@ -17,10 +17,10 @@ describe('Action open state', function() {
     const action = repo.append(identity)
     const callback = jest.fn()
 
-    action.once('open', callback)
+    action.subscribe(callback)
     action.open(3)
 
-    expect(callback).toHaveBeenCalledWith(3)
+    expect(callback).toHaveBeenCalledWith({ status: 'start', payload: 3 })
   })
 
   it('actions are no longer disabled when opened', function() {

@@ -45,28 +45,22 @@ describe('Effect::register', function() {
     expect(spy).toHaveBeenCalledWith(true)
   })
 
-  it('is only called once  - at reconciliation', function() {
+  it('is only called once  - at reconciliation', async () => {
     const repo = new Microcosm()
-    const test = n => n
+    const test = n => new Promise(resolve => setTimeout(resolve, n))
+    const handler = jest.fn()
 
-    const Effect = {
-      handler: jest.fn(),
+    repo.addEffect({
       register() {
         return {
-          [test]: this.handler
+          [test]: handler
         }
       }
-    }
+    })
 
-    repo.addEffect(Effect)
+    await Promise.all([repo.push(test, 10), repo.push(test, 0)])
 
-    const one = repo.append(test)
-    const two = repo.append(test)
-
-    two.resolve()
-    one.resolve()
-
-    expect(Effect.handler).toHaveBeenCalledTimes(2)
+    expect(handler).toHaveBeenCalledTimes(2)
   })
 
   it('does not need to register', function() {

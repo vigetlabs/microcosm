@@ -37,19 +37,10 @@ export default function tag(fn: string | Command, name?: string): Command {
   // Cast fn to keep Flow happy
   let cast: Tagged = fn
 
-  cast.open = symbol + '.open'
-
-  cast.loading = symbol + '.loading'
-  cast.update = cast.loading
-
-  cast.done = symbol // intentional for string actions
-  cast.resolve = cast.done
-
+  cast.start = symbol + '.start'
+  cast.next = symbol + '.next'
   cast.error = symbol + '.error'
-  cast.reject = cast.error
-
-  cast.cancel = symbol + '.cancel'
-  cast.cancelled = fn.cancel
+  cast.complete = symbol // intentional for string actions
 
   // The default state is done
   cast.toString = () => symbol

@@ -20,7 +20,9 @@ export default function withSend(Component: *): * {
 
     console.assert(
       this.send,
-      `${Sender.displayName} was not given \`send\` via context or props. Was this component mounted within a Presenter?`
+      `${
+        Sender.displayName
+      } was not given \`send\` via context or props. Was this component mounted within a Presenter?`
     )
 
     return createElement(Component, merge({ send }, props))

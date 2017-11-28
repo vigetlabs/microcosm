@@ -1,6 +1,6 @@
 {
   "props": {
-    "cname": 59,
+    "cname": 74,
     "props": {
       "$_updateModel": "a",
       "$_beginSetup": "b",
@@ -60,7 +60,22 @@
       "$_origin": "ca",
       "$_didChange": "da",
       "$_ensureSnapshot": "ea",
-      "$_updateSnapshotRange": "fa"
+      "$_updateSnapshotRange": "fa",
+      "$_snapshots": "ga",
+      "$_domains": "ha",
+      "$_effects": "ia",
+      "$_size": "ja",
+      "$_limit": "ka",
+      "$_updater": "la",
+      "$_releasing": "ma",
+      "$_actions": "na",
+      "$_downstream": "oa",
+      "$_upstream": "pa",
+      "$_closeRelease": "qa",
+      "$_queueRelease": "ra",
+      "$_observable": "sa",
+      "$_value": "ta",
+      "$_observers": "ua"
     }
   }
 }

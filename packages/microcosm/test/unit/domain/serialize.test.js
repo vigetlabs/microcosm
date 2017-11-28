@@ -55,7 +55,7 @@ describe('Domain::serialize', function() {
         serialize: word => word.toUpperCase()
       })
 
-      expect(child.serialize()).toEqual({ fiz: 'FIZ', buzz: 'BUZZ' })
+      expect(child.toJSON()).toEqual({ fiz: 'FIZ', buzz: 'BUZZ' })
     })
   })
 })

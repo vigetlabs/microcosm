@@ -2,6 +2,7 @@
  * @flow
  */
 
+import Observable from 'zen-observable'
 import type Microcosm from './microcosm'
 import { castPath, type KeyPath } from './key-path'
 import { toStringTag } from './symbols'
@@ -226,4 +227,26 @@ export function result(target: *, keyPath: string | KeyPath): * {
   }
 
   return value
+}
+
+/**
+ * Resolve an array of object of observables, preserving the
+ * original shape/order.
+ */
+const updatePair = (pair, value) => {
+  pair[1] = value
+  return pair
+}
+
+const assignPair = (state, pair) => set(state, pair)
+
+export function observerHash(obj) {
+  let jobs = Observable.of(...Object.keys(obj))
+  let shape = Array.isArray(obj) ? [] : {}
+
+  let pairs = jobs.flatMap(key => {
+    return obj[key].reduce(updatePair, [key, null])
+  })
+
+  return pairs.reduce(assignPair, shape)
 }

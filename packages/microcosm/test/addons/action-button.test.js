@@ -3,7 +3,8 @@
  */
 
 import React from 'react'
-import Microcosm, { Action } from 'microcosm'
+import Observable from 'zen-observable'
+import Microcosm from 'microcosm'
 import ActionButton from 'microcosm/addons/action-button'
 import { mount } from 'enzyme'
 
@@ -20,50 +21,38 @@ describe('actions', function() {
 })
 
 describe('callbacks', function() {
-  it('executes onOpen when that action completes', function() {
+  it('executes onStart when that action starts', function() {
     let repo = new Microcosm()
-    let onOpen = jest.fn()
+    let send = () => repo.push(n => n, true)
+    let onStart = jest.fn()
 
-    let button = mount(<ActionButton action="test" onOpen={n => onOpen(n)} />, {
-      context: {
-        send: () => repo.append(n => n).open(true)
-      }
-    })
+    mount(
+      <ActionButton action="test" onStart={onStart} send={send} />
+    ).simulate('click')
 
-    button.simulate('click')
-
-    expect(onOpen).toHaveBeenCalledWith(true)
+    expect(onStart).toHaveBeenCalledWith(true)
   })
 
-  it('executes onDone when that action completes', function() {
+  it.only('executes onComplete when that action completes', function() {
     let repo = new Microcosm()
-    let onDone = jest.fn()
+    let send = () => repo.push(n => n, true)
+    let onComplete = jest.fn()
 
-    let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
-      context: {
-        send: () => repo.append(n => n).resolve(true)
-      }
-    })
+    mount(
+      <ActionButton action="test" send={send} onComplete={onComplete} />
+    ).simulate('click')
 
-    button.simulate('click')
-
-    expect(onDone).toHaveBeenCalledWith(true)
+    expect(onComplete).toHaveBeenCalledWith(true)
   })
 
   it('executes onError when that action completes', function() {
     let repo = new Microcosm()
+    let send = () => new Observable(observer => observer.error('bad'))
     let onError = jest.fn()
 
-    let button = mount(
-      <ActionButton action="test" onError={n => onError(n)} />,
-      {
-        context: {
-          send: () => repo.append(n => n).reject('bad')
-        }
-      }
-    )
-
-    button.simulate('click')
+    mount(
+      <ActionButton action="test" send={send} onError={onError} />
+    ).simulate('click')
 
     expect(onError).toHaveBeenCalledWith('bad')
   })
@@ -107,16 +96,16 @@ describe('callbacks', function() {
     expect(onCancel).toHaveBeenCalledWith('nevermind')
   })
 
-  it('does not execute onDone if not given an action', function() {
-    let onDone = jest.fn()
+  it('does not execute onComplete if not given an action', function() {
+    let onComplete = jest.fn()
 
-    mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
+    mount(<ActionButton action="test" onComplete={n => onComplete(n)} />, {
       context: {
         send: () => true
       }
     }).simulate('click')
 
-    expect(onDone).not.toHaveBeenCalled()
+    expect(onComplete).not.toHaveBeenCalled()
   })
 
   it('does not execute onError if not given an action', function() {
@@ -174,10 +163,10 @@ describe('callbacks', function() {
   it('removes action callbacks when the component unmounts', async function() {
     const action = new Action(() => Promise.resolve(true))
     const send = jest.fn(() => action)
-    const onDone = jest.fn()
+    const onComplete = jest.fn()
 
     const button = mount(
-      <ActionButton action="test" onDone={onDone} send={send} />
+      <ActionButton action="test" onComplete={onComplete} send={send} />
     )
 
     button.simulate('click')
@@ -189,24 +178,27 @@ describe('callbacks', function() {
     await action.execute([])
 
     expect(action).toHaveStatus('resolve')
-    expect(onDone).not.toHaveBeenCalled()
+    expect(onComplete).not.toHaveBeenCalled()
   })
 })
 
 describe('manual operation', function() {
   it('click can be called directly on the component instance', function() {
     let repo = new Microcosm()
-    let onDone = jest.fn()
+    let onComplete = jest.fn()
 
-    let button = mount(<ActionButton action="test" onDone={n => onDone(n)} />, {
-      context: {
-        send: () => repo.append(n => n).resolve(true)
+    let button = mount(
+      <ActionButton action="test" onComplete={n => onComplete(n)} />,
+      {
+        context: {
+          send: () => repo.append(n => n).resolve(true)
+        }
       }
-    })
+    )
 
     button.instance().click()
 
-    expect(onDone).toHaveBeenCalledWith(true)
+    expect(onComplete).toHaveBeenCalledWith(true)
   })
 
   it('can pass in send manually', function() {

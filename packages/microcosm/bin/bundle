@@ -73,11 +73,20 @@ if (options.minify) {
   )
 }
 
-const external = ['react', 'react-dom', 'form-serialize']
+const external = [
+  'react',
+  'react-dom',
+  'form-serialize',
+  'zen-observable',
+  'symbol-observable'
+]
 
 const globals = {
   react: 'React',
-  'form-serialize': 'FormSerialize'
+  'react-dom': 'ReactDOM',
+  'symbol-observable': '$observable',
+  'form-serialize': 'FormSerialize',
+  'zen-observable': 'Observable'
 }
 
 Object.keys(configs).forEach(key => {
@@ -98,7 +107,7 @@ for (let name in configs) {
     onwarn: function(error) {
       // Do not raise warnings for named exports
       if (error.code !== 'MIXED_EXPORTS') {
-        console.warn(error.toString())
+        console.warn('%s: %s', name, error)
       }
     }
   })

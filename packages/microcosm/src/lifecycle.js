@@ -4,23 +4,16 @@
 
 import tag from './tag'
 
-import type Action from './action'
-import type Microcosm from './microcosm'
-
 function sandbox(data: Object, deserialize: boolean) {
-  return (action: Action, repo: Microcosm): void => {
+  return (observer: observer, repo: *): void => {
     let payload = data
 
     if (deserialize) {
-      try {
-        payload = repo.deserialize(data)
-      } catch (error) {
-        action.reject(error)
-        throw error
-      }
+      payload = repo.deserialize(data)
     }
 
-    action.resolve(payload || {})
+    observer.next(payload || {})
+    observer.complete()
   }
 }
 
@@ -28,8 +21,8 @@ export const RESET = tag(sandbox.bind(null), '$reset')
 
 export const PATCH = tag(sandbox.bind(null), '$patch')
 
-export const BIRTH = tag('$birth')
+export const INITIAL_STATE = tag('$initialState')
 
-export const START = tag('$start')
+export const SERIALIZE = tag('$serialize')
 
-export const FETCH = tag('$fetch')
+export const DESERIALIZE = tag('$deserialize')

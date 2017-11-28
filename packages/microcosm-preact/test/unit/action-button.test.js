@@ -1,7 +1,7 @@
+import Observable from 'zen-observable'
 import { h } from 'preact'
 import { mount, unmount } from '../helpers'
 import { ActionButton, Presenter } from '../../src/index'
-import { Action } from 'microcosm'
 
 describe('context', function() {
   it('collects send from a presenter', function() {
@@ -38,16 +38,16 @@ describe('actions', function() {
 })
 
 describe('callbacks', function() {
-  it('executes onOpen when that action completes', function() {
-    let onOpen = jest.fn()
-    let send = () => new Action(n => n).open(true)
+  it('executes onStart when that action completes', function() {
+    let onStart = jest.fn()
+    let send = () => Observable.of(true))
     let button = mount(
-      <ActionButton action="test" send={send} onOpen={onOpen} />
+      <ActionButton action="test" send={send} onStart={onStart} />
     )
 
     button.click()
 
-    expect(onOpen).toHaveBeenCalledWith(true)
+    expect(onStart).toHaveBeenCalledWith(true)
   })
 
   it('executes onDone when that action completes', function() {

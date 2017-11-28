@@ -4,12 +4,21 @@
 
 import getRegistration from './get-registration'
 import { clone, merge, result, createOrClone } from './utils'
-import { RESET, PATCH, FETCH } from './lifecycle'
+import {
+  RESET,
+  PATCH,
+  INITIAL_STATE,
+  DESERIALIZE,
+  SERIALIZE
+} from './lifecycle'
 
 import type Action from './action'
 import type Microcosm from './microcosm'
 
 type DomainList = { [key: string]: Domain }
+
+const noop = () => {}
+const identity = n => n
 
 /**
  * Reduce down a list of values.
@@ -33,10 +42,13 @@ class DomainEngine {
   constructor(repo: Microcosm) {
     this.repo = repo
     this.domains = {}
-    this.lifecycle = {}
-
-    this.lifecycle[RESET.toString()] = []
-    this.lifecycle[PATCH.toString()] = []
+    this.lifecycle = {
+      [INITIAL_STATE]: [],
+      [RESET]: [],
+      [PATCH]: [],
+      [DESERIALIZE]: [],
+      [SERIALIZE]: []
+    }
 
     this.registry = Object.create(this.lifecycle)
   }
@@ -60,7 +72,7 @@ class DomainEngine {
   }
 
   register(action: Action): Registrations {
-    let type = action.type
+    let type = action.command[action.status]
 
     if (!this.registry[type]) {
       this.registry[type] = this.getHandlers(action)
@@ -70,6 +82,12 @@ class DomainEngine {
   }
 
   add(key: string, config: *, options?: Object) {
+    if (key in this.domains) {
+      throw new Error(
+        `Can not add domain for "${key}". Another domain was already added`
+      )
+    }
+
     console.assert(
       !options || options.constructor === Object,
       'addDomain expected a plain object as the third argument.'
@@ -88,10 +106,30 @@ class DomainEngine {
 
     this.domains[key] = domain
 
-    this.lifecycle[RESET.toString()].push({
+    if ('getInitialState' in domain) {
+      this.lifecycle[INITIAL_STATE.toString()].push({
+        key: key,
+        scope: domain,
+        steps: [domain.getInitialState]
+      })
+    }
+
+    this.lifecycle[DESERIALIZE.toString()].push({
       key: key,
       scope: domain,
+      steps: [domain.deserialize || identity]
+    })
+
+    this.lifecycle[SERIALIZE.toString()].push({
+      key: key,
+      scope: domain,
+      steps: [domain.serialize || noop]
+    })
+
+    this.lifecycle[RESET.toString()].push({
+      key: key,
       local: true,
+      scope: domain,
       steps: [
         (state: *, data: any) => {
           return data[key] !== undefined
@@ -103,8 +141,8 @@ class DomainEngine {
 
     this.lifecycle[PATCH.toString()].push({
       key: key,
-      scope: domain,
       local: true,
+      scope: domain,
       steps: [
         (state: *, data: any) => {
           return data[key] !== undefined ? data[key] : state
@@ -114,20 +152,25 @@ class DomainEngine {
 
     this.registry = Object.create(this.lifecycle)
 
-    if (domain.setup) {
-      domain.setup(this.repo, deepOptions)
-    }
-
-    if (domain.teardown) {
-      this.repo.on('teardown', domain.teardown, domain)
-    }
+    this.repo.observable.subscribe({
+      start: () => {
+        if (domain.setup) {
+          domain.setup(this.repo, deepOptions)
+        }
+      },
+      complete: () => {
+        if (domain.teardown) {
+          domain.teardown(this.repo)
+        }
+      }
+    })
 
     return domain
   }
 
-  dispatch(action: Action, state: Object, snapshot: Snapshot) {
+  dispatch(action: Action, state: Object) {
     let handlers = this.register(action)
-    let answer = state
+    let answer = Object.create(state)
 
     for (var i = 0; i < handlers.length; i++) {
       var { local, key, scope, steps } = handlers[i]
@@ -136,68 +179,26 @@ class DomainEngine {
         continue
       }
 
-      var last = answer[key]
-      var head = snapshot.last[key]
-      var next = snapshot.next[key]
+      let next = reduce(steps, action.payload, answer[key], scope)
 
-      if (
-        // If the reference to the prior state changed
-        last !== head ||
-        // Or the payload is different
-        action.payload !== snapshot.payload ||
-        // or the status is different
-        action.status !== snapshot.status
-      ) {
-        // Recalculate state from the last answer
-        next = reduce(steps, action.payload, last, scope)
+      if (next !== answer[key]) {
+        answer[key] = next
       }
-
-      if (answer === state && next !== answer[key]) {
-        answer = clone(state)
-      }
-
-      answer[key] = next
     }
 
     return answer
   }
 
-  deserialize(data: Object): Object {
-    let next = clone(data)
-
-    for (var key in this.domains) {
-      var domain = this.domains[key]
-
-      if (domain.deserialize) {
-        next[key] = domain.deserialize(data[key])
-      }
-    }
-
-    return next
-  }
-
-  serialize(state: Object, data: Object): Object {
-    let next = clone(data)
-
-    for (var key in this.domains) {
-      var domain = this.domains[key]
-
-      if (domain.serialize) {
-        next[key] = domain.serialize(state[key])
-      }
-    }
-
-    return next
-  }
-
   getInitialState(): Object {
-    let next = {}
-
-    for (var key in this.domains) {
-      next[key] = result(this.domains[key], 'getInitialState')
-    }
-
-    return next
+    return this.dispatch(
+      {
+        origin: this.repo,
+        status: 'complete',
+        command: INITIAL_STATE,
+        payload: null
+      },
+      {}
+    )
   }
 }
 

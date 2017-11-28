@@ -1,18 +1,33 @@
 import Microcosm from 'microcosm'
 
 describe('Microcosm::push', function() {
-  it('the pushed function has no scope', function(done) {
+  it('a pushed function has no scope', () => {
+    expect.assertions(1)
+
     let repo = new Microcosm()
 
-    repo.push(function() {
+    return repo.push(function() {
       expect(this).toBe(null)
-      done()
     })
   })
 
-  it('can push an action, resolving it into state', function() {
+  it('a subscribed action does not dispatch twice', async () => {
     let repo = new Microcosm()
-    let step = n => n
+    let command = jest.fn(function() {
+      return new Promise(resolve => setTimeout(resolve, 10))
+    })
+    let action = repo.push(command)
+
+    action.subscribe(n => n)
+
+    await action
+
+    expect(command).toHaveBeenCalledTimes(1)
+  })
+
+  it('can push an action, resolving it into state', async () => {
+    let repo = new Microcosm()
+    let step = jest.fn(n => n)
 
     repo.addDomain('count', {
       getInitialState() {
@@ -25,9 +40,12 @@ describe('Microcosm::push', function() {
       }
     })
 
-    repo.push(step, 1)
-    repo.push(step, 3)
+    await repo.push(step, 1)
+    await repo.push(step, 3)
 
+    await repo.history
+
+    expect(step).toHaveBeenCalledTimes(2)
     expect(repo).toHaveState('count', 4)
   })
 
@@ -36,7 +54,8 @@ describe('Microcosm::push', function() {
     const spy = jest.fn()
 
     repo.addDomain('test', {})
-    repo.on('change', spy)
+
+    repo.observable.subscribe(spy)
 
     repo.push('whatever')
 
@@ -145,16 +164,5 @@ describe('Microcosm::push', function() {
       expect(right.state.color).toEqual('blue')
       expect(left.state.color).toEqual('blue')
     })
-  })
-
-  it.dev('warns when pushing an action from a torn down Microcosm', function() {
-    let repo = new Microcosm()
-
-    repo.shutdown()
-
-    expect(repo.prepare('test')).toThrow(
-      'Pushed "test" action, however this Microcosm has been shutdown. ' +
-        "It's possible that an event subscription was not cleaned up."
-    )
   })
 })

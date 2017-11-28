@@ -1,20 +1,6 @@
-import Microcosm from 'microcosm'
+import Microcosm, { patch } from 'microcosm'
 
 describe('Domain::deserialize', function() {
-  it('to getInitialState when no deserialize method is provided', function() {
-    const repo = new Microcosm()
-
-    repo.addDomain('fiz', {
-      getInitialState() {
-        return true
-      }
-    })
-
-    return repo.patch({}, true).onDone(function() {
-      expect(repo).toHaveState('fiz', true)
-    })
-  })
-
   it('can deserialize a string', function() {
     const repo = new Microcosm()
 

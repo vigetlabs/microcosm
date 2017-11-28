@@ -1,8 +1,4 @@
-/**
- * @fileoverview Actions encapsulate the process of resolving an
- * action creator. Create an action using `Microcosm::push`:
- * @flow
- */
+import Subject from './subject'
 
 import $observable from 'symbol-observable'
 import Observable from 'zen-observable'
@@ -346,37 +342,26 @@ class Action extends Emitter {
     return this
   }
 
-  toString() {
-    return this.command.toString()
+  update(payload) {
+    this.next({ status: 'next', payload })
   }
 
-  toJSON() {
-    return {
-      id: this.id,
-      status: this.status,
-      type: this.type,
-      payload: this.payload,
-      disabled: this.disabled,
-      children: this.children,
-      revisions: this.revisions,
-      next: this.next && this.next.id
-    }
+  resolve(payload) {
+    this.next({ status: 'complete', payload })
+    this.complete(payload)
   }
 
-  [$observable]() {
-    return new Observable(observer => {
-      let updater = payload => {
-        observer.next(payload)
+  reject(payload) {
+    this.next({ status: 'error', payload })
+    this.error(payload)
+  }
 
-        if (this.complete) {
-          observer.complete()
-        }
-      }
+  get payload() {
+    return this.valueOf().payload
+  }
 
-      this.onNext(updater, observer)
-
-      return () => this._removeScope(observer)
-    })
+  get status() {
+    return this.valueOf().status
   }
 }
 

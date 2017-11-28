@@ -13,9 +13,9 @@ describe('Action::teardown', function() {
 
     const repo = new Microcosm()
 
-    const action = repo.push(test)
-
-    action.onDone(() => done())
+    repo.push(test).subscribe({
+      complete: () => done()
+    })
   })
 
   it('does not lose an onError subscription when it fails', function(done) {
@@ -25,9 +25,9 @@ describe('Action::teardown', function() {
 
     const repo = new Microcosm()
 
-    const action = repo.push(test)
-
-    action.onError(() => done())
+    repo.push(test).subscribe({
+      error: () => done()
+    })
   })
 
   it('does not lose an onCancel subscription when it cancels', function(done) {

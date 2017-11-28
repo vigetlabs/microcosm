@@ -1,16 +1,17 @@
 import Microcosm from 'microcosm'
 
-const identity = n => n
-
 describe('Action complete state', function() {
-  it('will not change states if already complete', function() {
+  it('will not change states if already complete', async () => {
     const repo = new Microcosm()
-    const action = repo.append(identity)
 
-    action.cancel()
-    action.resolve()
+    let payload = await repo.push(function() {
+      return observer => {
+        observer.next({ status: 'update', payload: 'one' })
+        observer.complete()
+        observer.next({ status: 'done', payload: 'two' })
+      }
+    })
 
-    expect(action.is('cancelled')).toBe(true)
-    expect(action.is('done')).toBe(false)
+    expect(payload).toEqual('one')
   })
 })

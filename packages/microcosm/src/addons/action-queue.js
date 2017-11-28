@@ -21,10 +21,12 @@ class ActionQueue {
 
   push(action: Action, callbacks: ?Object): void {
     if (callbacks) {
-      action.subscribe(callbacks, this._scope)
+      action.subscribe(callbacks)
     }
 
-    action.onNext(this._clean, this)
+    action.subscribe({
+
+    })
 
     this._queue.push(action)
   }

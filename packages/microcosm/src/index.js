@@ -1,18 +1,31 @@
-import Action from './action'
-import Emitter from './emitter'
+import Observable from 'zen-observable'
 import History from './history'
 import Microcosm from './microcosm'
 import getRegistration from './get-registration'
 import tag from './tag'
-import STATUS from './status'
 import { clone, merge, get, set, update, result } from './utils'
+import { RESET, PATCH } from './lifecycle'
+
+Observable.prototype.then = function(pass, fail) {
+  return new Promise((resolve, reject) => {
+    let last = null
+
+    this.subscribe({
+      next(value) {
+        last = value
+      },
+      complete() {
+        resolve(last)
+      },
+      error: reject
+    })
+  }).then(pass, fail)
+}
 
 export {
   Microcosm as default,
   Microcosm,
-  Action,
   History,
-  Emitter,
   tag,
   get,
   set,
@@ -21,5 +34,6 @@ export {
   clone,
   result,
   getRegistration,
-  STATUS
+  RESET as reset,
+  PATCH as patch
 }

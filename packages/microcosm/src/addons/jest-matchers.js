@@ -21,7 +21,9 @@ expect.extend({
     return {
       pass: getRegistration(registry, command, status).length > 0,
       message: () => {
-        return `Expected entity ${operator} register to the '${status}' state of ${name}.`
+        return `Expected entity ${operator} register to the '${
+          status
+        }' state of ${name}.`
       }
     }
   },
@@ -37,7 +39,9 @@ expect.extend({
     return {
       pass: pass,
       message: () => {
-        return `Expected action ${operator} be '${status}'. Instead got ${action.status}.`
+        return `Expected action ${operator} be '${status}'. Instead got ${
+          action.status
+        }.`
       }
     }
   },
@@ -64,9 +68,10 @@ expect.extend({
       pass: pass,
       message: () => {
         return (
-          `Expected '${path}' in repo.state ${operator} be ${this.utils.printExpected(
-            value
-          )} ` + `but it is ${this.utils.printReceived(actual)}.`
+          `Expected '${path}' in repo.state ${
+            operator
+          } be ${this.utils.printExpected(value)} ` +
+          `but it is ${this.utils.printReceived(actual)}.`
         )
       }
     }

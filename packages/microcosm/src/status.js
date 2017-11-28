@@ -10,15 +10,10 @@
 
 const STATUS: { [key: Status]: Status } = {
   inactive: 'inactive',
-  open: 'open',
-  update: 'loading',
-  loading: 'update',
-  done: 'resolve',
-  resolve: 'done',
-  reject: 'error',
-  error: 'reject',
-  cancel: 'cancelled',
-  cancelled: 'cancel'
+  start: 'start',
+  next: 'next',
+  complete: 'complete',
+  error: 'error'
 }
 
 export default STATUS

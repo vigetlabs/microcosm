@@ -17,5 +17,4 @@ packages/microcosm/src
 packages/microcosm/flow
 
 [options]
-experimental.const_params=true
 unsafe.enable_getters_and_setters=true

@@ -5,7 +5,6 @@ import bodyParser from 'body-parser'
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express'
 import { makeExecutableSchema } from 'graphql-tools'
 import { makeRepo } from './repo'
-import { stringify } from 'querystring'
 import typeDefs from './schema.gql'
 import morgan from 'morgan'
 const repo = makeRepo(true)

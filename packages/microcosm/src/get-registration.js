@@ -1,6 +1,5 @@
 // @flow
 import { isObject } from './utils'
-import STATUS from './status'
 
 function isPlainObject(value) {
   return !Array.isArray(value) && isObject(value)
@@ -16,10 +15,6 @@ function getRegistration(pool: any, command: Tagged, status: Status) {
     return answer
   }
 
-  let alias = STATUS[status]
-
-  console.assert(alias, 'Invalid action status ' + status)
-
   console.assert(
     command.__tagged,
     `Unable to register ${command.name || 'action'}(). It has not been tagged.`
@@ -32,16 +27,11 @@ function getRegistration(pool: any, command: Tagged, status: Status) {
    * Support nesting, like:
    */
   if (isPlainObject(nest)) {
-    answer = nest[alias] || nest[status]
+    answer = nest[status]
 
     /**
      * Throw in strict mode if a nested registration is undefined. This is usually a typo.
      */
-    console.assert(
-      !(alias in nest) || answer !== undefined,
-      `The "${alias}" key within a nested registration for ${command.name ||
-        'an action'} is ${answer}. Is it being referenced correctly?`
-    )
     console.assert(
       !(status in nest) || answer !== undefined,
       `The "${status}" key within a nested registration for ${command.name ||
@@ -55,7 +45,9 @@ function getRegistration(pool: any, command: Tagged, status: Status) {
      */
     console.assert(
       !(type in pool) || answer !== undefined,
-      `${command.toString()} key within a registration is ${answer}. Is it being referenced correctly?`
+      `${command.toString()} key within a registration is ${
+        answer
+      }. Is it being referenced correctly?`
     )
   }
 

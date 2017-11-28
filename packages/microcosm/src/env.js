@@ -1,6 +1,6 @@
 /**
-* A common place to store data about the current environment
-*/
+ * A common place to store data about the current environment
+ */
 
 export const hasWindow = typeof window !== 'undefined'
 

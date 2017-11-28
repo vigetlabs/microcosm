@@ -3,8 +3,9 @@
  */
 
 import React from 'react'
-import { Action, merge } from '../index'
-import ActionQueue from './action-queue'
+import Observable from 'zen-observable'
+import $observable from 'symbol-observable'
+import { merge } from '../index'
 
 const identity = n => n
 
@@ -15,8 +16,8 @@ type Props = {
   onDone: ?Callback,
   onError: ?Callback,
   onNext: ?Callback,
-  onOpen: ?Callback,
-  onUpdate: ?Callback,
+  onStart: ?Callback,
+  onComplete: ?Callback,
   prepare: (value?: *, event?: Event) => *,
   send: ?Sender,
   tag: string | React$ElementType,
@@ -33,18 +34,18 @@ class ActionButton extends React.PureComponent<Props> {
 
   send: Sender
   click: (event: Event) => Action
-  _queue: ActionQueue
+  _queue: *[]
 
   constructor(props: Props, context: Context) {
     super(props, context)
 
     this.send = this.props.send || this.context.send
     this.click = this.click.bind(this)
-    this._queue = new ActionQueue(this)
+    this._queue = []
   }
 
   componentWillUnmount() {
-    this._queue.empty()
+    this._queue.forEach(item => item.unsubscribe())
   }
 
   render() {
@@ -53,10 +54,9 @@ class ActionButton extends React.PureComponent<Props> {
     delete props.tag
     delete props.action
     delete props.value
-    delete props.onOpen
-    delete props.onDone
-    delete props.onUpdate
-    delete props.onCancel
+    delete props.onStart
+    delete props.onNext
+    delete props.onComplete
     delete props.onError
     delete props.onNext
     delete props.send
@@ -73,17 +73,20 @@ class ActionButton extends React.PureComponent<Props> {
     const { action, onClick, prepare, value } = this.props
 
     let params = prepare(value, event)
-    let result = null
+    let result = this.send(action, params)
 
-    if (action) {
-      result = this.send(action, params)
-
-      if (result instanceof Action) {
-        this._queue.push(result, this.props)
-      }
+    if (result && $observable in result) {
+      this._queue.push(
+        result.subscribe({
+          start: this.props.onStart,
+          next: this.props.onNext,
+          complete: this.props.onComplete,
+          error: this.props.onError
+        })
+      )
     }
 
-    onClick(event, action)
+    onClick(event, result)
 
     return result
   }
@@ -95,13 +98,11 @@ ActionButton.contextTypes = {
 
 ActionButton.defaultProps = {
   action: null,
-  onCancel: null,
   onClick: identity,
-  onDone: null,
-  onError: null,
-  onNext: null,
-  onOpen: null,
-  onUpdate: null,
+  onStart: identity,
+  onNext: identity,
+  onComplete: identity,
+  onError: identity,
   prepare: identity,
   send: null,
   tag: 'button',

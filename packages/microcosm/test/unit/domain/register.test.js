@@ -23,7 +23,7 @@ describe('Domain::register', function() {
     repo.push(action)
   })
 
-  it('returns the same state if a handler is not provided', function() {
+  it('returns the same state if a handler is not provided', async () => {
     let repo = new Microcosm()
 
     repo.addDomain('test', {
@@ -32,9 +32,9 @@ describe('Domain::register', function() {
       }
     })
 
-    return repo.push(action).onDone(function() {
-      expect(repo).toHaveState('test', 'test')
-    })
+    await repo.push(action)
+
+    expect(repo).toHaveState('test', 'test')
   })
 
   describe('nesting', function() {

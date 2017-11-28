@@ -1,7 +1,6 @@
 import gql from 'graphql-tag'
 import Repo from '../../src/repo'
 import { find, filter } from '../../src/utilities'
-import { uniqBy } from 'lodash'
 
 export const SOLAR_SCHEMA = gql`
   type Star {
@@ -42,22 +41,8 @@ export class SolarSystem extends Repo {
 
   setup() {
     this.addDomain('Planet', {
-      actions: {
-        getPlanets: ({ limit = Infinity, offset = 0 } = {}) => {
-          return Promise.resolve(
-            SOLAR_DATA.Planet.slice(offset, offset + limit)
-          )
-        }
-      },
-      getInitialState() {
-        return []
-      },
-      register() {
-        return {
-          getPlanets: (old, next) => {
-            return uniqBy(old.concat(next), 'id')
-          }
-        }
+      all({ limit = Infinity, offset = 0 } = {}) {
+        return Promise.resolve(SOLAR_DATA.Planet.slice(offset, offset + limit))
       }
     })
 
