@@ -5,20 +5,15 @@ main {
   //min-height: 100vh;
 }
 
-.section {
-  // background: darkslateblue; //TODO - change later on scroll
-  // min-height: inherit;
-  // overflow: auto;
-  // // padding-top: ($nav-height + 50px);
 
-  .wrapper {
-    @include breakpoint(small-desktop-up) {
-      display: flex;
-      justify-content: space-between;
-    }
-    //position: relative;
+.wrapper {
+  @include breakpoint(small-desktop-up) {
+    display: flex;
+    justify-content: space-between;
   }
+  //position: relative;
 }
+
 
 .section-title {
   font-size: rem(30);

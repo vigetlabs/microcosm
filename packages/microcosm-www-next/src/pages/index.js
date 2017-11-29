@@ -1,132 +1,82 @@
 import React from 'react'
+import Section1 from '../components/section1';
+import Section2 from '../components/section2';
+import Observer from 'react-intersection-observer';
 
-const IndexPage = () => (
-  <section className="section">
-    <div className="wrapper">
+import callBackFn from '../modules/callbackFn';
 
-      <div className="col-left">
-        {/* <h2 className="section-title">
-          <span>01.</span>
-          Rendering a View
-        </h2> */}
-        <figure className="figure -left">
-          <img src="" className="figure__graphic" alt="TODO" />
-          <figcaption className="figure__content">
-            <h3 className="figure__content__header">In the browser</h3>
-            <p className="figure__content__text">
-              A user fires up the browser to take a quiz.
-            </p>
-          </figcaption>
-        </figure>
+// const IndexPage = () => (
+
+//   <div className="wrapper">
+
+//     <div className="col-left">
+//       {/* <h2 className="section-title">
+//         <span>01.</span>
+//         Rendering a View
+//       </h2> */}
+//       <figure className="figure -left">
+//         <img src="" className="figure__graphic" alt="TODO" />
+//         <figcaption className="figure__content">
+//           <h3 className="figure__content__header">In the browser</h3>
+//           <p className="figure__content__text">
+//             A user fires up the browser to take a quiz.
+//           </p>
+//         </figcaption>
+//       </figure>
+//     </div>
+
+//     <div className="col-right">
+//       <Section1 />
+//       <Section2 />
+//     </div>
+//   </div>
+
+
+// )
+
+export default class IndexPage extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    this.leftFigure = document.getElementsByClassName('figure__content__text')[0];
+  }
+
+  componentWillUnmount() {
+
+  }
+
+  render() {
+    return (
+      <div className="wrapper">
+        <div className="col-left">
+          {/* <h2 className="section-title">
+            <span>01.</span>
+            Rendering a View
+          </h2> */}
+          <figure className="figure -left">
+            <img src="" className="figure__graphic" alt="TODO" />
+            <figcaption className="figure__content">
+              <h3 className="figure__content__header">In the browser</h3>
+              <p className="figure__content__text">
+                A user fires up the browser to take a quiz.
+              </p>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div className="col-right">
+          <Section1 />
+          <Observer onChange={(inView) => callBackFn(inView, this.leftFigure, Section2)}>
+            <Section2 />
+          </Observer>
+
+        </div>
       </div>
+    );
+  }
+}
 
-      <div className="col-right">
-        <figure className="figure -right">
-          <img src="" className="figure__graphic" alt="TODO" />
-          <figcaption className="figure__content">
-            <h3 className="figure__content__header">In Microcosm</h3>
-            <p className="figure__content__text">
-              The <a href="TODO">Domains</a> are in charge of keeping state
-              organized, and provide whatever data is necessary to the
-              Presenter. A Presenter at it's core is a React Component, so it
-              uses the data it pulls from the Domains to render the appropriate
-              view.
-            </p>
-          </figcaption>
-        </figure>
-        <figure className="figure -right">
-          <img src="" className="figure__graphic" alt="TODO" />
-          <figcaption className="figure__content">
-            <h3 className="figure__content__header">In Microcosm</h3>
-            <p className="figure__content__text">
-              The <a href="TODO">Domains</a> are in charge of keeping state
-              organized, and provide whatever data is necessary to the
-              Presenter. A Presenter at it's core is a React Component, so it
-              uses the data it pulls from the Domains to render the appropriate
-              view.
-            </p>
-          </figcaption>
-        </figure>
-        <figure className="figure -right">
-          <img src="" className="figure__graphic" alt="TODO" />
-          <figcaption className="figure__content">
-            <h3 className="figure__content__header">In Microcosm</h3>
-            <p className="figure__content__text">
-              The <a href="TODO">Domains</a> are in charge of keeping state
-              organized, and provide whatever data is necessary to the
-              Presenter. A Presenter at it's core is a React Component, so it
-              uses the data it pulls from the Domains to render the appropriate
-              view.
-            </p>
-          </figcaption>
-        </figure>
-      </div>
-    </div>
-    {/* <div className="wrapper">
-      <h2 className="section-title">
-        <span>01.</span>
-        Rendering a View
-      </h2>
 
-      <div className="figure-container">
-        <figure className="figure -left">
-          <img src="" className="figure__graphic" alt="TODO" />
-          <figcaption className="figure__content">
-            <h3 className="figure__content__header">In the browser</h3>
-            <p className="figure__content__text">
-              A user fires up the browser to take a quiz.
-            </p>
-          </figcaption>
-        </figure>
-
-        <figure className="figure -right">
-          <img src="" className="figure__graphic" alt="TODO" />
-          <figcaption className="figure__content">
-            <h3 className="figure__content__header">In Microcosm</h3>
-            <p className="figure__content__text">
-              The <a href="TODO">Domains</a> are in charge of keeping state
-              organized, and provide whatever data is necessary to the
-              Presenter. A Presenter at it's core is a React Component, so it
-              uses the data it pulls from the Domains to render the appropriate
-              view.
-            </p>
-          </figcaption>
-        </figure>
-      </div>
-    </div> */}
-
-    {/* <div className="col-left">
-      <div className="wrapper2">
-        <figure className="figure -left">
-          <img src="" className="figure__graphic" alt="TODO" />
-          <figcaption className="figure__content">
-            <h3 className="figure__content__header">In the browser</h3>
-            <p className="figure__content__text">
-              A user fires up the browser to take a quiz.
-            </p>
-          </figcaption>
-        </figure>
-      </div>
-    </div>
-
-    <div className="col-right">
-      <div className="wrapper2">
-        <figure className="figure -right">
-          <img src="" className="figure__graphic" alt="TODO" />
-          <figcaption className="figure__content">
-            <h3 className="figure__content__header">In Microcosm</h3>
-            <p className="figure__content__text">
-              The <a href="TODO">Domains</a> are in charge of keeping state
-              organized, and provide whatever data is necessary to the
-              Presenter. A Presenter at it's core is a React Component, so it
-              uses the data it pulls from the Domains to render the appropriate
-              view.
-            </p>
-          </figcaption>
-        </figure>
-      </div>
-    </div> */}
-  </section>
-)
-
-export default IndexPage
+// When a new section is appearing, we want it to trigger the Intersection IntersectionObserver. After trigger, it will grab and change the figure on the left
