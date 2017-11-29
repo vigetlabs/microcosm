@@ -1,38 +1,6 @@
 import React from 'react'
-import Section1 from '../components/section1';
-import Section2 from '../components/section2';
-import Observer from 'react-intersection-observer';
-
-import callBackFn from '../modules/callbackFn';
-
-// const IndexPage = () => (
-
-//   <div className="wrapper">
-
-//     <div className="col-left">
-//       {/* <h2 className="section-title">
-//         <span>01.</span>
-//         Rendering a View
-//       </h2> */}
-//       <figure className="figure -left">
-//         <img src="" className="figure__graphic" alt="TODO" />
-//         <figcaption className="figure__content">
-//           <h3 className="figure__content__header">In the browser</h3>
-//           <p className="figure__content__text">
-//             A user fires up the browser to take a quiz.
-//           </p>
-//         </figcaption>
-//       </figure>
-//     </div>
-
-//     <div className="col-right">
-//       <Section1 />
-//       <Section2 />
-//     </div>
-//   </div>
-
-
-// )
+import data from '../data/index.json';
+import { Section1, Section2 } from '../components';
 
 export default class IndexPage extends React.Component {
   constructor(props) {
@@ -41,10 +9,21 @@ export default class IndexPage extends React.Component {
 
   componentDidMount() {
     this.leftFigure = document.getElementsByClassName('figure__content__text')[0];
+    let sections = document.querySelectorAll('[data-module="ObserveSection"]');
+
+    //create new Observer instance
+    let observer = new IntersectionObserver(this.onChange.bind(this), {threshold: 0.6});
+
+    //start observing each section
+    sections.forEach(section => observer.observe(section));
   }
 
-  componentWillUnmount() {
+  onChange(observed) {
+    let entry = observed[0];
 
+    if (entry.isIntersecting) {
+      this.leftFigure.innerHTML = data[entry.target.id].browserText;
+    }
   }
 
   render() {
@@ -59,24 +38,16 @@ export default class IndexPage extends React.Component {
             <img src="" className="figure__graphic" alt="TODO" />
             <figcaption className="figure__content">
               <h3 className="figure__content__header">In the browser</h3>
-              <p className="figure__content__text">
-                A user fires up the browser to take a quiz.
-              </p>
+              <p className="figure__content__text"></p>
             </figcaption>
           </figure>
         </div>
 
         <div className="col-right">
           <Section1 />
-          <Observer onChange={(inView) => callBackFn(inView, this.leftFigure, Section2)}>
-            <Section2 />
-          </Observer>
-
+          <Section2 />
         </div>
       </div>
     );
   }
 }
-
-
-// When a new section is appearing, we want it to trigger the Intersection IntersectionObserver. After trigger, it will grab and change the figure on the left

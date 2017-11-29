@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Section2 = ({ fill }) => (
-  <figure className="figure -right" data-hello="jh">
+  <figure className="figure -right" id="section2" data-module="ObserveSection">
     <img src="" className="figure__graphic mytry" alt="TODO" />
     <figcaption className="figure__content">
       <h3 className="figure__content__header">In Microcosm</h3>
