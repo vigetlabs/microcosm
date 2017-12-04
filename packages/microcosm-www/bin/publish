@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export BASE_URL=$(node -p 'require("../package").homepage')
+export BASE_URL=$(node -p 'require("./package").homepage')
 
 make all
 
@@ -9,9 +9,9 @@ rm -rf ./**/.DS_Store
 
 cd ..
 git checkout -B gh-pages
-git add -f site/public
+git add -f public
 git commit -am "[skip ci] Rebuild website"
-git filter-branch -f --prune-empty --subdirectory-filter site/public
+git filter-branch -f --prune-empty --subdirectory-filter public
 git push -f origin gh-pages
 git checkout -
 cd site
