@@ -14,7 +14,6 @@ git commit -am "[skip ci] Rebuild website"
 git filter-branch -f --prune-empty --subdirectory-filter public
 git push -f origin gh-pages
 git checkout -
-cd site
 
 echo ""
 echo "Published to:"
