@@ -238,7 +238,7 @@ function getPostWithComments (id) {
   }
 }
 
-repo.push(getBlogPost, 1)
+repo.push(getPostWithComments, 1)
 ```
 
 If all actions resolve or cancel, the generator sequence continues.
