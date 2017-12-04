@@ -9,7 +9,7 @@ describe('Action done state', function() {
 
     action.resolve()
 
-    expect(action).toHaveStatus('done')
+    expect(action).toHaveStatus('resolve')
   })
 
   it('triggers a done event when it resolves', function() {
@@ -17,7 +17,7 @@ describe('Action done state', function() {
     const action = repo.append(identity)
     const callback = jest.fn()
 
-    action.once('resolve', callback)
+    action.onDone(callback)
     action.resolve(3)
 
     expect(callback).toHaveBeenCalledWith(3)
@@ -43,7 +43,7 @@ describe('Action done state', function() {
     action.resolve(true)
 
     expect(action).not.toHaveStatus('loading')
-    expect(action).toHaveStatus('done')
+    expect(action).toHaveStatus('resolve')
   })
 
   it('actions can not be resolved after rejected', function() {
@@ -53,8 +53,8 @@ describe('Action done state', function() {
     action.reject(false)
     action.resolve()
 
-    expect(action).toHaveStatus('error')
-    expect(action).not.toHaveStatus('done')
+    expect(action).toHaveStatus('reject')
+    expect(action).not.toHaveStatus('resolve')
   })
 
   it('aliases the done type with resolve', function() {

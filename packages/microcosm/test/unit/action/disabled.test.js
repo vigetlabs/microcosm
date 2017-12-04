@@ -2,7 +2,7 @@ import Microcosm from 'microcosm'
 
 const identity = n => n
 
-describe('Action disabled state', function() {
+describe.skip('Action disabled state', function() {
   it('preserves other states when disabled', function() {
     const repo = new Microcosm()
     const action = repo.append(identity)

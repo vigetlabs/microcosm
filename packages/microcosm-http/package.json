@@ -4,7 +4,7 @@
   "main": "src/http.js",
   "private": true,
   "dependencies": {
-    "axios": "^0.16.2"
+    "axios": "^0.17.1"
   },
   "scripts": {
     "start": "webpack-dev-server"
@@ -13,8 +13,8 @@
     "body-parser": "^1.18.1",
     "html-webpack-plugin": "^2.30.1",
     "multer": "^1.3.0",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "webpack": "^3.6.0",
     "webpack-dev-server": "^2.8.2"
   }

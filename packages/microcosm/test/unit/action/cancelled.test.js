@@ -8,19 +8,19 @@ describe('Action cancelled state', function() {
     const action = repo.append(identity)
     const callback = jest.fn()
 
-    action.once('cancel', callback)
-    action.cancel()
+    action.onCancel(callback)
+    action.cancel(true)
 
-    expect(callback).toHaveBeenCalled()
+    expect(callback).toHaveBeenCalledWith(true)
   })
 
-  it('becomes complete when cancelled', function() {
+  it('becomes closed when cancelled', function() {
     const repo = new Microcosm()
     const action = repo.append(identity)
 
     action.cancel()
 
-    expect(action.complete).toBe(true)
+    expect(action.closed).toBe(true)
   })
 
   it('exposes a cancelled type when cancelled', function() {
@@ -40,7 +40,7 @@ describe('Action cancelled state', function() {
     action.onCancel(callback)
 
     action.cancel()
-    action._emit('cancel')
+    action.cancel()
 
     expect(callback).toHaveBeenCalledTimes(1)
   })

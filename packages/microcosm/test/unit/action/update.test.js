@@ -42,7 +42,7 @@ describe('Action update state', function() {
     action.update(true)
 
     expect(action).not.toHaveStatus('open')
-    expect(action).toHaveStatus('loading')
+    expect(action).toHaveStatus('update')
   })
 
   it('triggers an update event when it updates', function() {
@@ -50,7 +50,7 @@ describe('Action update state', function() {
     const action = repo.append(identity)
     const callback = jest.fn()
 
-    action.once('update', callback)
+    action.onUpdate(callback)
     action.update(3)
 
     expect(callback).toHaveBeenCalledWith(3)
@@ -61,14 +61,14 @@ describe('Action update state', function() {
     const action = repo.append(identity)
     const spy = jest.fn()
 
-    action.on('update', spy)
+    action.onUpdate(spy)
     action.resolve()
     action.update()
 
     expect(spy).not.toHaveBeenCalled()
   })
 
-  it('aliases the loading type with update', function() {
+  it.skip('aliases the loading type with update', function() {
     const repo = new Microcosm()
     const action = repo.append(identity)
 
@@ -80,33 +80,32 @@ describe('Action update state', function() {
   it('updates repo state with the latest progress', function() {
     const repo = new Microcosm()
     const test = n => n
-    const handler = jest.fn(n => n)
+    const handler = jest.fn((a, b) => b)
 
     repo.addDomain('progress', {
-      getInitalState() {
+      getInitialState() {
         return 0
       },
       register() {
         return {
           [test]: {
-            update: (a, b) => handler(b)
+            update: handler
           }
         }
       }
     })
 
     const action = repo.append(test)
-
     action.update(1)
-    expect(handler).toHaveBeenCalledWith(1)
+    expect(handler).toHaveBeenCalledWith(0, 1)
     expect(repo).toHaveState('progress', 1)
 
     action.update(2)
-    expect(handler).toHaveBeenCalledWith(2)
+    expect(handler).toHaveBeenCalledWith(0, 2)
     expect(repo).toHaveState('progress', 2)
 
     action.update(3)
-    expect(handler).toHaveBeenCalledWith(3)
+    expect(handler).toHaveBeenCalledWith(0, 3)
     expect(repo).toHaveState('progress', 3)
   })
 })

@@ -2,7 +2,7 @@
  * @flow
  */
 
-import Observable from 'zen-observable'
+import { Observable } from './observable'
 import Subject from './subject'
 import coroutine from './coroutine'
 import defaultUpdateStrategy from './default-update-strategy'
@@ -52,7 +52,7 @@ class History {
     this.releases = new Subject()
     this.updates = new Subject()
 
-    this.updates.observable.subscribe(this._queueRelease.bind(this))
+    this.updates.subscribe(this._queueRelease.bind(this))
   }
 
   then(pass?: *, fail?: *): Promise<*> {
@@ -74,24 +74,15 @@ class History {
     this.head = id
     this._size += 1
 
-    let action = {
-      id,
-      command,
-      status: null,
-      payload: null,
-      toString: () => id
-    }
+    let action = new Subject()
 
     this._actions[id] = action
 
-    let observable = coroutine(command, params, origin).reduce(
-      Object.assign,
-      action
-    )
+    this.updates.next({ id, command, action })
 
-    observable.subscribe(n => this.updates.next(n))
+    coroutine(action, command, params, origin)
 
-    return observable
+    return action
   }
 
   before(id) {

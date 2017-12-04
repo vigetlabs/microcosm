@@ -24,9 +24,7 @@ class ActionQueue {
       action.subscribe(callbacks)
     }
 
-    action.subscribe({
-
-    })
+    action.subscribe({})
 
     this._queue.push(action)
   }

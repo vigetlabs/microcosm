@@ -3,7 +3,6 @@
  */
 
 import React from 'react'
-import Observable from 'zen-observable'
 import $observable from 'symbol-observable'
 import { merge } from '../index'
 

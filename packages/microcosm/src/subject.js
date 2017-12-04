@@ -1,4 +1,4 @@
-import Observable from 'zen-observable'
+import { Observable } from './observable'
 
 function send(observers, message, value) {
   Array.from(observers).forEach(function(observer) {
@@ -9,7 +9,9 @@ function send(observers, message, value) {
     try {
       return observer[message](value)
     } catch (error) {
-      setTimeout(() => { throw error }, 0)
+      setTimeout(() => {
+        throw error
+      }, 0)
     }
   })
 }
@@ -71,7 +73,9 @@ class Subject {
   }
 
   next(value) {
-    this._value = value
+    if (!this.closed) {
+      this._value = value
+    }
 
     send(this._observers, 'next', value)
   }
@@ -88,6 +92,17 @@ class Subject {
 
   valueOf() {
     return this._value
+  }
+
+  then(pass, fail) {
+    return new Promise((resolve, reject) => {
+      this.subscribe({
+        complete() {
+          resolve(this._value)
+        },
+        error: reject
+      })
+    }).then(pass, fail)
   }
 }
 

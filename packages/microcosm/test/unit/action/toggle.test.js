@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe('Action::toggle', function() {
+describe.skip('Action::toggle', function() {
   it('it will not dispatch an action disabled at the head', function() {
     const repo = new Microcosm({ maxHistory: Infinity })
 

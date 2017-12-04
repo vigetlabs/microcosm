@@ -106,13 +106,11 @@ class DomainEngine {
 
     this.domains[key] = domain
 
-    if ('getInitialState' in domain) {
-      this.lifecycle[INITIAL_STATE.toString()].push({
-        key: key,
-        scope: domain,
-        steps: [domain.getInitialState]
-      })
-    }
+    this.lifecycle[INITIAL_STATE.toString()].push({
+      key: key,
+      scope: domain,
+      steps: [domain.getInitialState || noop]
+    })
 
     this.lifecycle[DESERIALIZE.toString()].push({
       key: key,

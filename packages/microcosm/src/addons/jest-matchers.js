@@ -34,7 +34,7 @@ expect.extend({
     }
 
     let operator = this.isNot ? 'not to' : 'to'
-    let pass = action.is(status)
+    let pass = action.status === status
 
     return {
       pass: pass,

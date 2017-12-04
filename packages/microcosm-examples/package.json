@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.16.2",
+    "axios": "^0.17.1",
     "babel-loader": "^7.1.2",
     "body-parser": "^1.17.2",
     "console.table": "^0.9.1",

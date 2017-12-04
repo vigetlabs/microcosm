@@ -2,7 +2,6 @@
  * @flow
  */
 
-import Observable from 'zen-observable'
 import Subject from './subject'
 import History from './history'
 import DomainEngine from './domain-engine'
@@ -41,17 +40,17 @@ class Microcosm extends Subject {
     this._domains = new DomainEngine(this)
     this._effects = new EffectEngine(this)
 
-    this.observable.subscribe({
-      start: this.teardown.bind(this, this.options),
-      complete: this.teardown.bind(this)
+    this.subscribe({
+      start: () => this.setup(this.options),
+      complete: () => this.teardown()
     })
 
     // A history is done reconciling and is ready for a release
-    this.history.releases.observable.subscribe(() => {
+    this.history.releases.subscribe(() => {
       this.observer.next(this.state)
     })
 
-    this.history.updates.observable.subscribe(next => {
+    this.history.updates.subscribe(next => {
       this._updateSnapshotRange(next)
       this._effects.dispatch(next)
     })
@@ -74,23 +73,9 @@ class Microcosm extends Subject {
   }
 
   getInitialState() {
-    return this.parent
-      ? merge(this.parent.getInitialState(), this._domains.getInitialState())
-      : this._domains.getInitialState()
-  }
+    let state = this._domains.getInitialState()
 
-  append(command: any): Action {
-    let action = null
-    let proxy = tag(
-      () => _action => {
-        action = _action
-      },
-      tag(command).toString()
-    )
-
-    this.history.append(proxy, [], this)
-
-    return action
+    return this.parent ? merge(this.parent.getInitialState(), state) : state
   }
 
   push(command: any, ...params: *[]): Action {
@@ -133,7 +118,7 @@ class Microcosm extends Subject {
 
   /* Private ------------------------------------------------------ */
 
-  _updateSnapshotRange(action: Action) {
+  _update(action) {
     let state =
       this._snapshots[this.history.before(action)] || this.getInitialState()
 
@@ -152,6 +137,27 @@ class Microcosm extends Subject {
 
       action = this.history.after(action)
     }
+  }
+
+  _updateSnapshotRange({ id, action, command }) {
+    let payload = null
+
+    action.subscribe({
+      start: () => {
+        this._update({ id, status: 'start', command, payload })
+      },
+      next: value => {
+        payload = value
+        this._update({ id, status: 'next', command, payload })
+      },
+      complete: () => {
+        this._update({ id, status: 'complete', command, payload })
+      },
+      error: () => {
+        payload = error
+        this._update({ id, status: 'error', command, payload })
+      }
+    })
   }
 }
 

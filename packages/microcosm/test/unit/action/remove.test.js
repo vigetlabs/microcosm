@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe('remove', function() {
+describe.skip('remove', function() {
   it('does not remove non-existent parents', function() {
     const repo = new Microcosm()
     const parent = repo.append(n => n)

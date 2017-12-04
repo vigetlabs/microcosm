@@ -31,7 +31,8 @@
   "devDependencies": {
     "babel-eslint": "^8.0.1",
     "babel-preset-env": "^1.6.0",
-    "codecov": "^2.3.0",
+    "buble": "^0.18.0",
+    "codecov": "^3.0.0",
     "console.table": "^0.9.1",
     "enzyme": "^3.0.0",
     "enzyme-adapter-react-16": "^1.0.0",
@@ -44,12 +45,12 @@
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-test-renderer": "^16.0.0",
-    "rollup": "^0.50.0",
-    "rollup-plugin-buble": "^0.16.0",
+    "rollup": "^0.52.0",
+    "rollup-plugin-buble": "^0.18.0",
     "rollup-plugin-flow": "^1.1.1",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-strip": "^1.1.1",
-    "rollup-plugin-uglify": "^1.0.2"
+    "rollup-plugin-uglify": "^2.0.1"
   }
 }

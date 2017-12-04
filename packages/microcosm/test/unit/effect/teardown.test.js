@@ -11,7 +11,7 @@ describe('Effect::teardown', function() {
 
     repo.addEffect(Effect)
 
-    repo.shutdown()
+    repo.complete()
 
     expect(spy).toHaveBeenCalledWith(repo)
   })
@@ -19,6 +19,6 @@ describe('Effect::teardown', function() {
   it('does not need to implement teardown', function() {
     const repo = new Microcosm()
     repo.addEffect(class Effect {})
-    repo.shutdown()
+    repo.complete()
   })
 })

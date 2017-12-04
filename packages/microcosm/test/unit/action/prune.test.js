@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe('prune', function() {
+describe.skip('prune', function() {
   it('does not prune non-existing grandparents', function() {
     const repo = new Microcosm()
     const grandparent = repo.append(n => n)

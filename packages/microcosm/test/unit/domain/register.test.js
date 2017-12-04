@@ -20,7 +20,7 @@ describe('Domain::register', function() {
       }
     })
 
-    repo.push(action)
+    repo.push(action, true)
   })
 
   it('returns the same state if a handler is not provided', async () => {
@@ -32,7 +32,7 @@ describe('Domain::register', function() {
       }
     })
 
-    await repo.push(action)
+    await repo.push('test')
 
     expect(repo).toHaveState('test', 'test')
   })
@@ -46,20 +46,20 @@ describe('Domain::register', function() {
         register() {
           return {
             [action]: {
-              open: handler,
-              update: handler,
-              reject: handler,
-              resolve: handler,
+              start: handler,
+              next: handler,
+              complete: handler,
+              error: handler,
               cancel: handler
             }
           }
         }
       })
 
-      expect(domain).toRegister(action, 'open')
-      expect(domain).toRegister(action, 'update')
-      expect(domain).toRegister(action, 'reject')
-      expect(domain).toRegister(action, 'resolve')
+      expect(domain).toRegister(action, 'start')
+      expect(domain).toRegister(action, 'next')
+      expect(domain).toRegister(action, 'complete')
+      expect(domain).toRegister(action, 'error')
       expect(domain).toRegister(action, 'cancel')
     })
   })

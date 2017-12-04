@@ -2,7 +2,7 @@
  * @flow
  */
 
-import Observable from 'zen-observable'
+import { Observable } from './observable'
 import type Microcosm from './microcosm'
 import { castPath, type KeyPath } from './key-path'
 import { toStringTag } from './symbols'
