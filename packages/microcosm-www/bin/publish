@@ -7,12 +7,14 @@ make all
 # Clean up pesky files
 rm -rf ./**/.DS_Store
 
+cd ../../../
 git checkout -B gh-pages
-git add -f public
+git add -f packages/microcosm-www/public
 git commit -am "[skip ci] Rebuild website"
-git filter-branch -f --prune-empty --subdirectory-filter public
+git filter-branch -f --prune-empty --subdirectory-filter packages/microcosm-www/public
 git push -f origin gh-pages
 git checkout -
+cd packages/microcosm-www
 
 echo ""
 echo "Published to:"
