@@ -7,7 +7,7 @@ make all
 # Clean up pesky files
 rm -rf ./**/.DS_Store
 
-cd ../../../
+cd ../../
 git checkout -B gh-pages
 git add -f packages/microcosm-www/public
 git commit -am "[skip ci] Rebuild website"
