@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="history">History</h1>
+<ol style="list-style-type: decimal">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#api">API</a></li>
+<li><a href="#events">Events</a></li>
+</ol>
+<p><strong>Note: This is a work in progress document and feature. History has been a private API for a very long time. We’re still working through the best public interface for working with Microcosm’s action history.</strong></p>
+<h2 id="overview">Overview</h2>
+<p>All Microcosms have a history. This history keeps track of outstanding actions, working with a Microcosm to determine the next application state as actions move through different states.</p>
+<p>By default, Microcosm automatically disposes actions that are complete. However you can control how many actions Microcosm’s history will hold on to by passing the <code>maxHistory</code> option:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Hold onto the last 10 actions</span>
+<span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>(<span class="op">{</span> <span class="dt">maxHistory</span><span class="op">:</span> <span class="dv">10</span> <span class="op">}</span>)
+
+<span class="co">// Or never forget anything</span>
+<span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>(<span class="op">{</span> <span class="dt">maxHistory</span><span class="op">:</span> <span class="kw">Infinity</span> <span class="op">}</span>)
+
+<span class="co">// Then push some actions</span>
+<span class="va">repo</span>.<span class="at">push</span>(action)
+<span class="va">repo</span>.<span class="at">push</span>(action)
+<span class="va">repo</span>.<span class="at">push</span>(action)
+
+<span class="co">// Get actions out by using `repo.history.toArray()`</span>
+<span class="kw">let</span> actions <span class="op">=</span> <span class="va">repo</span>.<span class="va">history</span>.<span class="at">toArray</span>() <span class="co">// [actionOne, actionTwo, actionThree]</span></code></pre></div>
+<h3 id="the-data-structure">The data structure</h3>
+<p>History stores actions as a tree, with a root and a head:</p>
+<pre><code>[root] - [one] - [two] - [three]</code></pre>
+<p>You can revert to a prior action by using <code>checkout(action)</code>:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>(<span class="op">{</span> <span class="dt">maxHistory</span><span class="op">:</span> <span class="kw">Infinity</span> <span class="op">}</span>)
+
+<span class="kw">let</span> one <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)
+<span class="kw">let</span> two <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)
+
+<span class="va">repo</span>.<span class="va">history</span>.<span class="at">checkout</span>(one)
+
+<span class="kw">let</span> three <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)</code></pre></div>
+<p>In the example above, the following tree would be produced:</p>
+<pre><code>               |- [two]
+[root] - [one] +
+               |- [*three]</code></pre>
+<p><code>three</code> is the active branch, marked with an asterisk. The active branch is used to determine state. Here, a Microcosm’s state will be the result of dispatching <code>root</code>, <code>one</code>, and <code>three</code> to Domains.</p>
+<h3 id="reconciling">Reconciling</h3>
+<p>What makes History such a powerful feature of Microcosm is its ability to walk through recorded actions whenever there is a change, similar to a rebase in git.</p>
+<p>Let’s say we have four actions pushed to our History, and that three of the four are completed <code>(C)</code>, but the second action we pushed is taking a long time and is still open <code>(O)</code>.</p>
+<pre><code>[root] - [one](C) - [two](O) - [three](C) - [four](C)</code></pre>
+<p>When our <code>two</code> action here resolves or rejects, History will initiate a reconciliation starting at <code>two</code>, and walk forward to <code>three</code> and then <code>four</code>. At each step, your Domains will recompute changes to the state based on the actions.</p>
+<p>This ensures that your application state is always accurate based on the order in which actions were triggered.</p>
+<h2 id="api">API</h2>
+<h3 id="checkoutaction">checkout(action)</h3>
+<p>Set the head of the tree to a target action. This has the effect of controlling time in a Microcosm’s history:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>(<span class="op">{</span> <span class="dt">maxHistory</span><span class="op">:</span> <span class="kw">Infinity</span> <span class="op">}</span>)
+
+<span class="kw">let</span> one <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)
+<span class="kw">let</span> two <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)
+
+<span class="va">repo</span>.<span class="va">history</span>.<span class="at">checkout</span>(one)
+
+<span class="kw">let</span> three <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)</code></pre></div>
+<p>The head of the history tree above is now three. Microcosm will calculate state by reconciling <code>root</code>, <code>one,</code> and <code>three</code>.</p>
+<h3 id="toggle-actions">toggle([ …actions ])</h3>
+<p>Disable a group of actions:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>(<span class="op">{</span> <span class="dt">maxHistory</span><span class="op">:</span> <span class="kw">Infinity</span> <span class="op">}</span>)
+
+<span class="kw">let</span> one <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(addUser)
+<span class="kw">let</span> two <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(updateUser)
+
+<span class="va">repo</span>.<span class="va">history</span>.<span class="at">toggle</span>([ one<span class="op">,</span> two ])</code></pre></div>
+<p>In the example above, actions <code>one</code> and <code>two</code> will be forgotten. The repo’s history will reconcile, and it will be as if they never existed.</p>
+<p>This flips the <code>disabled</code> state of each action provided. By executing toggle a second time, these actions will be re-enabled:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Actions disabled in the prior example</span>
+<span class="va">repo</span>.<span class="va">history</span>.<span class="at">toggle</span>([ one<span class="op">,</span> two ])
+<span class="co">// `one` and `two` have been re-enabled</span></code></pre></div>
+<h3 id="toarray">toArray()</h3>
+<p>Return an array version of the active branch:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>(<span class="op">{</span> <span class="dt">maxHistory</span><span class="op">:</span> <span class="kw">Infinity</span> <span class="op">}</span>)
+
+<span class="kw">let</span> one <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)
+<span class="kw">let</span> two <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)
+
+<span class="va">repo</span>.<span class="va">history</span>.<span class="at">checkout</span>(one)
+
+<span class="kw">let</span> three <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)
+
+<span class="va">repo</span>.<span class="at">toArray</span>() <span class="co">// =&gt; [ root, one, three ]</span></code></pre></div>
+<h3 id="wait">wait()</h3>
+<p>Return a Promise that waits for all current actions to complete. If any action rejects, this promise will reject. <strong>cancellation is ignored. Cancelling an action will not reject this promise.</strong></p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>(<span class="op">{</span> <span class="dt">maxHistory</span><span class="op">:</span> <span class="kw">Infinity</span> <span class="op">}</span>)
+
+<span class="kw">let</span> one <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(asyncAction)
+<span class="kw">let</span> two <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(asyncAction)
+<span class="kw">let</span> three <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(asyncAction)
+
+<span class="va">repo</span>.<span class="at">wait</span>().<span class="at">then</span>(<span class="kw">function</span> () <span class="op">{</span>
+  <span class="co">// Everything is done</span>
+<span class="op">}</span>)</code></pre></div>
+<h3 id="thenresolve-reject">then(resolve, reject)</h3>
+<p>Allows for direct Promise interop with history. One common use case for this is to wait for all actions to complete before executing a test. For example, if we were to write a test with Jest:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="at">describe</span>(<span class="st">&#39;An AJAX behavior&#39;</span><span class="op">,</span> <span class="kw">function</span>() <span class="op">{</span>
+
+  <span class="at">it</span>(<span class="st">&#39;adds a user&#39;</span><span class="op">,</span> async <span class="kw">function</span> () <span class="op">{</span>
+    <span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">MyMicrocosm</span>(<span class="op">{</span> <span class="dt">maxHistory</span><span class="op">:</span> <span class="kw">Infinity</span> <span class="op">}</span>)
+
+    <span class="va">repo</span>.<span class="at">push</span>(getUser<span class="op">,</span> <span class="dv">1</span>)
+    <span class="va">repo</span>.<span class="at">push</span>(getUser<span class="op">,</span> <span class="dv">2</span>)
+    <span class="va">repo</span>.<span class="at">push</span>(getUser<span class="op">,</span> <span class="dv">3</span>)
+
+    await <span class="va">repo</span>.<span class="at">history</span>
+
+    <span class="at">expect</span>(<span class="va">repo</span>.<span class="va">users</span>.<span class="at">length</span>).<span class="at">toEqual</span>(<span class="dv">3</span>)
+  <span class="op">}</span>)
+
+<span class="op">}</span>)</code></pre></div>
+<h3 id="removeaction">remove(action)</h3>
+<p>Completely remove an action from history. This is a dangerous operation! Removed actions can never be re-inserted.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">MyMicrocosm</span>(<span class="op">{</span> <span class="dt">maxHistory</span><span class="op">:</span> <span class="kw">Infinity</span> <span class="op">}</span>)
+
+<span class="kw">let</span> one <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)
+<span class="kw">let</span> two <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)
+<span class="kw">let</span> three <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(action)
+
+<span class="va">repo</span>.<span class="va">history</span>.<span class="at">remove</span>(two)
+
+<span class="va">repo</span>.<span class="va">history</span>.<span class="at">toArray</span>() <span class="co">// [root, one, three]</span></code></pre></div>
+<h2 id="events">Events</h2>
+<p>History emits events any time something of interest happens. This is how Microcosm knows to update the state to accurately reflect what’s going on given a sequence of actions and their statuses.</p>
+<p>You can manage event listeners with the following methods.</p>
+<h3 id="onevent-callback"><code>on(event, callback)</code></h3>
+<p>Adds an event listener to a Microcosm History instance.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+<span class="kw">const</span> history <span class="op">=</span> <span class="va">repo</span>.<span class="at">history</span>
+
+<span class="va">history</span>.<span class="at">on</span>(<span class="st">&#39;append&#39;</span><span class="op">,</span> callback)</code></pre></div>
+<h3 id="offevent-callback"><code>off(event, callback)</code></h3>
+<p>Removes an event listener.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">history</span>.<span class="at">off</span>(<span class="st">&#39;append&#39;</span><span class="op">,</span> callback)</code></pre></div>
+<h3 id="event-types">Event Types</h3>
+<h3 id="append"><code>append</code></h3>
+<p>Arguments: <code>action</code></p>
+<p>Emitted when an action is pushed onto the History stack.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">history</span>.<span class="at">on</span>(<span class="st">&#39;append&#39;</span><span class="op">,</span> <span class="kw">function</span>(action) <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&#39;Action pushed:&#39;</span><span class="op">,</span> <span class="va">action</span>.<span class="at">id</span>)
+<span class="op">}</span>)
+
+<span class="va">repo</span>.<span class="at">push</span>(newAction)
+
+<span class="co">// Action pushed: 42</span></code></pre></div>
+<h3 id="remove"><code>remove</code></h3>
+<p>Arguments: <code>action</code></p>
+<p>Emitted when an action is removed from the History stack.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">history</span>.<span class="at">on</span>(<span class="st">&#39;remove&#39;</span><span class="op">,</span> <span class="kw">function</span>(action) <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&#39;Action removed:&#39;</span><span class="op">,</span> <span class="va">action</span>.<span class="at">id</span>)
+<span class="op">}</span>)
+
+action <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(newAction)
+<span class="va">history</span>.<span class="at">remove</span>(action)
+
+<span class="co">// Action removed: 42</span></code></pre></div>
+<h3 id="update"><code>update</code></h3>
+<p>Arguments: <code>action</code></p>
+<p>Whenever there is an update to an action’s status, an <code>update</code> event is emitted with that action.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">history</span>.<span class="at">on</span>(<span class="st">&#39;update&#39;</span><span class="op">,</span> <span class="kw">function</span>(action) <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&#39;Action status:&#39;</span><span class="op">,</span> <span class="va">action</span>.<span class="at">status</span>)
+<span class="op">}</span>)
+
+<span class="va">repo</span>.<span class="at">push</span>(newAction)
+
+<span class="co">// Action status: inactive</span>
+<span class="co">// Action status: open</span>
+<span class="co">// Action status: update</span>
+<span class="co">// Action status: [resolve, reject, cancel]</span></code></pre></div>
+<p>Whenever an action that precedes other actions has a status update, History walks forward in time from that action reconciling the application state (see <a href="#reconciling">Reconciling</a> for more details.) For every action in this process, <code>update</code> will be emitted.</p>
+<h3 id="reconcile"><code>reconcile</code></h3>
+<p>Arguments: <code>action</code></p>
+<p>In response to an action’s status changing, History triggers a reconciliation. Once that has completed (and an <code>update</code> event has been emitted for each reconciled action), <code>reconcile</code> is emitted with the action that triggered the walk through.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">history</span>.<span class="at">on</span>(<span class="st">&#39;reconcile&#39;</span><span class="op">,</span> <span class="kw">function</span>(action) <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&#39;Action:&#39;</span><span class="op">,</span> <span class="va">action</span>.<span class="at">id</span>)
+<span class="op">}</span>)
+
+<span class="va">repo</span>.<span class="at">push</span>(newAction)
+
+<span class="co">// Action: 42</span></code></pre></div>
+<h3 id="release"><code>release</code></h3>
+<p>Emitted after a reconciliation pass. In setting up a Microcosm, you have the option to pass a <code>batch</code> option which will cause <code>release</code> to be emitted in batched intervals (used internally to improve state comparison performance).</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>(<span class="op">{</span> <span class="dt">batch</span><span class="op">:</span> <span class="kw">true</span> <span class="op">}</span>)
+<span class="kw">let</span> history <span class="op">=</span> <span class="va">repo</span>.<span class="at">history</span>
+
+<span class="va">history</span>.<span class="at">on</span>(<span class="st">&#39;append&#39;</span><span class="op">,</span> <span class="kw">function</span>(action) <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&#39;Action:&#39;</span><span class="op">,</span> <span class="va">action</span>.<span class="at">id</span>)
+<span class="op">}</span>)
+<span class="va">history</span>.<span class="at">on</span>(<span class="st">&#39;release&#39;</span><span class="op">,</span> <span class="kw">function</span>() <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&#39;Released!&#39;</span>)
+<span class="op">}</span>)
+
+<span class="va">repo</span>.<span class="at">push</span>(newAction)
+<span class="va">repo</span>.<span class="at">push</span>(newAction)
+<span class="va">repo</span>.<span class="at">push</span>(newAction)
+
+<span class="co">// Action: 1</span>
+<span class="co">// Action: 2</span>
+<span class="co">// Action: 3</span>
+<span class="co">// Released!</span></code></pre></div></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

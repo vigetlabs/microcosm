@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="changelog">Changelog</h1>
+<h2 id="master-13.x">Master (13.x)</h2>
+<ul>
+<li>Moved internal state tree diffing tool to addon.</li>
+<li>Removed support for root level domains, forks can not add keys managed by parents. Repos can not add domains to the same key name.</li>
+<li>Removed feature to instantiate a Microcosm with an initial state using the second argument of the constructor.</li>
+</ul>
+<h2 id="beta">12.14.0 (beta)</h2>
+<ul>
+<li>ActionForm action callbacks are given the related form as the second argument.</li>
+<li>ActionForm and ActionButton action callbacks are automatically unsubscribe on unmount</li>
+<li>Internal updates to improve the efficiency of forks</li>
+</ul>
+<h2 id="section">12.13.2</h2>
+<ul>
+<li>Properly externalize ReactDOM in build</li>
+</ul>
+<h2 id="section-1">12.13.1</h2>
+<ul>
+<li>Fix issue where refs passed to ActionForm would raise warning in React</li>
+</ul>
+<h2 id="section-2">12.13.0</h2>
+<ul>
+<li>In batching mode, Presenter model updates are asynchronous.</li>
+<li>Warn when a non-POJO is passed as effect/domain options</li>
+<li>Added lifecycle method for when a Presenter model changes: <code>modelDidUpdate</code>. See the docs for more information.</li>
+</ul>
+<h2 id="section-3">12.12.4</h2>
+<ul>
+<li>Properly externalize ReactDOM in build</li>
+</ul>
+<h2 id="section-4">12.12.3</h2>
+<ul>
+<li>Fix issue where refs passed to ActionForm would raise warning in React</li>
+</ul>
+<h2 id="section-5">12.12.2</h2>
+<ul>
+<li>Fix bad release</li>
+</ul>
+<h2 id="section-6">12.12.1</h2>
+<ul>
+<li><code>repo.parallel</code> returns an array of payloads when all related actions complete</li>
+</ul>
+<h2 id="section-7">12.12.0</h2>
+<ul>
+<li>Domain::setup and constructors receive the key they were mounted at via <code>options.key</code>.</li>
+<li>Added <code>prepare</code> prop for <code>ActionButton</code> that allows developers to specify an extra transformation of the underlying value (e.g. based on the <code>event</code> object) before the action gets dispatched.</li>
+<li>Domain and effect registration handlers can be an array of functions that are processed sequentially.</li>
+<li>Tweaked internal processing of actions to allow function arguments to be returned from actions without being treated as a thunk. See the docs for Actions for more information.</li>
+</ul>
+<h1 id="section-8">12.11.0</h1>
+<ul>
+<li>Removed string <code>ref</code> in ActionForm, avoiding some edge cases and allowing usage with React 16.</li>
+<li>Fix boolean flow type</li>
+<li>Warn when pushing actions on a torn down Microcosm instance</li>
+<li>register() can return null</li>
+<li>Pass <code>context</code> to ActionForm constructor, fixing a bug with context</li>
+<li>Use buble instead of babel for production builds, decreasing build size</li>
+</ul>
+<h2 id="section-9">12.10.0</h2>
+<ul>
+<li>Microcosm ships with ES6 and UMD bundles</li>
+<li>Domains and Effects can implement a <code>defaults</code> static object to provide default setup options.</li>
+<li>Do not return undefined when using <code>get</code> to retrieve a null value without a fallback.</li>
+<li><code>repo.append(action, state)</code> should reconcile history</li>
+</ul>
+<h2 id="section-10">12.9.0</h2>
+<ul>
+<li>Added new <code>repo.parallel</code> method. This returns an action that represents a group of actions processing in parallel.</li>
+<li>The action generator form may now <code>yeild</code> an array. This produces the same behavior as <code>repo.parallel</code></li>
+<li><code>Presenter::getModel</code> assignments accept <a href="https://github.com/tc39/proposal-observable">Observables</a>.</li>
+<li>Do not warn in strict mode when attempting to change a complete action. This allows for use cases like, “Cancel this action, but only if it hasn’t finished yet.”</li>
+<li>History and Action now serialize to JSON. This supports a new <a href="https://github.com/vigetlabs/microcosm-devtools">debugger</a>.</li>
+<li><code>Presenter:send</code> now pushes to the instance of Microcosm for the Presenter that first sent the action. This prevents <code>repo.state</code> from being wrong for a subsection of an application with an action that needs to reference state.</li>
+<li>Microcosm uses <a href="flowtype.org">Flow</a>. Flow definitions ship with the npm module.</li>
+</ul>
+<h2 id="section-11">12.8.0</h2>
+<ul>
+<li>The current repo is passed as the second argument of Presenter::getModel state key callbacks</li>
+</ul>
+<h2 id="section-12">12.7.0</h2>
+<ul>
+<li>Remove PropType usage from addons to prevent React 15.5.x deprecation warnings.</li>
+<li>Added configurable <code>teardown</code> method to the Microcosm prototype. This behaves similarly to <code>teardown</code> methods on other Microcosm classes.</li>
+<li>Fixed a bug where the first action dispatched would always fire a change event, even if state didn’t change.</li>
+<li>The first argument of <code>repo.push</code> is passed into the <code>open</code> state of actions that return promises.</li>
+<li>Action status changing methods are auto-bound, and will warn when a completed action attempts to move into a new state (strict mode only)</li>
+<li>Added <code>batch</code> as an option when instantiating Microcosm. When set to <code>true</code>, high frequency change events will be batched together using <code>requestIdleCallback</code>. When not available, it falls back to setTimeout.</li>
+</ul>
+<h3 id="auto-bound-action-status-methods">Auto-bound action status methods</h3>
+<p>Action status methods like <code>action.resolve()</code> and <code>action.reject()</code> are auto-bound. They can be passed directly into a callback without needing to wrap them in an anonymous function.</p>
+<p>This is particularly useful when working with AJAX libraries. For example, when working with <code>superagent</code>:</p>
+<p>Instead of:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> superagent <span class="im">from</span> <span class="st">&#39;superagent&#39;</span>
+
+<span class="kw">function</span> <span class="at">getPlanets</span> () <span class="op">{</span>
+  <span class="cf">return</span> action <span class="op">=&gt;</span> <span class="op">{</span>
+    <span class="kw">let</span> request <span class="op">=</span> <span class="va">superagent</span>.<span class="at">get</span>(<span class="st">&#39;/planets&#39;</span>)
+
+    <span class="va">request</span>.<span class="at">on</span>(<span class="st">&#39;request&#39;</span><span class="op">,</span> (data) <span class="op">=&gt;</span> <span class="va">action</span>.<span class="at">open</span>(data))
+    <span class="va">request</span>.<span class="at">on</span>(<span class="st">&#39;progress&#39;</span><span class="op">,</span> (data) <span class="op">=&gt;</span> <span class="va">action</span>.<span class="at">update</span>(data))
+    <span class="va">request</span>.<span class="at">on</span>(<span class="st">&#39;abort&#39;</span><span class="op">,</span> (data) <span class="op">=&gt;</span> <span class="va">action</span>.<span class="at">cancel</span>(data))
+
+    <span class="va">request</span>.<span class="at">then</span>((data) <span class="op">=&gt;</span> <span class="va">action</span>.<span class="at">resolve</span>(data)<span class="op">,</span> (error) <span class="op">=&gt;</span> <span class="va">action</span>.<span class="at">reject</span>(error))
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p>You can do:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> superagent <span class="im">from</span> <span class="st">&#39;superagent&#39;</span>
+
+<span class="kw">function</span> <span class="at">getPlanets</span> () <span class="op">{</span>
+  <span class="cf">return</span> action <span class="op">=&gt;</span> <span class="op">{</span>
+    <span class="kw">let</span> request <span class="op">=</span> <span class="va">superagent</span>.<span class="at">get</span>(<span class="st">&#39;/planets&#39;</span>)
+
+    <span class="va">request</span>.<span class="at">on</span>(<span class="st">&#39;request&#39;</span><span class="op">,</span> <span class="va">action</span>.<span class="at">open</span>)
+    <span class="va">request</span>.<span class="at">on</span>(<span class="st">&#39;progress&#39;</span><span class="op">,</span> <span class="va">action</span>.<span class="at">update</span>)
+    <span class="va">request</span>.<span class="at">on</span>(<span class="st">&#39;abort&#39;</span><span class="op">,</span> <span class="va">action</span>.<span class="at">cancel</span>)
+
+    <span class="va">request</span>.<span class="at">then</span>(<span class="va">action</span>.<span class="at">resolve</span><span class="op">,</span> <span class="va">action</span>.<span class="at">reject</span>)
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h2 id="section-13">12.6.1</h2>
+<ul>
+<li>Corrected generator check to be resistant to minification</li>
+</ul>
+<h2 id="section-14">12.6.0</h2>
+<ul>
+<li>Actions may now create workflows of sequential actions using generators. See <code>./docs/api/actions</code> for more information</li>
+<li>Added WrappedComponent property to the component returned from <code>withSend()</code>. This may be used to access the original component.</li>
+<li>Added strict mode validations for undefined Domain registrations</li>
+</ul>
+<h2 id="section-15">12.5.0</h2>
+<ul>
+<li>Added a <code>defaults</code> static to Microcosm that passes default options to the constructor and setup method.</li>
+<li>The first argument of <code>setup</code>, the options object passed when instantiating a Microcosm argument, will always be an object. There is no need to handle the null case for options.</li>
+<li>Added a strict mode build of Microcosm that ships with development assertions. See <code>installation.html</code> for more details</li>
+</ul>
+<h3 id="defaults">Defaults</h3>
+<p>We frequently pass custom options into Microcosm to configure Domains and Effects with different options based on the environment. For example, an Effect that auto-saves user data:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> Repo <span class="kw">extends</span> Microcosm <span class="op">{</span>
+  <span class="at">setup</span> (<span class="op">{</span> saveInterval <span class="op">}</span>) <span class="op">{</span>
+    <span class="co">// ...</span>
+    <span class="kw">this</span>.<span class="at">addEffect</span>(Autosave<span class="op">,</span> <span class="op">{</span> saveInterval <span class="op">}</span>)
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p>It can be cumbersome to chase down the default options, which may be specified as defaults in individual domains/effects. With this release, you may now define defaults using the <code>defaults</code> static:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> Repo <span class="kw">extends</span> Microcosm <span class="op">{</span>
+  <span class="kw">static</span> defaults <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">saveInterval</span><span class="op">:</span> <span class="dv">5000</span>
+  <span class="op">}</span>
+
+  <span class="at">setup</span> (<span class="op">{</span> saveInterval <span class="op">}</span>) <span class="op">{</span>
+    <span class="co">// ...</span>
+    <span class="kw">this</span>.<span class="at">addEffect</span>(Autosave<span class="op">,</span> <span class="op">{</span> saveInterval <span class="op">}</span>)
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p>This takes advantage of the <a href="https://github.com/tc39/proposal-class-public-fields">Class Fields &amp; Static Properties Spec</a>. This specification is still at <a href="http://2ality.com/2015/11/tc39-process.html">Stage 2</a>, however it has become common place to use this feature within React projects. If living on the edge isn’t your thing, defaults may also be configured by assigning a <code>default</code> property to your Microcosm subclass:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> Repo <span class="kw">extends</span> Microcosm <span class="op">{</span>
+  <span class="at">setup</span> (<span class="op">{</span> saveInterval <span class="op">}</span>) <span class="op">{</span>
+    <span class="co">// ...</span>
+    <span class="kw">this</span>.<span class="at">addEffect</span>(Autosave<span class="op">,</span> <span class="op">{</span> saveInterval <span class="op">}</span>)
+  <span class="op">}</span>
+<span class="op">}</span>
+
+
+<span class="va">Repo</span>.<span class="at">defaults</span> <span class="op">=</span> <span class="op">{</span>
+  <span class="dt">saveInterval</span><span class="op">:</span> <span class="dv">5000</span>
+<span class="op">}</span></code></pre></div>
+<p>All Microcosm specific options, such as <code>maxHistory</code> will get merged into your custom defaults upon construction.</p>
+<h2 id="section-16">12.4.0</h2>
+<ul>
+<li>Added <code>repo.history.wait()</code> and <code>repo.history.then()</code> to allow tests to wait for all outstanding actions to complete.</li>
+<li>Added <code>repo.history</code> documentation.</li>
+</ul>
+<h2 id="section-17">12.3.1</h2>
+<ul>
+<li>Fix bug where Presenters weren’t intercepting actions sent from child views.</li>
+</ul>
+<h2 id="section-18">12.3.0</h2>
+<ul>
+<li>Allow failed deserializes to raise an exception</li>
+<li>Add compatibility addon for 11.x indexing feature</li>
+</ul>
+<h2 id="section-19">12.2.1</h2>
+<ul>
+<li>adding domains does not reset state</li>
+<li>patching parents with keys owned by children does not patch children</li>
+<li>patch does not reset state in forks</li>
+<li>new children props re-render presenters</li>
+<li>presenter.send method is autobound, allowing it work when passed to children</li>
+</ul>
+<h2 id="section-20">12.2.0</h2>
+<ul>
+<li>Added method for removing actions from history, history <code>append</code> event.</li>
+</ul>
+<h2 id="section-21">12.1.3</h2>
+<ul>
+<li>Fix issue where pushing actions inside of other actions would cause a rollback to initial state.</li>
+</ul>
+<h2 id="section-22">12.1.2</h2>
+<ul>
+<li>Fixed issue where parent repos would send out changes before children could reconcile.</li>
+</ul>
+<h2 id="section-23">12.1.1</h2>
+<ul>
+<li>Fixed length caching issue where history would still try to publish changes to an untracked repo.</li>
+</ul>
+<h2 id="section-24">12.1.0</h2>
+<ul>
+<li>Add <code>onOpen</code> callback props to <code>ActionForm</code> and <code>ActionButton</code></li>
+<li>Replaced internal references of <code>behavior</code> with <code>command</code></li>
+<li>Cleaned up some internal operations they no longer expose actions in history</li>
+</ul>
+<h2 id="section-25">12.0.0</h2>
+<ul>
+<li><code>merge</code> helper skips over nully values. For example, <code>merge(null, {})</code> will start with the second argument</li>
+<li>Renamed <code>Presenter::model</code> to <code>Presenter::getModel</code>.</li>
+<li>Renamed <code>Presenter::register</code> to <code>Presenter::intercept</code></li>
+<li>Added <code>Presenter::ready</code>, which fires after <code>::setup</code></li>
+<li>Added a <code>model</code> property to Presenters. This behaves similarly to <code>props</code> or <code>state</code>, and is available after <code>setup</code> executes</li>
+<li><code>Presenter::render</code> is now the primary rendering method for Presenters</li>
+<li><code>Presenter::view</code> always gets called with <code>React.createElement</code></li>
+<li>Removed deprecated <code>Action::send</code></li>
+<li>Added nested action registrations in domains. See the Domains component of the upgrading section later.</li>
+<li><code>Microcosm:toJSON</code> only serializes domains that implement <code>::serialize</code></li>
+<li><code>Microcosm::reset</code> only operate on keys managed by the specific Microcosm. <code>reset</code> effects the entire tree of forks.</li>
+<li><code>Microcosm::patch</code> only operate on keys managed by the specific Microcosm. <code>patch</code> effects the entire tree of forks.</li>
+<li>Removed <code>Domain::commit</code>, which consistently added needless complexity to our applications.</li>
+<li>All instances of <code>intent</code> have been replaced with <code>action</code>. They are the exact same thing under the hood, and it is a common source of confusion.</li>
+<li>Renamed <code>IntentButton</code> to <code>ActionButton</code>. Import from <code>microcosm/addons/action-button</code></li>
+<li>Renamed <code>Form</code> to <code>ActionForm</code> Import from <code>microcosm/addons/action-form</code></li>
+<li>Renamed <code>withIntent</code> to <code>withSend</code>. Import from <code>microcosm/addons/with-send</code></li>
+<li>Added <code>update</code> data utility, which calls <code>set</code> on the result of a function that is passed the result of <code>get</code>.</li>
+</ul>
+<h3 id="upgrading">Upgrading</h3>
+<h4 id="microcosm">Microcosm</h4>
+<p><code>deserialize</code>, <code>serialize</code>, <code>reset</code>, and <code>patch</code> only operate on keys managed by a particular Microcosm. Verify that, where you are using these methods, your application is not relying on them to inject arbitrary application state.</p>
+<p>These methods now return the merged result of calling all the way up the hierarchy of Microcosm forks. In practice, this means that Microcosms only have to deal with the keys for domains they were assigned, which is more in line with the behavior we expect from forks.</p>
+<h4 id="actions">Actions</h4>
+<p>With the exception of removing <code>send</code>, which was replaced with <code>update</code>, actions have not changed. If you have removed all deprecated <code>action.send</code> calls after upgrading to 11.6.0, there should be no further change required.</p>
+<h4 id="domains">Domains</h4>
+<h4 id="no-more-commit">No more commit</h4>
+<p>Domains no longer support <code>commit()</code>, and subsequently <code>shouldCommit()</code>. We found, while useful for serializing libraries such as ImmutableJS, that it our usage of <code>commit</code> turned into a convenience method for always writing state in a specific way. This created an awkwardness with serializing data, and could be a source of performance problems as they continually write new object references from things like <code>filter</code> or <code>slice</code>.</p>
+<p>So we removed it. We recommend moving this sort of behavior to <code>getModel</code> in the Presenter add-on.</p>
+<h4 id="nested-action-registrations">Nested action registrations</h4>
+<p>Domains may now nest action statuses as an object:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> Domain <span class="op">{</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [action]<span class="op">:</span> <span class="op">{</span>
+        <span class="dt">open  </span><span class="op">:</span> <span class="kw">this</span>.<span class="at">setLoading</span><span class="op">,</span>
+        <span class="dt">error </span><span class="op">:</span> <span class="kw">this</span>.<span class="at">setError</span><span class="op">,</span>
+        <span class="dt">done  </span><span class="op">:</span> <span class="kw">this</span>.<span class="at">setDone</span>
+      <span class="op">}</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h3 id="presenters">Presenters</h3>
+<h4 id="getmodel-is-the-new-model"><code>getModel</code> is the new <code>model</code></h4>
+<p>We frequently found ourselves wanting to access the latest model inside of our presenter. What if we wanted to fetch extra data from records pulled out of a model, or render differently if the record was missing?</p>
+<p>Presenters now have a <code>model</code> property, which can be accessed after <code>setup</code> has completed:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> MyPresenter <span class="kw">extends</span> Presenter <span class="op">{</span>
+  <span class="at">getModel</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span> <span class="dt">count</span><span class="op">:</span> state <span class="op">=&gt;</span> <span class="va">state</span>.<span class="at">count</span> <span class="op">}</span>
+  <span class="op">}</span>
+
+  <span class="at">render</span> () <span class="op">{</span>
+    <span class="cf">return</span> (
+      <span class="op">&lt;</span>ActionButton action<span class="op">={</span>step<span class="op">}</span> value<span class="op">={</span><span class="dv">1</span><span class="op">}&gt;</span>
+        <span class="op">{</span><span class="kw">this</span>.<span class="va">model</span>.<span class="at">count</span><span class="op">}</span>
+      <span class="op">&lt;</span><span class="ss">/ActionButton&gt;</span>
+<span class="ss">    </span><span class="sc">)</span>
+<span class="ss">  }</span>
+<span class="ss">}</span></code></pre></div>
+<h4 id="ready"><code>ready</code></h4>
+<p><code>setup</code> can not have access to <code>this.model</code> because repo specific setup behavior might cause the model to be recalculated excessively. So we’ve added a <code>ready</code> method. Both <code>ready</code> and <code>update</code> have access to the last calculated model, which makes them ideal for performing some work based on it:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> MyPresenter <span class="kw">extends</span> Presenter <span class="op">{</span>
+  <span class="at">getModel</span> (props) <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      <span class="dt">user</span><span class="op">:</span> data <span class="op">=&gt;</span> <span class="va">data</span>.<span class="va">users</span>.<span class="at">find</span>(u <span class="op">=&gt;</span> <span class="va">u</span>.<span class="at">id</span> <span class="op">===</span> <span class="va">props</span>.<span class="at">id</span>)
+    <span class="op">}</span>
+  <span class="op">}</span>
+  <span class="at">ready</span> (repo<span class="op">,</span> props)
+    <span class="cf">if</span> (<span class="kw">this</span>.<span class="va">model</span>.<span class="at">user</span> <span class="op">==</span> <span class="kw">null</span>) <span class="op">{</span>
+      <span class="va">repo</span>.<span class="at">push</span>(<span class="kw">this</span>.<span class="at">fetchUser</span><span class="op">,</span> <span class="va">props</span>.<span class="at">id</span>)
+    <span class="op">}</span>
+  <span class="op">}</span>
+}</code></pre></div>
+<p>You can still do this sort of fetching inside of <code>setup</code>, there just won’t be a model to access. Not much of a change from <code>11.6.0</code>, where <code>this.model</code> was not available.</p>
+<h4 id="render-is-the-new-view"><code>render</code> is the new <code>view</code></h4>
+<p>We (Nate) got this wrong. By not using render, too much distance was created between the underlying React Component behavior and the “special treatment” received by <code>view</code>.</p>
+<p><code>render</code> now works just like <code>React.Component::render</code>, as it should be. Still, we haven’t gotten rid of <code>view</code>, which is useful in a couple of places, like as a getter to switch over some piece of model state:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> MyPresenter <span class="kw">extends</span> Presenter <span class="op">{</span>
+  <span class="at">getModel</span> (props) <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      <span class="dt">user</span><span class="op">:</span> data <span class="op">=&gt;</span> <span class="va">data</span>.<span class="va">users</span>.<span class="at">find</span>(u <span class="op">=&gt;</span> <span class="va">u</span>.<span class="at">id</span> <span class="op">===</span> <span class="va">props</span>.<span class="at">id</span>)
+    <span class="op">}</span>
+  <span class="op">}</span>
+
+  get <span class="at">view</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="kw">this</span>.<span class="va">model</span>.<span class="at">user</span> <span class="op">?</span> MyUserView : My404View
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p><code>view</code> is always invoked with <code>React.createElement</code>. <code>render</code> is always called in the context of the Presenter. It is a plain-old React render method (for great justice).</p>
+<h4 id="intercept-is-the-new-register"><code>intercept</code> is the new <code>register</code></h4>
+<p><code>Presenter::register</code> was a confusing name for the what it did. <code>Presenter::register</code> allows you to catch messages sent from child view components. Catch is a reserved word, so we’ve renamed it <code>intercept</code>.</p>
+<p>In the future, <code>Presenter::register</code> might behave more like an Effect, which is what several users have mistaken it for.</p>
+<h2 id="section-26">11.6.0</h2>
+<ul>
+<li>Added deprecation warning for <code>action.send()</code>. Future versions of Microcosm will use <code>action.update()</code>. This is more consistent with other nomenclature.</li>
+<li>Added <code>update</code> alias for action <code>loading</code> status</li>
+<li>Added <code>resolve</code> alias for action <code>done</code> status</li>
+<li>Added <code>reject</code> alias for action <code>error</code> status</li>
+<li>Added <code>cancel</code> alias for action <code>cancelled</code> status</li>
+<li><code>Form</code> addon now inherits from <code>React.Component</code> instead of using <code>createClass</code>.</li>
+<li>Added <code>IntentButton</code> addon. This is similar to the <code>Form</code>.</li>
+<li>Fix bug where intents would bubble up across repos with different histories.</li>
+</ul>
+<h3 id="upgrading-1">Upgrading</h3>
+<p>This should be a pretty simple upgrade. Just replace calls to <code>action.send()</code> with <code>action.update()</code>.</p>
+<h2 id="section-27">11.5.1</h2>
+<ul>
+<li>Fix case where <code>this</code> was undefined in render method of Presenters</li>
+</ul>
+<h2 id="section-28">11.5.0</h2>
+<ul>
+<li>Fix case where cancelling an action would return to a prior state, however not fire a change event because the state was the same as the cache.</li>
+<li>This is because <code>domain.commit</code> was too lazily executed, for those using <code>commit</code>, be sure to implement a <code>shouldCommit</code> method mitigate extra calls.</li>
+<li>Added some internal enumeration helpers for history.</li>
+</ul>
+<h2 id="section-29">11.4.0</h2>
+<ul>
+<li>Serializing a fork folds into parent serialization. This should be consistent with standard action dispatching.</li>
+<li>Deserializing a fork folds into parent deserialization. This should be consistent with standard action dispatching.</li>
+<li>Deserialize may now operate on a string.</li>
+<li>Microcosm::setup receives instantiation options</li>
+<li>Added some private APIs for memoized computed properties over fragments of state (more to come)</li>
+<li>Exposed and added documentation for <code>get</code>, <code>set</code>, and <code>merge</code> data helpers.</li>
+</ul>
+<h2 id="section-30">11.3.0</h2>
+<ul>
+<li>Presenters now support hot module replacement</li>
+<li>Fixed case where checkout out a an action in history would not link up the correct active branch</li>
+</ul>
+<h2 id="section-31">11.2.2</h2>
+<ul>
+<li>Fix case where committing did not properly result in a change</li>
+</ul>
+<h2 id="section-32">11.2.1</h2>
+<ul>
+<li>Properly teardown event listeners that are not forks</li>
+<li>Send forked repo into view</li>
+</ul>
+<h2 id="section-33">11.2.0</h2>
+<ul>
+<li>The <code>withIntent</code> add-on correctly sets its displayName property to <code>&quot;withIntent(ComponentName)&quot;)</code>. This makes it selectable by enzyme’s <code>find</code> function.</li>
+<li>Pass <code>send</code> prop to Presenter children</li>
+</ul>
+<h2 id="section-34">11.1.0</h2>
+<ul>
+<li>Added getRepo method to presenters to allow greater control over repo assignment</li>
+<li>Action payloads may now, intentionally, be set to undefined</li>
+<li>Fixed case where <code>action.toggle()</code> would not adjust history tree as intended.</li>
+<li>Cut memory usage for action history by roughly 80%</li>
+<li>Cut action resolution times by roughly 85%</li>
+</ul>
+<h2 id="section-35">11.0.0</h2>
+<ul>
+<li>Fix bug where Presenter given stateless view component as an inline prop would call it as a function instead of React.createElement.</li>
+<li>Add warning when using <code>render()</code> directly in the Presenter.</li>
+<li>Presenter.setState state will re-calculate the model. State is now the second argument of <code>model()</code>.</li>
+<li>Removed some deprecated methods and aliases:</li>
+<li>action.close() - Use action.resolve()</li>
+<li>repo.replace() - Use repo.patch(data, true)</li>
+<li>repo.addStore() - Use repo.addDomain</li>
+<li>Presenter::viewModel - Use Presenter::model</li>
+<li>Domains mounted to the root must pass <code>null</code> as the first argument to <code>addDomain</code>, like: <code>repo.addDomain(null, RootLevelDomain)</code></li>
+<li><code>addDomain</code> accepts a third argument: <code>options</code>. These options will be passed to domain constructors and to the setup method.</li>
+<li>Microcosm ships as an ES6 module. If you are using CommonJS, import Microcosm using <code>require('microcosm').Microcosm</code></li>
+<li>Presenter:render is now protected. Instead, always use <code>view</code></li>
+<li>Removed concept of purity. Microcosm depends on side-effect free updates, so it’s not really viable.</li>
+<li>Presenter extends from <code>React.PureComponent</code> when available.</li>
+<li>The Presenter model no longer returns all state by default. This is nice for short examples, however it can quickly get out of hand for non-trivial uses.</li>
+<li>Significantly improved performance across the board.</li>
+</ul>
+<h3 id="upgrading-2">Upgrading</h3>
+<p>We’ve successfully upgraded a few of our projects without requiring changes. However you may encounter a couple of issues.</p>
+<p>We removed several alias, which have been deprecated during the 10.x release. These are:</p>
+<ul>
+<li><code>action.close()</code>: Use <code>action.resolve()</code></li>
+<li><code>repo.addStore</code>: Use <code>action.addDomain</code></li>
+<li><code>repo.replace</code>: Use <code>repo.patch(data, true)</code>. <code>true</code> flags deserialization.</li>
+<li><code>Presenter::viewModel</code>: Use <code>Presenter::model()</code></li>
+</ul>
+<h4 id="modules">Modules</h4>
+<p>Microcosm is now bundled as a single module. This reduces build size and start up times, but those using CommonJS will need to make a few changes:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// old</span>
+<span class="kw">var</span> Microcosm <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;microcosm&#39;</span>)
+<span class="co">// new</span>
+<span class="kw">var</span> Microcosm <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;microcosm&#39;</span>).<span class="at">Microcosm</span></code></pre></div>
+<h4 id="domains-1">Domains</h4>
+<p>The signature for <code>repo.addDomain</code> must always include a key. This key can be empty. If you using this functionality, make the following change:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// old</span>
+<span class="va">repo</span>.<span class="at">addDomain</span>(Domain)
+<span class="co">// new</span>
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="kw">null</span><span class="op">,</span> Domain)</code></pre></div>
+<h4 id="presenter">Presenter</h4>
+<p><code>render</code> is now protected in the Presenter. Instead, use the <code>view</code> method. We believe that, in all cases, this should be as simple as renaming <code>render</code> to <code>view</code>.</p>
+<p>Presenter now extends from <code>PureComponent</code> when available.</p>
+<h2 id="section-36">10.9.0</h2>
+<ul>
+<li>Replace class usage with functions to reduce build size</li>
+<li>Remove <code>is-promise</code> dependency</li>
+<li>Calling setState in a Presenter will result in a re-render. This was a bug caused by a shouldComponentUpdate method implemented inside of a wrapper used to maintain context for &lt;= IE10.</li>
+</ul>
+<h2 id="section-37">10.8.0</h2>
+<ul>
+<li>Added a formal method of side-effects: <code>Effect</code>. An effect runs once, whenever an action moves from one state to the next. See <a href="./docs/api/effects.html"><code>./docs/api/effects.html</code></a></li>
+<li>Effect callbacks should be invoked within the context of the effect</li>
+<li>Throw an error if Presenter::view is nully. This will inevitably cause an error either way, and should make troubleshooting much easier.</li>
+<li><code>patch</code> and <code>reset</code> only apply to the repo that invoked them (and thus their children)</li>
+</ul>
+<h2 id="section-38">10.7.1</h2>
+<ul>
+<li>Do not pass <code>prepare</code> prop to form element of Form add-on</li>
+</ul>
+<h2 id="section-39">10.7.0</h2>
+<ul>
+<li>Added <code>prepare</code> method for processing form parameters after they are serialized.</li>
+</ul>
+<h2 id="section-40">10.6.1</h2>
+<ul>
+<li>Made a few performance tweaks to achieve deeper v8 optimization</li>
+<li>Never dispatch on archive. We don’t need to. History will correctly reconcile in all cases.</li>
+</ul>
+<h2 id="section-41">10.6.0</h2>
+<ul>
+<li>Presenter views can be React components.</li>
+</ul>
+<h2 id="section-42">10.5.1</h2>
+<ul>
+<li><strong>Important</strong>: Fixed case where incomplete action at root of history could cause cache to rollforward incorrectly, causing skipped action resolution.</li>
+</ul>
+<h2 id="section-43">10.5.0</h2>
+<ul>
+<li>Commit is given staged state for the entire microcosm as a second argument. Since commit is run on every change, this is useful for filtering data based upon some other piece of state.</li>
+<li>Made updates to the archival process that prevent unnecessary dispatches.</li>
+<li>Commit always writes state the first time</li>
+</ul>
+<h2 id="section-44">10.4.0</h2>
+<ul>
+<li>Expose <code>send</code> within a presenter. Presenters can now broadcast intents</li>
+</ul>
+<h2 id="section-45">10.3.6</h2>
+<ul>
+<li>Properly deploy documentation with build (hopefully this should sort out deploy issues)</li>
+</ul>
+<h2 id="section-46">10.3.5</h2>
+<ul>
+<li><code>this.props</code> within <code>Presenter::update</code> should be the old props.</li>
+</ul>
+<h2 id="section-47">10.3.4</h2>
+<ul>
+<li>Fixed internal loop iteration bug where change emissions of a Microcosm may cause forks to tear down, causing an error to be thrown on an undefined object (a repo no longer in the list of tracked repos).</li>
+</ul>
+<h2 id="section-48">10.3.3</h2>
+<ul>
+<li>Do not remove action event listeners on teardown. Otherwise <code>onDone</code>, <code>onError</code>, and <code>onCancel</code> never fire.</li>
+</ul>
+<h2 id="section-49">10.3.2</h2>
+<ul>
+<li>Fix incorrect deprecation information for <code>action.close</code></li>
+<li>Remove reference to history in action on teardown to improve GC</li>
+</ul>
+<h2 id="section-50">10.3.1</h2>
+<ul>
+<li>Fix bad release</li>
+</ul>
+<h2 id="section-51">10.3.0</h2>
+<p><strong>Important</strong>: this was a bad release. Please use &gt;= 10.3.1</p>
+<ul>
+<li>The <code>&lt;Form /&gt;</code> addon can now be submited directly. (#170, #171)</li>
+</ul>
+<h2 id="section-52">10.2.1</h2>
+<ul>
+<li>Use correct lifecycle for subscription to repo in Presenter</li>
+</ul>
+<h2 id="section-53">10.2.0</h2>
+<ul>
+<li>Domains can now be simple classes.</li>
+<li>Domain setup and teardown is now invoked with <code>repo</code> as the first argument.</li>
+<li>Presenters return the full repo state from model by default.</li>
+</ul>
+<h2 id="section-54">10.1.1</h2>
+<ul>
+<li>Correct order of execution of model such that Presenter setup method runs before model calculation. This prevents cases where a domain may be added in the setup method, but it isn’t represented in the initial model.</li>
+</ul>
+<h2 id="section-55">10.1.0</h2>
+<ul>
+<li>Completed actions can no longer change. For example, resolved actions can not be cancelled. A cancelled action can not be cancelled again.</li>
+<li>Passing <code>true</code> as the second argument of <code>patch</code> and <code>reset</code> will run deserialize on provided data.</li>
+<li>Tag intents so that actions register the same in presenters and repos.</li>
+</ul>
+<h2 id="section-56">10.0.0</h2>
+<p>We made it! It’s been a long road, but we’re finally here.</p>
+<p>This is a significant release. We’ve added some new tools for medium to large applications, and made some naming convention changes to make things more accurate to their purpose. Actions and Stores (now Domains) also received significant upgrades.</p>
+<p>High level list:</p>
+<ul>
+<li>All instances of <code>store</code> have been renamed to <code>domain</code>.</li>
+<li>All instances of <code>app</code> have been renamed to <code>repo</code></li>
+<li><code>Microcosm::replace</code> is now <code>Microcosm::patch</code>. <code>patch</code> does not deserialize data. <code>replace</code> is deprecated and will eventually be removed.</li>
+<li>Removed Plugins</li>
+<li>Removed the generator form for actions. Actions now support a thunk form (see <a href="./docs/api/actions.html">the docs</a>).</li>
+<li><code>repo.push</code> now returns the action representing the provided action creator.</li>
+<li>Added <code>pure</code> option, true by default. When true, change events will only fire when state is shallowly not equal.</li>
+<li>Microcosms can now be “forked”. “Child” Microcosms receive the state of their parents and share the same action history, however can safely add new domains and make modifications to repo state without affecting the parent.</li>
+<li>Added <code>Presenter</code> add-on that replaces <code>Provider</code> and <code>Connect</code>. Presenters extend from React.Component and can be used to extract state out of a Microcosm and send it into a “passive view” component.</li>
+<li>Added <code>withIntent</code> and <code>form</code> add-on. These add-ons provide an API for sending messages to Presenters without needing to pass callbacks deeply into the component tree.</li>
+</ul>
+<h3 id="no-more-plugins">No more plugins</h3>
+<p>Microcosm 9.x has a <code>start</code> method that must be called to begin using it. This method sets initial state and runs through all plugins, executing them in order.</p>
+<p>We really liked plugins, however this extra step was cumbersome and makes it harder to support embedding microcosms within components. This is important for future planning, so we took advantage of the major release to remove plugins.</p>
+<p>We’ve added a <code>setup</code> method to the <code>Microcosm</code> prototype. We’ve found most plugins can easily be converted into direct function calls, like:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> Repo <span class="kw">extends</span> Microcosm) <span class="op">{</span>
+  <span class="at">setup</span> () <span class="op">{</span>
+    <span class="at">plugin</span>(<span class="kw">this</span><span class="op">,</span> options)
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h3 id="domains-no-longer-called-stores">Domains (no longer called Stores)</h3>
+<ul>
+<li><strong>Domains can no longer be functions that return a registration</strong>. This wasn’t being used, and makes it easier to check if a Store should be instantiated when added (see next item).</li>
+<li>Domains can now be classes. When added, they will be instantiated (though no parameters are currently passed to the constructor; still figuring this one out).</li>
+<li>Added a <code>setup</code> method to Domains. This is a one time lifecycle method that runs when a store is added to a Microcosm.</li>
+<li>Domains can now implement a <code>commit</code> method that indicates how a store should write to <code>repo.state</code>. When used with <code>staging</code>, this is useful for keeping complex data types internal to a Microcosm, exposing vanilla JS data via <code>repo.state</code>.</li>
+<li>Domains can now implement a <code>shouldCommit</code> method that determines if <code>commit</code> should run (see <code>docs/recipes/immutable-js.html</code>)</li>
+</ul>
+<h4 id="state-management">State management</h4>
+<p>Repo state now has two extra phases: <code>stage</code> and <code>commit</code>. Domains handlers work against a internal staging ground. Domains can then commit state as a separate operation.</p>
+<p>For example, when working with ImmutableJS:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> ImmutableDomain <span class="op">=</span> <span class="op">{</span>
+  <span class="at">getInitialState</span>() <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">Immutable</span>.<span class="at">Map</span>()
+  <span class="op">},</span>
+
+  <span class="at">shouldCommit</span>(next<span class="op">,</span> previous) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">Immutable</span>.<span class="at">is</span>(next<span class="op">,</span> previous) <span class="op">===</span> <span class="kw">false</span>
+  <span class="op">},</span>
+
+  <span class="at">add</span>(state<span class="op">,</span> record) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">state</span>.<span class="at">set</span>(<span class="va">record</span>.<span class="at">id</span><span class="op">,</span> record)
+  <span class="op">},</span>
+
+  <span class="at">remove</span>(state<span class="op">,</span> id) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">state</span>.<span class="at">remove</span>(id)
+  <span class="op">}</span>
+
+  <span class="at">commit</span>(state) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">Array</span>.<span class="at">from</span>(<span class="va">state</span>.<span class="at">values</span>())
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p><code>shouldCommit</code> returns <code>true</code> by default, and <code>commit</code> just passes along state. When warranted, these new hooks should grant a high degree of separation between a Domain’s internal data management and the data consumed by a component tree.</p>
+<h3 id="actions-1">Actions</h3>
+<p>Actions have been significantly upgraded to allow for complicated async operations.</p>
+<ul>
+<li>Actions can now be simple strings. In these cases, the first argument of the pushed action is forwarded to stores.</li>
+<li>Properly display missing action reporting when dispatching an undefined action.</li>
+</ul>
+<p>We removed the generator form for actions. Instead, actions can return a function to get greater control over async operations:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">getUser</span> (id) <span class="op">{</span>
+  <span class="cf">return</span> <span class="kw">function</span> (action) <span class="op">{</span>
+    <span class="kw">const</span> request <span class="op">=</span> <span class="at">ajax</span>(<span class="st">&#39;/users/&#39;</span> <span class="op">+</span> id)
+
+    <span class="va">action</span>.<span class="at">open</span>(id)
+
+    <span class="va">request</span>.<span class="at">on</span>(<span class="st">&#39;load&#39;</span><span class="op">,</span> (data) <span class="op">=&gt;</span> <span class="va">action</span>.<span class="at">resolve</span>(data))
+
+    <span class="va">request</span>.<span class="at">on</span>(<span class="st">&#39;error&#39;</span><span class="op">,</span> (error) <span class="op">=&gt;</span> <span class="va">action</span>.<span class="at">reject</span>(error))
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p>Domains can subscribe to these fine-grained action states:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> UserDomain <span class="op">=</span> <span class="op">{</span>
+  <span class="co">// ... handlers</span>
+  <span class="at">register</span>() <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [<span class="va">getUser</span>.<span class="at">open</span>]  <span class="op">:</span> <span class="kw">this</span>.<span class="at">setLoading</span><span class="op">,</span>
+      [<span class="va">getUser</span>.<span class="at">done</span>]  <span class="op">:</span> <span class="kw">this</span>.<span class="at">updateUser</span><span class="op">,</span>
+      [<span class="va">getUser</span>.<span class="at">error</span>] <span class="op">:</span> <span class="kw">this</span>.<span class="at">setFailure</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h3 id="presenter-addon">Presenter Addon</h3>
+<p>We’ve removed the <code>Connect</code> and <code>Provide</code> addons in favor of a single <code>Presenter</code> addon. Though the API is different (using classes instead of higher order functions), it accomplishes the same goals.</p>
+<p>For usage, checkout the <a href="./docs/api/presenter.html">presenter docs</a></p>
+<h2 id="changes-10.0.0-after-rc11-released-in-10.0.0">Changes 10.0.0 after rc11 (released in 10.0.0)</h2>
+<ul>
+<li>Rename <code>replace</code> to <code>patch</code>, <code>patch</code> does not call deserialize.</li>
+<li>Fix proptypes on <code>form</code></li>
+<li><code>send</code> no longer raises a warning if no Presenter implements an intent, instead it will dispatch to Microcosm</li>
+<li>Prevent dispatch from accidentally triggering on Domains with the same method name as an action (should only be the case when dispatching string intents)</li>
+<li>Forked repos that have domains at the same key as their parents always handle their parent’s state instead of their own.</li>
+<li>Added <code>teardown</code> method to Domains. Called whenever the associated Microcosm instance invokes <code>teardown</code>.</li>
+</ul>
+<h2 id="rc11">10.0.0-rc11</h2>
+<ul>
+<li>Only root microcosms can replace state</li>
+<li>Finalize solution for Presenter issues in IE &lt; 11 that does not require a polyfil.</li>
+</ul>
+<h2 id="rc10">10.0.0-rc10</h2>
+<ul>
+<li>Fixed some edge cases in umbrella state sharing</li>
+</ul>
+<h2 id="rc9">10.0.0-rc9</h2>
+<ul>
+<li>Almost there, we promise. We were able to identify the core issue behind Presenter statics not forwarding to derived classes. Those using Presenters should include the <code>Object.setPrototypeOf</code> polyfill to support IE10 and lower.</li>
+</ul>
+<h2 id="rc8">10.0.0-rc8</h2>
+<ul>
+<li>Hoist Presenter statics for &lt;= IE10</li>
+</ul>
+<h2 id="rc7">10.0.0-rc7</h2>
+<ul>
+<li>Added “fork” feature to Microcosm. This method returns a new Microcosm that shares the same history tree the original and will receive the parent’s state, however does not share domains.</li>
+<li>Presenters fork their given repo by default.</li>
+<li>Renamed <code>action.close()</code> to <code>action.resolve()</code></li>
+</ul>
+<h2 id="rc6">10.0.0-rc6</h2>
+<ul>
+<li>Flipped <code>shouldCommit</code>’s signature to <code>shouldCommit(last, next)</code> to be consistent with other store methods.</li>
+<li>Added <code>Presenter::teardown</code>, the opposite of <code>Presenter::setup</code></li>
+<li>Added back <code>Microcosm::append</code> and made it a public API. It’s simply too useful for testing.</li>
+</ul>
+<h2 id="rc5">10.0.0-rc5</h2>
+<ul>
+<li>Do not execute callbacks in event listeners when another callback unsubscribes them.</li>
+</ul>
+<h2 id="rc4">10.0.0-rc4</h2>
+<ul>
+<li><code>replace</code> works as advertised. Merge data into existing state.</li>
+</ul>
+<h2 id="rc3">10.0.0-rc3</h2>
+<ul>
+<li>Added <code>view</code> method and <code>model</code> alias for <code>viewModel</code> on Presenter.</li>
+</ul>
+<h2 id="rc2">10.0.0-rc2</h2>
+<ul>
+<li>Fixed a bug where the presenter’s subscription would be removed when children unmounted.</li>
+</ul>
+<h2 id="rc">10.0.0-rc</h2>
+<ul>
+<li>Removed <code>Microcosm::append</code>. This was only used internally, and is no longer necessary.</li>
+<li>Updated Presenter to take advantage of scope management in event emitter.</li>
+<li>Renamed the <code>failed</code> action state to <code>error</code> to be consistent with <code>Action::onError</code> and the <code>error</code> event listener trigger.</li>
+<li>Added a new <code>withIntent</code> addon. See <a href="./docs/api/with-intent">the docs for more info</a></li>
+<li>All instances of <code>store</code> have been renamed to <code>domain</code>.</li>
+</ul>
+<h3 id="upgrading-3">Upgrading</h3>
+<ul>
+<li>Instead of calling <code>repo.addStore</code>, call <code>repo.addDomain</code>. We’ve kept <code>addStore</code> temporarily to make upgrading easier, but will remove it with the 10.0.0 release.</li>
+<li>Rename all <code>failed</code> subscriptions in Domain register methods to <code>error</code>.</li>
+</ul>
+<h2 id="beta-8">10.0.0-beta-8</h2>
+<ul>
+<li>Call action callbacks with provided scope (bug fix)</li>
+<li>Do not use a getter to compute type, just calculate it once when state changes. This also provides a small perf boost.</li>
+</ul>
+<h2 id="beta7">10.0.0-beta7</h2>
+<ul>
+<li>Throw an error before attempting to tag <code>null</code> or <code>undefined</code></li>
+<li>Warn if <code>Presenter::viewModel</code> returns <code>repo.state</code> directly, allow <code>viewModel</code> to return a function similar to an individual key/value binding.</li>
+<li>Add <code>onCancel</code> event to actions (returned from <code>repo.push()</code>). Thanks <span class="citation">@djmccormick</span>!</li>
+<li>Presenter no longer throws an error if no render method is implemented, instead it just passes along children (when it can)</li>
+<li>Removed Connect and Provider addons. The Presenter accommodates both uses cases.</li>
+</ul>
+<h2 id="beta6">10.0.0-beta6</h2>
+<p>Couple of bug fixes:</p>
+<ul>
+<li>Presenter setup needs to happen in <code>componentWillMount</code>, otherwise React warns when setState is called in a constructor.</li>
+<li>Cut some unused, undocumented methods from the base Emitter class.</li>
+<li>Ensure there is always a “last” state when executing <code>shouldCommit</code> in stores.</li>
+</ul>
+<h2 id="beta5">10.0.0-beta5</h2>
+<p>Almost there. This is an important revision. Any new changes after this should focus primarily API design (what do we call stuff?).</p>
+<h3 id="microcosm-1">Microcosm</h3>
+<ul>
+<li>Added <code>pure</code> option, true by default. When true, change events will only fire when state is shallowly not equal.</li>
+<li>Repo state now has an extra phase: <code>staging</code>. Stores can implement a <code>stage</code> method to determine how to write state to <code>staging</code>,</li>
+</ul>
+<h3 id="stores">Stores</h3>
+<ul>
+<li><strong>Stores can no longer be functions that return a registration</strong>. This wasn’t being used, and makes it easier to check if a Store should be instantiated when added (see next item).</li>
+<li>Stores can now be classes. When added, they will be instantiated (though no parameters are currently passed to the constructor; still figuring this one out).</li>
+<li>Added a <code>setup</code> method to Stores. This is a one time lifecycle method that runs when a store is added to a Microcosm.</li>
+<li>Stores can now implement a <code>commit</code> method that indicates how a store should write to <code>repo.state</code>. When used with <code>staging</code>, this is useful for keeping complex data types internal to a Microcosm, exposing vanilla JS data via <code>repo.state</code>.</li>
+<li>Stores can now implement a <code>shouldCommit</code> method that determines if <code>commit</code> should run (see <code>docs/recipes/immutable-js.html</code>)</li>
+</ul>
+<h3 id="presenter-addon-1">Presenter Addon</h3>
+<ul>
+<li>Added <code>setup</code> method. This is a one time lifecycle method that eliminates the need to crack open the constructor, and should be consistent with Microcosm.</li>
+<li>Presenters inherit <code>pure</code> from their provided repo. This behaves similarly to Microcosm’s pure, only on the <code>viewModel</code>.</li>
+</ul>
+<h2 id="beta4">10.0.0-beta4</h2>
+<ul>
+<li>Presenters (and Connect) now except non-function values as computed properties</li>
+<li>Presenters expose intents via a <code>register()</code> method (similarly to Stores)</li>
+<li>Removed faulty missing action error (added in beta3). Reduced some errors to warnings.</li>
+<li>Improved efficiency of some internal state tree operations</li>
+</ul>
+<h2 id="beta3">10.0.0-beta3</h2>
+<ul>
+<li>Actions can now be simple strings. In these cases, the first argument of the pushed action is forwarded to stores.</li>
+<li>Properly display missing action reporting when dispatching an undefined action.</li>
+<li>References to <code>app</code> are now <code>repo</code></li>
+</ul>
+<h2 id="section-57">9.21.0</h2>
+<ul>
+<li>The history tree now uses its nodes as linked lists to calculate children instead of allocation an array.
+<ul>
+<li>This results in about a 60% reduction in memory usage.</li>
+</ul></li>
+<li>Added <code>children</code> getter to Tree Node class.</li>
+<li>Updated some development-only validation errors and worked around a silly React Native bug with using <code>import</code> statements in comments.</li>
+</ul>
+<h2 id="section-58">9.20.0</h2>
+<p>This update contains internal updates that were substantial enough to warrant a minor release. There should be no breaking changes, but actions and plugins have been improved in ways that may affect your app.</p>
+<h3 id="noticeable-changes">Noticeable changes</h3>
+<ul>
+<li>Microcosm will now bail-out early if pushing an action before it is started.</li>
+<li>Eliminated possible cases where promises trapped errors</li>
+<li>Drastic performance increase</li>
+</ul>
+<h4 id="bailing-out-early">Bailing out early</h4>
+<p>A Microcosm must be started via <code>app.start()</code> before pushing actions. With this release, it will now throw an error when this is not the case. <strong>When upgrading, ensure that <code>app.start()</code> is being called before booting your application.</strong></p>
+<h4 id="promises">Promises</h4>
+<p>Before this release, the try/catch block that Promises use to identify rejections would also extend to internal Microcosm operations… and eventually React components subscribing to updates. This meant that it was possible for errors thrown by Stores and React components to be caught by Promises.</p>
+<p>This is typically what you sign up for with Promises, however there is a very clear stopping point within Microcosm where it simply needs the value returned from a Promise. There is no additional value in continuing on with the Promise behavior, only hindrance. In this release we’ve added an escape hatch at that specific part of the lifecycle to untrap errors after that point.</p>
+<p>This should only make working with Promises much more pleasant, and we do not anticipate it affecting the way you use Microcosm. Still, it is possible that your app does not properly handle errors from Promises. <strong>When upgrading, you should confirm this for all actions that rely on Promises.</strong></p>
+<h4 id="performance">Performance</h4>
+<p>Microcosm <strong>dispatches are roughly 1200% faster</strong> (depending on the number of stores, and event subscriptions).</p>
+<p>Much of this is attributed to changes in the Tree data structure used to keep track of state. Specific actions, such as retrieving the root and size of the tree occur in constant time. Additionally action handlers are now memoized to prevent wasteful calls to Store <code>register</code> methods.</p>
+<p>These changes have also resulted in tremendously lower memory usage.</p>
+<h2 id="section-59">9.19.1</h2>
+<ul>
+<li>Fixes a regression introduced in 9.6.0 where the promise payload was not being returned from push, this prevented promise chains from receiving the transaction payload.</li>
+</ul>
+<h2 id="section-60">9.19.0</h2>
+<ul>
+<li>Added Provider and Connect addons. See the API docs for more information and checkout the newly updated ReactRouter example.</li>
+</ul>
+<h2 id="section-61">9.18.0</h2>
+<ul>
+<li>When registered, the <code>options</code> argument of plugins default to an empty object.</li>
+<li>Added warning when a Store’s registration method is configured to listen to a particular action, however it is undefined. The message should read “Store for [key] is registered to [action], but the handler is undefined!”</li>
+<li>Upgraded patch release of Diode that fixed strange compilation issues with Babel 5.x in a Node environment.</li>
+</ul>
+<h2 id="section-62">9.17.0</h2>
+<p>Plugins no longer require a <code>next</code> argument. For example, consider:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">Plugin</span> (app<span class="op">,</span> options<span class="op">,</span> next) <span class="op">{</span>
+  <span class="va">app</span>.<span class="at">listen</span>(<span class="kw">function</span>() <span class="op">{</span>
+    <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;I changed!&quot;</span>)
+  <span class="op">}</span>)
+
+  <span class="at">next</span>()
+<span class="op">}</span></code></pre></div>
+<p>This plugin is entirely synchronous, yet relies on <code>next()</code> to advance plugin installation forward. As of this release, omitting the <code>next</code> argument causes a plugin to be synchronously processed:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">Plugin</span> (app<span class="op">,</span> options) <span class="op">{</span>
+  <span class="va">app</span>.<span class="at">listen</span>(<span class="kw">function</span>() <span class="op">{</span>
+    <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;I changed!&quot;</span>)
+  <span class="op">}</span>)
+<span class="op">}</span></code></pre></div>
+<p><strong>This is not mandatory</strong>, and designed to streamline simple plugins.</p>
+<h2 id="section-63">9.16.0</h2>
+<ul>
+<li>The history tree now properly implements “redo”. Before this release, moving forward in the tree would walk the oldest branch. From this point forward, it will take the newest path. This should not impact projects not utilizing undo history.</li>
+</ul>
+<h2 id="section-64">9.15.2</h2>
+<ul>
+<li>Republish to set to latest</li>
+</ul>
+<h2 id="section-65">9.15.1</h2>
+<ul>
+<li>Removes extraneous dependency</li>
+</ul>
+<h2 id="section-66">9.15.0</h2>
+<ul>
+<li>Fix bug where history would not completely flush all transactions, causing store handlers to fire twice.</li>
+<li><code>start()</code> must be invoked</li>
+</ul>
+<h3 id="potentially-breaking-changes">Potentially breaking changes</h3>
+<p>In a previous update, we made a change that allowed instances of microcosm to work without invoking <code>start()</code>. This update reverts that decision. Without intentionaly invoking start, transactional state becomes hard to predict. This is potentially a breaking change; for those upgrading, verify that you are calling <code>start</code> before using a microcosm.</p>
+<h2 id="section-67">9.14.1</h2>
+<ul>
+<li>Properly clear history so that store handlers do not fire twice</li>
+</ul>
+<h2 id="section-68">9.14.0</h2>
+<h3 id="noticeable-changes-1">Noticeable Changes</h3>
+<p>We improved the validation of stores to help improve debugging of bad inputs to <code>Microcosm::addStore</code>.</p>
+<h3 id="internal-changes">Internal Changes</h3>
+<ul>
+<li>Small change to dispatch process so that accessing state only happens when necessary. This should provide a small performance boost.</li>
+</ul>
+<h2 id="section-69">9.13.1</h2>
+<ul>
+<li>Addressed an IE9 bug where stores passed without key paths did not install properly.</li>
+</ul>
+<h2 id="section-70">9.13.0</h2>
+<h3 id="noticeable-changes-2">Noticeable Changes</h3>
+<ul>
+<li><code>Microcosm::addStore</code> mounts stores to a given key path, like: <code>app.addStore([ 'path', 'to', 'key' ], Store)</code>. Additionally, adding a store without a keypath will mount it to the entire application state. This is to improve the useability of Stores that must operate all state (such as make decisions about game state).</li>
+<li>Renamed <code>setFocus</code> to <code>checkout</code> in internal Tree structure. <strong>This is a breaking change.</strong> The goal is to move towards a more intuitive API.</li>
+<li>Tweaked build process to prevent babel compilation errors when developing for React Native development.</li>
+</ul>
+<h3 id="upgrading-4">Upgrading</h3>
+<p>The enhancement <code>Microcosm::addStore</code> is not a breaking change, all old use cases will continue to work.</p>
+<p>Those experimenting with <code>app.history</code> will need to rename calls to <code>setFocus</code> to <code>checkout</code>.</p>
+<h2 id="section-71">9.12.0</h2>
+<p>This is a big update, however there should be no breaking changes (assuming you are not referencing Microcosm internals).</p>
+<h3 id="noticeable-changes-3">Noticeable Changes</h3>
+<ul>
+<li>Microcosm now stores transactions created by actions as a tree. The long term plan for this change is to support undo trees.</li>
+<li>Stores determine initial state when they are added to a Microcosm. This allows for Microcosms to be created without needing to <code>start()</code>.</li>
+<li>Added history API. This is an unstable API. However, for those curious, check out the undo-tree example.</li>
+<li>Added some additional validations to ensure proper use of Microcosm.</li>
+<li>Actions that are generators now receive the last payload as the returned value from <code>yield</code>. This should help to improve sequential, daisy chained, calls.</li>
+<li>Adjusted build tooling to expose Microcosm modules at <code>microcosm/*</code> instead of <code>microcosm/src/*</code></li>
+<li>Stores and Plugins can now be functions. When this is the case, they will act as the <code>register</code> function in each instance.</li>
+</ul>
+<h3 id="internal-changes-1">Internal Changes</h3>
+<ul>
+<li>Adjustments to improve v8 performance. All Microcosm operations should occur without deoptimization penalties.</li>
+</ul>
+<h3 id="upgrading-5">Upgrading</h3>
+<p>For those referencing Microcosm internals, we have moved their hosted directory from <code>src</code> to the folder root. This means the following changes are necessary:</p>
+<p>Instead of:</p>
+<pre><code>require(&#39;microcosm/src/lifecycle&#39;)</code></pre>
+<p>Change this to:</p>
+<pre><code>require(&#39;microcosm/lifecycle&#39;)</code></pre>
+<h2 id="section-72">9.11.0</h2>
+<h3 id="noticeable-changes-4">Noticeable Changes</h3>
+<ul>
+<li>Generators used for Microcosm actions can now yield other generators. In these instances, child generators operate to completion before the next iteration of the parent generator.</li>
+</ul>
+<h2 id="section-73">9.10.0</h2>
+<h3 id="noticeable-changes-5">Noticeable Changes</h3>
+<ul>
+<li>Upgrade Diode to 6.1.0. <code>listen</code> now supports a second argument that defines the scope of the callback.</li>
+<li>Respect scope of bound functions when executing callbacks via <code>app.push</code></li>
+</ul>
+<h2 id="section-74">9.9.2</h2>
+<h3 id="internal-changes-2">Internal changes</h3>
+<ul>
+<li>Fixed bug where <code>eventually</code> would try to execute a non-function value</li>
+</ul>
+<h2 id="section-75">9.9.1</h2>
+<h3 id="noticeable-changes-6">Noticeable changes</h3>
+<ul>
+<li>Improved the error messages for <code>addStore</code></li>
+</ul>
+<h3 id="internal-changes-3">Internal changes</h3>
+<ul>
+<li>Changed order of execution in <code>tag</code> to prevent unnecessary work</li>
+</ul>
+<h2 id="section-76">9.9.0</h2>
+<h3 id="noticeable-changes-7">Noticeable changes</h3>
+<ul>
+<li>Each store will receive the reduced state from all prior stores. This means that stores can respond to the result from prior operations. This should not affect any stores that do not access the third argument of store callbacks (all application state).</li>
+</ul>
+<h3 id="internal-changes-4">Internal changes</h3>
+<ul>
+<li>Rewrites and improvements to <code>dispatch</code> and <code>send</code> methods to achieve higher v8 optimization.</li>
+</ul>
+<h2 id="section-77">9.8.0</h2>
+<h3 id="noticeable-changes-8">Noticeable changes</h3>
+<ul>
+<li>If a store returns undefined, no state change will occur. This is potentially a breaking change. If you have stores that return <code>undefined</code>, consider changing your logic to support returning <code>null</code></li>
+</ul>
+<h2 id="section-78">9.7.0</h2>
+<ul>
+<li>The third argument of store callbacks now contains all application state. The intention behind this addition is to allow for stores that must make decisions based upon input from multiple sources.</li>
+</ul>
+<h2 id="section-79">9.6.0</h2>
+<h3 id="noticeable-changes-9">Noticeable changes</h3>
+<ul>
+<li>The <code>deserialize</code> lifecycle method is now provided the entire raw state as the action parameters. This means that it is now available as the second argument in store callbacks.</li>
+<li>Similarly, the <code>serialize</code> lifecycle method is now provided the entire app state in the action. This means that it is now available as the second argument in store callbacks.</li>
+</ul>
+<h3 id="internal-changes-5">Internal changes</h3>
+<ul>
+<li>Tweaks to lazy callback executed after <code>app.push</code> for better optimization</li>
+<li>Tweaks to <code>flatten</code> for better optimization</li>
+<li>Renamed <code>async</code> utility to <code>coroutine</code></li>
+<li>Reworked transactions to expose future lifecycle methods</li>
+<li>Retain 100% test coverage</li>
+</ul>
+<h3 id="upgrading-6">Upgrading</h3>
+<p>There are no breaking changes for this release.</p>
+<h2 id="section-80">9.5.0</h2>
+<ul>
+<li>Upgrade dependencies</li>
+<li>Use fixed versions for dependencies</li>
+</ul>
+<h2 id="section-81">9.4.1</h2>
+<h3 id="internal-changes-6">Internal changes</h3>
+<ul>
+<li>Fixed bug where lifecycle methods used as registered actions did not properly stringify.</li>
+</ul>
+<h2 id="section-82">9.4.0</h2>
+<h3 id="noticeable-changes-10">Noticeable changes</h3>
+<ul>
+<li>Exposed lifecycle actions under <code>microcosm/lifecycle</code>. See the upgrading section for more notes.</li>
+</ul>
+<h3 id="internal-changes-7">Internal changes</h3>
+<ul>
+<li><code>getInitialState</code>, <code>serialize</code>, and <code>deserialize</code> are now triggered by actions. We call them <em>lifecycle actions</em>. Their associated counterparts are <code>willStart</code>, <code>willSerialize</code>, and <code>willDeserialize</code>. There is no obligation to use these lifecycle actions, the store methods should work all the same.</li>
+</ul>
+<h3 id="upgrading-7">Upgrading</h3>
+<p>This version adds lifecycle actions. This does not make any breaking change to the Microcosm API, however it provides us better internal consistency.</p>
+<p>These lifecycle actions are still undergoing development (names may change, etc, but we’ll keep you posted). However if you would like to give them a spin, consider the following code example:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> willStart <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;microcosm/lifecycle&#39;</span>
+<span class="im">import</span> <span class="op">{</span> addPlanet <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;actions/planets&#39;</span>
+
+<span class="kw">const</span> Planets <span class="op">=</span> <span class="op">{</span>
+  <span class="at">reset</span>() <span class="op">{</span>
+    <span class="cf">return</span> []
+  <span class="op">},</span>
+  <span class="at">add</span>(records<span class="op">,</span> item) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">records</span>.<span class="at">concat</span>(item)
+  <span class="op">},</span>
+  <span class="at">register</span>() <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [willStart] <span class="op">:</span> <span class="va">Planets</span>.<span class="at">reset</span><span class="op">,</span>
+      [addPlanet] <span class="op">:</span> <span class="va">Planets</span>.<span class="at">add</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h2 id="section-83">9.3.0</h2>
+<h3 id="noticeable-changes-11">Noticeable changes</h3>
+<ul>
+<li>Store registration methods can return non-function values. When this is the case, it will use this value as the new state.</li>
+</ul>
+<h2 id="section-84">9.2.0</h2>
+<h3 id="noticeable-changes-12">Noticeable changes</h3>
+<ul>
+<li>Plugins will now validate that their <code>register</code> property is a function. If this property is not present, it will skip this validation and continue to the next plugin.</li>
+</ul>
+<h3 id="internal-changes-8">Internal changes</h3>
+<ul>
+<li>Internalized <code>is-generator</code> package to reduce dependencies and cut some dead code.</li>
+<li>Refactored the install process to prevent needless extension and simplify the installation queue.</li>
+</ul>
+<h3 id="upgrading-8">Upgrading</h3>
+<p>All changes are purely internal polish. There should be no additional required action. The build is about 100 bytes smaller, but who’s counting? :)</p>
+<h2 id="section-85">9.1.0</h2>
+<h3 id="internal-changes-9">Internal changes</h3>
+<ul>
+<li>Updates to the way transactions are created and rolled forward to improve efifciency and support dev tool development</li>
+</ul>
+<h2 id="section-86">9.0.0</h2>
+<h3 id="noticeable-changes-13">Noticeable changes</h3>
+<ul>
+<li>Microcosm now uses transactions to process state. When an action is pushed, an associated transaction will be created. Transactions are processed in the order in which <code>app.push</code> is called.</li>
+<li>Added a mechanism for optimistic updates using generators in actions.</li>
+<li><code>app.push</code> accepts a callback as the third argument which will be invoked when an action is completely resolved (More in breaking changes)</li>
+</ul>
+<h3 id="breaking-changes">Breaking Changes</h3>
+<ul>
+<li>Removed Foliage. Microcosm no longer extends from Foliage and its API is no longer available.</li>
+<li>Instead of <code>app.get</code> or <code>app.toObject()</code> to retrieve state, use <code>app.state</code>.</li>
+<li>The signature for <code>app.push</code> is now <code>app.push(action, [...arguments], callback)</code>.</li>
+<li>The signature for <code>app.prepare</code> is now <code>app.prepare(action, [...arguments])</code>.</li>
+</ul>
+<h3 id="upgrading-9">Upgrading</h3>
+<h4 id="foliage">Foliage</h4>
+<p>For those using the Foliage API, consider using Foliage within Stores themselves.</p>
+<h4 id="app.push">app.push</h4>
+<p><code>app.push</code> should continue to work as expected when only one parameter is pushed to an action, however those pushing multiple parameters should make the following change:</p>
+<pre><code>// Before:
+app.push(action, &#39;one&#39;, &#39;two&#39;,&#39; &#39;three&#39;)
+// After:
+app.push(action, [&#39;one&#39; ,&#39;two&#39;, &#39;three&#39;])</code></pre>
+<p>Additionally, the third argument of <code>app.push</code> is now an error-first callback. When an action resolves or fails, it will execute this callback:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">app</span>.<span class="at">push</span>(action<span class="op">,</span> params<span class="op">,</span> <span class="kw">function</span>(error<span class="op">,</span> body) <span class="op">{</span>
+  <span class="cf">if</span> (error) <span class="op">{</span>
+    <span class="at">handleError</span>(error)
+  <span class="op">}</span>
+<span class="op">}</span>)</code></pre></div>
+<h4 id="getting-app-state">Getting app state</h4>
+<p>All instances of <code>app.get('key')</code> should be replaced with <code>app.state.key</code>, sort of like if it were a React Component</p>
+<h2 id="section-87">8.3.0</h2>
+<h3 id="breaking-changes-1">Breaking changes</h3>
+<ul>
+<li>Microcosm will emit events synchronously.</li>
+</ul>
+<h3 id="upgrading-10">Upgrading</h3>
+<p>In the past, Microcosm would use requestAnimationFrame to batch together changes. However this can cause unexpected consequences when sequentially performing otherwise synchronous operations. For those who wish to preserve this behavior, consider using debounce to “choke” high frequency changes.</p>
+<h2 id="section-88">8.2.0</h2>
+<h3 id="internal-changes-10">Internal Changes</h3>
+<ul>
+<li>Upgrade Foliage to <code>0.24.0</code>.</li>
+<li>Moved <code>Store.prototype.send</code> to <code>Store.send</code>. This has always been an internal API, however those using this method for testing will need to update. This change is motivated by a desire to reduce as much surface area from Store instances as possible.</li>
+<li>We now use <code>babel-plugin-object-assign</code> for extension</li>
+<li>Microcosm is compiled in normal babel mode (not loose)</li>
+</ul>
+<h3 id="fixes">Fixes</h3>
+<ul>
+<li>Store responses to actions will always be called within the scope of the store.</li>
+<li>Addressed classical inheritance issue not caught from <code>loose</code> babel compilation</li>
+</ul>
+<h3 id="upgrading-11">Upgrading</h3>
+<p>For those using <code>Store.prototype.send</code>, the following change is necessary:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Before</span>
+<span class="va">store</span>.<span class="at">send</span>(state<span class="op">,</span> action<span class="op">,</span> payload)
+<span class="co">// After</span>
+<span class="va">Store</span>.<span class="at">send</span>(store<span class="op">,</span> action<span class="op">,</span> state<span class="op">,</span> payload)</code></pre></div>
+<h2 id="section-89">8.1.0</h2>
+<h3 id="noticeable-changes-14">Noticeable changes</h3>
+<ul>
+<li>Stores no longer return <code>this</code> from <code>register()</code> by default. <strong>This is a potentially breaking change</strong>, however should not pose a problem to projects using idiomatic Store registration.</li>
+<li>Scope of store reducers when dispatching will always be the Store</li>
+</ul>
+<h3 id="internal-changes-11">Internal Changes</h3>
+<ul>
+<li>Added plugin class to manage defaults</li>
+<li><code>tag</code> now includes the name of the function in <code>toString()</code></li>
+<li>Unique ids for plugins and actions are internally generated with counters</li>
+</ul>
+<h2 id="section-90">8.0.0</h2>
+<h3 id="noticeable-changes-15">Noticeable changes</h3>
+<ul>
+<li>Stores now contain the logic for how it should receive an action. logic is contained under <code>send</code>.</li>
+<li>Stores now contain the logic to determine what method should resolve an action sent to it. This is defined in <code>register</code></li>
+<li><code>Microcosm::deserialize</code> will now only operate on the keys provided by the seed object. This means that data passed into <code>replace</code> will only blow way keys provided in the data object.</li>
+<li>The signaling logic for dispatching actions will throw an error if the action provided is not a function</li>
+<li>Internalized tag, it will now lazy evaluate as actions are fired</li>
+<li>Upgraded Foliage, Microcosm now contains <code>subscribe</code>, <code>unsubscribe</code>, and <code>publish</code> aliases for <code>listen</code>, <code>ignore</code>, and <code>publish</code></li>
+</ul>
+<h3 id="breaking-changes-2">Breaking Changes</h3>
+<ul>
+<li>Remove all uses of the <code>tag</code> module.</li>
+</ul>
+<h4 id="changes-to-stores">Changes to Stores</h4>
+<p>Before this release, stores would listen to actions using the stringified value of their functions:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> MyStore <span class="op">=</span> <span class="op">{</span>
+  [<span class="va">Action</span>.<span class="at">add</span>](state<span class="op">,</span> params)<span class="op">{}</span>
+<span class="op">}</span></code></pre></div>
+<p>This was terse, however required actions to be tagged with a special helper method. It also required any module that needed access to a Store’s method to also know what actions it implemented.</p>
+<p>To address these concerns, Stores now communicate with a Microcosm using the <code>register</code> method:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> MyStore <span class="op">=</span> <span class="op">{</span>
+  <span class="at">register</span>() <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [<span class="va">Action</span>.<span class="at">add</span>]<span class="op">:</span> <span class="kw">this</span>.<span class="at">add</span>
+    <span class="op">}</span>
+  <span class="op">},</span>
+  <span class="at">add</span>(state<span class="op">,</span> params)<span class="op">{}</span>
+<span class="op">}</span></code></pre></div>
+<p>Under the hood, Microcosm tags functions automatically.</p>
+<h2 id="section-91">7.1.1</h2>
+<ul>
+<li>Bumped Foliage to a newer version</li>
+</ul>
+<h2 id="section-92">7.1.0</h2>
+<h3 id="noticeable-changes-16">Noticeable changes</h3>
+<ul>
+<li><code>Microcosm::start</code> will return itself</li>
+</ul>
+<h3 id="internal-improvements">Internal improvements</h3>
+<ul>
+<li>Replaced all uses of ES6 modules with CommonJS. This was causing issues in non-ES6 module projects.</li>
+<li>Microcosm publishes as separate modules now. Ideally, this will make internal pieces easier to reuse and help with debugging.</li>
+</ul>
+<h2 id="section-93">7.0.0</h2>
+<ul>
+<li>Internally, Microcosm now uses <a href="https://github.com/vigetlabs/foliage">Foliage</a> for state management.</li>
+<li><code>pull</code> is now <code>get</code>, as it is inherited from Foliage</li>
+<li>Microcosm is actually an extension of Foliage, so it now includes all Foliage methods.</li>
+<li>Microcosm no longer uses toString() to get the key for Stores. This was decided upon so that it is easier to reason about what a Store is responsible for when hooking it into a Microcosm.</li>
+</ul>
+<h2 id="section-94">6.2.1</h2>
+<ul>
+<li>Externalize some methods to fix extension</li>
+</ul>
+<h2 id="section-95">6.2.0</h2>
+<ul>
+<li>Microcosm’s event system has been replaced with <a href="https://github.com/vigetlabs/diode">Diode</a>. The APIs are the same. This should not lead to any breaking changes.</li>
+</ul>
+<h2 id="section-96">6.1.0</h2>
+<ul>
+<li><code>Microcosm::pull</code> can now accept an array of keys for the first argument. This will traverse the nested keys of state to calculate value.</li>
+</ul>
+<h2 id="section-97">6.0.0</h2>
+<p>6.0.0 is the second effort to reduce the surface area of the Microcosm API.</p>
+<ul>
+<li>Removed <code>Upstream</code> and <code>Downstream</code> mixins. They used the undocumented context API and introduced some complexity in testing</li>
+<li><code>Microcosm::send</code> is now <code>Microcosm::push</code></li>
+<li><code>Microcosm::push</code> is now <code>Microcosm::replace</code></li>
+<li><code>Microcosm::dispatch</code> and <code>Microcosm::commit</code> are now private. These are important methods that should not be overridden</li>
+</ul>
+<h2 id="section-98">5.2.0</h2>
+<ul>
+<li><code>Microcosm::pull</code> accepts a callback that allows you to modify the result. This should help to make data queries more terse.</li>
+<li>Removed <code>Microcosm::clone</code>, the functionality is not gone, but it has been internalized to mitigate the cost of future changes</li>
+<li>Removed mixins from main payload to improve size</li>
+</ul>
+<h2 id="section-99">5.1.1</h2>
+<ul>
+<li>Fix build process mistake :-/</li>
+</ul>
+<h2 id="section-100">5.1.0</h2>
+<ul>
+<li>Removed fallback from <code>Microcosm::pull</code> which returns all state</li>
+<li>Added an <code>Upstream</code> and <code>Downstream</code> mixin, however it is experimental. More details will come as the feature develops.</li>
+<li><code>Microcosm::send</code> will throw an error if given an undefined action parameter</li>
+</ul>
+<h2 id="section-101">5.0.0</h2>
+<p>Version 5 represents an attempt to address some growth pains from rapidly adding new features to Microcosm. Names have been changed to improve consistency and internal APIs have been refactored. The overall surface area of the app has been reduced and more opinions have been made.</p>
+<ul>
+<li>Renamed <code>Microcosm::seed</code> to <code>Microcosm::push</code></li>
+<li>Renamed <code>Microcosm::get</code> to <code>Microcosm::pull</code></li>
+<li>Removed <code>Microcosm::has</code></li>
+<li>Removed <code>Microcosm::getInitialState</code>. the <code>Store</code> API still provides this function, however it is the expectation of the system that value of state is a primitive object. This is so that Microcosm always knows how to smartly clone its state, regardless of if another data library is used for its values.</li>
+<li>Removed <code>Microcosm::swap</code>, this was an internal API that is no longer required</li>
+<li>Renamed <code>Microcosm::reset</code> to <code>Microcosm::commit</code></li>
+<li>Removed <code>Microcosm::shouldUpdate</code>. If no stores respond to an action, a change event will not fire anyway. Placing this concern in the view layer keeps React’s <code>shouldComponentUpdate</code> as the single responsibility for this task.</li>
+<li>Added <code>Microcosm::toObject</code></li>
+<li>Internal function <code>mapBy</code> has been renamed to <code>remap</code>. It now operates primarily upon objects.</li>
+<li><code>Microcosm::pump</code> is now <code>Microcosm::emit</code>, this is to better match existing event emitter libraries (including the one in Node’s standard library)</li>
+</ul>
+<p>As an additional illustration, the Microcosm API has been logistically sorted within <code>./cheatsheet.html</code></p>
+<h2 id="section-102">4.0.0</h2>
+<ul>
+<li>Added concept of plugins. Plugins provide a way to layer on additional functionality. This has specifically been added so that environment specific behavior may be added to an app.</li>
+<li>Added <code>Microcosm::start</code>. Calling <code>start()</code> will bootstrap initial state, run all plugins, then execute a callback.</li>
+</ul>
+<h2 id="section-103">3.3.0</h2>
+<ul>
+<li><code>mapBy</code> internal function now accepts an initial value</li>
+<li>Changed <code>Microcosm::dispatch</code> copy strategy. Instead of merging a change set, it now directly modifies a clone of the previous state.</li>
+<li>Added <code>Microcosm::clone</code>. This method defines how state is copied before dispatching an action.</li>
+</ul>
+<h2 id="section-104">3.2.0</h2>
+<ul>
+<li>Changed default shouldUpdate algorithm</li>
+</ul>
+<h2 id="section-105">3.1.0</h2>
+<ul>
+<li><code>Microcosm::getInitialState()</code> now accepts an <code>options</code> argument. This argument is passed down from the constructor.</li>
+</ul>
+<h2 id="section-106">3.0.0</h2>
+<ul>
+<li>Changed data update pattern to more closely match <a href="https://github.com/omcljs/om/wiki/Basic-Tutorial">Om</a>. This means that <code>Microcosm::merge</code> has been replaced with <code>Microcosm::swap</code>. Additionally, <code>Microcosm::reset</code> has been added to completely obliterate old state.</li>
+<li><code>Microcosm::addStore</code> now only accepts one store at a time. It was not being utilized, gives poorer error handling, and makes let less clear the order in which Stores will process data.</li>
+<li>The internal class <code>Heartbeat</code> was replaced with <code>pulse</code>. Pulse is a function that can act as a factory or decorator. When given an argument, it extends an object with emitter functionality, otherwise it returns a new object that implements the same API. This eliminates the possibility that the private <code>_callbacks</code> member of <code>Heartbeat</code> was overridden. It also reduces the use of classical inheritance, which yields some minor file size benefits by polyfilling less of the <code>class</code> API.</li>
+</ul>
+<h2 id="section-107">2.0.1</h2>
+<ul>
+<li>Fix issue where empty arguments would break deserialize</li>
+</ul>
+<h2 id="section-108">2.0.0</h2>
+<ul>
+<li>Replace default <code>Microcosm::send</code> currying with partial application using <code>Microcosm::prepare</code></li>
+<li>Throw an error if a store is added that does not have a unique identifier</li>
+<li><code>Microcosm::set</code> has been replaced with <code>Microcosm::merge</code>, so far <code>set</code> has only been used internally to <code>Microcosm</code> and <code>merge</code> dries a couple of things up</li>
+</ul>
+<h3 id="more-info-on-removing-currying">More info on removing currying</h3>
+<p>Currying has been removed <code>Microcosm::send</code>. This was overly clever and somewhat malicious. If an action has default arguments, JavaScript has no way (to my knowledge) of communicating it. One (me) could get into a situation where it is unclear why an action has not fired properly (insufficient arguments when expecting fallback defaults).</p>
+<p>In a language without static typing, this can be particularly hard to debug.</p>
+<p>In most cases, partial application is sufficient. In light of this, actions can be “buffered up” up with <code>Microcosm::prepare</code>:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Old</span>
+<span class="kw">let</span> curried <span class="op">=</span> <span class="va">app</span>.<span class="at">send</span>(Action)
+
+<span class="co">// New</span>
+<span class="kw">let</span> partial <span class="op">=</span> <span class="va">app</span>.<span class="at">prepare</span>(Action)</code></pre></div>
+<p><code>Microcosm::prepare</code> is basically just <code>fn.bind()</code> under the hood. Actions should not use context whatsoever, so this should be a reasonable caveat.</p>
+<h2 id="section-109">1.4.0</h2>
+<ul>
+<li><code>Store.deserialize</code> returns the result of <code>getInitialState</code> if no state is given</li>
+<li>Added <code>Microcosm.swap</code> to perform diffing and emission on change</li>
+<li><code>Microcosm.seed</code> will now trigger a change event</li>
+<li><code>Heartbeat.js</code> now invokes callbacks with <code>callback.call(this)</code></li>
+</ul>
+<h2 id="section-110">1.3.0</h2>
+<ul>
+<li>Microcosms will <code>set</code> the result of <code>getInitialState</code> when adding a store</li>
+<li>Microcosms will execute <code>deserialize</code> on stores when running <code>seed</code></li>
+<li>Adding a store will now fold its properties on top of a default set of options. See <code>./src/Store.js</code> for details.</li>
+</ul>
+<h2 id="section-111">1.2.1</h2>
+<ul>
+<li>Fix bug introduced with Tag by exposing ES6 module</li>
+</ul>
+<h2 id="section-112">1.2.0</h2>
+<ul>
+<li>All stores can implement a <code>serialize</code> method which allows them to shape how app state is serialized to JSON.</li>
+</ul>
+<h2 id="section-113">1.1.0</h2>
+<ul>
+<li>Better seeding. Added <code>Microcosm::seed</code> which accepts an object. For each known key, Microcosm will the associated store’s <code>getInitialState</code> function and set the returned value.</li>
+<li>Exposed <code>Microcosm::getInitialState</code> to configure the starting value of the instance. This is useful for those wishing to use the <code>immutable</code> npm package by Facebook.</li>
+<li>Microcosm will not emit changes on dispatch unless the new state fails a shallow equality check. This can be configured with <code>Microcosm::shouldUpdate</code></li>
+<li><code>Microcosm::send</code> is now curried.</li>
+</ul>
+<h2 id="section-114">1.0.0</h2>
+<p>This version adds many breaking changes to better support other libraries such as <a href="https://github.com/vigetlabs/colonel-kurtz">Colonel Kurtz</a> and <a href="https://github.com/vigetlabs/ars-arsenal">Ars Arsenal</a>.</p>
+<p>In summary, these changes are an effort to alleviate the cumbersome nature of managing unique instances of Actions and Stores for each Microcosm instance. 1.0.0 moves away from this, instead relying on pure functions which an individual instance uses to operate upon a global state object.</p>
+<ul>
+<li>Actions must now be tagged with <code>microcosm/tag</code>. For the time being, this is to provide a unique identifier to each Action. It would be nice in future versions to figure out a way to utilize <code>WeakMap</code>.</li>
+<li>Stores are plain objects, no longer inheriting from <code>Store</code> base class.</li>
+<li>Stores must implement a <code>toString</code> method which returns a unique id.</li>
+<li>State for a store must now be accessed with: <code>microcosm.get(Store)</code></li>
+<li>Microcosms no longer require <code>addActions</code>, actions are fired with <code>microcosm.send(Action, params)</code></li>
+<li>Removed <code>Microscope</code> container component. Just use <code>listen</code></li>
+</ul>
+<h2 id="section-115">0.2.0</h2>
+<ul>
+<li>Remove <code>get all()</code> from <code>Store</code>. This is to reduce namespace collisions. Stores should define their own getters.</li>
+</ul>
+<h2 id="section-116">0.1.0</h2>
+<ul>
+<li>Added a <code>pump</code> method to <code>Microcosm</code> instances. This exposes the heartbeat used to propagate change.</li>
+</ul></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

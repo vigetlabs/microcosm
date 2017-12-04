@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="batch-updates">Batch Updates</h1>
+<p>Microcosm will never fire a <code>change</code> event if data is the same. However it is still possible to push a large number of actions at the same time, all of which modify data.</p>
+<p>The problem is that each of these actions will trigger a <code>change</code> event, which may cause a costly re-render. If an animation is playing, the user might see a degradation in frame rate.</p>
+<p>An easy solution for this is simply to emit fewer <code>change</code> events. To wait for a few actions to complete, then emit a single <code>change</code> event at once. We call this “batching”.</p>
+<h2 id="the-batch-option">The batch option</h2>
+<p>Microcosm provides a <code>batch</code> option that tells Microcosm that it is okay to group multiple change events together. This reduces the number of change events, resulting in less rendering. For example, without batching, this code would fire 3 change events:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="kw">let</span> add <span class="op">=</span> (n) <span class="op">=&gt;</span> n
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;count&#39;</span><span class="op">,</span> <span class="op">{</span>
+  <span class="at">getInitialState</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="dv">0</span>
+  <span class="op">},</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [add]<span class="op">:</span> (count<span class="op">,</span> n) <span class="op">=&gt;</span> count <span class="op">+</span> <span class="dv">1</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>)
+
+<span class="va">repo</span>.<span class="at">push</span>(add<span class="op">,</span> <span class="dv">2</span>) <span class="co">// change!</span>
+<span class="va">repo</span>.<span class="at">push</span>(add<span class="op">,</span> <span class="dv">2</span>) <span class="co">// change!</span>
+<span class="va">repo</span>.<span class="at">push</span>(add<span class="op">,</span> <span class="dv">2</span>) <span class="co">// change!</span></code></pre></div>
+<p>With batching, only a single change event would fire:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>(<span class="op">{</span> <span class="dt">batch</span><span class="op">:</span> <span class="kw">true</span> <span class="op">}</span>)
+
+<span class="co">// ...</span>
+
+<span class="va">repo</span>.<span class="at">push</span>(add<span class="op">,</span> <span class="dv">2</span>)
+<span class="va">repo</span>.<span class="at">push</span>(add<span class="op">,</span> <span class="dv">2</span>)
+<span class="va">repo</span>.<span class="at">push</span>(add<span class="op">,</span> <span class="dv">2</span>)
+
+<span class="co">// change!</span></code></pre></div>
+<h2 id="the-updater-option">The updater option</h2>
+<p>Most of the time, <code>batch: true</code> should be sufficient for accommodating apps with a high degree of change. However Microcosm provides an <code>updater</code> option that allows for more specific customization of the update process. For example, if we wanted to batch updates to a 12 millisecond interval:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">updater</span> () <span class="op">{</span>
+  <span class="co">// update is a function, executing it will send a request to</span>
+  <span class="co">// Microcosm, asking it trigger a change event if anything changed</span>
+  <span class="cf">return</span> update <span class="op">=&gt;</span> <span class="at">setTimeout</span>(update<span class="op">,</span> <span class="dv">12</span>)
+<span class="op">}</span></code></pre></div>
+<p>This will spool up any changes within a 12 millisecond time frame, sending out a larger update after the timeout completes.</p>
+<h2 id="gotchas-with-testing">Gotchas with testing</h2>
+<p>The problem with batching is that you have to wait, which is problematic for testing. For example:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> App <span class="im">from</span> <span class="st">&#39;src/views/application&#39;</span>
+<span class="im">import</span> <span class="op">{</span> mount <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;enzyme&#39;</span>
+
+<span class="at">test</span>(<span class="st">&quot;it increases the number when the stepper is clicked&quot;</span><span class="op">,</span> <span class="kw">function</span> () <span class="op">{</span>
+  <span class="kw">let</span> app <span class="op">=</span> <span class="at">mount</span>(<span class="op">&lt;</span>App /<span class="op">&gt;</span>)
+
+  <span class="va">app</span>.<span class="at">find</span>(<span class="st">&#39;#stepper&#39;</span>).<span class="at">simulate</span>(<span class="st">&#39;click&#39;</span>)
+
+  <span class="kw">let</span> count <span class="op">=</span> <span class="va">app</span>.<span class="at">find</span>(<span class="st">&#39;#count&#39;</span>).<span class="at">text</span>()
+
+  <span class="at">expect</span>(count).<span class="at">toEqual</span>(<span class="st">&#39;1&#39;</span>)
+<span class="op">}</span>)</code></pre></div>
+<p>The test above is synchronous. It expects the Microcosm associated with <code>App</code> to update immediately. However, if we configure Microcosm to wait a few milliseconds before changing, this won’t have happened yet.</p>
+<p>The easiest way to deal with this problem is to <strong>only pass <code>batch: true</code> for user facing code</strong>. However you could also lean in <code>repo.history.wait()</code>, which introduces a few more elements to the test:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> Repo <span class="im">from</span> <span class="st">&#39;src/repo&#39;</span>
+<span class="im">import</span> App <span class="im">from</span> <span class="st">&#39;src/views/application&#39;</span>
+<span class="im">import</span> <span class="op">{</span> mount <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;enzyme&#39;</span>
+
+<span class="at">test</span>(<span class="st">&quot;it increases the number when the stepper is clicked&quot;</span><span class="op">,</span> async <span class="kw">function</span> () <span class="op">{</span>
+  <span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Repo</span>()
+  <span class="kw">let</span> app <span class="op">=</span> <span class="at">mount</span>(<span class="op">&lt;</span>App repo<span class="op">={</span>repo<span class="op">}</span> <span class="ss">/&gt;</span><span class="sc">)</span>
+
+<span class="ss">  app.find</span><span class="sc">(</span><span class="ss">&#39;#stepper&#39;</span><span class="sc">)</span><span class="ss">.simulate</span><span class="sc">(</span><span class="ss">&#39;click&#39;</span><span class="sc">)</span>
+
+<span class="ss">  // wait</span><span class="sc">()</span><span class="ss"> will pause this test until all actions finish</span>
+<span class="ss">  await repo.history.wait</span><span class="sc">()</span>
+
+<span class="ss">  let count = app.find</span><span class="sc">(</span><span class="ss">&#39;#count&#39;</span><span class="sc">)</span><span class="ss">.text</span><span class="sc">()</span>
+
+<span class="ss">  expect</span><span class="sc">(</span><span class="ss">count</span><span class="sc">)</span><span class="ss">.toEqual</span><span class="sc">(</span><span class="ss">&#39;1&#39;</span><span class="sc">)</span>
+<span class="ss">}</span><span class="sc">)</span></code></pre></div></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

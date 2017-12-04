@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="contributing">Contributing</h1>
+<p>Thanks you for considering a contribution to Microcosm! Contributing to an open source project can be daunting. It shouldn’t be, and we are here to help. If you want to get involved but don’t know how reach out to us. Contributing to Microcosm ranges from tweeting about it, to helping document it, to writing and improving code. If you want to help, we want you to help.</p>
+<h2 id="how-you-can-help">How you can help:</h2>
+<p>We want to make contributing to Microcosm as easy as possible for anyone, here are a few ways you can help:</p>
+<ol style="list-style-type: decimal">
+<li><a href="https://github.com/vigetlabs/microcosm/issues">Create an issue on Github</a>. We’ve provided an issue template that will help us categorize and prioritize the issue. (You will see the template when creating a new issue)</li>
+<li>Comment on issues. Let us know your thoughts on <a href="https://github.com/vigetlabs/microcosm/issues">open issues</a></li>
+<li>Create a pull request (PR) that fixes an issue. We’ve created a PR template to help you describe what your PR is doing and help us check that it works. PRs can be opened for:
+<ul>
+<li>Documentation</li>
+<li>Improving Microcosm code</li>
+<li>Changes to the site</li>
+<li>Improving or adding examples</li>
+<li>Improving tooling</li>
+</ul></li>
+<li>Spread the word. On twitter you can use the hashtag <code>#microcosmJS</code>. You can also tweet @<a href="https://twitter.com/viget">viget</a> or @<a href="https://twitter.com/natehunzaker">natehunzaker</a> with your Microcosm questions or comments</li>
+</ol>
+<h2 id="get-set-up">Get set up:</h2>
+<p>If you are ready to help us out then the look for the <code>CONTRIBUTING</code> markdown file on the <a href="https://github.com/vigetlabs/microcosm">Microcosm repo</a> for all the information you will need to get started.</p>
+<blockquote>
+<p><strong>If you run into any problems let us know through an issue, tweet, or email.</strong></p>
+</blockquote></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

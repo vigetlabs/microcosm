@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="actionbutton">ActionButton</h1>
+<ol style="list-style-type: decimal">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#props">Props</a></li>
+</ol>
+<h2 id="overview">Overview</h2>
+<p>ActionButton is a wrapper around a standard <code>button</code> tag that provides a method of broadcasting an action to associated Presenters (see <a href="./presenter.html"><code>./presenter.html</code></a>).</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+<span class="im">import</span> DOM <span class="im">from</span> <span class="st">&#39;react-dom&#39;</span>
+<span class="im">import</span> Presenter <span class="im">from</span> <span class="st">&#39;microcosm/addons/presenter&#39;</span>
+<span class="im">import</span> ActionButton <span class="im">from</span> <span class="st">&#39;microcosm/addons/action-button&#39;</span>
+<span class="im">import</span> Microcosm <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+
+<span class="kw">const</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="kw">const</span> increaseCount <span class="op">=</span> n <span class="op">=&gt;</span> n
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;count&#39;</span><span class="op">,</span> <span class="op">{</span>
+  <span class="at">getInitialState</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="dv">0</span>
+  <span class="op">},</span>
+  <span class="at">increase</span> (count<span class="op">,</span> amount) <span class="op">{</span>
+    <span class="cf">return</span> count <span class="op">+</span> amount
+  <span class="op">},</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [increaseCount] <span class="op">:</span> <span class="kw">this</span>.<span class="at">increase</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>)
+
+<span class="kw">class</span> CountPresenter <span class="kw">extends</span> Presenter <span class="op">{</span>
+  <span class="at">getModel</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      <span class="dt">count </span><span class="op">:</span> state <span class="op">=&gt;</span> <span class="va">state</span>.<span class="at">count</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+
+  <span class="at">render</span> (<span class="op">{</span> count <span class="op">}</span>) <span class="op">{</span>
+    <span class="cf">return</span> (
+      <span class="op">&lt;</span>ActionButton action<span class="op">={</span>increaseCount<span class="op">}</span> value<span class="op">={</span><span class="dv">1</span><span class="op">}&gt;</span>
+        <span class="op">{</span>count<span class="op">}</span>
+      <span class="op">&lt;</span><span class="ss">/ActionButton&gt;</span>
+<span class="ss">    </span><span class="sc">)</span>
+<span class="ss">  }</span>
+<span class="ss">}</span>
+
+<span class="ss">DOM.render</span><span class="sc">(</span><span class="ss">&lt;CountPresenter repo={repo} /</span><span class="op">&gt;,</span> <span class="va">document</span>.<span class="at">getElementById</span>(<span class="st">&#39;container&#39;</span>))</code></pre></div>
+<p>When clicked, the ActionButton will invoke an action, passing in the provided <code>value</code> prop.</p>
+<h2 id="props">Props</h2>
+<h3 id="action">action</h3>
+<p>A string or action to send to Presenters. If a Presenter is registered to that string via its <code>intercept()</code> method, it will execute the associated callback. Otherwise, it gets passed up the tree of Presenters, eventually dispatching to the associated Microcosm instance.</p>
+<h3 id="tag">tag</h3>
+<p>Defaults to <code>&quot;button&quot;</code>. Indicates the HTML element <code>ActionButton</code> should render with.</p>
+<h3 id="value">value</h3>
+<p>The parameters that should be passed when broadcasting the provided action.</p>
+<h3 id="preparevalue-event">prepare(value, event)</h3>
+<p>Called after the button is clicked but before the action is broadcasted. This provides an opportunity to alter the action payload (e.g. based on the event object) before it gets dispatched.</p>
+<h3 id="onclickevent-action">onClick(event, action)</h3>
+<p>An event callback executed immediately after the button clicks and the action is broadcasted.</p>
+<h3 id="onopenpayload">onOpen(payload)</h3>
+<p>After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute when the action opens.</p>
+<h3 id="ondonepayload">onDone(payload)</h3>
+<p>After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute if the action completes successfully.</p>
+<h3 id="onerrorpayload">onError(payload)</h3>
+<p>After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute if the action is rejected.</p>
+<h3 id="oncancelpayload">onCancel(payload)</h3>
+<p>After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute when the action is cancelled.</p>
+<h3 id="onupdatepayload">onUpdate(payload)</h3>
+<p>After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute when the action emits a progress update.</p></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

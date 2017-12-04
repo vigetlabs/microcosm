@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="testing-effects">Testing Effects</h1>
+<p>Effects provide a way to control side-effects. A side-effect may include persistence in localStorage, updating a page title, or some other mutative behavior.</p>
+<p>This can be a challenge for testing, as a side-effect may mutate a globally available piece of state.</p>
+<h2 id="wrangling-effects">Wrangling Effects</h2>
+<p>The <a href="http://facebook.github.io/jest/">Jest</a> test runner provides a sandbox for every test suite. This helps us deal with the issues of stateful testing – particularly in the DOM.</p>
+<p>By using the <a href="https://github.com/tmpvar/jsdom">jsdom</a> environment setting, Jest can setup a unique DOM for every test. This can be enabled via the <code>--env</code> CLI flag, or <code>env</code> configuration option:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># We might run our tests like:</span>
+<span class="ex">jest</span> --env jsdom</code></pre></div>
+<p>With that in mind, let’s jump into an example</p>
+<h2 id="testing-an-effect">Testing an Effect</h2>
+<p>In our guide on Effects, we went through an example that updates the query string parameter of the URL. Recall our <code>Location</code> effect:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> url <span class="im">from</span> <span class="st">&#39;url&#39;</span>
+<span class="im">import</span> <span class="op">{</span>patch<span class="op">}</span> <span class="im">from</span> <span class="st">&#39;../actions/query&#39;</span>
+
+<span class="kw">class</span> Location <span class="op">{</span>
+
+  <span class="at">updateQuery</span> (repo) <span class="op">{</span>
+    <span class="kw">const</span> <span class="op">{</span> origin<span class="op">,</span> hash <span class="op">}</span> <span class="op">=</span> <span class="va">window</span>.<span class="at">location</span>
+
+    <span class="kw">const</span> location <span class="op">=</span> <span class="va">url</span>.<span class="at">format</span>(<span class="op">{</span>
+      <span class="dt">host  </span><span class="op">:</span> origin<span class="op">,</span>
+      <span class="dt">query </span><span class="op">:</span> <span class="va">repo</span>.<span class="va">state</span>.<span class="at">query</span><span class="op">,</span>
+      <span class="dt">hash  </span><span class="op">:</span> hash
+    <span class="op">}</span>)
+
+    <span class="va">window</span>.<span class="va">history</span>.<span class="at">pushState</span>(<span class="kw">null</span><span class="op">,</span> <span class="kw">null</span><span class="op">,</span> location)
+  <span class="op">}</span>
+
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [patchQuery] <span class="op">:</span> <span class="kw">this</span>.<span class="at">updateQuery</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="im">export</span> <span class="im">default</span> Location</code></pre></div>
+<p>So in the case above, whenever a <code>patchQuery</code> action resolves, it’ll run through some logic to update the URL location. Triggering that might look something like:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> Microcosm <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+<span class="im">import</span> Location <span class="im">from</span> <span class="st">&#39;./effects/location&#39;</span>
+<span class="im">import</span> <span class="op">{</span>patchQuery<span class="op">}</span> <span class="im">from</span> <span class="st">&#39;./actions/query&#39;</span>
+
+<span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="va">repo</span>.<span class="at">addEffect</span>(Location)
+
+<span class="co">// The query string will now be ?page=10</span>
+<span class="va">repo</span>.<span class="at">push</span>(patchQuery<span class="op">,</span> <span class="op">{</span> <span class="dt">page</span><span class="op">:</span> <span class="dv">10</span> <span class="op">}</span>)</code></pre></div>
+<p>With that out of the way, let’s move into testing.</p>
+<h3 id="teaching-jest-about-urls">Teaching Jest about URLs</h3>
+<p>This test will require using the browser’s <a href="https://developer.mozilla.org/en-US/docs/Web/API/History_API"><code>pushState</code></a> API, that means we need to teach Jest to operate at a test URL. Otherwise, you’ll see an error that looks something like:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">SecurityError</span>
+  <span class="ex">at</span> HistoryImpl._sharedPushAndReplaceState (~/jsdom/...)</code></pre></div>
+<p>Not good. So let’s fix that! Jest keeps all of it’s configuration in a JSON file. By default, this is the <code>package.json</code> for your project:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// ... config</span>
+<span class="st">&quot;jest&quot;</span><span class="op">:</span> <span class="op">{</span>
+  <span class="st">&quot;testURL&quot;</span><span class="op">:</span> <span class="st">&quot;http://example.com&quot;</span>
+<span class="op">}</span>
+<span class="co">// ... config</span></code></pre></div>
+<p>That should do it for configuration. Now let’s move on to a test!</p>
+<h2 id="a-basic-test">A basic test</h2>
+<p>The simplest thing would be to just reproduce our usage example as a test:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> Microcosm <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+<span class="im">import</span> Location <span class="im">from</span> <span class="st">&#39;./effects/location&#39;</span>
+<span class="im">import</span> <span class="op">{</span>patchQuery<span class="op">}</span> <span class="im">from</span> <span class="st">&#39;./actions/query&#39;</span>
+
+<span class="at">describe</span>(<span class="st">&#39;Location Effect&#39;</span><span class="op">,</span> <span class="kw">function</span> () <span class="op">{</span>
+  <span class="at">it</span>(<span class="st">&#39;it updates the URL when a repo is sent patchQuery&#39;</span><span class="op">,</span> <span class="kw">function</span>() <span class="op">{</span>
+    <span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+    <span class="va">repo</span>.<span class="at">addEffect</span>(Location)
+
+    <span class="va">repo</span>.<span class="at">push</span>(patchQuery<span class="op">,</span> <span class="op">{</span> <span class="dt">page</span><span class="op">:</span> <span class="dv">10</span> <span class="op">}</span>)
+
+    <span class="at">expect</span>(<span class="va">window</span>.<span class="va">location</span>.<span class="at">search</span>).<span class="at">toContain</span>(<span class="st">&#39;page=10&#39;</span>)
+  <span class="op">}</span>)
+<span class="op">}</span>)</code></pre></div>
+<p><code>toContain</code> will check to see if one string is a part of another. In this case, it’s checking to see if the URL parameters are what we expect.</p>
+<h2 id="controlling-for-change">Controlling for change</h2>
+<p>Our previous test is great, but how do we prevent future tests from being affected by those that have already run?</p>
+<p>Jest provides a <code>beforeEach</code> function that makes it easy to perform a bit of work before every test runs. We can use it to set up our test:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> Microcosm <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+<span class="im">import</span> Location <span class="im">from</span> <span class="st">&#39;./effects/location&#39;</span>
+<span class="im">import</span> <span class="op">{</span>patchQuery<span class="op">}</span> <span class="im">from</span> <span class="st">&#39;./actions/query&#39;</span>
+
+<span class="at">describe</span>(<span class="st">&#39;Location Effect&#39;</span><span class="op">,</span> <span class="kw">function</span> () <span class="op">{</span>
+  <span class="at">beforeEach</span>(<span class="kw">function</span> () <span class="op">{</span>
+    <span class="va">window</span>.<span class="va">location</span>.<span class="at">search</span> <span class="op">=</span> <span class="st">&#39;&#39;</span>
+  <span class="op">}</span>)
+
+  <span class="co">// ...</span>
+<span class="op">}</span>)</code></pre></div>
+<p>Nice! Now every test will start with a clean slate!</p>
+<h2 id="wrapping-up">Wrapping up</h2>
+<p>The important thing to remember when testing Effects is to control for the destructive changes they may apply. By setting up your testing environment to sandbox their changes, testing Effects becomes much easier.</p></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

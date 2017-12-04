@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="testing-microcosm">Testing Microcosm</h1>
+<p>We’ve put a lot of careful planning into making Microcosm easy to test. In this section, we’ll cover our basic testing setup. Additional sections touch on the individual pieces of Microcosm.</p>
+<h2 id="tools">Tools</h2>
+<p>Let’s cover a couple of tools that we’ll use throughout the guides.</p>
+<p><strong>These are not mandatory</strong>. Examples should be easily translatable to your existing testing setup. However we’ve found these tools to be easy to work with and put them forth as recommendations.</p>
+<h3 id="jest">Jest</h3>
+<p>Our testing setup centers around <a href="http://facebook.github.io/jest/">Jest</a>, a testing framework by Facebook. We like Jest because it is fast, feature rich, and doesn’t require a lot of setup.</p>
+<p>Jest leans on <a href="https://github.com/jasmine/jasmine">Jasmine</a>, adding additional features and a custom test runner. A test may look something like:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="at">describe</span>(<span class="st">&#39;Suite name&#39;</span><span class="op">,</span> <span class="kw">function</span> () <span class="op">{</span>
+  <span class="at">it</span>(<span class="st">&quot;test name&quot;</span><span class="op">,</span> <span class="kw">function</span> () <span class="op">{</span>
+    <span class="kw">let</span> answer <span class="op">=</span> <span class="dv">2</span> <span class="op">+</span> <span class="dv">2</span>
+
+    <span class="co">// This is an assertion. If the result here is not what we expect,</span>
+    <span class="co">// it will throw an error. Jest will tell us when this happens.</span>
+    <span class="at">expect</span>(answer).<span class="at">toEqual</span>(<span class="dv">4</span>)
+  <span class="op">}</span>)
+<span class="op">}</span>)</code></pre></div>
+<p>Get started with Jest using their <a href="http://facebook.github.io/jest/docs/getting-started.html#content">installation guide</a></p>
+<h3 id="enzyme">Enzyme</h3>
+<p><a href="https://github.com/airbnb/enzyme/">Enzyme</a> is a testing utility for working with React. It makes it easy to create, manipulate, and traverse React component trees of any size.</p>
+<p>A typical test using Enzyme involves setting up a React component, interacting with it, and then asserting some value:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+<span class="im">import</span> <span class="op">{</span>mount<span class="op">}</span> <span class="im">from</span> <span class="st">&#39;enzyme&#39;</span>
+
+<span class="im">import</span> Hello <span class="im">from</span> <span class="st">&#39;../components/hello-world&#39;</span>
+
+<span class="at">describe</span>(<span class="st">&#39;&lt;Hello /&gt;&#39;</span><span class="op">,</span> <span class="kw">function</span> () <span class="op">{</span>
+  <span class="at">it</span>(<span class="st">&#39;it greets a user at a given name&#39;</span><span class="op">,</span> <span class="kw">function</span> () <span class="op">{</span>
+    <span class="kw">let</span> wrapper <span class="op">=</span> <span class="at">mount</span>(<span class="op">&lt;</span>Hello name<span class="op">=</span><span class="st">&quot;Bill&quot;</span> <span class="ss">/&gt;</span><span class="sc">)</span>
+<span class="ss">    let text = wrapper.text</span><span class="sc">()</span>
+
+<span class="ss">    expect</span><span class="sc">(</span><span class="ss">text</span><span class="sc">)</span><span class="ss">.toEqual</span><span class="sc">(</span><span class="ss">&#39;Hello, Bill!&#39;</span><span class="sc">)</span>
+<span class="ss">  }</span><span class="sc">)</span>
+<span class="ss">}</span><span class="sc">)</span></code></pre></div>
+<p>We won’t get into it, but Enzyme can do quite a bit more. It can also simulating events, find DOM elements by their component type, and much more. It has become an essential tool for writing concise UI tests with React.</p>
+<h3 id="jsdom">jsdom</h3>
+<p>Testing UI code often means we have to deal with the browser. This can be a frustrating experience. Browser testing takes time, can be flaky, and hog system resources.</p>
+<p>To work around this, Jest provides first-class support for <a href="https://github.com/tmpvar/jsdom">jsdom</a>, a JavaScript implementation of the web browser’s <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model">Document Object Model (DOM)</a>. By using jsdom, we can write unit tests against an environment very similar to the browser without paying in execution time.</p>
+<p>Chances are that you already have jsdom if you’ve set up Jest. All that’s required is to tell Jest that you would like to use it:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Whenever you execute tests, add this flag:</span>
+<span class="ex">jest</span> --env jsdom</code></pre></div>
+<p>Jest will automatically setup and teardown jsdom for every one of your test suites.</p>
+<h2 id="wrapping-up">Wrapping up</h2>
+<p>That’s it! Now that you are familiar with the tools we’ll use in the examples, check out the individual guides for more details.</p></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

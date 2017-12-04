@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header -float">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="hero fill-bloom">
+        <div class="hero__inner">
+          <h1>An evolution of Flux</h1>
+          <p>
+            Microcosm is
+            <a href="https://facebook.github.io/flux/docs/overview.html">Flux</a>
+            with actions at center stage. Write optimistic updates,
+            cancel requests, and track changes with ease.
+          </p>
+          <footer>
+            <a class="hero__callout" href="guides/quickstart.html">
+              Get Started
+            </a>
+          </footer>
+        </div>
+      </section>
+
+      <section class="content"><h2 id="actions">Actions</h2>
+<p>Microcosm organizes itself around a history of user actions. As those actions move through a set lifecycle, Microcosm reconciles them in the order they were created.</p>
+<p>Invoking <code>push()</code> appends to that history, and returns an <code>Action</code> object to represent it:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">getPlanet</span> (id) <span class="op">{</span>
+  <span class="co">// Fetch returns a Promise, handled out of the box</span>
+  <span class="cf">return</span> <span class="at">fetch</span>(<span class="st">&#39;/planets/&#39;</span> <span class="op">+</span> id).<span class="at">then</span>(response <span class="op">=&gt;</span> <span class="va">response</span>.<span class="at">json</span>())
+<span class="op">}</span>
+
+<span class="kw">let</span> action <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(getPlanet<span class="op">,</span> <span class="st">&#39;venus&#39;</span>)
+
+<span class="va">action</span>.<span class="at">onDone</span>(<span class="kw">function</span> (planet) <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="va">planet</span>.<span class="at">id</span>) <span class="co">// venus</span>
+<span class="op">}</span>)</code></pre></div>
+<h2 id="domains-stateless-stores">Domains: Stateless Stores</h2>
+<p>A Domain is a collection of side-effect free operations for manipulating data. As actions update, Microcosm uses domains to determine how state should change. Old state comes in, new state comes out:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> getPlanet <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;./actions/planets&#39;</span>
+
+<span class="kw">const</span> PlanetsDomain <span class="op">=</span> <span class="op">{</span>
+  <span class="at">getInitialState</span> () <span class="op">{</span>
+    <span class="cf">return</span> []
+  <span class="op">},</span>
+
+  <span class="at">addPlanet</span> (planets<span class="op">,</span> record) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">planets</span>.<span class="at">concat</span>(record)
+  <span class="op">},</span>
+
+  <span class="at">register</span>() <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [getPlanet]<span class="op">:</span> <span class="kw">this</span>.<span class="at">addPlanet</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;planets&#39;</span><span class="op">,</span> PlanetsDomain)</code></pre></div>
+<p>By implementing a register method, domains can subscribe to actions. Each action is assigned a unique string identifier. <strong>Action type constants are generated automatically</strong>.</p>
+<h2 id="pending-failed-and-cancelled-requests">Pending, failed, and cancelled requests</h2>
+<p>Microcosm makes it easy to handle pending, loading, cancelled, completed, and failed requests:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> getPlanet <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;../actions/planets&#39;</span>
+
+<span class="kw">const</span> PlanetsDomain <span class="op">=</span> <span class="op">{</span>
+  <span class="co">// ...handlers</span>
+
+  <span class="at">register</span>() <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [<span class="va">getPlanet</span>.<span class="at">open</span>]      <span class="op">:</span> <span class="kw">this</span>.<span class="at">setPending</span><span class="op">,</span>
+      [<span class="va">getPlanet</span>.<span class="at">done</span>]      <span class="op">:</span> <span class="kw">this</span>.<span class="at">addPlanet</span><span class="op">,</span>
+      [<span class="va">getPlanet</span>.<span class="at">error</span>]     <span class="op">:</span> <span class="kw">this</span>.<span class="at">setError</span><span class="op">,</span>
+      [<span class="va">getPlanet</span>.<span class="at">loading</span>]   <span class="op">:</span> <span class="kw">this</span>.<span class="at">setProgress</span><span class="op">,</span>
+      [<span class="va">getPlanet</span>.<span class="at">cancelled</span>] <span class="op">:</span> <span class="kw">this</span>.<span class="at">setCancelled</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p><code>open</code>, <code>loading</code>, <code>done</code>, <code>error</code> and <code>cancelled</code> are action states. In our action creator, we can unlock a deeper level of control by returning a function:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> request <span class="im">from</span> <span class="st">&#39;superagent&#39;</span>
+
+<span class="kw">function</span> <span class="at">getPlanet</span> (id) <span class="op">{</span>
+
+  <span class="cf">return</span> <span class="kw">function</span> (action) <span class="op">{</span>
+    <span class="va">action</span>.<span class="at">open</span>(id)
+
+    <span class="kw">let</span> request <span class="op">=</span> <span class="at">request</span>(<span class="st">&#39;/planets/&#39;</span> <span class="op">+</span> id)
+
+    <span class="va">request</span>.<span class="at">end</span>(<span class="kw">function</span> (error<span class="op">,</span> response) <span class="op">{</span>
+      <span class="cf">if</span> (error) <span class="op">{</span>
+        <span class="va">action</span>.<span class="at">reject</span>(error)
+      <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
+        <span class="va">action</span>.<span class="at">resolve</span>(<span class="va">response</span>.<span class="at">body</span>)
+      <span class="op">}</span>
+    <span class="op">}</span>)
+
+    <span class="co">// Cancellation!</span>
+    <span class="va">action</span>.<span class="at">onCancel</span>(<span class="va">request</span>.<span class="at">abort</span>)
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p>First, the action becomes <code>open</code>. This state is useful when waiting for something to happen, such as loading. When the request finishes, if it fails, we reject the action, otherwise we resolve it.</p>
+<p><strong>Microcosm actions are cancellable</strong>. Invoking <code>action.cancel()</code> triggers a cancellation event:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> getPlanet <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;./actions/planets&#39;</span>
+
+<span class="kw">let</span> action <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(getPlanet<span class="op">,</span> <span class="st">&#39;Pluto&#39;</span>)
+
+<span class="co">// Wait, Pluto isn&#39;t a planet!</span>
+<span class="va">action</span>.<span class="at">cancel</span>()</code></pre></div>
+<p>When <code>action.cancel()</code> is called, the action will move into a <code>cancelled</code> state. If a domain doesn’t handle a given state no data operation will occur.</p>
+<h2 id="a-historical-account-of-everything-that-has-happened">A historical account of everything that has happened</h2>
+<p>The source of truth in Microcosm is a historical tree of every action.</p>
+<p>By default, this tree prunes itself as actions complete. However passing the maxHistory option into Microcosm allows for a compelling debugging story.</p>
+<p>For example, the <a href="https://github.com/vigetlabs/microcosm-debugger">Time-Travelling Microcosm Debugger</a>:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> forever <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>(<span class="op">{</span> <span class="dt">maxHistory</span><span class="op">:</span> <span class="kw">Infinity</span> <span class="op">}</span>)</code></pre></div>
+<p><img src="assets/chat-debugger.gif" alt="Time Travel" /></p>
+<h2 id="networks-of-microcosms-with-presenters">Networks of Microcosms with Presenters</h2>
+<p>A Presenter is a special React component that can build a view model for a given state, sending it to child “passive view” components.</p>
+<p>All Microcosms sent into a Presenter are <a href="https://github.com/vigetlabs/microcosm/blob/master/docs/api/microcosm.html#fork">forked</a>, placing them in a sandbox for data operations specific to their part of an application:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> Presenter <span class="im">from</span> <span class="st">&#39;microcosm/addons/presenter&#39;</span>
+<span class="im">import</span> <span class="op">{</span> getUsers <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;../actions/users&#39;</span>
+
+<span class="kw">class</span> PaginatedUsers <span class="kw">extends</span> Presenter <span class="op">{</span>
+
+  <span class="at">setup</span> (repo<span class="op">,</span> props) <span class="op">{</span>
+    <span class="va">repo</span>.<span class="at">add</span>(<span class="st">&#39;users&#39;</span><span class="op">,</span> PaginatedUsersDomain)
+
+    <span class="va">repo</span>.<span class="at">push</span>(getUsers<span class="op">,</span> <span class="va">props</span>.<span class="at">page</span>)
+  <span class="op">}</span>
+
+  <span class="at">model</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      <span class="dt">users </span><span class="op">:</span> state <span class="op">=&gt;</span> <span class="va">state</span>.<span class="at">users</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+
+  <span class="at">view</span> (<span class="op">{</span> page<span class="op">,</span> users <span class="op">}</span>) <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">&lt;</span>UsersTable page<span class="op">={</span>page<span class="op">}</span> users<span class="op">={</span>users<span class="op">}</span> <span class="ss">/&gt;</span>
+<span class="ss">  }</span>
+
+<span class="ss">}</span>
+
+<span class="ss">const repo = new Microcosm</span><span class="sc">()</span>
+
+<span class="ss">repo.addDomain</span><span class="sc">(</span><span class="ss">&#39;users&#39;, UsersDomain</span><span class="sc">)</span>
+
+<span class="ss">ReactDOM.render</span><span class="sc">(</span><span class="ss">&lt;PaginatedUsers repo={repo} page=&quot;1&quot; /</span><span class="op">&gt;,</span> el)</code></pre></div>
+<h2 id="why-another-flux">Why another Flux?</h2>
+<p>Good question! Other popular implementations of Flux treat actions as static events. The result of calling a <code>dispatch</code> method or resolving some sort of data structure like a <code>Promise</code>.</p>
+<p>But what about everything before that point? A user might get tired of waiting for a file to upload, or dip into a subway tunnel and lose connectivity. They might want to retry an request, cancel it, or just see what’s happening.</p>
+<p>The burden of this state often falls on data stores (Domains, in Microcosm) or a home-grown solution for tracking outstanding requests and binding them to related action data.</p>
+<p>While manageable, we’ve found that this can be cumbersome. That it can lead to interface-specific requirements leaking into the data layer, resulting in complicated code, and unexpected bugs as requirements change.</p>
+<h3 id="how-microcosm-is-different">How Microcosm is different</h3>
+<p>Microcosm thinks of actions as <strong><em>stories</em></strong>. They go through different states as they move from start to completion. Actions have a common public interface, regardless of what data structures or asynchronous patterns are utilized. An interface that is easy to query from the presentation layer in order to handle use-case specific display requirements.</p>
+<p>This makes it easier to handle complicated behaviors such as optimistic updates, dialog windows, or long running processes.</p>
+<h2 id="learn-more">Learn more</h2>
+<p>Get going with the <a href="./guides/quickstart.html">quickstart tutorial</a>, or dive deeper with our <a href="./guides/architecture.html">guide to architecture</a>.</p></section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

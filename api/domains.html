@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="domains">Domains</h1>
+<ol style="list-style-type: decimal">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#creating-domains">Creating Domains</a></li>
+<li><a href="#subscribing-to-different-action-states">Subscribing to different action states</a></li>
+<li><a href="#api">API</a></li>
+</ol>
+<h2 id="overview">Overview</h2>
+<p>Domains define the rules in which resolved actions are converted into new state. They are added to a Microcosm instance using <code>addDomain</code>:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Mount a domain that operates on a specific key in repo state.</span>
+<span class="co">// Any operations the domain handles are recorded at `repo.state.key`:</span>
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;key&#39;</span><span class="op">,</span> Domain)
+
+<span class="co">// Mount a domain that operates on all repo state, handlers will</span>
+<span class="co">// write directly to `repo.state` itself:</span>
+<span class="va">repo</span>.<span class="at">addDomain</span>(Domain)</code></pre></div>
+<p>Domains do not enforce any particular structure. However specific methods can be defined on domains to configure behavior at key points in a Microcosm’s lifecycle.</p>
+<h2 id="creating-domains">Creating Domains</h2>
+<p>There are two ways to create a domains: as a class, and as a plain object. The usage is roughly the same for both versions, the class form can additionally take advantage of having a <code>constructor</code>.</p>
+<h3 id="domains-as-classes">Domains as classes</h3>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> Domain <span class="op">{</span>
+  <span class="at">setup</span> (repo<span class="op">,</span> options) <span class="op">{</span>
+    <span class="co">// Run startup behavior</span>
+  <span class="op">}</span>
+  <span class="at">teardown</span> (repo) <span class="op">{</span>
+    <span class="co">// Clean up any setup behavior</span>
+  <span class="op">}</span>
+  <span class="at">handleAction</span> (state<span class="op">,</span> payload) <span class="op">{</span>
+    <span class="co">// Old state in, new state out...</span>
+    <span class="kw">let</span> newState <span class="op">=</span> <span class="op">{</span> ...<span class="at">state</span><span class="op">,</span> <span class="dt">prop</span><span class="op">:</span> <span class="va">payload</span>.<span class="at">prop</span> <span class="op">}</span>
+
+    <span class="cf">return</span> newState
+  <span class="op">}</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [action] <span class="op">:</span> <span class="kw">this</span>.<span class="at">handleAction</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;key&#39;</span><span class="op">,</span> Domain)</code></pre></div>
+<h3 id="domains-as-plain-objects">Domains as plain objects</h3>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> Domain <span class="op">=</span> <span class="op">{</span>
+  <span class="at">setup</span> (repo<span class="op">,</span> options) <span class="op">{</span>
+    <span class="co">// Run startup behavior</span>
+  <span class="op">},</span>
+  <span class="at">teardown</span> (repo) <span class="op">{</span>
+    <span class="co">// Clean up any setup behavior</span>
+  <span class="op">},</span>
+  <span class="at">handleAction</span> (state<span class="op">,</span> payload) <span class="op">{</span>
+    <span class="kw">let</span> newState <span class="op">=</span> <span class="op">{</span> ...<span class="at">state</span><span class="op">,</span> <span class="dt">prop</span><span class="op">:</span> <span class="va">payload</span>.<span class="at">prop</span> <span class="op">}</span>
+
+    <span class="cf">return</span> newState
+  <span class="op">},</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [action] <span class="op">:</span> <span class="kw">this</span>.<span class="at">handleAction</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;key&#39;</span><span class="op">,</span> Domain)</code></pre></div>
+<p>Microcosm calls <code>Object.create</code> on the simple object form, preventing any assignments within the Domain from polluting other instances. In this way, they are somewhat similar to the class form.</p>
+<h2 id="subscribing-to-different-action-states">Subscribing to different action states</h2>
+<p>Domains can provide a <code>register</code> method to dictate what actions they listen to:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> Domain <span class="op">=</span> <span class="op">{</span>
+
+  <span class="co">// ... Other domain methods</span>
+
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [action]<span class="op">:</span> <span class="op">{</span>
+        <span class="dt">open</span><span class="op">:</span> <span class="kw">this</span>.<span class="at">setLoading</span><span class="op">,</span>
+        <span class="dt">loading</span><span class="op">:</span> <span class="kw">this</span>.<span class="at">setProgress</span><span class="op">,</span>
+        <span class="dt">done</span><span class="op">:</span> <span class="kw">this</span>.<span class="at">addRecord</span><span class="op">,</span>
+        <span class="dt">error</span><span class="op">:</span> <span class="kw">this</span>.<span class="at">setError</span><span class="op">,</span>
+        <span class="dt">cancelled</span><span class="op">:</span> <span class="kw">this</span>.<span class="at">setCancelled</span>
+      <span class="op">}</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p><code>action</code> referenced directly, like <code>[action]: callback</code>, refer to the <code>done</code> state.</p>
+<h2 id="api">API</h2>
+<h3 id="getinitialstate"><code>getInitialState()</code></h3>
+<p>Generate the starting value for the particular state this domain is managing. This will be called by the Microcosm using this domain when it is started.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> Planets <span class="op">=</span> <span class="op">{</span>
+  <span class="at">getInitialState</span> () <span class="op">{</span>
+    <span class="cf">return</span> []
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h3 id="setuprepo-options"><code>setup(repo, options)</code></h3>
+<p>Setup runs right after a domain is added to a Microcosm, but before it runs getInitialState. This is useful for one-time setup instructions.</p>
+<p>Options are passed from the second argument of <code>repo.addDomain</code>. Additionally, <code>options.key</code> indicates the key where the domain was mounted:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="kw">class</span> Planets <span class="op">{</span>
+  <span class="at">setup</span>(repo<span class="op">,</span> options) <span class="op">{</span>
+    <span class="va">console</span>.<span class="at">log</span>(<span class="va">options</span>.<span class="at">key</span>) <span class="co">// &quot;planets&quot;</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;planets&#39;</span><span class="op">,</span> Planets)</code></pre></div>
+<h3 id="teardownrepo"><code>teardown(repo)</code></h3>
+<p>Runs whenever a Microcosm is torn down. This usually happens when a Presenter component unmounts. Useful for cleaning up work done in <code>setup()</code>.</p>
+<h3 id="serializestaged"><code>serialize(staged)</code></h3>
+<p>Allows a domain to transform data before it leaves the system. It gives the domain the opportunity to reduce non-primitive values into JSON.</p>
+<p>For example, if using <a href="https://github.com/facebook/immutable-js">ImmutableJS</a>, this might look like:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> Planets <span class="op">=</span> <span class="op">{</span>
+  <span class="at">getInitialState</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">Immutable</span>.<span class="at">List</span>()
+  <span class="op">},</span>
+  <span class="at">serialize</span> (planets) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">planets</span>.<span class="at">toJSON</span>()
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h3 id="deserializestate"><code>deserialize(state)</code></h3>
+<p>Allows data to be transformed into a valid shape before it enters a Microcosm. This is the reverse operation to <code>serialize</code>. Drawing from the example in <code>serialize</code>:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> Planets <span class="op">=</span> <span class="op">{</span>
+  <span class="at">getInitialState</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">Immutable</span>.<span class="at">List</span>()
+  <span class="op">},</span>
+  <span class="at">serialize</span> (planets) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">planets</span>.<span class="at">toJSON</span>()
+  <span class="op">},</span>
+  <span class="at">deserialize</span> (raw) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">Immutable</span>.<span class="at">List</span>(raw)
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h3 id="register"><code>register()</code></h3>
+<p>Returns an object mapping actions to methods on the domain. This is the communication point between a domain and the rest of the system.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> addPlanet <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;../actions/planets&#39;</span>
+
+<span class="kw">const</span> Planets <span class="op">=</span> <span class="op">{</span>
+  <span class="co">//...</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [addPlanet]<span class="op">:</span> <span class="kw">this</span>.<span class="at">append</span>
+    <span class="op">}</span>
+  <span class="op">},</span>
+  <span class="at">append</span> (planets<span class="op">,</span> params) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">planets</span>.<span class="at">concat</span>(params)
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">push</span>(<span class="va">Actions</span>.<span class="at">add</span><span class="op">,</span> <span class="op">{</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&#39;earth&#39;</span> <span class="op">}</span>) <span class="co">// this will add Earth</span></code></pre></div>
+<h4 id="multiple-handlers-for-the-same-action">Multiple handlers for the same action</h4>
+<p>You can assign multiple handlers to an action by passing an array:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> addPlanet <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;../actions/planets&#39;</span>
+<span class="im">import</span> <span class="op">{</span> sortBy <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;lodash&#39;</span>
+
+<span class="kw">const</span> Planets <span class="op">=</span> <span class="op">{</span>
+  <span class="co">//...</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [addPlanet]<span class="op">:</span> [<span class="kw">this</span>.<span class="at">append</span><span class="op">,</span> <span class="kw">this</span>.<span class="at">sort</span>]
+    <span class="op">}</span>
+  <span class="op">},</span>
+  <span class="at">append</span> (planets<span class="op">,</span> params) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">planets</span>.<span class="at">concat</span>(params)
+  <span class="op">},</span>
+  <span class="at">sort</span> (planets) <span class="op">{</span>
+    <span class="cf">return</span> <span class="at">sortBy</span>(planets<span class="op">,</span> <span class="st">&#39;name&#39;</span>)
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">push</span>(<span class="va">Actions</span>.<span class="at">add</span><span class="op">,</span> <span class="op">{</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&#39;earth&#39;</span> <span class="op">}</span>) <span class="co">// this will add Earth</span></code></pre></div>
+<p>These handlers are processed from left to right, receiving the result of the prior handler as the first argument.</p>
+<h3 id="domain.defaults"><code>Domain.defaults</code></h3>
+<p>Specifies default options a Domain is instantiated with. This provides a concise way to configure sensible defaults for setup options:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> Counter <span class="op">{</span>
+  <span class="kw">static</span> defaults <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">start</span><span class="op">:</span> <span class="dv">0</span>
+  <span class="op">}</span>
+
+  <span class="at">setup</span> (repo<span class="op">,</span> <span class="op">{</span> start <span class="op">}</span>) <span class="op">{</span>
+    <span class="va">console</span>.<span class="at">log</span>(start) <span class="co">// 0</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;counter&#39;</span><span class="op">,</span> Counter) <span class="co">// default start is 0</span></code></pre></div>
+<p>When instantiated, default options are determined in the following order:</p>
+<ol style="list-style-type: decimal">
+<li>Microcosm defaults</li>
+<li>Microcosm instantiation options</li>
+<li>Domain defaults</li>
+<li>Options passed to <code>repo.addDomain</code>.</li>
+</ol></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="ajax">AJAX</h1>
+<p>There are two ways to manage asynchronous requests in Microcosm:</p>
+<ol style="list-style-type: decimal">
+<li><a href="#return-a-promise">Return a Promise</a></li>
+<li><a href="#tap-into-the-lower-level-action-api">Tap into the lower-level action API</a></li>
+</ol>
+<h2 id="return-a-promise">Return a Promise</h2>
+<p>Microcosm implements standard behaviors for Promise resolution; convenient for Promise based AJAX libraries. Whenever an action creator returns a Promise, it will wait for that Promise to resolve/reject:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Run this code yourself at:</span>
+<span class="co">// https://tonicdev.com/57ac614723722e17003526a7/57acbf88a55ecf1200fa3763</span>
+<span class="kw">var</span> Microcosm <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;microcosm&#39;</span>)
+<span class="kw">var</span> request <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;superagent&#39;</span>)
+
+<span class="kw">var</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="kw">function</span> <span class="at">getSite</span> () <span class="op">{</span>
+  <span class="cf">return</span> <span class="va">request</span>.<span class="at">get</span>(<span class="st">&#39;http://code.viget.com/microcosm&#39;</span>)
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;site&#39;</span><span class="op">,</span> <span class="kw">function</span> () <span class="op">{</span>
+  <span class="cf">return</span> <span class="op">{</span>
+    [getSite]<span class="op">:</span> <span class="op">{</span>
+      <span class="dt">open  </span><span class="op">:</span> () <span class="op">=&gt;</span> <span class="st">&#39;loading&#39;</span><span class="op">,</span>
+      <span class="dt">error </span><span class="op">:</span> () <span class="op">=&gt;</span> <span class="st">&#39;error&#39;</span><span class="op">,</span>
+      <span class="dt">done  </span><span class="op">:</span> () <span class="op">=&gt;</span> <span class="st">&#39;done&#39;</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>)
+
+<span class="va">repo</span>.<span class="at">on</span>(<span class="st">&#39;change&#39;</span><span class="op">,</span> <span class="kw">function</span> (state) <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="va">state</span>.<span class="at">site</span>) <span class="co">// loading, done</span>
+<span class="op">}</span>)
+
+<span class="va">repo</span>.<span class="at">push</span>(getSite)</code></pre></div>
+<h3 id="how-it-works">How it works</h3>
+<p>When Microcosm detects a Promise returned from an action creator, it handles it in the following way:</p>
+<ol style="list-style-type: decimal">
+<li>Mark the action as <code>open</code>. This gives domain handlers a way to subscribe to a loading state. The payload of the action will be the first argument of the parameters passed into <code>repo.push</code>.</li>
+<li>On resolution, mark the action as <code>done</code> and update its payload to that of the resolved Promise.</li>
+<li>On failure, mark the action as <code>error</code> and update its payload to the associated error.</li>
+</ol>
+<h3 id="why-did-my-loading-state-go-away-when-the-action-completed">Why did my loading state go away when the action completed?</h3>
+<p>Microcosm’s state management model enables easy clean up of loading states. Whenever the action moves from <code>open</code> to <code>done</code>, Microcosm re-executes all outstanding actions in the order they were pushed.</p>
+<p>To illustrate, when the action creator is first pushed into Microcosm, it inserts an action into Microcosm’s historical ledger of all actions like:</p>
+<pre><code>1. ajax (open)</code></pre>
+<p>Microcosm then enumerates through this list, using domain handlers to calculate repo state. When the action completes, it moves into a <code>done</code> state:</p>
+<pre><code>1. ajax (done)</code></pre>
+<p>Again, Microcosm rolls forward through the history list, recalculating state for the repo.</p>
+<p>Since the action is no longer in an <code>open</code> state, the resulting repo state will be as though the loading domain handler never fired. There’s no cleanup.</p>
+<h2 id="tap-into-the-lower-level-action-api">Tap into the lower-level action API</h2>
+<p>Promises are easy to use, but they have a couple of problems when representing HTTP requests. Cancellation is difficult, and progress updates are impossible.</p>
+<p>Returning a function from an action creator provides a way to tap into the lower level API for an action:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// Run this code yourself</span>
+<span class="co">// https://tonicdev.com/57ac614723722e17003526a7/57acbfab74054114008fda70</span>
+<span class="kw">var</span> Microcosm <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;microcosm&#39;</span>)
+<span class="kw">var</span> request <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;superagent&#39;</span>)
+
+<span class="kw">var</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="kw">function</span> <span class="at">getSite</span> () <span class="op">{</span>
+  <span class="cf">return</span> <span class="kw">function</span> (action) <span class="op">{</span>
+    <span class="va">action</span>.<span class="at">open</span>()
+
+    <span class="va">request</span>.<span class="at">get</span>(<span class="st">&#39;http://code.viget.com/microcosm&#39;</span>).<span class="at">end</span>(<span class="kw">function</span>(error<span class="op">,</span> payload) <span class="op">{</span>
+      <span class="cf">if</span> (error) <span class="op">{</span>
+        <span class="va">action</span>.<span class="at">reject</span>(error)
+      <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
+        <span class="va">action</span>.<span class="at">resolve</span>(payload)
+      <span class="op">}</span>
+    <span class="op">}</span>)
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;site&#39;</span><span class="op">,</span> <span class="kw">function</span> () <span class="op">{</span>
+  <span class="cf">return</span> <span class="op">{</span>
+    [getSite]<span class="op">:</span> <span class="op">{</span>
+      <span class="dt">open  </span><span class="op">:</span> () <span class="op">=&gt;</span> <span class="st">&#39;loading&#39;</span><span class="op">,</span>
+      <span class="dt">error </span><span class="op">:</span> () <span class="op">=&gt;</span> <span class="st">&#39;error&#39;</span><span class="op">,</span>
+      <span class="dt">done  </span><span class="op">:</span> () <span class="op">=&gt;</span> <span class="st">&#39;done&#39;</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>)
+
+<span class="va">repo</span>.<span class="at">on</span>(<span class="st">&#39;change&#39;</span><span class="op">,</span> <span class="kw">function</span> (state) <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="va">state</span>.<span class="at">site</span>)
+<span class="op">}</span>)
+
+<span class="va">repo</span>.<span class="at">push</span>(getSite)</code></pre></div></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="hydrating-state">Hydrating State</h1>
+<p>Often times your application will need to start in a specific state. For example: server rendered pages that need to be hydrated in a specific state, or applications that save data in <code>localStorage</code> for return visits.</p>
+<p>Microcosm ships with several utilities that make this easy.</p>
+<h2 id="resetting-state">Resetting state</h2>
+<p>The <code>reset</code> method wipes away existing state, replacing it with new data. If this data object does not include a key managed by a domain, it will reset that value to the initial state of the domain.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> Microcosm <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+
+<span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;planets&#39;</span><span class="op">,</span> <span class="op">{</span>
+  <span class="at">getInitialState</span> () <span class="op">{</span>
+    <span class="cf">return</span> []
+  <span class="op">}</span>
+<span class="op">}</span>)
+
+<span class="co">// The initial state is an empty object</span>
+<span class="va">repo</span>.<span class="va">state</span>.<span class="at">planets</span> <span class="co">// []</span>
+
+<span class="co">// Now reset the state with new data</span>
+<span class="va">repo</span>.<span class="at">reset</span>(<span class="op">{</span> <span class="dt">planets</span><span class="op">:</span> [<span class="op">{</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;Earth&quot;</span> <span class="op">}</span>]<span class="op">}</span>)
+
+<span class="co">// The repo now contains planets</span>
+<span class="va">repo</span>.<span class="va">state</span>.<span class="at">planets</span> <span class="co">// [{ name: &quot;Earth&quot; }]</span>
+
+<span class="co">// Reset without a data payload</span>
+<span class="va">repo</span>.<span class="at">reset</span>()
+
+<span class="co">// Since no planets were provided, the repo has reverted to</span>
+<span class="co">// the initial plents state</span>
+<span class="va">repo</span>.<span class="va">state</span>.<span class="at">planets</span> <span class="co">// []</span></code></pre></div>
+<h2 id="deserializing-json-into-repo-state">Deserializing JSON into repo state</h2>
+<p>Data doesn’t always ship in a form useable by a repo. By setting the second argument of <code>reset</code> to true, it tells the repo to execute <code>deserialize</code> on the provided data before entering it.</p>
+<p>This is primarily to accommodate complex data libraries such as ImmutableJS. When resetting, we can tell a domain to convert raw data using the ImmutableJS API:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> Microcosm <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+<span class="im">import</span> Immutable <span class="im">from</span> <span class="st">&#39;immutable&#39;</span>
+
+<span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;planets&#39;</span><span class="op">,</span> <span class="op">{</span>
+  <span class="at">getInitialState</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">Immutable</span>.<span class="at">List</span>()
+  <span class="op">},</span>
+
+  <span class="at">deserialize</span> (data) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">Immutable</span>.<span class="at">fromJS</span>(data)
+  <span class="op">}</span>
+<span class="op">}</span>)
+
+<span class="va">repo</span>.<span class="at">reset</span>(<span class="op">{</span> <span class="dt">planets</span><span class="op">:</span> [<span class="op">{</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;Earth&quot;</span> <span class="op">}</span>]<span class="op">},</span> <span class="kw">true</span>)
+
+<span class="co">// The repo now contains planets</span>
+<span class="va">repo</span>.<span class="va">state</span>.<span class="at">planets</span> <span class="co">// Immutable.List</span></code></pre></div>
+<h2 id="serializing-a-repo-into-json">Serializing a repo into JSON</h2>
+<p>Microcosm implements a <code>toJSON</code> method that asks domains to convert their managed state into a serializable form. This makes it easy to convert complex data types into something that can be sent over the wire:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> Microcosm <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+<span class="im">import</span> Immutable <span class="im">from</span> <span class="st">&#39;immutable&#39;</span>
+
+<span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;planets&#39;</span><span class="op">,</span> <span class="op">{</span>
+  <span class="at">getInitialState</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">Immutable</span>.<span class="at">List</span>()
+  <span class="op">},</span>
+  <span class="at">serialize</span> (list) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">list</span>.<span class="at">toJSON</span>()
+  <span class="op">}</span>
+<span class="op">}</span>)
+
+<span class="va">repo</span>.<span class="at">serialize</span>() <span class="co">// { planets: [] }</span>
+
+<span class="va">JSON</span>.<span class="at">stringify</span>(repo) <span class="co">// &quot;{ &quot;planets&quot;: [] }&quot;</span></code></pre></div></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

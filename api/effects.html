@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="effects">Effects</h1>
+<ol style="list-style-type: decimal">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#creating-effects">Creating Effects</a></li>
+<li><a href="#a-quick-example---query-strings">A quick example</a></li>
+<li><a href="#api">API</a></li>
+</ol>
+<h2 id="overview">Overview</h2>
+<p>Not all actions result in updates to application state. For example:</p>
+<ul>
+<li>Writing backup data to <code>localStorage</code></li>
+<li>Sending analytics events</li>
+<li>Persisting query information in the URL.</li>
+</ul>
+<p><strong>Effect handlers fire immediately after Domain handlers and are only called once per action state.</strong> This means that a repo’s state is up to date with the latest state transitions by the time they execute.</p>
+<h2 id="creating-effects">Creating Effects</h2>
+<p>There are two ways to create an effect: as a class, and as a plain object. The usage is roughly the same for both versions, the class form can additionally take advantage of having a <code>constructor</code>.</p>
+<h3 id="effects-as-classes">Effects as classes</h3>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> Effect <span class="op">{</span>
+  <span class="at">setup</span> (repo<span class="op">,</span> options) <span class="op">{</span>
+    <span class="co">// Run startup behavior</span>
+  <span class="op">}</span>
+  <span class="at">teardown</span> (repo) <span class="op">{</span>
+    <span class="co">// Clean up any setup behavior</span>
+  <span class="op">}</span>
+  <span class="at">handleAction</span> (repo<span class="op">,</span> payload) <span class="op">{</span>
+    <span class="co">// Respond once to an action</span>
+  <span class="op">}</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [action] <span class="op">:</span> <span class="kw">this</span>.<span class="at">handleAction</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">addEffect</span>(Effect)</code></pre></div>
+<h3 id="effects-as-plain-objects">Effects as plain objects</h3>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> Effect <span class="op">=</span> <span class="op">{</span>
+  <span class="at">setup</span> (repo<span class="op">,</span> options) <span class="op">{</span>
+    <span class="co">// Run starting behavior</span>
+  <span class="op">},</span>
+  <span class="at">teardown</span> (repo) <span class="op">{</span>
+    <span class="co">// Clean up</span>
+  <span class="op">},</span>
+  <span class="at">handleAction</span> (repo<span class="op">,</span> payload) <span class="op">{</span>
+    <span class="co">// Respond once to an action</span>
+  <span class="op">},</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [action] <span class="op">:</span> <span class="kw">this</span>.<span class="at">handleAction</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">addEffect</span>(Effect)</code></pre></div>
+<p>Microcosm calls <code>Object.create</code> on the simple object form, preventing any assignments within the Effect from polluting other instances. In this way, they are somewhat similar to the class form.</p>
+<h2 id="a-quick-example---query-strings">A quick example - query strings</h2>
+<p>URL persistence is important for shareability and wayfinding. However, a full routing solution isn’t always practical. On some projects we simply want to push search parameters or other meta data into a query string.</p>
+<p>This is a perfect use case for an effect:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// /src/effects/location.js</span>
+
+<span class="im">import</span> url <span class="im">from</span> <span class="st">&#39;url&#39;</span>
+<span class="im">import</span> <span class="op">{</span>patchQuery<span class="op">}</span> <span class="im">from</span> <span class="st">&#39;../actions/query&#39;</span>
+
+<span class="kw">class</span> Location <span class="op">{</span>
+
+  <span class="at">updateQuery</span> (repo) <span class="op">{</span>
+    <span class="kw">const</span> <span class="op">{</span> origin<span class="op">,</span> hash <span class="op">}</span> <span class="op">=</span> <span class="va">window</span>.<span class="at">location</span>
+
+    <span class="kw">const</span> location <span class="op">=</span> <span class="va">url</span>.<span class="at">format</span>(<span class="op">{</span>
+      <span class="dt">host  </span><span class="op">:</span> origin<span class="op">,</span>
+      <span class="dt">query </span><span class="op">:</span> <span class="va">repo</span>.<span class="va">state</span>.<span class="at">query</span><span class="op">,</span>
+      <span class="dt">hash  </span><span class="op">:</span> hash
+    <span class="op">}</span>)
+
+    <span class="va">window</span>.<span class="va">history</span>.<span class="at">pushState</span>(<span class="kw">null</span><span class="op">,</span> <span class="kw">null</span><span class="op">,</span> location)
+  <span class="op">}</span>
+
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [patchQuery] <span class="op">:</span> <span class="kw">this</span>.<span class="at">updateQuery</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="im">export</span> <span class="im">default</span> Location</code></pre></div>
+<h2 id="api">API</h2>
+<h3 id="setuprepo-options"><code>setup(repo, options)</code></h3>
+<p>Setup runs right after an effect is added to a Microcosm. It receives that repo and any options passed as the second argument.</p>
+<h3 id="teardownrepo"><code>teardown(repo)</code></h3>
+<p>Runs whenever <code>Microcosm::teardown</code> is invoked. Useful for cleaning up work done in <code>setup()</code>.</p>
+<h3 id="register"><code>register()</code></h3>
+<p>Returns an object mapping actions to methods on the effect. This is the communication point between a effect and the rest of the system.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// /src/effects/planets.js</span>
+
+<span class="im">import</span> <span class="op">{</span> addPlanet <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;../actions/planets&#39;</span>
+
+<span class="kw">class</span> Planets <span class="op">{</span>
+  <span class="co">//...</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [addPlanet]<span class="op">:</span> <span class="kw">this</span>.<span class="at">alert</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+
+  <span class="at">alert</span> (repo<span class="op">,</span> planet) <span class="op">{</span>
+    <span class="at">alert</span>(<span class="st">&#39;A planet was added! &#39;</span> <span class="op">+</span> <span class="va">planet</span>.<span class="at">name</span>)
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">addEffect</span>(Planets)
+<span class="va">repo</span>.<span class="at">push</span>(addPlanet<span class="op">,</span> <span class="op">{</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&#39;earth&#39;</span> <span class="op">}</span>) <span class="co">// this will add Earth</span></code></pre></div>
+<h4 id="multiple-handlers-for-the-same-action">Multiple handlers for the same action</h4>
+<p>You can assign multiple handlers to an action by passing an array:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// /src/effects/planets.js</span>
+
+<span class="im">import</span> <span class="op">{</span> addPlanet <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;../actions/planets&#39;</span>
+
+<span class="kw">class</span> Planets <span class="op">{</span>
+  <span class="co">//...</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [<span class="va">addPlanet</span>.<span class="at">error</span>]<span class="op">:</span> [<span class="kw">this</span>.<span class="at">alert</span><span class="op">,</span> <span class="kw">this</span>.<span class="at">trackError</span>]
+    <span class="op">}</span>
+  <span class="op">}</span>
+
+  <span class="at">alert</span> (repo<span class="op">,</span> error) <span class="op">{</span>
+    <span class="at">alert</span>(<span class="st">&#39;There was an issue!)</span>
+  <span class="op">}</span>
+  
+  <span class="at">trackError</span> (repo<span class="op">,</span> error) <span class="op">{</span>
+    <span class="va">myLogService</span>.<span class="at">trackError</span>(error)
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">addEffect</span>(Planets)
+<span class="va">repo</span>.<span class="at">push</span>(addPlanet<span class="op">,</span> <span class="op">{</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&#39;earth&#39;</span> <span class="op">}</span>)</code></pre></div>
+<h3 id="effect.defaults"><code>Effect.defaults</code></h3>
+<p>Specifies default options a Effect is instantiated with. This provides a concise way to configure sensible defaults for setup options:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> AutoSave <span class="op">{</span>
+  <span class="kw">static</span> defaults <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">saveInterval</span><span class="op">:</span> <span class="dv">5000</span>
+  <span class="op">}</span>
+
+  <span class="at">setup</span> (repo<span class="op">,</span> <span class="op">{</span> saveInterval <span class="op">}</span>) <span class="op">{</span>
+    <span class="va">console</span>.<span class="at">log</span>(saveInterval) <span class="co">// 5000</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">let</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="va">repo</span>.<span class="at">addEffect</span>(AutoSave) <span class="co">// default saveInterval is 5000</span></code></pre></div>
+<p>When instantiated, default options are determined in the following order:</p>
+<ol style="list-style-type: decimal">
+<li>Microcosm defaults</li>
+<li>Microcosm instantiation options</li>
+<li>Effect defaults</li>
+<li>Instantiation options</li>
+<li>Options passed to <code>repo.addEffect</code>.</li>
+</ol></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="actionform">ActionForm</h1>
+<ol style="list-style-type: decimal">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#props">Props</a></li>
+</ol>
+<h2 id="overview">Overview</h2>
+<p>ActionForm is a wrapper around a standard <code>form</code> tag that provides a method of broadcasting an action to associated Presenters (see <a href="./presenter.html"><code>./presenter.html</code></a>). This attempts to more closely model the way forms traditionally work, however within the context of a JavaScript application.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+<span class="im">import</span> DOM <span class="im">from</span> <span class="st">&#39;react-dom&#39;</span>
+<span class="im">import</span> Presenter <span class="im">from</span> <span class="st">&#39;microcosm/addons/presenter&#39;</span>
+<span class="im">import</span> ActionForm <span class="im">from</span> <span class="st">&#39;microcosm/addons/action-form&#39;</span>
+<span class="im">import</span> Microcosm <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+
+<span class="kw">const</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="kw">const</span> increaseCount <span class="op">=</span> n <span class="op">=&gt;</span> n
+
+<span class="va">repo</span>.<span class="at">addDomain</span>(<span class="st">&#39;count&#39;</span><span class="op">,</span> <span class="op">{</span>
+  <span class="at">getInitialState</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="dv">0</span>
+  <span class="op">},</span>
+  <span class="at">increase</span> (count<span class="op">,</span> <span class="op">{</span> amount <span class="op">}</span>) <span class="op">{</span>
+    <span class="cf">return</span> count <span class="op">+</span> amount
+  <span class="op">},</span>
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [increaseCount] <span class="op">:</span> <span class="kw">this</span>.<span class="at">increase</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>)
+
+<span class="kw">function</span> <span class="at">StepperForm</span> (<span class="op">{</span> count <span class="op">}</span>) <span class="op">{</span>
+  <span class="cf">return</span> (
+    <span class="op">&lt;</span>ActionForm action<span class="op">={</span>increaseCount<span class="op">}&gt;</span>
+      <span class="op">&lt;</span>input type<span class="op">=</span><span class="st">&quot;hidden&quot;</span> name<span class="op">=</span><span class="st">&quot;amount&quot;</span> value<span class="op">=</span><span class="st">&quot;1&quot;</span> <span class="ss">/&gt;</span>
+<span class="ss">      &lt;button&gt;</span><span class="sc">+</span><span class="ss"> 1&lt;/button</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="ss">/ActionForm&gt;</span>
+<span class="ss">  </span><span class="sc">)</span>
+<span class="ss">}</span>
+
+<span class="ss">class CountPresenter extends Presenter {</span>
+<span class="ss">  getModel </span><span class="sc">()</span><span class="ss"> {</span>
+<span class="ss">    return {</span>
+<span class="ss">      count : state =&gt; state.count</span>
+<span class="ss">    }</span>
+<span class="ss">  }</span>
+
+<span class="ss">  render </span><span class="sc">()</span><span class="ss"> {</span>
+<span class="ss">    const { count } = this.model</span>
+
+<span class="ss">    return &lt;StepperForm count={ count } /</span><span class="op">&gt;</span>
+  <span class="op">}</span>
+}
+
+<span class="va">DOM</span>.<span class="at">render</span>(<span class="op">&lt;</span>CountPresenter repo<span class="op">={</span> repo <span class="op">}</span> <span class="ss">/&gt;, document.getElementById</span><span class="sc">(</span><span class="ss">&#39;container&#39;</span><span class="sc">))</span></code></pre></div>
+<p>ActionForm inputs are serialized to JSON upon submission using <a href="https://github.com/defunctzombie/form-serialize"><code>form-serialize</code></a>.</p>
+<h2 id="props">Props</h2>
+<h3 id="action">action</h3>
+<p>A string value to send to Presenters. If a Presenter is registered to that string via its <code>intercept()</code> method, it will execute the associated callback.</p>
+<h3 id="serializerform">serializer(form)</h3>
+<p>The serialization function. By default this uses <a href="https://github.com/defunctzombie/form-serialize"><code>form-serialize</code></a>. On submission, this function is given the associated form HTML element.</p>
+<h3 id="prepareparams">prepare(params)</h3>
+<p>Executed after serialization to allow for extra parameter manipulation. This is useful for ensuring proper date formats, or other data formats that may come directly from a form input.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">class</span> MyForm <span class="kw">extends</span> <span class="va">React</span>.<span class="at">Component</span> <span class="op">{</span>
+  <span class="at">prepare</span> (params) <span class="op">{</span>
+    <span class="va">params</span>.<span class="at">start</span> <span class="op">=</span> <span class="kw">new</span> <span class="at">Date</span>(<span class="va">params</span>.<span class="at">start</span>).<span class="at">toISOString</span>()
+    <span class="va">params</span>.<span class="at">end</span> <span class="op">=</span> <span class="kw">new</span> <span class="at">Date</span>(<span class="va">params</span>.<span class="at">start</span>).<span class="at">toISOString</span>()
+
+    <span class="cf">return</span> params
+  <span class="op">}</span>
+
+  <span class="at">render</span> () <span class="op">{</span>
+    <span class="cf">return</span> (
+      <span class="op">&lt;</span>ActionForm action<span class="op">={</span><span class="va">actions</span>.<span class="at">create</span><span class="op">}</span> prepare<span class="op">={</span><span class="kw">this</span>.<span class="at">prepare</span><span class="op">}&gt;</span>
+        <span class="op">&lt;</span>input name<span class="op">=</span><span class="st">&quot;name&quot;</span> <span class="ss">/&gt;</span>
+<span class="ss">        &lt;input name=&quot;start&quot; type=&quot;datetime-local&quot; /</span><span class="op">&gt;</span>
+        <span class="op">&lt;</span>input name<span class="op">=</span><span class="st">&quot;end&quot;</span> type<span class="op">=</span><span class="st">&quot;datetime-local&quot;</span> <span class="ss">/&gt;</span>
+
+<span class="ss">        &lt;input type=&quot;submit&quot; /</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span><span class="ss">/ActionForm&gt;</span>
+<span class="ss">    </span><span class="sc">)</span>
+<span class="ss">  }</span>
+<span class="ss">}</span></code></pre></div>
+<h3 id="onsubmitevent-action">onSubmit(event, action)</h3>
+<p>An event callback executed immediately after the form submits and the action is broadcasted.</p>
+<h3 id="onopenpayload-form">onOpen(payload, form)</h3>
+<p>After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute when the action opens.</p>
+<h3 id="ondonepayload-form">onDone(payload, form)</h3>
+<p>After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute if the action completes successfully.</p>
+<h3 id="onerrorpayload-form">onError(payload, form)</h3>
+<p>After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute if the action is rejected.</p>
+<h3 id="oncancelpayload-form">onCancel(payload, form)</h3>
+<p>After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute when the action is cancelled.</p>
+<h3 id="onupdatepayload-form">onUpdate(payload, form)</h3>
+<p>After broadcasting, if the dispatched action returns a Microcosm action, this callback will execute when the action emits a progress update.</p></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

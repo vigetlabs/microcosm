@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="quickstart">Quickstart</h1>
+<p>This guide will teach you how to build a simple app using <a href="https://github.com/vigetlabs/microcosm">Microcosm</a> and <a href="https://github.com/facebook/react">React</a>.</p>
+<h2 id="what-well-cover">What we’ll cover</h2>
+<ol style="list-style-type: decimal">
+<li>Project setup</li>
+<li>Routing</li>
+<li>Presenters</li>
+<li>Domains</li>
+<li>Actions</li>
+</ol>
+<h2 id="project-setup">Project setup</h2>
+<p>Let’s clone the <a href="https://github.com/vigetlabs/microcosm-quickstart"><code>microcosm-quickstart</code></a> repo and install dependencies. Type these commands into your terminal:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">git</span> clone https://github.com/vigetlabs/microcosm-quickstart
+<span class="bu">cd</span> microcosm-quickstart
+<span class="ex">npm</span> install</code></pre></div>
+<p>Don’t have npm? <a href="https://docs.npmjs.com/getting-started/installing-node">Learn how to install Node.js and npm here</a>.</p>
+<h3 id="working-your-way-around-the-application">Working your way around the application</h3>
+<p>The starter project will come with everything you need to get started with Microcosm. This also includes a project structure:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">src/</span>
+├── <span class="ex">actions</span>
+├── <span class="ex">presenters</span>
+├── <span class="ex">domains</span>
+├── <span class="ex">effects</span>
+├── <span class="ex">style</span>
+├── <span class="ex">views</span>
+├── <span class="ex">index.js</span>
+├── <span class="ex">repo.js</span>
+└── <span class="ex">routes.js</span></code></pre></div>
+<p>Microcosm follows the <a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter">Model View Presenter (MVP)</a> architectural pattern. Don’t worry about that too much now, we’ll cover it as we build out a quick application.</p>
+<h3 id="launch-the-app">Launch the app</h3>
+<p>Run the following command in your terminal:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Stop the server at any time with ctrl-c</span>
+<span class="ex">npm</span> start</code></pre></div>
+<p>This will probably open your default browser to a new tab at <a href="http://localhost:3000" class="uri">http://localhost:3000</a>. Congratulations! You just created and booted your first Microcosm app!</p>
+<h3 id="personalize-it">Personalize it</h3>
+<p>The current site copy is cheerful, but a little too generic. This text lives inside of the application layout file.</p>
+<p>Let’s update it, open <code>src/views/layout.js</code></p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/views/layout.js</span>
+<span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+
+<span class="im">export</span> <span class="im">default</span> <span class="kw">function</span> <span class="at">Layout</span> (<span class="op">{</span>children<span class="op">}</span>) <span class="op">{</span>
+
+  <span class="cf">return</span> (
+    <span class="op">&lt;</span>div<span class="op">&gt;</span>
+      <span class="op">&lt;</span>h1<span class="op">&gt;</span>Solar System<span class="op">&lt;</span><span class="ss">/h1&gt;</span>
+<span class="ss">      {children}</span>
+<span class="ss">    &lt;/div</span><span class="op">&gt;</span>
+  )
+<span class="op">}</span></code></pre></div>
+<p>Foreshadowing things to come…</p>
+<h2 id="define-a-route">Define a route</h2>
+<p>Let’s build an application that shows a list of planets. We’ll place that content in an index route, which will display when a user visits the homepage.</p>
+<p>We use <a href="https://github.com/reactjs/react-router"><code>react-router</code></a> for routing. It’s already included in <code>microcosm-quickstart</code>, so let’s go ahead and add an index route.</p>
+<p>Crack open <code>src/routes.js</code> and edit it to look like:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/routes.js</span>
+<span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+<span class="im">import</span> <span class="op">{</span>Route<span class="op">,</span> IndexRoute<span class="op">}</span> <span class="im">from</span> <span class="st">&#39;react-router&#39;</span>
+
+<span class="im">import</span> App <span class="im">from</span> <span class="st">&#39;./presenters/application&#39;</span>
+<span class="im">import</span> Planets <span class="im">from</span> <span class="st">&#39;./presenters/planets&#39;</span>
+
+<span class="im">export</span> <span class="im">default</span> (
+  <span class="op">&lt;</span>Route path<span class="op">=</span><span class="st">&quot;/&quot;</span> component<span class="op">={</span>App<span class="op">}&gt;</span>
+    <span class="op">&lt;</span>IndexRoute component<span class="op">={</span>Planets<span class="op">}</span> <span class="ss">/&gt;</span>
+<span class="ss">  &lt;/Route</span><span class="op">&gt;</span>
+)</code></pre></div>
+<p>Your build process is probably yelling at you right now with something like:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">Error</span> in ./src/routes.js
+<span class="ex">Module</span> not found: ./presenters/planets in ~/microcosm-quickstart/src</code></pre></div>
+<p>That’s because we haven’t added a presenter yet. We’ll do that next.</p>
+<h2 id="define-a-presenter">Define a presenter</h2>
+<p>Presenters are just special React components that are charged with higher levels of responsibility. We make a distinction between them and “passive view” components for a couple of reasons:</p>
+<ol style="list-style-type: decimal">
+<li>Presenters provide an answer for where to keep data operations and dispatch application actions.</li>
+<li>Presenters are a gateway. They keep application concerns outside of the majority of the presentation layer.</li>
+<li>Testing and refactoring are significantly easier because everything in <code>src/views</code> is isolated. It has no idea how the application works.</li>
+</ol>
+<p>Let’s create a presenter! Make a new JavaScript file at <code>src/presenters/planets.js</code>:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/presenters/planets.js</span>
+<span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+<span class="im">import</span> Presenter <span class="im">from</span> <span class="st">&#39;microcosm/addons/presenter&#39;</span>
+
+<span class="kw">class</span> Planets <span class="kw">extends</span> Presenter <span class="op">{</span>
+
+  <span class="at">render</span> () <span class="op">{</span>
+    <span class="cf">return</span> (
+      <span class="op">&lt;</span>ul<span class="op">&gt;</span>
+        <span class="op">&lt;</span>li<span class="op">&gt;</span>Mercury<span class="op">&lt;</span><span class="ss">/li&gt;</span>
+<span class="ss">        &lt;li&gt;Venus&lt;/li</span><span class="op">&gt;</span>
+        <span class="op">&lt;</span>li<span class="op">&gt;</span>Earth<span class="op">&lt;</span><span class="ss">/li&gt;</span>
+<span class="ss">        &lt;li&gt;Mars&lt;/li</span><span class="op">&gt;</span>
+        <span class="op">&lt;</span>li<span class="op">&gt;</span>Jupiter<span class="op">&lt;</span><span class="ss">/li&gt;</span>
+<span class="ss">        &lt;li&gt;Saturn&lt;/li</span><span class="op">&gt;</span>
+        <span class="op">&lt;</span>li<span class="op">&gt;</span>Uranus<span class="op">&lt;</span><span class="ss">/li&gt;</span>
+<span class="ss">        &lt;li&gt;Neptune&lt;/li</span><span class="op">&gt;</span>
+        <span class="op">&lt;</span>li<span class="op">&gt;</span>Pluto<span class="op">&lt;</span><span class="ss">/li&gt;</span>
+<span class="ss">      &lt;/ul</span><span class="op">&gt;</span>
+    )
+  <span class="op">}</span>
+
+<span class="op">}</span>
+
+<span class="im">export</span> <span class="im">default</span> Planets</code></pre></div>
+<p>Check out the list of planets in your browser! Now you might be asking yourself:</p>
+<blockquote>
+<p>You said that Presenters isolate the view layer from the application. Where’s the separation?</p>
+</blockquote>
+<p>And you’d be correct! Let’s make a planets list view component. Create a new React component at <code>src/views/planet-list.js</code>:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/views/planet-list.js</span>
+<span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+
+<span class="im">export</span> <span class="im">default</span> <span class="kw">function</span> <span class="at">PlanetList</span> () <span class="op">{</span>
+
+  <span class="cf">return</span> (
+    <span class="op">&lt;</span>ul<span class="op">&gt;</span>
+      <span class="op">&lt;</span>li<span class="op">&gt;</span>Mercury<span class="op">&lt;</span><span class="ss">/li&gt;</span>
+<span class="ss">      &lt;li&gt;Venus&lt;/li</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span>li<span class="op">&gt;</span>Earth<span class="op">&lt;</span><span class="ss">/li&gt;</span>
+<span class="ss">      &lt;li&gt;Mars&lt;/li</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span>li<span class="op">&gt;</span>Jupiter<span class="op">&lt;</span><span class="ss">/li&gt;</span>
+<span class="ss">      &lt;li&gt;Saturn&lt;/li</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span>li<span class="op">&gt;</span>Uranus<span class="op">&lt;</span><span class="ss">/li&gt;</span>
+<span class="ss">      &lt;li&gt;Neptune&lt;/li</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span>li<span class="op">&gt;</span>Pluto<span class="op">&lt;</span><span class="ss">/li&gt;</span>
+<span class="ss">    &lt;/ul</span><span class="op">&gt;</span>
+  )
+<span class="op">}</span></code></pre></div>
+<p>Then update the Planets presenter to use this new view component:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/presenters/planets.js</span>
+<span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+<span class="im">import</span> Presenter <span class="im">from</span> <span class="st">&#39;microcosm/addons/presenter&#39;</span>
+<span class="im">import</span> PlanetList <span class="im">from</span> <span class="st">&#39;../views/planet-list&#39;</span>
+
+<span class="kw">class</span> Planets <span class="kw">extends</span> Presenter <span class="op">{</span>
+
+  <span class="at">render</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">&lt;</span>PlanetList /<span class="op">&gt;</span>
+  <span class="op">}</span>
+
+<span class="op">}</span>
+
+<span class="im">export</span> <span class="im">default</span> Planets</code></pre></div>
+<p>Awesome. Well, not <em>really</em>. Now the <code>PlanetList</code> component knows all about the data. It shouldn’t care whether or not Pluto’s a <em>real</em> planet. Let’s fix that.</p>
+<p>We need to prepare data in the presenter to send down into the <code>PlanetList</code> view. Presenters can implement a <code>getModel</code> method that to do just that:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/presenters/planets</span>
+<span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+<span class="im">import</span> Presenter <span class="im">from</span> <span class="st">&#39;microcosm/addons/presenter&#39;</span>
+<span class="im">import</span> PlanetList <span class="im">from</span> <span class="st">&#39;../views/planet-list&#39;</span>
+
+<span class="kw">class</span> Planets <span class="kw">extends</span> Presenter <span class="op">{</span>
+
+  <span class="at">getModel</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      <span class="dt">planets</span><span class="op">:</span> () <span class="op">=&gt;</span> [<span class="st">&#39;Mercury&#39;</span><span class="op">,</span> <span class="st">&#39;Venus&#39;</span><span class="op">,</span> <span class="st">&#39;Earth&#39;</span><span class="op">,</span> <span class="st">&#39;Mars&#39;</span><span class="op">,</span> <span class="st">&#39;Jupiter&#39;</span><span class="op">,</span> <span class="st">&#39;Saturn&#39;</span><span class="op">,</span> <span class="st">&#39;Uranus&#39;</span><span class="op">,</span> <span class="st">&#39;Neptune&#39;</span><span class="op">,</span> <span class="st">&#39;Pluto&#39;</span>]
+    <span class="op">}</span>
+  <span class="op">}</span>
+
+  <span class="at">render</span> () <span class="op">{</span>
+    <span class="kw">const</span> <span class="op">{</span> planets <span class="op">}</span> <span class="op">=</span> <span class="kw">this</span>.<span class="at">model</span>
+
+    <span class="cf">return</span> <span class="op">&lt;</span>PlanetList planets<span class="op">={</span>planets<span class="op">}</span> <span class="ss">/&gt;</span>
+<span class="ss">  }</span>
+
+<span class="ss">}</span>
+
+<span class="ss">export default Planets</span></code></pre></div>
+<p>And in our PlanetList:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/views/planet-list.js</span>
+<span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+
+<span class="im">export</span> <span class="im">default</span> <span class="kw">function</span> <span class="at">PlanetList</span> (<span class="op">{</span> planets <span class="op">=</span> [] <span class="op">}</span>) <span class="op">{</span>
+
+  <span class="cf">return</span> (
+    <span class="op">&lt;</span>ul<span class="op">&gt;</span>
+      <span class="op">{</span> <span class="va">planets</span>.<span class="at">map</span>(p <span class="op">=&gt;</span> <span class="op">&lt;</span>li key<span class="op">={</span>p<span class="op">}&gt;{</span>p<span class="op">}&lt;</span><span class="ss">/li&gt;</span><span class="sc">)</span><span class="ss">}</span>
+<span class="ss">    &lt;/ul</span><span class="op">&gt;</span>
+  )
+<span class="op">}</span></code></pre></div>
+<p>Much better.</p>
+<h2 id="defining-a-domain">Defining a domain</h2>
+<p>We can do better. Application data really belongs in Microcosm. To do this, we need to make a Planets domain. This domain will define all of the operations for data related to planets. Create a new JavaScript file at <code>./src/domains/planets.js</code>:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/domains/planets.js</span>
+<span class="kw">const</span> Planets <span class="op">=</span> <span class="op">{</span>
+
+  <span class="at">getInitialState</span>() <span class="op">{</span>
+    <span class="cf">return</span> [
+      <span class="st">&#39;Mercury&#39;</span><span class="op">,</span> <span class="st">&#39;Venus&#39;</span><span class="op">,</span> <span class="st">&#39;Earth&#39;</span><span class="op">,</span> <span class="st">&#39;Mars&#39;</span><span class="op">,</span>
+      <span class="st">&#39;Jupiter&#39;</span><span class="op">,</span> <span class="st">&#39;Saturn&#39;</span><span class="op">,</span> <span class="st">&#39;Uranus&#39;</span><span class="op">,</span> <span class="st">&#39;Neptune&#39;</span><span class="op">,</span>
+      <span class="st">&#39;Pluto&#39;</span>
+    ]
+  <span class="op">}</span>
+
+<span class="op">}</span>
+
+<span class="im">export</span> <span class="im">default</span> Planets</code></pre></div>
+<p>We call instances of Microcosm <em>repos</em>. An isolated warehouse to manage application state. Hooking up the planets domain is easy:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/repo.js</span>
+<span class="im">import</span> Microcosm <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+<span class="im">import</span> Planets <span class="im">from</span> <span class="st">&#39;./domains/planets&#39;</span>
+
+<span class="kw">class</span> Repo <span class="kw">extends</span> Microcosm <span class="op">{</span>
+
+  <span class="at">setup</span> () <span class="op">{</span>
+    <span class="kw">this</span>.<span class="at">addDomain</span>(<span class="st">&#39;planets&#39;</span><span class="op">,</span> Planets)
+  <span class="op">}</span>
+
+<span class="op">}</span>
+
+<span class="im">export</span> <span class="im">default</span> Repo</code></pre></div>
+<p>Here we’re saying, “Mount the Planets domain to <code>'planets'</code>.” It will managing everything under <code>repo.state.planets</code>.</p>
+<p>We can subscribe to that in our Planets presenter. Open it up once more:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+<span class="im">import</span> Presenter <span class="im">from</span> <span class="st">&#39;microcosm/addons/presenter&#39;</span>
+<span class="im">import</span> PlanetList <span class="im">from</span> <span class="st">&#39;../views/planet-list&#39;</span>
+
+<span class="kw">class</span> Planets <span class="kw">extends</span> Presenter <span class="op">{</span>
+
+  <span class="at">getModel</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      <span class="co">// I&#39;m new. Pull planets out of the repo&#39;s state</span>
+      <span class="dt">planets</span><span class="op">:</span> state <span class="op">=&gt;</span> <span class="va">state</span>.<span class="at">planets</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+
+  <span class="at">render</span> () <span class="op">{</span>
+    <span class="kw">const</span> <span class="op">{</span> planets <span class="op">}</span> <span class="op">=</span> <span class="kw">this</span>.<span class="at">model</span>
+
+    <span class="cf">return</span> <span class="op">&lt;</span>PlanetList planets<span class="op">={</span>planets<span class="op">}</span> <span class="ss">/&gt;</span>
+<span class="ss">  }</span>
+
+<span class="ss">}</span>
+
+<span class="ss">export default Planets</span></code></pre></div>
+<p>Cool. Each value in the key/value map returned from <code>model</code> is processed by the Presenter. When given a function, it will invoke it with the current application state.</p>
+<p>Awesome. Nice and separated.</p>
+<h2 id="defining-an-action">Defining an action</h2>
+<p>Let’s simulate what would happen if you were working with a planets API. In this case, the Planets domain wouldn’t know about all of the planets right on start-up. We need to fetch information from a server.</p>
+<p>Microcosm actions are responsible for dealing with asynchronous state. Let’s move the data inside of planets out into an action:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/actions/planets.js</span>
+<span class="im">export</span> <span class="kw">function</span> <span class="at">getPlanets</span>() <span class="op">{</span>
+
+  <span class="co">// This isn&#39;t *really* an AJAX request, but it</span>
+  <span class="co">// accomplishes what we want...</span>
+  <span class="cf">return</span> <span class="kw">new</span> <span class="at">Promise</span>(<span class="kw">function</span> (resolve<span class="op">,</span> reject) <span class="op">{</span>
+    <span class="at">resolve</span>([
+      <span class="st">&#39;Mercury&#39;</span><span class="op">,</span> <span class="st">&#39;Venus&#39;</span><span class="op">,</span> <span class="st">&#39;Earth&#39;</span><span class="op">,</span> <span class="st">&#39;Mars&#39;</span><span class="op">,</span>
+      <span class="st">&#39;Jupiter&#39;</span><span class="op">,</span> <span class="st">&#39;Saturn&#39;</span><span class="op">,</span> <span class="st">&#39;Uranus&#39;</span><span class="op">,</span> <span class="st">&#39;Neptune&#39;</span><span class="op">,</span>
+      <span class="st">&#39;Pluto&#39;</span>
+    ])
+  <span class="op">}</span>)
+<span class="op">}</span></code></pre></div>
+<p>And in the Planet’s domain, subscribe to it using the <code>register()</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/domains/planets.js</span>
+<span class="im">import</span> <span class="op">{</span>getPlanets<span class="op">}</span> <span class="im">from</span> <span class="st">&#39;../actions/planets&#39;</span>
+
+<span class="kw">const</span> Planets <span class="op">=</span> <span class="op">{</span>
+  <span class="at">getInitialState</span> () <span class="op">{</span>
+    <span class="co">// Remember, we put the planets data into the action</span>
+    <span class="cf">return</span> []
+  <span class="op">},</span>
+
+  <span class="at">append</span> (planets<span class="op">,</span> data) <span class="op">{</span>
+    <span class="cf">return</span> <span class="va">planets</span>.<span class="at">concat</span>(data)
+  <span class="op">},</span>
+
+  <span class="at">register</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      <span class="co">// Curious? This works because Microcosm assigns a unique</span>
+      <span class="co">// toString() method to each action pushed into it. That means</span>
+      <span class="co">// the action can be used as a unique key in an object.</span>
+      [getPlanets]<span class="op">:</span> <span class="kw">this</span>.<span class="at">append</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="im">export</span> <span class="im">default</span> Planets</code></pre></div>
+<p>You might have noticed that the planets went missing from the page. Of course! We aren’t asking for them.</p>
+<p>Let’s use the Presenter’s <code>setup</code> lifecycle hook to fetch the planet when the presenter boots up. <code>setup</code> is given the current <code>repo</code> for the presenter specifically for this purpose:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/presenters/planets.js</span>
+<span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+<span class="im">import</span> Presenter <span class="im">from</span> <span class="st">&#39;microcosm/addons/presenter&#39;</span>
+<span class="im">import</span> PlanetList <span class="im">from</span> <span class="st">&#39;../views/planet-list&#39;</span>
+<span class="im">import</span> <span class="op">{</span>getPlanets<span class="op">}</span> <span class="im">from</span> <span class="st">&#39;../actions/planets&#39;</span>
+
+<span class="kw">class</span> Planets <span class="kw">extends</span> Presenter <span class="op">{</span>
+
+  <span class="at">setup</span> (repo) <span class="op">{</span>
+    <span class="va">repo</span>.<span class="at">push</span>(getPlanets)
+  <span class="op">}</span>
+
+  <span class="at">getModel</span> () <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      <span class="dt">planets</span><span class="op">:</span> state <span class="op">=&gt;</span> <span class="va">state</span>.<span class="at">planets</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+
+  <span class="at">render</span> () <span class="op">{</span>
+    <span class="kw">const</span> <span class="op">{</span> planets <span class="op">}</span> <span class="op">=</span> <span class="kw">this</span>.<span class="at">model</span>
+
+    <span class="cf">return</span> <span class="op">&lt;</span>PlanetList planets<span class="op">={</span>planets<span class="op">}</span> <span class="ss">/&gt;</span>
+<span class="ss">  }</span>
+
+<span class="ss">}</span>
+
+<span class="ss">export default Planets</span></code></pre></div>
+<p>And we’re back! When the router is about to mount the Planets presenter to the page, it will call <code>setup</code>. This will cause a <code>getPlanets</code> to get queued up with the application’s repo.</p>
+<p>Microcosm will process the action, sending updates to the domains who indicate they want to get updates based on their <code>register</code> function.</p>
+<h2 id="handling-user-interaction">Handling user interaction</h2>
+<p>This is looking great, but most applications respond to user interaction in some way, so lets look at one way to handle that in Microcosm.</p>
+<p>Microcosm provides a couple of options for capturing user input and passing it in to actions. One of these is by using the <code>ActionButton</code> addon. Let’s modify our View layer to pull that in:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> React <span class="im">from</span> <span class="st">&#39;react&#39;</span>
+<span class="im">import</span> ActionButton <span class="im">from</span> <span class="st">&#39;microcosm/addons/action-button&#39;</span>
+<span class="im">import</span> <span class="op">{</span>addPlanet<span class="op">}</span> <span class="im">from</span> <span class="st">&#39;../actions/planets&#39;</span>
+
+<span class="im">export</span> <span class="im">default</span> <span class="kw">function</span> <span class="at">PlanetList</span> (<span class="op">{</span> planets <span class="op">=</span> [] <span class="op">}</span>) <span class="op">{</span>
+
+  <span class="cf">return</span> (
+    <span class="op">&lt;</span>div<span class="op">&gt;</span>
+      <span class="op">&lt;</span>ul<span class="op">&gt;</span>
+        <span class="op">{</span> <span class="va">planets</span>.<span class="at">map</span>(p <span class="op">=&gt;</span> <span class="op">&lt;</span>li key<span class="op">={</span>p<span class="op">}&gt;{</span>p<span class="op">}&lt;</span><span class="ss">/li&gt;</span><span class="sc">)</span><span class="ss">}</span>
+<span class="ss">      &lt;/ul</span><span class="op">&gt;</span>
+
+      <span class="op">&lt;</span>ActionButton action<span class="op">={</span>addPlanet<span class="op">}</span> value<span class="op">=</span><span class="st">&quot;Alpha Centauri&quot;</span><span class="op">&gt;</span>
+        Add Planet
+      <span class="op">&lt;</span><span class="ss">/ActionButton&gt;</span>
+<span class="ss">    &lt;/div</span><span class="op">&gt;</span>
+  )
+<span class="op">}</span></code></pre></div>
+<p>When clicked, our button will broadcast the <code>addPlanet</code> action. This won’t do anything currently because the <code>addPlanet</code> action doesn’t exist. Let’s create that action and subscribe our Domain to it:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// add to src/actions/planets.js</span>
+<span class="im">export</span> <span class="kw">function</span> <span class="at">addPlanet</span> (planet) <span class="op">{</span>
+  <span class="cf">return</span> planet
+<span class="op">}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// update register() method in src/domains/planets.js</span>
+<span class="at">register</span> () <span class="op">{</span>
+  <span class="cf">return</span> <span class="op">{</span>
+    [getPlanets]<span class="op">:</span> <span class="kw">this</span>.<span class="at">append</span><span class="op">,</span>
+    [addPlanet]<span class="op">:</span> <span class="kw">this</span>.<span class="at">append</span>
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p>There we have it! Now we have a button in our view which triggers an action that adds a new planet to our data model. When the Domain updates the state with the new planet, our Presenter and View will update accordingly to display the new data.</p>
+<h2 id="wrapping-up">Wrapping up</h2>
+<p>That’s it! You’ve just gone through a whirlwind tour of Microcosm and our preferred architecture. Happy trailblazing!</p></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

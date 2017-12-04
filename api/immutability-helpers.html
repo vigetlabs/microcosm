@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="immutability-helpers">Immutability Helpers</h1>
+<ol style="list-style-type: decimal">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#API">API</a></li>
+</ol>
+<h2 id="overview">Overview</h2>
+<p>Microcosm requires immutable updates. This makes it easier to track changes, support Microcosm’s action history, and keep things fast. However the ergonomics and details of this can be a bit frustrating. Let’s say we want to update a nested key:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> user <span class="op">=</span> <span class="op">{</span> <span class="dt">id</span><span class="op">:</span> <span class="st">&#39;Billy&#39;</span><span class="op">,</span> <span class="dt">facts</span><span class="op">:</span> <span class="op">{</span> <span class="dt">height</span><span class="op">:</span> <span class="dv">72</span><span class="op">,</span> <span class="dt">age</span><span class="op">:</span> <span class="dv">23</span> <span class="op">}</span> <span class="op">}</span>
+
+<span class="co">// Update the user&#39;s age</span>
+<span class="kw">let</span> next <span class="op">=</span> <span class="op">{</span>...<span class="at">user</span><span class="op">,</span> <span class="dt">facts</span><span class="op">:</span> <span class="op">{</span>...<span class="at">facts</span><span class="op">,</span> <span class="dt">age</span><span class="op">:</span> <span class="dv">24</span> <span class="op">}</span> <span class="op">}</span></code></pre></div>
+<p>Spreading can quickly get out of hand, and always copies data even if it hasn’t changed. Alternatively, we could use the immutability helpers that ship with Microcosm:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> set <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+
+<span class="kw">let</span> user <span class="op">=</span> <span class="op">{</span> <span class="dt">id</span><span class="op">:</span> <span class="st">&#39;Billy&#39;</span><span class="op">,</span> <span class="dt">facts</span><span class="op">:</span> <span class="op">{</span> <span class="dt">height</span><span class="op">:</span> <span class="dv">72</span><span class="op">,</span> <span class="dt">age</span><span class="op">:</span> <span class="dv">23</span> <span class="op">}</span> <span class="op">}</span>
+
+<span class="kw">let</span> next <span class="op">=</span> <span class="at">set</span>(user<span class="op">,</span> <span class="st">&#39;facts.age&#39;</span><span class="op">,</span> <span class="dv">24</span>)</code></pre></div>
+<p>Additionally, <code>set</code> will not perform an update if no value requires changing.</p>
+<p>Microcosm uses these utilities internally. Pulling them into your application allows you to reuse that code. However if you are evaluating alternatives, we recommend <a href="https://github.com/kolodny/immutability-helper">immutability-helper</a>.</p>
+<hr />
+<h2 id="api">API</h2>
+<h3 id="getobject-keypath-fallback">get(object, keypath, fallback?)</h3>
+<p>Safely retrieve a value from an object. If that value is not defined, optionally return a fallback value:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> get <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+
+<span class="kw">let</span> state <span class="op">=</span> <span class="op">{</span>
+  <span class="dt">planets</span><span class="op">:</span> <span class="op">{</span>
+    <span class="dt">earth</span><span class="op">:</span> <span class="op">{</span> <span class="dt">color</span><span class="op">:</span> <span class="st">&#39;blue&#39;</span> <span class="op">},</span>
+    <span class="dt">mars</span><span class="op">:</span> <span class="op">{</span> <span class="dt">color</span><span class="op">:</span> <span class="st">&#39;red&#39;</span> <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="co">// Pass a simple string key</span>
+<span class="kw">let</span> planets <span class="op">=</span> <span class="at">get</span>(state<span class="op">,</span> <span class="st">&#39;planets&#39;</span>)
+<span class="va">console</span>.<span class="at">log</span>(planets) <span class="co">// { earth, mars }</span>
+
+<span class="co">// An array of keys to access a deeply nested value</span>
+<span class="kw">let</span> earth <span class="op">=</span> <span class="at">get</span>(state<span class="op">,</span> [<span class="st">&#39;planets&#39;</span><span class="op">,</span> <span class="st">&#39;earth&#39;</span>])
+<span class="va">console</span>.<span class="at">log</span>(earth) <span class="co">// { color: &#39;blue&#39; }</span>
+
+<span class="co">// Or a string keypath can also be used to access a deeply nested value</span>
+<span class="kw">let</span> earth <span class="op">=</span> <span class="at">get</span>(state<span class="op">,</span> <span class="st">&#39;planets.earth&#39;</span>)
+
+<span class="co">// If a value isn&#39;t found</span>
+<span class="kw">let</span> color <span class="op">=</span> <span class="at">get</span>(state<span class="op">,</span> [<span class="st">&#39;planets&#39;</span><span class="op">,</span> <span class="st">&#39;venus&#39;</span><span class="op">,</span> <span class="st">&#39;color&#39;</span>])
+<span class="va">console</span>.<span class="at">log</span>(color) <span class="co">// undefined</span>
+
+<span class="co">// Optionally, provide a fallback if a value isn&#39;t found</span>
+<span class="kw">let</span> color <span class="op">=</span> <span class="at">get</span>(state<span class="op">,</span> [<span class="st">&#39;planets&#39;</span><span class="op">,</span> <span class="st">&#39;venus&#39;</span><span class="op">,</span> <span class="st">&#39;color&#39;</span>]<span class="op">,</span> <span class="st">&#39;black&#39;</span>)
+<span class="va">console</span>.<span class="at">log</span>(color) <span class="co">// &#39;black&#39;</span></code></pre></div>
+<h3 id="setobject-keypath-value">set(object, keypath, value)</h3>
+<p>Safely assign a property to an object. If the keypath provided is not defined within the object, it will produce new objects until it reaches the final key, in which case it will assign the value.</p>
+<p><code>set</code> never modifies data in place. It will always return a new object, unless assigning the value would make no change.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> set <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+
+<span class="kw">let</span> state <span class="op">=</span> <span class="op">{</span>
+  <span class="dt">planets</span><span class="op">:</span> <span class="op">{</span>
+    <span class="dt">earth</span><span class="op">:</span> <span class="op">{</span> <span class="dt">color</span><span class="op">:</span> <span class="st">&#39;blue&#39;</span> <span class="op">},</span>
+    <span class="dt">mars</span><span class="op">:</span> <span class="op">{</span> <span class="dt">color</span><span class="op">:</span> <span class="st">&#39;red&#39;</span> <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="co">// Pass a simple string key</span>
+<span class="kw">let</span> next <span class="op">=</span> <span class="at">set</span>(state<span class="op">,</span> <span class="st">&#39;center&#39;</span><span class="op">,</span> <span class="st">&#39;sol&#39;</span>)
+<span class="va">console</span>.<span class="at">log</span>(next) <span class="co">// { center, planets }</span>
+
+<span class="co">// An array of keys to deeply assign a value</span>
+<span class="kw">let</span> next <span class="op">=</span> <span class="at">set</span>(state<span class="op">,</span> [<span class="st">&#39;planets&#39;</span><span class="op">,</span> <span class="st">&#39;venus&#39;</span>]<span class="op">,</span> <span class="op">{</span> <span class="dt">color</span><span class="op">:</span> <span class="st">&#39;yellow&#39;</span> <span class="op">}</span>)
+<span class="va">console</span>.<span class="at">log</span>(state) <span class="co">// { planets: { venus, earth, mars } }</span>
+
+<span class="co">// Or a string keypath can be used to deeply assign a value</span>
+<span class="kw">let</span> next <span class="op">=</span> <span class="at">set</span>(state<span class="op">,</span> <span class="st">&#39;planet.venus&#39;</span><span class="op">,</span> <span class="op">{</span><span class="dt">color</span><span class="op">:</span> <span class="st">&#39;yellow&#39;</span> <span class="op">}</span>)
+<span class="va">console</span>.<span class="at">log</span>(state) <span class="co">// { planets: { venus, earth, mars } }</span>
+
+<span class="co">// If the value is the same, no change will occur</span>
+<span class="kw">let</span> next <span class="op">=</span> <span class="at">set</span>(state<span class="op">,</span> [<span class="st">&#39;planets&#39;</span><span class="op">,</span> <span class="st">&#39;earth&#39;</span><span class="op">,</span> <span class="st">&#39;color&#39;</span>]<span class="op">,</span> blue)
+<span class="va">console</span>.<span class="at">log</span>(next <span class="op">===</span> subject) <span class="co">// true</span></code></pre></div>
+<h3 id="updatetarget-key-processor-fallback">update(target, key, processor, fallback?)</h3>
+<p>Extract a value from a keypath, then call a function on that value and assign the result at the same point. This is useful for modifying values in-place:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> update <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+
+<span class="kw">let</span> state <span class="op">=</span> <span class="op">{</span>
+  population <span class="op">=</span> <span class="dv">7500000000</span>
+  <span class="dt">planets</span><span class="op">:</span> <span class="op">{</span>
+    <span class="dt">earth</span><span class="op">:</span> <span class="op">{</span> <span class="dt">mass</span><span class="op">:</span> <span class="dv">1</span> <span class="op">},</span>
+    <span class="dt">mercury</span><span class="op">:</span> <span class="op">{</span> <span class="dt">mass</span><span class="op">:</span> <span class="fl">0.055</span> <span class="op">},</span>
+    <span class="dt">jupiter</span><span class="op">:</span> <span class="op">{</span> <span class="dt">mass</span><span class="op">:</span> <span class="dv">316</span> <span class="op">},</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="co">// Pass a simple string key</span>
+<span class="kw">let</span> next <span class="op">=</span> <span class="at">update</span>(state<span class="op">,</span> <span class="st">&#39;population&#39;</span><span class="op">,</span> n <span class="op">=&gt;</span> n <span class="op">+</span> <span class="dv">1</span>)
+
+<span class="co">// An array of keys to update a deeply nested value</span>
+<span class="kw">let</span> next <span class="op">=</span> <span class="at">update</span>(state<span class="op">,</span> [<span class="st">&#39;planets&#39;</span><span class="op">,</span> <span class="st">&#39;jupiter&#39;</span><span class="op">,</span> <span class="st">&#39;mass&#39;</span>]<span class="op">,</span> n <span class="op">=&gt;</span> n <span class="op">+</span> <span class="dv">1</span>)
+
+<span class="co">// Or a string keypath can be used to do deeply nested updates</span>
+<span class="kw">let</span> next <span class="op">=</span> <span class="at">update</span>(state<span class="op">,</span> <span class="st">&#39;planets.jupiter.mass&#39;</span><span class="op">,</span> n <span class="op">=&gt;</span> n <span class="op">+</span> <span class="dv">1</span>)
+
+<span class="va">console</span>.<span class="at">log</span>(<span class="va">next</span>.<span class="at">population</span>) <span class="co">// 7500000001</span></code></pre></div>
+<p><code>update</code> also accepts a fallback value. If the provided keypath is missing, the processor function will be called with the fallback value:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> update <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+
+<span class="kw">let</span> votes <span class="op">=</span> <span class="op">{</span> <span class="dt">yay</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">nay</span><span class="op">:</span> <span class="dv">0</span> <span class="op">}</span>
+<span class="kw">let</span> next <span class="op">=</span> <span class="at">update</span>(votes<span class="op">,</span> <span class="st">&#39;undecided&#39;</span><span class="op">,</span> n <span class="op">=&gt;</span> n <span class="op">+</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">0</span>)
+
+<span class="va">console</span>.<span class="at">log</span>(next) <span class="co">// { yay: 0, nay: 0, undecided: 1 }</span></code></pre></div>
+<h3 id="mergeobjects">merge(…objects)</h3>
+<p>Non-destructively merge together the keys of any number of objects, starting from left to right. Returns a new object if any of the keys changed.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> merge <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;microcosm&#39;</span>
+
+<span class="kw">let</span> earth <span class="op">=</span> <span class="op">{</span> <span class="dt">color</span><span class="op">:</span> <span class="st">&#39;blue&#39;</span> <span class="op">}</span>
+
+<span class="co">// Folding in new values returns a new object</span>
+<span class="kw">let</span> newEarth <span class="op">=</span> <span class="at">merge</span>(earth<span class="op">,</span> <span class="op">{</span> <span class="dt">color</span><span class="op">:</span> <span class="st">&#39;azule&#39;</span> <span class="op">}</span>)
+<span class="va">console</span>.<span class="at">log</span>(newEarth) <span class="co">// { color: &#39;azule&#39; }</span>
+<span class="va">console</span>.<span class="at">log</span>(newEarth <span class="op">===</span> earth) <span class="co">// false</span>
+
+<span class="co">// Folding in the same values yields no change</span>
+<span class="kw">let</span> update <span class="op">=</span> <span class="at">merge</span>(earth<span class="op">,</span> <span class="op">{</span> <span class="dt">color</span><span class="op">:</span> <span class="st">&#39;blue&#39;</span> <span class="op">}</span>
+<span class="va">console</span>.<span class="at">log</span>(updated <span class="op">===</span> earth) <span class="co">// true</span></code></pre></div></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>

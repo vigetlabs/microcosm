@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Microcosm</title>
+
+    <meta property="og:title" content="Microcosm" />
+    <meta property="og:description" content="Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease."
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://code.viget.com/microcosm" />
+    <meta property="og:image" content="http://code.viget.com/microcosm/assets/microcosm-badge.png" />
+
+    <link rel="stylesheet" href="http://code.viget.com/microcosm/assets/style.css" />
+  </head>
+  <body>
+    <header class="header fill-bloom">
+      <div class="header__inner">
+        <a href="http://code.viget.com/microcosm">
+          <img src="http://code.viget.com/microcosm/assets/microcosm-white.svg" alt="Microcosm" height="24" width="207" />
+        </a>
+
+        <nav class="nav">
+          <a href="http://code.viget.com/microcosm/api/">API</a>
+          <a href="http://code.viget.com/microcosm/guides/quickstart.html">Guides</a>
+          <a href="https://github.com/vigetlabs/microcosm">Github</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main -with-sidebar">
+      <aside class="sidebar">
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/guides/">
+              Guides
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/guides/quickstart.html">Quickstart</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/installation.html">Installation</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/architecture.html">Architecture</a></li>
+            <li><a href="http://code.viget.com/microcosm/guides/contributing.html">Contributing</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/">
+              API
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/microcosm.html">Microcosm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/actions.html">Actions</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/history.html">History</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/immutability-helpers.html">Immutability Helpers</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/api/#addons">
+              Addons
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/api/presenter.html">Presenter</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-form.html">ActionForm</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/action-button.html">ActionButton</a></li>
+            <li><a href="http://code.viget.com/microcosm/api/with-send.html">withSend</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/testing/">
+              Testing
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/testing/overview.html">Overview</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/domains.html">Domains</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/effects.html">Effects</a></li>
+            <li><a href="http://code.viget.com/microcosm/testing/presenters.html">Presenters</a></li>
+          </ul>
+        </section>
+        <section class="sidebar__group">
+          <h4 class="sidebar__heading">
+            <a href="http://code.viget.com/microcosm/recipes/">
+              Recipes
+            </a>
+          </h4>
+          <ul>
+            <li><a href="http://code.viget.com/microcosm/recipes/ajax.html">AJAX</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/react-router.html">React Router</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/preact.html">Preact</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/hydrating-state.html">Hydrating State</a></li>
+            <li><a href="http://code.viget.com/microcosm/recipes/batch-updates.html">Batch Updates</a></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content"><h1 id="actions">Actions</h1>
+<ol style="list-style-type: decimal">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#writing-action-creators">Writing Action Creators</a></li>
+<li><a href="#dispatching-to-domains">Dispatching to Domains</a></li>
+<li><a href="#how-this-works">How this works</a></li>
+<li><a href="#api">API</a></li>
+</ol>
+<h2 id="overview">Overview</h2>
+<p>Microcosm uses actions to queue up some task and track its progress. Actions are ultimately dispatched to domains and effects for additional processing. Use actions to send requests to a server, or dispatch a global notification that some user action has occurred.</p>
+<p>Create an action by executing <code>Microcosm::push</code> with a function that performs some type of work. We call this function an <em>action creator</em>.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// axios is an AJAX library</span>
+<span class="co">// https://github.com/mzabriskie/axios</span>
+<span class="im">import</span> axios <span class="im">from</span> <span class="st">&#39;axios&#39;</span>
+
+<span class="kw">const</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>()
+
+<span class="kw">function</span> <span class="at">createPlanet</span> (data) <span class="op">{</span>
+  <span class="co">// This will return a promise, which Microcosm automatically</span>
+  <span class="co">// understands. Read further for more details.</span>
+  <span class="cf">return</span> <span class="va">axios</span>.<span class="at">post</span>(<span class="st">&#39;/planets&#39;</span><span class="op">,</span> data)
+<span class="op">}</span>
+
+<span class="kw">const</span> action <span class="op">=</span> <span class="va">repo</span>.<span class="at">push</span>(createPlanet<span class="op">,</span> <span class="op">{</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&#39;Venus&#39;</span> <span class="op">}</span>)
+
+<span class="va">action</span>.<span class="at">onDone</span>(<span class="kw">function</span> () <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&#39;All done!&#39;</span>)
+<span class="op">}</span>)</code></pre></div>
+<p>An action moves through several states:</p>
+<ol style="list-style-type: decimal">
+<li><code>open</code>: Indicates work has started.</li>
+<li><code>loading</code>: Used for progress updates.</li>
+<li><code>done</code>: The action has completed successfully.</li>
+<li><code>error</code>: The action has failed.</li>
+<li><code>cancelled</code>: Useful tracking aborted XHR requests or closed dialog modals.</li>
+</ol>
+<p>You can access these states with varying degrees of control depending on how you author action creators.</p>
+<h2 id="writing-action-creators">Writing Action Creators</h2>
+<p>There are four ways to write action creators in Microcosm, all of which relate to the value returned from functions passed into <code>repo.push()</code>.</p>
+<h3 id="return-a-primitive-value">Return a primitive value</h3>
+<p>Action creators that return a primitive value resolve immediately:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">addPlanet</span> (props) <span class="op">{</span>
+  <span class="cf">return</span> props
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">push</span>(addPlanet<span class="op">,</span> <span class="op">{</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&#39;Saturn&#39;</span> <span class="op">}</span>)</code></pre></div>
+<h3 id="return-a-promise">Return a promise</h3>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> axios <span class="im">from</span> <span class="st">&#39;axios&#39;</span>
+
+<span class="kw">function</span> <span class="at">getPlanet</span> (id) <span class="op">{</span>
+  <span class="co">// Any promise-based AJAX library will do. We like axios</span>
+  <span class="cf">return</span> <span class="at">axios</span>(<span class="vs">`/planets/</span><span class="sc">${</span>id<span class="sc">}</span><span class="vs">`</span>)
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">push</span>(getPlanet<span class="op">,</span> <span class="st">&#39;mars&#39;</span>)</code></pre></div>
+<p>When returning a Promise:</p>
+<ol style="list-style-type: decimal">
+<li>The action is opened with the first argument of the parameters passed to <code>repo.push</code>. In this case: <code>'mars'</code></li>
+<li>When the request finishes, the action is resolved with the payload passed into the Promise’s resolve callback</li>
+<li>If the request fails, the action is rejected with whatever error was passed with the Promise’s reject callback</li>
+</ol>
+<h3 id="return-a-function">Return a function</h3>
+<p>Action creators that return functions grant full access to the action that represents it. If we were to write a lower level version of the Promise example earlier:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">readPlanets</span> () <span class="op">{</span>
+  <span class="cf">return</span> <span class="kw">function</span> (action) <span class="op">{</span>
+    <span class="va">action</span>.<span class="at">open</span>()
+
+    <span class="kw">const</span> xhr <span class="op">=</span> <span class="kw">new</span> <span class="at">XMLHttpRequest</span>()
+
+    <span class="va">xhr</span>.<span class="at">open</span>(<span class="st">&#39;GET&#39;</span><span class="op">,</span> <span class="st">&#39;/planets&#39;</span>)
+    <span class="va">xhr</span>.<span class="at">setRequestHeader</span>(<span class="st">&#39;Content-Type&#39;</span><span class="op">,</span> <span class="st">&#39;application/json&#39;</span>)
+
+    <span class="va">xhr</span>.<span class="at">addEventListener</span>(<span class="st">&#39;load&#39;</span><span class="op">,</span> <span class="kw">function</span> () <span class="op">{</span>
+      <span class="va">action</span>.<span class="at">resolve</span>(<span class="va">JSON</span>.<span class="at">parse</span>(<span class="va">xhr</span>.<span class="at">responseText</span>))
+    <span class="op">}</span>)
+
+    <span class="va">xhr</span>.<span class="at">addEventListener</span>(<span class="st">&#39;error&#39;</span><span class="op">,</span> <span class="kw">function</span> () <span class="op">{</span>
+      <span class="va">action</span>.<span class="at">reject</span>(<span class="op">{</span> <span class="dt">status</span><span class="op">:</span> <span class="va">xhr</span>.<span class="at">status</span> <span class="op">}</span>)
+    <span class="op">}</span>)
+
+    <span class="va">xhr</span>.<span class="at">send</span>()
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">push</span>(readPlanets)</code></pre></div>
+<p><strong>Heads up:</strong> Sometimes you want an action to return a function that isn’t executed as a thunk. If you pass a function as an action argument and return that function in the action body, Microcosm <em>will not</em> treat this as a thunk.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">noThunk</span>(fn) <span class="op">{</span>
+  <span class="cf">return</span> fn <span class="co">// will not be called as a thunk by Microcosm</span>
+<span class="op">}</span></code></pre></div>
+<p>If you need to return a function from an action body consider wrapping it in a thunk:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">actionReturnsFunction</span> () <span class="op">{</span>
+  <span class="cf">return</span> <span class="kw">function</span> (action) <span class="op">{</span>
+    <span class="va">action</span>.<span class="at">resolve</span>(x <span class="op">=&gt;</span> x) <span class="co">// the action&#39;s payload will be this inner function</span>
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p>Alternatively, if you want Microcosm to treat your function action argument as a thunk, you can wrap it in an anonymous function first.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">maybeThunk</span>(thunkFn<span class="op">,</span> shouldThunk) <span class="op">{</span>
+  <span class="cf">if</span> (shouldThunk) <span class="op">{</span>
+    <span class="cf">return</span> (action<span class="op">,</span> repo) <span class="op">=&gt;</span> <span class="at">thunkFn</span>(action<span class="op">,</span> repo)
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h3 id="return-a-generator">Return a generator</h3>
+<p><strong>Heads up:</strong> Generators are a new feature included in the JS2015 language specification, which does not have wide support. To get around this, we recommend using <a href="https://babeljs.io">Babel</a> with the <a href="https://github.com/facebook/regenerator">regenerator</a> polyfill available through <a href="https://babeljs.io/docs/usage/polyfill/">babel-polyfill</a>.</p>
+<p>Often times we need to dispatch multiple actions in sequential order. For example, what if we want to ask the user to confirm their action before deleting a record?</p>
+<p>This can be accomplished by using a generator:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">ask</span> (message) <span class="op">{</span>
+  <span class="cf">return</span> action <span class="op">=&gt;</span> <span class="op">{</span>
+    <span class="cf">if</span> (<span class="at">confirm</span>(message)) <span class="op">{</span>
+      <span class="va">action</span>.<span class="at">resolve</span>()
+    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
+      <span class="va">action</span>.<span class="at">reject</span>()
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">function</span> <span class="at">deleteUser</span> (id) <span class="op">{</span>
+  <span class="cf">return</span> <span class="va">axios</span>.<span class="at">delete</span>(<span class="st">&#39;/users/${id}&#39;</span>)
+<span class="op">}</span>
+
+<span class="kw">function</span> <span class="at">confirmAndDelete</span> (user) <span class="op">{</span>
+  <span class="cf">return</span> <span class="kw">function</span> <span class="op">*</span> (repo) <span class="op">{</span>
+    <span class="kw">yield</span> <span class="va">repo</span>.<span class="at">push</span>(ask<span class="op">,</span> <span class="vs">`Are you sure you want to delete </span><span class="sc">${</span><span class="va">user</span>.<span class="at">name</span><span class="sc">}</span><span class="vs">?`</span>)
+    <span class="kw">yield</span> <span class="va">repo</span>.<span class="at">push</span>(deleteUser<span class="op">,</span> <span class="va">user</span>.<span class="at">id</span>)
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<p>Each <code>yield</code> in the generator processes sequentially. A parent action is returned from <code>repo.push()</code> to represent the entire sequence. If any action is cancelled or rejected along the way, the parent action is rejected or cancelled with the same payload.</p>
+<p>When all steps of the generator complete, the payload of the parent action will be the resolved payload of the final action.</p>
+<h4 id="yielding-actions-in-parallel">Yielding Actions in Parallel</h4>
+<p>By yielding an array of actions, you can wait for multiple actions to complete before continuing:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">getUser</span> (id) <span class="op">{</span>
+  <span class="cf">return</span> <span class="at">fetch</span>(<span class="vs">`/users/</span><span class="sc">${</span>id<span class="sc">}</span><span class="vs">`</span>)
+<span class="op">}</span>
+
+<span class="kw">function</span> <span class="at">getUsers</span> (ids) <span class="op">{</span>
+  <span class="cf">return</span> <span class="kw">function</span> <span class="op">*</span> (repo) <span class="op">{</span>
+    <span class="kw">yield</span> <span class="va">ids</span>.<span class="at">map</span>(id <span class="op">=&gt;</span> <span class="va">repo</span>.<span class="at">push</span>(getUser<span class="op">,</span> id))
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">push</span>(getUsers<span class="op">,</span> [ <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span> ])</code></pre></div>
+<p>Alternatively, you may also yield an object, this is useful for stitching together records that may have data at different locations:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">getPost</span> (id) <span class="op">{</span>
+  <span class="cf">return</span> <span class="at">fetch</span>(<span class="vs">`/posts/</span><span class="sc">${</span>id<span class="sc">}</span><span class="vs">`</span>)
+<span class="op">}</span>
+
+<span class="kw">function</span> <span class="at">getComments</span> (id) <span class="op">{</span>
+  <span class="cf">return</span> <span class="at">fetch</span>(<span class="vs">`/posts/</span><span class="sc">${</span>id<span class="sc">}</span><span class="vs">/comments`</span>)
+<span class="op">}</span>
+
+<span class="kw">function</span> <span class="at">getPostWithComments</span> (id) <span class="op">{</span>
+  <span class="cf">return</span> <span class="kw">function</span> <span class="op">*</span> (repo) <span class="op">{</span>
+    <span class="kw">let</span> <span class="op">{</span> post<span class="op">,</span> comments <span class="op">}</span> <span class="op">=</span> <span class="kw">yield</span> <span class="op">{</span>
+      <span class="dt">post</span><span class="op">:</span> <span class="va">repo</span>.<span class="at">push</span>(getPost<span class="op">,</span> id)<span class="op">,</span>
+      <span class="dt">comments</span><span class="op">:</span> <span class="va">repo</span>.<span class="at">push</span>(getComments<span class="op">,</span> id)
+    <span class="op">}</span>
+    
+    <span class="va">post</span>.<span class="at">comments</span> <span class="op">=</span> comments
+
+    <span class="cf">return</span> post
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">push</span>(getPostWithComments<span class="op">,</span> <span class="dv">1</span>)</code></pre></div>
+<p>If all actions resolve or cancel, the generator sequence continues.</p>
+<h3 id="action-status-methods-are-auto-bound">Action status methods are auto-bound</h3>
+<p>Action status methods like <code>action.resolve()</code> and <code>action.reject()</code> are auto-bound. They can be passed directly into a callback without needing to wrap them in an anonymous function.</p>
+<p>This is particularly useful when working with AJAX libraries. For example, when working with <code>superagent</code>:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> superagent <span class="im">from</span> <span class="st">&#39;superagent&#39;</span>
+
+<span class="kw">function</span> <span class="at">getPlanets</span> () <span class="op">{</span>
+  <span class="cf">return</span> action <span class="op">=&gt;</span> <span class="op">{</span>
+    <span class="kw">let</span> request <span class="op">=</span> <span class="va">superagent</span>.<span class="at">get</span>(<span class="st">&#39;/planets&#39;</span>)
+
+    <span class="va">request</span>.<span class="at">on</span>(<span class="st">&#39;request&#39;</span><span class="op">,</span> <span class="va">action</span>.<span class="at">open</span>)
+    <span class="va">request</span>.<span class="at">on</span>(<span class="st">&#39;progress&#39;</span><span class="op">,</span> <span class="va">action</span>.<span class="at">update</span>)
+    <span class="va">request</span>.<span class="at">on</span>(<span class="st">&#39;abort&#39;</span><span class="op">,</span> <span class="va">action</span>.<span class="at">cancel</span>)
+
+    <span class="va">request</span>.<span class="at">then</span>(<span class="va">action</span>.<span class="at">resolve</span><span class="op">,</span> <span class="va">action</span>.<span class="at">reject</span>)
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h2 id="dispatching-to-domains">Dispatching to Domains</h2>
+<p>One of the differences between Microcosm and other Flux implementations is the dispatch process. Sending actions to domains is handled by Microcosm. Instead of dispatching <code>ACTION_LOADING</code> or <code>ACTION_FAILED</code>, actions go through various states as they resolve. You can subscribe to these states within domains like:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// A sample domain that subscribes to every action state</span>
+<span class="kw">const</span> SolarSystem <span class="op">=</span> <span class="op">{</span>
+
+  <span class="co">// ... Other domain methods</span>
+
+  <span class="at">register</span>() <span class="op">{</span>
+    <span class="cf">return</span> <span class="op">{</span>
+      [getPlanet]<span class="op">:</span> <span class="op">{</span>
+        <span class="dt">open   </span><span class="op">:</span> <span class="kw">this</span>.<span class="at">setLoading</span><span class="op">,</span>
+        <span class="dt">update </span><span class="op">:</span> <span class="kw">this</span>.<span class="at">setProgress</span><span class="op">,</span>
+        <span class="dt">done   </span><span class="op">:</span> <span class="kw">this</span>.<span class="at">addPlanet</span><span class="op">,</span>
+        <span class="dt">error  </span><span class="op">:</span> <span class="kw">this</span>.<span class="at">setError</span><span class="op">,</span>
+        <span class="dt">cancel </span><span class="op">:</span> <span class="kw">this</span>.<span class="at">setCancelled</span>
+      <span class="op">}</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h2 id="how-this-works">How this works</h2>
+<p>Whenever <code>repo.push()</code> is invoked, Microcosm creates a new <code>Action</code> object, appending it to a ledger of all actions. As the state of an action changes, the associated microcosm will run through all outstanding actions to determine the next state.</p>
+<p>By default, Microcosm will only hold on to unresolved actions. This can be extended by setting the <code>maxHistory</code> setting when creating a Microcosm:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> repo <span class="op">=</span> <span class="kw">new</span> <span class="at">Microcosm</span>(<span class="op">{</span> <span class="dt">maxHistory</span><span class="op">:</span> <span class="dv">100</span> <span class="op">}</span>)</code></pre></div>
+<p>This is useful for debugging purposes, or to implement undo/redo behavior.</p>
+<h2 id="api">API</h2>
+<h3 id="ondonecallback-scope"><code>onDone(callback, [scope])</code></h3>
+<p>Add a one-time event subscription for when the action resolves successfully. If the action is already resolved, it will immediately execute.</p>
+<h3 id="onerrorcallback-scope"><code>onError(callback, [scope])</code></h3>
+<p>Add a one-time event subscription for when the action is rejected. If the action has already failed, it will immediately execute.</p>
+<h3 id="onupdatecallback-scope"><code>onUpdate(callback, [scope])</code></h3>
+<p>Listen for progress updates from an action as it loads. For example:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">wait</span> () <span class="op">{</span>
+
+  <span class="cf">return</span> <span class="kw">function</span> (action) <span class="op">{</span>
+    <span class="va">action</span>.<span class="at">open</span>()
+    <span class="at">setTimeout</span>(() <span class="op">=&gt;</span> <span class="va">action</span>.<span class="at">update</span>(<span class="dv">25</span>)<span class="op">,</span> <span class="dv">500</span>)
+    <span class="at">setTimeout</span>(() <span class="op">=&gt;</span> <span class="va">action</span>.<span class="at">update</span>(<span class="dv">50</span>)<span class="op">,</span> <span class="dv">1000</span>)
+    <span class="at">setTimeout</span>(() <span class="op">=&gt;</span> <span class="va">action</span>.<span class="at">update</span>(<span class="dv">75</span>)<span class="op">,</span> <span class="dv">1500</span>)
+    <span class="at">setTimeout</span>(() <span class="op">=&gt;</span> <span class="va">action</span>.<span class="at">resolve</span>(<span class="dv">100</span>)<span class="op">,</span> <span class="dv">1000</span>)
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="va">repo</span>.<span class="at">push</span>(wait).<span class="at">onUpdate</span>(<span class="kw">function</span> (payload) <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(payload) <span class="co">// 25...50...75</span>
+<span class="op">}</span>)</code></pre></div>
+<p>An important note here is that <code>onUpdate</code> does not trigger when an action completes.</p>
+<h3 id="oncancelcallback-scope"><code>onCancel(callback, [scope])</code></h3>
+<p>Add a one-time event subscription for when the action is cancelled. If the action has already been cancelled, it will immediately execute.</p>
+<h3 id="thenresolve-reject"><code>then(resolve, reject)</code></h3>
+<p>Return a promisified version of the action. This is useful for interop with <code>async/await</code>, or working with testing tools like <code>ava</code> or <code>mocha</code>.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> result <span class="op">=</span> await <span class="va">repo</span>.<span class="at">push</span>(promiseAction)
+
+<span class="co">// or</span>
+<span class="va">repo</span>.<span class="at">push</span>(promiseAction).<span class="at">then</span>(success<span class="op">,</span> failure)</code></pre></div>
+<h3 id="openpayload"><code>open([payload])</code></h3>
+<p>Elevate an action into the <code>open</code> state and optional update the payload. Domains registered to <code>action.open</code> will pick up on an action within this state.</p>
+<h3 id="updatepayload"><code>update([payload])</code></h3>
+<p>Send a progress update. This will move an action into the <code>loading</code> state and optional update the payload. Domains registered to <code>action.loading</code> will pick up on an action within this state.</p>
+<h3 id="rejectpayload"><code>reject([payload])</code></h3>
+<p>Reject an action. This will move an action into the <code>error</code> state and optional update the payload. Domains registered to <code>action.error</code> will pick up on an action within this state.</p>
+<h3 id="resolvepayload"><code>resolve([payload])</code></h3>
+<p>Resolve an action. This will move an action into the <code>done</code> state and optional update the payload. Domains registered to <code>action</code> or <code>action.done</code> will pick up on an action within this state.</p>
+<h3 id="cancel"><code>cancel()</code></h3>
+<p>Cancel an action. This is useful for handling cases such as aborting ajax requests. Moves an action into the <code>cancelled</code>. Domains registered to <code>action.cancelled</code> will pick up on an action within this state.</p></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <nav class="footer__left">
+          <a href="https://www.npmjs.com/package/microcosm">
+            <img src="https://img.shields.io/npm/v/microcosm.svg?style=flat-square" alt="View package on NPM" />
+          </a>
+          <a href="http://code.viget.com/microcosm/changelog.html">Changelog</a>
+          <a href="https://github.com/vigetlabs/microcosm">Source</a>
+        </nav>
+        <div class="footer__right">
+          Built with patience and time by <a href="https://viget.com">●° Viget</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        function checkActiveLinks () {
+          var location = window.location.toString()
+
+          for (var i = 0; i < document.links.length; i++) {
+            if (document.links[i].href === location) {
+              document.links[i].classList.add('active')
+            }
+          }
+        }
+
+        checkActiveLinks()
+
+        window.addEventListener('hashchange', checkActiveLinks)
+      }())
+    </script>
+  </body>
+</html>
