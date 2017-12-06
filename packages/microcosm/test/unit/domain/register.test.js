@@ -8,7 +8,7 @@ describe('Domain::register', function() {
 
     let repo = new Microcosm()
 
-    repo.addDomain('test', {
+    repo.domains.add('test', {
       test: true,
 
       register() {
@@ -23,10 +23,39 @@ describe('Domain::register', function() {
     repo.push(action, true)
   })
 
+  it('gets initial state', function() {
+    let repo = new Microcosm()
+
+    repo.domains.add('test', {
+      getInitialState: () => 0
+    })
+
+
+    expect(repo.state).toEqual({ test: 0 })
+  })
+
+  it('counts', function() {
+    let repo = new Microcosm()
+
+    repo.domains.add('test', {
+      getInitialState: () => 0,
+      register() {
+        return {
+          add: (a, b) => a + b
+        }
+      }
+    })
+
+    repo.push('add', 1)
+    repo.push('add', 1)
+
+    expect(repo.state.test).toBe(2)
+  })
+
   it('returns the same state if a handler is not provided', async () => {
     let repo = new Microcosm()
 
-    repo.addDomain('test', {
+    repo.domains.add('test', {
       getInitialState() {
         return 'test'
       }
@@ -42,14 +71,14 @@ describe('Domain::register', function() {
       let repo = new Microcosm()
       let handler = jest.fn()
 
-      let domain = repo.addDomain('test', {
+      let domain = repo.domains.add('test', {
         register() {
           return {
             [action]: {
               start: handler,
               next: handler,
-              complete: handler,
               error: handler,
+              complete: handler,
               cancel: handler
             }
           }

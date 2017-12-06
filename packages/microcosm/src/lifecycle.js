@@ -21,8 +21,8 @@ export const RESET = tag(sandbox.bind(null), '$reset')
 
 export const PATCH = tag(sandbox.bind(null), '$patch')
 
-export const INITIAL_STATE = tag('$initialState')
+export const INITIAL_STATE = '$initialState'
 
-export const SERIALIZE = tag('$serialize')
+export const SERIALIZE = '$serialize'
 
-export const DESERIALIZE = tag('$deserialize')
+export const DESERIALIZE = '$deserialize'

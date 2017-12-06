@@ -7,7 +7,7 @@ import Microcosm, { Action, tag, get, result, getRegistration } from '../index'
 declare var expect: any
 
 expect.extend({
-  toRegister(entity, command, status = 'done') {
+  toRegister(entity, command, status = 'complete') {
     let tagged = tag(command)
     let name = tagged.toString()
 
@@ -19,7 +19,7 @@ expect.extend({
     let registry = result(entity, 'register')
 
     return {
-      pass: getRegistration(registry, command, status).length > 0,
+      pass: getRegistration(registry, { command, status }).length > 0,
       message: () => {
         return `Expected entity ${operator} register to the '${
           status

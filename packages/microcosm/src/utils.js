@@ -3,9 +3,9 @@
  */
 
 import { Observable } from './observable'
-import type Microcosm from './microcosm'
 import { castPath, type KeyPath } from './key-path'
-import { toStringTag } from './symbols'
+
+import type Microcosm from './microcosm'
 
 type MixedObject = { [key: string]: mixed }
 
@@ -151,6 +151,10 @@ export function isObject(target: *): boolean {
   return !(!target || typeof target !== 'object')
 }
 
+export function isPlainObject(value: *): boolean {
+  return !Array.isArray(value) && isObject(value)
+}
+
 /**
  * Is a value a POJO?
  */
@@ -167,27 +171,6 @@ export function isFunction(target: any): boolean {
 
 export function isBlank(value: any): boolean {
   return value === '' || value === null || value === undefined
-}
-
-/**
- * Get the toStringTag symbol out of an object, with
- * some legacy support.
- */
-/* istanbul ignore next */
-export function getStringTag(value: any): string {
-  if (!value) {
-    return ''
-  }
-
-  return value[toStringTag] || ''
-}
-
-/**
- * Is the provided value a generator function? This is largely
- * informed by the regenerator runtime.
- */
-export function isGeneratorFn(value: any): boolean {
-  return getStringTag(value) === 'GeneratorFunction'
 }
 
 export function createOrClone(target: any, options: ?Object, repo: Microcosm) {
@@ -227,26 +210,4 @@ export function result(target: *, keyPath: string | KeyPath): * {
   }
 
   return value
-}
-
-/**
- * Resolve an array of object of observables, preserving the
- * original shape/order.
- */
-const updatePair = (pair, value) => {
-  pair[1] = value
-  return pair
-}
-
-const assignPair = (state, pair) => set(state, pair)
-
-export function observerHash(obj) {
-  let jobs = Observable.of(...Object.keys(obj))
-  let shape = Array.isArray(obj) ? [] : {}
-
-  let pairs = jobs.flatMap(key => {
-    return obj[key].reduce(updatePair, [key, null])
-  })
-
-  return pairs.reduce(assignPair, shape)
 }

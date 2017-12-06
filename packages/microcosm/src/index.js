@@ -1,4 +1,5 @@
 import { Observable } from './observable'
+import Subject from './subject'
 import History from './history'
 import Microcosm from './microcosm'
 import getRegistration from './get-registration'
@@ -11,6 +12,7 @@ export {
   Microcosm,
   History,
   Observable,
+  Subject,
   tag,
   get,
   set,

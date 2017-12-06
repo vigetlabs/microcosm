@@ -11,7 +11,6 @@
  * timeout such that a user never waits longer than 36 milliseconds
  * for an update.
  *
- * @private
  * @flow
  */
 

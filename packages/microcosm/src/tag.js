@@ -29,15 +29,10 @@ export default function tag(fn: string | Command, name?: string): Command {
    * Function.name lacks legacy support. For these browsers, fallback
    * to a consistent name:
    */
-  const symbol = name || (fn.name || FALLBACK) + '.' + uid
+  const symbol = name || (fn.name || FALLBACK) + '-' + uid
 
   // Cast fn to keep Flow happy
   let cast: Tagged = fn
-
-  cast.start = symbol + '.start'
-  cast.next = symbol + '.next'
-  cast.error = symbol + '.error'
-  cast.complete = symbol // intentional for string actions
 
   // The default state is done
   cast.toString = () => symbol

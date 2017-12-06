@@ -8,8 +8,11 @@ import DomainEngine from './domain-engine'
 import EffectEngine from './effect-engine'
 import installDevtools from './install-devtools'
 import tag from './tag'
-import { merge, clone } from './utils'
+import { get, merge, clone } from './utils'
 import { version } from '../package.json'
+import { INITIAL_STATE, DESERIALIZE, SERIALIZE } from './lifecycle'
+import { COMPLETE } from './status'
+import { register } from './registry'
 
 const DEFAULTS = {
   debug: false,
@@ -23,10 +26,10 @@ class Microcosm extends Subject {
   parent: ?Microcosm
   history: History
   options: Object
+  domains: DomainEngine
+  effects: EffectEngine
 
   _snapshots: Object
-  _domains: DomainEngine
-  _effects: EffectEngine
 
   constructor(preOptions?: ?Object) {
     super()
@@ -37,8 +40,8 @@ class Microcosm extends Subject {
     this.history = this.parent ? this.parent.history : new History(this.options)
 
     this._snapshots = {}
-    this._domains = new DomainEngine(this)
-    this._effects = new EffectEngine(this)
+    this.domains = new DomainEngine(this)
+    this.effects = new EffectEngine(this)
 
     this.subscribe({
       start: () => this.setup(this.options),
@@ -46,14 +49,8 @@ class Microcosm extends Subject {
     })
 
     // A history is done reconciling and is ready for a release
-    this.history.releases.subscribe(() => {
-      this.observer.next(this.state)
-    })
-
-    this.history.updates.subscribe(next => {
-      this._updateSnapshotRange(next)
-      this._effects.dispatch(next)
-    })
+    this.history.releases.subscribe(() => this.observer.next(this.state))
+    this.history.updates.subscribe(next => this._updateSnapshotRange(next))
 
     if (this.options.debug) {
       installDevtools(this)
@@ -61,7 +58,19 @@ class Microcosm extends Subject {
   }
 
   get state(): Object {
-    return this._snapshots[this.history.head] || this.getInitialState()
+    return this.recall(this.history.head)
+  }
+
+  recall(id) {
+    if (id in this._snapshots) {
+      return this._snapshots[id]
+    }
+
+    let state = this.getInitialState()
+
+    this._snapshots[id] = state
+
+    return state
   }
 
   setup(options?: Object) {
@@ -73,21 +82,17 @@ class Microcosm extends Subject {
   }
 
   getInitialState() {
-    let state = this._domains.getInitialState()
-
-    return this.parent ? merge(this.parent.getInitialState(), state) : state
+    return this.domains.dispatch(
+      {
+        status: COMPLETE,
+        command: INITIAL_STATE
+      },
+      {}
+    )
   }
 
   push(command: any, ...params: *[]): Action {
     return this.history.append(command, params, this)
-  }
-
-  addDomain(key: string, config: *, options?: Object) {
-    return this._domains.add(key, config, options)
-  }
-
-  addEffect(config: *, options?: Object) {
-    return this._effects.add(config, options)
   }
 
   deserialize(payload: string | Object) {
@@ -101,13 +106,31 @@ class Microcosm extends Subject {
       base = merge(base, this.parent.deserialize(base))
     }
 
-    return clone(this._domains.deserialize(base))
+    let data = this.domains.dispatch(
+      {
+        status: COMPLETE,
+        command: DESERIALIZE,
+        payload: null
+      },
+      base
+    )
+
+    return clone(data)
   }
 
   toJSON() {
     let base = this.parent ? this.parent.toJSON() : null
 
-    return merge(this._domains.serialize(this.state), base)
+    let json = this.domains.dispatch(
+      {
+        status: COMPLETE,
+        command: SERIALIZE,
+        payload: null
+      },
+      this.state
+    )
+
+    return merge(json, base)
   }
 
   fork() {
@@ -116,47 +139,38 @@ class Microcosm extends Subject {
     })
   }
 
+  addDomain() {
+    return this.domains.add(...arguments)
+  }
+
+  addEffect() {
+    return this.effects.add(...arguments)
+  }
+
   /* Private ------------------------------------------------------ */
 
   _update(action) {
-    let state =
-      this._snapshots[this.history.before(action)] || this.getInitialState()
-
-    if (this.parent) {
-      state = merge(state, this.parent.state)
-    }
+    let state = this.recall(this.history.before(action.id))
 
     while (action) {
-      state = this._domains.dispatch(action, state)
+      state = this.domains.dispatch(action, state)
 
-      this._snapshots[action] = state
+      this._snapshots[action.id] = state
 
       if (this.history.end(action)) {
         break
       }
 
-      action = this.history.after(action)
+      action = this.history.after(action.id)
     }
   }
 
-  _updateSnapshotRange({ id, action, command }) {
-    let payload = null
+  _updateSnapshotRange(entry) {
+    let action = register(entry)
 
-    action.subscribe({
-      start: () => {
-        this._update({ id, status: 'start', command, payload })
-      },
-      next: value => {
-        payload = value
-        this._update({ id, status: 'next', command, payload })
-      },
-      complete: () => {
-        this._update({ id, status: 'complete', command, payload })
-      },
-      error: () => {
-        payload = error
-        this._update({ id, status: 'error', command, payload })
-      }
+    action.subscribe(revision => {
+      this._update(revision)
+      this.effects.dispatch(next)
     })
   }
 }

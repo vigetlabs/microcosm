@@ -12,9 +12,6 @@ import {
   SERIALIZE
 } from './lifecycle'
 
-import type Action from './action'
-import type Microcosm from './microcosm'
-
 type DomainList = { [key: string]: Domain }
 
 const noop = () => {}
@@ -49,36 +46,25 @@ class DomainEngine {
       [DESERIALIZE]: [],
       [SERIALIZE]: []
     }
-
-    this.registry = Object.create(this.lifecycle)
   }
 
   getHandlers(action: Action): Registrations {
-    let { command, status } = action
-
-    let handlers = []
+    let handlers = this.lifecycle[action.command] || []
 
     for (var key in this.domains) {
-      var scope = this.domains[key]
+      var domain = this.domains[key]
 
-      let steps = getRegistration(result(scope, 'register'), command, status)
-
-      if (steps.length) {
-        handlers.push({ key, scope, steps, local: false })
+      if (domain.register) {
+        handlers.push({
+          key: key,
+          scope: domain,
+          steps: getRegistration(domain.register(), action),
+          local: false
+        })
       }
     }
 
     return handlers
-  }
-
-  register(action: Action): Registrations {
-    let type = action.command[action.status]
-
-    if (!this.registry[type]) {
-      this.registry[type] = this.getHandlers(action)
-    }
-
-    return this.registry[type]
   }
 
   add(key: string, config: *, options?: Object) {
@@ -148,9 +134,7 @@ class DomainEngine {
       ]
     })
 
-    this.registry = Object.create(this.lifecycle)
-
-    this.repo.observable.subscribe({
+    this.repo.subscribe({
       start: () => {
         if (domain.setup) {
           domain.setup(this.repo, deepOptions)
@@ -167,8 +151,8 @@ class DomainEngine {
   }
 
   dispatch(action: Action, state: Object) {
-    let handlers = this.register(action)
-    let answer = Object.create(state)
+    let answer = state
+    let handlers = this.getHandlers(action)
 
     for (var i = 0; i < handlers.length; i++) {
       var { local, key, scope, steps } = handlers[i]
@@ -180,23 +164,15 @@ class DomainEngine {
       let next = reduce(steps, action.payload, answer[key], scope)
 
       if (next !== answer[key]) {
+        if (answer === state) {
+          answer = Object.create(state)
+        }
+
         answer[key] = next
       }
     }
 
     return answer
-  }
-
-  getInitialState(): Object {
-    return this.dispatch(
-      {
-        origin: this.repo,
-        status: 'complete',
-        command: INITIAL_STATE,
-        payload: null
-      },
-      {}
-    )
   }
 }
 

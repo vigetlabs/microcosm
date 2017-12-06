@@ -90,6 +90,11 @@ class Subject {
     send(this._observers, 'complete', value)
   }
 
+  cancel(value) {
+    this.closed = true
+    send(this._observers, 'cancel', value)
+  }
+
   valueOf() {
     return this._value
   }

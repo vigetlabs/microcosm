@@ -14,7 +14,7 @@ describe('Effect::register', function() {
       }
     }
 
-    repo.addEffect(Effect)
+    repo.effects.add(Effect)
 
     repo.push(test, true)
 
@@ -38,7 +38,7 @@ describe('Effect::register', function() {
       }
     }
 
-    repo.addEffect(Effect)
+    repo.effects.add(Effect)
 
     repo.push(test, true)
 
@@ -50,7 +50,7 @@ describe('Effect::register', function() {
     const test = n => new Promise(resolve => setTimeout(resolve, n))
     const handler = jest.fn()
 
-    repo.addEffect({
+    repo.effects.add({
       register() {
         return {
           [test]: handler
@@ -65,7 +65,7 @@ describe('Effect::register', function() {
 
   it('does not need to register', function() {
     const repo = new Microcosm()
-    repo.addEffect({})
+    repo.effects.add({})
     repo.push(n => n)
   })
 
@@ -78,7 +78,7 @@ describe('Effect::register', function() {
       }
     }
 
-    repo.addEffect(Effect)
+    repo.effects.add(Effect)
 
     repo.push('missing', true)
   })
@@ -89,7 +89,7 @@ describe('Effect::register', function() {
     const repo = new Microcosm()
     const test = n => n
 
-    repo.addDomain('test', {
+    repo.domains.add('test', {
       getInitialState() {
         return false
       },
@@ -111,7 +111,7 @@ describe('Effect::register', function() {
       }
     }
 
-    repo.addEffect(Effect)
+    repo.effects.add(Effect)
 
     repo.push(test, true)
   })
@@ -121,24 +121,24 @@ describe('Effect::register', function() {
     let handler = jest.fn()
     let action = n => n
 
-    let effect = repo.addEffect({
+    let effect = repo.effects.add({
       register() {
         return {
           [action]: {
-            open: handler,
-            update: handler,
-            reject: handler,
-            resolve: handler,
+            start: handler,
+            next: handler,
+            error: handler,
+            complete: handler,
             cancel: handler
           }
         }
       }
     })
 
-    expect(effect).toRegister(action, 'open')
-    expect(effect).toRegister(action, 'update')
-    expect(effect).toRegister(action, 'reject')
-    expect(effect).toRegister(action, 'resolve')
+    expect(effect).toRegister(action, 'start')
+    expect(effect).toRegister(action, 'next')
+    expect(effect).toRegister(action, 'error')
+    expect(effect).toRegister(action, 'complete')
     expect(effect).toRegister(action, 'cancel')
   })
 })
