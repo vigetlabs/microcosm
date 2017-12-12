@@ -3,7 +3,7 @@
  */
 
 function asPromise(action, body) {
-  body.then(action.complete.bind(action), action.error.bind(action))
+  body.then(action.complete, action.error)
 }
 
 /**
@@ -19,7 +19,6 @@ export default function coroutine(action, job, params: *[], repo: any): void {
     body(action, repo)
   } else {
     // Otherwise just return a resolved action
-    action.next(body)
-    action.complete()
+    action.complete(body)
   }
 }

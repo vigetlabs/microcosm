@@ -47,8 +47,6 @@ export const NEXT = 'next'
 
 export const ERROR = 'error'
 
-export const CANCEL = 'cancel'
-
 export const DESERIALIZE_ACTION = {
   payload: null,
   meta: { status: COMPLETE, command: DESERIALIZE }

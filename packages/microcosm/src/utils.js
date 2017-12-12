@@ -9,14 +9,6 @@ import type Microcosm from './microcosm'
 type MixedObject = { [key: string]: mixed }
 
 /**
- * Generate a unique id
- */
-let uidStepper = 0
-export function uid(prefix: string): string {
-  return `${prefix}${uidStepper++}`
-}
-
-/**
  * Shallow copy an object
  */
 export function clone<T: MixedObject>(target: T): $Shape<T> {

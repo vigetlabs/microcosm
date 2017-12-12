@@ -8,16 +8,82 @@ function cleanupSubscription(subscription) {
   // Assert:  observer._observer is undefined
   let cleanup = subscription._cleanup
 
-  if (!cleanup) {
-    return
+  if (cleanup) {
+    // Drop the reference to the cleanup function so that we won't call it
+    // more than once
+    subscription._cleanup = undefined
+
+    // Call the cleanup function
+    cleanup()
+  }
+}
+
+function handleNext(subscription, value) {
+  if (subscription._observer && subscription._observer.next) {
+    return subscription._observer.next(value)
+  }
+}
+
+function handleError(subscription, value) {
+  // If the stream is closed, throw the error to the caller
+  if (subscription._observer === undefined) {
+    throw value
   }
 
-  // Drop the reference to the cleanup function so that we won't call it
-  // more than once
-  subscription._cleanup = undefined
+  let observer = subscription._observer
+  subscription._observer = undefined
 
-  // Call the cleanup function
-  cleanup()
+  try {
+    if (observer.error) {
+      throw value
+    }
+    value = observer.error(value)
+  } catch (e) {
+    try {
+      cleanupSubscription(subscription)
+    } finally {
+      throw e
+    }
+  }
+
+  cleanupSubscription(subscription)
+
+  return value
+}
+
+function handleComplete(subscription, value) {
+  // If the stream is closed, then return undefined
+  if (subscription._observer === undefined) {
+    return undefined
+  }
+
+  let observer = subscription._observer
+
+  subscription._observer = undefined
+
+  if (observer.complete) {
+    console.assert(
+      typeof observer.complete === 'function',
+      '"complete" must be a function, instead got %s',
+      value
+    )
+
+    try {
+      value = observer.complete(value)
+    } catch (e) {
+      try {
+        cleanupSubscription(subscription)
+      } finally {
+        throw e
+      }
+    }
+  } else {
+    value = undefined
+  }
+
+  cleanupSubscription(subscription)
+
+  return value
 }
 
 class Subscription {
@@ -81,87 +147,16 @@ class SubscriptionObserver {
     this._subscription = subscription
   }
 
-  next(value) {
-    let subscription = this._subscription
-
-    // If the stream is closed, then return undefined
-    if (subscription._observer === undefined) {
-      return undefined
-    }
-
-    let observer = subscription._observer
-
-    // If the observer doesn't support "next", then return undefined
-    return observer.next ? observer.next.call(observer, value) : undefined
+  get next() {
+    return handleNext.bind(null, this._subscription)
   }
 
-  error(value) {
-    let subscription = this._subscription
-
-    // If the stream is closed, throw the error to the caller
-    if (subscription._observer === undefined) {
-      throw value
-    }
-
-    let observer = subscription._observer
-    subscription._observer = undefined
-
-    try {
-      let m = observer.error
-
-      // If the sink does not support "error", then throw the error to the caller
-      if (!m) throw value
-
-      value = m.call(observer, value)
-    } catch (e) {
-      console.error('error', e)
-
-      try {
-        cleanupSubscription(subscription)
-      } finally {
-        throw e
-      }
-    }
-
-    cleanupSubscription(subscription)
-    return value
+  get complete() {
+    return handleComplete.bind(null, this._subscription)
   }
 
-  complete(value) {
-    let subscription = this._subscription
-
-    // If the stream is closed, then return undefined
-    if (subscription._observer === undefined) {
-      return undefined
-    }
-
-    let observer = subscription._observer
-    subscription._observer = undefined
-
-    if (observer.complete) {
-      console.assert(
-        typeof observer.complete === 'function',
-        '"complete" must be a function, instead got %s',
-        value
-      )
-
-      try {
-        value = observer.complete(value)
-      } catch (e) {
-        console.error('error', e)
-
-        try {
-          cleanupSubscription(subscription)
-        } finally {
-          throw e
-        }
-      }
-    } else {
-      value = undefined
-    }
-
-    cleanupSubscription(subscription)
-    return value
+  get error() {
+    return handleError.bind(null, this._subscription)
   }
 }
 
