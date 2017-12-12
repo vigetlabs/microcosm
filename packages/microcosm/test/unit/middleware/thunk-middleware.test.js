@@ -9,16 +9,14 @@ describe('Thunk middleware', function() {
     expect(spy).toHaveBeenCalledWith(action, repo)
   })
 
-  it('does not treat function action arguments as thunks when they are directly returned', function() {
-    expect.assertions(2)
-
+  it('does not treat function action arguments as thunks when they are directly returned', async function() {
     let action = fn => fn
     let spy = jest.fn()
     let repo = new Microcosm()
 
-    repo.push(action, spy).onDone(result => {
-      expect(result).toEqual(spy)
-      expect(spy).not.toHaveBeenCalled()
-    })
+    let result = await repo.push(action, spy)
+
+    expect(result).toEqual(spy)
+    expect(spy).not.toHaveBeenCalled()
   })
 })
