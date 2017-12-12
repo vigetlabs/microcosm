@@ -6,7 +6,7 @@ import { Subject } from './subject'
 import { Warehouse } from './warehouse'
 import coroutine from './coroutine'
 import tag from './tag'
-import { INACTIVE, START, COMPLETE, NEXT, ERROR, CANCEL } from './lifecycle'
+import { INACTIVE, START, COMPLETE, NEXT, ERROR } from './lifecycle'
 
 function standardAction(command) {
   return {

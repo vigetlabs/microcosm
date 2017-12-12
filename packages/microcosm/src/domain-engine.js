@@ -71,12 +71,10 @@ class DomainEngine {
           }
           break
         case RESET:
-          if (this.repo === action.origin) {
-            state[key] = payload[key]
-          }
+          state[key] = payload[key]
           break
         case PATCH:
-          if (this.repo === action.origin && key in payload) {
+          if (key in payload) {
             state[key] = payload[key]
           }
           break
