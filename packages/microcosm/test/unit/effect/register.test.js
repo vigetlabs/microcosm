@@ -14,7 +14,7 @@ describe('Effect::register', function() {
       }
     }
 
-    repo.effects.add(Effect)
+    repo.addEffect(Effect)
 
     repo.push(test, true)
 
@@ -38,7 +38,7 @@ describe('Effect::register', function() {
       }
     }
 
-    repo.effects.add(Effect)
+    repo.addEffect(Effect)
 
     repo.push(test, true)
 
@@ -50,7 +50,7 @@ describe('Effect::register', function() {
     const test = n => new Promise(resolve => setTimeout(resolve, n))
     const handler = jest.fn()
 
-    repo.effects.add({
+    repo.addEffect({
       register() {
         return {
           [test]: handler
@@ -65,7 +65,7 @@ describe('Effect::register', function() {
 
   it('does not need to register', function() {
     const repo = new Microcosm()
-    repo.effects.add({})
+    repo.addEffect({})
     repo.push(n => n)
   })
 
@@ -78,7 +78,7 @@ describe('Effect::register', function() {
       }
     }
 
-    repo.effects.add(Effect)
+    repo.addEffect(Effect)
 
     repo.push('missing', true)
   })
@@ -111,7 +111,7 @@ describe('Effect::register', function() {
       }
     }
 
-    repo.effects.add(Effect)
+    repo.addEffect(Effect)
 
     repo.push(test, true)
   })
@@ -121,7 +121,7 @@ describe('Effect::register', function() {
     let handler = jest.fn()
     let action = n => n
 
-    let effect = repo.effects.add({
+    let effect = repo.addEffect({
       register() {
         return {
           [action]: {

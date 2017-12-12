@@ -1,4 +1,4 @@
-import Microcosm, { patch } from 'microcosm'
+import Microcosm from 'microcosm'
 
 describe('Domain::deserialize', function() {
   it('can deserialize a string', function() {

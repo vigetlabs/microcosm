@@ -4,8 +4,6 @@
  * @flow
  */
 
-import { isFunction } from './utils'
-
 export type Callback = (...args: any[]) => any
 
 type Listener = {
@@ -33,7 +31,7 @@ class Emitter {
    */
   on(event: Event, fn: Callback, scope?: any) {
     console.assert(
-      isFunction(fn),
+      typeof fn === 'function',
       `Expected ${event} listener to be function, instead got ${typeof fn}`
     )
 
@@ -50,7 +48,7 @@ class Emitter {
    */
   once(event: Event, fn: Callback, scope?: any) {
     console.assert(
-      isFunction(fn),
+      typeof fn === 'function',
       `Expected ${event} listener to be function, instead got ${typeof fn}`
     )
 

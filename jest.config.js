@@ -1,6 +1,7 @@
 const isBundled = process.env.BUNDLED
 
 module.exports = {
+  testEnvironment: 'node',
   projects: [
     './packages/microcosm',
     './packages/microcosm-preact',

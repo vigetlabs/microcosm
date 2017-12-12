@@ -1,4 +1,4 @@
-import Microcosm from 'microcosm'
+import Microcosm, { reset } from 'microcosm'
 
 describe('Microcosm::addDomain', function() {
   it('adding a domain backfills the initial state', function() {
@@ -55,7 +55,7 @@ describe('Microcosm::addDomain', function() {
         }
       })
 
-      repo.reset({ a: 1 })
+      repo.push(reset, { a: 1 })
 
       expect(repo).toHaveState('a', 1)
 
@@ -81,7 +81,7 @@ describe('Microcosm::addDomain', function() {
         }
       })
 
-      repo.reset({ a: 1 })
+      repo.push(reset, { a: 1 })
 
       expect(repo).toHaveState('a', 1)
       expect(fork).toHaveState('a', 1)

@@ -3627,13 +3627,17 @@ graphql-server-express@^1.1.2:
   dependencies:
     apollo-server-express "^1.2.0"
 
-graphql-tag@^2.2.0, graphql-tag@^2.4.2:
+graphql-tag@^2.2.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.5.0.tgz#b43bfd8b5babcd2c205ad680c03e98b238934e0f"
 
-graphql-tools@^2.2.1:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/graphql-tools/-/graphql-tools-2.11.0.tgz#be86d14acfe4ca9411967c6b54bac2eedc0dbb72"
+graphql-tag@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.6.0.tgz#0fb1b9f6d6651263c47a3420e827910e6fed3952"
+
+graphql-tools@^2.12.0:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/graphql-tools/-/graphql-tools-2.12.0.tgz#6286902650537bf7f20ac87159ab5c8b2e9741f8"
   dependencies:
     apollo-utilities "^1.0.1"
     deprecated-decorator "^0.1.6"
@@ -5435,9 +5439,9 @@ node-pre-gyp@^0.6.39:
     tar "^2.2.1"
     tar-pack "^3.4.0"
 
-nodemon@^1.12.0:
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-1.12.1.tgz#996a56dc49d9f16bbf1b78a4de08f13634b3878d"
+nodemon@^1.12.5:
+  version "1.12.5"
+  resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-1.12.5.tgz#bd34afa1aa855f1996b561147848519f136de620"
   dependencies:
     chokidar "^1.7.0"
     debug "^2.6.8"
@@ -5448,7 +5452,7 @@ nodemon@^1.12.0:
     ps-tree "^1.1.0"
     touch "^3.1.0"
     undefsafe "0.0.3"
-    update-notifier "^2.2.0"
+    update-notifier "^2.3.0"
 
 nomnom@~1.6.2:
   version "1.6.2"
@@ -6211,9 +6215,9 @@ preserve@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
 
-prettier@^1.6.1:
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.8.2.tgz#bff83e7fd573933c607875e5ba3abbdffb96aeb8"
+prettier@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.9.1.tgz#41638a0d47c1efbd1b7d5a742aaa5548eab86d70"
 
 pretty-error@^2.0.2:
   version "2.1.1"
@@ -6902,9 +6906,9 @@ rollup-pluginutils@^2.0.1:
     estree-walker "^0.3.0"
     micromatch "^2.3.11"
 
-rollup@^0.52.0:
-  version "0.52.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.52.0.tgz#cdb6927f53bf7b7fb09af3a936b9c8ee49b161e2"
+rollup@^0.52.1:
+  version "0.52.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.52.1.tgz#610e8e1be432f18fcfbfa865408a1cd7618cd707"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
@@ -7813,7 +7817,7 @@ unzip-response@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/unzip-response/-/unzip-response-2.0.1.tgz#d2f0f737d16b0615e72a6935ed04214572d56f97"
 
-update-notifier@^2.2.0:
+update-notifier@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/update-notifier/-/update-notifier-2.3.0.tgz#4e8827a6bb915140ab093559d7014e3ebb837451"
   dependencies:
@@ -7998,9 +8002,9 @@ webpack-dev-middleware@^1.11.0:
     range-parser "^1.0.3"
     time-stamp "^2.0.0"
 
-webpack-dev-server@^2.4.5, webpack-dev-server@^2.6.1, webpack-dev-server@^2.8.2:
-  version "2.9.5"
-  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-2.9.5.tgz#79336fba0087a66ae491f4869f6545775b18daa8"
+webpack-dev-server@^2.9.7:
+  version "2.9.7"
+  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-2.9.7.tgz#100ad6a14775478924d417ca6dcfb9d52a98faed"
   dependencies:
     ansi-html "0.0.7"
     array-includes "^3.0.3"
@@ -8037,9 +8041,9 @@ webpack-sources@^1.0.1:
     source-list-map "^2.0.0"
     source-map "~0.6.1"
 
-webpack@^3.3.0, webpack@^3.5.5, webpack@^3.5.6, webpack@^3.6.0:
-  version "3.9.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.9.1.tgz#9a60aa544ed5d4d454c069e3f521aa007e02643c"
+webpack@^3.10.0:
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.10.0.tgz#5291b875078cf2abf42bdd23afe3f8f96c17d725"
   dependencies:
     acorn "^5.0.0"
     acorn-dynamic-import "^2.0.0"

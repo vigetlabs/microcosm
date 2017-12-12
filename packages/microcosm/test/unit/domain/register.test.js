@@ -30,7 +30,6 @@ describe('Domain::register', function() {
       getInitialState: () => 0
     })
 
-
     expect(repo.state).toEqual({ test: 0 })
   })
 
@@ -41,7 +40,9 @@ describe('Domain::register', function() {
       getInitialState: () => 0,
       register() {
         return {
-          add: (a, b) => a + b
+          add: (a, b) => {
+            return a + b
+          }
         }
       }
     })

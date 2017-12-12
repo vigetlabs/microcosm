@@ -1,44 +1,46 @@
-import Subject from './subject'
-import { START, NEXT, COMPLETE, ERROR } from './status'
+/**
+ * @flow
+ */
 
-export function register({ id, action, command }) {
-  let subject = new Subject()
+import { isPlainObject } from './utils'
+import { COMPLETE } from './lifecycle'
+import { result } from './utils'
 
-  action.subscribe({
-    start: () => {
-      subject.next({
-        id: id,
-        status: START,
-        command: command,
-        payload: action.valueOf()
-      })
-    },
-    next: value => {
-      subject.next({
-        id: id,
-        status: NEXT,
-        command: command,
-        payload: action.valueOf()
-      })
-    },
-    complete: () => {
-      subject.next({
-        id: id,
-        status: COMPLETE,
-        command: command,
-        payload: action.valueOf()
-      })
-      subject.complete()
-    },
-    error: () => {
-      subject.error({
-        id: id,
-        status: ERROR,
-        command: command,
-        payload: action.valueOf()
-      })
+const NO_HANDLERS = []
+
+export function getHandlers(pool: Object, action: Action): *[] {
+  let { status, command } = action.meta
+
+  let entry = pool[command] || NO_HANDLERS
+
+  if (isPlainObject(entry)) {
+    entry = entry[status] || NO_HANDLERS
+  } else if (status !== COMPLETE) {
+    return NO_HANDLERS
+  }
+
+  return Array.isArray(entry) ? entry : [entry]
+}
+
+export function map(repo, entity) {
+  return action => {
+    let pool = result(entity, 'register')
+    let handlers = getHandlers(pool, action)
+
+    for (var i = 0, len = handlers.length; i < len; i++) {
+      handlers[i].call(entity, repo, action.payload)
     }
-  })
+  }
+}
 
-  return subject
+export function teardown(repo, entity, options) {
+  if ('teardown' in entity) {
+    entity.teardown(repo, options)
+  }
+}
+
+export function setup(repo, entity, options) {
+  if ('setup' in entity) {
+    entity.setup(repo, options)
+  }
 }

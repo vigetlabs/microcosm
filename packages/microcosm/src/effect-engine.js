@@ -2,50 +2,19 @@
  * @flow
  */
 
-import getRegistration from './get-registration'
-import { merge, result, createOrClone } from './utils'
+import { merge, createOrClone } from './utils'
+import { map, setup, teardown } from './registry'
 
-import type Action from './action'
-import type Microcosm from './microcosm'
+export function effectEngine(repo, constructor, effectOptions) {
+  let options = merge(repo.options, constructor.defaults, effectOptions)
+  let effect: Effect = createOrClone(constructor, options, repo)
 
-class EffectEngine {
-  repo: Microcosm
-  effects: Array<Effect>
+  repo.subscribe({
+    start: setup(repo, effect, options),
+    complete: teardown(repo, effect, options)
+  })
 
-  constructor(repo: Microcosm) {
-    this.repo = repo
-    this.effects = []
-  }
+  repo.history.updates.subscribe(map(repo, effect))
 
-  add(config: Object | Function, options?: Object) {
-    let deepOptions = merge(this.repo.options, config.defaults, options)
-    let effect: Effect = createOrClone(config, deepOptions, this.repo)
-
-    this.repo.subscribe({
-      start: () => {
-        if (effect.setup) {
-          effect.setup(this.repo, deepOptions)
-        }
-      },
-      complete: () => {
-        if (effect.teardown) {
-          effect.teardown(this.repo)
-        }
-      }
-    })
-
-    this.effects.push(effect)
-
-    return effect
-  }
-
-  dispatch(action: Action) {
-    this.effects.forEach(effect => {
-      getRegistration(result(effect, 'register'), action).forEach(handler =>
-        handler.call(effect, this.repo, action.payload)
-      )
-    })
-  }
+  return effect
 }
-
-export default EffectEngine

@@ -18,12 +18,12 @@
     "microcosm": "^12.9.0",
     "minimist": "^1.2.0",
     "preact": "^8.2.1",
-    "rollup": "^0.52.0",
+    "rollup": "^0.52.1",
     "rollup-plugin-buble": "^0.18.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^2.0.1",
-    "webpack": "^3.3.0",
-    "webpack-dev-server": "^2.6.1"
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7"
   },
   "dependencies": {
     "form-serialize": "^0.7.1"

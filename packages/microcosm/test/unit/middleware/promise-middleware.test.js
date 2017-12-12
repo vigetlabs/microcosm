@@ -1,64 +1,94 @@
 import Microcosm from 'microcosm'
 
 describe('Promise middleware', function() {
-  it('opens with the first argument of params', function() {
-    const repo = new Microcosm()
-    const action = repo.push(n => Promise.resolve(n), true)
+  it('starts', async function() {
+    expect.assertions(2)
 
-    expect(action).toHaveStatus('open')
-    expect(action.payload).toEqual(true)
+    const repo = new Microcosm()
+    const action = n => Promise.resolve(n)
+
+    repo.addDomain('test', {
+      register() {
+        return {
+          [action]: {
+            start: (state, value) => {
+              expect(value).toBe(null)
+            },
+            complete: (state, value) => {
+              expect(value).toBe(true)
+            }
+          }
+        }
+      }
+    })
+
+    await repo.push(action, true)
   })
 
-  it('completes when a promise resolves', function(done) {
+  it('completes when a promise resolves', async function() {
     const repo = new Microcosm()
-    const action = repo.push(n => Promise.resolve(n))
 
-    action.onDone(() => done())
+    await repo.push(n => Promise.resolve(n))
   })
 
-  it('rejects when a promise fails', function(done) {
+  it('errors when a promise rejects', async function() {
     const repo = new Microcosm()
-    const action = repo.push(n => Promise.reject(n))
 
-    action.onError(() => done())
+    try {
+      await repo.push(n => Promise.reject(n), false)
+    } catch (error) {
+      expect(error).toBe(false)
+    }
   })
 
-  it('rejects when a promise throws an error', function(done) {
+  it('rejects when a promise throws an error', async function() {
     const repo = new Microcosm()
-    const action = repo.push(
-      n =>
-        new Promise(function(resolve, reject) {
-          throw 'This error is intentional'
+
+    try {
+      await repo.push(
+        n =>
+          new Promise(() => {
+            throw 'error'
+          }),
+        false
+      )
+    } catch (error) {
+      expect(error).toBe('error')
+    }
+  })
+
+  it('handles successful chains', async function() {
+    const repo = new Microcosm()
+
+    let payload = await repo.push(n => Promise.resolve().then(() => n), true)
+
+    expect(payload).toBe(true)
+  })
+
+  it('handles failed chains', async function() {
+    const repo = new Microcosm()
+
+    try {
+      await repo.push(
+        n => Promise.resolve().then(() => Promise.reject('error')),
+        true
+      )
+    } catch (error) {
+      expect(error).toBe('error')
+    }
+  })
+
+  it('handles failed chains that raise errors', async function() {
+    const repo = new Microcosm()
+
+    try {
+      await repo.push(() =>
+        Promise.resolve().then(() => {
+          throw 'error'
         })
-    )
-
-    action.onError(() => done())
-  })
-
-  it('handles successful chains', function(done) {
-    const repo = new Microcosm()
-    const action = repo.push(n => Promise.resolve().then(() => n))
-
-    action.onDone(() => done())
-  })
-
-  it('handles failed chains', function(done) {
-    const repo = new Microcosm()
-    const action = repo.push(n => {
-      return Promise.resolve().then(() => Promise.reject('error'))
-    })
-
-    action.onError(() => done())
-  })
-
-  it('handles failed chains that raise errors', function(done) {
-    const repo = new Microcosm()
-    const action = repo.push(n => {
-      return Promise.resolve().then(() => {
-        throw new Error('error')
-      })
-    })
-
-    action.onError(() => done())
+      )
+    } catch (error) {
+      expect(error).toBe('error')
+    }
   })
 })

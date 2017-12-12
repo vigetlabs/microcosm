@@ -2,24 +2,7 @@
  * Taken from zen-observable, with specific implimentation notes for Microcosm
  */
 
-function hasSymbol(name) {
-  return typeof Symbol === 'function' && Boolean(Symbol[name])
-}
-
-function getSymbol(name) {
-  return hasSymbol(name) ? Symbol[name] : '@@' + name
-}
-
-function getSpecies(obj) {
-  let ctor = obj.constructor
-  if (ctor !== undefined) {
-    ctor = ctor[getSymbol('species')]
-    if (ctor === null) {
-      ctor = undefined
-    }
-  }
-  return ctor !== undefined ? ctor : Observable
-}
+import { getSymbol } from './utils'
 
 function cleanupSubscription(subscription) {
   // Assert:  observer._observer is undefined
@@ -37,16 +20,6 @@ function cleanupSubscription(subscription) {
   cleanup()
 }
 
-function subscriptionClosed(subscription) {
-  return subscription._observer === undefined
-}
-
-function cleanupFromSubscription(subscription) {
-  return () => {
-    subscription.unsubscribe()
-  }
-}
-
 class Subscription {
   constructor(observer, subscriber) {
     console.assert(Object(observer) === observer, 'Observer must be an object')
@@ -58,7 +31,7 @@ class Subscription {
       observer.start.call(observer, this)
     }
 
-    if (subscriptionClosed(this)) {
+    if (this._observer === undefined) {
       return
     }
 
@@ -71,7 +44,7 @@ class Subscription {
       // The return value must be undefined, null, a subscription object, or a function
       if (cleanup != null) {
         if (typeof cleanup.unsubscribe === 'function') {
-          cleanup = cleanupFromSubscription(cleanup)
+          cleanup = cleanup.unsubscribe()
         } else if (typeof cleanup !== 'function') {
           throw new TypeError(cleanup + ' is not a function')
         }
@@ -79,6 +52,7 @@ class Subscription {
         this._cleanup = cleanup
       }
     } catch (e) {
+      console.error('error', e)
       // If an error occurs during startup, then attempt to send the error
       // to the observer
       observer.error(e)
@@ -86,23 +60,19 @@ class Subscription {
     }
 
     // If the stream is already finished, then perform cleanup
-    if (subscriptionClosed(this)) {
+    if (this._observer === undefined) {
       cleanupSubscription(this)
     }
   }
 
-  get closed() {
-    return subscriptionClosed(this)
-  }
-
   unsubscribe() {
-    if (subscriptionClosed(subscription)) {
+    if (this._observer === undefined) {
       return
     }
 
-    subscription._observer = undefined
+    this._observer = undefined
 
-    cleanupSubscription(subscription)
+    cleanupSubscription(this)
   }
 }
 
@@ -111,15 +81,11 @@ class SubscriptionObserver {
     this._subscription = subscription
   }
 
-  get closed() {
-    return subscriptionClosed(this._subscription)
-  }
-
   next(value) {
     let subscription = this._subscription
 
     // If the stream is closed, then return undefined
-    if (subscriptionClosed(subscription)) {
+    if (subscription._observer === undefined) {
       return undefined
     }
 
@@ -133,7 +99,7 @@ class SubscriptionObserver {
     let subscription = this._subscription
 
     // If the stream is closed, throw the error to the caller
-    if (subscriptionClosed(subscription)) {
+    if (subscription._observer === undefined) {
       throw value
     }
 
@@ -148,6 +114,8 @@ class SubscriptionObserver {
 
       value = m.call(observer, value)
     } catch (e) {
+      console.error('error', e)
+
       try {
         cleanupSubscription(subscription)
       } finally {
@@ -163,75 +131,55 @@ class SubscriptionObserver {
     let subscription = this._subscription
 
     // If the stream is closed, then return undefined
-    if (subscriptionClosed(subscription)) return undefined
-
-    let observer = subscription._observer
-    subscription._observer = undefined
-
-    try {
-      let m = observer.complete
-
-      // If the sink does not support "complete", then return undefined
-      value = m ? m.call(observer, value) : undefined
-    } catch (e) {
-      try {
-        cleanupSubscription(subscription)
-      } finally {
-        throw e
-      }
-    }
-
-    cleanupSubscription(subscription)
-    return value
-  }
-
-  cancel(value) {
-    let subscription = this._subscription
-
-    // If the stream is closed, then return undefined
-    if (subscriptionClosed(subscription)) {
+    if (subscription._observer === undefined) {
       return undefined
     }
 
     let observer = subscription._observer
     subscription._observer = undefined
 
-    try {
-      let m = observer.cancel
+    if (observer.complete) {
+      console.assert(
+        typeof observer.complete === 'function',
+        '"complete" must be a function, instead got %s',
+        value
+      )
 
-      // If the sink does not support "complete", then return undefined
-      value = m ? m.call(observer, value) : undefined
-    } catch (e) {
       try {
-        cleanupSubscription(subscription)
-      } finally {
-        throw e
+        value = observer.complete(value)
+      } catch (e) {
+        console.error('error', e)
+
+        try {
+          cleanupSubscription(subscription)
+        } finally {
+          throw e
+        }
       }
+    } else {
+      value = undefined
     }
 
     cleanupSubscription(subscription)
-
     return value
   }
 }
 
 export class Observable {
   constructor(subscriber) {
-    // The stream subscriber must be a function
-    if (typeof subscriber !== 'function') {
-      throw new TypeError('Observable initializer must be a function')
-    }
-
+    console.assert(
+      typeof subscriber === 'function',
+      'Observable initializer must be a function'
+    )
     this._subscriber = subscriber
   }
 
-  subscribe(observer, ...args) {
+  subscribe(observer) {
     if (typeof observer === 'function') {
       observer = {
-        next: observer,
-        error: args[0],
-        complete: args[1],
-        cancel: args[2]
+        next: arguments[0],
+        error: arguments[1],
+        complete: arguments[2]
       }
     }
 
@@ -242,10 +190,10 @@ export class Observable {
     return this
   }
 
-  static of(...items) {
+  static of() {
     return new Observable(observer => {
-      for (let i = 0; i < items.length; ++i) {
-        observer.next(items[i])
+      for (let i = 0; i < arguments.length; ++i) {
+        observer.next(arguments[i])
 
         if (observer.closed) {
           return

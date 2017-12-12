@@ -5,7 +5,7 @@
  */
 
 import { type Microcosm, Emitter, merge } from '../index'
-import { type Job } from '../default-update-strategy'
+import { type Job } from './default-update-strategy'
 
 function isObservable(binding: *): boolean {
   return binding && typeof binding.subscribe === 'function'

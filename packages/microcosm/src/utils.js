@@ -2,7 +2,6 @@
  * @flow
  */
 
-import { Observable } from './observable'
 import { castPath, type KeyPath } from './key-path'
 
 import type Microcosm from './microcosm'
@@ -138,13 +137,6 @@ export function set(object: Object, key: *, value: *): any {
 }
 
 /**
- * Is the provided object a promise?
- */
-export function isPromise(obj: *): boolean {
-  return (isObject(obj) || isFunction(obj)) && isFunction(obj.then)
-}
-
-/**
  * Is a value an object?
  */
 export function isObject(target: *): boolean {
@@ -210,4 +202,12 @@ export function result(target: *, keyPath: string | KeyPath): * {
   }
 
   return value
+}
+
+export function hasSymbol(name) {
+  return typeof Symbol === 'function' && Boolean(Symbol[name])
+}
+
+export function getSymbol(name) {
+  return hasSymbol(name) ? Symbol[name] : '@@' + name
 }

@@ -2,7 +2,7 @@
  * @flow weak
  */
 
-import Microcosm, { Action, tag, get, result, getRegistration } from '../index'
+import Microcosm, { Action, tag, get, result, getHandlers } from '../index'
 
 declare var expect: any
 
@@ -17,13 +17,12 @@ expect.extend({
 
     let operator = this.isNot ? 'not to' : 'to'
     let registry = result(entity, 'register')
+    let action = { meta: { status, command }, payload: null }
 
     return {
-      pass: getRegistration(registry, { command, status }).length > 0,
+      pass: getHandlers(registry, action).length > 0,
       message: () => {
-        return `Expected entity ${operator} register to the '${
-          status
-        }' state of ${name}.`
+        return `Expected entity ${operator} register to the '${status}' state of ${name}.`
       }
     }
   },
@@ -68,10 +67,9 @@ expect.extend({
       pass: pass,
       message: () => {
         return (
-          `Expected '${path}' in repo.state ${
-            operator
-          } be ${this.utils.printExpected(value)} ` +
-          `but it is ${this.utils.printReceived(actual)}.`
+          `Expected '${path}' in repo.state ${operator} be ${this.utils.printExpected(
+            value
+          )} ` + `but it is ${this.utils.printReceived(actual)}.`
         )
       }
     }

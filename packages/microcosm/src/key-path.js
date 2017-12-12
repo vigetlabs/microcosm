@@ -6,7 +6,9 @@
  * @flow
  */
 
-import { isBlank } from './utils'
+function isBlank(value: any): boolean {
+  return value === '' || value === null || value === undefined
+}
 
 export type KeyPath = Array<string>
 

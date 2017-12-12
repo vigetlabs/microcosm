@@ -14,7 +14,7 @@
  * @flow
  */
 
-import { merge } from './utils'
+import { merge } from '../index'
 import { hasWindow, hasIdle } from './env'
 
 export type Updater = (update: Function, options: Object) => void | *

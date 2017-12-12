@@ -2,7 +2,9 @@
  * @flow
  */
 
-import { isFunction, isPromise } from './utils'
+function asPromise(action, body) {
+  body.then(action.complete.bind(action), action.error.bind(action))
+}
 
 /**
  * Coroutine is used by an action to determine how it should resolve
@@ -11,26 +13,13 @@ import { isFunction, isPromise } from './utils'
 export default function coroutine(action, job, params: *[], repo: any): void {
   let body = job.apply(null, params)
 
-  if (isPromise(body)) {
-    body.then(
-      payload => {
-        action.next(payload)
-        action.complete(payload)
-      },
-      payload => action.error(payload)
-    )
-
-    return
-  }
-
-  if (isFunction(body) && !params.some(param => param === body)) {
+  if (body && typeof body.then === 'function') {
+    asPromise(action, body)
+  } else if (typeof body === 'function' && params.indexOf(body) < 0) {
     body(action, repo)
-    return
+  } else {
+    // Otherwise just return a resolved action
+    action.next(body)
+    action.complete()
   }
-
-  // Otherwise just return a resolved action
-  action.next(body)
-  action.complete()
-
-  return
 }

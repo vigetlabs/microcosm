@@ -1,11 +1,11 @@
 import Microcosm from 'microcosm'
 
 describe('String middleware', function() {
-  it('passes strings through as identify functions', function() {
-    let repo = new Microcosm()
-    let action = repo.push('test', true)
+  it('passes strings through as identify functions', async function() {
+    let repo = new Microcosm({ debug: true })
 
-    expect(action.type).toBe('test')
-    expect(action.payload).toBe(true)
+    let payload = await repo.push('test', true)
+
+    expect(payload).toBe(true)
   })
 })

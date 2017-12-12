@@ -6,7 +6,7 @@
 import Node from './node'
 import Query from './query'
 import { getKeyString, getKeyPaths, type KeyPath } from '../../key-path'
-import { type Callback } from '../../emitter'
+import { type Callback } from './emitter'
 
 // The root key is an empty string. This can be a little
 // counter-intuitive, so we keep track of them as a named constant.

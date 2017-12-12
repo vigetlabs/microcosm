@@ -40,7 +40,7 @@ describe('actions', function() {
 describe('callbacks', function() {
   it('executes onStart when that action completes', function() {
     let onStart = jest.fn()
-    let send = () => Observable.of(true))
+    let send = () => Observable.of(true)
     let button = mount(
       <ActionButton action="test" send={send} onStart={onStart} />
     )

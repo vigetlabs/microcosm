@@ -1,11 +1,11 @@
-import { Observable } from './observable'
-import Subject from './subject'
 import History from './history'
 import Microcosm from './microcosm'
-import getRegistration from './get-registration'
-import tag from './tag'
-import { clone, merge, get, set, update, result } from './utils'
+import { Subject } from './subject'
+import { Observable } from './observable'
+import { getHandlers } from './registry'
 import { RESET, PATCH } from './lifecycle'
+import { get, set, merge, update, result } from './utils'
+import tag from './tag'
 
 export {
   Microcosm as default,
@@ -13,14 +13,13 @@ export {
   History,
   Observable,
   Subject,
+  getHandlers,
   tag,
   get,
   set,
-  update,
   merge,
-  clone,
+  update,
   result,
-  getRegistration,
   RESET as reset,
   PATCH as patch
 }

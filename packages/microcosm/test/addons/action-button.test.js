@@ -33,7 +33,7 @@ describe('callbacks', function() {
     expect(onStart).toHaveBeenCalledWith(true)
   })
 
-  it.only('executes onComplete when that action completes', function() {
+  it('executes onComplete when that action completes', function() {
     let repo = new Microcosm()
     let send = () => repo.push(n => n, true)
     let onComplete = jest.fn()
@@ -46,7 +46,6 @@ describe('callbacks', function() {
   })
 
   it('executes onError when that action completes', function() {
-    let repo = new Microcosm()
     let send = () => new Observable(observer => observer.error('bad'))
     let onError = jest.fn()
 
@@ -161,7 +160,7 @@ describe('callbacks', function() {
   })
 
   it('removes action callbacks when the component unmounts', async function() {
-    const action = new Action(() => Promise.resolve(true))
+    const action = new Observable(observer => observer.complete())
     const send = jest.fn(() => action)
     const onComplete = jest.fn()
 

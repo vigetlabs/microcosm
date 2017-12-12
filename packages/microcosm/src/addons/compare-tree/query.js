@@ -4,7 +4,8 @@
  * @flow
  */
 
-import { Emitter, get } from '../../index'
+import Emitter from './Emitter'
+import { get } from '../../index'
 import { type KeyPath, getKeyStrings } from '../../key-path'
 
 class Query extends Emitter {
