@@ -3,7 +3,7 @@
  */
 
 let uid = 0
-const FALLBACK = 'action'
+const FALLBACK = '_action'
 
 /**
  * Uniquely tag a function. This is used to identify actions.

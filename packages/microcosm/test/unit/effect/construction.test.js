@@ -23,15 +23,6 @@ describe('Effect construction', function() {
     expect(spy).toHaveBeenCalledWith(repo, true)
   })
 
-  it.dev('errors when given non-POJO options', function() {
-    expect(function() {
-      let repo = new Microcosm()
-      repo.addEffect({}, new Microcosm())
-    }).toThrow(
-      /expected a plain object as the second argument\. Instead got Microcosm/
-    )
-  })
-
   it('class - with defaults', function() {
     expect.assertions(1)
 

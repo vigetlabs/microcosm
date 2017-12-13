@@ -2,7 +2,7 @@
  * @flow
  */
 
-import { merge, createOrClone } from './utils'
+import { merge, createOrClone, isPlainObject } from './utils'
 import { map, setup, teardown } from './registry'
 
 export function effectEngine(repo, constructor, effectOptions) {

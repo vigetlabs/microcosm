@@ -13,7 +13,7 @@ describe('Effect::teardown', function() {
 
     repo.complete()
 
-    expect(spy).toHaveBeenCalledWith(repo)
+    expect(spy).toHaveBeenCalledWith(repo, repo.options)
   })
 
   it('does not need to implement teardown', function() {

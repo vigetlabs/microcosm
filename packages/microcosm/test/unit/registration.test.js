@@ -3,15 +3,18 @@ import Microcosm, { STATUS } from 'microcosm'
 const action = n => n
 
 describe('getRegistration', function() {
-  it('can use nested objects to return specific statuses', function() {
+  it('can use nested objects to return specific statuses', async () => {
     let handler = jest.fn()
+    let action = () => Promise.reject('Reject')
 
     class Repo extends Microcosm {
       setup() {
         this.addDomain('test', {
-          register: {
-            action: {
-              reject: handler
+          register() {
+            return {
+              [action]: {
+                error: handler
+              }
             }
           }
         })
@@ -20,7 +23,7 @@ describe('getRegistration', function() {
 
     let repo = new Repo()
 
-    repo.append('action').reject()
+    await repo.push(action)
 
     expect(handler).toHaveBeenCalled()
   })
@@ -67,75 +70,7 @@ describe('getRegistration', function() {
     expect(b).toHaveBeenCalledWith(repo, 'foobar')
   })
 
-  it.dev('throws if given an invalid status', function() {
-    let repo = new Microcosm()
-
-    // Registration does not happen if there are no registerable
-    // domains
-    repo.addDomain('test', {
-      register: {}
-    })
-
-    expect(() => {
-      repo.append(action, 'totally-missing')
-    }).toThrow('Invalid action status totally-missing')
-  })
-
-  describe('Action aliasing', function() {
-    for (let status in STATUS) {
-      if (status === 'inactive') {
-        continue
-      }
-
-      let alias = STATUS[status]
-
-      it(`can inspect the ${status} status`, function() {
-        let handler = jest.fn()
-
-        class Repo extends Microcosm {
-          setup() {
-            this.addDomain('test', {
-              register: {
-                action: {
-                  [status]: handler
-                }
-              }
-            })
-          }
-        }
-
-        let repo = new Repo()
-
-        repo.append('action', status)
-
-        expect(handler).toHaveBeenCalled()
-      })
-
-      it(`can register the ${alias} alias`, function() {
-        let handler = jest.fn()
-
-        class Repo extends Microcosm {
-          setup() {
-            this.addDomain('test', {
-              register: {
-                action: {
-                  [status]: handler
-                }
-              }
-            })
-          }
-        }
-
-        let repo = new Repo()
-
-        repo.append('action', status)
-
-        expect(handler).toHaveBeenCalled()
-      })
-    }
-  })
-
-  it.dev(
+  it.skip(
     'prints the action name in the warning when a handler is undefined',
     function() {
       class Repo extends Microcosm {

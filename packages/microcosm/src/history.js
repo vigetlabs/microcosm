@@ -97,6 +97,10 @@ class History {
     return action === this.head ? null : this._downstream.get(action)
   }
 
+  wait() {
+    return this.then()
+  }
+
   get size() {
     return this._head ? this._upstream.size + 1 : 0
   }
@@ -113,9 +117,10 @@ function didNext(history, revision, payload) {
   history.updates.next(revision)
 }
 
-function didComplete(history, revision) {
+function didComplete(history, revision, payload) {
   revision.meta.status = COMPLETE
   revision.meta.closed = true
+  revision.payload = payload
   history.updates.next(revision)
   history.archive()
 }

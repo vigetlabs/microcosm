@@ -7,7 +7,7 @@ import History from './history'
 import DomainEngine from './domain-engine'
 import installDevtools from './install-devtools'
 import { effectEngine } from './effect-engine'
-import { merge } from './utils'
+import { clone, merge, observerHash } from './utils'
 import { version } from '../package.json'
 import { INITIAL_STATE, DESERIALIZE, SERIALIZE } from './lifecycle'
 
@@ -41,9 +41,7 @@ class Microcosm extends Subject {
     })
 
     // A history is done reconciling and is ready for a release
-    this.history.updates.subscribe(next => {
-      this._update(next)
-    })
+    this.history.updates.subscribe(this._update.bind(this))
 
     if (this.options.debug) {
       installDevtools(this)
@@ -99,7 +97,7 @@ class Microcosm extends Subject {
 
   toJSON() {
     return merge(
-      this.domains.lifecycle(SERIALIZE, this.state),
+      this.domains.lifecycle(SERIALIZE, clone(this.state)),
       this.parent ? this.parent.toJSON() : null
     )
   }
@@ -108,6 +106,10 @@ class Microcosm extends Subject {
     return new Microcosm({
       parent: this
     })
+  }
+
+  parallel(actions) {
+    return observerHash(actions)
   }
 
   /* Private ------------------------------------------------------ */

@@ -24,11 +24,6 @@ class DomainEngine {
   }
 
   add(key: string, config: *, options?: Object) {
-    console.assert(
-      !options || options.constructor === Object,
-      'addDomain expected a plain object as the third argument.'
-    )
-
     console.assert(key && key.length > 0, 'Can not add domain to root level.')
 
     let deepOptions = merge(
@@ -50,9 +45,7 @@ class DomainEngine {
     return domain
   }
 
-  lifecycle(type, payload) {
-    let state = {}
-
+  lifecycle(type, state) {
     for (var key in this.domains) {
       var domain = this.domains[key]
 
@@ -62,20 +55,14 @@ class DomainEngine {
           break
         case DESERIALIZE:
           if ('deserialize' in domain) {
-            state[key] = domain.deserialize(payload[key])
+            state[key] = domain.deserialize(state[key])
           }
           break
         case SERIALIZE:
           if ('serialize' in domain) {
-            state[key] = domain.serialize(payload[key])
-          }
-          break
-        case RESET:
-          state[key] = payload[key]
-          break
-        case PATCH:
-          if (key in payload) {
-            state[key] = payload[key]
+            state[key] = domain.serialize(state[key])
+          } else {
+            delete state[key]
           }
           break
         default:
@@ -86,6 +73,12 @@ class DomainEngine {
   }
 
   dispatch(action: Action, state: Object) {
+    if (action.command === RESET) {
+      return action.payload
+    } else if (action.command === PATCH) {
+      return merge(state, action.payload)
+    }
+
     for (var key in this.domains) {
       var domain = this.domains[key]
       var handlers = getHandlers(result(domain, 'register') || {}, action)

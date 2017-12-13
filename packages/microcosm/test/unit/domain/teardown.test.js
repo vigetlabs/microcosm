@@ -15,6 +15,10 @@ describe('Domain::teardown', function() {
 
     repo.complete()
 
-    expect(test).toHaveBeenCalledWith(repo)
+    expect(test).toHaveBeenCalledWith(repo, {
+      ...repo.options,
+      key: 'count',
+      test: true
+    })
   })
 })

@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe('When a domain includes an actions object', () => {
+describe.skip('When a domain includes an actions object', () => {
   let repo = null
   let addPlanet = null
 

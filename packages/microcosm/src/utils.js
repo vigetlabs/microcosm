@@ -2,6 +2,7 @@
  * @flow
  */
 
+import { Observable } from 'microcosm'
 import { castPath, type KeyPath } from './key-path'
 
 import type Microcosm from './microcosm'
@@ -136,7 +137,11 @@ export function isObject(target: *): boolean {
 }
 
 export function isPlainObject(value: *): boolean {
-  return !Array.isArray(value) && isObject(value)
+  if (!value || Array.isArray(value)) {
+    return false
+  }
+
+  return value.constructor === Object
 }
 
 /**
@@ -202,4 +207,31 @@ export function hasSymbol(name) {
 
 export function getSymbol(name) {
   return hasSymbol(name) ? Symbol[name] : '@@' + name
+}
+
+/**
+ * Resolve an array of object of observables, preserving the
+ * original shape/order.
+ */
+const updatePair = (pair, value) => {
+  pair[1] = value
+  return pair
+}
+
+const assignPair = (state, pair) => set(state, pair)
+
+export function observerHash(obj) {
+  if (isObject(obj)) {
+    if (getSymbol('observable') in obj) {
+      return obj[getSymbol('observable')]()
+    }
+
+    var jobs = Observable.of(...Object.keys(obj))
+    var shape = Array.isArray(obj) ? [] : {}
+    var pairs = jobs.flatMap(key => obj[key].reduce(updatePair, [key, null]))
+
+    return pairs.reduce(assignPair, shape)
+  }
+
+  return Observable.of(obj)
 }
