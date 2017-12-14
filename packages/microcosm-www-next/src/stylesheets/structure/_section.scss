@@ -1,9 +1,8 @@
 $section-top-padding-mobile: $nav-height + 49px;
 $section-top-padding-desktop: $nav-height + 110px;
 
-main {
-  //min-height: 100vh;
-}
+  @include breakpoint(large-desktop-up) {
+    display: flex;
 
 .section {
   padding-top: $section-top-padding-mobile;
@@ -16,7 +15,6 @@ main {
       justify-content: space-between;
     }
   }
-  //position: relative;
 }
 
 // CONTENT
