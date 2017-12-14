@@ -8,17 +8,17 @@
   outline: none;
 }
 
-html {
-  background-color: #fff;
-  min-height: 100%;
-}
+// html {
+//   background-color: #fff;
+//   min-height: 100%;
+// }
 
 body {
   color: color(text);
   @include font-family-regular;
   letter-spacing: 0.02em;
-  min-height: 100%;
-  position: relative;
+  //min-height: 100%;
+  //position: relative;
 }
 
 cite {

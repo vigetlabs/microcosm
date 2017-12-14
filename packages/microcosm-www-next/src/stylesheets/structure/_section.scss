@@ -1,21 +1,20 @@
-$left-graphic-height: 367px;
-$right-graphic-height: 600px;
+.section {
 
-main {
-  //min-height: 100vh;
-}
-
-
-.wrapper {
-  @include breakpoint(small-desktop-up) {
+  @include breakpoint(large-desktop-up) {
     display: flex;
-    justify-content: space-between;
+
+    .section__content,
+    .section__graphic {
+      flex-basis: 50%;
+    }
+
+    .section__content {
+      order: 2;
+    }
   }
-  //position: relative;
 }
 
-
-.section-title {
+.section__content__heading {
   font-size: rem(30);
 
   span {
@@ -26,115 +25,24 @@ main {
   }
 }
 
-.figure-container {
-  // @include breakpoint(small-desktop-up) {
-  //   display: flex;
-  //   justify-content: flex-end;
-  // }
+.section__content__subheading {
+  @include font-family-medium;
+  text-transform: uppercase;
+  margin-bottom: rem(12);
 }
 
-.figure {
-  @include breakpoint(small-desktop-up) {
-    &.-left {
-      // width: 36%;
-      // padding-top: 10vh;
-      // height: 100vh;
-      // position: fixed;
-      // left: 0;
-      // top: 0;
-    }
-
-    &.-right {
-      // width: 60%;
-    }
-  }
+.section__content__text {
+  font-size: rem(18);
+  line-height: rem(27);
 }
-
-.figure__graphic {
-  background: lightblue;
-  margin-bottom: rem(28);
-
-  .-left & {
-    height: 40vh;
-    width: 40vh;
-    max-height: 367px;
-  }
-
-  .-right & {
-    // min-height: 450px;
-    // min-width: 450px;
-    height: 60vh;
-    width: 60vh;
-    max-height: 600px;
-  }
-}
-
-.figure__content {
-  width: 60vh;
-  max-width: 100%;
-
-  @include breakpoint(small-desktop-up) {
-    //padding: 0 rem(40);
-  }
-
-  .figure__content__text {
-    font-size: rem(18);
-    line-height: rem(27);
-  }
-
-  .figure__content__header {
-    @include font-family-medium;
-    text-transform: uppercase;
-    margin-bottom: rem(12);
-  }
-}
-
-
-
-
-
 
 
 
 body {
   background: slateblue;
-  min-height: 100vh;
+  //min-height: 100vh;
 }
 
-@include breakpoint(small-desktop-up) {
-  .col-left {
-    width: 36%;
-    height: 100vh;
-//    padding-top: ($nav-height + 50px);
-    position: sticky;
-    top: 0;
-    left: 0;
-  }
-
-  .col-right {
-    width: 60%;
- //   margin-top: ($nav-height + 50px);
-  }
+main {
+  padding-top: $nav-height;
 }
-
-.figure {
-  display: grid;
-  grid-template-columns: 100%;
-  grid-template-rows: ($nav-height + 50px) 65vh auto;
-}
-
-.figure__graphic {
-  align-self: end;
-  grid-column: 1;
-  grid-row: 2
-}
-
-.figure__content {
-  grid-row: 3;
-}
-
-
-// .col-left .figure__caption {
-//   grid-column: 1;
-//   grid-row: 11 / span 1;
-// }
