@@ -22,7 +22,7 @@ $section-top-padding: 116px;
 
 .section__graphic {
   @include breakpoint(large-desktop-up) {
-    flex-basis: 45%;
+    flex-basis: 600px;
   }
 }
 
@@ -50,7 +50,31 @@ $section-top-padding: 116px;
 .section__content__subheading {
   @include font-family-medium;
   text-transform: uppercase;
-  margin-bottom: rem(12);
+  margin: rem(12) 0;
+
+  &.-top {
+    &::after {
+      content: ' Microcosm';
+    }
+
+    &.-browserView {
+      &::after {
+        content: ' the browser';
+      }
+    }
+  }
+
+  &.-bottom {
+    &::after {
+      content: ' the browser...';
+    }
+
+    &.-browserView {
+      &::after {
+        content: ' Microcosm...';
+      }
+    }
+  }
 }
 
 .section__content__text {
@@ -58,6 +82,19 @@ $section-top-padding: 116px;
   line-height: rem(27);
 }
 
+
+
+.section__browser-btn {
+  &::before {
+    content: 'Browser View';
+  }
+
+  &.-browserView {
+    &::before {
+      content: 'Microcosm View';
+    }
+  }
+}
 
 
 body {
