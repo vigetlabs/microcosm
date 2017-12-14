@@ -1,9 +1,9 @@
 {
-  "section1": {
-    "browserText": "A user fires up the browser to take a quiz.", "title": "The Future of Fantasy Football"
+  "graphic1": {
+    "heading": "<span>01.</span> Rendering a View"
   },
-  "section2": {
-    "browserText": "A user selects an option from the quiz list.", "title": "Improving Medication Adherence"
+  "graphic2": {
+    "heading": "<span>02.</span> Creating an Action"
   }
 }
 

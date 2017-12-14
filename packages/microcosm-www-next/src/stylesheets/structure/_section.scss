@@ -1,18 +1,40 @@
+$section-top-padding: 116px;
+
 .section {
+  padding-top: $section-top-padding;
 
   @include breakpoint(large-desktop-up) {
     display: flex;
-
-    .section__content,
-    .section__graphic {
-      flex-basis: 50%;
-    }
-
-    .section__content {
-      order: 2;
-    }
+    justify-content: space-between;
   }
 }
+
+.section__content {
+  height: 100%;
+  position: sticky;
+  top: $section-top-padding;
+
+  @include breakpoint(large-desktop-up) {
+    flex-basis: 45%;
+    order: 2;
+  }
+}
+
+.section__graphic {
+  @include breakpoint(large-desktop-up) {
+    flex-basis: 45%;
+  }
+}
+
+.section__graphic__figure {
+  width: 600px;
+  height: 600px;
+  background-color: white;
+  border: 1px solid black;
+  margin-bottom: 100px;
+}
+
+
 
 .section__content__heading {
   font-size: rem(30);
@@ -41,8 +63,4 @@
 body {
   background: slateblue;
   //min-height: 100vh;
-}
-
-main {
-  padding-top: $nav-height;
 }
