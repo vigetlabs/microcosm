@@ -92,10 +92,7 @@ export default class IndexPage extends React.Component {
 
   changeSubheadingText(button) {
     this.subheadingTop.classList.toggle('-browserView', !this.onMicrocosmView)
-    this.subheadingBottom.classList.toggle(
-      '-browserView',
-      !this.onMicrocosmView
-    )
+    this.subheadingBottom.classList.toggle('-browserView', !this.onMicrocosmView)
   }
 
   switchView = e => {
