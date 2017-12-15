@@ -1,0 +1,25 @@
+.main {
+  &::before {   //covers up under nav so we don't see items sliding under transparent nav
+    @include pseudo-elem;
+    height: $nav-height;
+    top: 0;
+  }
+
+  &::after {   //covers up under footer
+    @include pseudo-elem;
+    bottom: 0;
+    height: $footer-height;
+  }
+
+  @for $i from 1 through $section-count {
+    .bg-#{$i} & {
+      &::before {
+        background-color: color(bg-#{$i}-top);
+      }
+
+      &::after {
+        background-color: color(bg-#{$i}-bottom);
+      }
+    }
+  }
+}
