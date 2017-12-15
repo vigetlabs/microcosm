@@ -12,7 +12,6 @@ const Navigation = () => (
       <h1>
         <span className="screenreader-only">Microcosm</span>
         <img src="./static/images/microcosm-logo.png" alt="" />
-        {/* make these images into background svgs later?? */}
       </h1>
 
       <img src="./static/images/menu.png" alt="menu" />
