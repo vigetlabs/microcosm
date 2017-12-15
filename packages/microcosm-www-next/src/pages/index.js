@@ -1,6 +1,6 @@
 import React from 'react'
 import data from '../data/index.json';
-import { Graphic1, Graphic2 } from '../components';
+import { Graphic1, Graphic2, Graphic3 } from '../components';
 
 export default class IndexPage extends React.Component {
   constructor(props) {
@@ -8,7 +8,7 @@ export default class IndexPage extends React.Component {
   }
 
   componentDidMount() {
-    // TODO - accessibility to alert on change
+    // TODO later - accessibility to alert on change
     this.setVars();
     this.beginObserve();
   }
@@ -16,7 +16,12 @@ export default class IndexPage extends React.Component {
   setVars() {
     this.onMicrocosmView = true;
     this.currentSection = 1;
-    this.minThreshold = 0.6;
+    this.observeOptions = {
+      root: null,
+      rootMargin: '0px 0px 100px',
+      threshold: 1.0
+    }
+
     this.text = document.getElementById('text');
     this.heading = document.getElementById('heading');
     this.subheadingTop = document.getElementById('subheading-top');
@@ -35,7 +40,7 @@ export default class IndexPage extends React.Component {
 
   beginObserve() {
     //create new Observer instance
-    let observer = new IntersectionObserver(this.onIntersection, {threshold: this.minThreshold});
+    let observer = new IntersectionObserver(this.onIntersection, this.observeOptions);
 
     //start observing each graphic
     Object.values(this.graphicsMap).forEach(graphic => observer.observe(graphic));
@@ -44,10 +49,9 @@ export default class IndexPage extends React.Component {
   onIntersection = (observed) => {
     let entry = observed[0];
     let section = entry.target.dataset.section;
-    let isIntersecting = entry.intersectionRatio > this.minThreshold;
     let notAlreadyVisible = section !== this.currentSection;
 
-    if (isIntersecting && notAlreadyVisible) {
+    if (entry.isIntersecting && notAlreadyVisible) {
       this.currentSection = section;
       this.changeHeading();
       this.changeText();
@@ -117,6 +121,7 @@ export default class IndexPage extends React.Component {
           <div className="section__graphic">
             <Graphic1 />
             <Graphic2 />
+            <Graphic3 />
           </div>
         </section>
       </div>
