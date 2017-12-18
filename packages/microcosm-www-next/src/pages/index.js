@@ -7,8 +7,8 @@ export default class IndexPage extends React.Component {
     super(props)
     this.state = {
       numSections: 3,
-      heading: data[1].heading,
       text: data[1].text,
+      heading: data[1].heading,
       graphicUrl: data[1].microcosmGraphicUrl,
     }
   }
@@ -53,55 +53,45 @@ export default class IndexPage extends React.Component {
 
     if (entry.isIntersecting && notAlreadyVisible) {
       this.currentSection = section
-      this.sectionData = data[this.currentSection]
+      this.sectionData = data[section]
 
-      this.changeHeading()
-      this.changeText()
-      this.changeGraphic()
+      let heading = this.changeHeading()
+      let text = this.changeText()
+      let graphicUrl = this.changeGraphic()
+
+      this.setState({ heading, text, graphicUrl })
     }
   }
 
   changeHeading() {
-    let heading = this.sectionData.heading
-    this.setState({ heading })
+    let newHeading = this.sectionData.heading
+    return newHeading
   }
 
   changeText() {
-    let text = this.onMicrocosmView
+    let newText = this.onMicrocosmView
       ? this.sectionData.microcosmText
       : this.sectionData.browserText
 
-    this.setState({ text })
+    return newText
   }
 
   changeGraphic() {
-    let graphicUrl = this.onMicrocosmView
+    let newGraphicUrl = this.onMicrocosmView
       ? this.sectionData.microcosmGraphicUrl
       : this.sectionData.browserGraphicUrl
 
-    this.setState({ graphicUrl })
-  }
-
-  changeButtonText(button) {
-    button.classList.toggle('-browserView', !this.onMicrocosmView)
-  }
-
-  changeSubheadingText(button) {
-    this.subheadingTop.classList.toggle('-browserView', !this.onMicrocosmView)
-    this.subheadingBottom.classList.toggle(
-      '-browserView',
-      !this.onMicrocosmView
-    )
+    return newGraphicUrl
   }
 
   switchView = e => {
-    this.onMicrocosmView = !this.onMicrocosmView
     this.sectionData = data[this.currentSection]
+    this.onMicrocosmView = !this.onMicrocosmView
 
-    this.changeGraphic()
-    this.changeSubheadingText()
-    this.changeText()
-    this.changeButtonText(e.target)
+    let text = this.changeText()
+    let graphicUrl = this.changeGraphic()
+
+    this.setState({ text, graphicUrl })
   }
 
   render() {
@@ -117,7 +107,7 @@ export default class IndexPage extends React.Component {
 
             <h3
               id="subheading-top"
-              className="section__content__subheading -top"
+              className={'section__content__subheading -top' + (this.onMicrocosmView ? '' : ' -browserView')}
             >
               In
             </h3>
@@ -129,13 +119,13 @@ export default class IndexPage extends React.Component {
 
             <h3
               id="subheading-bottom"
-              className="section__content__subheading -bottom"
+              className={'section__content__subheading -bottom' + (this.onMicrocosmView ? '' : ' -browserView')}
             >
               Meanwhile, in
             </h3>
             <button
               onClick={this.switchView}
-              className="section__browser-btn"
+              className={'section__browser-btn' + (this.onMicrocosmView ? '' : ' -browserView')}
             />
           </div>
 
