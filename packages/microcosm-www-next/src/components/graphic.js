@@ -1,15 +1,15 @@
 import React from 'react'
 
-const Graphic2 = ({ fill }) => (
+const Graphic = ({ section, graphicUrl }) => (
   <figure>
     <img
-      src="http://via.placeholder.com/600x600"
+      src={graphicUrl}
       alt="TODO"
       className="section__graphic__figure"
       data-module="ObserveGraphic"
-      data-section="2"
+      data-section={section}
     />
   </figure>
 )
 
-export default Graphic2
+export default Graphic

@@ -1,10 +1,16 @@
 import React from 'react'
 import data from '../data/index.json'
-import { Graphic1, Graphic2, Graphic3 } from '../components'
+import Graphic from '../components/graphic'
 
 export default class IndexPage extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      numSections: 3,
+      heading: data[1].heading,
+      text: data[1].text,
+      graphicUrl: data[1].microcosmGraphicUrl,
+    }
   }
 
   componentDidMount() {
@@ -26,16 +32,7 @@ export default class IndexPage extends React.Component {
     this.heading = document.getElementById('heading')
     this.subheadingTop = document.getElementById('subheading-top')
     this.subheadingBottom = document.getElementById('subheading-bottom')
-
-    let graphics = document.querySelectorAll('[data-module="ObserveGraphic"]')
-    this.graphicsMap = this.setGraphicsMap(graphics)
-  }
-
-  setGraphicsMap(graphics) {
-    return [].slice.call(graphics).reduce((map, graphic) => {
-      map[graphic.dataset.section] = graphic
-      return map
-    }, {})
+    this.graphics = document.querySelectorAll('[data-module="ObserveGraphic"]')
   }
 
   beginObserve() {
@@ -46,9 +43,7 @@ export default class IndexPage extends React.Component {
     )
 
     //start observing each graphic
-    Object.values(this.graphicsMap).forEach(graphic =>
-      observer.observe(graphic)
-    )
+    this.graphics.forEach(graphic => observer.observe(graphic))
   }
 
   onIntersection = observed => {
@@ -58,6 +53,8 @@ export default class IndexPage extends React.Component {
 
     if (entry.isIntersecting && notAlreadyVisible) {
       this.currentSection = section
+      this.sectionData = data[this.currentSection]
+
       this.changeHeading()
       this.changeText()
       this.changeGraphic()
@@ -65,25 +62,24 @@ export default class IndexPage extends React.Component {
   }
 
   changeHeading() {
-    let sectionData = data[this.currentSection]
-    this.heading.innerHTML = sectionData.heading
+    let heading = this.sectionData.heading
+    this.setState({ heading })
   }
 
   changeText() {
-    let sectionData = data[this.currentSection]
-    this.text.innerHTML = this.onMicrocosmView
-      ? sectionData.microcosmText
-      : sectionData.browserText
+    let text = this.onMicrocosmView
+      ? this.sectionData.microcosmText
+      : this.sectionData.browserText
+
+    this.setState({ text })
   }
 
   changeGraphic() {
-    let section = this.currentSection
-    let graphicElement = this.graphicsMap[section]
-    let newGraphicUrl = this.onMicrocosmView
-      ? data[section].microcosmGraphicUrl
-      : data[section].browserGraphicUrl
+    let graphicUrl = this.onMicrocosmView
+      ? this.sectionData.microcosmGraphicUrl
+      : this.sectionData.browserGraphicUrl
 
-    graphicElement.setAttribute('src', newGraphicUrl)
+    this.setState({ graphicUrl })
   }
 
   changeButtonText(button) {
@@ -92,11 +88,15 @@ export default class IndexPage extends React.Component {
 
   changeSubheadingText(button) {
     this.subheadingTop.classList.toggle('-browserView', !this.onMicrocosmView)
-    this.subheadingBottom.classList.toggle('-browserView', !this.onMicrocosmView)
+    this.subheadingBottom.classList.toggle(
+      '-browserView',
+      !this.onMicrocosmView
+    )
   }
 
   switchView = e => {
     this.onMicrocosmView = !this.onMicrocosmView
+    this.sectionData = data[this.currentSection]
 
     this.changeGraphic()
     this.changeSubheadingText()
@@ -109,41 +109,46 @@ export default class IndexPage extends React.Component {
       <div className="wrapper">
         <section className="section">
           <div className="section__content">
-            <h2 className="section__content__heading" id="heading">
-              <span>01.</span>
-              Rendering a View
-            </h2>
+            <h2
+              id="heading"
+              className="section__content__heading"
+              dangerouslySetInnerHTML={{ __html: this.state.heading }}
+            />
 
             <h3
-              className="section__content__subheading -top"
               id="subheading-top"
+              className="section__content__subheading -top"
             >
               In
             </h3>
-            <p className="section__content__text" id="text">
-              The <a href="TODO">Domains</a> are in charge of keeping state
-              organized, and provide whatever data is necessary to the
-              Presenter. A Presenter at it's core is a React Component, so it
-              uses the data it pulls from the Domains to render the appropriate
-              view.
-            </p>
+            <p
+              id="text"
+              className="section__content__text"
+              dangerouslySetInnerHTML={{ __html: this.state.text }}
+            />
 
             <h3
-              className="section__content__subheading -bottom"
               id="subheading-bottom"
+              className="section__content__subheading -bottom"
             >
               Meanwhile, in
             </h3>
             <button
-              className="section__browser-btn"
               onClick={this.switchView}
+              className="section__browser-btn"
             />
           </div>
 
           <div className="section__graphic">
-            <Graphic1 />
-            <Graphic2 />
-            <Graphic3 />
+            {Array(this.state.numSections)
+              .fill()
+              .map((el, i) => (
+                <Graphic
+                  key={i}
+                  section={i + 1}
+                  graphicUrl={this.state.graphicUrl}
+                />
+              ))}
           </div>
         </section>
       </div>
