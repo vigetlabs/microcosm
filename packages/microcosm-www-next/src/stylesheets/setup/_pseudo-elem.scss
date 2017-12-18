@@ -1,7 +1,0 @@
-@mixin pseudo-elem {
-  content: '';
-  position: fixed;
-  transition: transition(background-color);
-  width: 100%;
-  z-index: 1;
-}
