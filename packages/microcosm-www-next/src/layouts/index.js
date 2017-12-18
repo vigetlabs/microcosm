@@ -55,7 +55,7 @@ const PageWrapper = ({ children }) => (
 
     <Navigation />
 
-    <main className="main">{children()}</main>
+    <main>{children()}</main>
 
     <Footer />
   </div>

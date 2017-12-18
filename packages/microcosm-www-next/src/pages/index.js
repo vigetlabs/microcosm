@@ -75,8 +75,7 @@ export default class IndexPage extends React.Component {
   }
 
   render() {
-    let section = this.state.currentSection
-    let sectionData = data[section]
+    let sectionData = data[this.state.currentSection]
     let text = this.state.microcosmView
       ? sectionData.microcosmText
       : sectionData.browserText

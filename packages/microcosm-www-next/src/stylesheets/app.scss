@@ -14,11 +14,11 @@
 @import 'base/elements';
 
 // utility (generic utility classes)
-@import 'utility/bg-color';
 @import 'utility/screenreader';
 @import 'utility/wrapper';
 
 // structure (header, footer, etc)
+@import 'structure/body';
 @import 'structure/nav';
 @import 'structure/section';
 @import 'structure/footer';
