@@ -8,7 +8,7 @@ export default class IndexPage extends React.Component {
     this.state = {
       numSections: 3,
       currentSection: 1,
-      microcosmView: true
+      microcosmView: true,
     }
   }
 
