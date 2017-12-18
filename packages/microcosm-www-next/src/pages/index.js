@@ -66,25 +66,21 @@ export default class IndexPage extends React.Component {
         <section className="section">
           <div className="section__content">
             <h2
-              id="heading"
               className="section__content__heading"
               dangerouslySetInnerHTML={{ __html: sectionData.heading }}
             />
 
             <h3
-              id="subheading-top"
               className={'section__content__subheading -top' + browserClass}
             >
               In
             </h3>
             <p
-              id="text"
               className="section__content__text"
               dangerouslySetInnerHTML={{ __html: text }}
             />
 
             <h3
-              id="subheading-bottom"
               className={'section__content__subheading -bottom' + browserClass}
             >
               Meanwhile, in
