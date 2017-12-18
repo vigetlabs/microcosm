@@ -8,7 +8,7 @@ export default class IndexPage extends React.Component {
     this.state = {
       numSections: 3,
       currentSection: 1,
-      microcosmView: true
+      microcosmView: true,
     }
   }
 
@@ -43,19 +43,23 @@ export default class IndexPage extends React.Component {
     let notAlreadyVisible = section !== this.state.currentSection
 
     if (entry.isIntersecting & notAlreadyVisible) {
-      this.setState({currentSection: section})
+      this.setState({ currentSection: section })
     }
   }
 
   switchView = e => {
-    this.setState({microcosmView: !this.state.microcosmView})
+    this.setState({ microcosmView: !this.state.microcosmView })
   }
 
   render() {
     let sectionData = data[this.state.currentSection]
-    let addClass    = !this.state.microcosmView ? ' -browserView' : ''
-    let text        = this.state.microcosmView ? sectionData.microcosmText : sectionData.browserText
-    let graphicUrl  = this.state.microcosmView ? sectionData.microcosmUrl : sectionData.browserUrl
+    let text = this.state.microcosmView
+      ? sectionData.microcosmText
+      : sectionData.browserText
+    let graphicUrl = this.state.microcosmView
+      ? sectionData.microcosmUrl
+      : sectionData.browserUrl
+    let browserClass = !this.state.microcosmView ? ' -browserView' : ''
 
     return (
       <div className="wrapper">
@@ -69,7 +73,7 @@ export default class IndexPage extends React.Component {
 
             <h3
               id="subheading-top"
-              className={'section__content__subheading -top' + addClass}
+              className={'section__content__subheading -top' + browserClass}
             >
               In
             </h3>
@@ -81,13 +85,13 @@ export default class IndexPage extends React.Component {
 
             <h3
               id="subheading-bottom"
-              className={'section__content__subheading -bottom' + addClass}
+              className={'section__content__subheading -bottom' + browserClass}
             >
               Meanwhile, in
             </h3>
             <button
               onClick={this.switchView}
-              className={'section__browser-btn' + addClass}
+              className={'section__browser-btn' + browserClass}
             />
           </div>
 
@@ -95,11 +99,7 @@ export default class IndexPage extends React.Component {
             {Array(this.state.numSections)
               .fill()
               .map((el, i) => (
-                <Graphic
-                  key={i}
-                  section={i + 1}
-                  graphicUrl={graphicUrl}
-                />
+                <Graphic key={i} section={i + 1} graphicUrl={graphicUrl} />
               ))}
           </div>
         </section>
