@@ -1,9 +1,11 @@
+import asciitree from 'asciitree'
+
 export default function visualize(history) {
-  function dig(focus, edges) {
-    return edges.has(focus)
-      ? [focus.tag, dig(edges.get(focus), edges)]
-      : focus.tag
+  function dig(focus) {
+    let children = history.children(focus).map(dig)
+
+    return children.length ? [focus.tag, ...children] : focus.tag
   }
 
-  console.log(require('asciitree')(dig(history.root, history._forwards)))
+  console.log(asciitree(dig(history.root)))
 }

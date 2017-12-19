@@ -30,8 +30,8 @@ describe('History @@iterator', function() {
   it('works with Promise.all', async function() {
     let repo = new Microcosm({ debug: true })
 
-    let one = repo.push(() => Promise.resolve('one'))
-    let two = repo.push(() => Promise.resolve('two'))
+    repo.push(() => Promise.resolve('one'))
+    repo.push(() => Promise.resolve('two'))
 
     await Promise.all(repo.history)
 
@@ -45,8 +45,8 @@ describe('History @@iterator', function() {
   it('works with Observable.of', function() {
     let repo = new Microcosm({ debug: true })
 
-    let one = repo.push(() => Promise.resolve('one'))
-    let two = repo.push(() => Promise.resolve('two'))
+    repo.push(() => Promise.resolve('one'))
+    repo.push(() => Promise.resolve('two'))
     let complete = jest.fn()
 
     Observable.of(repo.history).subscribe({ complete })
