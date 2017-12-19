@@ -47,7 +47,7 @@ describe('History::toggle', function() {
     let one = repo.push('one')
     let two = repo.push('two')
 
-    repo.checkout(one)
+    repo.history.checkout(one)
     repo.push('three')
 
     let spy = jest.spyOn(repo.history, 'reconcile')
@@ -63,7 +63,7 @@ describe('History::toggle', function() {
     let one = repo.push('one')
     let two = repo.push('two')
 
-    repo.checkout(one)
+    repo.history.checkout(one)
 
     let three = repo.push('three')
     let four = repo.push('four')
