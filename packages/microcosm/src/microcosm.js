@@ -2,10 +2,10 @@
  * @flow
  */
 
-import { Subject } from './subject'
 import History from './history'
 import DomainEngine from './domain-engine'
 import installDevtools from './install-devtools'
+import { Subject } from './subject'
 import { effectEngine } from './effect-engine'
 import { clone, merge, observerHash } from './utils'
 import { version } from '../package.json'
@@ -29,19 +29,14 @@ class Microcosm extends Subject {
     super()
 
     this.options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
-
     this.parent = this.options.parent
     this.history = this.parent ? this.parent.history : new History(this.options)
-
     this.domains = new DomainEngine(this)
 
     this.subscribe({
-      start: () => this.setup(this.options),
-      complete: () => this.teardown()
+      start: this.setup.bind(this, this.options),
+      complete: this.teardown.bind(this)
     })
-
-    // A history is done reconciling and is ready for a release
-    this.history.updates.subscribe(this._update.bind(this))
 
     if (this.options.debug) {
       installDevtools(this)
@@ -49,7 +44,12 @@ class Microcosm extends Subject {
   }
 
   get state(): Object {
-    return this.history.current(this) || this.getInitialState()
+    // TODO: This is very inefficient!
+    return merge(
+      this.parent ? this.parent.state : null,
+      this.domains.lifecycle(INITIAL_STATE, {}),
+      this.history.current(this)
+    )
   }
 
   setup(options?: Object) {
@@ -63,22 +63,20 @@ class Microcosm extends Subject {
   addDomain(key, config, options) {
     console.assert(
       this.state.hasOwnProperty(key) === false,
-      'Can not add domain for ' + key + '. This state is already managed.'
+      'Can not add domain for "' + key + '". This state is already managed.'
     )
 
-    return this.domains.add(key, config, options)
+    console.assert(key && key.length > 0, 'Can not add domain to root level.')
+
+    return this.domains.add(this, key, config, options)
   }
 
   addEffect(config, options) {
     return effectEngine(this, config, options)
   }
 
-  getInitialState() {
-    return this.domains.lifecycle(INITIAL_STATE, {})
-  }
-
   push(command: any, ...params: *[]): Action {
-    return this.history.append(command, params, this)
+    return this.history.append(command, params)
   }
 
   deserialize(payload: string | Object) {
@@ -106,21 +104,6 @@ class Microcosm extends Subject {
     return new Microcosm({
       parent: this
     })
-  }
-
-  parallel(actions) {
-    return observerHash(actions)
-  }
-
-  /* Private ------------------------------------------------------ */
-
-  _update(action) {
-    let state = this.history.recall(action, this) || this.getInitialState()
-
-    while (action) {
-      this.history.stash(action, this, this.domains.dispatch(action, state))
-      action = this.history.after(action)
-    }
   }
 }
 

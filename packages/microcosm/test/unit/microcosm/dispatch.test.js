@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe('Microcosm::dispatch', function() {
+describe.skip('Microcosm::dispatch', function() {
   it('does not mutate base state on prior dispatches', function() {
     const repo = new Microcosm()
     const mutation = () => true

@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe('Microcosm::checkout', function() {
+describe.skip('Microcosm::checkout', function() {
   it('returns to a prior state', function() {
     const repo = new Microcosm({ maxHistory: Infinity })
     const action = n => n

@@ -89,7 +89,7 @@ describe('Effect::register', function() {
     const repo = new Microcosm()
     const test = n => n
 
-    repo.domains.add('test', {
+    repo.addDomain('test', {
       getInitialState() {
         return false
       },

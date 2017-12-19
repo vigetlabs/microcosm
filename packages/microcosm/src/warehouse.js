@@ -7,6 +7,10 @@ export class Warehouse {
     this._bank = new Map()
   }
 
+  has(action) {
+    return this._bank.has(action)
+  }
+
   set(action, repo, payload) {
     this._ensure(action)
 
@@ -15,7 +19,7 @@ export class Warehouse {
 
   get(action, repo) {
     if (!action) {
-      return null
+      return {}
     }
 
     this._ensure(action, repo)
@@ -27,11 +31,15 @@ export class Warehouse {
     this._bank.delete(action)
   }
 
+  get size() {
+    return this._bank.size
+  }
+
   /* Private ------------------------------------------------------ */
 
-  _ensure(action) {
+  _ensure(action, repo) {
     if (this._bank.has(action) === false) {
-      this._bank.set(action, new Map())
+      this._bank.set(action, new Map([[repo, {}]]))
     }
   }
 }

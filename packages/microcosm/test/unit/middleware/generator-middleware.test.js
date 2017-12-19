@@ -87,7 +87,7 @@ describe('Generator Middleware', function() {
       error() {
         throw new Error('Sequence should not have rejected')
       },
-      cancel() {
+      cancel(result) {
         expect(result).toEqual('Cancelled')
       }
     })

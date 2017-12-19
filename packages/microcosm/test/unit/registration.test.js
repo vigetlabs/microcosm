@@ -1,6 +1,4 @@
-import Microcosm, { STATUS } from 'microcosm'
-
-const action = n => n
+import Microcosm from 'microcosm'
 
 describe('getRegistration', function() {
   it('can use nested objects to return specific statuses', async () => {
@@ -70,24 +68,21 @@ describe('getRegistration', function() {
     expect(b).toHaveBeenCalledWith(repo, 'foobar')
   })
 
-  it.skip(
-    'prints the action name in the warning when a handler is undefined',
-    function() {
-      class Repo extends Microcosm {
-        setup() {
-          this.addDomain('test', {
-            register: {
-              getUser: undefined
-            }
-          })
-        }
+  it.skip('prints the action name in the warning when a handler is undefined', function() {
+    class Repo extends Microcosm {
+      setup() {
+        this.addDomain('test', {
+          register: {
+            getUser: undefined
+          }
+        })
       }
-
-      let repo = new Repo()
-
-      expect(repo.prepare('getUser')).toThrow(
-        'getUser key within a registration is undefined. Is it being referenced correctly?'
-      )
     }
-  )
+
+    let repo = new Repo()
+
+    expect(repo.prepare('getUser')).toThrow(
+      'getUser key within a registration is undefined. Is it being referenced correctly?'
+    )
+  })
 })

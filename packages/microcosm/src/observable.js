@@ -34,7 +34,6 @@ class Subscription {
         this._cleanup = cleanup
       }
     } catch (e) {
-      console.error('error', e)
       // If an error occurs during startup, then attempt to send the error
       // to the observer
       observer.error(e)

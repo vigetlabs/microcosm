@@ -8,8 +8,7 @@ declare var expect: any
 
 expect.extend({
   toRegister(entity, command, status = 'complete') {
-    let tagged = tag(command)
-    let name = tagged.toString()
+    let tagged = tag(command).toString()
 
     if (entity.register == null) {
       throw new TypeError(`${entity.constructor.name} has no register method.`)
@@ -17,12 +16,12 @@ expect.extend({
 
     let operator = this.isNot ? 'not to' : 'to'
     let registry = result(entity, 'register')
-    let action = { meta: { status, command }, payload: null }
+    let action = { tag: tagged, status, payload: null }
 
     return {
       pass: getHandlers(registry, action).length > 0,
       message: () => {
-        return `Expected entity ${operator} register to the '${status}' state of ${name}.`
+        return `Expected entity ${operator} register to the '${status}' state of ${tag}.`
       }
     }
   },

@@ -2,36 +2,35 @@
  * @flow
  */
 
+import { getSymbol } from './utils'
 import { Subject } from './subject'
 import { Warehouse } from './warehouse'
 import coroutine from './coroutine'
-import tag from './tag'
-import { INACTIVE, START, COMPLETE, NEXT, ERROR } from './lifecycle'
-
-function standardAction(command) {
-  return {
-    meta: { status: INACTIVE, command, closed: false },
-    error: false,
-    payload: null
-  }
-}
 
 class History {
-  _root: Action
-  _head: Action
-
   constructor(options) {
-    this.debug = Boolean(options ? options.debug : false)
-
-    this._downstream = new Map()
-    this._upstream = new Map()
+    this._backwards = new Map()
+    this._forwards = new Map()
     this._db = new Warehouse()
 
+    this.debug = Boolean(options ? options.debug : false)
     this.updates = new Subject()
   }
 
+  get size() {
+    let count = this.root ? 1 : 0
+    let focus = this.root
+
+    while (focus !== this.head) {
+      count += 1
+      focus = this.after(focus)
+    }
+
+    return count
+  }
+
   then(pass?: *, fail?: *): Promise<*> {
-    return Promise.all([...this._downstream.values()])
+    return Promise.all([...this._backwards.values()])
   }
 
   stash(action, repo, payload) {
@@ -39,99 +38,152 @@ class History {
   }
 
   recall(action, repo) {
-    return this._db.get(this._upstream.get(action), repo)
+    return this._db.get(this._backwards.get(action), repo)
+  }
+
+  previous(action) {
+    return this._backwards.get(action)
+  }
+
+  next(action) {
+    return this._forwards.get(action)
   }
 
   current(repo) {
-    return this._db.get(this._head, repo)
+    return this._db.get(this.head, repo)
   }
 
   archive() {
-    if (this.debug) {
-      return
-    }
+    while (this.root && this.root.closed && this.root !== this.head) {
+      let last = this.root
+      let next = this._forwards.get(this.root)
 
-    while (this.size > 1 && this._root.meta.closed) {
-      let last = this._root
-      let next = this._downstream.get(this._root)
-
-      if (next && next.meta.closed) {
-        this._root = next
-        this._db.delete(last)
-        this._upstream.delete(last)
-        this._downstream.delete(last)
+      if (next && next.closed) {
+        this.remove(last)
       } else {
         break
       }
     }
   }
 
-  append(command: string | Command, params: *[], origin: Microcosm): Action {
-    command = tag(command)
+  append(command: string | Command, params): Subject {
+    let action = new Subject(command)
 
-    let revision = standardAction(command)
-    let action = new Subject()
-
-    if (this.size > 0) {
-      this._downstream.set(this._head, revision)
-      this._upstream.set(revision, this._head)
+    if (this.head) {
+      this._forwards.set(this.head, action)
+      this._backwards.set(action, this.head)
     } else {
-      this._root = revision
+      this.root = action
     }
 
-    this._head = revision
+    this.head = action
 
-    action.subscribe({
-      start: didStart.bind(null, this, revision),
-      next: didNext.bind(null, this, revision),
-      complete: didComplete.bind(null, this, revision),
-      error: didError.bind(null, this, revision)
-    })
+    this.updates.next(action)
 
-    coroutine(action, command, params, origin)
+    coroutine(action, command, params)
+
+    if (this.debug === false) {
+      action.subscribe({
+        complete: this.archive.bind(this)
+      })
+    }
 
     return action
   }
 
   after(action) {
-    return action === this.head ? null : this._downstream.get(action)
+    return action === this.head ? undefined : this._forwards.get(action)
   }
 
   wait() {
     return this.then()
   }
 
-  get size() {
-    return this._head ? this._upstream.size + 1 : 0
+  remove(action) {
+    let before = this._backwards.get(action)
+    let after = this._forwards.get(action)
+    let base = after || before
+
+    this._forwards.delete(action)
+    this._backwards.delete(action)
+    this._db.delete(action)
+
+    if (this.head === action) {
+      this._forwards.delete(before)
+      this.head = before
+    }
+
+    if (this.root === action) {
+      this.root = base
+    }
+
+    if (this._forwards.get(before) === action) {
+      this._forwards.set(before, after)
+    }
+
+    if (this._backwards.get(after) === action) {
+      this._backwards.set(after, before)
+    }
+
+    if (base && action.disabled === false) {
+      this.updates.next(base)
+    }
   }
-}
 
-function didStart(history, revision) {
-  revision.meta.status = START
-  history.updates.next(revision)
-}
+  checkout(action) {
+    if (!action) {
+      throw new Error(`Unable to checkout ${action} action`)
+    }
 
-function didNext(history, revision, payload) {
-  revision.meta.status = NEXT
-  revision.payload = payload
-  history.updates.next(revision)
-}
+    let focus = action
 
-function didComplete(history, revision, payload) {
-  revision.meta.status = COMPLETE
-  revision.meta.closed = true
-  revision.payload = payload
-  history.updates.next(revision)
-  history.archive()
-}
+    this.head = focus
 
-function didError(history, revision, error) {
-  revision.error = true
-  revision.payload = error
-  revision.meta.status = ERROR
-  revision.meta.closed = true
-  history.updates.next(revision)
-  history.archive()
+    while (focus) {
+      var previous = this._backwards.get(focus)
+
+      if (previous) {
+        this._forwards.set(previous, focus)
+      }
+
+      focus = previous
+    }
+
+    this.updates.next(action)
+  }
+
+  [getSymbol('iterator')]() {
+    let focus = this.root
+
+    return {
+      _start: this.root,
+      next: () => {
+        if (focus) {
+          let step = { value: focus, done: false }
+          focus = this._forwards.get(focus)
+          return step
+        }
+
+        // TODO: This is intended to help GC. Does this really do anything?
+        focus = null
+
+        return { done: true }
+      }
+    }
+  }
+
+  toggle(action) {
+    if (this._db.has(action)) {
+      action.toggle()
+      this.updates.next(action)
+    }
+  }
+
+  // TODO: This is probably extremely slow
+  children(action) {
+    let all = Array.from(this._backwards.keys())
+    return all.filter(value => this._backwards.get(value) === action)
+  }
 }
 
 export default History

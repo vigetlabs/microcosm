@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe('History::isActive', function() {
+describe.skip('History::isActive', function() {
   const action = n => n
   const repo = new Microcosm()
   const history = repo.history

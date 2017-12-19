@@ -12,42 +12,60 @@ import {
   SERIALIZE
 } from './lifecycle'
 
-type DomainList = { [key: string]: Domain }
-
 class DomainEngine {
-  repo: Microcosm
-  domains: DomainList
+  _domains: { [key: string]: Domain }
 
   constructor(repo: Microcosm) {
-    this.repo = repo
-    this.domains = {}
+    this._domains = {}
+
+    let tracker = repo.history.updates.subscribe(this.track.bind(this, repo))
+
+    repo.subscribe({ complete: tracker.unsubscribe })
   }
 
-  add(key: string, config: *, options?: Object) {
-    console.assert(key && key.length > 0, 'Can not add domain to root level.')
+  track(repo, action) {
+    let bound = this.rollforward.bind(this, repo, action)
 
-    let deepOptions = merge(
-      this.repo.options,
-      config.defaults,
-      { key },
-      options
-    )
+    action.subscribe({
+      start: bound,
+      next: bound,
+      complete: bound,
+      error: bound
+    })
+  }
 
-    let domain: Domain = createOrClone(config, deepOptions, this.repo)
+  rollforward(repo, action) {
+    while (action) {
+      let last = repo.history.recall(action, repo)
+      let next = last
 
-    this.domains[key] = domain
+      if (action.disabled === false) {
+        next = this.dispatch(action, last)
+      }
 
-    this.repo.subscribe({
-      start: setup(this.repo, domain, deepOptions),
-      complete: teardown(this.repo, domain, deepOptions)
+      repo.history.stash(action, repo, next)
+
+      action = repo.history.after(action)
+    }
+  }
+
+  add(repo, key: string, config: *, options?: Object) {
+    let deepOptions = merge(repo.options, config.defaults, { key }, options)
+    let domain: Domain = createOrClone(config, deepOptions, repo)
+
+    this._domains[key] = domain
+
+    repo.subscribe({
+      start: setup(repo, domain, deepOptions),
+      complete: teardown(repo, domain, deepOptions)
     })
 
     return domain
   }
 
   lifecycle(type, state) {
-    for (var key in this.domains) {
-      var domain = this.domains[key]
+    for (var key in this._domains) {
+      var domain = this._domains[key]
 
       switch (type) {
         case INITIAL_STATE:
@@ -73,28 +91,46 @@ class DomainEngine {
   }
 
   dispatch(action: Action, state: Object) {
-    if (action.command === RESET) {
-      return action.payload
-    } else if (action.command === PATCH) {
-      return merge(state, action.payload)
+    if (action.id === RESET) {
+      return reset(this._domains, action, state)
     }
 
-    for (var key in this.domains) {
-      var domain = this.domains[key]
+    if (action.id === PATCH) {
+      return patch(this._domains, action, state)
+    }
+
+    for (var key in this._domains) {
+      var domain = this._domains[key]
       var handlers = getHandlers(result(domain, 'register') || {}, action)
+      var last = key in state ? state[key] : result(domain, 'getInitialState')
 
       for (var i = 0; i < handlers.length; i++) {
-        state[key] = handlers[i].call(
-          domain,
-          state[key],
-          action.payload,
-          action.meta
-        )
+        state[key] = handlers[i].call(domain, last, action.payload)
       }
     }
 
     return state
   }
+}
+
+function patch(domains, action, state) {
+  let next = {}
+
+  for (var key in domains) {
+    next[key] = action.payload[key]
+  }
+
+  return merge(state, next)
+}
+
+function reset(domains, action, state) {
+  let next = {}
+
+  for (var key in this._domains) {
+    next[key] = action.payload[key]
+  }
+
+  return merge(state, next)
 }
 
 export default DomainEngine

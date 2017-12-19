@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe('Microcosm devtools', function() {
+describe.skip('Microcosm devtools', function() {
   it('installs the devtools when enabled', function() {
     let emit = jest.fn()
 

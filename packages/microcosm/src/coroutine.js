@@ -2,14 +2,18 @@
  * @flow
  */
 
-import { Observable, fromIterator } from './observable'
-import { getSymbol, isPlainObject, observerHash } from './utils'
+import { getSymbol, observerHash } from './utils'
 
 /**
  * Coroutine is used by an action to determine how it should resolve
  * the body of their associated command.
  */
 export default function coroutine(action, job, params: *[], repo: any): void {
+  if (typeof job !== 'function') {
+    action.complete(params[0])
+    return
+  }
+
   let body = job.apply(null, params)
 
   if (isGeneratorFn(body)) {

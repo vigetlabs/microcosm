@@ -1,4 +1,10 @@
-import Microcosm from 'microcosm'
+import Microcosm, { patch } from 'microcosm'
+
+const delay = (n, payload) => {
+  return new Promise(resolve => {
+    setTimeout(() => resolve(payload), n)
+  })
+}
 
 describe('Microcosm::patch', function() {
   it('only patches within managed keys', function() {
@@ -6,7 +12,7 @@ describe('Microcosm::patch', function() {
 
     repo.addDomain('colors', {})
 
-    repo.patch({ shapes: ['square', 'triangle', 'circle'] })
+    repo.push(patch, { shapes: ['square', 'triangle', 'circle'] })
 
     expect(repo).not.toHaveState('shapes')
   })
@@ -15,7 +21,7 @@ describe('Microcosm::patch', function() {
     const repo = new Microcosm()
 
     // This is invalid
-    let badPatch = () => repo.patch('{ test: deserialize }', true)
+    let badPatch = () => repo.push(patch, '{ test: deserialize }', true)
 
     expect(badPatch).toThrow()
   })
@@ -26,7 +32,7 @@ describe('Microcosm::patch', function() {
 
       tree.addDomain('color', {})
 
-      tree.patch({ color: 'red' })
+      tree.push(patch, { color: 'red' })
 
       const branch = tree.fork()
       const leaf = branch.fork()
@@ -35,36 +41,40 @@ describe('Microcosm::patch', function() {
       expect(leaf).toHaveState('color', 'red')
     })
 
-    it('properly archives after a patch', () => {
+    it.only('properly archives after a patch', async () => {
       const parent = new Microcosm({ maxHistory: 0 })
 
       parent.addDomain('one', {
+        getInitialState() {
+          return false
+        },
         register() {
           return {
-            getInitialState: () => false,
-            one: (a, b) => b
+            [delay]: (a, b) => b
           }
         }
       })
 
       parent.addDomain('two', {
+        getInitialState() {
+          return false
+        },
         register() {
           return {
-            getInitialState: () => false,
-            two: (a, b) => b
+            [delay]: (a, b) => b
           }
         }
       })
 
-      parent.patch({ one: false, two: false })
+      parent.push(patch, { one: false, two: false })
 
       const child = parent.fork()
 
-      const one = parent.append('one')
-      const two = parent.append('two')
+      parent.push(delay, 20, false)
+      parent.push(delay, 10, false)
 
-      two.resolve(true)
-      one.resolve(true)
+      await parent.history.wait()
+      console.log(child.state, parent.state)
 
       expect(child.state.one).toBe(true)
       expect(child.state.two).toBe(true)
@@ -82,7 +92,7 @@ describe('Microcosm::patch', function() {
         }
       })
 
-      child.patch({ count: 2 })
+      child.push(patch, { count: 2 })
 
       child.push('add', 1)
       child.push('add', 1)
@@ -112,7 +122,7 @@ describe('Microcosm::patch', function() {
         }
       })
 
-      child.patch({ bottom: true })
+      child.push(patch, { bottom: true })
 
       expect(parent.state).toEqual({ top: true })
 
@@ -135,7 +145,7 @@ describe('Microcosm::patch', function() {
         }
       })
 
-      parent.patch({ top: true })
+      parent.push(patch, { top: true })
 
       expect(parent).toHaveState('top', true)
       expect(child).toHaveState('top', true)
@@ -157,7 +167,7 @@ describe('Microcosm::patch', function() {
         }
       })
 
-      parent.patch({ bottom: true })
+      parent.push(patch, { bottom: true })
 
       expect(parent).not.toHaveState('bottom')
       expect(child).toHaveState('bottom', false)

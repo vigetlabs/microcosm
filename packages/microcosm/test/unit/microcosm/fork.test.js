@@ -1,4 +1,4 @@
-import Microcosm from 'microcosm'
+import Microcosm, { patch } from 'microcosm'
 
 describe('Microcosm::fork', function() {
   it('forks can not manage state owned by parents', () => {
@@ -42,10 +42,7 @@ describe('Microcosm::fork', function() {
     const parent = new Microcosm()
     const child = parent.fork()
 
-    parent.on('change', function() {
-      child.teardown()
-    })
-
-    parent.patch({ test: true })
+    parent.subscribe(() => child.teardown())
+    parent.push(patch, { test: true })
   })
 })

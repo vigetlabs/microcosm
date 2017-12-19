@@ -8,10 +8,14 @@ import { result } from './utils'
 
 const NO_HANDLERS = []
 
-export function getHandlers(pool: Object, action: Action): *[] {
-  let { status, command } = action.meta
+export function getHandlers(pool: ?Object, action: Action): *[] {
+  if (!pool) {
+    return NO_HANDLERS
+  }
 
-  let entry = pool[command] || NO_HANDLERS
+  let { tag, status } = action
+
+  let entry = pool[tag] || NO_HANDLERS
 
   if (isPlainObject(entry)) {
     entry = entry[status] || NO_HANDLERS

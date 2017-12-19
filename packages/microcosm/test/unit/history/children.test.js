@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe('History node children', function() {
+describe.skip('History node children', function() {
   const action = n => n
 
   it('can determine children', function() {
