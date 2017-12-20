@@ -2,7 +2,8 @@
  * @flow
  */
 
-import { getSymbol, observerHash } from './utils'
+import { observerHash } from './observable'
+import { getSymbol } from './symbols'
 
 /**
  * Coroutine is used by an action to determine how it should resolve
@@ -22,6 +23,8 @@ export default function coroutine(action, job, params: *[], repo: any): void {
     asPromise(action, body)
   } else if (typeof body === 'function' && params.indexOf(body) < 0) {
     body(action, repo)
+  } else if (body && body[getSymbol('observable')]) {
+    action.subscribe(body.subscribe(action))
   } else {
     action.complete(body)
   }

@@ -1,8 +1,6 @@
-/**
- * @flow
- */
+// @flow
 
-import { getSymbol } from './utils'
+import { getSymbol } from './symbols'
 import { Subject } from './subject'
 import { Warehouse } from './warehouse'
 import coroutine from './coroutine'
@@ -59,14 +57,14 @@ class History {
       let next = this._forwards.get(this.root)
 
       if (next && next.closed) {
-        this.remove(last)
+        this.remove(last, true)
       } else {
         break
       }
     }
   }
 
-  append(command: string | Command, params): Subject {
+  append(command: string | Command, params, origin: *): Subject {
     let action = new Subject(command)
 
     if (this.head) {
@@ -80,7 +78,7 @@ class History {
 
     this.updates.next(action)
 
-    coroutine(action, command, params)
+    coroutine(action, command, params, origin)
 
     if (this.debug === false) {
       action.subscribe({
@@ -99,7 +97,7 @@ class History {
     return this.then()
   }
 
-  remove(action) {
+  remove(action, silent) {
     let before = this._backwards.get(action)
     let after = this._forwards.get(action)
     let base = after || before
@@ -125,7 +123,7 @@ class History {
       this._backwards.set(after, before)
     }
 
-    if (base && action.disabled === false) {
+    if (!silent && base && action.disabled === false) {
       this.updates.next(base)
     }
   }

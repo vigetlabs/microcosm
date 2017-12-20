@@ -92,13 +92,13 @@ describe('History::checkout', function() {
     repo.push('five')
     repo.push('six')
 
-    expect(`${repo.history.toArray().map(a => a.tag)}`).toEqual(
+    expect(`${Array.from(repo.history).map(a => a.tag)}`).toEqual(
       'one,two,five,six'
     )
 
     repo.history.checkout(four)
 
-    expect(`${repo.history.toArray().map(a => a.tag)}`).toEqual(
+    expect(`${Array.from(repo.history).map(a => a.tag)}`).toEqual(
       'one,two,three,four'
     )
   })

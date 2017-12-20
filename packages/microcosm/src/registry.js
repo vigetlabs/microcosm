@@ -1,35 +1,45 @@
-/**
- * @flow
- */
+// @flow
 
-import { isPlainObject } from './utils'
+import { EMPTY_ARRAY, EMPTY_OBJECT } from './empty'
 import { COMPLETE } from './lifecycle'
-import { result } from './utils'
 
-const NO_HANDLERS = []
+function wrap(value: *): *[] {
+  return Array.isArray(value) ? value : [value]
+}
 
-export function getHandlers(pool: ?Object, action: Action): *[] {
-  if (!pool) {
-    return NO_HANDLERS
+export function createOrClone(target: any, options: ?Object, repo: *) {
+  return typeof target === 'function'
+    ? new target(options, repo)
+    : Object.create(target)
+}
+
+export function buildRegistry(entity: *): Object {
+  if (typeof entity.register === 'function') {
+    return entity.register()
   }
 
-  let { tag, status } = action
+  return entity.register == null ? EMPTY_OBJECT : entity.register
+}
 
-  let entry = pool[tag] || NO_HANDLERS
+export function getHandlers(pool: Object, action: Action): *[] {
+  let entry = pool[action.tag]
 
-  if (isPlainObject(entry)) {
-    entry = entry[status] || NO_HANDLERS
-  } else if (status !== COMPLETE) {
-    return NO_HANDLERS
+  if (entry) {
+    if (action.status in entry) {
+      return wrap(entry[action.status])
+    }
+
+    if (action.status === COMPLETE) {
+      return wrap(entry)
+    }
   }
 
-  return Array.isArray(entry) ? entry : [entry]
+  return EMPTY_ARRAY
 }
 
 export function map(repo, entity) {
   return action => {
-    let pool = result(entity, 'register')
-    let handlers = getHandlers(pool, action)
+    let handlers = getHandlers(buildRegistry(entity), action)
 
     for (var i = 0, len = handlers.length; i < len; i++) {
       handlers[i].call(entity, repo, action.payload)

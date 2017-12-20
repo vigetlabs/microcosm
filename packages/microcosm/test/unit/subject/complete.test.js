@@ -6,9 +6,9 @@ describe('Action complete state', function() {
 
     let payload = await repo.push(function() {
       return observer => {
-        observer.next({ status: 'update', payload: 'one' })
+        observer.next('one')
         observer.complete()
-        observer.next({ status: 'done', payload: 'two' })
+        observer.next('two')
       }
     })
 

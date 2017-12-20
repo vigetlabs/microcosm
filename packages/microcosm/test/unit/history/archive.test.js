@@ -7,17 +7,17 @@ describe('History::archive', function() {
   it('archive moves all the way up to the head', function() {
     const repo = new Microcosm({ debug: true })
 
-    let one = repo.push('first', 1)
+    repo.push('first', 1)
     let two = repo.push('second', 2)
-    let three = repo.push('third', 3)
+    repo.push('third', 3)
 
     repo.history.checkout(two)
     repo.history.archive()
 
-    expect(repo.history._root.tag).toBe('second')
+    expect(repo.history.root.tag).toBe('second')
 
     // This is two because we checked out two earlier
-    expect(repo.history._head.tag).toBe('second')
+    expect(repo.history.head.tag).toBe('second')
   })
 
   it('builds up back-pressure', function() {

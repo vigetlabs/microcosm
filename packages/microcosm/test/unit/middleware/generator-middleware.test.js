@@ -41,7 +41,7 @@ describe('Generator Middleware', function() {
   })
 
   it('a rejected step halts the chain', async () => {
-    expect.assertions(1)
+    expect.assertions(2)
 
     let stepper = n => n + 1
     let repo = new Microcosm()
@@ -63,7 +63,11 @@ describe('Generator Middleware', function() {
       }
     })
 
-    await sequence
+    try {
+      await sequence
+    } catch (error) {
+      expect(error).toEqual('failure')
+    }
   })
 
   it.skip('a cancelled step halts the chain', () => {

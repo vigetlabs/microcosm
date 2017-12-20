@@ -52,7 +52,14 @@ describe('callbacks', function() {
 
   it('executes onDone when that action completes', function() {
     let onDone = jest.fn()
-    let send = () => new Action(n => n).resolve(true)
+    let send = () => {
+      let subject = new Subject()
+
+      subject.resolve(true)
+
+      return subject
+    }
+
     let button = mount(
       <ActionButton action="test" onDone={onDone} send={send} />
     )

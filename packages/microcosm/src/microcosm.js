@@ -7,9 +7,9 @@ import DomainEngine from './domain-engine'
 import installDevtools from './install-devtools'
 import { Subject } from './subject'
 import { effectEngine } from './effect-engine'
-import { clone, merge, observerHash } from './utils'
+import { clone, merge } from './data'
 import { version } from '../package.json'
-import { INITIAL_STATE, DESERIALIZE, SERIALIZE } from './lifecycle'
+import { DESERIALIZE, SERIALIZE } from './lifecycle'
 
 const DEFAULTS = {
   debug: false,
@@ -47,7 +47,7 @@ class Microcosm extends Subject {
     // TODO: This is very inefficient!
     return merge(
       this.parent ? this.parent.state : null,
-      this.domains.lifecycle(INITIAL_STATE, {}),
+      this.domains.getInitialState(),
       this.history.current(this)
     )
   }
@@ -76,7 +76,7 @@ class Microcosm extends Subject {
   }
 
   push(command: any, ...params: *[]): Action {
-    return this.history.append(command, params)
+    return this.history.append(command, params, this)
   }
 
   deserialize(payload: string | Object) {

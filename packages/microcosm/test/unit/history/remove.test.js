@@ -147,7 +147,8 @@ describe('History::remove', function() {
       let repo = new Microcosm({ debug: true })
       let next = jest.fn()
 
-      let one = repo.push('one')
+      repo.push('one')
+
       let two = repo.push('two')
       let three = repo.push('three')
 

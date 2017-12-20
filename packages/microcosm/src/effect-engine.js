@@ -2,12 +2,15 @@
  * @flow
  */
 
-import { merge, createOrClone } from './utils'
 import { map, setup, teardown } from './registry'
+import { merge } from './data'
 
-export function effectEngine(repo, constructor, effectOptions) {
-  let options = merge(repo.options, constructor.defaults, effectOptions)
-  let effect: Effect = createOrClone(constructor, options, repo)
+export function effectEngine(repo, entity, effectOptions) {
+  let options = merge(repo.options, entity.defaults, effectOptions)
+  let effect =
+    typeof entity === 'function'
+      ? new entity(options, repo)
+      : Object.create(entity)
 
   repo.subscribe({
     start: setup(repo, effect, options),

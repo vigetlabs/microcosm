@@ -5,8 +5,8 @@ describe('Action::teardown', function() {
     function test(action, method, payload) {
       return function(action) {
         Promise.resolve().then(
-          () => action.resolve(true),
-          () => action.reject(false)
+          () => action.complete(true),
+          () => action.error(false)
         )
       }
     }
@@ -30,7 +30,7 @@ describe('Action::teardown', function() {
     })
   })
 
-  it('does not lose an onCancel subscription when it cancels', function(done) {
+  it('does not lose an unsubscription subscription when it unsubscribes', function(done) {
     function test(action, method, payload) {
       return function(action) {
         // intentionally blank
@@ -38,11 +38,9 @@ describe('Action::teardown', function() {
     }
 
     const repo = new Microcosm()
-
     const action = repo.push(test)
 
-    action.onCancel(() => done())
-
-    action.cancel()
+    action.subscribe({ unsubscribe: () => done() })
+    action.unsubscribe()
   })
 })

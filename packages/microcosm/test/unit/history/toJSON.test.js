@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe('History::toJSON', function() {
+describe.skip('History::toJSON', function() {
   const action = n => n
 
   it('includes the size of the tree', function() {

@@ -2,7 +2,7 @@
  * Taken from zen-observable, with specific implimentation notes for Microcosm
  */
 
-import { getSymbol, result } from './utils'
+import { getSymbol } from './symbols'
 
 class Subscription {
   constructor(observer, subscriber) {
@@ -12,7 +12,6 @@ class Subscription {
     if (observer.start) {
       observer.start.call(observer, this)
     }
-
     if (this._observer === undefined) {
       return
     }
@@ -47,11 +46,17 @@ class Subscription {
   }
 
   unsubscribe() {
-    if (this._observer === undefined) {
+    let observer = this._observer
+
+    if (observer === undefined) {
       return
     }
 
     this._observer = undefined
+
+    if (observer.unsubscribe) {
+      observer.unsubscribe()
+    }
 
     cleanupSubscription(this)
   }
@@ -72,6 +77,10 @@ class SubscriptionObserver {
 
   get error() {
     return handleError.bind(null, this._subscription)
+  }
+
+  get unsubscribe() {
+    return this._subscription.unsubscribe.bind(this._subscription)
   }
 }
 
@@ -305,7 +314,6 @@ function handleNext(subscription, value) {
 
 function handleError(subscription, value) {
   let observer = subscription._observer
-  let error = null
 
   // If the stream is closed, throw the error to the caller
   if (observer === undefined) {
@@ -313,26 +321,17 @@ function handleError(subscription, value) {
   }
 
   subscription._observer = undefined
-
   try {
-    if (!observer.error) {
-      throw value
+    if (observer.error) {
+      observer.error(value)
     }
-    observer.error(value)
-  } catch (e) {
-    error = e
-  }
-
-  cleanupSubscription(subscription)
-
-  if (error) {
-    throw error
+  } finally {
+    cleanupSubscription(subscription)
   }
 }
 
 function handleComplete(subscription, value) {
   let observer = subscription._observer
-  let error = null
 
   // If the stream is closed, then return undefined
   if (observer === undefined) {
@@ -341,23 +340,17 @@ function handleComplete(subscription, value) {
 
   subscription._observer = undefined
 
-  if (observer.complete) {
-    try {
+  try {
+    if (observer.complete) {
       observer.complete(value)
-    } catch (e) {
-      error = e
     }
-  }
-
-  cleanupSubscription(subscription)
-
-  if (error) {
-    throw error
+  } finally {
+    cleanupSubscription(subscription)
   }
 }
 
-export function fromObservable(object) {
-  let observable = result(object, getSymbol('observable'))
+function fromObservable(object) {
+  let observable = object[getSymbol('observable')]()
 
   if (Object(observable) !== observable) {
     throw new TypeError(observable + ' is not an object')
@@ -370,9 +363,9 @@ export function fromObservable(object) {
   return new Observable(observer => observable.subscribe(observer))
 }
 
-export function fromIterator(object) {
+function fromIterator(object) {
   return new Observable(observer => {
-    let iterator = result(object, getSymbol('iterator'))
+    let iterator = object[getSymbol('iterator')]
     let next = iterator.next()
     let last = undefined
 
@@ -389,4 +382,34 @@ export function fromIterator(object) {
 
     observer.complete(last)
   })
+}
+
+/**
+ * Resolve an array of object of observables, preserving the
+ * original shape/order.
+ */
+const updatePair = (pair, value) => {
+  pair[1] = value
+  return pair
+}
+
+const assignPair = (state, pair) => {
+  state[pair[0]] = pair[1]
+  return pair
+}
+
+export function observerHash(obj) {
+  if (obj && typeof obj === 'object') {
+    if (getSymbol('observable') in obj) {
+      return obj[getSymbol('observable')]()
+    }
+
+    var jobs = Observable.of(...Object.keys(obj))
+    var shape = Array.isArray(obj) ? [] : {}
+    var pairs = jobs.flatMap(key => obj[key].reduce(updatePair, [key, null]))
+
+    return pairs.reduce(assignPair, shape)
+  }
+
+  return Observable.of(obj)
 }

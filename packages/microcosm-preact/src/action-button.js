@@ -1,5 +1,5 @@
 import { h, Component } from 'preact'
-import { Action, merge } from 'microcosm'
+import { merge, Subject } from 'microcosm'
 import ActionQueue from 'microcosm/addons/action-queue'
 
 class ActionButton extends Component {
@@ -45,7 +45,7 @@ class ActionButton extends Component {
     if (action) {
       result = this.send(action, params)
 
-      if (result instanceof Action) {
+      if (result instanceof Subject) {
         this._queue.push(result, this.props)
       }
     }

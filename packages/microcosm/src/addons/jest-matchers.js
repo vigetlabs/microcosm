@@ -2,35 +2,12 @@
  * @flow weak
  */
 
-import Microcosm, { Action, tag, get, result, getHandlers } from '../index'
+import Microcosm, { get } from '../index'
 
 declare var expect: any
 
 expect.extend({
-  toRegister(entity, command, status = 'complete') {
-    let tagged = tag(command).toString()
-
-    if (entity.register == null) {
-      throw new TypeError(`${entity.constructor.name} has no register method.`)
-    }
-
-    let operator = this.isNot ? 'not to' : 'to'
-    let registry = result(entity, 'register')
-    let action = { tag: tagged, status, payload: null }
-
-    return {
-      pass: getHandlers(registry, action).length > 0,
-      message: () => {
-        return `Expected entity ${operator} register to the '${status}' state of ${tag}.`
-      }
-    }
-  },
-
   toHaveStatus(action, status) {
-    if (action instanceof Action === false) {
-      throw new TypeError('toHaveStatus expects an action.')
-    }
-
     let operator = this.isNot ? 'not to' : 'to'
     let pass = action.status === status
 

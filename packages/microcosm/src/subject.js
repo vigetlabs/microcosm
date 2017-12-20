@@ -2,11 +2,21 @@
 
 import tag from './tag'
 import { Observable } from './observable'
-import { getSymbol } from './utils'
-import { INACTIVE, START, NEXT, COMPLETE, ERROR } from './lifecycle'
+import { getSymbol } from './symbols'
+import {
+  INACTIVE,
+  START,
+  NEXT,
+  COMPLETE,
+  ERROR,
+  UNSUBSCRIBE
+} from './lifecycle'
+
+let uid = 0
 
 export class Subject {
   constructor(id) {
+    this.id = uid++
     this.tag = tag(id).toString()
     this.status = INACTIVE
     this.payload = null
@@ -23,7 +33,9 @@ export class Subject {
 
   subscribe() {
     if (this.closed) {
-      return Observable.of(this.payload).subscribe(...arguments)
+      return new Observable(observer =>
+        observer[this.status](this.payload)
+      ).subscribe(...arguments)
     }
 
     if (this.status === INACTIVE) {
@@ -65,6 +77,10 @@ export class Subject {
     return handleComplete.bind(null, this)
   }
 
+  get unsubscribe() {
+    return handleUnsubscribe.bind(null, this)
+  }
+
   then(pass, fail) {
     return new Promise((complete, error) => {
       this.subscribe({ complete, error })
@@ -77,6 +93,18 @@ export class Subject {
 
   toString() {
     return this.tag
+  }
+
+  every(callback) {
+    let bound = callback.bind(null, this)
+
+    return this.subscribe({
+      [START]: bound,
+      [NEXT]: bound,
+      [COMPLETE]: bound,
+      [ERROR]: bound,
+      [UNSUBSCRIBE]: bound
+    })
   }
 
   [getSymbol('observable')]() {
@@ -107,7 +135,6 @@ function delegate(subject, method, args) {
 
 function handleNext(subject, value) {
   if (subject.closed) {
-    console.warn('This Subject has already closed.')
     return
   }
 
@@ -124,6 +151,10 @@ function handleError(subject, error) {
   subject.status = ERROR
   subject.closed = true
 
+  if (arguments.length > 1) {
+    subject.payload = error
+  }
+
   send(subject._observers, ERROR, error)
 }
 
@@ -135,5 +166,16 @@ function handleComplete(subject, value) {
     subject.payload = value
   }
 
-  send(subject._observers, 'complete', subject.payload)
+  send(subject._observers, COMPLETE, subject.payload)
+}
+
+function handleUnsubscribe(subject) {
+  if (subject.closed) {
+    return
+  }
+
+  subject.status = UNSUBSCRIBE
+  subject.closed = true
+
+  subject._observers.forEach(observer => observer.unsubscribe())
 }
