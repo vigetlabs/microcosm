@@ -84,7 +84,6 @@ $section-top-padding-desktop: $nav-height + 110px;
 
   span {
     @include font-family-bold;
-    display: block;
     font-size: rem(14);
     margin-bottom: rem(5);
 
