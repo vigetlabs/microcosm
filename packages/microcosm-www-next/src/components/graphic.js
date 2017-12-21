@@ -6,10 +6,7 @@ const Graphic = ({ section, graphicUrl }) => (
     data-module="ObserveGraphic"
     data-section={section}
   >
-    <img
-      src={graphicUrl}
-      alt="TODO"
-    />
+    <img src={graphicUrl} alt="TODO" />
   </figure>
 )
 
