@@ -26,8 +26,8 @@ export default class IndexPage extends React.Component {
     this.graphics = document.querySelectorAll('[data-module="ObserveGraphic"]')
     this.observeOptions = {
       root: null,
-      rootMargin: '0px 0px 100px',
-      threshold: 1.0,
+      rootMargin: '0px 0px 0px',
+      threshold: 0.5,
     }
   }
 
@@ -57,9 +57,10 @@ export default class IndexPage extends React.Component {
   onIntersection = observed => {
     let entry = observed[0]
     let section = parseInt(entry.target.dataset.section)
+    let isIntersecting = entry.intersectionRatio >= 0.5
     let notAlreadyVisible = section !== this.state.currentSection
 
-    if (entry.isIntersecting && notAlreadyVisible) {
+    if (isIntersecting && notAlreadyVisible) {
       this.changeBgColor(this.state.currentSection, section)
       this.setState({ currentSection: section })
     }
@@ -86,7 +87,34 @@ export default class IndexPage extends React.Component {
 
     return (
       <div className="wrapper">
+        <aside className="section-nav">
+          <nav>
+            <ol className="section-nav__list">
+              <li className="section-nav__list__link"><a href="#">Rendering a View</a></li>
+              <li className="section-nav__list__link"><a href="#">Creating an Action</a></li>
+              <li className="section-nav__list__link"><a href="#">The Repository</a></li>
+              <li className="section-nav__list__link"><a href="#">Lorem Ipsum</a></li>
+              <li className="section-nav__list__link"><a href="#">Lorem Ipsum</a></li>
+              <li className="section-nav__list__link"><a href="#">Lorem Ipsum</a></li>
+              <li className="section-nav__list__link"><a href="#">Lorem Ipsum</a></li>
+            </ol>
+          </nav>
+        </aside>
         <section className="section">
+          <div className="toggle-container -mobile">
+            <h3
+              className={
+                'section__content__subheading -bottom' + browserClass
+              }
+            >
+              Meanwhile, in
+            </h3>
+            <button
+              onClick={this.switchView}
+              className={'section__toggle-btn' + browserClass}
+            />
+          </div>
+
           <div className="section__content">
             <div className="text-container">
               <h2
@@ -104,7 +132,7 @@ export default class IndexPage extends React.Component {
               />
             </div>
 
-            <div className="toggle-container">
+            <div className="toggle-container -desktop">
               <h3
                 className={
                   'section__content__subheading -bottom' + browserClass
