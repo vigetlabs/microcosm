@@ -53,7 +53,7 @@ $section-top-padding-desktop: $nav-height + 110px;
   }
 }
 
-.toggle-container {
+.toggle-container.-mobile {
   @include breakpoint(medium-desktop-down) {
     align-items: center;
     bottom: 0;
@@ -65,6 +65,25 @@ $section-top-padding-desktop: $nav-height + 110px;
     padding: 0 rem(20);
     position: fixed;
     width: 100%;
+    z-index: 1;
+  }
+
+  @include breakpoint(medium-desktop-up) {
+    @media (min-height: 901px) {
+      margin-bottom: $footer-height + 45px;
+    }
+  }
+
+  @include breakpoint(large-desktop-up) {
+    display: none;
+  }
+}
+
+.toggle-container.-desktop {
+  display: none;
+
+  @include breakpoint(large-desktop-up) {
+    display: block;
   }
 }
 
@@ -98,8 +117,8 @@ $section-top-padding-desktop: $nav-height + 110px;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
 
-  .toggle-container & {
-    @include breakpoint(medium-desktop-down) {
+  .toggle-container.-mobile & {
+    // @include breakpoint(medium-desktop-down) {
       margin-right: 4%;
       padding-left: rem(40);
       position: relative;
@@ -109,11 +128,15 @@ $section-top-padding-desktop: $nav-height + 110px;
         position: absolute;
         left: 0;
       }
-    }
+    // }
 
-    @include breakpoint(large-desktop-up) {
-      margin-bottom: rem(30);
-    }
+    // @include breakpoint(large-desktop-up) {
+    //   margin-bottom: rem(30);
+    // }
+  }
+
+  .toggle-container.-desktop & {
+    margin-bottom: rem(30);
   }
 
   &.-top {
@@ -182,11 +205,10 @@ $section-top-padding-desktop: $nav-height + 110px;
 }
 
 .section__graphic__figure {
-  margin: 0 auto 50vh;
+  margin: 0 auto 80vh;
   max-height: 600px;
   max-width: 600px;
   position: relative;
-  z-index: 1;
 
   &:last-child {
     @include breakpoint(large-desktop-up) {
@@ -197,5 +219,56 @@ $section-top-padding-desktop: $nav-height + 110px;
   img {
     height: 100%;
     width: 100%;
+  }
+}
+
+
+
+// SECTION NAV (ASIDE)
+
+.section-nav {
+  position: fixed;
+  left: $page-gutter;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+
+  @include breakpoint(large-desktop-up) {
+    display: none;
+  }
+}
+
+.section-nav__list__link {
+  @include breakpoint(medium-desktop-down) {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    border: 1px solid white;
+    margin-top: 0.75rem;
+
+    &:first-child {
+      background-color: white;
+    }
+
+    a {
+      color: transparent;
+      font-size: 1rem;
+      padding-left: 1rem;
+      vertical-align: top;
+      display: block;
+      width: 300px;
+      line-height: 8px;
+      text-decoration: none;
+    }
+
+    &:hover {
+      background-color: white;
+
+      a {
+        color: white;
+        text-shadow: 0px 0px 0.3em rgba(0, 0, 0, 0.5);
+      }
+    }
   }
 }
