@@ -71,32 +71,46 @@ export default class IndexPage extends React.Component {
     this.body.classList.add(`bg-color-${newSection}`)
   }
 
-  switchView = e => {
+  switchView = () => {
     this.setState({ microcosmView: !this.state.microcosmView })
   }
 
+  scroll = (e, num) => {
+    e.preventDefault()
+
+    this.oldLink = this.newLink ? this.newLink : document.getElementsByClassName('-active')[0]
+    this.newLink = e.target
+
+    this.oldLink.classList.remove('-active')
+    this.newLink.classList.add('-active')
+
+    window.scroll({
+      top: document.getElementById(num).offsetTop - 400,
+      left: 0,
+      behavior: 'smooth'
+    });
+  }
+
   render() {
+    let microcosmView = this.state.microcosmView
     let sectionData = data[this.state.currentSection]
-    let text = this.state.microcosmView
-      ? sectionData.microcosmText
-      : sectionData.browserText
-    let graphicUrl = this.state.microcosmView
-      ? sectionData.microcosmUrl
-      : sectionData.browserUrl
-    let browserClass = !this.state.microcosmView ? ' -browserView' : ''
+    let text = microcosmView ? sectionData.microcosmText : sectionData.browserText
+    let browserClass = !microcosmView ? ' -browserView' : ''
 
     return (
       <div className="wrapper">
         <aside className="section-nav">
           <nav>
             <ol className="section-nav__list">
-              <li className="section-nav__list__link"><a href="#">Rendering a View</a></li>
-              <li className="section-nav__list__link"><a href="#">Creating an Action</a></li>
-              <li className="section-nav__list__link"><a href="#">The Repository</a></li>
-              <li className="section-nav__list__link"><a href="#">Lorem Ipsum</a></li>
-              <li className="section-nav__list__link"><a href="#">Lorem Ipsum</a></li>
-              <li className="section-nav__list__link"><a href="#">Lorem Ipsum</a></li>
-              <li className="section-nav__list__link"><a href="#">Lorem Ipsum</a></li>
+              <li className="section-nav__list__link">
+                <a href="#1" className="-active" onClick={(e) => {this.scroll(e, 1)}}>Rendering a View</a>
+              </li>
+              <li className="section-nav__list__link">
+                <a  href="#2" onClick={(e) => {this.scroll(e, 2)}}>Creating an Action</a>
+              </li>
+              <li className="section-nav__list__link">
+                <a  href="#3" onClick={(e) => {this.scroll(e, 3)}}>The Repository</a>
+              </li>
             </ol>
           </nav>
         </aside>
@@ -149,7 +163,11 @@ export default class IndexPage extends React.Component {
 
           <div className="section__graphic">
             {this.sections.map(num => (
-              <Graphic key={num} section={num} graphicUrl={graphicUrl} />
+              <Graphic
+                key={num}
+                section={num}
+                graphicUrl={microcosmView ? data[num].microcosmUrl : data[num].browserUrl}
+              />
             ))}
           </div>
         </section>
