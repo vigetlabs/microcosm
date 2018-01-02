@@ -27,7 +27,7 @@ export default class IndexPage extends React.Component {
     this.observeOptions = {
       root: null,
       rootMargin: '0px 0px 0px',
-      threshold: 0.5,
+      threshold: 1.0,
     }
   }
 
@@ -57,7 +57,7 @@ export default class IndexPage extends React.Component {
   onIntersection = observed => {
     let entry = observed[0]
     let section = parseInt(entry.target.dataset.section)
-    let isIntersecting = entry.intersectionRatio >= 0.5
+    let isIntersecting = entry.intersectionRatio >= 1.0
     let notAlreadyVisible = section !== this.state.currentSection
 
     if (isIntersecting && notAlreadyVisible) {
@@ -85,7 +85,7 @@ export default class IndexPage extends React.Component {
     this.newLink.classList.add('-active')
 
     window.scroll({
-      top: document.getElementById(num).offsetTop - 500,
+      top: document.getElementById(num).offsetTop - 400,
       left: 0,
       behavior: 'smooth'
     });
