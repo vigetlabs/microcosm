@@ -2,7 +2,7 @@
 
 .section-nav {
   position: fixed;
-  left: $page-gutter;
+  left: $page-gutter-mobile / 2;
   height: 100vh;
   display: flex;
   align-items: center;

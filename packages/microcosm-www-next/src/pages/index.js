@@ -85,7 +85,7 @@ export default class IndexPage extends React.Component {
     this.newLink.classList.add('-active')
 
     window.scroll({
-      top: document.getElementById(num).offsetTop - 400,
+      top: document.getElementById(num).offsetTop - 500,
       left: 0,
       behavior: 'smooth'
     });

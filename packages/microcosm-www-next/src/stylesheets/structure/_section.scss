@@ -118,21 +118,18 @@ $section-top-padding-desktop: $nav-height + 110px;
   text-transform: uppercase;
 
   .toggle-container.-mobile & {
-    // @include breakpoint(medium-desktop-down) {
+    @include breakpoint(medium-desktop-down) {
       margin-right: 4%;
       padding-left: rem(40);
       position: relative;
 
       &::before {
         content: url('../images/arrow.svg');
-        position: absolute;
         left: 0;
+        position: absolute;
+        width: 17px;
       }
-    // }
-
-    // @include breakpoint(large-desktop-up) {
-    //   margin-bottom: rem(30);
-    // }
+    }
   }
 
   .toggle-container.-desktop & {
