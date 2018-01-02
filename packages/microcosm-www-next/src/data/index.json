@@ -3,7 +3,7 @@
     "heading": "<span>01.</span> Rendering a View",
     "microcosmText": "The <a href='TODO'>Domains</a> are in charge of keeping state organized, and provide whatever data is necessary to the Presenter. A Presenter at its core is a React Component, so it uses the data it pulls from the Domains to render the appropriate view.",
     "browserText": "A user fires up the browser to take a quiz.",
-    "microcosmUrl": "http://via.placeholder.com/600x600",
+    "microcosmUrl": "../static/images/v.png",
     "browserUrl": "http://via.placeholder.com/400x400"
   },
   "2": {
