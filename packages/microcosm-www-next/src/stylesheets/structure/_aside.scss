@@ -1,0 +1,48 @@
+// SECTION NAV (ASIDE)
+
+.section-nav {
+  position: fixed;
+  left: $page-gutter;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+
+  @include breakpoint(large-desktop-up) {
+    display: none;
+  }
+}
+
+.section-nav__list__link {
+  @include breakpoint(medium-desktop-down) {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    border: 1px solid white;
+    margin-top: 0.75rem;
+
+    a {
+      color: transparent;
+      font-size: 1rem;
+      padding-left: 1rem;
+      vertical-align: top;
+      display: block;
+      width: 300px;
+      line-height: 8px;
+      text-decoration: none;
+
+      // &.-active {
+      //   background-color: white;
+      // }
+    }
+
+    &:hover {
+      background-color: white;
+
+      a {
+        color: white;
+        text-shadow: 0px 0px 0.3em rgba(0, 0, 0, 0.5);
+      }
+    }
+  }
+}
