@@ -90,7 +90,9 @@ export default class IndexPage extends React.Component {
 
             <div className="toggle-container">
               <h3
-                className={'section__content__subheading -bottom' + browserClass}
+                className={
+                  'section__content__subheading -bottom' + browserClass
+                }
               >
                 Meanwhile, in
               </h3>
