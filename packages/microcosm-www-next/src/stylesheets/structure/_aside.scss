@@ -1,11 +1,11 @@
 // SECTION NAV (ASIDE)
 
 .section-nav {
-  position: fixed;
-  left: $page-gutter-mobile / 2;
-  height: 100vh;
-  display: flex;
   align-items: center;
+  display: flex;
+  height: 100vh;
+  left: $page-gutter-mobile / 2;
+  position: fixed;
   z-index: 1;
 
   @include breakpoint(large-desktop-up) {
@@ -15,25 +15,21 @@
 
 .section-nav__list__link {
   @include breakpoint(medium-desktop-down) {
-    width: 10px;
-    height: 10px;
     border-radius: 2px;
     border: 1px solid white;
+    height: 10px;
     margin-top: 0.75rem;
+    width: 10px;
 
     a {
       color: transparent;
-      font-size: 1rem;
-      padding-left: 1rem;
-      vertical-align: top;
       display: block;
-      width: 300px;
+      font-size: 1rem;
       line-height: 8px;
+      padding-left: 1rem;
       text-decoration: none;
-
-      // &.-active {
-      //   background-color: white;
-      // }
+      vertical-align: top;
+      width: 300px;
     }
 
     &:hover {
