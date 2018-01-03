@@ -79,7 +79,9 @@ export default class IndexPage extends React.Component {
   render() {
     let microcosmView = this.state.microcosmView
     let sectionData = data[this.state.currentSection]
-    let text = microcosmView ? sectionData.microcosmText : sectionData.browserText
+    let text = microcosmView
+      ? sectionData.microcosmText
+      : sectionData.browserText
     let browserClass = !microcosmView ? ' -browserView' : ''
 
     return (
@@ -89,9 +91,7 @@ export default class IndexPage extends React.Component {
         <section className="section">
           <div className="toggle-container -mobile">
             <h3
-              className={
-                'section__content__subheading -bottom' + browserClass
-              }
+              className={'section__content__subheading -bottom' + browserClass}
             >
               Meanwhile, in
             </h3>
@@ -138,7 +138,9 @@ export default class IndexPage extends React.Component {
               <Graphic
                 key={num}
                 section={num}
-                graphicUrl={microcosmView ? data[num].microcosmUrl : data[num].browserUrl}
+                graphicUrl={
+                  microcosmView ? data[num].microcosmUrl : data[num].browserUrl
+                }
               />
             ))}
           </div>
