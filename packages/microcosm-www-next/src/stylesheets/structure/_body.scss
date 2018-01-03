@@ -1,16 +1,24 @@
+$split-bg-height-mobile: 471px;
+$split-bg-height-desktop: 291px;
+
 body {
   background-color: color(bg-1-bottom);
+  position: relative;
   transition: transition(background-color);
 
   &::before {  //top of half split bg
     background-color: color(bg-1-top);
     content: '';
-    height: 281px;
+    height: $split-bg-height-mobile;
     position: fixed;
     top: 0;
     transition: transition(background-color);
     width: 100%;
     z-index: -1;
+
+    @include breakpoint(large-desktop-up) {
+      height: $split-bg-height-desktop;
+    }
   }
 
   @for $i from 1 through $section-count {

@@ -12,6 +12,10 @@ export default class IndexPage extends React.Component {
     }
   }
 
+  componentWillMount() {
+    this.sections = this.createSectionsArray()
+  }
+
   componentDidMount() {
     this.setVars()
     this.beginObserve()
@@ -27,6 +31,16 @@ export default class IndexPage extends React.Component {
     }
   }
 
+  createSectionsArray() {
+    let arr = []
+
+    for (let i = 0; i < this.state.numSections; i++) {
+      arr.push(i + 1)
+    }
+
+    return arr
+  }
+
   beginObserve() {
     //create new Observer instance
     let observer = new IntersectionObserver(
@@ -35,7 +49,9 @@ export default class IndexPage extends React.Component {
     )
 
     //start observing each graphic
-    this.graphics.forEach(graphic => observer.observe(graphic))
+    for (let i = 0; i < this.graphics.length; i++) {
+      observer.observe(this.graphics[i])
+    }
   }
 
   onIntersection = observed => {
@@ -72,36 +88,41 @@ export default class IndexPage extends React.Component {
       <div className="wrapper">
         <section className="section">
           <div className="section__content">
-            <h2
-              className="section__content__heading"
-              dangerouslySetInnerHTML={{ __html: sectionData.heading }}
-            />
+            <div className="text-container">
+              <h2
+                className="section__content__heading"
+                dangerouslySetInnerHTML={{ __html: sectionData.heading }}
+              />
+              <h3
+                className={'section__content__subheading -top' + browserClass}
+              >
+                In
+              </h3>
+              <p
+                className="section__content__text"
+                dangerouslySetInnerHTML={{ __html: text }}
+              />
+            </div>
 
-            <h3 className={'section__content__subheading -top' + browserClass}>
-              In
-            </h3>
-            <p
-              className="section__content__text"
-              dangerouslySetInnerHTML={{ __html: text }}
-            />
-
-            <h3
-              className={'section__content__subheading -bottom' + browserClass}
-            >
-              Meanwhile, in
-            </h3>
-            <button
-              onClick={this.switchView}
-              className={'section__browser-btn' + browserClass}
-            />
+            <div className="toggle-container">
+              <h3
+                className={
+                  'section__content__subheading -bottom' + browserClass
+                }
+              >
+                Meanwhile, in
+              </h3>
+              <button
+                onClick={this.switchView}
+                className={'section__toggle-btn' + browserClass}
+              />
+            </div>
           </div>
 
           <div className="section__graphic">
-            {Array(this.state.numSections)
-              .fill()
-              .map((el, i) => (
-                <Graphic key={i} section={i + 1} graphicUrl={graphicUrl} />
-              ))}
+            {this.sections.map(num => (
+              <Graphic key={num} section={num} graphicUrl={graphicUrl} />
+            ))}
           </div>
         </section>
       </div>

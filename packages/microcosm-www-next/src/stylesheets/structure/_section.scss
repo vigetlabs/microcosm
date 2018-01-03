@@ -1,56 +1,120 @@
-$section-top-padding: 116px;
+$section-top-padding-mobile: $nav-height + 49px;
+$section-top-padding-desktop: $nav-height + 110px;
 
 .section {
-  padding-top: $section-top-padding;
+  padding-top: $section-top-padding-mobile;
 
   @include breakpoint(large-desktop-up) {
     display: flex;
-    justify-content: space-between;
+    padding-top: $section-top-padding-desktop;
+
+    @supports (position: sticky) or (position: -webkit-sticky) {
+      justify-content: space-between;
+    }
   }
 }
+
+// CONTENT
 
 .section__content {
   height: 100%;
-  position: sticky;
-  top: $section-top-padding;
+  padding-right: 20px;
+  position: fixed;
+  width: 100%;
 
   @include breakpoint(large-desktop-up) {
-    flex-basis: 45%;
-    order: 2;
+    right: 2%;
+    width: 45%;
+  }
+
+  @supports (position: sticky) or (position: -webkit-sticky) {
+    padding-right: 0;
+    position: -webkit-sticky;
+    position: sticky;
+    top: $section-top-padding-mobile;
+
+    @include breakpoint(large-desktop-up) {
+      order: 2;
+      top: $section-top-padding-desktop;
+    }
   }
 }
 
-.section__graphic {
-  @include breakpoint(large-desktop-up) {
-    flex-basis: 600px;
+
+// CONTENT - containers
+
+.text-container {
+  margin-bottom: rem(50);
+  max-width: 550px;
+
+  @include breakpoint(medium-desktop-down) {
+    margin: 0 auto rem(50);
+    padding-left: rem(40);
   }
 }
 
-.section__graphic__figure {
-  width: 600px;
-  height: 600px;
-  background-color: white;
-  border: 1px solid black;
-  margin-bottom: 25vh;
+.toggle-container {
+  @include breakpoint(medium-desktop-down) {
+    align-items: center;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    left: 0;
+    margin-bottom: rem(30);
+    padding: 0 rem(20);
+    position: fixed;
+    width: 100%;
+  }
 }
 
-
+// CONTENT - elements
 
 .section__content__heading {
   font-size: rem(30);
+  margin-bottom: rem(40);
+  position: relative;
+
+  @include breakpoint(large-desktop-up) {
+    margin-bottom: rem(63);
+  }
 
   span {
     @include font-family-bold;
     display: block;
     font-size: rem(14);
     margin-bottom: rem(5);
+
+    @include breakpoint(medium-desktop-down) {
+      left: rem(-40);
+      position: absolute;
+      top: 0.35em;
+    }
   }
 }
 
 .section__content__subheading {
   @include font-family-medium;
+  margin-bottom: 0.5rem;
   text-transform: uppercase;
-  margin: rem(12) 0;
+
+  .toggle-container & {
+    @include breakpoint(medium-desktop-down) {
+      margin-right: 4%;
+      padding-left: rem(40);
+      position: relative;
+
+      &::before {
+        content: url('../images/arrow.svg');
+        position: absolute;
+        left: 0;
+      }
+    }
+
+    @include breakpoint(large-desktop-up) {
+      margin-bottom: rem(30);
+    }
+  }
 
   &.-top {
     &::after {
@@ -82,16 +146,56 @@ $section-top-padding: 116px;
   line-height: rem(27);
 }
 
+.section__toggle-btn {
+  border-radius: 10px;
+  height: 57px;
+  text-transform: uppercase;
+  width: 217px;
+  font-size: rem(18);
 
-
-.section__browser-btn {
-  &::before {
+  &::after {
     content: 'Browser View';
   }
 
   &.-browserView {
-    &::before {
+    &::after {
       content: 'Microcosm View';
     }
+  }
+}
+
+
+// GRAPHIC
+
+.section__graphic {
+  @include breakpoint(medium-desktop-down) {
+    padding-top: 30vh;
+  }
+
+  @include breakpoint(large-desktop-up) {
+    flex-basis: 600px;
+  }
+
+  @supports (position: sticky) or (position: -webkit-sticky) {
+    padding-top: 0;
+  }
+}
+
+.section__graphic__figure {
+  margin: 0 auto 50vh;
+  max-height: 600px;
+  max-width: 600px;
+  position: relative;
+  z-index: 1;
+
+  &:last-child {
+    @include breakpoint(large-desktop-up) {
+      margin-bottom: 34vh;
+    }
+  }
+
+  img {
+    height: 100%;
+    width: 100%;
   }
 }
