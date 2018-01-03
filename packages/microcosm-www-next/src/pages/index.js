@@ -22,10 +22,10 @@ export default class IndexPage extends React.Component {
   setVars() {
     this.body = document.body
     this.graphics = document.querySelectorAll('[data-module="ObserveGraphic"]')
+    this.intersectionThreshold = 1.0
     this.observeOptions = {
-      root: null,
       rootMargin: '0px 0px 0px',
-      threshold: 1.0,
+      threshold: this.intersectionThreshold
     }
 
     this.setGraphicsMap()
@@ -60,7 +60,7 @@ export default class IndexPage extends React.Component {
   onIntersection = observed => {
     let entry = observed[0]
     let section = parseInt(entry.target.dataset.section)
-    let isIntersecting = entry.intersectionRatio >= 1.0
+    let isIntersecting = entry.intersectionRatio >= this.intersectionThreshold
     let notAlreadyVisible = section !== this.state.currentSection
 
     if (isIntersecting && notAlreadyVisible) {
@@ -88,7 +88,10 @@ export default class IndexPage extends React.Component {
 
     return (
       <div className="wrapper">
-        <SideNav currentSection={this.state.currentSection} graphics={this.state.graphicsMap} />
+        <SideNav
+          currentSection={this.state.currentSection}
+          graphics={this.state.graphicsMap}
+        />
 
         <section className="section">
           <div className="toggle-container -mobile">
@@ -105,10 +108,10 @@ export default class IndexPage extends React.Component {
 
           <div className="section__content">
             <div className="text-container">
-              <h2
-                className="section__content__heading"
-                dangerouslySetInnerHTML={{ __html: sectionData.heading }}
-              />
+              <h2 className="section__content__heading">
+                <span>{sectionData.num}</span>
+                {sectionData.heading}
+              </h2>
               <h3
                 className={'section__content__subheading -top' + browserClass}
               >
