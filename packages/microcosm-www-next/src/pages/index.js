@@ -8,7 +8,7 @@ export default class IndexPage extends React.Component {
     this.state = {
       numSections: 3,
       currentSection: 1,
-      microcosmView: true,
+      microcosmView: true
     }
   }
 
@@ -23,7 +23,7 @@ export default class IndexPage extends React.Component {
     this.observeOptions = {
       root: null,
       rootMargin: '0px 0px 100px',
-      threshold: 1.0,
+      threshold: 1.0
     }
   }
 
