@@ -1,8 +1,8 @@
 import Microcosm from 'microcosm'
 
 describe('History::wait', function() {
-  const delay = n => action => setTimeout(action.complete, n)
-  const reject = n => action => setTimeout(action.error, n)
+  const delay = (time, value) => a => setTimeout(() => a.complete(value), time)
+  const reject = (time, value) => a => setTimeout(() => a.error(value), time)
 
   it('resolves when every action completes successfully', function() {
     const repo = new Microcosm()
@@ -19,12 +19,12 @@ describe('History::wait', function() {
 
     repo.push(delay, 0)
     repo.push(delay, 0)
-    repo.push(reject, 0)
+    repo.push(reject, 0, 'error')
 
     try {
       await repo.history.wait()
     } catch (error) {
-      expect(error).toEqual('Wut')
+      expect(error).toEqual('error')
     }
   })
 
@@ -32,8 +32,10 @@ describe('History::wait', function() {
     const repo = new Microcosm({ maxHistory: Infinity })
 
     repo.push(delay)
+    let two = repo.push(delay)
     repo.push(delay)
-    repo.push(delay)
+
+    two.unsubscribe()
 
     // This will fail if the promise returned from `wait()` rejects, and
     // it will only pass when the promise resolves.

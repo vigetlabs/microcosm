@@ -7,7 +7,5 @@ export default function installDevtools(repo) {
 
   if (hook) {
     hook.emit('init', repo)
-
-    repo.history.setLimit(Infinity)
   }
 }

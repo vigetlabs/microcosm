@@ -4,6 +4,8 @@ import 'microcosm/addons/jest-matchers'
 
 configure({ adapter: new Adapter() })
 
+jest.setTimeout(1000)
+
 // Make a strict-only test flag
 it.dev = function(description, test) {
   if (!process.env.BUNDLED) {

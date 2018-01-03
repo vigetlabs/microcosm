@@ -8,8 +8,8 @@ import installDevtools from './install-devtools'
 import { Subject } from './subject'
 import { effectEngine } from './effect-engine'
 import { clone, merge } from './data'
-import { version } from '../package.json'
 import { DESERIALIZE, SERIALIZE } from './lifecycle'
+import { version } from '../package.json'
 
 const DEFAULTS = {
   debug: false,
@@ -26,21 +26,23 @@ class Microcosm extends Subject {
   domains: DomainEngine
 
   constructor(preOptions?: ?Object) {
-    super()
+    super('repo')
 
     this.options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
     this.parent = this.options.parent
     this.history = this.parent ? this.parent.history : new History(this.options)
     this.domains = new DomainEngine(this)
 
-    this.subscribe({
-      start: this.setup.bind(this, this.options),
-      complete: this.teardown.bind(this)
+    this.tracker = this.history.updates.subscribe(action => {
+      this.domains.rollforward(this, action)
+      this.next(this.state)
     })
 
     if (this.options.debug) {
       installDevtools(this)
     }
+
+    this.setup(this.options)
   }
 
   get state(): Object {
@@ -50,6 +52,12 @@ class Microcosm extends Subject {
       this.domains.getInitialState(),
       this.history.current(this)
     )
+  }
+
+  shutdown() {
+    this.unsubscribe()
+    this.tracker.unsubscribe()
+    this.teardown()
   }
 
   setup(options?: Object) {
@@ -62,7 +70,7 @@ class Microcosm extends Subject {
 
   addDomain(key, config, options) {
     console.assert(
-      this.state.hasOwnProperty(key) === false,
+      key in this.state === false,
       'Can not add domain for "' + key + '". This state is already managed.'
     )
 
@@ -77,6 +85,10 @@ class Microcosm extends Subject {
 
   push(command: any, ...params: *[]): Action {
     return this.history.append(command, params, this)
+  }
+
+  prepare(command: any, ...params: *[]): Action {
+    return (...args) => this.push(command, ...params, ...args)
   }
 
   deserialize(payload: string | Object) {
@@ -104,6 +116,10 @@ class Microcosm extends Subject {
     return new Microcosm({
       parent: this
     })
+  }
+
+  fetch(...args) {
+    return this.domains.fetch(this, ...args)
   }
 }
 

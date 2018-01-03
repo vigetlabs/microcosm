@@ -4,6 +4,40 @@ const never = () => new Promise(() => {})
 const noop = () => {}
 
 describe('History::archive', function() {
+  it('cleans up actions that fail', async () => {
+    const repo = new Microcosm()
+
+    repo.push('one')
+    let action = repo.push(() => Promise.reject(true))
+    repo.push('two')
+
+    try {
+      await repo.history.wait()
+    } catch (x) {
+      expect(x).toBe(true)
+    }
+
+    // Note: We always hold on to at least the last action for
+    // rollbacks
+    expect(repo.history.size).toBe(1)
+  })
+
+  it('cleans up actions that unsubscribe', async () => {
+    const repo = new Microcosm()
+
+    repo.push('one')
+    let action = repo.push(() => new Promise(n => n))
+    repo.push('two')
+
+    action.unsubscribe()
+
+    await repo.history.wait
+
+    // Note: We always hold on to at least the last action for
+    // rollbacks
+    expect(repo.history.size).toBe(1)
+  })
+
   it('archive moves all the way up to the head', function() {
     const repo = new Microcosm({ debug: true })
 

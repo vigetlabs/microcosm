@@ -40,10 +40,10 @@ describe('Microcosm::push', function() {
       }
     })
 
-    await repo.push(step, 1)
-    await repo.push(step, 3)
+    repo.push(step, 1)
+    repo.push(step, 3)
 
-    await repo.history
+    await repo.history.wait()
 
     expect(step).toHaveBeenCalledTimes(2)
     expect(repo).toHaveState('count', 4)
@@ -55,7 +55,7 @@ describe('Microcosm::push', function() {
 
     repo.addDomain('test', {})
 
-    repo.observable.subscribe(spy)
+    repo.subscribe(spy)
 
     repo.push('whatever')
 

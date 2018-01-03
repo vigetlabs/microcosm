@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe('History updater', function() {
+describe.skip('History updater', function() {
   it('provides a default batching method', function(done) {
     const repo = new Microcosm({
       batch: true

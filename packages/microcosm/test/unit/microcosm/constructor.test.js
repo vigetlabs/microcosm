@@ -1,7 +1,7 @@
 import Microcosm from 'microcosm'
 
-describe.skip('Microcosm constructor', function() {
-  describe('maxHistory option', function() {
+describe('Microcosm constructor', function() {
+  describe.skip('maxHistory option', function() {
     it('controls history size', function() {
       const repo = new Microcosm({ maxHistory: 5 })
 
@@ -10,7 +10,7 @@ describe.skip('Microcosm constructor', function() {
   })
 
   describe('extending options', function() {
-    it('extends custom defaults with Microcosm defaults', function() {
+    it.skip('extends custom defaults with Microcosm defaults', function() {
       class Repo extends Microcosm {
         static defaults = {
           test: true

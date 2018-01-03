@@ -70,16 +70,17 @@ describe('Generator Middleware', function() {
     }
   })
 
-  it.skip('a cancelled step halts the chain', () => {
+  it('a cancelled step halts the chain', () => {
     expect.assertions(1)
 
-    let stepper = n => n + 1
+    let stepper = n => action => action.complete(n + 1)
+    let cancel = n => action => action.unsubscribe('Cancelled')
     let repo = new Microcosm()
 
     let sequence = repo.push(function() {
       return function*(repo) {
         yield repo.push(stepper, 0)
-        yield repo.append(stepper).cancel('Cancelled')
+        yield repo.push(cancel)
         yield repo.push(stepper)
       }
     })
@@ -91,8 +92,8 @@ describe('Generator Middleware', function() {
       error() {
         throw new Error('Sequence should not have rejected')
       },
-      cancel(result) {
-        expect(result).toEqual('Cancelled')
+      unsubscribe(result) {
+        expect(result).toEqual(undefined)
       }
     })
   })
@@ -114,12 +115,13 @@ describe('Generator Middleware', function() {
     expect(payload).toEqual(true)
   })
 
-  it('waits for an async sequences', async function() {
+  it.only('waits for an async sequences', async function() {
     let repo = new Microcosm()
 
     function sleep(time) {
       return action => {
-        setTimeout(() => action.complete(true), time)
+        action.next(true)
+        setTimeout(action.complete, time)
       }
     }
 

@@ -2,29 +2,27 @@
  * @flow
  */
 
+import { Observable, observerHash } from './observable'
+import { Subject } from './subject'
 import { merge } from './data'
 import { setup, teardown, getHandlers, buildRegistry } from './registry'
-
 import { RESET, PATCH, DESERIALIZE, SERIALIZE, COMPLETE } from './lifecycle'
+import coroutine from './coroutine'
+
+const FETCH = function(key, value) {
+  return observerHash({ [key]: value })
+}
 
 class DomainEngine {
   _domains: { [key: string]: Domain }
 
-  constructor(repo: Microcosm) {
+  constructor() {
     this._domains = {}
     this._initialState = {}
-
-    let tracker = repo.history.updates.subscribe(this.track.bind(this, repo))
-
-    repo.subscribe({ complete: tracker.unsubscribe })
   }
 
   getInitialState() {
     return this._initialState
-  }
-
-  track(repo, action) {
-    action.every(this.rollforward.bind(this, repo))
   }
 
   rollforward(repo, action) {
@@ -51,9 +49,9 @@ class DomainEngine {
 
     this._domains[key] = domain
 
-    if (domain.getInitialState) {
-      this._initialState[key] = domain.getInitialState()
-    }
+    this._initialState[key] = domain.getInitialState
+      ? domain.getInitialState()
+      : null
 
     repo.subscribe({
       start: setup(repo, domain, options),
@@ -88,12 +86,18 @@ class DomainEngine {
   }
 
   dispatch(action: Action, state: Object) {
-    if (action.tag === RESET && action.status === COMPLETE) {
-      return reset(this._domains, action, state)
-    }
+    if (action.status === COMPLETE) {
+      if (action.tag === String(RESET)) {
+        return reset(this._domains, action, this._initialState)
+      }
 
-    if (action.tag === PATCH && action.status === COMPLETE) {
-      return patch(this._domains, action, state)
+      if (action.tag === String(PATCH)) {
+        return patch(this._domains, action, state)
+      }
+
+      if (action.tag === String(FETCH)) {
+        return patch(this._domains, action, state)
+      }
     }
 
     for (var key in this._domains) {
@@ -108,6 +112,34 @@ class DomainEngine {
 
     return state
   }
+
+  fetch(repo, key, method, ...args) {
+    let domain = this._domains[key]
+
+    if (!domain) {
+      throw new TypeError(
+        `Unable to fetch from ${key}:${method}. Missing domain.`
+      )
+    }
+
+    let entity = domain.entity
+
+    if (!entity) {
+      throw new TypeError(
+        `Unable to fetch from ${key}:${method}. Missing entity.`
+      )
+    }
+
+    if (!entity[method]) {
+      throw new TypeError(
+        `Unable to fetch from ${key}:${method}. Missing method.`
+      )
+    }
+
+    return repo
+      .push(FETCH, key, entity[method](...args))
+      .map(state => state[key])
+  }
 }
 
 function patch(domains, action, state) {
@@ -120,14 +152,18 @@ function patch(domains, action, state) {
   return merge(state, next)
 }
 
-function reset(domains, action, state) {
+function reset(domains, action, base) {
   let next = {}
 
-  for (var key in this._domains) {
-    next[key] = action.payload[key]
+  for (var key in domains) {
+    if (key in action.payload) {
+      next[key] = action.payload[key]
+    } else {
+      next[key] = base[key]
+    }
   }
 
-  return merge(state, next)
+  return next
 }
 
 export default DomainEngine

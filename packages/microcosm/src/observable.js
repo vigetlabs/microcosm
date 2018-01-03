@@ -3,20 +3,27 @@
  */
 
 import { getSymbol } from './symbols'
+import { Subject } from './subject'
+import { set } from './data'
+import { noop } from './empty'
+
+function getObservable(obj) {
+  return obj && obj[getSymbol('observable')]
+}
 
 class Subscription {
-  constructor(observer, subscriber) {
+  constructor(observer, subscriber, origin) {
     this._cleanup = undefined
     this._observer = observer
+    this._origin = origin
 
-    if (observer.start) {
-      observer.start.call(observer, this)
-    }
+    observer.start.call(observer, this)
+
     if (this._observer === undefined) {
       return
     }
 
-    observer = new SubscriptionObserver(this)
+    observer = subscriptionObserver(this)
 
     try {
       // Call the subscriber function
@@ -32,10 +39,10 @@ class Subscription {
 
         this._cleanup = cleanup
       }
-    } catch (e) {
+    } catch (error) {
       // If an error occurs during startup, then attempt to send the error
       // to the observer
-      observer.error(e)
+      observer.error(error)
       return
     }
 
@@ -45,148 +52,93 @@ class Subscription {
     }
   }
 
-  unsubscribe() {
-    let observer = this._observer
-
-    if (observer === undefined) {
-      return
-    }
-
-    this._observer = undefined
-
-    if (observer.unsubscribe) {
-      observer.unsubscribe()
-    }
-
-    cleanupSubscription(this)
+  get unsubscribe() {
+    return handleUnsubscribe.bind(null, this)
   }
 }
 
-class SubscriptionObserver {
-  constructor(subscription) {
-    this._subscription = subscription
+function subscriptionObserver(subscription) {
+  return {
+    next: handleNext.bind(null, subscription),
+    complete: handleComplete.bind(null, subscription),
+    error: handleError.bind(null, subscription),
+    unsubscribe: subscription.unsubscribe.bind(subscription)
+  }
+}
+
+function observer(config) {
+  if (config == null) {
+    throw new TypeError('Unable to subscribe via ' + config)
   }
 
-  get next() {
-    return handleNext.bind(null, this._subscription)
+  let observer = {
+    start: noop,
+    next: noop,
+    error: noop,
+    complete: noop,
+    unsubscribe: noop
   }
 
-  get complete() {
-    return handleComplete.bind(null, this._subscription)
+  if (typeof config === 'function') {
+    observer.next = arguments[0]
+
+    if (arguments.length > 1) {
+      observer.error = arguments[1]
+    }
+
+    if (arguments.length > 2) {
+      observer.complete = arguments[2]
+    }
+  } else {
+    for (var key in observer) {
+      if (config[key]) {
+        observer[key] = config[key]
+      }
+    }
   }
 
-  get error() {
-    return handleError.bind(null, this._subscription)
-  }
+  return observer
+}
 
-  get unsubscribe() {
-    return this._subscription.unsubscribe.bind(this._subscription)
-  }
+function purge(subscriptions) {
+  subscriptions.forEach(s => s.unsubscribe())
 }
 
 export class Observable {
   constructor(subscriber) {
     this._subscriber = subscriber
+    this._subscriptions = new Set()
   }
 
-  subscribe(observer) {
-    if (typeof observer === 'function') {
-      observer = {
-        next: arguments[0],
-        error: arguments[1],
-        complete: arguments[2]
-      }
-    }
+  subscribe(config) {
+    let subscription = new Subscription(
+      observer(config),
+      this._subscriber,
+      this
+    )
 
-    return new Subscription(observer, this._subscriber)
+    this._subscriptions.add(subscription)
+
+    return subscription
+  }
+
+  get unsubscribe() {
+    return purge.bind(null, this._subscriptions)
+  }
+
+  [getSymbol('observable')]() {
+    return this
   }
 
   map(fn) {
-    return new Observable(observer =>
+    return new Observable(observer => {
       this.subscribe({
-        next(value) {
-          if (observer.closed) return
-
-          try {
-            value = fn(value)
-          } catch (e) {
-            return observer.error(e)
-          }
-
-          return observer.next(value)
-        },
-
         error: observer.error,
+        unsubscribe: observer.unsubscribe,
+        next: value => observer.next(fn(value)),
         complete: observer.complete
       })
-    )
-  }
-
-  filter(fn) {
-    return new Observable(observer =>
-      this.subscribe({
-        next(value) {
-          if (observer.closed) {
-            return
-          }
-
-          try {
-            if (!fn(value)) {
-              return undefined
-            }
-          } catch (e) {
-            return observer.error(e)
-          }
-
-          return observer.next(value)
-        },
-
-        error: observer.error,
-        complete: observer.error
-      })
-    )
-  }
-
-  reduce(fn) {
-    let hasSeed = arguments.length > 1
-    let hasValue = false
-    let seed = arguments[1]
-    let acc = seed
-
-    return new Observable(observer =>
-      this.subscribe({
-        next(value) {
-          if (observer.closed) {
-            return
-          }
-
-          let first = !hasValue
-          hasValue = true
-
-          if (!first || hasSeed) {
-            try {
-              acc = fn(acc, value)
-            } catch (e) {
-              return observer.error(e)
-            }
-          } else {
-            acc = value
-          }
-        },
-
-        error: observer.error,
-
-        complete() {
-          if (!hasValue && !hasSeed) {
-            observer.error(new TypeError('Cannot reduce an empty sequence'))
-            return
-          }
-
-          observer.next(acc)
-          observer.complete()
-        }
-      })
-    )
+    })
   }
 
   flatMap(fn) {
@@ -207,19 +159,13 @@ export class Observable {
           }
 
           // Subscribe to the inner Observable
-          Observable.from(value).subscribe({
+          Observable.wrap(value).subscribe({
             _subscription: null,
-
+            next: observer.next,
+            error: observer.error,
             start(s) {
               subscriptions.push((this._subscription = s))
             },
-            next(value) {
-              observer.next(value)
-            },
-            error(e) {
-              observer.error(e)
-            },
-
             complete() {
               let i = subscriptions.indexOf(this._subscription)
 
@@ -231,9 +177,7 @@ export class Observable {
             }
           })
         },
-
         error: observer.error,
-
         complete() {
           completed = true
           closeIfDone()
@@ -245,16 +189,7 @@ export class Observable {
           observer.complete()
         }
       }
-
-      return () => {
-        subscriptions.forEach(s => s.unsubscribe())
-        outer.unsubscribe()
-      }
     })
-  }
-
-  [getSymbol('observable')]() {
-    return this
   }
 
   static of() {
@@ -263,38 +198,35 @@ export class Observable {
 
       for (var i = 0; i < arguments.length; ++i) {
         last = arguments[i]
-
         observer.next(last)
-
-        if (observer.closed) {
-          return
-        }
       }
 
-      observer.complete(last)
+      observer.complete()
     })
   }
 
-  static from(source) {
-    if (Array.isArray(source)) {
-      return Observable.of(...source)
+  static wrap(source) {
+    if (source && typeof source === 'object') {
+      if (getObservable(source)) {
+        return source
+      }
+
+      if (typeof source.then === 'function') {
+        return fromPromise(source)
+      }
     }
 
-    if (source && getSymbol('observable') in source) {
-      return fromObservable(source)
-    }
-
-    if (source && getSymbol('iterator') in source) {
-      return fromIterator(source)
-    }
-
-    throw new TypeError(source + ' is not observable')
+    return new Observable(observer => {
+      observer.next(source)
+      observer.complete()
+    })
   }
 }
 
 function cleanupSubscription(subscription) {
-  // Assert:  observer._observer is undefined
   let cleanup = subscription._cleanup
+
+  subscription._origin._subscriptions.delete(subscription)
 
   if (cleanup) {
     // Drop the reference to the cleanup function so that we won't call it
@@ -307,7 +239,7 @@ function cleanupSubscription(subscription) {
 }
 
 function handleNext(subscription, value) {
-  if (subscription._observer && subscription._observer.next) {
+  if (subscription._observer) {
     return subscription._observer.next(value)
   }
 }
@@ -315,22 +247,18 @@ function handleNext(subscription, value) {
 function handleError(subscription, value) {
   let observer = subscription._observer
 
-  // If the stream is closed, throw the error to the caller
   if (observer === undefined) {
     throw value
   }
 
   subscription._observer = undefined
-  try {
-    if (observer.error) {
-      observer.error(value)
-    }
-  } finally {
-    cleanupSubscription(subscription)
-  }
+
+  observer.error(value)
+
+  cleanupSubscription(subscription)
 }
 
-function handleComplete(subscription, value) {
+function handleComplete(subscription) {
   let observer = subscription._observer
 
   // If the stream is closed, then return undefined
@@ -340,76 +268,77 @@ function handleComplete(subscription, value) {
 
   subscription._observer = undefined
 
-  try {
-    if (observer.complete) {
-      observer.complete(value)
-    }
-  } finally {
-    cleanupSubscription(subscription)
-  }
+  observer.complete()
+
+  cleanupSubscription(subscription)
 }
 
-function fromObservable(object) {
-  let observable = object[getSymbol('observable')]()
+function handleUnsubscribe(subscription) {
+  let observer = subscription._observer
 
-  if (Object(observable) !== observable) {
-    throw new TypeError(observable + ' is not an object')
+  if (observer === undefined) {
+    return
   }
 
-  if (observable.constructor === Observable) {
-    return observable
-  }
+  subscription._observer = undefined
 
-  return new Observable(observer => observable.subscribe(observer))
+  observer.unsubscribe()
+
+  cleanupSubscription(subscription)
 }
 
-function fromIterator(object) {
+export function fromPromise(promise) {
   return new Observable(observer => {
-    let iterator = object[getSymbol('iterator')]
-    let next = iterator.next()
-    let last = undefined
-
-    while (next.done === false) {
-      last = next.value
-      observer.next(last)
-
-      if (observer.closed) {
-        break
-      }
-
-      next = iterator.next(last)
-    }
-
-    observer.complete(last)
+    promise
+      .then(observer.next)
+      .then(observer.complete)
+      .catch(observer.error)
   })
 }
 
-/**
- * Resolve an array of object of observables, preserving the
- * original shape/order.
- */
-const updatePair = (pair, value) => {
-  pair[1] = value
-  return pair
-}
-
-const assignPair = (state, pair) => {
-  state[pair[0]] = pair[1]
-  return pair
-}
-
 export function observerHash(obj) {
-  if (obj && typeof obj === 'object') {
-    if (getSymbol('observable') in obj) {
-      return obj[getSymbol('observable')]()
-    }
+  let subject = new Subject()
 
-    var jobs = Observable.of(...Object.keys(obj))
-    var shape = Array.isArray(obj) ? [] : {}
-    var pairs = jobs.flatMap(key => obj[key].reduce(updatePair, [key, null]))
-
-    return pairs.reduce(assignPair, shape)
+  // TODO: This should trigger on numbers, booleans, strings,
+  // dates, etc... Everything that isn't an array or POJO
+  if (obj == null || typeof obj !== 'object') {
+    return Observable.of(obj)
   }
 
-  return Observable.of(obj)
+  if (getObservable(obj)) {
+    return obj
+  }
+
+  let keys = Object.keys(obj)
+  let payload = Array.isArray(obj) ? [] : {}
+  let jobs = keys.length
+
+  function complete() {
+    if (--jobs <= 0) {
+      subject.complete()
+    }
+  }
+
+  function assign(key, value) {
+    let payload = set(payload, key, value)
+
+    // TODO: What if this was a filter?
+    if (payload !== subject.payload) {
+      subject.next(payload)
+    }
+  }
+
+  keys.forEach(key => {
+    let subscription = Observable.wrap(obj[key]).subscribe({
+      next: assign.bind(null, key),
+      complete: complete,
+      error: subject.error
+    })
+
+    subject.subscribe(subscription)
+  })
+
+  return subject
 }
+
+Observable.hash = observerHash

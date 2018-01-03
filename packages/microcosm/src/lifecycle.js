@@ -3,6 +3,7 @@
  */
 
 import { merge } from './data'
+import { EMPTY_OBJECT } from './empty'
 
 export const RESET = function $reset(data: Object, deserialize: boolean) {
   return (observer: observer, repo: *): void => {
@@ -12,8 +13,7 @@ export const RESET = function $reset(data: Object, deserialize: boolean) {
       payload = repo.deserialize(data)
     }
 
-    observer.next(merge(repo.getInitialState(), payload))
-    observer.complete()
+    observer.complete(payload || EMPTY_OBJECT)
   }
 }
 
@@ -25,8 +25,7 @@ export const PATCH = function $patch(data: Object, deserialize: boolean) {
       payload = repo.deserialize(data)
     }
 
-    observer.next(payload || null)
-    observer.complete()
+    observer.complete(payload || EMPTY_OBJECT)
   }
 }
 

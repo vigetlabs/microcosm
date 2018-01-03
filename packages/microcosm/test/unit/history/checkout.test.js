@@ -13,15 +13,15 @@ describe('History::checkout', function() {
   it('updates the next values of nodes to follow the current branch', function() {
     let repo = new Microcosm({ debug: true })
 
-    let one = repo.push(action)
-    let two = repo.push(action)
-    let three = repo.push(action)
-    let four = repo.push(action)
+    let one = repo.push('one')
+    let two = repo.push('two')
+    let three = repo.push('three')
+    let four = repo.push('four')
 
     repo.history.checkout(two)
 
-    let five = repo.push(action)
-    let six = repo.push(action)
+    let five = repo.push('five')
+    let six = repo.push('six')
 
     expect(repo.history.next(one)).toEqual(two)
     expect(repo.history.next(two)).toEqual(five)
@@ -44,17 +44,19 @@ describe('History::checkout', function() {
     }
   })
 
-  it.skip('reconciles on the supplied action if it is active', function() {
+  it('reconciles on the supplied action if it is active', function() {
     let repo = new Microcosm()
-
     let one = repo.push(action)
+
     repo.push(action)
 
-    let spy = jest.spyOn(repo.history, 'reconcile')
+    let handler = jest.fn()
 
-    repo.checkout(one)
+    repo.history.updates.subscribe(handler)
 
-    expect(spy).toHaveBeenCalledWith(one)
+    repo.history.checkout(one)
+
+    expect(handler).toHaveBeenCalledWith(one)
   })
 
   it('reconciles on the most recent shared node if hopping branches', function() {
@@ -81,6 +83,7 @@ describe('History::checkout', function() {
 
   it('properly handles forked branches', function() {
     let repo = new Microcosm({ debug: true })
+
 
     repo.push('one')
     let two = repo.push('two')

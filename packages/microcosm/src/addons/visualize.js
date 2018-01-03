@@ -1,6 +1,6 @@
 import asciitree from 'asciitree'
 
-export default function visualize(history) {
+export function asTree(history) {
   function dig(focus) {
     let children = history.children(focus).map(dig)
 

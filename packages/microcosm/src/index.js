@@ -9,3 +9,5 @@ export { RESET as reset, PATCH as patch } from './lifecycle'
 
 // Data helpers, useful in domain handlers for immutable updates
 export { get, set, merge, update } from './data'
+
+export { tag } from './tag'

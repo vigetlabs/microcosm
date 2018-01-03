@@ -17,7 +17,11 @@ export function effectEngine(repo, entity, effectOptions) {
     complete: teardown(repo, effect, options)
   })
 
-  repo.history.updates.subscribe(map(repo, effect))
+  let tracker = repo.history.updates.subscribe(map(repo, effect))
+
+  repo.subscribe({
+    unsubscribe: tracker.unsubscribe
+  })
 
   return effect
 }

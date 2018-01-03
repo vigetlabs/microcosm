@@ -1,66 +1,50 @@
 import Microcosm from 'microcosm'
 
-describe.skip('History node children', function() {
-  const action = n => n
+describe('History node children', function() {
+  let action = n => n
 
   it('can determine children', function() {
-    const repo = new Microcosm()
+    let repo = new Microcosm({ debug: true })
 
-    const a = repo.append(action)
-    const b = repo.append(action)
+    let a = repo.push(action)
+    let b = repo.push(action)
 
-    repo.checkout(a)
+    repo.history.checkout(a)
 
-    const c = repo.append(action)
+    let c = repo.push(action)
 
-    expect(a.children.map(n => n.id)).toEqual([b.id, c.id])
+    expect(repo.history.children(a).map(n => n.id)).toEqual([b.id, c.id])
   })
 
   it('does not lose children when checking out nodes on the left', function() {
-    const repo = new Microcosm()
+    let repo = new Microcosm({ debug: true })
 
-    repo.append(action)
+    repo.push(action)
 
-    const b = repo.append(action)
-    const c = repo.append(action)
+    let b = repo.push(action)
+    let c = repo.push(action)
 
-    repo.checkout(b)
+    repo.history.checkout(b)
 
-    const d = repo.append(action)
+    let d = repo.push(action)
 
-    expect(b.children).toEqual([c, d])
+    expect(repo.history.children(b)).toEqual([c, d])
   })
 
   it('does not lose children when checking out nodes on the right', function() {
-    const repo = new Microcosm()
+    let repo = new Microcosm({ debug: true })
 
-    repo.append(action)
+    repo.push(action)
 
-    const b = repo.append(action)
-    const c = repo.append(action)
+    let b = repo.push(action)
+    let c = repo.push(action)
 
-    repo.checkout(b)
+    repo.history.checkout(b)
 
-    const d = repo.append(action)
+    let d = repo.push(action)
 
-    repo.checkout(c)
+    repo.history.checkout(c)
 
-    expect(b.children).toEqual([c, d])
-  })
-
-  it('will not remove a child it does not own', function() {
-    const repo = new Microcosm()
-
-    const a = repo.append(action)
-    const b = repo.append(action)
-
-    repo.checkout(a)
-
-    const c = repo.append(action)
-
-    // Note: This does not work
-    b.abandon(c)
-
-    expect(c.parent).toBe(a)
+    expect(repo.history.children(b)).toEqual([c, d])
   })
 })

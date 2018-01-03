@@ -7,7 +7,7 @@ describe('Microcosm::setup', function() {
     class Repo extends Microcosm {
       setup(options) {
         expect(options).toHaveProperty('foo', 'bar')
-        expect(options).toHaveProperty('maxHistory')
+        expect(options).toHaveProperty('debug')
       }
     }
 

@@ -8,7 +8,7 @@ const FALLBACK = '_action'
 /**
  * Uniquely tag a function. This is used to identify actions.
  */
-export default function tag(fn: string | Command, name?: string): Command {
+export function tag(fn: string | Command, name?: string): Command {
   if (typeof fn !== 'function') {
     return String(fn)
   }
@@ -24,5 +24,5 @@ export default function tag(fn: string | Command, name?: string): Command {
 
   cast.toString = () => symbol
 
-  return fn
+  return cast
 }

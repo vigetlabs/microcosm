@@ -18,7 +18,15 @@ class GraphMicrocosm extends Microcosm {
       'Too many query definitions.'
     )
 
-    return compile(this.schema, document.definitions[0], this.queries)
+    return compile(this.schema, document.definitions[0], this.queries())
+  }
+
+  queries() {
+    let queries = {}
+    for (var key in this.domains._domains) {
+      queries[key] = this.domains._domains[key].entity
+    }
+    return queries
   }
 
   query(document, variables) {

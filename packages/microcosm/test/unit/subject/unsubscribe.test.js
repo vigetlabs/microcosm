@@ -1,12 +1,12 @@
-import Microcosm, { Observable } from 'microcosm'
+import Microcosm, { Subject, Observable } from 'microcosm'
 
 let hang = () => new Promise(() => {})
 
 describe('Subject unsubscribed state', function() {
   it('calls the clean up function of observables when it is unsubscribed', function() {
-    const repo = new Microcosm()
-    const cleanup = jest.fn()
-    const action = repo.push(() => new Observable(observer => cleanup))
+    let repo = new Microcosm()
+    let cleanup = jest.fn()
+    let action = repo.push(() => new Observable(observer => cleanup))
 
     action.unsubscribe()
 

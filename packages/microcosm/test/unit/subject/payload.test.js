@@ -5,7 +5,8 @@ describe('subject.payload', function() {
     const repo = new Microcosm()
     const action = repo.push(() => action => {
       action.next(true)
-      action.complete(undefined)
+      action.next(undefined)
+      action.complete()
     })
 
     await action

@@ -1,8 +1,8 @@
 import Microcosm from 'microcosm'
 
-describe.skip('History::isActive', function() {
+describe('History::isActive', function() {
   const action = n => n
-  const repo = new Microcosm()
+  const repo = new Microcosm({ debug: true })
   const history = repo.history
 
   /*
@@ -13,15 +13,15 @@ describe.skip('History::isActive', function() {
    *               |- [five] - [*six]
    */
 
-  const one = history.append(action)
-  const two = history.append(action)
-  const three = history.append(action)
-  const four = history.append(action)
+  const one = repo.push('one')
+  const two = repo.push('two')
+  const three = repo.push('three')
+  const four = repo.push('four')
 
   history.checkout(two)
 
-  const five = history.append(action)
-  const six = history.append(action)
+  const five = repo.push('five')
+  const six = repo.push('six')
 
   history.checkout(four)
 

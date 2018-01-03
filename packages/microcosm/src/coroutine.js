@@ -2,7 +2,7 @@
  * @flow
  */
 
-import { observerHash } from './observable'
+import { Observable, observerHash } from './observable'
 import { getSymbol } from './symbols'
 
 /**
@@ -11,7 +11,8 @@ import { getSymbol } from './symbols'
  */
 export default function coroutine(action, job, params: *[], repo: any): void {
   if (typeof job !== 'function') {
-    action.complete(params[0])
+    action.next(params.length ? params[0] : undefined)
+    action.complete()
     return
   }
 
@@ -19,14 +20,10 @@ export default function coroutine(action, job, params: *[], repo: any): void {
 
   if (isGeneratorFn(body)) {
     asGenerator(action, body, repo)
-  } else if (body && typeof body.then === 'function') {
-    asPromise(action, body)
   } else if (typeof body === 'function' && params.indexOf(body) < 0) {
     body(action, repo)
-  } else if (body && body[getSymbol('observable')]) {
-    action.subscribe(body.subscribe(action))
   } else {
-    action.complete(body)
+    action.subscribe(Observable.wrap(body).subscribe(action))
   }
 }
 
@@ -34,25 +31,22 @@ function isGeneratorFn(value: any): boolean {
   return value && value[getSymbol('toStringTag')] === 'GeneratorFunction'
 }
 
-function asGenerator(action: Action, body: GeneratorAction, repo: *) {
+function asGenerator(action: Subject, body: GeneratorAction, repo: *) {
   let iterator = body(repo)
 
-  function step(payload: mixed) {
-    let next = iterator.next(payload)
+  function step() {
+    let next = iterator.next(action.payload)
 
     if (next.done) {
-      action.complete(payload)
+      action.complete()
     } else {
       observerHash(next.value).subscribe({
-        error: action.error,
-        complete: step
+        next: action.next,
+        complete: step,
+        error: action.error
       })
     }
   }
 
   step()
-}
-
-function asPromise(action, body) {
-  return body.then(action.complete, action.error)
 }

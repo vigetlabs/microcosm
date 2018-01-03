@@ -25,11 +25,11 @@ export function getHandlers(pool: Object, action: Action): *[] {
   let entry = pool[action.tag]
 
   if (entry) {
-    if (action.status in entry) {
-      return wrap(entry[action.status])
-    }
-
-    if (action.status === COMPLETE) {
+    if (typeof entry !== 'function') {
+      if (action.status in entry) {
+        return wrap(entry[action.status])
+      }
+    } else if (action.status === COMPLETE) {
       return wrap(entry)
     }
   }
@@ -37,9 +37,23 @@ export function getHandlers(pool: Object, action: Action): *[] {
   return EMPTY_ARRAY
 }
 
-export function map(repo, entity) {
+export function cache(entity) {
+  let registry = {}
+
   return action => {
-    let handlers = getHandlers(buildRegistry(entity), action)
+    if (registry.hasOwnProperty(action.tag) === false) {
+      registry[action.tag] = buildRegistry(entity)
+    }
+
+    return getHandlers(registry[action.tag], action)
+  }
+}
+
+export function map(repo, entity) {
+  let registry = cache(entity)
+
+  return action => {
+    let handlers = registry(action)
 
     for (var i = 0, len = handlers.length; i < len; i++) {
       handlers[i].call(entity, repo, action.payload)

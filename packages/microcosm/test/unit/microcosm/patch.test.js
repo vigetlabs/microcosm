@@ -74,7 +74,6 @@ describe('Microcosm::patch', function() {
       parent.push(delay, 10, false)
 
       await parent.history.wait()
-      console.log(child.state, parent.state)
 
       expect(child.state.one).toBe(true)
       expect(child.state.two).toBe(true)

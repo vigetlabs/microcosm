@@ -34,6 +34,28 @@ export const SOLAR_DATA = {
   Star: [{ id: '0', name: 'Sol' }, { id: '1', name: 'Alpha Centari' }]
 }
 
+const Planet = {
+  all({ limit = Infinity, offset = 0 } = {}) {
+    return Promise.resolve(SOLAR_DATA.Planet.slice(offset, offset + limit))
+  },
+  star: jest.fn(async (planet, args, repo) => {
+    let records = await repo.fetch('Star', 'all')
+
+    return find(records, { id: planet.star })
+  })
+}
+
+const Star = {
+  all() {
+    return Promise.resolve(SOLAR_DATA.Star)
+  },
+  planets: jest.fn(async (star, args, repo) => {
+    let records = await repo.fetch('Planet', 'all')
+
+    return find(records, { star: star.id })
+  })
+}
+
 export class SolarSystem extends Repo {
   static defaults = {
     schema: SOLAR_SCHEMA
@@ -41,79 +63,36 @@ export class SolarSystem extends Repo {
 
   setup() {
     this.addDomain('Planet', {
-      all({ limit = Infinity, offset = 0 } = {}) {
-        return Promise.resolve(SOLAR_DATA.Planet.slice(offset, offset + limit))
-      }
+      entity: Planet
     })
 
     this.addDomain('Star', {
-      actions: {
-        getStars: () => {
-          return Promise.resolve(SOLAR_DATA.Star)
-        }
-      },
-      getInitialState() {
-        return []
-      },
-      register() {
-        return {
-          getStars: (old, next) => next
-        }
-      }
+      entity: Star
     })
 
-    this.addQuery('Query', {
-      planet: {
-        resolver: jest.fn(async (_root, args, repo) => {
-          let records = await repo.push('getPlanets', args)
+    this.addDomain('Query', {
+      entity: {
+        planet: jest.fn(async (_root, args, repo) => {
+          let records = await repo.fetch('Planet', 'all', args)
 
           return find(records, args)
-        })
-      },
-      planets: {
-        resolver: jest.fn(async (_root, args, repo) => {
-          let records = await repo.push('getPlanets', args)
-
+        }),
+        planets: jest.fn(async (_root, args, repo) => {
+          let records = await repo.fetch('Planet', 'all', args)
           return filter(records, args)
-        })
-      },
-      paginatedPlanets: {
-        resolver: (_root, args, repo) => {
-          return repo.push('getPlanets', args)
-        }
-      },
-      star: {
-        resolver: jest.fn(async (_root, args, repo) => {
-          let records = await repo.push('getStars', args)
+        }),
+        paginatedPlanets: (_root, args, repo) => {
+          return repo.fetch('Planet', 'all', args)
+        },
+        star: jest.fn(async (_root, args, repo) => {
+          let records = await repo.fetch('Star', 'all', args)
 
           return find(records, args)
-        })
-      },
-      stars: {
-        resolver: jest.fn(async (_root, args, repo) => {
-          let records = await repo.push('getStars', args)
+        }),
+        stars: jest.fn(async (_root, args, repo) => {
+          let records = await repo.fetch('Star', 'all', args)
 
           return find(records, args)
-        })
-      }
-    })
-
-    this.addQuery('Planet', {
-      star: {
-        resolver: jest.fn(async (planet, args, repo) => {
-          let records = await repo.push('getStars')
-
-          return find(records, { id: planet.star })
-        })
-      }
-    })
-
-    this.addQuery('Star', {
-      planets: {
-        resolver: jest.fn(async (star, args, repo) => {
-          let records = await repo.push('getPlanets')
-
-          return find(records, { star: star.id })
         })
       }
     })

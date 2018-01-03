@@ -13,24 +13,10 @@ describe('tag', function() {
     expect(`${tagged}`).toContain('_action')
   })
 
-  it.dev('will not tag a null action', function() {
-    expect(() => tag(null)).toThrow(/Unable to identify null action/)
-  })
-
-  it.dev('will not tag an undefined action', function() {
-    expect(() => tag(undefined)).toThrow(/Unable to identify undefined action/)
-  })
-
   it('can have an override name', function() {
     const tagged = tag(function() {}, 'test')
 
     expect(`${tagged}`).toEqual('test')
-  })
-
-  it('tagged strings return identity functions', function() {
-    const tagged = tag('test')
-
-    expect(tagged(1)).toBe(1)
   })
 
   it('is unique', function() {

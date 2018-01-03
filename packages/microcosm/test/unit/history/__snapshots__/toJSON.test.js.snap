@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`History::toJSON serializes the tree of actions 1`] = `
+Object {
+  "head": 15,
+  "list": Array [
+    Object {
+      "id": 12,
+      "payload": true,
+      "status": "complete",
+      "tag": "one",
+    },
+    Object {
+      "id": 13,
+      "payload": true,
+      "status": "complete",
+      "tag": "two",
+    },
+    Object {
+      "id": 15,
+      "payload": true,
+      "status": "complete",
+      "tag": "four",
+    },
+  ],
+  "root": 12,
+  "size": 3,
+  "tree": Object {
+    "children": Array [
+      Object {
+        "children": Array [
+          Object {
+            "children": Array [],
+            "id": 14,
+            "payload": true,
+            "status": "complete",
+            "tag": "three",
+          },
+          Object {
+            "children": Array [],
+            "id": 15,
+            "payload": true,
+            "status": "complete",
+            "tag": "four",
+          },
+        ],
+        "id": 13,
+        "payload": true,
+        "status": "complete",
+        "tag": "two",
+      },
+    ],
+    "id": 12,
+    "payload": true,
+    "status": "complete",
+    "tag": "one",
+  },
+}
+`;

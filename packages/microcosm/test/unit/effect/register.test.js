@@ -45,7 +45,7 @@ describe('Effect::register', function() {
     expect(spy).toHaveBeenCalledWith(true)
   })
 
-  it('is only called once  - at reconciliation', async () => {
+  it('is only called once - at reconciliation', async () => {
     const repo = new Microcosm()
     const test = n => new Promise(resolve => setTimeout(resolve, n))
     const handler = jest.fn()
@@ -116,29 +116,119 @@ describe('Effect::register', function() {
     repo.push(test, true)
   })
 
-  it('allows domains nested registration methods', function() {
-    let repo = new Microcosm()
-    let handler = jest.fn()
-    let action = n => n
+  describe('statuses', function() {
+    it('listens to start', async () => {
+      let repo = new Microcosm()
+      let handler = jest.fn()
+      let action = () => {}
 
-    let effect = repo.addEffect({
-      register() {
-        return {
-          [action]: {
-            start: handler,
-            next: handler,
-            error: handler,
-            complete: handler,
-            cancel: handler
+      let effect = repo.addEffect({
+        register() {
+          return {
+            [action]: {
+              start: handler
+            }
           }
         }
-      }
+      })
+
+      await repo.push(action)
+
+      expect(handler).toHaveBeenCalledTimes(1)
+      expect(handler).toHaveBeenCalledWith(repo, null)
     })
 
-    expect(effect).toRegister(action, 'start')
-    expect(effect).toRegister(action, 'next')
-    expect(effect).toRegister(action, 'error')
-    expect(effect).toRegister(action, 'complete')
-    expect(effect).toRegister(action, 'cancel')
+    it('listens to next', async () => {
+      let repo = new Microcosm()
+      let handler = jest.fn()
+      let action = () => action => {
+        action.next(1)
+        action.next(2)
+        setTimeout(action.complete)
+      }
+
+      let effect = repo.addEffect({
+        register() {
+          return {
+            [action]: {
+              next: handler
+            }
+          }
+        }
+      })
+
+      await repo.push(action)
+
+      expect(handler).toHaveBeenCalledWith(repo, 1)
+      expect(handler).toHaveBeenCalledWith(repo, 2)
+      expect(handler).toHaveBeenCalledTimes(2)
+    })
+
+    it('listens to complete', async () => {
+      let repo = new Microcosm()
+      let handler = jest.fn()
+      let action = () => action => action.complete(true)
+
+      let effect = repo.addEffect({
+        register() {
+          return {
+            [action]: {
+              complete: handler
+            }
+          }
+        }
+      })
+
+      await repo.push(action)
+
+      expect(handler).toHaveBeenCalledWith(repo, true)
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
+
+    it('listens to error', async () => {
+      let repo = new Microcosm()
+      let handler = jest.fn()
+      let action = () => action => action.error(true)
+
+      let effect = repo.addEffect({
+        register() {
+          return {
+            [action]: {
+              error: handler
+            }
+          }
+        }
+      })
+
+      try {
+        await repo.push(action)
+      } catch (error) {
+        expect(error).toBe(true)
+      }
+
+      expect(handler).toHaveBeenCalledWith(repo, true)
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
+
+    it('listens to unsubscribe', async () => {
+      let repo = new Microcosm()
+      let handler = jest.fn()
+      let action = () => action => setTimeout(action.error)
+
+      let effect = repo.addEffect({
+        register() {
+          return {
+            [action]: {
+              unsubscribe: handler
+            }
+          }
+        }
+      })
+
+      repo.push(action).unsubscribe()
+
+      expect(handler).toHaveBeenCalledWith(repo, null)
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
   })
 })

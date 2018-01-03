@@ -1,4 +1,4 @@
-import Microcosm from 'microcosm'
+import Microcosm, { patch } from 'microcosm'
 
 describe('Microcosm::shutdown', function() {
   it('removes all listeners', function() {
@@ -14,11 +14,11 @@ describe('Microcosm::shutdown', function() {
 
     const listener = jest.fn()
 
-    repo.on('change', listener)
+    repo.subscribe(listener)
 
     repo.shutdown()
 
-    repo.append('setColor').resolve('blue')
+    repo.push('setColor', 'blue')
 
     expect(listener).not.toHaveBeenCalled()
   })
@@ -35,14 +35,13 @@ describe('Microcosm::shutdown', function() {
 
   it('removes the microcosm from its history', function() {
     const repo = new Microcosm()
-    const register = jest.fn()
+    const register = jest.fn(n => ({}))
 
     repo.addEffect({ register })
 
     repo.push('test')
     repo.shutdown()
-
-    repo.append('test', 'resolve')
+    repo.push('test')
 
     expect(register).toHaveBeenCalledTimes(1)
   })
@@ -54,15 +53,15 @@ describe('Microcosm::shutdown', function() {
 
       parent.addDomain('color', {})
 
-      parent.patch({ color: 'red' })
+      parent.push(patch, { color: 'red' })
 
-      child.on('change', function() {
+      child.subscribe(() => {
         throw new Error('Should not have changed')
       })
 
       child.shutdown()
 
-      parent.patch({ color: 'blue' })
+      parent.push(patch, { color: 'blue' })
 
       expect(parent.state.color).toEqual('blue')
 

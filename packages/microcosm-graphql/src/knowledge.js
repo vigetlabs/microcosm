@@ -1,7 +1,6 @@
-import Observable from 'zen-observable'
-import { get } from 'microcosm'
+import { Observable, get } from 'microcosm'
 import { createFinder } from './default-resolvers'
-import { getName, observerHash } from './utilities'
+import { getName } from './utilities'
 import { parseArguments } from './arguments'
 
 const noop = () => {}
@@ -32,14 +31,7 @@ class Answer {
     let key = this.hasher(root, args)
 
     if (key in this.resolveCache === false) {
-      this.resolveCache[key] = new Observable(observer => {
-        Promise.resolve(this.resolver(root, args, repo))
-          .then(computer => {
-            observer.next(computer)
-            observer.complete()
-          })
-          .catch(error => observer.error(error))
-      })
+      this.resolveCache[key] = Observable.wrap(this.resolver(root, args, repo))
     }
 
     return this.resolveCache[key]
@@ -61,11 +53,11 @@ export class Knowledge {
     )
 
     if (key in this.answers === false) {
-      let existing = get(this.resolvers, [definition.name, field.name], {})
+      let existing = get(this.resolvers, [definition.name, field.name], null)
 
       this.answers[key] = new Answer(
         key,
-        existing.resolver || createFinder(this.schema, definition, field)
+        existing || createFinder(this.schema, definition, field)
       )
     }
 
@@ -117,7 +109,7 @@ export class Question {
   }
 
   resolve(root, context) {
-    return this.answer.resolve(context.repo, this.parameterize(context), root)
+    return this.answer.resolver(root, this.parameterize(context), context.repo)
   }
 
   push(root, context) {
@@ -125,7 +117,7 @@ export class Question {
 
     if (this.field.isList) {
       return result.flatMap(list => {
-        return observerHash(list.map(i => this.trickle(i, context)))
+        return Observable.hash(list.map(i => this.trickle(i, context)))
       })
     }
 
@@ -146,7 +138,7 @@ export class Question {
       answer[key] = this.edges[key].push(root, context)
     }
 
-    return observerHash(answer)
+    return Observable.hash(answer)
   }
 
   pipe(key, question) {

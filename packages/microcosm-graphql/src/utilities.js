@@ -2,9 +2,6 @@
  * @flow
  */
 
-import { set } from 'microcosm'
-import Observable from 'zen-observable'
-
 export function matches(item, matchers) {
   for (var key in matchers) {
     if (item.hasOwnProperty(key) === false || item[key] !== matchers[key]) {
@@ -57,23 +54,4 @@ export function reduceName(list: Arguments[], callback: NameReducer, extra: *) {
   }
 
   return answer
-}
-
-export function observerHash(obj) {
-  return new Observable(observer => {
-    let keys = Object.keys(obj)
-    let answer = Array.isArray(obj) ? [] : {}
-
-    if (keys.length <= 0) {
-      observer.next(answer)
-    }
-
-    Observable.of(...keys)
-      .flatMap(key => obj[key].map(value => ({ key, value })))
-      .map(next => {
-        answer = set(answer, next.key, next.value)
-        return answer
-      })
-      .subscribe(observer)
-  })
 }

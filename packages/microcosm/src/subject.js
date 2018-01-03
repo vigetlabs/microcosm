@@ -1,6 +1,6 @@
 // @flow
 
-import tag from './tag'
+import { tag } from './tag'
 import { Observable } from './observable'
 import { getSymbol } from './symbols'
 import {
@@ -17,8 +17,9 @@ let uid = 0
 export class Subject {
   constructor(id) {
     this.id = uid++
-    this.tag = tag(id).toString()
+    this.tag = String(tag(id))
     this.status = INACTIVE
+    // TODO: Should this start as undefined or null?
     this.payload = null
     this.closed = false
     this.disabled = false
@@ -33,9 +34,10 @@ export class Subject {
 
   subscribe() {
     if (this.closed) {
-      return new Observable(observer =>
+      return new Observable(observer => {
+        observer.next(this.payload)
         observer[this.status](this.payload)
-      ).subscribe(...arguments)
+      }).subscribe(...arguments)
     }
 
     if (this.status === INACTIVE) {
@@ -46,11 +48,7 @@ export class Subject {
   }
 
   reduce() {
-    if (this.closed) {
-      return Observable.of(this.payload).reduce(...arguments)
-    }
-
-    return this._observable.reduce(...arguments)
+    return delegate(this, 'reduce', arguments)
   }
 
   map() {
@@ -81,9 +79,21 @@ export class Subject {
     return handleUnsubscribe.bind(null, this)
   }
 
+  map(fn) {
+    if (this.closed) {
+      return Observable.of(this.payload).map(fn)
+    }
+
+    return this._observable.map(fn)
+  }
+
   then(pass, fail) {
-    return new Promise((complete, error) => {
-      this.subscribe({ complete, error })
+    return new Promise((resolve, reject) => {
+      this.subscribe({
+        complete: () => resolve(this.payload),
+        error: reject,
+        unsubscribe: resolve
+      })
     }).then(pass, fail)
   }
 
@@ -110,6 +120,15 @@ export class Subject {
   [getSymbol('observable')]() {
     return this
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      tag: this.tag,
+      status: this.status,
+      payload: this.payload
+    }
+  }
 }
 
 function send(observers, message, value) {
@@ -126,11 +145,13 @@ function multicast(observers, observer) {
 }
 
 function delegate(subject, method, args) {
+  let observable = this._observable
+
   if (this.closed) {
-    return Observable.of(this.payload)[method](...args)
+    observable = Observable.of(this.payload)
   }
 
-  return this._observable[method](...args)
+  return observable[method](...args)
 }
 
 function handleNext(subject, value) {
@@ -139,10 +160,7 @@ function handleNext(subject, value) {
   }
 
   subject.status = NEXT
-
-  if (arguments.length > 1) {
-    subject.payload = value
-  }
+  subject.payload = value
 
   send(subject._observers, NEXT, subject.payload)
 }
@@ -150,32 +168,20 @@ function handleNext(subject, value) {
 function handleError(subject, error) {
   subject.status = ERROR
   subject.closed = true
-
-  if (arguments.length > 1) {
-    subject.payload = error
-  }
+  subject.payload = error
 
   send(subject._observers, ERROR, error)
 }
 
-function handleComplete(subject, value) {
+function handleComplete(subject) {
   subject.status = COMPLETE
   subject.closed = true
 
-  if (arguments.length > 1) {
-    subject.payload = value
-  }
-
-  send(subject._observers, COMPLETE, subject.payload)
+  send(subject._observers, COMPLETE)
 }
 
 function handleUnsubscribe(subject) {
-  if (subject.closed) {
-    return
-  }
-
   subject.status = UNSUBSCRIBE
   subject.closed = true
-
-  subject._observers.forEach(observer => observer.unsubscribe())
+  subject._observable.unsubscribe()
 }

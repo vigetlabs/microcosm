@@ -1,4 +1,4 @@
-import Microcosm from 'microcosm'
+import Microcosm, { reset, patch } from 'microcosm'
 
 describe('Microcosm::reset', function() {
   it('reset returns to initial state', function() {
@@ -8,11 +8,11 @@ describe('Microcosm::reset', function() {
       getInitialState: () => false
     })
 
-    repo.patch({ test: true })
+    repo.push(patch, { test: true })
 
     expect(repo).toHaveState('test', true)
 
-    repo.reset()
+    repo.push(reset)
 
     expect(repo).toHaveState('test', false)
   })
@@ -22,7 +22,7 @@ describe('Microcosm::reset', function() {
 
     repo.addDomain('colors', {})
 
-    repo.reset({ shapes: ['square', 'triangle', 'circle'] })
+    repo.push(reset, { shapes: ['square', 'triangle', 'circle'] })
 
     expect(repo).not.toHaveState('shapes')
   })
@@ -31,7 +31,7 @@ describe('Microcosm::reset', function() {
     const repo = new Microcosm()
 
     // This is invalid
-    let badPatch = () => repo.reset('{ test: deserialize }', true)
+    let badPatch = () => repo.push(reset, '{ test: deserialize }', true)
 
     expect(badPatch).toThrow()
   })
@@ -45,13 +45,13 @@ describe('Microcosm::reset', function() {
 
     expect(repo).toHaveState('test', true)
 
-    repo.patch({ test: false })
+    repo.push(patch, { test: false })
 
     expect(repo).toHaveState('test', false)
 
     // This is invalid
     try {
-      repo.reset('{ test: badJson }', true)
+      repo.push(reset, '{ test: badJson }', true)
     } catch (x) {
       // do not handle this error
     }
@@ -66,7 +66,7 @@ describe('Microcosm::reset', function() {
 
       parent.addDomain('foo', {})
 
-      parent.reset({ foo: 'bar' })
+      parent.push(reset, { foo: 'bar' })
 
       expect(child).toHaveState('foo', 'bar')
     })
@@ -83,7 +83,7 @@ describe('Microcosm::reset', function() {
         }
       })
 
-      child.reset({ count: 2 })
+      child.push(reset, { count: 2 })
 
       child.push('add', 1)
       child.push('add', 1)

@@ -1,50 +1,6 @@
 import { Subject } from 'microcosm'
 
 describe('Subject', function() {
-  it('moves into a next state when it pushes an action to', () => {
-    let subject = new Subject()
-
-    subject.subscribe(n => n)
-
-    subject.next(true)
-
-    expect(subject.status).toBe('next')
-  })
-
-  it('does not move into start if it has updated before a subscription', () => {
-    let subject = new Subject()
-
-    subject.next(true)
-    subject.subscribe(n => n)
-
-    expect(subject.status).toBe('next')
-  })
-
-  it('sets an error state when it errors', () => {
-    let subject = new Subject()
-
-    subject.error(true)
-
-    expect(subject.status).toBe('error')
-  })
-
-  it('sets an complete state when it finishes', () => {
-    let subject = new Subject()
-
-    subject.complete(true)
-
-    expect(subject.status).toBe('complete')
-  })
-
-  it('a subjects payload can intentionally be set to undefined', async () => {
-    let subject = new Subject()
-
-    subject.next(true)
-    subject.complete(undefined)
-
-    expect(subject.payload).toBe(undefined)
-  })
-
   describe('start', function() {
     it('moves into a started state when it is subscribed to', () => {
       let subject = new Subject()
@@ -62,29 +18,58 @@ describe('Subject', function() {
 
       expect(start).toHaveBeenCalledTimes(1)
     })
+
+    it('does not move into start if it has updated before a subscription', () => {
+      let subject = new Subject()
+
+      subject.next(true)
+      subject.subscribe(n => n)
+
+      expect(subject.status).toBe('next')
+    })
+  })
+
+  describe('next', function() {
+    it('moves into a next state', () => {
+      let subject = new Subject()
+
+      subject.subscribe(n => n)
+
+      subject.next(true)
+
+      expect(subject.status).toBe('next')
+    })
   })
 
   describe('complete', function() {
+    it('sets an complete state when it finishes', () => {
+      let subject = new Subject()
+
+      subject.complete(true)
+
+      expect(subject.status).toBe('complete')
+    })
+
     it('triggers once', () => {
       let subject = new Subject()
       let complete = jest.fn()
 
       subject.subscribe({ complete })
-      subject.complete(true)
+
+      subject.complete()
+      subject.complete()
 
       expect(complete).toHaveBeenCalledTimes(1)
-      expect(complete).toHaveBeenCalledWith(true)
     })
 
     it('triggers if already completed', () => {
       let subject = new Subject()
       let complete = jest.fn()
 
-      subject.complete(true)
+      subject.complete()
       subject.subscribe({ complete })
 
       expect(complete).toHaveBeenCalledTimes(1)
-      expect(complete).toHaveBeenCalledWith(true)
     })
 
     it('does not trigger unsubscribe', () => {
@@ -109,9 +94,41 @@ describe('Subject', function() {
 
       expect(unsubscribe).toHaveBeenCalled()
     })
+
+    it('does not trigger on error', () => {
+      let subject = new Subject()
+      let unsubscribe = jest.fn()
+      let error = jest.fn()
+
+      subject.subscribe({ error, unsubscribe })
+      subject.error(true)
+
+      expect(unsubscribe).not.toHaveBeenCalled()
+      expect(error).toHaveBeenCalledWith(true)
+    })
+
+    it('does not trigger on complete', () => {
+      let subject = new Subject()
+      let unsubscribe = jest.fn()
+      let complete = jest.fn()
+
+      subject.subscribe({ complete, unsubscribe })
+      subject.complete()
+
+      expect(unsubscribe).not.toHaveBeenCalled()
+      expect(complete).toHaveBeenCalled()
+    })
   })
 
   describe('error', function() {
+    it('sets an error state when it errors', () => {
+      let subject = new Subject()
+
+      subject.error(true)
+
+      expect(subject.status).toBe('error')
+    })
+
     it('invokes the error again if already errored', () => {
       let subject = new Subject()
       let error = jest.fn()
@@ -120,6 +137,17 @@ describe('Subject', function() {
       subject.subscribe({ error })
 
       expect(error).toHaveBeenCalled()
+    })
+
+    it('does not invoke the error if already completed', () => {
+      let subject = new Subject()
+      let error = jest.fn()
+
+      subject.subscribe({ error })
+      subject.complete()
+      subject.error()
+
+      expect(error).not.toHaveBeenCalled()
     })
   })
 })

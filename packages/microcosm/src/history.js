@@ -1,34 +1,30 @@
 // @flow
 
-import { getSymbol } from './symbols'
 import { Subject } from './subject'
 import { Warehouse } from './warehouse'
+import { Tree } from './data'
+import { getSymbol } from './symbols'
 import coroutine from './coroutine'
 
 class History {
   constructor(options) {
-    this._backwards = new Map()
-    this._forwards = new Map()
+    this._active = new Set()
+    this._stream = new Tree()
     this._db = new Warehouse()
 
+    this.root = null
+    this.head = null
+
     this.debug = Boolean(options ? options.debug : false)
-    this.updates = new Subject()
+    this.updates = new Subject('updater')
   }
 
   get size() {
-    let count = this.root ? 1 : 0
-    let focus = this.root
-
-    while (focus !== this.head) {
-      count += 1
-      focus = this.after(focus)
-    }
-
-    return count
+    return this._active.size
   }
 
   then(pass?: *, fail?: *): Promise<*> {
-    return Promise.all([...this._backwards.values()])
+    return Promise.all(this)
   }
 
   stash(action, repo, payload) {
@@ -36,15 +32,15 @@ class History {
   }
 
   recall(action, repo) {
-    return this._db.get(this._backwards.get(action), repo)
+    return this._db.get(this._stream.before(action), repo)
   }
 
   previous(action) {
-    return this._backwards.get(action)
+    return this._stream.before(action)
   }
 
   next(action) {
-    return this._forwards.get(action)
+    return this._stream.after(action)
   }
 
   current(repo) {
@@ -54,9 +50,10 @@ class History {
   archive() {
     while (this.root && this.root.closed && this.root !== this.head) {
       let last = this.root
-      let next = this._forwards.get(this.root)
+      let next = this._stream.after(this.root)
 
       if (next && next.closed) {
+        this._active.delete(last)
         this.remove(last, true)
       } else {
         break
@@ -67,64 +64,63 @@ class History {
   append(command: string | Command, params, origin: *): Subject {
     let action = new Subject(command)
 
+    this._active.add(action)
+
     if (this.head) {
-      this._forwards.set(this.head, action)
-      this._backwards.set(action, this.head)
+      this._stream.point(this.head, action)
     } else {
       this.root = action
     }
 
     this.head = action
 
-    this.updates.next(action)
+    action.every(this.updates.next)
 
     coroutine(action, command, params, origin)
 
     if (this.debug === false) {
-      action.subscribe({
-        complete: this.archive.bind(this)
-      })
+      action.every(this.archive.bind(this))
     }
 
     return action
   }
 
   after(action) {
-    return action === this.head ? undefined : this._forwards.get(action)
+    return action === this.head ? undefined : this._stream.after(action)
   }
 
   wait() {
     return this.then()
   }
 
-  remove(action, silent) {
-    let before = this._backwards.get(action)
-    let after = this._forwards.get(action)
-    let base = after || before
-
-    this._forwards.delete(action)
-    this._backwards.delete(action)
-    this._db.delete(action)
+  remove(action) {
+    let isActive = this.isActive(action)
 
     if (this.head === action) {
-      this._forwards.delete(before)
-      this.head = before
+      this.head = this._stream.before(action)
     }
+
+    let base = this._stream.remove(action)
 
     if (this.root === action) {
       this.root = base
     }
 
-    if (this._forwards.get(before) === action) {
-      this._forwards.set(before, after)
-    }
+    this._db.delete(action)
+    this._active.delete(action)
 
-    if (this._backwards.get(after) === action) {
-      this._backwards.set(after, before)
-    }
-
-    if (!silent && base && action.disabled === false) {
+    if (isActive && base) {
       this.updates.next(base)
+    }
+  }
+
+  toggle(action) {
+    if (this._db.has(action)) {
+      action.toggle()
+
+      if (this.isActive(action)) {
+        this.updates.next(action)
+      }
     }
   }
 
@@ -133,54 +129,34 @@ class History {
       throw new Error(`Unable to checkout ${action} action`)
     }
 
-    let focus = action
+    let path = this._stream.select(action)
 
-    this.head = focus
+    this.head = action
+    this._active = new Set(path)
 
-    while (focus) {
-      var previous = this._backwards.get(focus)
+    this.updates.next(path[0])
+  }
 
-      if (previous) {
-        this._forwards.set(previous, focus)
-      }
+  children(action) {
+    return this._stream.children(action)
+  }
 
-      focus = previous
-    }
-
-    this.updates.next(action)
+  isActive(action) {
+    return !action.disabled && this._active.has(action)
   }
 
   [getSymbol('iterator')]() {
-    let focus = this.root
+    return this._active[getSymbol('iterator')]()
+  }
 
+  toJSON() {
     return {
-      _start: this.root,
-      next: () => {
-        if (focus) {
-          let step = { value: focus, done: false }
-          focus = this._forwards.get(focus)
-          return step
-        }
-
-        // TODO: This is intended to help GC. Does this really do anything?
-        focus = null
-
-        return { done: true }
-      }
+      head: this.head ? this.head.id : null,
+      root: this.root ? this.root.id : null,
+      size: this.size,
+      list: Array.from(this._active),
+      tree: this._stream.toJS(this.root)
     }
-  }
-
-  toggle(action) {
-    if (this._db.has(action)) {
-      action.toggle()
-      this.updates.next(action)
-    }
-  }
-
-  // TODO: This is probably extremely slow
-  children(action) {
-    let all = Array.from(this._backwards.keys())
-    return all.filter(value => this._backwards.get(value) === action)
   }
 }
 

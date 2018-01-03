@@ -7,7 +7,9 @@ describe('History::remove', function() {
     let action = repo.push('action')
 
     expect(repo.history.size).toBe(1)
+
     repo.history.remove(action)
+
     expect(repo.history.size).toEqual(0)
   })
 
@@ -15,6 +17,7 @@ describe('History::remove', function() {
     let repo = new Microcosm({ debug: true })
 
     repo.push('test')
+
     repo.history.remove(new Subject('external'))
 
     expect(repo.history.size).toEqual(1)
@@ -160,19 +163,17 @@ describe('History::remove', function() {
       expect(next).toHaveBeenCalledWith(three)
     })
 
-    // TODO: We don't track the active branch when removing
-    it.skip('does not reconcile if the action is not in active branch', function() {
+    it('does not reconcile if the action is not in active branch', function() {
       let repo = new Microcosm({ debug: true })
       let next = jest.fn()
 
       repo.push('one')
+
       let two = repo.push('two')
       let three = repo.push('three')
 
       repo.history.checkout(two)
-
       repo.history.updates.subscribe(next)
-
       repo.history.remove(three)
 
       expect(next).not.toHaveBeenCalled()
