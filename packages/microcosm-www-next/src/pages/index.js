@@ -17,7 +17,6 @@ export default class IndexPage extends React.Component {
   }
 
   componentDidMount() {
-    require('intersection-observer') // IntersectionObserver polyfill
     this.setVars()
     this.beginObserve()
   }
