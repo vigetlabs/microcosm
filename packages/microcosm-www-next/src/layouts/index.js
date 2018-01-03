@@ -3,8 +3,14 @@ import PropTypes from 'prop-types'
 import Link from 'gatsby-link'
 import Helmet from 'react-helmet'
 import VigetLogo from '../components/viget-logo'
-
 import '../stylesheets/app.scss'
+
+const isBrowser = typeof window !== 'undefined'
+
+if (isBrowser) {
+  //if this is running in browser, import IntersectionObserver polyfill
+  require('intersection-observer')
+}
 
 const Navigation = () => (
   <nav className="navigation">
@@ -23,7 +29,7 @@ const Footer = () => (
   <footer className="footer">
     <div className="wrapper">
       <Link to="https://www.viget.com/" className="viget-logo" target="_blank">
-        <VigetLogo fill="blue" />
+        <VigetLogo />
       </Link>
 
       <Link

@@ -1,68 +1,201 @@
-$left-graphic-height: 367px;
-$right-graphic-height: 600px;
+$section-top-padding-mobile: $nav-height + 49px;
+$section-top-padding-desktop: $nav-height + 110px;
 
 .section {
-  background: darkslateblue; //TODO - change later on scroll
-  min-height: calc(100vh - #{$footer-height});
-  padding: ($nav-height + 50px) 0 100px;
+  padding-top: $section-top-padding-mobile;
+
+  @include breakpoint(large-desktop-up) {
+    display: flex;
+    padding-top: $section-top-padding-desktop;
+
+    @supports (position: sticky) or (position: -webkit-sticky) {
+      justify-content: space-between;
+    }
+  }
 }
 
-.section-title {
+// CONTENT
+
+.section__content {
+  height: 100%;
+  padding-right: 20px;
+  position: fixed;
+  width: 100%;
+
+  @include breakpoint(large-desktop-up) {
+    right: 2%;
+    width: 45%;
+  }
+
+  @supports (position: sticky) or (position: -webkit-sticky) {
+    padding-right: 0;
+    position: -webkit-sticky;
+    position: sticky;
+    top: $section-top-padding-mobile;
+
+    @include breakpoint(large-desktop-up) {
+      order: 2;
+      top: $section-top-padding-desktop;
+    }
+  }
+}
+
+
+// CONTENT - containers
+
+.text-container {
+  margin-bottom: rem(50);
+  max-width: 550px;
+
+  @include breakpoint(medium-desktop-down) {
+    margin: 0 auto rem(50);
+    padding-left: rem(40);
+  }
+}
+
+.toggle-container {
+  @include breakpoint(medium-desktop-down) {
+    align-items: center;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    left: 0;
+    margin-bottom: rem(30);
+    padding: 0 rem(20);
+    position: fixed;
+    width: 100%;
+  }
+}
+
+// CONTENT - elements
+
+.section__content__heading {
   font-size: rem(30);
+  margin-bottom: rem(40);
+  position: relative;
+
+  @include breakpoint(large-desktop-up) {
+    margin-bottom: rem(63);
+  }
 
   span {
     @include font-family-bold;
     display: block;
     font-size: rem(14);
     margin-bottom: rem(5);
-  }
-}
 
-.figure-container {
-  @include breakpoint(small-desktop-up) {
-    display: flex;
-    justify-content: space-between;
-  }
-}
-
-.figure {
-  @include breakpoint(small-desktop-up) {
-    &.-left {
-      width: 36%;
-      padding-top: $right-graphic-height - $left-graphic-height;
-    }
-
-    &.-right {
-      width: 60%;
+    @include breakpoint(medium-desktop-down) {
+      left: rem(-40);
+      position: absolute;
+      top: 0.35em;
     }
   }
 }
 
-.figure__graphic {
-  width: 100%;
-  height: $right-graphic-height;
-  background: lightblue;
-  margin-bottom: rem(28);
+.section__content__subheading {
+  @include font-family-medium;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
 
-  .-left & {
-    height: $left-graphic-height;
+  .toggle-container & {
+    @include breakpoint(medium-desktop-down) {
+      margin-right: 4%;
+      padding-left: rem(40);
+      position: relative;
+
+      &::before {
+        content: url('../images/arrow.svg');
+        position: absolute;
+        left: 0;
+      }
+    }
+
+    @include breakpoint(large-desktop-up) {
+      margin-bottom: rem(30);
+    }
+  }
+
+  &.-top {
+    &::after {
+      content: ' Microcosm';
+    }
+
+    &.-browserView {
+      &::after {
+        content: ' the browser';
+      }
+    }
+  }
+
+  &.-bottom {
+    &::after {
+      content: ' the browser...';
+    }
+
+    &.-browserView {
+      &::after {
+        content: ' Microcosm...';
+      }
+    }
   }
 }
 
-.figure__content {
-  @include breakpoint(small-desktop-up) {
-    padding: 0 rem(40);
+.section__content__text {
+  font-size: rem(18);
+  line-height: rem(27);
+}
+
+.section__toggle-btn {
+  border-radius: 10px;
+  height: 57px;
+  text-transform: uppercase;
+  width: 217px;
+  font-size: rem(18);
+
+  &::after {
+    content: 'Browser View';
   }
 
-  .figure__content__text {
-    font-size: rem(18);
-    line-height: rem(27);
-  }
-
-  .figure__content__header {
-    @include font-family-medium;
-    text-transform: uppercase;
-    margin-bottom: rem(12);
+  &.-browserView {
+    &::after {
+      content: 'Microcosm View';
+    }
   }
 }
 
+
+// GRAPHIC
+
+.section__graphic {
+  @include breakpoint(medium-desktop-down) {
+    padding-top: 30vh;
+  }
+
+  @include breakpoint(large-desktop-up) {
+    flex-basis: 600px;
+  }
+
+  @supports (position: sticky) or (position: -webkit-sticky) {
+    padding-top: 0;
+  }
+}
+
+.section__graphic__figure {
+  margin: 0 auto 50vh;
+  max-height: 600px;
+  max-width: 600px;
+  position: relative;
+  z-index: 1;
+
+  &:last-child {
+    @include breakpoint(large-desktop-up) {
+      margin-bottom: 34vh;
+    }
+  }
+
+  img {
+    height: 100%;
+    width: 100%;
+  }
+}

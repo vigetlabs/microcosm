@@ -8,17 +8,10 @@
   outline: none;
 }
 
-html {
-  background-color: #fff;
-  min-height: 100%;
-}
-
 body {
   color: color(text);
   @include font-family-regular;
   letter-spacing: 0.02em;
-  min-height: 100%;
-  position: relative;
 }
 
 cite {
@@ -37,6 +30,13 @@ svg {
   max-width: 100%;
 }
 
+a {
+  color: white;
+}
+
+button {
+  cursor: pointer;
+}
 
 // box-sizing -- http://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/
 

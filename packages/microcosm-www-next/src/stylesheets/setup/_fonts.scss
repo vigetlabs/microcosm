@@ -17,20 +17,22 @@
 @include font-face('Noway Medium', 'noway-medium-webfont');
 @include font-face('Noway Regular', 'noway-regular-webfont');
 
+
 // Variables
 
-// $base-font-size   : 18px;
-// $base-line-height : 1.8;
-// $font-size-tiny: 14px;
-// $font-size-small: 16px;
-// $font-size-large: 22px;
-// $font-size-larger: 24px;
-// $font-size-xlarge: 30px;
-// $font-spacing-narrow: 0.15em;
-// $font-spacing-wide: 0.2em;
+  // $base-font-size   : 18px;
+  // $base-line-height : 1.8;
+  // $font-size-tiny: 14px;
+  // $font-size-small: 16px;
+  // $font-size-large: 22px;
+  // $font-size-larger: 24px;
+  // $font-size-xlarge: 30px;
+  // $font-spacing-narrow: 0.15em;
+  // $font-spacing-wide: 0.2em;
 
 
 // Mixins
+
 @mixin font-family-bold {
   font-family: 'Noway Bold', 'Arial', san-serif;
 }
@@ -43,12 +45,17 @@
   font-family: 'Noway Regular', 'Arial', san-serif;
 }
 
-// @mixin font-family-geo-book {
-//   font-family: 'geomanist-book', 'Arial', san-serif;
-// }
 
-// @mixin font-smoothing {
-//   -moz-osx-font-smoothing: grayscale;
-//   -webkit-font-smoothing: antialiased;
-// }
+// antialised text for use on dark backgrounds
+// http://usabilitypost.com/2012/11/05/stop-fixing-font-smoothing/
+@mixin font-smooth {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smoothing: antialiased;
+}
 
+@mixin font-unsmooth {
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+  font-smoothing: auto;
+}

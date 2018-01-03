@@ -1,11 +1,19 @@
 .navigation {
-  background: rgba(#000, 0.3);
+  background-color: color(bg-1-nav);
   color: white;
   height: $nav-height;
   left: 0;
   position: fixed;
   top: 0;
   width: 100%;
+  z-index: 2;
+  transition: transition(background-color);
+
+  @for $i from 1 through $section-count {
+    .bg-color-#{$i} & {
+      background-color: color(bg-#{$i}-nav);
+    }
+  }
 
   .wrapper {
     align-items: center;
