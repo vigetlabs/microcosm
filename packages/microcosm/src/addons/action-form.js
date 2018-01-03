@@ -3,7 +3,6 @@
  */
 
 import React from 'react'
-import DOM from 'react-dom'
 import serialize from 'form-serialize'
 import { Action, merge } from '../index'
 import ActionQueue from './action-queue'
@@ -32,7 +31,8 @@ class ActionForm extends React.PureComponent<Props> {
 
   send: Sender
 
-  _form: *
+  _form: HTMLFormElement
+  _assignForm: HTMLFormElement => void
   _queue: ActionQueue
   _onSubmit: *
 
@@ -43,19 +43,19 @@ class ActionForm extends React.PureComponent<Props> {
 
     this._onSubmit = this._onSubmit.bind(this)
     this._queue = new ActionQueue(this)
-  }
 
-  componentDidMount() {
-    this._form = DOM.findDOMNode(this)
+    this._assignForm = el => {
+      this._form = el
+    }
   }
 
   componentWillUnmount() {
     this._queue.empty()
-    this._form = null
   }
 
   render() {
     let props = merge(this.props, {
+      ref: this._assignForm,
       onSubmit: this._onSubmit
     })
 

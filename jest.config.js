@@ -8,6 +8,7 @@ module.exports = {
     './packages/microcosm-react-router',
     './packages/microcosm-http'
   ],
+  collectCoverageFrom: ['**/src/**/*.js', '!example/**/*.js'],
   modulePathIgnorePatterns: ['example', 'build'],
   moduleNameMapper: {
     '^microcosm(/.+|$)': `<rootDir>/../microcosm/${isBundled

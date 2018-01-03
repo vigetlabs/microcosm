@@ -151,13 +151,6 @@ export function isObject(target: *): boolean {
 }
 
 /**
- * Is a value a POJO?
- */
-export function isPlainObject(target: *) {
-  return isObject(target) && target.constructor == Object
-}
-
-/**
  * Is a value a function?
  */
 export function isFunction(target: any): boolean {

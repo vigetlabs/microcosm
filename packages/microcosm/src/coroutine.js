@@ -3,7 +3,7 @@
  */
 
 import Action from './action'
-import { isFunction, isPromise, isGeneratorFn, isPlainObject } from './utils'
+import { isFunction, isPromise, isGeneratorFn } from './utils'
 
 /**
  * Provide support for generators, performing a sequence of actions in
@@ -28,7 +28,7 @@ function processGenerator(action: Action, body: GeneratorAction, repo: *) {
   }
 
   function progress(subAction: Action | Action[]): Action {
-    if (Array.isArray(subAction) || isPlainObject(subAction)) {
+    if (Array.isArray(subAction)) {
       return progress(repo.parallel(subAction))
     }
 
@@ -37,14 +37,11 @@ function processGenerator(action: Action, body: GeneratorAction, repo: *) {
       `Iteration of generator expected an Action. Instead got ${typeof subAction}`
     )
 
-    return subAction.subscribe(
-      {
-        onDone: step,
-        onCancel: action.cancel,
-        onError: action.reject
-      },
-      action
-    )
+    subAction.onDone(step)
+    subAction.onCancel(action.cancel, action)
+    subAction.onError(action.reject, action)
+
+    return subAction
   }
 
   step()
