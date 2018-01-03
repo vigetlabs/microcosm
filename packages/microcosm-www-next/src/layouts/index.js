@@ -44,7 +44,7 @@ const PageWrapper = ({ children }) => (
       title="Microcosm"
       meta={[
         { name: 'description', content: 'Sample' },
-        { name: 'keywords', content: 'sample, something' },
+        { name: 'keywords', content: 'sample, something' }
       ]}
     />
 
@@ -57,7 +57,7 @@ const PageWrapper = ({ children }) => (
 )
 
 PageWrapper.propTypes = {
-  children: PropTypes.func,
+  children: PropTypes.func
 }
 
 export default PageWrapper

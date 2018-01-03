@@ -18,11 +18,9 @@
   "scripts": {
     "build": "gatsby build",
     "start": "gatsby develop",
-    "format": "prettier --trailing-comma es5 --no-semi --single-quote --write 'src/**/*.js'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "babel-preset-env": "^1.6.1",
-    "prettier": "^1.7.4"
+    "babel-preset-env": "^1.6.1"
   }
 }
