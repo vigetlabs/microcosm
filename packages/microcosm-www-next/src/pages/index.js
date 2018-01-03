@@ -7,6 +7,7 @@ export default class IndexPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      graphics: [],
       numSections: 3,
       currentSection: 1,
       microcosmView: true,
@@ -24,12 +25,14 @@ export default class IndexPage extends React.Component {
 
   setVars() {
     this.body = document.body
-    this.graphics = document.querySelectorAll('[data-module="ObserveGraphic"]')
     this.observeOptions = {
       root: null,
       rootMargin: '0px 0px 0px',
       threshold: 1.0,
     }
+
+    this.graphics = [].slice.call(document.querySelectorAll('[data-module="ObserveGraphic"]'))
+    this.setState({ graphics: this.graphics })
   }
 
   createSectionsArray() {
@@ -86,7 +89,7 @@ export default class IndexPage extends React.Component {
 
     return (
       <div className="wrapper">
-        <SideNav sections={this.sections} />
+        <SideNav currentSection={this.state.currentSection} graphics={this.state.graphics} />
 
         <section className="section">
           <div className="toggle-container -mobile">
