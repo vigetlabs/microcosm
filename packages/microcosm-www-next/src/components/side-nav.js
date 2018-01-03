@@ -1,59 +1,43 @@
 import React from 'react'
 import data from '../data/index.json'
 
-export default class SideNav extends React.Component {
-  componentDidMount() {
-    this.elementsMap = this.props.sections.reduce((map, section) => {
-      map[section] = document.getElementById('graphic-' + section)
-      return map
-    }, {})
-  }
+const SideNav = ({ graphics, currentSection }) => {
 
-  onClick = (e, num) => {
+  const scrollToGraphic = (e, section) => {
     e.preventDefault()
-    this.changeClasses(e.target)
-    this.scrollToSection(num)
-  }
 
-  changeClasses = elem => {
-    this.prevLink = this.currLink
-      ? this.currLink
-      : document.getElementsByClassName('-active')[0]
-    this.currLink = elem
-
-    this.prevLink.classList.remove('-active')
-    this.currLink.classList.add('-active')
-  }
-
-  scrollToSection = num => {
     window.scroll({
-      top: this.elementsMap[num].offsetTop - 400,
+      top: section.offsetTop - 400,
       left: 0,
       behavior: 'smooth',
     })
   }
 
-  render() {
-    return (
-      <aside className="section-nav">
-        <nav>
-          <ol className="section-nav__list">
-            {this.props.sections.map(section => (
-              <li key={section} className="section-nav__list__link">
+  return (
+    <aside className="section-nav">
+      <nav>
+        <ol className="section-nav__list">
+          {graphics.length && graphics.map(graphic => {
+            const id = parseInt(graphic.dataset.section)
+
+            return (
+              <li key={id} className="section-nav__list__link">
                 <a
-                  href={'#graphic-' + section}
-                  className={section === 1 ? '-active' : ''}
+                  href={'#graphic-' + id}
+                  className={id === currentSection ? '-active' : ''}
                   onClick={e => {
-                    this.onClick(e, section)
+                    scrollToGraphic(e, graphic)
                   }}
                 >
-                  {data[section].heading}
+                  {data[id].heading}
                 </a>
               </li>
-            ))}
-          </ol>
-        </nav>
-      </aside>
-    )
-  }
+            )
+          })}
+        </ol>
+      </nav>
+    </aside>
+  )
 }
+
+export default SideNav
