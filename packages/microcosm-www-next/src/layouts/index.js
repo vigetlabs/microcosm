@@ -4,6 +4,7 @@ import Link from 'gatsby-link'
 import Helmet from 'react-helmet'
 import VigetLogo from '../components/viget-logo'
 
+import 'intersection-observer'
 import '../stylesheets/app.scss'
 
 const Navigation = () => (

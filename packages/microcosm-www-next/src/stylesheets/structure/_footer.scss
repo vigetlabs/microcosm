@@ -18,6 +18,10 @@ $cta-bottom-padding: 6px;
 
   @include breakpoint(large-desktop-up) {
     position: fixed;
+
+    @media (max-height: 900px) { // if browser is shorter than 900px, don't fix footer to bottom
+      position: absolute;
+    }
   }
 
   .wrapper {

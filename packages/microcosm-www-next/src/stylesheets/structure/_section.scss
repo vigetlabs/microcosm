@@ -6,8 +6,11 @@ $section-top-padding-desktop: $nav-height + 110px;
 
   @include breakpoint(large-desktop-up) {
     display: flex;
-    justify-content: space-between;
     padding-top: $section-top-padding-desktop;
+
+    @supports (position: sticky) or (position: -webkit-sticky) {
+      justify-content: space-between;
+    }
   }
 }
 
@@ -15,23 +18,37 @@ $section-top-padding-desktop: $nav-height + 110px;
 
 .section__content {
   height: 100%;
-  position: sticky;
-  top: $section-top-padding-mobile;
+  padding-right: 20px;
+  position: fixed;
+  width: 100%;
 
   @include breakpoint(large-desktop-up) {
-    flex-basis: 45%;
-    order: 2;
-    top: $section-top-padding-desktop;
+    right: 2%;
+    width: 45%;
+  }
+
+  @supports (position: sticky) or (position: -webkit-sticky) {
+    padding-right: 0;
+    position: -webkit-sticky;
+    position: sticky;
+    top: $section-top-padding-mobile;
+
+    @include breakpoint(large-desktop-up) {
+      order: 2;
+      top: $section-top-padding-desktop;
+    }
   }
 }
+
 
 // CONTENT - containers
 
 .text-container {
-  margin: 0 auto rem(50);
+  margin-bottom: rem(50);
   max-width: 550px;
 
   @include breakpoint(medium-desktop-down) {
+    margin: 0 auto rem(50);
     padding-left: rem(40);
   }
 }
@@ -151,8 +168,16 @@ $section-top-padding-desktop: $nav-height + 110px;
 // GRAPHIC
 
 .section__graphic {
+  @include breakpoint(medium-desktop-down) {
+    padding-top: 30vh;
+  }
+
   @include breakpoint(large-desktop-up) {
     flex-basis: 600px;
+  }
+
+  @supports (position: sticky) or (position: -webkit-sticky) {
+    padding-top: 0;
   }
 }
 

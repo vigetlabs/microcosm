@@ -12,6 +12,10 @@ export default class IndexPage extends React.Component {
     }
   }
 
+  componentWillMount() {
+    this.sections = this.createSectionsArray()
+  }
+
   componentDidMount() {
     this.setVars()
     this.beginObserve()
@@ -27,6 +31,16 @@ export default class IndexPage extends React.Component {
     }
   }
 
+  createSectionsArray() {
+    let arr = []
+
+    for (let i = 0; i < this.state.numSections; i++) {
+      arr.push(i + 1)
+    }
+
+    return arr
+  }
+
   beginObserve() {
     //create new Observer instance
     let observer = new IntersectionObserver(
@@ -35,7 +49,9 @@ export default class IndexPage extends React.Component {
     )
 
     //start observing each graphic
-    this.graphics.forEach(graphic => observer.observe(graphic))
+    for (let i = 0; i < this.graphics.length; i++) {
+      observer.observe(this.graphics[i])
+    }
   }
 
   onIntersection = observed => {
@@ -104,11 +120,9 @@ export default class IndexPage extends React.Component {
           </div>
 
           <div className="section__graphic">
-            {Array(this.state.numSections)
-              .fill()
-              .map((el, i) => (
-                <Graphic key={i} section={i + 1} graphicUrl={graphicUrl} />
-              ))}
+            {this.sections.map(num => (
+              <Graphic key={num} section={num} graphicUrl={graphicUrl} />
+            ))}
           </div>
         </section>
       </div>

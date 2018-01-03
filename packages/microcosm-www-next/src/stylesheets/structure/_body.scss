@@ -3,6 +3,7 @@ $split-bg-height-desktop: 291px;
 
 body {
   background-color: color(bg-1-bottom);
+  position: relative;
   transition: transition(background-color);
 
   &::before {  //top of half split bg
