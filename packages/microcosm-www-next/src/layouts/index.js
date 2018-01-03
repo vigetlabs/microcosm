@@ -4,6 +4,7 @@ import Link from 'gatsby-link'
 import Helmet from 'react-helmet'
 import VigetLogo from '../components/viget-logo'
 
+import 'intersection-observer'
 import '../stylesheets/app.scss'
 
 const Navigation = () => (
@@ -23,7 +24,7 @@ const Footer = () => (
   <footer className="footer">
     <div className="wrapper">
       <Link to="https://www.viget.com/" className="viget-logo" target="_blank">
-        <VigetLogo fill="blue" />
+        <VigetLogo />
       </Link>
 
       <Link

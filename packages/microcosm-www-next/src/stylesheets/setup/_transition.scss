@@ -1,0 +1,3 @@
+@function transition($prop) {
+  @return $prop 0.5s ease-out;
+}

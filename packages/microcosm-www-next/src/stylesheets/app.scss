@@ -6,6 +6,7 @@
 @import 'setup/fonts';
 @import 'setup/grid';
 @import 'setup/hover';
+@import 'setup/transition';
 @import 'setup/units';
 
 // base (base elements, resets, etc)
@@ -17,6 +18,7 @@
 @import 'utility/wrapper';
 
 // structure (header, footer, etc)
+@import 'structure/body';
 @import 'structure/nav';
 @import 'structure/section';
 @import 'structure/footer';
