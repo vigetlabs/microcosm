@@ -7,15 +7,11 @@ export default class IndexPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      graphics: [],
-      numSections: 3,
       currentSection: 1,
-      microcosmView: true
+      graphicsMap: [],
+      microcosmView: true,
+      numSections: Object.keys(data)
     }
-  }
-
-  componentWillMount() {
-    this.sections = this.createSectionsArray()
   }
 
   componentDidMount() {
@@ -25,24 +21,27 @@ export default class IndexPage extends React.Component {
 
   setVars() {
     this.body = document.body
+    this.graphics = document.querySelectorAll('[data-module="ObserveGraphic"]')
     this.observeOptions = {
       root: null,
       rootMargin: '0px 0px 0px',
       threshold: 1.0,
     }
 
-    this.graphics = [].slice.call(document.querySelectorAll('[data-module="ObserveGraphic"]'))
-    this.setState({ graphics: this.graphics })
+    this.setGraphicsMap()
   }
 
-  createSectionsArray() {
-    let arr = []
+  setGraphicsMap() {
+    let graphicsMap = [].slice.call(this.graphics).reduce((map, graphic) => {
+      map.push({
+        num: parseInt(graphic.dataset.section),
+        elem: graphic
+      })
 
-    for (let i = 0; i < this.state.numSections; i++) {
-      arr.push(i + 1)
-    }
+      return map
+    }, [])
 
-    return arr
+    this.setState({ graphicsMap })
   }
 
   beginObserve() {
@@ -89,7 +88,7 @@ export default class IndexPage extends React.Component {
 
     return (
       <div className="wrapper">
-        <SideNav currentSection={this.state.currentSection} graphics={this.state.graphics} />
+        <SideNav currentSection={this.state.currentSection} graphics={this.state.graphicsMap} />
 
         <section className="section">
           <div className="toggle-container -mobile">
@@ -137,7 +136,7 @@ export default class IndexPage extends React.Component {
           </div>
 
           <div className="section__graphic">
-            {this.sections.map(num => (
+            {this.state.numSections.map(num => (
               <Graphic
                 key={num}
                 section={num}

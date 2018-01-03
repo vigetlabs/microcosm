@@ -3,11 +3,11 @@ import data from '../data/index.json'
 
 const SideNav = ({ graphics, currentSection }) => {
 
-  const scrollToGraphic = (e, section) => {
+  const scrollToElement = (e, elem) => {
     e.preventDefault()
 
     window.scroll({
-      top: section.offsetTop - 400,
+      top: elem.offsetTop - 400,
       left: 0,
       behavior: 'smooth',
     })
@@ -17,19 +17,17 @@ const SideNav = ({ graphics, currentSection }) => {
     <aside className="section-nav">
       <nav>
         <ol className="section-nav__list">
-          {graphics.length && graphics.map(graphic => {
-            const id = parseInt(graphic.dataset.section)
-
+          {graphics.map(({ num, elem }) => {
             return (
-              <li key={id} className="section-nav__list__link">
+              <li key={num} className="section-nav__list__link">
                 <a
-                  href={'#graphic-' + id}
-                  className={id === currentSection ? '-active' : ''}
+                  href={'#graphic-' + num}
+                  className={num === currentSection ? '-active' : ''}
                   onClick={e => {
-                    scrollToGraphic(e, graphic)
+                    scrollToElement(e, elem)
                   }}
                 >
-                  {data[id].heading}
+                  {data[num].heading}
                 </a>
               </li>
             )
