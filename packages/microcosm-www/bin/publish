@@ -1,20 +1,20 @@
 #!/bin/bash
 
-export BASE_URL=$(node -p 'require("./package").homepage')
+export BASE_URL=$(node -p 'require("../package").homepage')
 
 make all
 
 # Clean up pesky files
 rm -rf ./**/.DS_Store
 
-cd ../../
+cd ..
 git checkout -B gh-pages
-git add -f packages/microcosm-www/public
+git add -f site/public
 git commit -am "[skip ci] Rebuild website"
-git filter-branch -f --prune-empty --subdirectory-filter packages/microcosm-www/public
+git filter-branch -f --prune-empty --subdirectory-filter site/public
 git push -f origin gh-pages
 git checkout -
-cd packages/microcosm-www
+cd site
 
 echo ""
 echo "Published to:"

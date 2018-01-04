@@ -1,5 +1,6 @@
-<svg id="arrow" xmlns="http://www.w3.org/2000/svg" width="17" height="36.94" viewBox="0 0 17 36.94">
-  <path id="Rectangle_544_copy" data-name="Rectangle 544 copy" className="cls-1" fill="#fff" fill-rule="evenodd" opacity="0.5" d="M94.5,1446.33l8.507,8.34-8.507,8.34-8.507-8.34Zm0-3.08,8.507,8.34-8.507,8.34-8.507-8.34Z" transform="translate(-86 -1426.06)"/>
-  <path id="Rectangle_544_copy_2" data-name="Rectangle 544 copy 2" className="cls-2" fill="#fff" fill-rule="evenodd" opacity="0.2" d="M94.5,1436.2l8.507,8.34-8.507,8.34-8.507-8.34Zm0-3.08,8.507,8.34L94.5,1449.8l-8.507-8.34Z" transform="translate(-86 -1426.06)"/>
-  <path id="Rectangle_544_copy_3" data-name="Rectangle 544 copy 3" className="cls-3" fill="#fff" fill-rule="evenodd" opacity="0.1" d="M94.5,1426.07l8.507,8.34-8.507,8.34-8.507-8.34Zm0-3.08,8.507,8.34-8.507,8.34-8.507-8.34Z" transform="translate(-86 -1426.06)"/>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 9.4 17" style="enable-background:new 0 0 9.4 17;" xml:space="preserve">
+	<polygon style="opacity:0.2;fill:#FFFFFF;" points="9.4,0.9 4.7,5.7 0,0.9 0.9,0 4.7,3.8 8.5,0 "/>
+	<polygon style="opacity:0.4;fill:#FFFFFF;" points="9.4,6.6 4.7,11.3 0,6.6 0.9,5.7 4.7,9.4 8.5,5.7 "/>
+	<polygon style="opacity:0.6;fill:#FFFFFF;" points="9.4,12.3 4.7,17 0,12.3 0.9,11.3 4.7,15.1 8.5,11.3 "/>
 </svg>

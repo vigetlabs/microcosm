@@ -2,9 +2,9 @@
  * @flow
  */
 
-type ActionFormCallback = (payload?: *, form?: *) => void
+type ActionFormCallback = (payload?: *, form?: HTMLFormElement) => void
 
-type ActionFormSerializer = (form: *) => Object
+type ActionFormSerializer = (form: HTMLFormElement) => Object
 
 type ActionFormPreparer = (data: Object) => Object
 

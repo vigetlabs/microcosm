@@ -12,35 +12,11 @@
 - ActionForm and ActionButton action callbacks are automatically unsubscribe on unmount
 - Internal updates to improve the efficiency of forks
 
-## 12.13.2
-
-- Properly externalize ReactDOM in build
-
-## 12.13.1 
-
-- Fix issue where refs passed to ActionForm would raise warning in React
-
 ## 12.13.0
 
 - In batching mode, Presenter model updates are asynchronous. 
 - Warn when a non-POJO is passed as effect/domain options
 - Added lifecycle method for when a Presenter model changes: `modelDidUpdate`. See the docs for more information.
-
-## 12.12.4
-
-- Properly externalize ReactDOM in build
-
-## 12.12.3
-
-- Fix issue where refs passed to ActionForm would raise warning in React
-
-## 12.12.2
-
-- Fix bad release
-
-## 12.12.1
-
-- `repo.parallel` returns an array of payloads when all related actions complete
 
 ## 12.12.0
 

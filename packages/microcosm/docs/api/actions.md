@@ -210,38 +210,10 @@ function getUsers (ids) {
     yield ids.map(id => repo.push(getUser, id))
   }
 }
-
-repo.push(getUsers, [ 1, 2 ])
 ```
 
-Alternatively, you may also yield an object, this is useful for stitching together records that may have data at different locations:
-
-```javascript
-function getPost (id) {
-  return fetch(`/posts/${id}`)
-}
-
-function getComments (id) {
-  return fetch(`/posts/${id}/comments`)
-}
-
-function getPostWithComments (id) {
-  return function * (repo) {
-    let { post, comments } = yield {
-      post: repo.push(getPost, id),
-      comments: repo.push(getComments, id)
-    }
-    
-    post.comments = comments
-
-    return post
-  }
-}
-
-repo.push(getPostWithComments, 1)
-```
-
-If all actions resolve or cancel, the generator sequence continues.
+If all actions resolve or cancel, the generator sequence
+continues.
 
 ### Action status methods are auto-bound
 

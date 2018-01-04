@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: /home/circleci/microcosm
   docker:
-    - image: circleci/node:8.0
+    - image: circleci/node:latest
 
 jobs:
   build:
@@ -29,13 +29,6 @@ jobs:
           at: /home/circleci
       - run: yarn flow
       - run: yarn lint
-  website:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /home/circleci
-      - run: sudo apt-get -y -qq install awscli
-      - run: yarn deploy
   test-dev:
     <<: *defaults
     steps:
@@ -55,7 +48,6 @@ workflows:
   microcosm:
     jobs:
       - build
-      - website
       - audit:
           requires:
             - build

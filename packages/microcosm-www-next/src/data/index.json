@@ -1,20 +1,23 @@
 {
   "1": {
-    "heading": "<span>01.</span> Rendering a View",
+    "num": "01.",
+    "heading": "Rendering a View",
     "microcosmText": "The <a href='TODO'>Domains</a> are in charge of keeping state organized, and provide whatever data is necessary to the Presenter. A Presenter at its core is a React Component, so it uses the data it pulls from the Domains to render the appropriate view.",
     "browserText": "A user fires up the browser to take a quiz.",
-    "microcosmUrl": "http://via.placeholder.com/600x600",
+    "microcosmUrl": "../static/images/v.png",
     "browserUrl": "http://via.placeholder.com/400x400"
   },
   "2": {
-    "heading": "<span>02.</span> Creating an Action",
+    "num": "02.",
+    "heading": "Creating an Action",
     "microcosmText": "The <a href='TODO'>Presenter</a> creates a new <a href='TODO'>Action</a> in response to the user's click. This particular Action's job will be to fetch some data from an external API on cats. Cool cats.",
     "browserText": "A user selects an option from the quiz list.",
     "microcosmUrl": "http://via.placeholder.com/500x500",
     "browserUrl": "http://via.placeholder.com/300x300"
   },
   "3": {
-    "heading": "<span>03.</span> The Repository",
+    "num": "03.",
+    "heading": "The Repository",
     "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with actions, history, and state. The Repo knows which domains care about what actions, and also has access to the History of actions. Let's see what that looks like... ",
     "browserText": "Lorem Ipsum.",
     "microcosmUrl": "http://via.placeholder.com/400x400",
