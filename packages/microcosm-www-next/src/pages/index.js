@@ -86,9 +86,6 @@ export default class IndexPage extends React.Component {
       ? sectionData.microcosmText
       : sectionData.browserText
     let browserClass = !microcosmView ? ' -browserView' : ''
-    let headingColorClass = ` heading-color-${currentSection}`
-    let subheadingColorClass = ` subheading-color-${currentSection}`
-    let buttonClassColor = ` button-color-${currentSection}`
 
     return (
       <div className="wrapper">
@@ -100,24 +97,24 @@ export default class IndexPage extends React.Component {
         <section className="section">
           <div className="toggle-container -mobile">
             <h3
-              className={'section__content__subheading -bottom' + browserClass + subheadingColorClass}
+              className={'section__content__subheading -bottom' + browserClass}
             >
               Meanwhile, in
             </h3>
             <button
               onClick={this.switchView}
-              className={'section__toggle-btn' + browserClass + buttonClassColor}
+              className={'section__toggle-btn' + browserClass}
             />
           </div>
 
           <div className="section__content">
             <div className="text-container">
-              <h2 className={"section__content__heading" + headingColorClass}>
+              <h2 className={"section__content__heading"}>
                 <span>{sectionData.num}</span>
                 {sectionData.heading}
               </h2>
               <h3
-                className={'section__content__subheading -top' + browserClass + subheadingColorClass}
+                className={'section__content__subheading -top' + browserClass}
               >
                 In
               </h3>
@@ -130,14 +127,14 @@ export default class IndexPage extends React.Component {
             <div className="toggle-container -desktop">
               <h3
                 className={
-                  'section__content__subheading -bottom' + browserClass + subheadingColorClass
+                  'section__content__subheading -bottom' + browserClass
                 }
               >
                 Meanwhile, in
               </h3>
               <button
                 onClick={this.switchView}
-                className={'section__toggle-btn' + browserClass + buttonClassColor}
+                className={'section__toggle-btn' + browserClass}
               />
             </div>
           </div>

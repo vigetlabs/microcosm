@@ -95,6 +95,12 @@ $section-top-padding-desktop: $nav-height + 110px;
   position: relative;
   transition: transition(color);
 
+  @for $i from 1 through $section-count {
+    .bg-color-#{$i} & {
+      color: color(primary-#{$i});
+    }
+  }
+
   @include breakpoint(large-desktop-up) {
     margin-bottom: rem(63);
   }
@@ -118,6 +124,12 @@ $section-top-padding-desktop: $nav-height + 110px;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   transition: transition(color);
+
+  @for $i from 1 through $section-count {
+    .bg-color-#{$i} & {
+      color: color(secondary-#{$i});
+    }
+  }
 
   .toggle-container.-mobile & {
     @include breakpoint(medium-desktop-down) {
@@ -175,6 +187,12 @@ $section-top-padding-desktop: $nav-height + 110px;
   text-transform: uppercase;
   transition: transition(background-color);
   width: 217px;
+
+  @for $i from 1 through $section-count {
+    .bg-color-#{$i} & {
+      background-color: color(secondary-#{$i});
+    }
+  }
 
   &::after {
     content: 'Browser View';
