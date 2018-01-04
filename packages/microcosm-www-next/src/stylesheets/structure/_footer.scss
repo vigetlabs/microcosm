@@ -16,10 +16,14 @@ $cta-bottom-padding: 6px;
     }
   }
 
-  @include breakpoint(large-desktop-up) {
-    position: fixed;
+  @include breakpoint(medium-desktop-up) {  //from tablet up, if the screen is long enough (i.e. enough space), fix footer to bottom
+    @media (min-height: 901px) {
+      position: fixed;
+    }
+  }
 
-    @media (max-height: 900px) { // if browser is shorter than 900px, don't fix footer to bottom
+  @include breakpoint(large-desktop-up) {  //from desktop up, if there isn't enough space, make footer absolute so it goes over content and doesn't move elems around
+    @media (max-height: 900px) {
       position: absolute;
     }
   }

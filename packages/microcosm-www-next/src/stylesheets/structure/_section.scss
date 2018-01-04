@@ -53,7 +53,7 @@ $section-top-padding-desktop: $nav-height + 110px;
   }
 }
 
-.toggle-container {
+.toggle-container.-mobile {
   @include breakpoint(medium-desktop-down) {
     align-items: center;
     bottom: 0;
@@ -65,6 +65,25 @@ $section-top-padding-desktop: $nav-height + 110px;
     padding: 0 rem(20);
     position: fixed;
     width: 100%;
+    z-index: 1;
+  }
+
+  @include breakpoint(medium-desktop-up) {
+    @media (min-height: 901px) {
+      margin-bottom: $footer-height + 45px;
+    }
+  }
+
+  @include breakpoint(large-desktop-up) {
+    display: none;
+  }
+}
+
+.toggle-container.-desktop {
+  display: none;
+
+  @include breakpoint(large-desktop-up) {
+    display: block;
   }
 }
 
@@ -98,7 +117,7 @@ $section-top-padding-desktop: $nav-height + 110px;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
 
-  .toggle-container & {
+  .toggle-container.-mobile & {
     @include breakpoint(medium-desktop-down) {
       margin-right: 4%;
       padding-left: rem(40);
@@ -106,14 +125,15 @@ $section-top-padding-desktop: $nav-height + 110px;
 
       &::before {
         content: url('../images/arrow.svg');
-        position: absolute;
         left: 0;
+        position: absolute;
+        width: 17px;
       }
     }
+  }
 
-    @include breakpoint(large-desktop-up) {
-      margin-bottom: rem(30);
-    }
+  .toggle-container.-desktop & {
+    margin-bottom: rem(30);
   }
 
   &.-top {
@@ -182,15 +202,28 @@ $section-top-padding-desktop: $nav-height + 110px;
 }
 
 .section__graphic__figure {
-  margin: 0 auto 50vh;
+  margin: 0 auto 80vh;
   max-height: 600px;
   max-width: 600px;
   position: relative;
-  z-index: 1;
+
+  @include breakpoint(large-desktop-up) {
+    margin-bottom: 30vh;
+
+    &::after {
+      bottom: -17vh;
+      content: url('../images/arrow.svg');
+      left: 0;
+      margin: 0 auto;
+      position: absolute;
+      right: 0;
+      width: 17px;
+    }
+  }
 
   &:last-child {
     @include breakpoint(large-desktop-up) {
-      margin-bottom: 34vh;
+      margin-bottom: 60vh;
     }
   }
 

@@ -4,9 +4,14 @@
 .wrapper {
   margin-left: auto;
   margin-right: auto;
-  padding-left: $page-gutter;
-  padding-right: $page-gutter;
+  padding-left: $page-gutter-mobile;
+  padding-right: $page-gutter-mobile;
   width: 100%;
+
+  @include breakpoint(large-tablet-up) {
+    padding-left: $page-gutter-desktop;
+    padding-right: $page-gutter-desktop;
+  }
 
   @include breakpoint(medium-desktop-up) {
     max-width: 1225px;
