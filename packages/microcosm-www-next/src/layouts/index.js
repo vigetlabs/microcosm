@@ -5,9 +5,7 @@ import Helmet from 'react-helmet'
 import VigetLogo from '../components/viget-logo'
 import '../stylesheets/app.scss'
 
-const isBrowser = typeof window !== 'undefined'
-
-if (isBrowser) {
+if (typeof window !== 'undefined') {
   //if this is running in browser, import IntersectionObserver polyfill
   require('intersection-observer')
 }
