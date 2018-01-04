@@ -90,12 +90,13 @@ $section-top-padding-desktop: $nav-height + 110px;
 // CONTENT - elements
 
 .section__content__heading {
+  color: color(primary-1);
   font-size: rem(30);
   margin-bottom: rem(40);
   position: relative;
   transition: transition(color);
 
-  @for $i from 1 through $section-count {
+  @for $i from 2 through $section-count {
     .bg-color-#{$i} & {
       color: color(primary-#{$i});
     }
@@ -121,11 +122,12 @@ $section-top-padding-desktop: $nav-height + 110px;
 
 .section__content__subheading {
   @include font-family-medium;
+  color: color(primary-1);
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   transition: transition(color);
 
-  @for $i from 1 through $section-count {
+  @for $i from 2 through $section-count {
     .bg-color-#{$i} & {
       color: color(secondary-#{$i});
     }
@@ -181,6 +183,7 @@ $section-top-padding-desktop: $nav-height + 110px;
 }
 
 .section__toggle-btn {
+  background-color: color(secondary-1);
   border-radius: 10px;
   font-size: rem(18);
   height: 57px;
@@ -188,7 +191,7 @@ $section-top-padding-desktop: $nav-height + 110px;
   transition: transition(background-color);
   width: 217px;
 
-  @for $i from 1 through $section-count {
+  @for $i from 2 through $section-count {
     .bg-color-#{$i} & {
       background-color: color(secondary-#{$i});
     }

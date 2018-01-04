@@ -9,7 +9,7 @@
   z-index: 2;
   transition: transition(background-color);
 
-  @for $i from 1 through $section-count {
+  @for $i from 2 through $section-count {
     .bg-color-#{$i} & {
       background-color: color(bg-#{$i}-nav);
     }
