@@ -18,7 +18,7 @@ export default class IndexPage extends React.Component {
 
   componentDidMount() {
     this.setVars()
-    this.beginObserve()
+    //this.beginObserve()
   }
 
   setVars() {
