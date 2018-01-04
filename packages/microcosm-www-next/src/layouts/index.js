@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Link from 'gatsby-link'
 import Helmet from 'react-helmet'
-import VigetLogo from '../components/viget-logo'
+import { menu, VigetLogo, microcosmLogo } from '../images'
 import '../stylesheets/app.scss'
 
 const isBrowser = typeof window !== 'undefined'
@@ -17,10 +17,10 @@ const Navigation = () => (
     <div className="wrapper">
       <h1>
         <span className="screenreader-only">Microcosm</span>
-        <img src="./static/images/microcosm-logo.png" alt="" />
+        <img src={microcosmLogo} alt="" />
       </h1>
 
-      <img src="./static/images/menu.png" alt="menu" />
+      <img src={menu} alt="menu" />
     </div>
   </nav>
 )

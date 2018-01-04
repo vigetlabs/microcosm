@@ -143,9 +143,7 @@ export default class IndexPage extends React.Component {
               <Graphic
                 key={num}
                 section={num}
-                graphicUrl={
-                  microcosmView ? data[num].microcosmUrl : data[num].browserUrl
-                }
+                microcosmView={microcosmView}
               />
             ))}
           </div>
