@@ -1,9 +1,6 @@
 $section-top-padding-mobile: $nav-height + 49px;
 $section-top-padding-desktop: $nav-height + 110px;
 
-  @include breakpoint(large-desktop-up) {
-    display: flex;
-
 .section {
   padding-top: $section-top-padding-mobile;
 
