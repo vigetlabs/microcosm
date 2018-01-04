@@ -93,6 +93,7 @@ $section-top-padding-desktop: $nav-height + 110px;
   font-size: rem(30);
   margin-bottom: rem(40);
   position: relative;
+  transition: transition(color);
 
   @include breakpoint(large-desktop-up) {
     margin-bottom: rem(63);
@@ -116,6 +117,7 @@ $section-top-padding-desktop: $nav-height + 110px;
   @include font-family-medium;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
+  transition: transition(color);
 
   .toggle-container.-mobile & {
     @include breakpoint(medium-desktop-down) {
@@ -168,13 +170,15 @@ $section-top-padding-desktop: $nav-height + 110px;
 
 .section__toggle-btn {
   border-radius: 10px;
+  font-size: rem(18);
   height: 57px;
   text-transform: uppercase;
+  transition: transition(background-color);
   width: 217px;
-  font-size: rem(18);
 
   &::after {
     content: 'Browser View';
+    opacity: 0.6;
   }
 
   &.-browserView {
@@ -224,6 +228,10 @@ $section-top-padding-desktop: $nav-height + 110px;
   &:last-child {
     @include breakpoint(large-desktop-up) {
       margin-bottom: 60vh;
+
+      &::after {
+        content: ''
+      }
     }
   }
 
