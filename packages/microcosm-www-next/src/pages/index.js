@@ -79,8 +79,7 @@ export default class IndexPage extends React.Component {
   }
 
   render() {
-    let currentSection = this.state.currentSection
-    let sectionData = data[currentSection]
+    let sectionData = data[this.state.currentSection]
     let microcosmView = this.state.microcosmView
     let text = microcosmView
       ? sectionData.microcosmText
@@ -90,7 +89,7 @@ export default class IndexPage extends React.Component {
     return (
       <div className="wrapper">
         <SideNav
-          currentSection={currentSection}
+          currentSection={this.state.currentSection}
           graphics={this.state.graphicsMap}
         />
 
@@ -109,7 +108,7 @@ export default class IndexPage extends React.Component {
 
           <div className="section__content">
             <div className="text-container">
-              <h2 className={"section__content__heading"}>
+              <h2 className="section__content__heading">
                 <span>{sectionData.num}</span>
                 {sectionData.heading}
               </h2>
