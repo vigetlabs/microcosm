@@ -167,7 +167,10 @@ describe('Effect::register', function() {
     it('listens to complete', async () => {
       let repo = new Microcosm()
       let handler = jest.fn()
-      let action = () => action => action.complete(true)
+      let action = () => action => {
+        action.next(true)
+        action.complete()
+      }
 
       let effect = repo.addEffect({
         register() {

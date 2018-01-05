@@ -41,44 +41,6 @@ describe('Microcosm::patch', function() {
       expect(leaf).toHaveState('color', 'red')
     })
 
-    it.only('properly archives after a patch', async () => {
-      const parent = new Microcosm({ maxHistory: 0 })
-
-      parent.addDomain('one', {
-        getInitialState() {
-          return false
-        },
-        register() {
-          return {
-            [delay]: (a, b) => b
-          }
-        }
-      })
-
-      parent.addDomain('two', {
-        getInitialState() {
-          return false
-        },
-        register() {
-          return {
-            [delay]: (a, b) => b
-          }
-        }
-      })
-
-      parent.push(patch, { one: false, two: false })
-
-      const child = parent.fork()
-
-      parent.push(delay, 20, false)
-      parent.push(delay, 10, false)
-
-      await parent.history.wait()
-
-      expect(child.state.one).toBe(true)
-      expect(child.state.two).toBe(true)
-    })
-
     it('does not cause forks to revert state', function() {
       const parent = new Microcosm()
       const child = parent.fork()

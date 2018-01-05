@@ -62,7 +62,7 @@ class History {
   }
 
   append(command: string | Command, params, origin: *): Subject {
-    let action = new Subject(command)
+    let action = new Subject(command, { origin })
 
     this._active.add(action)
 

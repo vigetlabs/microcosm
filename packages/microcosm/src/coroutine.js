@@ -43,7 +43,8 @@ function asGenerator(action: Subject, body: GeneratorAction, repo: *) {
       observerHash(next.value).subscribe({
         next: action.next,
         complete: step,
-        error: action.error
+        error: action.error,
+        unsubscribe: action.unsubscribe
       })
     }
   }

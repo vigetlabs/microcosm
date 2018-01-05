@@ -4,19 +4,16 @@
 
 import { Observable, observerHash } from './observable'
 import { Subject } from './subject'
-import { merge } from './data'
-import { setup, teardown, getHandlers, buildRegistry } from './registry'
+import { clone, merge } from './data'
+import { spawn, setup, teardown, getHandlers, buildRegistry } from './registry'
 import { RESET, PATCH, DESERIALIZE, SERIALIZE, COMPLETE } from './lifecycle'
 import coroutine from './coroutine'
-
-const FETCH = function(key, value) {
-  return observerHash({ [key]: value })
-}
 
 class DomainEngine {
   _domains: { [key: string]: Domain }
 
-  constructor() {
+  constructor(repo) {
+    this._repo = repo
     this._domains = {}
     this._initialState = {}
   }
@@ -42,10 +39,7 @@ class DomainEngine {
 
   add(repo, key: string, entity: *, domainOptions?: Object) {
     let options = merge(repo.options, entity.defaults, { key }, domainOptions)
-    let domain: Domain =
-      typeof entity === 'function'
-        ? new entity(options, repo)
-        : Object.create(entity)
+    let domain: Domain = spawn(entity, options, repo)
 
     this._domains[key] = domain
 
@@ -86,80 +80,36 @@ class DomainEngine {
   }
 
   dispatch(action: Action, state: Object) {
-    if (action.status === COMPLETE) {
+    if (action.meta.origin === this._repo && action.status === COMPLETE) {
       if (action.tag === String(RESET)) {
-        return reset(this._domains, action, this._initialState)
+        return patch(this._domains, action, this._initialState)
       }
 
       if (action.tag === String(PATCH)) {
         return patch(this._domains, action, state)
       }
-
-      if (action.tag === String(FETCH)) {
-        return patch(this._domains, action, state)
-      }
     }
 
-    for (var key in this._domains) {
-      var domain = this._domains[key]
-      var handlers = getHandlers(buildRegistry(domain), action)
-      var last = key in state ? state[key] : this._initialState[key]
+    for (let key in this._domains) {
+      let domain = this._domains[key]
+      let handlers = getHandlers(buildRegistry(domain), action)
+      let last = key in state ? state[key] : this._initialState[key]
 
-      for (var i = 0; i < handlers.length; i++) {
+      for (let i = 0; i < handlers.length; i++) {
         state[key] = handlers[i].call(domain, last, action.payload)
       }
     }
 
     return state
   }
-
-  fetch(repo, key, method, ...args) {
-    let domain = this._domains[key]
-
-    if (!domain) {
-      throw new TypeError(
-        `Unable to fetch from ${key}:${method}. Missing domain.`
-      )
-    }
-
-    let entity = domain.entity
-
-    if (!entity) {
-      throw new TypeError(
-        `Unable to fetch from ${key}:${method}. Missing entity.`
-      )
-    }
-
-    if (!entity[method]) {
-      throw new TypeError(
-        `Unable to fetch from ${key}:${method}. Missing method.`
-      )
-    }
-
-    return repo
-      .push(FETCH, key, entity[method](...args))
-      .map(state => state[key])
-  }
 }
 
 function patch(domains, action, state) {
-  let next = {}
-
-  for (var key in domains) {
-    next[key] = action.payload[key]
-  }
-
-  return merge(state, next)
-}
-
-function reset(domains, action, base) {
-  let next = {}
+  let next = clone(state)
 
   for (var key in domains) {
     if (key in action.payload) {
       next[key] = action.payload[key]
-    } else {
-      next[key] = base[key]
     }
   }
 

@@ -84,7 +84,6 @@ describe('History::checkout', function() {
   it('properly handles forked branches', function() {
     let repo = new Microcosm({ debug: true })
 
-
     repo.push('one')
     let two = repo.push('two')
     repo.push('three')

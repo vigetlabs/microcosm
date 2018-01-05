@@ -3,6 +3,7 @@
 import { tag } from './tag'
 import { Observable } from './observable'
 import { getSymbol } from './symbols'
+import { EMPTY_OBJECT } from './empty'
 import {
   INACTIVE,
   START,
@@ -15,11 +16,12 @@ import {
 let uid = 0
 
 export class Subject {
-  constructor(id) {
+  constructor(id, meta) {
     this.id = uid++
     this.tag = String(tag(id))
     this.status = INACTIVE
-    // TODO: Should this start as undefined or null?
+    this.meta = meta || EMPTY_OBJECT
+
     this.payload = null
     this.closed = false
     this.disabled = false

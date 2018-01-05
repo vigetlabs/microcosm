@@ -117,10 +117,6 @@ class Microcosm extends Subject {
       parent: this
     })
   }
-
-  fetch(...args) {
-    return this.domains.fetch(this, ...args)
-  }
 }
 
 Microcosm.version = version
