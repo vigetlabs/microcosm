@@ -79,8 +79,8 @@ export default class IndexPage extends React.Component {
   }
 
   render() {
-    let sectionData = data[this.state.currentSection]
     let microcosmView = this.state.microcosmView
+    let sectionData = data[this.state.currentSection]
     let text = microcosmView
       ? sectionData.microcosmText
       : sectionData.browserText
@@ -140,11 +140,7 @@ export default class IndexPage extends React.Component {
 
           <div className="section__graphic">
             {this.state.numSections.map(num => (
-              <Graphic
-                key={num}
-                section={num}
-                microcosmView={microcosmView}
-              />
+              <Graphic key={num} section={num} microcosmView={microcosmView} />
             ))}
           </div>
         </section>
