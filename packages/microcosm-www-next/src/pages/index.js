@@ -94,45 +94,37 @@ export default class IndexPage extends React.Component {
         />
 
         <section className="section">
-          { !bookend ?
-              <ToggleContainer
-                typeClass="-mobile"
-                microcosmView={microcosmView}
-                switchView={this.switchView}
-              />
-              :
-              null
-          }
+          {!bookend ? (
+            <ToggleContainer
+              typeClass="-mobile"
+              microcosmView={microcosmView}
+              switchView={this.switchView}
+            />
+          ) : null}
           <div className="section__content">
             <div className="text-container">
               <h2 className="section__content__heading">
                 <span className={bookendClass}>{sectionData.num}</span>
                 {sectionData.heading}
               </h2>
-              { !bookend ?
-                  <h3
-                    className='section__content__subheading'
-                  >
-                    In { microcosmView ? 'Microcosm' : 'the browser' }
-                  </h3>
-                  :
-                  null
-              }
+              {!bookend ? (
+                <h3 className="section__content__subheading">
+                  In {microcosmView ? 'Microcosm' : 'the browser'}
+                </h3>
+              ) : null}
               <p
-                className={"section__content__text " + bookendClass}
+                className={'section__content__text ' + bookendClass}
                 dangerouslySetInnerHTML={{ __html: text }}
               />
             </div>
 
-            { !bookend ?
-                <ToggleContainer
-                  typeClass="-desktop"
-                  microcosmView={microcosmView}
-                  switchView={this.switchView}
-                />
-                :
-                null
-            }
+            {!bookend ? (
+              <ToggleContainer
+                typeClass="-desktop"
+                microcosmView={microcosmView}
+                switchView={this.switchView}
+              />
+            ) : null}
           </div>
 
           <div className="section__graphic">
