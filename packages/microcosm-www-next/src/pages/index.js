@@ -104,10 +104,8 @@ export default class IndexPage extends React.Component {
                 <span>{sectionData.num}</span>
                 {sectionData.heading}
               </h2>
-              <h3
-                className='section__content__subheading'
-              >
-                In { microcosmView ? 'Microcosm' : 'the browser' }
+              <h3 className="section__content__subheading">
+                In {microcosmView ? 'Microcosm' : 'the browser'}
               </h3>
               <p
                 className="section__content__text"
