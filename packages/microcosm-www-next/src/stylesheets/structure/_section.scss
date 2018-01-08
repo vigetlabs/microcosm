@@ -151,30 +151,6 @@ $section-top-padding-desktop: $nav-height + 110px;
   .toggle-container.-desktop & {
     margin-bottom: rem(30);
   }
-
-  &.-top {
-    &::after {
-      content: ' Microcosm';
-    }
-
-    &.-browserView {
-      &::after {
-        content: ' the browser';
-      }
-    }
-  }
-
-  &.-bottom {
-    &::after {
-      content: ' the browser...';
-    }
-
-    &.-browserView {
-      &::after {
-        content: ' Microcosm...';
-      }
-    }
-  }
 }
 
 .section__content__text {
@@ -185,26 +161,21 @@ $section-top-padding-desktop: $nav-height + 110px;
 .section__toggle-btn {
   background-color: color(secondary-1);
   border-radius: 10px;
+  color: color(bg-1-footer);
+  display: flex;
+  fill: color(bg-1-footer);
   font-size: rem(18);
   height: 57px;
+  justify-content: center;
   text-transform: uppercase;
-  transition: transition(background-color);
+  transition: transition(all);
   width: 217px;
 
   @for $i from 2 through $section-count {
     .bg-color-#{$i} & {
       background-color: color(secondary-#{$i});
-    }
-  }
-
-  &::after {
-    content: 'Browser View';
-    opacity: 0.6;
-  }
-
-  &.-browserView {
-    &::after {
-      content: 'Microcosm View';
+      color: color(bg-#{$i}-footer);
+      fill: color(bg-#{$i}-footer);
     }
   }
 }

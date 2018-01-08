@@ -1,7 +1,6 @@
 import React from 'react'
 import data from '../data/index.json'
-import SideNav from '../components/side-nav'
-import Graphic from '../components/graphic'
+import { Graphic, SideNav, ToggleContainer } from '../components'
 
 export default class IndexPage extends React.Component {
   constructor(props) {
@@ -84,7 +83,6 @@ export default class IndexPage extends React.Component {
     let text = microcosmView
       ? sectionData.microcosmText
       : sectionData.browserText
-    let browserClass = !microcosmView ? ' -browserView' : ''
 
     return (
       <div className="wrapper">
@@ -94,17 +92,11 @@ export default class IndexPage extends React.Component {
         />
 
         <section className="section">
-          <div className="toggle-container -mobile">
-            <h3
-              className={'section__content__subheading -bottom' + browserClass}
-            >
-              Meanwhile, in
-            </h3>
-            <button
-              onClick={this.switchView}
-              className={'section__toggle-btn' + browserClass}
-            />
-          </div>
+          <ToggleContainer
+            typeClass="-mobile"
+            microcosmView={microcosmView}
+            switchView={this.switchView}
+          />
 
           <div className="section__content">
             <div className="text-container">
@@ -113,9 +105,9 @@ export default class IndexPage extends React.Component {
                 {sectionData.heading}
               </h2>
               <h3
-                className={'section__content__subheading -top' + browserClass}
+                className='section__content__subheading'
               >
-                In
+                In { microcosmView ? 'Microcosm' : 'the browser' }
               </h3>
               <p
                 className="section__content__text"
@@ -123,19 +115,11 @@ export default class IndexPage extends React.Component {
               />
             </div>
 
-            <div className="toggle-container -desktop">
-              <h3
-                className={
-                  'section__content__subheading -bottom' + browserClass
-                }
-              >
-                Meanwhile, in
-              </h3>
-              <button
-                onClick={this.switchView}
-                className={'section__toggle-btn' + browserClass}
-              />
-            </div>
+            <ToggleContainer
+              typeClass="-desktop"
+              microcosmView={microcosmView}
+              switchView={this.switchView}
+            />
           </div>
 
           <div className="section__graphic">
