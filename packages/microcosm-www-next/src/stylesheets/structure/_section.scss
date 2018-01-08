@@ -256,8 +256,70 @@ $section-top-padding-desktop: $nav-height + 110px;
     }
   }
 
-  img {
+  .microcosm-graphic {
     height: 100%;
     width: 100%;
+  }
+}
+
+
+
+
+////
+$header-height: 100px;
+
+.browser-graphic {
+  height: 600px;
+  border: 20px solid #e4e4e4;
+  border-top-width: 40px;
+  border-radius: 10px;
+  background: #fff;
+  @include font-family-medium;
+  text-transform: uppercase;
+
+  header {
+    color: #ff0000;
+    border-bottom: 5px solid #e4e4e4;
+    height: $header-height;
+    font-size: rem(27);
+    display: flex;
+    align-items: center;
+    padding-left: rem(40);
+  }
+
+  main {
+    display: flex;
+    height: calc(100% - #{$header-height});
+  }
+
+  .content,
+  .graphic {
+    flex-basis: 50%;
+  }
+
+  .graphic {
+    background: linear-gradient(#5385e1 70%, #3a69c0 70%);
+
+    img {
+      margin: 70% auto 0;
+    }
+  }
+
+  .content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    ol {
+      list-style-type: upper-alpha;
+      padding-left: rem(40);
+    }
+
+    li {
+      font-size: rem(34);
+      color: #646464;
+      padding-left: rem(20);
+      margin: rem(30) 0;
+    }
   }
 }
