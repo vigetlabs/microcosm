@@ -2,7 +2,7 @@ $cta-border-height: 3px;
 $cta-bottom-padding: 6px;
 
 .footer {
-  background-color: color(bg-1-footer);
+  background-color: color(bg-0-footer);
   bottom: 0;
   height: $footer-height;
   position: relative;
@@ -10,7 +10,7 @@ $cta-bottom-padding: 6px;
   width: 100%;
   z-index: 2;
 
-  @for $i from 2 through $section-count {
+  @for $i from 1 through $section-count {
     .bg-color-#{$i} & {
       background-color: color(bg-#{$i}-footer);
 
@@ -57,7 +57,7 @@ $cta-bottom-padding: 6px;
     }
 
     svg {
-      fill: color(secondary-1);
+      fill: color(secondary-0);
       transition: transition(fill);
     }
   }
@@ -65,7 +65,7 @@ $cta-bottom-padding: 6px;
 
 .footer__cta {
   border-bottom: $cta-border-height solid;
-  color: color(secondary-1);
+  color: color(secondary-0);
   font-size: rem(14);
   padding-bottom: $cta-bottom-padding;
   text-decoration: none;

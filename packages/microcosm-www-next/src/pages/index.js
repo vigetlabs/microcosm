@@ -6,7 +6,7 @@ export default class IndexPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentSection: 1,
+      currentSection: 0,
       graphicsMap: [],
       microcosmView: true,
       numSections: Object.keys(data)
@@ -80,6 +80,8 @@ export default class IndexPage extends React.Component {
   render() {
     let microcosmView = this.state.microcosmView
     let sectionData = data[this.state.currentSection]
+    let bookend = sectionData.bookend
+    let bookendClass = bookend ? '-end' : ''
     let text = microcosmView
       ? sectionData.microcosmText
       : sectionData.browserText
@@ -92,32 +94,45 @@ export default class IndexPage extends React.Component {
         />
 
         <section className="section">
-          <ToggleContainer
-            typeClass="-mobile"
-            microcosmView={microcosmView}
-            switchView={this.switchView}
-          />
-
+          { !bookend ?
+              <ToggleContainer
+                typeClass="-mobile"
+                microcosmView={microcosmView}
+                switchView={this.switchView}
+              />
+              :
+              null
+          }
           <div className="section__content">
             <div className="text-container">
               <h2 className="section__content__heading">
-                <span>{sectionData.num}</span>
+                <span className={bookendClass}>{sectionData.num}</span>
                 {sectionData.heading}
               </h2>
-              <h3 className="section__content__subheading">
-                In {microcosmView ? 'Microcosm' : 'the browser'}
-              </h3>
+              { !bookend ?
+                  <h3
+                    className='section__content__subheading'
+                  >
+                    In { microcosmView ? 'Microcosm' : 'the browser' }
+                  </h3>
+                  :
+                  null
+              }
               <p
-                className="section__content__text"
+                className={"section__content__text " + bookendClass}
                 dangerouslySetInnerHTML={{ __html: text }}
               />
             </div>
 
-            <ToggleContainer
-              typeClass="-desktop"
-              microcosmView={microcosmView}
-              switchView={this.switchView}
-            />
+            { !bookend ?
+                <ToggleContainer
+                  typeClass="-desktop"
+                  microcosmView={microcosmView}
+                  switchView={this.switchView}
+                />
+                :
+                null
+            }
           </div>
 
           <div className="section__graphic">

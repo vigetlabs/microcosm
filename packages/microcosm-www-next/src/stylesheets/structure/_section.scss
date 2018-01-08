@@ -53,50 +53,16 @@ $section-top-padding-desktop: $nav-height + 110px;
   }
 }
 
-.toggle-container.-mobile {
-  @include breakpoint(medium-desktop-down) {
-    align-items: center;
-    bottom: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    left: 0;
-    margin-bottom: rem(30);
-    padding: 0 rem(20);
-    position: fixed;
-    width: 100%;
-    z-index: 1;
-  }
-
-  @include breakpoint(medium-desktop-up) {
-    @media (min-height: 901px) {
-      margin-bottom: $footer-height + 45px;
-    }
-  }
-
-  @include breakpoint(large-desktop-up) {
-    display: none;
-  }
-}
-
-.toggle-container.-desktop {
-  display: none;
-
-  @include breakpoint(large-desktop-up) {
-    display: block;
-  }
-}
 
 // CONTENT - elements
 
 .section__content__heading {
-  color: color(primary-1);
   font-size: rem(30);
   margin-bottom: rem(40);
   position: relative;
   transition: transition(color);
 
-  @for $i from 2 through $section-count {
+  @for $i from 1 through $section-count {
     .bg-color-#{$i} & {
       color: color(primary-#{$i});
     }
@@ -111,11 +77,14 @@ $section-top-padding-desktop: $nav-height + 110px;
     display: block;
     font-size: rem(14);
     margin-bottom: rem(5);
+    text-transform: uppercase;
 
     @include breakpoint(medium-desktop-down) {
-      left: rem(-40);
-      position: absolute;
-      top: 0.35em;
+      &:not(.-end) {
+        left: rem(-40);
+        position: absolute;
+        top: 0.35em;
+      }
     }
   }
 }
@@ -132,30 +101,16 @@ $section-top-padding-desktop: $nav-height + 110px;
       color: color(secondary-#{$i});
     }
   }
-
-  .toggle-container.-mobile & {
-    @include breakpoint(medium-desktop-down) {
-      margin-right: 4%;
-      padding-left: rem(40);
-      position: relative;
-
-      &::before {
-        content: url('../images/arrow.svg');
-        left: 0;
-        position: absolute;
-        width: 17px;
-      }
-    }
-  }
-
-  .toggle-container.-desktop & {
-    margin-bottom: rem(30);
-  }
 }
 
 .section__content__text {
+  color: color(text);
   font-size: rem(18);
   line-height: rem(27);
+
+  &.-end {
+    color: #000;
+  }
 }
 
 .section__toggle-btn {
