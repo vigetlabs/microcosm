@@ -1,4 +1,5 @@
 import React from 'react'
+import BrowserGraphic from './browser-graphic'
 
 const Graphic = ({ section, microcosmView }) => (
   <figure
@@ -7,12 +8,15 @@ const Graphic = ({ section, microcosmView }) => (
     data-module="ObserveGraphic"
     data-section={section}
   >
-    <img
-      src={
-        microcosmView ? `/${section}-microcosm.png` : `/${section}-browser.png`
-      }
-      alt="TODO"
-    />
+    {microcosmView || section === 0 || section == 9 ? (
+      <img
+        src={`/${section}-microcosm.png`}
+        className="microcosm-graphic"
+        alt="TODO"
+      />
+    ) : (
+      <BrowserGraphic />
+    )}
   </figure>
 )
 
