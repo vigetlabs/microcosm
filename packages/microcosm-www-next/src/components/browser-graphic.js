@@ -16,7 +16,7 @@ const BrowserGraphic = () => (
         </ol>
       </div>
       <div className="graphic">
-        <img src={cat}  className="graphic__img" alt="TODO" />
+        <img src={cat} className="graphic__img" alt="TODO" />
       </div>
     </main>
   </div>

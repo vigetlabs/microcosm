@@ -8,12 +8,15 @@ const Graphic = ({ section, microcosmView }) => (
     data-module="ObserveGraphic"
     data-section={section}
   >
-    {
-      microcosmView ?
-        <img src={`/${section}-microcosm.png`} className="microcosm-graphic" alt="TODO" />
-        :
-        <BrowserGraphic />
-    }
+    {microcosmView ? (
+      <img
+        src={`/${section}-microcosm.png`}
+        className="microcosm-graphic"
+        alt="TODO"
+      />
+    ) : (
+      <BrowserGraphic />
+    )}
   </figure>
 )
 
