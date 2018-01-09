@@ -1,6 +1,24 @@
 import Microcosm from 'microcosm'
 
 describe('Generator Middleware', function() {
+  it('can push generators', async () => {
+    expect.assertions(1)
+
+    let repo = new Microcosm()
+
+    function* range(repo, start, end) {
+      let value = start
+
+      while (value < end) {
+        yield Promise.resolve(++value)
+      }
+    }
+
+    let result = await repo.push(range, 0, 3)
+
+    expect(result).toEqual(3)
+  })
+
   it('processes actions sequentially', async () => {
     expect.assertions(1)
 
@@ -115,7 +133,7 @@ describe('Generator Middleware', function() {
     expect(payload).toEqual(true)
   })
 
-  it.only('waits for an async sequences', async function() {
+  it('waits for an async sequences', async function() {
     let repo = new Microcosm()
 
     function sleep(time) {

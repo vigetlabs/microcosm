@@ -5,25 +5,16 @@
 import { EMPTY_OBJECT } from './empty'
 
 function parse(data: Object, deserialize: boolean) {
-  return function(action: Subject, repo: *) {
-    let payload = data
-
-    if (deserialize) {
-      payload = repo.deserialize(data)
-    }
-
-    action.next(payload || EMPTY_OBJECT)
-    action.complete()
+  if (deserialize && typeof data === 'string') {
+    data = JSON.parse(data)
   }
+
+  return { data: data || EMPTY_OBJECT, deserialize }
 }
 
 export const RESET = parse.bind(null)
 
 export const PATCH = parse.bind(null)
-
-export const SERIALIZE = '$serialize'
-
-export const DESERIALIZE = '$deserialize'
 
 export const INACTIVE = 'inactive'
 

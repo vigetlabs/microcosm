@@ -37,6 +37,7 @@
     "flow-bin": "^0.61.0",
     "jest": "^22.0.1",
     "lerna": "^2.1.2",
+    "microbundle": "^0.2.4",
     "prettier": "^1.9.2",
     "raf": "^3.3.2"
   },
@@ -51,6 +52,7 @@
     "packages/microcosm-graphql",
     "packages/microcosm-http",
     "packages/microcosm-preact",
+    "packages/microcosm-react",
     "packages/microcosm-react-router",
     "packages/microcosm-www"
   ]

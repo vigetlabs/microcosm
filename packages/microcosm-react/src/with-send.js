@@ -1,25 +1,25 @@
 /**
  * Connect a component to the presenter tree
- * @flow
  */
 
 import { createElement } from 'react'
-import { merge } from '../index'
+import { merge } from 'microcosm'
+import { noop } from './utilities'
 
-function displayName(Component: Object) {
+function displayName(Component) {
   return Component.displayName || Component.name || 'Component'
 }
 
 const CONTEXT_TYPES = {
-  send: () => {}
+  send: noop
 }
 
-export default function withSend(Component: *): * {
-  function Sender(props: Object, context: Object) {
+export function withSend(Component) {
+  function Sender(props, context) {
     let send = props.send || context.send
 
     console.assert(
-      this.send,
+      send,
       `${
         Sender.displayName
       } was not given \`send\` via context or props. Was this component mounted within a Presenter?`
@@ -28,10 +28,8 @@ export default function withSend(Component: *): * {
     return createElement(Component, merge({ send }, props))
   }
 
-  Sender.displayName = 'withSend(' + displayName(Component) + ')'
-
+  Sender.displayName = `withSend(${displayName(Component)})`
   Sender.contextTypes = CONTEXT_TYPES
-
   Sender.WrappedComponent = Component
 
   return Sender

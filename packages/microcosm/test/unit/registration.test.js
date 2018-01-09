@@ -20,8 +20,11 @@ describe('getRegistration', function() {
     }
 
     let repo = new Repo()
-
-    await repo.push(action)
+    try {
+      await repo.push(action)
+    } catch (x) {
+      expect(x).toBe('Reject')
+    }
 
     expect(handler).toHaveBeenCalled()
   })
@@ -66,23 +69,5 @@ describe('getRegistration', function() {
 
     expect(a).toHaveBeenCalledWith(repo, 'foobar')
     expect(b).toHaveBeenCalledWith(repo, 'foobar')
-  })
-
-  it.skip('prints the action name in the warning when a handler is undefined', function() {
-    class Repo extends Microcosm {
-      setup() {
-        this.addDomain('test', {
-          register: {
-            getUser: undefined
-          }
-        })
-      }
-    }
-
-    let repo = new Repo()
-
-    expect(repo.prepare('getUser')).toThrow(
-      'getUser key within a registration is undefined. Is it being referenced correctly?'
-    )
   })
 })

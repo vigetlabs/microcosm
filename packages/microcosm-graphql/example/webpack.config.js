@@ -7,6 +7,35 @@ const nodeModules = require('fs').readdirSync(
   __dirname + '/../../../node_modules'
 )
 
+const output = {
+  filename: '[name].js',
+  path: path.resolve(__dirname, 'build')
+}
+
+const modules = {
+  rules: [
+    {
+      test: /\.gql$/,
+      loader: 'graphql-tag/loader'
+    },
+    {
+      test: /\.js$/,
+      loader: 'babel-loader',
+      exclude: /node_modules/
+    },
+    {
+      test: /\.json/,
+      loader: 'json-loader'
+    }
+  ]
+}
+
+const resolve = {
+  alias: {
+    microcosm: path.resolve(__dirname, '../../microcosm/src/')
+  }
+}
+
 module.exports = function() {
   const output = {
     filename: '[name].js',

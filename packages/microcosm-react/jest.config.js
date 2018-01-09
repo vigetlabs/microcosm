@@ -1,7 +1,8 @@
 const { moduleNameMapper } = require('../../jest.config')
 
 module.exports = {
-  setupFiles: ['./test/setup.js'],
+  setupFiles: ['raf/polyfill', './test/setup.js'],
   testEnvironment: 'jsdom',
+  modulePathIgnorePatterns: ['build'],
   moduleNameMapper: moduleNameMapper
 }

@@ -1,4 +1,5 @@
 import Microcosm, { Subject } from 'microcosm'
+import { asTree } from 'microcosm/addons/visualize'
 
 describe('History::remove', function() {
   it('resets when there are no actions left', function() {
@@ -214,8 +215,7 @@ describe('History::remove', function() {
 
       history.remove(two)
 
-      expect(history.children(one)).not.toContain(two)
-      expect(history.children(one)).toContain(three)
+      expect(asTree(history)).toMatchSnapshot()
     })
 
     it('maintains children on the left when the next action is removed', function() {
@@ -231,7 +231,7 @@ describe('History::remove', function() {
 
       history.remove(three)
 
-      expect(history.children(one)).toEqual([two])
+      expect(asTree(history)).toMatchSnapshot()
     })
 
     it('allows having children, but no next value', function() {
@@ -245,8 +245,7 @@ describe('History::remove', function() {
 
       repo.history.remove(three)
 
-      expect(repo.history.head).toEqual(one)
-      expect(repo.history.children(one)).toEqual([two])
+      expect(asTree(repo.history)).toMatchSnapshot()
     })
   })
 })

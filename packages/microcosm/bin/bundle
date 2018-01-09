@@ -3,9 +3,9 @@
 'use strict'
 
 const rollup = require('rollup')
-const buble = require('rollup-plugin-buble')
 const flow = require('rollup-plugin-flow')
 const strip = require('rollup-plugin-strip')
+const buble = require('rollup-plugin-buble')
 const uglify = require('rollup-plugin-uglify')
 const node = require('rollup-plugin-node-resolve')
 const json = require('rollup-plugin-json')
@@ -33,29 +33,6 @@ const plugins = [
   })
 ]
 
-const configs = {
-  ActionButton: path.resolve('src/addons/action-button.js'),
-  ActionForm: path.resolve('src/addons/action-form.js'),
-  ActionQueue: path.resolve('src/addons/action-queue.js'),
-  CompareTree: path.resolve('src/addons/compare-tree/index.js'),
-  Indexing: path.resolve('src/addons/indexing.js'),
-  JestMatchers: path.resolve('src/addons/jest-matchers.js'),
-  Microcosm: path.resolve('src/index.js'),
-  Model: path.resolve('src/addons/model.js'),
-  Presenter: path.resolve('src/addons/presenter.js'),
-  withSend: path.resolve('src/addons/with-send.js')
-}
-
-if (!options.strict) {
-  plugins.push(
-    strip({
-      debugger: true,
-      functions: ['console.assert', 'assert'],
-      sourceMap: true
-    })
-  )
-}
-
 if (options.minify) {
   plugins.push(
     uglify({
@@ -73,12 +50,22 @@ if (options.minify) {
   )
 }
 
-const external = [
-  'react',
-  'react-dom',
-  'form-serialize',
-  'symbol-observable'
-]
+const configs = {
+  JestMatchers: path.resolve('src/addons/jest-matchers.js'),
+  Microcosm: path.resolve('src/index.js')
+}
+
+if (!options.strict) {
+  plugins.push(
+    strip({
+      debugger: true,
+      functions: ['console.assert', 'assert'],
+      sourceMap: true
+    })
+  )
+}
+
+const external = ['react', 'react-dom', 'form-serialize', 'symbol-observable']
 
 const globals = {
   react: 'React',

@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`History::remove children allows having children, but no next value 1`] = `
+"  one
+   |
+  two"
+`;
+
+exports[`History::remove children eliminates references to removed on the left 1`] = `
+"   one
+    |
+  three"
+`;
+
+exports[`History::remove children maintains children on the left when the next action is removed 1`] = `
+"  one
+   |
+  two"
+`;

@@ -1,4 +1,4 @@
-import Microcosm from 'microcosm'
+import { Microcosm } from 'microcosm'
 
 describe('Effect::register', function() {
   it('invokes when an action completes', function() {
@@ -95,7 +95,9 @@ describe('Effect::register', function() {
       },
       register() {
         return {
-          [test]: (a, b) => b
+          [test]: (a, b) => {
+            return b
+          }
         }
       }
     })
@@ -122,7 +124,7 @@ describe('Effect::register', function() {
       let handler = jest.fn()
       let action = () => {}
 
-      let effect = repo.addEffect({
+      repo.addEffect({
         register() {
           return {
             [action]: {
@@ -147,7 +149,7 @@ describe('Effect::register', function() {
         setTimeout(action.complete)
       }
 
-      let effect = repo.addEffect({
+      repo.addEffect({
         register() {
           return {
             [action]: {
@@ -172,7 +174,7 @@ describe('Effect::register', function() {
         action.complete()
       }
 
-      let effect = repo.addEffect({
+      repo.addEffect({
         register() {
           return {
             [action]: {
@@ -193,7 +195,7 @@ describe('Effect::register', function() {
       let handler = jest.fn()
       let action = () => action => action.error(true)
 
-      let effect = repo.addEffect({
+      repo.addEffect({
         register() {
           return {
             [action]: {
@@ -218,7 +220,7 @@ describe('Effect::register', function() {
       let handler = jest.fn()
       let action = () => action => setTimeout(action.error)
 
-      let effect = repo.addEffect({
+      repo.addEffect({
         register() {
           return {
             [action]: {

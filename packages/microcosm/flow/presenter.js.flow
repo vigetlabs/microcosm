@@ -1,7 +1,0 @@
-/**
- * @flow
- */
-
-declare type Intent = string | Command
-
-declare type Sender = (intent: Intent, ...params: *[]) => *

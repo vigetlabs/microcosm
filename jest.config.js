@@ -5,6 +5,7 @@ module.exports = {
   projects: [
     './packages/microcosm',
     './packages/microcosm-preact',
+    './packages/microcosm-react',
     './packages/microcosm-graphql',
     './packages/microcosm-react-router',
     './packages/microcosm-http'
@@ -15,6 +16,9 @@ module.exports = {
       isBundled ? 'build/min' : 'src'
     }$1`,
     '^microcosm-preact$': `<rootDir>/../microcosm-preact/${
+      isBundled ? 'build' : 'src'
+    }`,
+    '^microcosm-react$': `<rootDir>/../microcosm-react/${
       isBundled ? 'build' : 'src'
     }`,
     '^microcosm-http$': `<rootDir>/../microcosm-http/src/http.js`

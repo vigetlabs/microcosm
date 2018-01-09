@@ -49,7 +49,7 @@ describe('Microcosm::push', function() {
     expect(repo).toHaveState('count', 4)
   })
 
-  it('does not change if no action responds', () => {
+  it.skip('does not change if no action responds', () => {
     const repo = new Microcosm()
     const spy = jest.fn()
 

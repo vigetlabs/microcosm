@@ -16,10 +16,14 @@ export default function coroutine(action, job, params: *[], repo: any): void {
     return
   }
 
+  if (isGeneratorFn(job)) {
+    return asGenerator(action, job(repo, ...params))
+  }
+
   let body = job.apply(null, params)
 
   if (isGeneratorFn(body)) {
-    asGenerator(action, body, repo)
+    asGenerator(action, body(repo, action))
   } else if (typeof body === 'function' && params.indexOf(body) < 0) {
     body(action, repo)
   } else {
@@ -31,21 +35,24 @@ function isGeneratorFn(value: any): boolean {
   return value && value[getSymbol('toStringTag')] === 'GeneratorFunction'
 }
 
-function asGenerator(action: Subject, body: GeneratorAction, repo: *) {
-  let iterator = body(repo)
-
-  function step() {
-    let next = iterator.next(action.payload)
+function asGenerator(action: Subject, iterator: GeneratorAction) {
+  function step(payload) {
+    let next = iterator.next(payload)
 
     if (next.done) {
+      action.next(payload)
       action.complete()
     } else {
-      observerHash(next.value).subscribe({
-        next: action.next,
-        complete: step,
+      let subject = observerHash(next.value)
+
+      let tracker = subject.subscribe({
+        // TODO: next: action.next should work here. Why doesn't it?
+        complete: () => step(subject.payload),
         error: action.error,
         unsubscribe: action.unsubscribe
       })
+
+      action.subscribe(tracker)
     }
   }
 

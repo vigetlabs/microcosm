@@ -1,0 +1,25 @@
+{
+  "name": "microcosm-react",
+  "version": "13.0.0",
+  "main": "microcosm-react.js",
+  "module": "microcosm-react.m.js",
+  "private": true,
+  "author": "Nathan Hunzaker <nate.hunzaker@viget.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "make all",
+    "release": "make release",
+    "test": "NODE_ENV=test jest"
+  },
+  "repository": "https://github.com/vigetlabs/microcosm",
+  "devDependencies": {
+    "jest": "^21.0.0",
+    "microbundle": "^0.2.4",
+    "microcosm": "^12.9.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  },
+  "dependencies": {
+    "form-serialize": "^0.7.1"
+  }
+}

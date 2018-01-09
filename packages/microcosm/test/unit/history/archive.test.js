@@ -8,7 +8,7 @@ describe('History::archive', function() {
     const repo = new Microcosm()
 
     repo.push('one')
-    let action = repo.push(() => Promise.reject(true))
+    repo.push(() => Promise.reject(true))
     repo.push('two')
 
     try {

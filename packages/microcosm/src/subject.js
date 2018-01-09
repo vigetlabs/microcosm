@@ -13,6 +13,56 @@ import {
   UNSUBSCRIBE
 } from './lifecycle'
 
+function send(observers, message, value) {
+  observers.forEach(observer => {
+    if (!observer.closed) {
+      observer[message](value)
+    }
+  })
+}
+
+function delegate(subject, method, args) {
+  let observable = subject._observable
+
+  if (subject.closed) {
+    observable = Observable.of(subject.payload)
+  }
+
+  return observable[method](...args)
+}
+
+function handleNext(subject, value) {
+  if (subject.closed) {
+    return
+  }
+
+  subject.status = NEXT
+  subject.payload = value
+
+  send(subject._observers, NEXT, subject.payload)
+}
+
+function handleError(subject, error) {
+  subject.status = ERROR
+  subject.closed = true
+  subject.payload = error
+
+  send(subject._observers, ERROR, error)
+}
+
+function handleComplete(subject) {
+  subject.status = COMPLETE
+  subject.closed = true
+
+  send(subject._observers, COMPLETE)
+}
+
+function handleUnsubscribe(subject) {
+  subject.status = UNSUBSCRIBE
+  subject.closed = true
+  subject._observable.unsubscribe()
+}
+
 let uid = 0
 
 export class Subject {
@@ -27,7 +77,11 @@ export class Subject {
     this.disabled = false
 
     this._observers = new Set()
-    this._observable = new Observable(multicast.bind(null, this._observers))
+
+    this._observable = new Observable(observer => {
+      this._observers.add(observer)
+      return () => this._observers.delete(observer)
+    })
   }
 
   toggle() {
@@ -37,7 +91,10 @@ export class Subject {
   subscribe() {
     if (this.closed) {
       return new Observable(observer => {
-        observer.next(this.payload)
+        if (this.status === COMPLETE) {
+          observer.next(this.payload)
+        }
+
         observer[this.status](this.payload)
       }).subscribe(...arguments)
     }
@@ -79,14 +136,6 @@ export class Subject {
 
   get unsubscribe() {
     return handleUnsubscribe.bind(null, this)
-  }
-
-  map(fn) {
-    if (this.closed) {
-      return Observable.of(this.payload).map(fn)
-    }
-
-    return this._observable.map(fn)
   }
 
   then(pass, fail) {
@@ -131,59 +180,4 @@ export class Subject {
       payload: this.payload
     }
   }
-}
-
-function send(observers, message, value) {
-  observers.forEach(observer => {
-    if (!observer.closed) {
-      observer[message](value)
-    }
-  })
-}
-
-function multicast(observers, observer) {
-  observers.add(observer)
-  return observers.delete.bind(observers, observer)
-}
-
-function delegate(subject, method, args) {
-  let observable = this._observable
-
-  if (this.closed) {
-    observable = Observable.of(this.payload)
-  }
-
-  return observable[method](...args)
-}
-
-function handleNext(subject, value) {
-  if (subject.closed) {
-    return
-  }
-
-  subject.status = NEXT
-  subject.payload = value
-
-  send(subject._observers, NEXT, subject.payload)
-}
-
-function handleError(subject, error) {
-  subject.status = ERROR
-  subject.closed = true
-  subject.payload = error
-
-  send(subject._observers, ERROR, error)
-}
-
-function handleComplete(subject) {
-  subject.status = COMPLETE
-  subject.closed = true
-
-  send(subject._observers, COMPLETE)
-}
-
-function handleUnsubscribe(subject) {
-  subject.status = UNSUBSCRIBE
-  subject.closed = true
-  subject._observable.unsubscribe()
 }

@@ -137,10 +137,6 @@ class History {
     this.updates.next(path[0])
   }
 
-  children(action) {
-    return this._stream.children(action)
-  }
-
   isActive(action) {
     return !action.disabled && this._active.has(action)
   }

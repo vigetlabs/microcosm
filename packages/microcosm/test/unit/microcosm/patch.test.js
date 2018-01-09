@@ -1,11 +1,5 @@
 import Microcosm, { patch } from 'microcosm'
 
-const delay = (n, payload) => {
-  return new Promise(resolve => {
-    setTimeout(() => resolve(payload), n)
-  })
-}
-
 describe('Microcosm::patch', function() {
   it('only patches within managed keys', function() {
     const repo = new Microcosm()

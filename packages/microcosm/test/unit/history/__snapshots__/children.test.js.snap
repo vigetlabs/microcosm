@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`History node children can determine children 1`] = `
+"    a
+   / \\\\
+  b   c"
+`;
+
+exports[`History node children does not lose children when checking out nodes on the left 1`] = `
+"    a
+    |
+    b
+   / \\\\
+  c   d"
+`;
+
+exports[`History node children does not lose children when checking out nodes on the right 1`] = `
+"    a
+    |
+    b
+   / \\\\
+  c   d"
+`;

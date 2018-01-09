@@ -1,5 +1,6 @@
 /**
  * Taken from zen-observable, with specific implimentation notes for Microcosm
+ * @flow
  */
 
 import { getSymbol } from './symbols'
@@ -17,7 +18,7 @@ class Subscription {
     this._observer = observer
     this._origin = origin
 
-    observer.start.call(observer, this)
+    observer.start(this)
 
     if (this._observer === undefined) {
       return
@@ -32,7 +33,7 @@ class Subscription {
       // The return value must be undefined, null, a subscription object, or a function
       if (cleanup != null) {
         if (typeof cleanup.unsubscribe === 'function') {
-          cleanup = cleanup.unsubscribe()
+          cleanup = cleanup.unsubscribe
         } else if (typeof cleanup !== 'function') {
           throw new TypeError(cleanup + ' is not a function')
         }
@@ -147,7 +148,7 @@ export class Observable {
       let subscriptions = []
 
       // Subscribe to the outer Observable
-      let outer = this.subscribe({
+      this.subscribe({
         next(value) {
           if (fn) {
             try {
@@ -215,7 +216,6 @@ export class Observable {
         return fromPromise(source)
       }
     }
-
     return new Observable(observer => {
       observer.next(source)
       observer.complete()
@@ -297,16 +297,22 @@ export function fromPromise(promise) {
 }
 
 export function observerHash(obj) {
-  let subject = new Subject()
-
-  // TODO: This should trigger on numbers, booleans, strings,
-  // dates, etc... Everything that isn't an array or POJO
-  if (obj == null || typeof obj !== 'object') {
-    return Observable.of(obj)
-  }
-
   if (getObservable(obj)) {
     return obj
+  }
+
+  let subject = new Subject()
+
+  if (obj == null || typeof obj !== 'object') {
+    subject.next(obj)
+    subject.complete()
+
+    return subject
+  }
+
+  if (typeof obj.then === 'function') {
+    subject.subscribe(fromPromise(obj).subscribe(subject))
+    return subject
   }
 
   let keys = Object.keys(obj)
@@ -320,7 +326,7 @@ export function observerHash(obj) {
   }
 
   function assign(key, value) {
-    let payload = set(payload, key, value)
+    payload = set(payload, key, value)
 
     // TODO: What if this was a filter?
     if (payload !== subject.payload) {
@@ -342,3 +348,7 @@ export function observerHash(obj) {
 }
 
 Observable.hash = observerHash
+
+Observable.isObservable = function(obj: any): boolean {
+  return obj && typeof obj === 'object' && getSymbol('observable') in obj
+}

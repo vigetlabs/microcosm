@@ -17,16 +17,18 @@ export function buildRegistry(entity: *): Object {
   return entity.register ? entity.register() : EMPTY_OBJECT
 }
 
-export function getHandlers(pool: Object, action: Action): *[] {
+export function getHandlers(pool: Object, action: Subject): *[] {
   let entry = pool[action.tag]
 
   if (entry) {
-    if (typeof entry !== 'function') {
-      if (action.status in entry) {
-        return wrap(entry[action.status])
+    if (action.status === COMPLETE) {
+      if (Array.isArray(entry) || typeof entry === 'function') {
+        return wrap(entry)
       }
-    } else if (action.status === COMPLETE) {
-      return wrap(entry)
+    }
+
+    if (entry.hasOwnProperty(action.status)) {
+      return wrap(entry[action.status])
     }
   }
 
@@ -59,7 +61,7 @@ export function map(repo, entity) {
 
 export function teardown(repo, entity, options) {
   return () => {
-    if ('teardown' in entity) {
+    if (entity.teardown) {
       entity.teardown(repo, options)
     }
   }
@@ -67,7 +69,7 @@ export function teardown(repo, entity, options) {
 
 export function setup(repo, entity, options) {
   return () => {
-    if ('setup' in entity) {
+    if (entity.setup) {
       entity.setup(repo, options)
     }
   }

@@ -1,4 +1,4 @@
-import Microcosm, { Subject, Observable } from 'microcosm'
+import Microcosm, { Observable } from 'microcosm'
 
 let hang = () => new Promise(() => {})
 

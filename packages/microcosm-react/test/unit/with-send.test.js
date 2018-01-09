@@ -1,13 +1,10 @@
-/**
- * @jest-environment jsdom
- */
-
 import React from 'react'
-import withSend from 'microcosm/addons/with-send'
+import { Microcosm } from 'microcosm'
+import { Presenter, withSend } from 'microcosm-react'
 import { mount } from 'enzyme'
 
 it('exposes the wrapped component as a static property', function() {
-  const Button = function({ send }) {
+  function Button({ send }) {
     return (
       <button type="button" onClick={() => send('action')}>
         Click me
@@ -15,13 +12,13 @@ it('exposes the wrapped component as a static property', function() {
     )
   }
 
-  const WrappedButton = withSend(Button)
+  let WrappedButton = withSend(Button)
 
   expect(WrappedButton.WrappedComponent).toEqual(Button)
 })
 
 it('extracts send from context', function() {
-  const Button = withSend(function({ send }) {
+  let Button = withSend(function Button({ send }) {
     return (
       <button type="button" onClick={() => send('action')}>
         Click me
@@ -29,24 +26,26 @@ it('extracts send from context', function() {
     )
   })
 
-  const send = jest.fn()
+  let handler = jest.fn()
 
-  const component = mount(<Button />, {
-    context: { send },
-    childContextTypes: {
-      send: () => {}
+  class Test extends Presenter {
+    intercept() {
+      return { action: handler }
     }
-  })
+    render() {
+      return <Button />
+    }
+  }
 
-  component.simulate('click')
+  mount(<Test />).simulate('click')
 
-  expect(send).toHaveBeenCalledWith('action')
+  expect(handler).toHaveBeenCalled()
 })
 
 it('allows send to be overridden by a prop', function() {
-  const send = jest.fn()
+  let send = jest.fn()
 
-  const Button = withSend(function({ send }) {
+  let Button = withSend(function({ send }) {
     return (
       <button type="button" onClick={() => send('action')}>
         Click me
@@ -61,21 +60,17 @@ it('allows send to be overridden by a prop', function() {
 
 describe('Display name', function() {
   it('sets the correct display name for stateless components', function() {
-    const Button = withSend(function Button() {
+    let Button = withSend(function Button() {
       return <button type="button" />
     })
 
-    let wrapper = mount(
-      <div>
-        <Button />
-      </div>
-    )
+    let wrapper = mount(<Button send={jest.fn()} />)
 
     expect(wrapper.find('withSend(Button)')).toHaveLength(1)
   })
 
   it('sets the correct display name for stateful components', function() {
-    const Button = withSend(
+    let Button = withSend(
       class Button extends React.Component {
         render() {
           return <button type="button" />
@@ -83,11 +78,7 @@ describe('Display name', function() {
       }
     )
 
-    let wrapper = mount(
-      <div>
-        <Button />
-      </div>
-    )
+    let wrapper = mount(<Button send={jest.fn()} />)
 
     expect(wrapper.find('withSend(Button)')).toHaveLength(1)
   })

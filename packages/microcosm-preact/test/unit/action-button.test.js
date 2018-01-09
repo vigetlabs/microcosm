@@ -1,4 +1,4 @@
-import Observable from 'zen-observable'
+import { Observable, Subject } from 'microcosm'
 import { h } from 'preact'
 import { mount, unmount } from '../helpers'
 import { ActionButton, Presenter } from '../../src/index'
@@ -71,7 +71,7 @@ describe('callbacks', function() {
 
   it('executes onError when that action completes', function() {
     let onError = jest.fn()
-    let send = () => new Action(n => n).reject(true)
+    let send = () => new Subject().error(true)
     let button = mount(
       <ActionButton action="test" onError={onError} send={send} />
     )
@@ -83,7 +83,7 @@ describe('callbacks', function() {
 
   it('executes onUpdate when that action sends an update', function() {
     let onUpdate = jest.fn()
-    let action = new Action(n => n)
+    let action = new Subject()
     let send = () => action
     let button = mount(
       <ActionButton action="test" onUpdate={onUpdate} send={send} />
@@ -143,7 +143,7 @@ describe('callbacks', function() {
   })
 
   it('removes action callbacks when the component unmounts', async function() {
-    const action = new Action(() => Promise.resolve(true))
+    const action = new Subject()(() => Promise.resolve(true))
     const send = jest.fn(() => action)
     const onDone = jest.fn()
 
@@ -176,7 +176,7 @@ describe('callbacks', function() {
 describe('manual operation', function() {
   it('click can be called directly on the component instance', function() {
     let onDone = jest.fn()
-    let send = () => new Action(n => n).resolve(true)
+    let send = () => new Subject().resolve(true)
 
     let button = mount(
       <ActionButton action="test" onDone={onDone} send={send} />

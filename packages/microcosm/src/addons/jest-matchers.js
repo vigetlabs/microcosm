@@ -3,8 +3,7 @@
  */
 
 import Microcosm, { get } from '../index'
-
-declare var expect: any
+import expect from 'expect'
 
 expect.extend({
   toHaveStatus(action, status) {

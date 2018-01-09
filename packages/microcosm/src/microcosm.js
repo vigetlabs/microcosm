@@ -1,13 +1,11 @@
-/**
- * @flow
- */
-
+// @flow
 import History from './history'
 import DomainEngine from './domain-engine'
 import installDevtools from './install-devtools'
+import { Observable } from './observable'
 import { Subject } from './subject'
 import { effectEngine } from './effect-engine'
-import { clone, merge } from './data'
+import { merge } from './data'
 import { DESERIALIZE, SERIALIZE } from './lifecycle'
 import { version } from '../package.json'
 
@@ -16,22 +14,16 @@ const DEFAULTS = {
   parent: null
 }
 
+const reducer = (a, b) => b(a)
+
 class Microcosm extends Subject {
-  static defaults: Object
-  static version: String
-
-  parent: ?Microcosm
-  history: History
-  options: Object
-  domains: DomainEngine
-
   constructor(preOptions?: ?Object) {
     super('repo')
 
     this.options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
     this.parent = this.options.parent
     this.history = this.parent ? this.parent.history : new History(this.options)
-    this.domains = new DomainEngine(this)
+    this.domains = new DomainEngine()
 
     this.tracker = this.history.updates.subscribe(action => {
       this.domains.rollforward(this, action)
@@ -55,7 +47,7 @@ class Microcosm extends Subject {
   }
 
   shutdown() {
-    this.unsubscribe()
+    this.complete()
     this.tracker.unsubscribe()
     this.teardown()
   }
@@ -66,6 +58,15 @@ class Microcosm extends Subject {
 
   teardown() {
     // NOOP
+  }
+
+  watch(key, ...callbacks) {
+    let updater = state => callbacks.reduce(reducer, state[key])
+
+    return new Observable(observer => {
+      observer.next(updater(this.state))
+      return this.map(updater).subscribe(observer)
+    })
   }
 
   addDomain(key, config, options) {
@@ -83,32 +84,18 @@ class Microcosm extends Subject {
     return effectEngine(this, config, options)
   }
 
-  push(command: any, ...params: *[]): Action {
+  push(command: any, ...params: *[]): Subject {
     return this.history.append(command, params, this)
   }
 
-  prepare(command: any, ...params: *[]): Action {
-    return (...args) => this.push(command, ...params, ...args)
-  }
-
-  deserialize(payload: string | Object) {
-    let base = payload
-
-    if (typeof base === 'string') {
-      base = JSON.parse(base)
-    }
-
-    if (this.parent) {
-      base = merge(base, this.parent.deserialize(base))
-    }
-
-    return this.domains.lifecycle(DESERIALIZE, base)
+  prepare(): Subject {
+    return this.push.bind(this, ...arguments)
   }
 
   toJSON() {
     return merge(
-      this.domains.lifecycle(SERIALIZE, clone(this.state)),
-      this.parent ? this.parent.toJSON() : null
+      this.parent ? this.parent.toJSON() : null,
+      this.domains.serialize(this.state)
     )
   }
 
