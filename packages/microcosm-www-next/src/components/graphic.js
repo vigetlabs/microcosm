@@ -11,9 +11,10 @@ const Graphic = ({ section, microcosmView }) => (
   >
     {microcosmView || section === 0 || section == 9 ? (
       <LazySizes
-        alt="TODO"
+        dataSrc={`/${section}-microcosm.png`}
         className="microcosm-graphic"
-        dataSrc={`/${section}-microcosm.png`} />
+        alt="TODO"
+      />
     ) : (
       <BrowserGraphic />
     )}
