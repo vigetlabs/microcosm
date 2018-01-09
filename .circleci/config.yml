@@ -4,7 +4,6 @@ defaults: &defaults
   working_directory: /home/circleci/microcosm
   docker:
     - image: circleci/node:8.0
-
 jobs:
   build:
     <<: *defaults
@@ -18,50 +17,10 @@ jobs:
           paths:
             - node_modules
           key: yarn-cache-{{ checksum "yarn.lock" }}
-      - persist_to_workspace:
-          root: /home/circleci
-          paths:
-            - microcosm
-  audit:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /home/circleci
       - run: yarn flow
       - run: yarn lint
-  website:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /home/circleci
       - run: sudo apt-get -y -qq install awscli
       - run: yarn deploy
-  test-dev:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /home/circleci
       - run: yarn test:cov --ci
       - run: yarn report-coverage
-  test-prod:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /home/circleci
       - run: yarn test:prod --ci
-
-workflows:
-  version: 2
-  microcosm:
-    jobs:
-      - build
-      - website
-      - audit:
-          requires:
-            - build
-      - test-dev:
-          requires:
-            - build
-      - test-prod:
-          requires:
-            - build
