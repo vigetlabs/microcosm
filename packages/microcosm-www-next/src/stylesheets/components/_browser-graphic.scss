@@ -1,4 +1,7 @@
-$header-height: 100px;
+$header-height-sm: 60px;
+$header-height-lg: 100px;
+$left-padding-sm: rem(20);
+$left-padding-lg: rem(40);
 
 .browser-graphic {
   @include font-family-medium;
@@ -7,7 +10,8 @@ $header-height: 100px;
   border-radius: 10px;
   border-style: solid;
   border-width: 40px 20px 20px;
-  height: 600px;
+  height: 76vw;
+  max-height: inherit;
   text-transform: uppercase;
 
   &::before {
@@ -23,14 +27,24 @@ $header-height: 100px;
     border-bottom: 5px solid #e4e4e4;
     color: #ff0000;
     display: flex;
-    font-size: rem(27);
-    height: $header-height;
-    padding-left: rem(40);
+    font-size: rem(20);
+    height: $header-height-sm;
+    padding-left: $left-padding-sm;
+
+    @include breakpoint(small-tablet-up) {
+      font-size: rem(27);
+      height: $header-height-lg;
+      padding-left: $left-padding-lg;
+    }
   }
 
   main {
     display: flex;
-    height: calc(100% - #{$header-height});
+    height: calc(100% - #{$header-height-sm});
+
+    @include breakpoint(small-tablet-up) {
+      height: calc(100% - #{$header-height-lg});
+    }
   }
 
   .content,
@@ -43,24 +57,43 @@ $header-height: 100px;
   }
 
   .graphic__img {
-    margin: 70% auto 0;
+    margin: 0 auto;
+    max-width: 90%;
+    position: relative;
+    top: 43%;
   }
 
   .content {
     align-items: center;
     display: flex;
-    justify-content: center;
   }
 
   .content__list {
     list-style-type: upper-alpha;
-    padding-left: rem(40);
+    padding-left: $left-padding-sm * 2;
+
+    @include breakpoint(small-tablet-up) {
+      padding-left: $left-padding-lg * 2;
+    }
 
     li {
       color: #646464;
-      font-size: rem(34);
-      margin: rem(30) 0;
-      padding-left: rem(20);
+      margin: rem(10) 0;
+
+      @media screen and (min-width: 472px) {
+        font-size: rem(23);
+        margin: rem(20) 0;
+      }
+
+      @include breakpoint(small-tablet-up) {
+        font-size: rem(30);
+        margin: rem(30) 0;
+      }
+
+      @include breakpoint(large-tablet-up) {
+        font-size: rem(34);
+        padding-left: rem(20);
+      }
     }
   }
 }
