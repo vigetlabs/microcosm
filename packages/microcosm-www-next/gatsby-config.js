@@ -3,6 +3,5 @@ module.exports = {
     title: `Microcosm`
   },
   plugins: [`gatsby-plugin-react-helmet`, `gatsby-plugin-sass`],
-  pathPrefix: process.env.PUBLIC_PATH || '/',
   pathPrefix: process.env.PUBLIC_PATH || '/'
 }
