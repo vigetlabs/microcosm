@@ -3,6 +3,7 @@
     "num": "Introduction",
     "heading": "Welcome to Microcosm",
     "microcosmText": "Intro lorem ipsum",
+    "browserText": "Intro lorem ipsum",
     "bookend": true
   },
   "1": {
@@ -57,6 +58,7 @@
     "num": "Conclusion",
     "heading": "Conclusion",
     "microcosmText": "So that's a quick recap of Microcosm's players and how they work together. How Presenters push Actions up the hierarchy, how History watches over the Actions as they move through their status lifecycle, how Repos/Domains respond to keep state up to date, and how Presenters (completing the cycle) consume that state.<br>This is one of the simplest explanations of the functionality available when using Microcosm. Check out the documentation for examples and explanations of some of the more powerful features.<br>Under the hood there are loads of performance optimizations to ensure duplicate calculations are kept to a minimum, helping your application run as quickly as possible, leaving you to worry about the business logic. We have big plans for the future of Microcosm along these lines, aiming to maintain a strong balance between hyper-optimized and easy-to-use.",
+    "browserText": "So that's a quick recap of Microcosm's players and how they work together. How Presenters push Actions up the hierarchy, how History watches over the Actions as they move through their status lifecycle, how Repos/Domains respond to keep state up to date, and how Presenters (completing the cycle) consume that state.<br>This is one of the simplest explanations of the functionality available when using Microcosm. Check out the documentation for examples and explanations of some of the more powerful features.<br>Under the hood there are loads of performance optimizations to ensure duplicate calculations are kept to a minimum, helping your application run as quickly as possible, leaving you to worry about the business logic. We have big plans for the future of Microcosm along these lines, aiming to maintain a strong balance between hyper-optimized and easy-to-use.",
     "bookend": true
   }
 }
