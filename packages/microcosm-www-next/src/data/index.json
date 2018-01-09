@@ -1,27 +1,65 @@
 {
+  "0": {
+    "num": "Introduction",
+    "heading": "Welcome to Microcosm",
+    "microcosmText": "Intro lorem ipsum",
+    "browserText": "Intro lorem ipsum",
+    "bookend": true
+  },
   "1": {
     "num": "01.",
     "heading": "Rendering a View",
     "microcosmText": "The <a href='TODO'>Domains</a> are in charge of keeping state organized, and provide whatever data is necessary to the Presenter. A Presenter at its core is a React Component, so it uses the data it pulls from the Domains to render the appropriate view.",
-    "browserText": "A user fires up the browser to take a quiz.",
-    "microcosmUrl": "../static/images/v.png",
-    "browserUrl": "http://via.placeholder.com/400x400"
+    "browserText": "A user fires up the browser to take a quiz."
   },
   "2": {
     "num": "02.",
     "heading": "Creating an Action",
     "microcosmText": "The <a href='TODO'>Presenter</a> creates a new <a href='TODO'>Action</a> in response to the user's click. This particular Action's job will be to fetch some data from an external API on cats. Cool cats.",
-    "browserText": "A user selects an option from the quiz list.",
-    "microcosmUrl": "http://via.placeholder.com/500x500",
-    "browserUrl": "http://via.placeholder.com/300x300"
+    "browserText": "A user selects an option from the quiz list."
   },
   "3": {
     "num": "03.",
     "heading": "The Repository",
     "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with actions, history, and state. The Repo knows which domains care about what actions, and also has access to the History of actions. Let's see what that looks like... ",
-    "browserText": "Lorem Ipsum.",
-    "microcosmUrl": "http://via.placeholder.com/400x400",
-    "browserUrl": "http://via.placeholder.com/200x200"
+    "browserText": "Lorem Ipsum."
+  },
+  "4": {
+    "num": "04.",
+    "heading": "The Action Begins",
+    "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with actions, history, and state. The Repo knows which domains care about what actions, and also has access to the History of actions. Let's see what that looks like... ",
+    "browserText": "Lorem Ipsum."
+  },
+  "5": {
+    "num": "05.",
+    "heading": "History's Job",
+    "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with actions, history, and state. The Repo knows which domains care about what actions, and also has access to the History of actions. Let's see what that looks like... ",
+    "browserText": "Lorem Ipsum."
+  },
+  "6": {
+    "num": "06.",
+    "heading": "Domains Update the State",
+    "microcosmText": "As guardians of the application data, Domains are in charge of updating their state whenever an Action changes status. Here, they're alerted that the Cool Cat Action is now Open. The Modal Domain reacts by updating their state to specify that the modal is open but in a loading state. The Cat’s Domain doesn't care so they just sit there.",
+    "browserText": "The modal opens!"
+  },
+  "7": {
+    "num": "07.",
+    "heading": "Needs a Name",
+    "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with actions, history, and state. The Repo knows which domains care about what actions, and also has access to the History of actions. Let's see what that looks like... ",
+    "browserText": "Lorem Ipsum."
+  },
+  "8": {
+    "num": "08.",
+    "heading": "History Keeps Track of the Actions",
+    "microcosmText": "Clicking the 'X' triggers the action process all over again. The Presenter sends a new Action up to the Repo. The Action is immediately appended to History and gets to work on it's task. This time however, it doesn't have a slow API to work with like our Cool Cat Action (which is still waiting), it just has a simple message: 'Close the Modal!'. Since the Action is so straightforward, it skips the open step and jumps it's status straight to resolve. The Domains are alerted of the new activity - Close Modal Action is Resolved, and the Modal Domain adjusts it's state accordingly. Yet again, the Cats Domain doesn't care.",
+    "browserText": "Lorem Ipsum."
+  },
+  "9": {
+    "num": "Conclusion",
+    "heading": "Conclusion",
+    "microcosmText": "So that's a quick recap of Microcosm's players and how they work together. How Presenters push Actions up the hierarchy, how History watches over the Actions as they move through their status lifecycle, how Repos/Domains respond to keep state up to date, and how Presenters (completing the cycle) consume that state.<br>This is one of the simplest explanations of the functionality available when using Microcosm. Check out the documentation for examples and explanations of some of the more powerful features.<br>Under the hood there are loads of performance optimizations to ensure duplicate calculations are kept to a minimum, helping your application run as quickly as possible, leaving you to worry about the business logic. We have big plans for the future of Microcosm along these lines, aiming to maintain a strong balance between hyper-optimized and easy-to-use.",
+    "browserText": "So that's a quick recap of Microcosm's players and how they work together. How Presenters push Actions up the hierarchy, how History watches over the Actions as they move through their status lifecycle, how Repos/Domains respond to keep state up to date, and how Presenters (completing the cycle) consume that state.<br>This is one of the simplest explanations of the functionality available when using Microcosm. Check out the documentation for examples and explanations of some of the more powerful features.<br>Under the hood there are loads of performance optimizations to ensure duplicate calculations are kept to a minimum, helping your application run as quickly as possible, leaving you to worry about the business logic. We have big plans for the future of Microcosm along these lines, aiming to maintain a strong balance between hyper-optimized and easy-to-use.",
+    "bookend": true
   }
 }
 

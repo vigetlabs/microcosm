@@ -1,0 +1,52 @@
+.toggle-container.-mobile {
+  @include breakpoint(medium-desktop-down) {
+    align-items: center;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    left: 0;
+    margin-bottom: rem(30);
+    padding: 0 rem(20);
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+  }
+
+  @include breakpoint(medium-desktop-up) {
+    @media (min-height: 901px) {
+      margin-bottom: $footer-height + 45px;
+    }
+  }
+
+  @include breakpoint(large-desktop-up) {
+    display: none;
+  }
+
+  .section__content__subheading {
+    @include breakpoint(medium-desktop-down) {
+      margin-right: 4%;
+      padding-left: rem(40);
+      position: relative;
+
+      &::before {
+        content: url('../images/arrow.svg');
+        left: 0;
+        position: absolute;
+        width: 17px;
+      }
+    }
+  }
+}
+
+.toggle-container.-desktop {
+  display: none;
+
+  @include breakpoint(large-desktop-up) {
+    display: block;
+  }
+
+  .section__content__subheading {
+    margin-bottom: rem(30);
+  }
+}

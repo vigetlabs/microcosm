@@ -9,7 +9,6 @@
 }
 
 body {
-  color: color(text);
   @include font-family-regular;
   letter-spacing: 0.02em;
 }

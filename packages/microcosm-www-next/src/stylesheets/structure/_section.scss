@@ -53,39 +53,6 @@ $section-top-padding-desktop: $nav-height + 110px;
   }
 }
 
-.toggle-container.-mobile {
-  @include breakpoint(medium-desktop-down) {
-    align-items: center;
-    bottom: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    left: 0;
-    margin-bottom: rem(30);
-    padding: 0 rem(20);
-    position: fixed;
-    width: 100%;
-    z-index: 1;
-  }
-
-  @include breakpoint(medium-desktop-up) {
-    @media (min-height: 901px) {
-      margin-bottom: $footer-height + 45px;
-    }
-  }
-
-  @include breakpoint(large-desktop-up) {
-    display: none;
-  }
-}
-
-.toggle-container.-desktop {
-  display: none;
-
-  @include breakpoint(large-desktop-up) {
-    display: block;
-  }
-}
 
 // CONTENT - elements
 
@@ -93,6 +60,13 @@ $section-top-padding-desktop: $nav-height + 110px;
   font-size: rem(30);
   margin-bottom: rem(40);
   position: relative;
+  transition: transition(color);
+
+  @for $i from 1 through $section-count {
+    .bg-color-#{$i} & {
+      color: color(primary-#{$i});
+    }
+  }
 
   @include breakpoint(large-desktop-up) {
     margin-bottom: rem(63);
@@ -103,83 +77,60 @@ $section-top-padding-desktop: $nav-height + 110px;
     display: block;
     font-size: rem(14);
     margin-bottom: rem(5);
+    text-transform: uppercase;
 
     @include breakpoint(medium-desktop-down) {
-      left: rem(-40);
-      position: absolute;
-      top: 0.35em;
+      &:not(.-end) {
+        left: rem(-40);
+        position: absolute;
+        top: 0.35em;
+      }
     }
   }
 }
 
 .section__content__subheading {
   @include font-family-medium;
+  color: color(secondary-1);
   margin-bottom: 0.5rem;
   text-transform: uppercase;
+  transition: transition(color);
 
-  .toggle-container.-mobile & {
-    @include breakpoint(medium-desktop-down) {
-      margin-right: 4%;
-      padding-left: rem(40);
-      position: relative;
-
-      &::before {
-        content: url('../images/arrow.svg');
-        left: 0;
-        position: absolute;
-        width: 17px;
-      }
-    }
-  }
-
-  .toggle-container.-desktop & {
-    margin-bottom: rem(30);
-  }
-
-  &.-top {
-    &::after {
-      content: ' Microcosm';
-    }
-
-    &.-browserView {
-      &::after {
-        content: ' the browser';
-      }
-    }
-  }
-
-  &.-bottom {
-    &::after {
-      content: ' the browser...';
-    }
-
-    &.-browserView {
-      &::after {
-        content: ' Microcosm...';
-      }
+  @for $i from 2 through $section-count {
+    .bg-color-#{$i} & {
+      color: color(secondary-#{$i});
     }
   }
 }
 
 .section__content__text {
+  color: color(text);
   font-size: rem(18);
   line-height: rem(27);
+
+  &.-end {
+    color: #000;
+  }
 }
 
 .section__toggle-btn {
+  background-color: color(secondary-1);
   border-radius: 10px;
-  height: 57px;
-  text-transform: uppercase;
-  width: 217px;
+  color: color(bg-1-footer);
+  display: flex;
+  fill: color(bg-1-footer);
   font-size: rem(18);
+  height: 57px;
+  justify-content: center;
+  text-transform: uppercase;
+  transition: transition(all);
+  width: 217px;
 
-  &::after {
-    content: 'Browser View';
-  }
-
-  &.-browserView {
-    &::after {
-      content: 'Microcosm View';
+  @for $i from 2 through $section-count {
+    .bg-color-#{$i} & {
+      background-color: color(secondary-#{$i});
+      color: color(bg-#{$i}-footer);
+      fill: color(bg-#{$i}-footer);
     }
   }
 }
@@ -224,10 +175,14 @@ $section-top-padding-desktop: $nav-height + 110px;
   &:last-child {
     @include breakpoint(large-desktop-up) {
       margin-bottom: 60vh;
+
+      &::after {
+        content: ''
+      }
     }
   }
 
-  img {
+  .microcosm-graphic {
     height: 100%;
     width: 100%;
   }

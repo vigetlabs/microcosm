@@ -13,14 +13,14 @@ const SideNav = ({ graphics, currentSection }) => {
   }
 
   return (
-    <aside className="section-nav">
+    <aside className="side-nav">
       <nav>
-        <ol className="section-nav__list">
+        <ol className="side-nav__list">
           {graphics.map(({ num, elem }) => (
             <li
               key={num}
               className={
-                'section-nav__list__link' +
+                'side-nav__list__link' +
                 (num === currentSection ? ' -active' : '')
               }
             >

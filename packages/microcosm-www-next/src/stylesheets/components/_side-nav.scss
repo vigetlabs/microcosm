@@ -1,6 +1,4 @@
-// SECTION NAV (ASIDE)
-
-.section-nav {
+.side-nav {
   align-items: center;
   display: flex;
   height: 100vh;
@@ -13,7 +11,7 @@
   }
 }
 
-.section-nav__list__link {
+.side-nav__list__link {
   @include breakpoint(medium-desktop-down) {
     border-radius: 2px;
     border: 1px solid white;

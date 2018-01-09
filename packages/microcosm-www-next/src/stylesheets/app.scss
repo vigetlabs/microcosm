@@ -21,8 +21,9 @@
 @import 'structure/body';
 @import 'structure/nav';
 @import 'structure/section';
-@import 'structure/aside';
 @import 'structure/footer';
 
 // components (page level blocks and components)
-// @import 'components/*';
+@import 'components/browser-graphic';
+@import 'components/side-nav';
+@import 'components/toggle-container';
