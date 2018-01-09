@@ -8,7 +8,7 @@ const Graphic = ({ section, microcosmView }) => (
     data-module="ObserveGraphic"
     data-section={section}
   >
-    {microcosmView ? (
+    {microcosmView || section === 0 || section == 9 ? (
       <img
         src={`/${section}-microcosm.png`}
         className="microcosm-graphic"

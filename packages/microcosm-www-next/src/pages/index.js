@@ -129,7 +129,7 @@ export default class IndexPage extends React.Component {
 
           <div className="section__graphic">
             {this.state.numSections.map(num => (
-              <Graphic key={num} section={num} microcosmView={microcosmView} />
+              <Graphic key={num} section={parseInt(num)} microcosmView={microcosmView} />
             ))}
           </div>
         </section>
