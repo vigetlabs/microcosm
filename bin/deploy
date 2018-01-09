@@ -20,7 +20,7 @@ pushd packages/microcosm-www-next > /dev/null
 export PUBLIC_PATH=http://$AWS_BUCKET.s3-website-$AWS_DEFAULT_REGION.amazonaws.com/$BRANCH_NAME
 
 yarn install
-yarn build --prefix-paths
+yarn build 
 
 aws s3 sync public/ s3://$AWS_BUCKET/$BRANCH_NAME
 
