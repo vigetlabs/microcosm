@@ -1,12 +1,10 @@
 version: 2
 
-defaults: &defaults
-  working_directory: /home/circleci/microcosm
-  docker:
-    - image: circleci/node:8.0
 jobs:
   build:
-    <<: *defaults
+    working_directory: /home/circleci/microcosm
+    docker:
+      - image: circleci/node:8.0
     steps:
       - checkout
       - restore_cache:
