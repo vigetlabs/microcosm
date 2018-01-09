@@ -1,4 +1,10 @@
 {
+  "0": {
+    "num": "Introduction",
+    "heading": "Welcome to Microcosm",
+    "microcosmText": "Intro lorem ipsum",
+    "bookend": true
+  },
   "1": {
     "num": "01.",
     "heading": "Rendering a View",
@@ -46,6 +52,12 @@
     "heading": "History Keeps Track of the Actions",
     "microcosmText": "Clicking the 'X' triggers the action process all over again. The Presenter sends a new Action up to the Repo. The Action is immediately appended to History and gets to work on it's task. This time however, it doesn't have a slow API to work with like our Cool Cat Action (which is still waiting), it just has a simple message: 'Close the Modal!'. Since the Action is so straightforward, it skips the open step and jumps it's status straight to resolve. The Domains are alerted of the new activity - Close Modal Action is Resolved, and the Modal Domain adjusts it's state accordingly. Yet again, the Cats Domain doesn't care.",
     "browserText": "Lorem Ipsum."
+  },
+  "9": {
+    "num": "Conclusion",
+    "heading": "Conclusion",
+    "microcosmText": "So that's a quick recap of Microcosm's players and how they work together. How Presenters push Actions up the hierarchy, how History watches over the Actions as they move through their status lifecycle, how Repos/Domains respond to keep state up to date, and how Presenters (completing the cycle) consume that state.<br>This is one of the simplest explanations of the functionality available when using Microcosm. Check out the documentation for examples and explanations of some of the more powerful features.<br>Under the hood there are loads of performance optimizations to ensure duplicate calculations are kept to a minimum, helping your application run as quickly as possible, leaving you to worry about the business logic. We have big plans for the future of Microcosm along these lines, aiming to maintain a strong balance between hyper-optimized and easy-to-use.",
+    "bookend": true
   }
 }
 

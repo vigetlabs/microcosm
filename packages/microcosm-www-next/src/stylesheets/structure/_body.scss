@@ -2,12 +2,12 @@ $split-bg-height-mobile: 471px;
 $split-bg-height-desktop: 291px;
 
 body {
-  background-color: color(bg-1-bottom);
+  background-color: color(bg-0-bottom);
   position: relative;
   transition: transition(background-color);
 
   &::before {  //top of half split bg
-    background-color: color(bg-1-top);
+    background-color: color(bg-0-top);
     content: '';
     height: $split-bg-height-mobile;
     position: fixed;
@@ -21,7 +21,7 @@ body {
     }
   }
 
-  @for $i from 2 through $section-count {
+  @for $i from 1 through $section-count {
     &.bg-color-#{$i} {
       background-color: color(bg-#{$i}-bottom);
 
