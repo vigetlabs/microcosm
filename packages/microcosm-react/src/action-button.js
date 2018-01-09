@@ -87,7 +87,7 @@ export class ActionButton extends PureComponent {
 }
 
 ActionButton.contextTypes = {
-  send: noop,
+  send: noop
 }
 
 ActionButton.defaultProps = {
