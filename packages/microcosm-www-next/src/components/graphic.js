@@ -1,5 +1,4 @@
 import React from 'react'
-import LazySizes from 'react-lazysizes'
 import BrowserGraphic from './browser-graphic'
 
 const Graphic = ({ section, microcosmView }) => (
@@ -10,9 +9,9 @@ const Graphic = ({ section, microcosmView }) => (
     data-section={section}
   >
     {microcosmView || section === 0 || section == 9 ? (
-      <LazySizes
-        dataSrc={`/${section}-microcosm.png`}
-        className="microcosm-graphic"
+      <img
+        data-src={`/${section}-microcosm.png`}
+        className="lazyload microcosm-graphic"
         alt="TODO"
       />
     ) : (
