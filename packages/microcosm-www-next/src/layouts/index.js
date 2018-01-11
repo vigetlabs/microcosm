@@ -8,8 +8,8 @@ import '../stylesheets/app.scss'
 const isBrowser = typeof window !== 'undefined'
 
 if (isBrowser) {
-  //if this is running in browser, import IntersectionObserver polyfill
-  require('intersection-observer')
+  require('intersection-observer') //IntersectionObserver polyfill
+  require('lazysizes') //lazy loading images
 }
 
 const Navigation = () => (
