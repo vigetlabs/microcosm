@@ -1,8 +1,8 @@
-import Microcosm from 'microcosm'
+import Microcosm, { patch } from 'microcosm'
 
 describe('Efficiency', function() {
-  it('actions are not dispatched twice with 0 history', () => {
-    const parent = new Microcosm({ maxHistory: 0 })
+  it('actions are not dispatched twice', () => {
+    const parent = new Microcosm()
     const handler = jest.fn()
     const action = n => n
 
@@ -14,15 +14,15 @@ describe('Efficiency', function() {
       }
     })
 
-    parent.patch()
+    parent.push(patch, {})
     parent.push(action)
-    parent.patch()
+    parent.push(patch, {})
 
     expect(handler).toHaveBeenCalledTimes(1)
   })
 
   it('actions are only dispatched once with infinite history', () => {
-    const parent = new Microcosm({ maxHistory: Infinity })
+    const parent = new Microcosm({ debug: true })
     const handler = jest.fn()
     const action = n => n
 
@@ -34,15 +34,15 @@ describe('Efficiency', function() {
       }
     })
 
-    parent.patch()
+    parent.push(patch, {})
     parent.push(action)
-    parent.patch()
+    parent.push(patch, {})
 
     expect(handler).toHaveBeenCalledTimes(1)
   })
 
   it('actions are only dispatched once with fixed size history', () => {
-    const parent = new Microcosm({ maxHistory: 1 })
+    const parent = new Microcosm()
     const handler = jest.fn()
     const action = n => n
 
@@ -54,17 +54,17 @@ describe('Efficiency', function() {
       }
     })
 
-    parent.patch()
+    parent.push(patch, {})
     parent.push(action)
-    parent.patch()
+    parent.push(patch, {})
 
     expect(handler).toHaveBeenCalledTimes(1)
   })
 
   it('actions only dispatch duplicatively to address races', () => {
-    const repo = new Microcosm({ maxHistory: 1 })
+    const repo = new Microcosm()
     const handler = jest.fn()
-    const action = n => n
+    const action = () => () => {}
 
     repo.addDomain('one', {
       register() {
@@ -74,11 +74,11 @@ describe('Efficiency', function() {
       }
     })
 
-    const one = repo.append(action)
-    const two = repo.append(action)
+    const one = repo.push(action)
+    const two = repo.push(action)
 
-    two.resolve()
-    one.resolve()
+    two.complete()
+    one.complete()
 
     expect(handler).toHaveBeenCalledTimes(2)
   })
@@ -86,7 +86,7 @@ describe('Efficiency', function() {
   it('does not dispatch a change event if nothing changes on the first reconciliation', () => {
     const repo = new Microcosm()
 
-    repo.on('change', function() {
+    repo.subscribe(function() {
       throw new Error('Change event should not have fired')
     })
 

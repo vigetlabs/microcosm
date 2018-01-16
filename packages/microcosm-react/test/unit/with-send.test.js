@@ -1,5 +1,4 @@
 import React from 'react'
-import { Microcosm } from 'microcosm'
 import { Presenter, withSend } from 'microcosm-react'
 import { mount } from 'enzyme'
 

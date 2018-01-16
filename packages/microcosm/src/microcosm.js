@@ -1,55 +1,40 @@
 // @flow
 import History from './history'
-import DomainEngine from './domain-engine'
 import installDevtools from './install-devtools'
-import { Observable } from './observable'
 import { Subject } from './subject'
 import { effectEngine } from './effect-engine'
+import { domainEngine } from './domain-engine'
 import { merge } from './data'
-import { DESERIALIZE, SERIALIZE } from './lifecycle'
 import { version } from '../package.json'
+import { EMPTY_OBJECT } from './empty'
 
 const DEFAULTS = {
   debug: false,
-  parent: null
+  _state: EMPTY_OBJECT,
+  _domains: EMPTY_OBJECT,
+  _answers: EMPTY_OBJECT
 }
-
-const reducer = (a, b) => b(a)
 
 class Microcosm extends Subject {
   constructor(preOptions?: ?Object) {
-    super('repo')
+    super()
 
-    this.options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
-    this.parent = this.options.parent
-    this.history = this.parent ? this.parent.history : new History(this.options)
-    this.domains = new DomainEngine()
+    let options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
 
-    this.tracker = this.history.updates.subscribe(action => {
-      this.domains.rollforward(this, action)
-      this.next(this.state)
-    })
+    this.history = options._history || new History(options)
+    this.state = options._state ? Object.create(options._state) : {}
+    this.domains = options._domains ? Object.create(options._domains) : {}
+    this.answers = options._answers ? Object.create(options._answers) : {}
+    this.options = options
 
-    if (this.options.debug) {
+    if (options.debug) {
       installDevtools(this)
     }
 
-    this.setup(this.options)
-  }
-
-  get state(): Object {
-    // TODO: This is very inefficient!
-    return merge(
-      this.parent ? this.parent.state : null,
-      this.domains.getInitialState(),
-      this.history.current(this)
-    )
-  }
-
-  shutdown() {
-    this.complete()
-    this.tracker.unsubscribe()
-    this.teardown()
+    this.subscribe({
+      start: this.setup.bind(this, this.options),
+      cleanup: this.teardown.bind(this, this.options)
+    })
   }
 
   setup(options?: Object) {
@@ -60,15 +45,6 @@ class Microcosm extends Subject {
     // NOOP
   }
 
-  watch(key, ...callbacks) {
-    let updater = state => callbacks.reduce(reducer, state[key])
-
-    return new Observable(observer => {
-      observer.next(updater(this.state))
-      return this.map(updater).subscribe(observer)
-    })
-  }
-
   addDomain(key, config, options) {
     console.assert(
       key in this.state === false,
@@ -77,31 +53,49 @@ class Microcosm extends Subject {
 
     console.assert(key && key.length > 0, 'Can not add domain to root level.')
 
-    return this.domains.add(this, key, config, options)
+    let { domain, answer } = domainEngine(this, key, config, options)
+
+    this.domains[key] = domain
+    this.answers[key] = answer
+
+    Object.defineProperty(this.state, key, {
+      enumerable: true,
+      get: () => answer.payload
+    })
+
+    return domain
   }
 
   addEffect(config, options) {
     return effectEngine(this, config, options)
   }
 
-  push(command: any, ...params: *[]): Subject {
-    return this.history.append(command, params, this)
+  push() {
+    return this.history.append(this, ...arguments)
   }
 
-  prepare(): Subject {
+  prepare() {
     return this.push.bind(this, ...arguments)
   }
 
   toJSON() {
-    return merge(
-      this.parent ? this.parent.toJSON() : null,
-      this.domains.serialize(this.state)
-    )
+    let json = {}
+
+    for (var key in this.domains) {
+      if (this.domains[key].serialize) {
+        json[key] = this.domains[key].serialize(this.state[key])
+      }
+    }
+
+    return json
   }
 
   fork() {
     return new Microcosm({
-      parent: this
+      _state: this.state,
+      _domains: this.domains,
+      _answers: this.answers,
+      _history: this.history
     })
   }
 }

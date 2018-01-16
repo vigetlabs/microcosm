@@ -5,7 +5,7 @@
  * data using another action.
  */
 
-import Microcosm, { update } from 'microcosm'
+import Microcosm, { update, patch } from 'microcosm'
 
 describe('When pushing actions inside of another action', function() {
   it('does not return to an old state when pushing the second action', function() {
@@ -27,11 +27,12 @@ describe('When pushing actions inside of another action', function() {
         expect(repo).toHaveState('data.count', 2)
         expect(repo).toHaveState('data.focus', false)
 
-        action.open()
+        action.next(2)
         expect(repo).toHaveState('data.count', 2)
         expect(repo).toHaveState('data.focus', false)
 
-        action.resolve(1)
+        action.next(1)
+        action.complete()
         expect(repo).toHaveState('data.count', 3)
         expect(repo).toHaveState('data.focus', false)
       }
@@ -55,7 +56,7 @@ describe('When pushing actions inside of another action', function() {
       }
     })
 
-    repo.patch({ data: { count: 2, focus: true } })
+    repo.push(patch, { data: { count: 2, focus: true } })
     repo.push(stepper)
   })
 })

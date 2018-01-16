@@ -51,7 +51,6 @@ if (options.minify) {
 }
 
 const configs = {
-  JestMatchers: path.resolve('src/addons/jest-matchers.js'),
   Microcosm: path.resolve('src/index.js')
 }
 

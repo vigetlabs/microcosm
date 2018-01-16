@@ -2,18 +2,49 @@
  * @flow
  */
 
-import { spawn, map, setup, teardown } from './registry'
+import { spawn, Cache } from './registry'
 import { merge } from './data'
 
 export function effectEngine(repo, entity, effectOptions) {
   let options = merge(repo.options, entity.defaults, effectOptions)
   let effect = spawn(entity, options, repo)
-  let tracker = repo.history.updates.subscribe(map(repo, effect))
+  let registry = new Cache(effect)
+
+  let tracker = repo.history.updates.subscribe(action => {
+    if (registry.respondsTo(action) === false) {
+      return null
+    }
+
+    let dispatcher = () => {
+      let handlers = registry.resolve(action)
+
+      for (var i = 0, len = handlers.length; i < len; i++) {
+        handlers[i].call(effect, repo, action.payload)
+      }
+    }
+
+    return action.subscribe({
+      start: dispatcher,
+      next: dispatcher,
+      complete: dispatcher,
+      error: dispatcher,
+      unsubscribe: dispatcher
+    })
+  })
 
   repo.subscribe({
-    start: setup(repo, effect, options),
-    complete: teardown(repo, effect, options),
-    unsubscribe: tracker.unsubscribe
+    start() {
+      if (effect.setup) {
+        effect.setup(repo, options)
+      }
+    },
+    cleanup() {
+      tracker.unsubscribe()
+
+      if (effect.teardown) {
+        effect.teardown(repo, options)
+      }
+    }
   })
 
   return effect

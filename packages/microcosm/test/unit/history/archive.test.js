@@ -44,14 +44,14 @@ describe('History::archive', function() {
     repo.push('first', 1)
     let two = repo.push('second', 2)
     repo.push('third', 3)
-
     repo.history.checkout(two)
+
     repo.history.archive()
 
-    expect(repo.history.root.tag).toBe('second')
+    expect(`${repo.history.root}`).toBe('second')
 
     // This is two because we checked out two earlier
-    expect(repo.history.head.tag).toBe('second')
+    expect(`${repo.history.head}`).toBe('second')
   })
 
   it('builds up back-pressure', function() {

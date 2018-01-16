@@ -23,15 +23,15 @@ describe('History::checkout', function() {
     let five = repo.push('five')
     let six = repo.push('six')
 
-    expect(repo.history.next(one)).toEqual(two)
-    expect(repo.history.next(two)).toEqual(five)
-    expect(repo.history.next(five)).toEqual(six)
+    expect(repo.history.after(one)).toEqual(two)
+    expect(repo.history.after(two)).toEqual(five)
+    expect(repo.history.after(five)).toEqual(six)
 
     repo.history.checkout(four)
 
-    expect(repo.history.next(one)).toEqual(two)
-    expect(repo.history.next(two)).toEqual(three)
-    expect(repo.history.next(three)).toEqual(four)
+    expect(repo.history.after(one)).toEqual(two)
+    expect(repo.history.after(two)).toEqual(three)
+    expect(repo.history.after(three)).toEqual(four)
   })
 
   it('will not checkout a null action', function() {
@@ -75,7 +75,6 @@ describe('History::checkout', function() {
 
     repo.history.checkout(one)
     repo.push(action, 3)
-
     repo.history.checkout(two)
 
     expect(repo).toHaveState('test', 2)
@@ -94,14 +93,10 @@ describe('History::checkout', function() {
     repo.push('five')
     repo.push('six')
 
-    expect(`${Array.from(repo.history).map(a => a.tag)}`).toEqual(
-      'one,two,five,six'
-    )
+    expect(`${Array.from(repo.history)}`).toEqual('one,two,five,six')
 
     repo.history.checkout(four)
 
-    expect(`${Array.from(repo.history).map(a => a.tag)}`).toEqual(
-      'one,two,three,four'
-    )
+    expect(`${Array.from(repo.history)}`).toEqual('one,two,three,four')
   })
 })

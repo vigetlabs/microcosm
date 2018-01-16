@@ -9,17 +9,16 @@
   "scripts": {
     "build": "make all",
     "release": "make release",
-    "test": "NODE_ENV=test jest"
+    "test": "jest"
   },
   "repository": "https://github.com/vigetlabs/microcosm",
-  "devDependencies": {
-    "jest": "^21.0.0",
-    "microbundle": "^0.2.4",
-    "microcosm": "^12.9.0",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
-  },
   "dependencies": {
     "form-serialize": "^0.7.1"
+  },
+  "devDependencies": {
+    "jest": "^22.0.1",
+    "microbundle": "^0.2.4",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   }
 }

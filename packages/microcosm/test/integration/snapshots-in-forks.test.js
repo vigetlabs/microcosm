@@ -4,8 +4,7 @@ describe('Snapshots', function() {
   it('forks accommodate actions that were pushed before the parent was forked', function() {
     let parent = new Microcosm()
 
-    let wait = n => new Promise(n => n)
-    let action = parent.push(wait)
+    let wait = n => action => {}
 
     parent.addDomain('top', {
       getInitialState() {
@@ -37,9 +36,12 @@ describe('Snapshots', function() {
       }
     })
 
-    expect(action.status).toBe('start')
+    let action = parent.push(wait)
 
-    action.complete(2)
+    expect(action.meta.status).toBe('start')
+
+    action.next(2)
+    action.complete()
 
     expect(parent).toHaveState('top', 2)
     expect(child).toHaveState('bottom', 2)

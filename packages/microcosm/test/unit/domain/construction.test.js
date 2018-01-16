@@ -10,7 +10,7 @@ describe('Domain construction', function() {
       }
     })
 
-    expect(repo).toHaveState('count', 0)
+    expect(repo.state.count).toBe(0)
   })
 
   it('object - original primitive is not mutated', function() {
@@ -38,7 +38,7 @@ describe('Domain construction', function() {
 
     repo.addDomain('count', Counter)
 
-    expect(repo).toHaveState('count', 0)
+    expect(repo.state.count).toBe(0)
   })
 
   it('class - with defaults', function() {

@@ -15,24 +15,23 @@ describe('Microcosm::patch', function() {
     const repo = new Microcosm()
 
     // This is invalid
-    let badPatch = () => repo.push(patch, '{ test: deserialize }', true)
+    let badPatch = () => repo.push(patch, '{ test }', true)
 
     expect(badPatch).toThrow()
   })
 
   describe('forks', function() {
     it('deeply inherits state', function() {
-      const tree = new Microcosm({ maxHistory: Infinity })
+      const grandparent = new Microcosm()
 
-      tree.addDomain('color', {})
+      grandparent.addDomain('color', {})
+      grandparent.push(patch, { color: 'red' })
 
-      tree.push(patch, { color: 'red' })
+      const parent = grandparent.fork()
+      const child = parent.fork()
 
-      const branch = tree.fork()
-      const leaf = branch.fork()
-
-      expect(branch).toHaveState('color', 'red')
-      expect(leaf).toHaveState('color', 'red')
+      expect(parent).toHaveState('color', 'red')
+      expect(child).toHaveState('color', 'red')
     })
 
     it('does not cause forks to revert state', function() {
@@ -79,9 +78,11 @@ describe('Microcosm::patch', function() {
 
       child.push(patch, { bottom: true })
 
-      expect(parent.state).toEqual({ top: true })
+      expect(parent.state.top).toBe(true)
+      expect(parent.state).not.toHaveProperty('bottom')
 
-      expect(child.state).toEqual({ top: true, bottom: true })
+      expect(child.state.top).toEqual(true)
+      expect(child.state.bottom).toEqual(true)
     })
 
     it('does not strip away parent inherited state when the parent patches', function() {

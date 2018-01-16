@@ -1,5 +1,5 @@
 import React from 'react'
-import { Microcosm, Observable, Subject } from 'microcosm'
+import { Microcosm } from 'microcosm'
 import { ActionButton } from 'microcosm-react'
 import { mount } from 'enzyme'
 
@@ -102,7 +102,7 @@ describe('callbacks', function() {
     expect(handler).toHaveBeenCalled()
   })
 
-  it('removes action callbacks when the component unmounts', async function() {
+  it('removes action callbacks when the component unmounts', function() {
     let repo = new Microcosm()
     let action = repo.push(() => action => {})
     let send = jest.fn(() => action)
@@ -117,8 +117,7 @@ describe('callbacks', function() {
     expect(send).toHaveBeenCalled()
 
     button.unmount()
-
-    await action.complete(true)
+    action.complete(true)
 
     expect(onComplete).not.toHaveBeenCalled()
   })

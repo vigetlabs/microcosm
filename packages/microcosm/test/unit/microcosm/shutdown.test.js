@@ -1,6 +1,6 @@
 import Microcosm, { patch } from 'microcosm'
 
-describe('Microcosm::shutdown', function() {
+describe('Shutting down a microcosm', function() {
   it('removes all listeners', function() {
     const repo = new Microcosm()
 
@@ -14,9 +14,8 @@ describe('Microcosm::shutdown', function() {
 
     const listener = jest.fn()
 
-    repo.subscribe(listener)
-
-    repo.shutdown()
+    repo.answers.colors.subscribe(listener)
+    repo.complete()
 
     repo.push('setColor', 'blue')
 
@@ -28,22 +27,33 @@ describe('Microcosm::shutdown', function() {
     const teardown = jest.fn()
 
     repo.addDomain('test', { teardown })
-    repo.shutdown()
+    repo.complete()
 
     expect(teardown).toHaveBeenCalled()
   })
 
-  it('removes the microcosm from its history', function() {
+  it('stops dispatching to domains', function() {
+    const repo = new Microcosm()
+    const register = jest.fn(n => ({}))
+
+    repo.addDomain('test', { register })
+
+    repo.complete()
+    repo.push('test')
+
+    expect(register).toHaveBeenCalledTimes(0)
+  })
+
+  it('stops dispatching to effects', function() {
     const repo = new Microcosm()
     const register = jest.fn(n => ({}))
 
     repo.addEffect({ register })
 
-    repo.push('test')
-    repo.shutdown()
+    repo.complete()
     repo.push('test')
 
-    expect(register).toHaveBeenCalledTimes(1)
+    expect(register).toHaveBeenCalledTimes(0)
   })
 
   describe('forks', function() {
@@ -59,7 +69,7 @@ describe('Microcosm::shutdown', function() {
         throw new Error('Should not have changed')
       })
 
-      child.shutdown()
+      child.complete()
 
       parent.push(patch, { color: 'blue' })
 

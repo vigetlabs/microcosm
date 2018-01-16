@@ -22,15 +22,6 @@ describe('Subject unsubscribed state', function() {
     expect(action.closed).toBe(true)
   })
 
-  it('exposes a unsubscribed type when unsubscribed', function() {
-    const repo = new Microcosm()
-    const action = repo.push(hang)
-
-    action.unsubscribe()
-
-    expect(action.status).toBe('unsubscribe')
-  })
-
   it('unsubscribe is a one time binding', function() {
     const repo = new Microcosm()
     const action = repo.push(hang)
@@ -42,16 +33,5 @@ describe('Subject unsubscribed state', function() {
     action.unsubscribe()
 
     expect(unsubscribe).toHaveBeenCalledTimes(1)
-  })
-
-  it('executes unsubscribe if the action is already unsubscribed', function() {
-    const repo = new Microcosm()
-    const action = repo.push(hang)
-    const unsubscribe = jest.fn()
-
-    action.unsubscribe()
-    action.subscribe({ unsubscribe })
-
-    expect(unsubscribe).toHaveBeenCalled()
   })
 })

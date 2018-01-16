@@ -1,8 +1,4 @@
-/**
- * @flow weak
- */
-
-import Microcosm, { get } from '../index'
+import { get } from '../index'
 import expect from 'expect'
 
 expect.extend({
@@ -21,10 +17,6 @@ expect.extend({
   },
 
   toHaveState(repo, key, value) {
-    if (repo instanceof Microcosm === false) {
-      throw new TypeError('toHaveState expects a Microcosm.')
-    }
-
     let operator = this.isNot ? 'not to' : 'to'
     let pass = false
     let actual = get(repo.state, key)

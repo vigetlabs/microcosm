@@ -1,8 +1,8 @@
 import Microcosm, { Subject } from 'microcosm'
-import { asTree } from 'microcosm/addons/visualize'
+import { asTree } from '../../helpers'
 
 describe('History::remove', function() {
-  it('resets when there are no actions left', function() {
+  it('retains the last node', function() {
     let repo = new Microcosm({ debug: true })
 
     let action = repo.push('action')
@@ -11,7 +11,7 @@ describe('History::remove', function() {
 
     repo.history.remove(action)
 
-    expect(repo.history.size).toEqual(0)
+    expect(repo.history.size).toEqual(1)
   })
 
   it('does not remove the root when given a node outside the tree', function() {
@@ -19,7 +19,7 @@ describe('History::remove', function() {
 
     repo.push('test')
 
-    repo.history.remove(new Subject('external'))
+    repo.history.remove(new Subject())
 
     expect(repo.history.size).toEqual(1)
   })
@@ -31,11 +31,17 @@ describe('History::remove', function() {
       let action = repo.push('two')
       let handler = jest.fn()
 
-      repo.history.toggle(action)
       repo.history.updates.subscribe(handler)
-      repo.history.remove(action)
+      // Initial subscription fires to provide the current action
+      expect(handler).toHaveBeenCalledTimes(1)
 
-      expect(handler).not.toHaveBeenCalled()
+      repo.history.toggle(action)
+      // Fires to reconcile the disabled action
+      expect(handler).toHaveBeenCalledTimes(2)
+
+      repo.history.remove(action)
+      // Disabled actions do not reconcile
+      expect(handler).toHaveBeenCalledTimes(2)
     })
   })
 
@@ -59,7 +65,7 @@ describe('History::remove', function() {
 
       repo.history.remove(three)
 
-      expect(Array.from(repo.history).map(i => i.tag)).toEqual(['one', 'two'])
+      expect(`${Array.from(repo.history)}`).toEqual('one,two')
     })
 
     it('removing the head node eliminates the reference to "next"', function() {
@@ -175,9 +181,12 @@ describe('History::remove', function() {
 
       repo.history.checkout(two)
       repo.history.updates.subscribe(next)
-      repo.history.remove(three)
+      // Initial subscription
+      expect(next).toHaveBeenCalledTimes(1)
 
-      expect(next).not.toHaveBeenCalled()
+      repo.history.remove(three)
+      // Removing outside of the active branch does not reconcile
+      expect(next).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -211,7 +220,7 @@ describe('History::remove', function() {
 
       repo.history.checkout(one)
 
-      let three = repo.push('three')
+      repo.push('three')
 
       history.remove(two)
 
@@ -223,7 +232,7 @@ describe('History::remove', function() {
       let history = repo.history
 
       let one = repo.push('one')
-      let two = repo.push('two')
+      repo.push('two')
 
       repo.history.checkout(one)
 
@@ -237,7 +246,7 @@ describe('History::remove', function() {
     it('allows having children, but no next value', function() {
       let repo = new Microcosm({ debug: true })
       let one = repo.push('one')
-      let two = repo.push('two')
+      repo.push('two')
 
       repo.history.checkout(one)
 

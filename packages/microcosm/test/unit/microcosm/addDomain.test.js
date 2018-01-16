@@ -67,8 +67,8 @@ describe('Microcosm::addDomain', function() {
         }
       })
 
-      expect(fork.state).toHaveProperty('a', 1)
-      expect(fork.state).toHaveProperty('b', 2)
+      expect(fork).toHaveState('a', 1)
+      expect(fork).toHaveState('b', 2)
     })
 
     it('adding a domain to a parent sends initial state to forks', function() {

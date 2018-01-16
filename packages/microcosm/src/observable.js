@@ -12,7 +12,7 @@ function getObservable(obj) {
   return obj && obj[getSymbol('observable')]
 }
 
-class Subscription {
+export class Subscription {
   constructor(observer, subscriber, origin) {
     this._cleanup = undefined
     this._observer = observer
@@ -24,7 +24,7 @@ class Subscription {
       return
     }
 
-    observer = subscriptionObserver(this)
+    observer = new SubscriptionObserver(this)
 
     try {
       // Call the subscriber function
@@ -58,16 +58,16 @@ class Subscription {
   }
 }
 
-function subscriptionObserver(subscription) {
-  return {
-    next: handleNext.bind(null, subscription),
-    complete: handleComplete.bind(null, subscription),
-    error: handleError.bind(null, subscription),
-    unsubscribe: subscription.unsubscribe.bind(subscription)
+export class SubscriptionObserver {
+  constructor(subscription) {
+    this.next = handleNext.bind(null, subscription)
+    this.complete = handleComplete.bind(null, subscription)
+    this.error = handleError.bind(null, subscription)
+    this.unsubscribe = subscription.unsubscribe
   }
 }
 
-function observer(config) {
+export function genObserver(config) {
   if (config == null) {
     throw new TypeError('Unable to subscribe via ' + config)
   }
@@ -77,7 +77,8 @@ function observer(config) {
     next: noop,
     error: noop,
     complete: noop,
-    unsubscribe: noop
+    unsubscribe: noop,
+    cleanup: noop
   }
 
   if (typeof config === 'function') {
@@ -103,6 +104,7 @@ function observer(config) {
 
 function purge(subscriptions) {
   subscriptions.forEach(s => s.unsubscribe())
+  subscriptions.length = 0
 }
 
 export class Observable {
@@ -113,7 +115,7 @@ export class Observable {
 
   subscribe(config) {
     let subscription = new Subscription(
-      observer(config),
+      genObserver(config),
       this._subscriber,
       this
     )
@@ -129,68 +131,6 @@ export class Observable {
 
   [getSymbol('observable')]() {
     return this
-  }
-
-  map(fn) {
-    return new Observable(observer => {
-      this.subscribe({
-        error: observer.error,
-        unsubscribe: observer.unsubscribe,
-        next: value => observer.next(fn(value)),
-        complete: observer.complete
-      })
-    })
-  }
-
-  flatMap(fn) {
-    return new Observable(observer => {
-      let completed = false
-      let subscriptions = []
-
-      // Subscribe to the outer Observable
-      this.subscribe({
-        next(value) {
-          if (fn) {
-            try {
-              value = fn(value)
-            } catch (x) {
-              observer.error(x)
-              return
-            }
-          }
-
-          // Subscribe to the inner Observable
-          Observable.wrap(value).subscribe({
-            _subscription: null,
-            next: observer.next,
-            error: observer.error,
-            start(s) {
-              subscriptions.push((this._subscription = s))
-            },
-            complete() {
-              let i = subscriptions.indexOf(this._subscription)
-
-              if (i >= 0) {
-                subscriptions.splice(i, 1)
-              }
-
-              closeIfDone()
-            }
-          })
-        },
-        error: observer.error,
-        complete() {
-          completed = true
-          closeIfDone()
-        }
-      })
-
-      function closeIfDone() {
-        if (completed && subscriptions.length === 0) {
-          observer.complete()
-        }
-      }
-    })
   }
 
   static of() {
@@ -216,10 +156,62 @@ export class Observable {
         return fromPromise(source)
       }
     }
+
     return new Observable(observer => {
       observer.next(source)
       observer.complete()
     })
+  }
+
+  static hash(obj) {
+    if (getObservable(obj)) {
+      return obj
+    }
+
+    let subject = new Subject()
+
+    if (obj == null || typeof obj !== 'object') {
+      subject.next(obj)
+      subject.complete()
+      return subject
+    }
+
+    if (typeof obj.then === 'function') {
+      subject.subscribe(fromPromise(obj).subscribe(subject))
+      return subject
+    }
+
+    let keys = Object.keys(obj)
+    let payload = Array.isArray(obj) ? [] : {}
+    let jobs = keys.length
+
+    function complete() {
+      if (--jobs <= 0) {
+        subject.complete()
+      }
+    }
+
+    function assign(key, value) {
+      payload = set(payload, key, value)
+
+      if (payload !== subject.payload) {
+        subject.next(payload)
+      }
+    }
+
+    for (var i = 0, len = keys.length; i < len; i++) {
+      let key = keys[i]
+
+      let subscription = Observable.wrap(obj[key]).subscribe({
+        next: assign.bind(null, key),
+        complete: complete,
+        error: subject.error
+      })
+
+      subject.subscribe(subscription)
+    }
+
+    return subject
   }
 }
 
@@ -254,6 +246,7 @@ function handleError(subscription, value) {
   subscription._observer = undefined
 
   observer.error(value)
+  observer.cleanup()
 
   cleanupSubscription(subscription)
 }
@@ -269,6 +262,7 @@ function handleComplete(subscription) {
   subscription._observer = undefined
 
   observer.complete()
+  observer.cleanup()
 
   cleanupSubscription(subscription)
 }
@@ -283,72 +277,16 @@ function handleUnsubscribe(subscription) {
   subscription._observer = undefined
 
   observer.unsubscribe()
+  observer.cleanup()
 
   cleanupSubscription(subscription)
 }
 
-export function fromPromise(promise) {
+function fromPromise(promise) {
   return new Observable(observer => {
     promise
       .then(observer.next)
       .then(observer.complete)
       .catch(observer.error)
   })
-}
-
-export function observerHash(obj) {
-  if (getObservable(obj)) {
-    return obj
-  }
-
-  let subject = new Subject()
-
-  if (obj == null || typeof obj !== 'object') {
-    subject.next(obj)
-    subject.complete()
-
-    return subject
-  }
-
-  if (typeof obj.then === 'function') {
-    subject.subscribe(fromPromise(obj).subscribe(subject))
-    return subject
-  }
-
-  let keys = Object.keys(obj)
-  let payload = Array.isArray(obj) ? [] : {}
-  let jobs = keys.length
-
-  function complete() {
-    if (--jobs <= 0) {
-      subject.complete()
-    }
-  }
-
-  function assign(key, value) {
-    payload = set(payload, key, value)
-
-    // TODO: What if this was a filter?
-    if (payload !== subject.payload) {
-      subject.next(payload)
-    }
-  }
-
-  keys.forEach(key => {
-    let subscription = Observable.wrap(obj[key]).subscribe({
-      next: assign.bind(null, key),
-      complete: complete,
-      error: subject.error
-    })
-
-    subject.subscribe(subscription)
-  })
-
-  return subject
-}
-
-Observable.hash = observerHash
-
-Observable.isObservable = function(obj: any): boolean {
-  return obj && typeof obj === 'object' && getSymbol('observable') in obj
 }

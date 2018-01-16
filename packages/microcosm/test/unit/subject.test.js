@@ -1,55 +1,40 @@
 import { Subject } from 'microcosm'
 
 describe('Subject', function() {
-  describe('start', function() {
-    it('moves into a started state when it is subscribed to', () => {
-      let subject = new Subject()
+  it('triggers the start hook when subscribed to', () => {
+    let subject = new Subject()
+    let start = jest.fn()
 
-      subject.subscribe(n => n)
+    subject.subscribe({ start })
 
-      expect(subject.status).toBe('start')
-    })
-
-    it('triggers the start hook when subscribed to', () => {
-      let subject = new Subject()
-      let start = jest.fn()
-
-      subject.subscribe({ start })
-
-      expect(start).toHaveBeenCalledTimes(1)
-    })
-
-    it('does not move into start if it has updated before a subscription', () => {
-      let subject = new Subject()
-
-      subject.next(true)
-      subject.subscribe(n => n)
-
-      expect(subject.status).toBe('next')
-    })
+    expect(start).toHaveBeenCalledTimes(1)
   })
 
   describe('next', function() {
-    it('moves into a next state', () => {
+    it('does not trigger after being completed', () => {
       let subject = new Subject()
+      let next = jest.fn()
 
-      subject.subscribe(n => n)
-
+      subject.subscribe({ next })
+      subject.complete()
       subject.next(true)
 
-      expect(subject.status).toBe('next')
+      expect(next).toHaveBeenCalledTimes(0)
+    })
+
+    it('does not trigger after erroring', () => {
+      let subject = new Subject()
+      let next = jest.fn()
+
+      subject.subscribe({ next })
+      subject.error()
+      subject.next(true)
+
+      expect(next).toHaveBeenCalledTimes(0)
     })
   })
 
   describe('complete', function() {
-    it('sets an complete state when it finishes', () => {
-      let subject = new Subject()
-
-      subject.complete(true)
-
-      expect(subject.status).toBe('complete')
-    })
-
     it('triggers once', () => {
       let subject = new Subject()
       let complete = jest.fn()
@@ -59,6 +44,7 @@ describe('Subject', function() {
       subject.complete()
       subject.complete()
 
+      expect(subject).toHaveProperty('closed', true)
       expect(complete).toHaveBeenCalledTimes(1)
     })
 
@@ -69,6 +55,7 @@ describe('Subject', function() {
       subject.complete()
       subject.subscribe({ complete })
 
+      expect(subject).toHaveProperty('closed', true)
       expect(complete).toHaveBeenCalledTimes(1)
     })
 
@@ -90,6 +77,18 @@ describe('Subject', function() {
 
       subject.subscribe({ unsubscribe })
 
+      subject.unsubscribe()
+
+      expect(unsubscribe).toHaveBeenCalled()
+    })
+
+    it('can listen to another unsubscribe command', () => {
+      let subject = new Subject()
+      let other = new Subject()
+      let unsubscribe = jest.fn()
+
+      subject.subscribe(other)
+      other.subscribe({ unsubscribe })
       subject.unsubscribe()
 
       expect(unsubscribe).toHaveBeenCalled()
@@ -121,14 +120,6 @@ describe('Subject', function() {
   })
 
   describe('error', function() {
-    it('sets an error state when it errors', () => {
-      let subject = new Subject()
-
-      subject.error(true)
-
-      expect(subject.status).toBe('error')
-    })
-
     it('invokes the error again if already errored', () => {
       let subject = new Subject()
       let error = jest.fn()

@@ -49,7 +49,6 @@ describe('Microcosm::reset', function() {
 
     expect(repo).toHaveState('test', false)
 
-    // This is invalid
     try {
       repo.push(reset, '{ test: badJson }', true)
     } catch (x) {

@@ -1,17 +1,8 @@
 // @flow
 
-import { tag } from './tag'
-import { Observable } from './observable'
+import { Observable, genObserver } from './observable'
 import { getSymbol } from './symbols'
-import { EMPTY_OBJECT } from './empty'
-import {
-  INACTIVE,
-  START,
-  NEXT,
-  COMPLETE,
-  ERROR,
-  UNSUBSCRIBE
-} from './lifecycle'
+import { noop, EMPTY_SUBSCRIPTION } from './empty'
 
 function send(observers, message, value) {
   observers.forEach(observer => {
@@ -21,60 +12,16 @@ function send(observers, message, value) {
   })
 }
 
-function delegate(subject, method, args) {
-  let observable = subject._observable
-
-  if (subject.closed) {
-    observable = Observable.of(subject.payload)
-  }
-
-  return observable[method](...args)
-}
-
-function handleNext(subject, value) {
-  if (subject.closed) {
-    return
-  }
-
-  subject.status = NEXT
-  subject.payload = value
-
-  send(subject._observers, NEXT, subject.payload)
-}
-
-function handleError(subject, error) {
-  subject.status = ERROR
-  subject.closed = true
-  subject.payload = error
-
-  send(subject._observers, ERROR, error)
-}
-
-function handleComplete(subject) {
-  subject.status = COMPLETE
-  subject.closed = true
-
-  send(subject._observers, COMPLETE)
-}
-
-function handleUnsubscribe(subject) {
-  subject.status = UNSUBSCRIBE
-  subject.closed = true
-  subject._observable.unsubscribe()
-}
-
-let uid = 0
-
 export class Subject {
-  constructor(id, meta) {
-    this.id = uid++
-    this.tag = String(tag(id))
-    this.status = INACTIVE
-    this.meta = meta || EMPTY_OBJECT
-
-    this.payload = null
+  constructor(payload, meta) {
+    this.meta = meta || {}
+    this.payload = payload
     this.closed = false
+    this.errored = false
     this.disabled = false
+    this.cancelled = false
+
+    this.meta.status = 'start'
 
     this._observers = new Set()
 
@@ -84,58 +31,74 @@ export class Subject {
     })
   }
 
+  get next() {
+    if (this.closed) {
+      return noop
+    }
+
+    return value => {
+      this.payload = value
+      this.meta.status = 'next'
+
+      send(this._observers, 'next', value)
+    }
+  }
+
+  get complete() {
+    return () => {
+      this.closed = true
+      this.meta.status = 'complete'
+
+      send(this._observers, 'complete')
+    }
+  }
+
+  get error() {
+    return error => {
+      this.closed = true
+      this.errored = true
+      this.payload = error
+      this.meta.status = 'error'
+
+      send(this._observers, 'error', error)
+    }
+  }
+
+  get unsubscribe() {
+    return reason => {
+      this.closed = true
+      this.cancelled = true
+      this.payload = reason
+      this.meta.status = 'unsubscribe'
+
+      this._observable.unsubscribe()
+    }
+  }
+
   toggle() {
     this.disabled = !this.disabled
   }
 
   subscribe() {
-    if (this.closed) {
+    let observer = genObserver(...arguments)
+
+    if (this.errored) {
+      observer.error(this.payload)
+    } else if (this.cancelled) {
+      observer.unsubscribe(this.payload)
+    } else if (this.closed) {
+      observer.next(this.payload)
+      observer.complete()
+    } else {
       return new Observable(observer => {
-        if (this.status === COMPLETE) {
+        if (this.meta.status === 'next') {
           observer.next(this.payload)
         }
-
-        observer[this.status](this.payload)
-      }).subscribe(...arguments)
+        return this._observable.subscribe(observer)
+      }).subscribe(observer)
     }
 
-    if (this.status === INACTIVE) {
-      this.status = START
-    }
-
-    return this._observable.subscribe(...arguments)
-  }
-
-  reduce() {
-    return delegate(this, 'reduce', arguments)
-  }
-
-  map() {
-    return delegate(this, 'map', arguments)
-  }
-
-  filter() {
-    return delegate(this, 'filter', arguments)
-  }
-
-  flatMap() {
-    return delegate(this, 'flatMap', arguments)
-  }
-
-  get next() {
-    return handleNext.bind(null, this)
-  }
-
-  get error() {
-    return handleError.bind(null, this)
-  }
-
-  get complete() {
-    return handleComplete.bind(null, this)
-  }
-
-  get unsubscribe() {
-    return handleUnsubscribe.bind(null, this)
+    return EMPTY_SUBSCRIPTION
   }
 
   then(pass, fail) {
@@ -148,36 +111,19 @@ export class Subject {
     }).then(pass, fail)
   }
 
-  valueOf() {
-    return this.payload
-  }
-
-  toString() {
-    return this.tag
-  }
-
-  every(callback) {
-    let bound = callback.bind(null, this)
-
-    return this.subscribe({
-      [START]: bound,
-      [NEXT]: bound,
-      [COMPLETE]: bound,
-      [ERROR]: bound,
-      [UNSUBSCRIBE]: bound
-    })
-  }
-
   [getSymbol('observable')]() {
     return this
   }
 
+  toString() {
+    return this.meta.tag || 'subject'
+  }
+
   toJSON() {
     return {
-      id: this.id,
-      tag: this.tag,
-      status: this.status,
-      payload: this.payload
+      payload: this.payload,
+      status: this.meta.status,
+      tag: this.meta.tag
     }
   }
 }

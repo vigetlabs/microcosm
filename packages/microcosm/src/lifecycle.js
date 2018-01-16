@@ -3,18 +3,21 @@
  */
 
 import { EMPTY_OBJECT } from './empty'
+import { tag } from './tag'
 
 function parse(data: Object, deserialize: boolean) {
   if (deserialize && typeof data === 'string') {
     data = JSON.parse(data)
   }
 
-  return { data: data || EMPTY_OBJECT, deserialize }
+  return { data: data || EMPTY_OBJECT, deserialize: !!deserialize }
 }
 
-export const RESET = parse.bind(null)
+export const RESET = tag(parse.bind(null), '$reset')
 
-export const PATCH = parse.bind(null)
+export const PATCH = tag(parse.bind(null), '$patch')
+
+export const INITIAL_STATE = '$initialState'
 
 export const INACTIVE = 'inactive'
 

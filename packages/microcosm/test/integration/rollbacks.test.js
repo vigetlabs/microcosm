@@ -1,13 +1,9 @@
-import Microcosm, { merge } from 'microcosm'
+import Microcosm, { merge, reset } from 'microcosm'
 
 describe('rollbacks', function() {
   it('does not rollforward the same actions twice', function() {
-    const repo = new Microcosm({ maxHistory: Infinity })
-    const send = n => n
-
-    const a = repo.append(send)
-    const b = repo.append(send)
-    const c = repo.append(send)
+    const repo = new Microcosm({ debug: true })
+    const send = () => action => {}
 
     repo.addDomain('messages', {
       getInitialState() {
@@ -25,19 +21,27 @@ describe('rollbacks', function() {
       register() {
         return {
           [send]: {
-            open: this.addLoading,
-            done: this.add
+            next: this.addLoading,
+            complete: this.add
           }
         }
       }
     })
 
-    a.open({ id: 1 })
-    b.open({ id: 2 })
-    c.open({ id: 3 })
-    a.resolve({ id: 2 })
-    b.resolve({ id: 2 })
-    c.resolve({ id: 3 })
+    const a = repo.push(send)
+    const b = repo.push(send)
+    const c = repo.push(send)
+
+    a.next({ id: 1 })
+    b.next({ id: 2 })
+    c.next({ id: 3 })
+
+    a.next({ id: 2 })
+    a.complete()
+    b.next({ id: 2 })
+    b.complete()
+    c.next({ id: 3 })
+    c.complete()
 
     expect(repo).not.toHaveState('messages.0.pending')
     expect(repo).not.toHaveState('messages.1.pending')
@@ -47,7 +51,7 @@ describe('rollbacks', function() {
   })
 
   it('remembers the archive point', function() {
-    const repo = new Microcosm({ maxHistory: Infinity })
+    const repo = new Microcosm({ debug: true })
     const send = n => n
 
     repo.addDomain('messages', {
@@ -59,7 +63,7 @@ describe('rollbacks', function() {
       },
       register() {
         return {
-          [send.done]: this.add
+          [send]: this.add
         }
       }
     })
@@ -68,21 +72,21 @@ describe('rollbacks', function() {
     const b = repo.push(send, { id: 2 })
     const c = repo.push(send, { id: 3 })
 
-    repo.checkout(a)
+    repo.history.checkout(a)
     expect(repo.state.messages.map(m => m.id)).toEqual([1])
 
-    repo.checkout(c)
+    repo.history.checkout(c)
     expect(repo.state.messages.map(m => m.id)).toEqual([1, 2, 3])
 
-    repo.checkout(b)
+    repo.history.checkout(b)
     expect(repo.state.messages.map(m => m.id)).toEqual([1, 2])
   })
 
   it('properly rolls forward the cache', () => {
     const repo = new Microcosm()
 
-    const all = n => n
-    const single = n => n
+    const all = () => action => {}
+    const single = () => action => {}
 
     repo.addDomain('items', {
       getInitialState() {
@@ -113,25 +117,28 @@ describe('rollbacks', function() {
 
       register() {
         return {
-          [all.done]: this.reset,
-          [single.open]: this.setLoading,
-          [single.done]: this.update
+          [all]: this.reset,
+          [single]: this.setLoading,
+          [single]: this.update
         }
       }
     })
 
-    const getAll = repo.append(all)
-    const getOne = repo.append(single)
-    const getTwo = repo.append(single)
+    const getAll = repo.push(all)
+    const getOne = repo.push(single)
+    const getTwo = repo.push(single)
 
-    getAll.resolve([{ id: '1' }, { id: '2' }])
+    getAll.next([{ id: '1' }, { id: '2' }])
+    getAll.complete()
 
-    getOne.open('1')
-    getTwo.open('2')
+    getOne.next('1')
+    getTwo.next('2')
 
-    getOne.resolve({ id: '1', done: true })
+    getOne.next({ id: '1', done: true })
+    getOne.complete()
 
-    getTwo.resolve({ id: '2', done: true })
+    getTwo.next({ id: '2', done: true })
+    getTwo.complete()
 
     expect(repo.state.items).toEqual([
       { id: '1', done: true },
@@ -143,7 +150,7 @@ describe('rollbacks', function() {
     const repo = new Microcosm()
 
     const all = n => n
-    const single = n => n
+    const single = () => action => {}
 
     repo.addDomain('items', {
       getInitialState() {
@@ -174,18 +181,20 @@ describe('rollbacks', function() {
 
       register() {
         return {
-          [all.done]: this.reset,
-          [single.open]: this.setLoading,
-          [single.done]: this.update
+          [all]: this.reset,
+          [single]: {
+            next: this.setLoading,
+            complete: this.update
+          }
         }
       }
     })
 
     repo.push(all, [{ id: '1' }, { id: '2' }, { id: '3' }])
 
-    repo.append(single).open('1')
-    repo.append(single).open('2')
-    repo.append(single).open('3')
+    repo.push(single).next('1')
+    repo.push(single).next('2')
+    repo.push(single).next('3')
 
     expect(repo.state.items.map(i => i.loading)).toEqual([true, true, true])
   })
@@ -193,7 +202,7 @@ describe('rollbacks', function() {
   it('handles cancelling back to a former state', () => {
     const repo = new Microcosm()
 
-    const foldIn = n => n
+    const foldIn = () => action => {}
 
     repo.addDomain('styles', {
       getInitialState() {
@@ -206,19 +215,21 @@ describe('rollbacks', function() {
 
       register() {
         return {
-          [foldIn.open]: this.merge,
-          [foldIn.done]: this.merge
+          [foldIn]: {
+            next: this.merge,
+            complete: this.merge
+          }
         }
       }
     })
 
-    let action = repo.append(foldIn)
+    let action = repo.push(foldIn)
 
-    action.open({ color: 'red' })
+    action.next({ color: 'red' })
 
     expect(repo).toHaveState('styles.color', 'red')
 
-    action.cancel()
+    action.unsubscribe()
 
     expect(repo).toHaveState('styles.color', 'blue')
   })
@@ -232,13 +243,15 @@ describe('rollbacks', function() {
       }
     })
 
-    repo.checkout(repo.history.root)
+    repo.push(() => action => {})
+
+    repo.history.checkout(repo.history.root)
 
     expect(repo).toHaveState('test', true)
   })
 
   it('can checkout the root after a reconciliation', () => {
-    const repo = new Microcosm()
+    const repo = new Microcosm({ debug: true })
 
     repo.addDomain('test', {
       getInitialState() {
@@ -246,9 +259,9 @@ describe('rollbacks', function() {
       }
     })
 
-    repo.reset({ test: false })
+    repo.push(reset, { test: false })
 
-    repo.checkout(repo.history.root)
+    repo.history.checkout(repo.history.root)
 
     expect(repo).toHaveState('test', false)
   })

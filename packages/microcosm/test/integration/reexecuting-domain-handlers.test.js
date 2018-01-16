@@ -7,6 +7,9 @@ describe('Re-executing domain handlers', function() {
     let counterOneCalls = 0
     let counterTwoCalls = 0
 
+    let addOne = () => action => {}
+    let addTwo = () => action => {}
+
     repo.addDomain('counterOne', {
       getInitialState() {
         return 0
@@ -17,7 +20,7 @@ describe('Re-executing domain handlers', function() {
       },
       register() {
         return {
-          addOne: this.add
+          [addOne]: this.add
         }
       }
     })
@@ -32,20 +35,24 @@ describe('Re-executing domain handlers', function() {
       },
       register() {
         return {
-          addTwo: this.add
+          [addTwo]: this.add
         }
       }
     })
 
-    let one = repo.append('addOne')
+    let one = repo.push(addOne)
+    let two = repo.push(addTwo)
 
-    repo.push('addTwo', 2)
+    two.next(2)
+    two.complete()
 
-    one.resolve(1)
+    one.next(1)
+    one.complete()
 
     expect(counterOneCalls).toBe(1)
     expect(counterTwoCalls).toBe(1)
-    expect(repo.state).toEqual({ counterOne: 1, counterTwo: 2 })
+    expect(repo).toHaveState('counterOne', 1)
+    expect(repo).toHaveState('counterTwo', 2)
   })
 
   it('domains in a fork do not invalidate the parent when both register the same action', function() {
@@ -53,6 +60,7 @@ describe('Re-executing domain handlers', function() {
 
     let counterOneCalls = 0
     let counterTwoCalls = 0
+    let test = () => action => {}
 
     parent.addDomain('counterOne', {
       getInitialState() {
@@ -60,11 +68,10 @@ describe('Re-executing domain handlers', function() {
       },
       add(count, n) {
         counterOneCalls += 1
-
         return count + n
       },
       register() {
-        return { test: this.add }
+        return { [test]: this.add }
       }
     })
 
@@ -79,15 +86,18 @@ describe('Re-executing domain handlers', function() {
         return count + n
       },
       register() {
-        return { test: this.add }
+        return { [test]: this.add }
       }
     })
 
-    let one = parent.append('test')
+    let one = parent.push(test)
+    let two = parent.push(test)
 
-    parent.push('test', 2)
+    two.next(2)
+    two.complete()
 
-    one.resolve(1)
+    one.next(1)
+    one.complete()
 
     // The parent should get updates, but not state managed by a child
     expect(parent).toHaveState('counterOne', 3)

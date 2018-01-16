@@ -1,21 +1,21 @@
 import Microcosm from 'microcosm'
 
 describe('Promise middleware', function() {
-  it('starts', async function() {
+  it('starts with the first argument', async function() {
     expect.assertions(2)
 
     const repo = new Microcosm()
-    const action = n => Promise.resolve(n)
+    const action = n => Promise.resolve(!n)
 
     repo.addDomain('test', {
       register() {
         return {
           [action]: {
             start: (state, value) => {
-              expect(value).toBe(null)
+              expect(value).toBe(true)
             },
             complete: (state, value) => {
-              expect(value).toBe(true)
+              expect(value).toBe(false)
             }
           }
         }

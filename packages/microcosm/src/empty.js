@@ -9,3 +9,5 @@ export const EMPTY_OBJECT = {}
 Object.freeze(EMPTY_OBJECT)
 
 export const noop = () => {}
+
+export const EMPTY_SUBSCRIPTION = { unsubscribe: noop }

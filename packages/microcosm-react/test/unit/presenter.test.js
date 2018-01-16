@@ -1,13 +1,9 @@
 import React from 'react'
-import { Microcosm, Observable, Subject, patch } from 'microcosm'
+import { Microcosm, patch } from 'microcosm'
 import { Presenter, ActionButton, withSend } from 'microcosm-react'
 import { mount } from 'enzyme'
 
-let View = withSend(function({ send }) {
-  return <button id="button" onClick={() => send('test', true)} />
-})
-
-let timer = time => new Promise(resolve => setTimeout(resolve, time))
+let View = () => <ActionButton action="test" value={true} />
 
 class Repo extends Microcosm {
   setup() {
@@ -24,7 +20,7 @@ describe('::getModel', function() {
     class Hello extends Presenter {
       getModel(repo, { place }) {
         return {
-          greeting: 'Hello, ' + place + '!'
+          greeting: `Hello, ${place}!`
         }
       }
 
@@ -38,7 +34,7 @@ describe('::getModel', function() {
     expect(wrapper.text()).toEqual('Hello, world!')
   })
 
-  it('builds the view model into state', async function() {
+  it('builds the view model into state', function() {
     class MyPresenter extends Presenter {
       getModel(repo) {
         return {
@@ -51,9 +47,10 @@ describe('::getModel', function() {
     }
 
     let repo = new Repo()
+
     let presenter = mount(<MyPresenter repo={repo} />)
 
-    await repo.push(patch, { color: 'red' })
+    repo.push(patch, { color: 'red' })
 
     expect(presenter.text()).toEqual('red')
   })
@@ -97,46 +94,6 @@ describe('::getModel', function() {
     repo.push(patch, { color: 'turqoise' })
 
     expect(spy).toHaveBeenCalledTimes(1)
-  })
-
-  describe('when first building a model', function() {
-    it.skip('passes the repo as the second argument of model callbacks', function() {
-      expect.assertions(1)
-
-      let repo = new Repo()
-
-      class TestCase extends Presenter {
-        getModel() {
-          return {
-            name: this.process
-          }
-        }
-
-        process(_state, fork) {
-          expect(fork.parent).toBe(repo)
-        }
-      }
-
-      mount(<TestCase repo={repo} />)
-    })
-
-    it.skip('invokes model callbacks in the scope of the presenter', function() {
-      expect.assertions(1)
-
-      class TestCase extends Presenter {
-        getModel(props) {
-          return {
-            name: this.process
-          }
-        }
-
-        process() {
-          expect(this).toBeInstanceOf(TestCase)
-        }
-      }
-
-      mount(<TestCase />)
-    })
   })
 
   describe('when updating props', function() {
@@ -480,6 +437,7 @@ describe('::teardown', function() {
 
   it('unsubscribes from an unforked repo', function() {
     let spy = jest.fn()
+    let repo = new Microcosm()
 
     class Test extends Presenter {
       getModel() {
@@ -492,8 +450,6 @@ describe('::teardown', function() {
       }
     }
 
-    let repo = new Microcosm()
-
     mount(<Test repo={repo} />).unmount()
 
     repo.addDomain('test', {
@@ -505,10 +461,10 @@ describe('::teardown', function() {
   })
 
   it('changes during teardown do not cause a recalculation', function() {
-    let spy = jest.fn()
+    let spy = jest.fn(value => value)
 
     class Test extends Presenter {
-      getModel() {
+      getModel(repo) {
         return { test: repo.watch('test', spy) }
       }
       teardown(repo) {
@@ -530,44 +486,44 @@ describe('::teardown', function() {
   })
 })
 
-describe.skip('purity', function() {
+describe('purity', function() {
   it('does not cause a re-render when shallowly equal', function() {
     let repo = new Microcosm()
     let renders = jest.fn(() => <p>Test</p>)
 
-    repo.patch({ name: 'Kurtz' })
+    repo.push(patch, { name: 'Kurtz' })
 
     class Namer extends Presenter {
-      getModel() {
-        return { name: state => state.name }
+      getModel(repo) {
+        return { name: repo.watch('name') }
       }
 
-      get view() {
-        return renders
+      render() {
+        return renders()
       }
     }
 
     mount(<Namer repo={repo} />)
 
-    repo.patch({ name: 'Kurtz', unrelated: true })
+    repo.push(patch, { name: 'Kurtz', unrelated: true })
 
-    expect(renders.mock.calls.length).toEqual(1)
+    expect(renders).toHaveBeenCalledTimes(1)
   })
 })
 
-describe.skip('unmounting', function() {
+describe('unmounting', function() {
   it('ignores an repo when it unmounts', function() {
-    let spy = jest.fn()
+    let complete = jest.fn()
 
     class Test extends Presenter {
       setup(repo) {
-        repo.teardown = spy
+        repo.subscribe({ complete })
       }
     }
 
     mount(<Test />).unmount()
 
-    expect(spy).toHaveBeenCalled()
+    expect(complete).toHaveBeenCalled()
   })
 
   it('does not update the view model when umounted', function() {
@@ -585,49 +541,19 @@ describe.skip('unmounting', function() {
 
     wrapper.unmount()
 
-    repo.patch({ foo: 'bar' })
+    repo.push(patch, { foo: 'bar' })
 
     expect(spy.mock.calls.length).toEqual(1)
   })
 })
 
-describe.skip('Efficiency', function() {
-  it('does not subscribe to a change if there is no model', function() {
+describe('Efficiency', function() {
+  it('child view model is not recalculated when parent repos cause them to re-render', function() {
     let repo = new Repo()
 
-    jest.spyOn(repo, 'on')
-
-    class Parent extends Presenter {}
-
-    mount(<Parent repo={repo} />)
-
-    expect(repo.on).not.toHaveBeenCalled()
-  })
-
-  it('does not subscribe to a change if there is no stateful model binding', function() {
-    let repo = new Repo()
-
-    jest.spyOn(repo, 'on')
-
-    class Parent extends Presenter {
-      getModel() {
-        return {
-          foo: 'bar'
-        }
-      }
-    }
-
-    mount(<Parent repo={repo} />)
-
-    expect(repo.on).not.toHaveBeenCalled()
-  })
-
-  it('child view model is not recalculated when parent repos cause them to re-render', async function() {
-    let repo = new Repo()
-
-    let model = jest.fn(function() {
+    let model = jest.fn(repo => {
       return {
-        color: state => state.color
+        color: repo.watch('color')
       }
     })
 
@@ -640,24 +566,27 @@ describe.skip('Efficiency', function() {
     }
 
     class Parent extends Presenter {
-      view = Child
+      render() {
+        return <Child />
+      }
     }
 
     let wrapper = mount(<Parent repo={repo} />)
 
-    repo.patch({ color: 'green' })
-
-    await timer(100)
+    repo.push(patch, { color: 'green' })
 
     expect(model).toHaveBeenCalledTimes(1)
     expect(wrapper.text()).toEqual('green')
   })
 
   it('should re-render when state changes', function() {
-    let spy = jest.fn(() => null)
+    let spy = jest.fn()
 
     class Test extends Presenter {
-      view = spy
+      render() {
+        spy()
+        return null
+      }
     }
 
     mount(<Test />).setState({ test: true })
@@ -666,31 +595,37 @@ describe.skip('Efficiency', function() {
   })
 
   it('should re-render when a property is added', function() {
-    let spy = jest.fn(() => null)
+    let renders = 0
 
     class Test extends Presenter {
-      view = spy
+      render() {
+        renders += 1
+        return null
+      }
     }
 
     mount(<Test />).setProps({ another: true })
 
-    expect(spy).toHaveBeenCalledTimes(2)
+    expect(renders).toBe(2)
   })
 
   it('should re-render when a property is removed', function() {
-    let spy = jest.fn(() => null)
+    let renders = 0
 
     class Test extends Presenter {
-      view = spy
+      render() {
+        renders += 1
+        return null
+      }
     }
 
     mount(<Test prop="true" />).setProps({ prop: null })
 
-    expect(spy).toHaveBeenCalledTimes(2)
+    expect(renders).toBe(2)
   })
 
-  it('cancels pending updates when unmounted', async function() {
-    let spy = jest.fn(() => <p>Test</p>)
+  it('cancels pending updates when unmounted', function() {
+    let renders = 0
 
     class Test extends Presenter {
       getModel() {
@@ -699,100 +634,86 @@ describe.skip('Efficiency', function() {
         }
       }
 
-      view = spy
+      render() {
+        renders += 1
+        return <p>Test</p>
+      }
     }
 
     let repo = new Repo()
     let wrapper = mount(<Test repo={repo} />)
 
     // Cause a change
-    repo.patch({ color: 'teal' })
-
-    // Wait for history to reconcile, this will trigger a change
-    // that activates the model
-    await repo.history
+    repo.push(patch, { color: 'teal' })
 
     // Unmounting should kill all outstanding update frames
     wrapper.unmount()
 
-    // Wait for the animation frame to fire
-    await timer(10)
-
     // The frame should have been cancelled, so render is called once
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(renders).toBe(1)
   })
 
-  it('does not render again if forced to render in the meantime', async function() {
-    let spy = jest.fn(() => <p>Test</p>)
+  it('does not render again if forced to render in the meantime', function() {
+    let renders = 0
 
     class Test extends Presenter {
       getModel() {
         return {
-          anything: state => Math.random()
+          anything: Math.random()
         }
       }
-
-      view = spy
+      render() {
+        renders += 1
+        return null
+      }
     }
 
     let repo = new Repo()
     let wrapper = mount(<Test repo={repo} />)
 
     // Cause a change
-    repo.patch({ color: 'teal' })
-
-    // Wait for history to reconcile, this will trigger a change
-    // that activates the model
-    await repo.history
+    repo.push(patch, { color: 'teal' })
 
     // Now send new properties in, which forces a render
     wrapper.setProps({ foo: 'bar' })
 
-    // Wait for the animation frame to fire
-    await timer(10)
-
     // The frame should have been cancelled, so render is called twice:
     // for the initial render, and new props
-    expect(spy).toHaveBeenCalledTimes(2)
+    expect(renders).toBe(2)
   })
 
-  it('batches pending updates', async function() {
-    let spy = jest.fn(() => <p>Test</p>)
+  it('batches pending updates', function() {
+    let renders = 0
 
     class Test extends Presenter {
       getModel() {
         return {
-          anything: state => Math.random()
+          anything: Math.random()
         }
       }
-
-      view = spy
+      render() {
+        renders += 1
+        return null
+      }
     }
 
     let repo = new Repo()
     let wrapper = mount(<Test repo={repo} />)
 
     // Cause a change
-    repo.patch({ color: 'teal' })
-
-    // Wait for history to reconcile, this will trigger a change
-    // that activates the model
-    await repo.history
+    repo.push(patch, { color: 'teal' })
 
     // Now send new properties in, which forces a render
     wrapper.setProps({ foo: 'bar' })
     wrapper.setProps({ foo: 'baz' })
 
-    // Wait for the animation frame to fire
-    await timer(100)
-
     // The frame should have been cancelled, so render is called three times:
     // for the initial render, and the two property injections
-    expect(spy).toHaveBeenCalledTimes(3)
+    expect(renders).toBe(3)
   })
 })
 
-describe.skip('::render', function() {
+describe('::render', function() {
   it('the default render implementation passes children', function() {
     let wrapper = mount(
       <Presenter>
@@ -850,7 +771,7 @@ describe.skip('::render', function() {
   })
 })
 
-describe.skip('::getRepo', function() {
+describe('::getRepo', function() {
   it('can circumvent forking command', function() {
     class NoFork extends Presenter {
       getRepo(repo) {
@@ -865,28 +786,32 @@ describe.skip('::getRepo', function() {
   })
 })
 
-describe.skip('intercepting actions', function() {
+describe('intercepting actions', function() {
   it('receives intent events', function() {
     let test = jest.fn()
 
     class MyPresenter extends Presenter {
-      view = View
-
       intercept() {
         return { test }
       }
+
+      render() {
+        return <View />
+      }
     }
 
-    mount(<MyPresenter />)
-      .find(View)
-      .simulate('click')
+    let presenter = mount(<MyPresenter />)
 
-    expect(test.mock.calls[0][1]).toEqual(true)
+    presenter.simulate('click')
+
+    expect(test).toHaveBeenCalledWith(presenter.instance().repo, true)
   })
 
   it('actions do not bubble to different repo types', function() {
     class Child extends Presenter {
-      view = View
+      render() {
+        return <View />
+      }
     }
 
     class Parent extends Presenter {
@@ -895,8 +820,8 @@ describe.skip('intercepting actions', function() {
       }
     }
 
-    let top = new Microcosm({ maxHistory: Infinity })
-    let bottom = new Microcosm({ maxHistory: Infinity })
+    let top = new Microcosm({ debug: true })
+    let bottom = new Microcosm({ debug: true })
 
     let wrapper = mount(
       <Parent repo={top}>
@@ -906,13 +831,15 @@ describe.skip('intercepting actions', function() {
 
     wrapper.find(View).simulate('click')
 
-    expect(top.history.size).toBe(1)
-    expect(bottom.history.size).toBe(2)
+    expect(top.history.size).toBe(0)
+    expect(bottom.history.size).toBe(1)
   })
 
   it('intents do not bubble to different repo types even if not forking', function() {
     class Child extends Presenter {
-      view = View
+      render() {
+        return <View />
+      }
     }
 
     class Parent extends Presenter {
@@ -924,8 +851,8 @@ describe.skip('intercepting actions', function() {
       }
     }
 
-    let top = new Microcosm({ maxHistory: Infinity })
-    let bottom = new Microcosm({ maxHistory: Infinity })
+    let top = new Microcosm({ debug: true })
+    let bottom = new Microcosm({ debug: true })
 
     let wrapper = mount(
       <Parent repo={top}>
@@ -935,24 +862,22 @@ describe.skip('intercepting actions', function() {
 
     wrapper.find(View).simulate('click')
 
-    expect(top.history.size).toBe(1)
-    expect(bottom.history.size).toBe(2)
+    expect(top.history.size).toBe(0)
+    expect(bottom.history.size).toBe(1)
   })
 
   it('forwards intents to the repo as actions', function() {
     class MyPresenter extends Presenter {
-      view() {
+      render() {
         return <View />
       }
     }
 
-    let repo = new Microcosm({ maxHistory: 1 })
+    let repo = new Microcosm({ debug: true })
 
-    mount(<MyPresenter repo={repo} />)
-      .find(View)
-      .simulate('click')
+    mount(<MyPresenter repo={repo} />).simulate('click')
 
-    expect(repo.history.head.command.toString()).toEqual('test')
+    expect(repo.history.head.tag).toEqual('test')
   })
 
   it('send bubbles up to parent presenters', function() {
@@ -960,7 +885,7 @@ describe.skip('intercepting actions', function() {
     let intercepted = jest.fn()
 
     class Child extends Presenter {
-      view() {
+      render() {
         return <View />
       }
     }
@@ -969,14 +894,12 @@ describe.skip('intercepting actions', function() {
       intercept() {
         return { test: (repo, props) => intercepted(props) }
       }
-      view() {
+      render() {
         return <Child />
       }
     }
 
-    mount(<Parent repo={new Microcosm()} />)
-      .find(View)
-      .simulate('click')
+    mount(<Parent />).simulate('click')
 
     expect(test).not.toHaveBeenCalled()
     expect(intercepted).toHaveBeenCalledWith(true)
@@ -996,14 +919,12 @@ describe.skip('intercepting actions', function() {
           [test]: (repo, val) => intercepted(val)
         }
       }
-      view() {
+      render() {
         return <Child />
       }
     }
 
-    mount(<Parent repo={new Microcosm()} />)
-      .find(Child)
-      .simulate('click')
+    mount(<Parent repo={new Microcosm()} />).simulate('click')
 
     expect(test).not.toHaveBeenCalled()
     expect(intercepted).toHaveBeenCalledWith(true)
@@ -1028,14 +949,12 @@ describe.skip('intercepting actions', function() {
       intercept() {
         return { [a]: spy }
       }
-      view() {
+      render() {
         return <TestView />
       }
     }
 
-    mount(<Test />)
-      .find(TestView)
-      .simulate('click')
+    mount(<Test />).simulate('click')
 
     expect(spy).not.toHaveBeenCalled()
   })
@@ -1116,17 +1035,15 @@ describe.skip('intercepting actions', function() {
       }
     }
 
-    let wrapper = mount(
+    mount(
       <Parent>
         <Child />
       </Parent>
-    )
-
-    wrapper.find(ActionButton).simulate('click')
+    ).simulate('click')
   })
 })
 
-describe.skip('forks', function() {
+describe('forks', function() {
   it('nested presenters fork in the correct order', function() {
     class Top extends Presenter {
       setup(repo) {
@@ -1170,7 +1087,7 @@ describe.skip('forks', function() {
   })
 })
 
-describe.skip('::send', function() {
+describe('::send', function() {
   it('autobinds send', function() {
     expect.assertions(2)
 
@@ -1186,14 +1103,14 @@ describe.skip('::send', function() {
         }
       }
 
-      view = function({ send }) {
+      render() {
+        let send = this.send
+
         return <button onClick={() => send('test')}>Click me</button>
       }
     }
 
-    mount(<Test />)
-      .find('button')
-      .simulate('click')
+    mount(<Test />).simulate('click')
   })
 
   it('dispatches the action using the current repo if nothing else responds', function() {
@@ -1237,15 +1154,11 @@ describe.skip('::send', function() {
   })
 })
 
-describe.skip('::children', function() {
+describe('::children', function() {
   it('re-renders when it gets new children', function() {
-    let wrapper = mount(
-      <Presenter>
-        <span>1</span>
-      </Presenter>
-    )
+    let wrapper = mount(<Presenter children="1" />)
 
-    wrapper.setProps({ children: <span>2</span> })
+    wrapper.setProps({ children: '2' })
 
     expect(wrapper.text()).toEqual('2')
   })
@@ -1263,132 +1176,5 @@ describe.skip('::children', function() {
     wrapper.setProps({ children })
 
     expect(spy).toHaveBeenCalledTimes(1)
-  })
-})
-
-describe.skip('::modelWillUpdate', function() {
-  it('does not invoke on the first model calculation', () => {
-    let spy = jest.fn()
-
-    class Test extends Presenter {
-      getModel(props) {
-        return {
-          id: props.id
-        }
-      }
-
-      modelWillUpdate = spy
-    }
-
-    mount(<Test id="2" />)
-
-    expect(spy).not.toHaveBeenCalled()
-  })
-
-  it('is invoked before the new model is assigned', () => {
-    expect.assertions(2)
-
-    class Test extends Presenter {
-      getModel(props) {
-        return {
-          id: props.id
-        }
-      }
-
-      modelWillUpdate(repo, model) {
-        expect(this.model.id).toBe('2')
-        expect(model.id).toBe('3')
-      }
-    }
-
-    mount(<Test id="2" />).setProps({ id: '3' })
-  })
-
-  it('provides a patch of the difference', () => {
-    expect.assertions(1)
-
-    class Test extends Presenter {
-      getModel(props) {
-        return {
-          static: true,
-          dynamic: props.id
-        }
-      }
-
-      modelWillUpdate(repo, model, patch) {
-        expect(patch).toEqual({ dynamic: '3' })
-      }
-    }
-
-    mount(<Test id="2" />).setProps({ id: '3' })
-  })
-})
-
-describe.skip('::batching', function() {
-  it('bundles together repo actions when in batch mode', done => {
-    let repo = new Repo()
-
-    class Test extends Presenter {
-      getModel() {
-        return {
-          color: state => state.color
-        }
-      }
-
-      modelWillUpdate(repo, state, change) {
-        if (change.color === 'pink') {
-          done()
-        } else {
-          done(new Error('Expected color to be pink'))
-        }
-      }
-
-      render() {
-        return <p>{this.model.color}</p>
-      }
-    }
-
-    mount(<Test repo={repo} />)
-
-    repo.patch({ color: 'red' })
-    repo.patch({ color: 'blue' })
-    repo.patch({ color: 'pink' })
-  })
-
-  it('bundles together model calls in batch mode', done => {
-    let repo = new Repo()
-
-    class Test extends Presenter {
-      getModel() {
-        return {
-          color: new Observable(observer => {
-            observer.next('red')
-
-            setTimeout(function() {
-              observer.next('blue')
-              observer.next('pink')
-            })
-          })
-        }
-      }
-
-      modelWillUpdate(repo, state, { color }) {
-        if (color === 'pink') {
-          done()
-        } else {
-          done(new Error('Expected color to be pink instead of ' + color))
-        }
-      }
-
-      render() {
-        return <p>{this.model.color}</p>
-      }
-    }
-
-    let text = mount(<Test repo={repo} />).text()
-
-    if (text !== 'red') {
-      throw new Error('Expected initial text to be red instead of ' + text)
-    }
   })
 })

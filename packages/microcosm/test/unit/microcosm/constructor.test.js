@@ -1,16 +1,8 @@
 import Microcosm from 'microcosm'
 
 describe('Microcosm constructor', function() {
-  describe.skip('maxHistory option', function() {
-    it('controls history size', function() {
-      const repo = new Microcosm({ maxHistory: 5 })
-
-      expect(repo.history).toHaveProperty('limit', 5)
-    })
-  })
-
   describe('extending options', function() {
-    it.skip('extends custom defaults with Microcosm defaults', function() {
+    it('extends custom defaults with Microcosm defaults', function() {
       class Repo extends Microcosm {
         static defaults = {
           test: true
@@ -20,7 +12,7 @@ describe('Microcosm constructor', function() {
       let repo = new Repo()
 
       expect(repo.options).toHaveProperty('test', true)
-      expect(repo.options).toHaveProperty('batch', false)
+      expect(repo.options).toHaveProperty('debug', false)
     })
 
     it('extends custom defaults with passed arguments', function() {

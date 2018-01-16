@@ -64,17 +64,11 @@ export class ActionForm extends PureComponent {
   submit(event) {
     const { onSubmit, prepare, serializer, action } = this.props
 
-    console.assert(
-      this.form,
-      'ActionForm has no form reference and can not submit. This can happen',
-      'if submit() is called after the parent component has unmounted.'
-    )
-
     let params = prepare(serializer(this.form))
     let result = this.send(action, params)
 
     if (Observable.isObservable(result)) {
-      let subscriber = result.subscribe({
+      result.subscribe({
         start: this.onChange.bind(this, 'start', result),
         error: this.onChange.bind(this, 'error', result),
         next: this.onChange.bind(this, 'next', result),
@@ -98,14 +92,13 @@ ActionForm.contextTypes = {
 }
 
 ActionForm.defaultProps = {
-  action: null,
+  action: 'no-action',
   onSubmit: identity,
   onStart: identity,
   onNext: identity,
   onComplete: identity,
   onError: identity,
   onUnsubscribe: identity,
-  onNext: identity,
   prepare: identity,
   send: null,
   tag: 'form',

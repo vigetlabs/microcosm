@@ -25,7 +25,7 @@ describe('Microcosm::push', function() {
     expect(command).toHaveBeenCalledTimes(1)
   })
 
-  it('can push an action, resolving it into state', async () => {
+  it('can push an action, resolving it into state', () => {
     let repo = new Microcosm()
     let step = jest.fn(n => n)
 
@@ -35,7 +35,9 @@ describe('Microcosm::push', function() {
       },
       register() {
         return {
-          [step]: (count, n) => count + n
+          [step]: (count, n) => {
+            return count + n
+          }
         }
       }
     })
@@ -43,13 +45,10 @@ describe('Microcosm::push', function() {
     repo.push(step, 1)
     repo.push(step, 3)
 
-    await repo.history.wait()
-
-    expect(step).toHaveBeenCalledTimes(2)
     expect(repo).toHaveState('count', 4)
   })
 
-  it.skip('does not change if no action responds', () => {
+  it('does not change if no action responds', () => {
     const repo = new Microcosm()
     const spy = jest.fn()
 

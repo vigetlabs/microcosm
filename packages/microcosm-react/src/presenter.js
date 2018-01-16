@@ -1,28 +1,30 @@
-import { createElement, Fragment, PureComponent } from 'react'
-import { Microcosm, Observable, merge, tag } from 'microcosm'
+import { createElement, PureComponent } from 'react'
+import { Microcosm, Observable, tag } from 'microcosm'
 import { advice, noop } from './utilities'
-
-function install(presenter, mediator, repo) {
-  advice(Presenter, presenter, 'componentWillUpdate')
-  advice(Presenter, presenter, 'componentDidMount')
-
-  mediator.repo = presenter.getRepo(repo)
-
-  presenter.mediator = mediator
-  presenter.didFork = mediator.repo !== repo
-}
 
 function renderMediator() {
   return createElement(PresenterMediator, {
     repo: this.props.repo,
-    presenter: this
+    presenter: this,
+    __props: this.props,
+    __state: this.state
   })
 }
 
 export class Presenter extends PureComponent {
   constructor() {
     super(...arguments)
+
+    this.send = this.send.bind(this)
     this.state = {}
+
+    // Ensure key lifecycle methods are protected by first applying
+    // prototype behavior, thenany extended behavior
+    advice(Presenter, this, 'componentWillUpdate')
+    advice(Presenter, this, 'componentDidMount')
+
+    // Override the given render method so that the mediator can boot.
+    // The original render method gets called in the mediator
     this.render = renderMediator
   }
 
@@ -72,6 +74,7 @@ export class Presenter extends PureComponent {
   }
 
   componentWillUnmount() {
+    this.mediator.model.unsubscribe()
     this.teardown(this.repo, this.props, this.state)
 
     if (this.didFork) {
@@ -80,64 +83,11 @@ export class Presenter extends PureComponent {
   }
 
   render() {
-    return createElement(Fragment, {
-      children: this.props.children || null
-    })
-  }
-}
-
-class PresenterMediator extends PureComponent {
-  constructor() {
-    super(...arguments)
-
-    this.model = Observable.of({})
-    this.presenter = this.props.presenter
-
-    install(this.presenter, this, this.props.repo || this.context.repo)
-
-    this.state = {}
-    this.send = this.send.bind(this)
-  }
-
-  getChildContext() {
-    return {
-      repo: this.repo,
-      send: this.send,
-      parent: this
-    }
-  }
-
-  componentWillMount() {
-    this.presenter.setup(this.repo, this.presenter.props, this.presenter.state)
-    this.updateModel(this.presenter.props, this.presenter.state)
-  }
-
-  componentWillUnmount() {
-    this.model.unsubscribe()
-  }
-
-  render() {
-    return Object.getPrototypeOf(this.presenter).render.call(this.presenter)
-  }
-
-  updateModel(props, state) {
-    this.model.unsubscribe()
-
-    this.model = Observable.hash(
-      merge(
-        this.model.payload,
-        this.presenter.getModel(this.repo, props, state)
-      )
-    )
-
-    this.model.subscribe(this.setState.bind(this))
-
-    // TODO: Why is this necessary?
-    this.setState(this.model.payload)
+    return this.props.children || null
   }
 
   send(intent, ...params) {
-    let mediator = this
+    let mediator = this.mediator
     let taggedIntent = tag(intent)
 
     while (mediator) {
@@ -151,6 +101,50 @@ class PresenterMediator extends PureComponent {
     }
 
     return this.repo.push(taggedIntent, ...params)
+  }
+}
+
+class PresenterMediator extends PureComponent {
+  constructor() {
+    super(...arguments)
+
+    this.model = Observable.of({})
+    this.presenter = this.props.presenter
+
+    let prepo = this.props.repo || this.context.repo
+    this.repo = this.presenter.getRepo(prepo)
+
+    this.presenter.mediator = this
+    this.presenter.didFork = this.repo !== prepo
+
+    this.state = {}
+  }
+
+  getChildContext() {
+    return {
+      repo: this.repo,
+      send: this.presenter.send,
+      parent: this
+    }
+  }
+
+  componentWillMount() {
+    this.presenter.setup(this.repo, this.presenter.props, this.presenter.state)
+    this.updateModel(this.presenter.props, this.presenter.state)
+  }
+
+  render() {
+    return Object.getPrototypeOf(this.presenter).render.call(this.presenter)
+  }
+
+  updateModel(props, state) {
+    this.model.unsubscribe()
+
+    this.model = Observable.hash(
+      this.presenter.getModel(this.repo, props, state)
+    )
+
+    this.model.subscribe(this.setState.bind(this))
   }
 }
 

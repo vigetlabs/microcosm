@@ -28,7 +28,7 @@ describe('History::wait', function() {
     }
   })
 
-  it.skip('ignores cancelled actions', function() {
+  it('ignores cancelled actions', function() {
     const repo = new Microcosm({ maxHistory: Infinity })
 
     repo.push(delay)

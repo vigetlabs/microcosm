@@ -1,6 +1,6 @@
 import Microcosm from 'microcosm'
 
-describe.skip('Microcosm::release', function() {
+describe('Microcosm::release', function() {
   it('will not emit a change if state is shallowly equal', function() {
     const repo = new Microcosm()
     const identity = n => n
@@ -15,7 +15,7 @@ describe.skip('Microcosm::release', function() {
       }
     })
 
-    repo.subscribe(spy)
+    repo.answers.test.subscribe(spy)
 
     repo.push(identity, 0)
 
@@ -36,7 +36,7 @@ describe.skip('Microcosm::release', function() {
       }
     })
 
-    repo.on('change', spy)
+    repo.answers.test.subscribe(spy)
 
     repo.push(identity, 1)
 
@@ -59,9 +59,9 @@ describe.skip('Microcosm::release', function() {
       }
     })
 
-    repo.on('change', function() {
+    repo.answers.count.subscribe(() => {
       expect(repo.state.count).toBe(1)
-      expect(fork.state.count).toBe(repo.state.count)
+      expect(fork.state.count).toBe(1)
     })
 
     repo.push(step, 1)

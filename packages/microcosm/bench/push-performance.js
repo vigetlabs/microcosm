@@ -5,7 +5,7 @@
 
 'use strict'
 
-const { Microcosm } = require('../build')
+const { Microcosm, tag } = require('../build/min')
 
 const SIZES = [1000, 10000, 50000, 100000]
 
@@ -14,10 +14,7 @@ console.log('\nConducting push benchmark...\n')
 var results = SIZES.map(function(SIZE) {
   var repo = new Microcosm()
 
-  var action = function test() {}
-  action.toString = function() {
-    return 'test'
-  }
+  var action = tag(function test() {}, 'test')
 
   var Domain = {
     getInitialState: () => 0,

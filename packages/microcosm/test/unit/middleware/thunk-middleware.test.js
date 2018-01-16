@@ -9,9 +9,7 @@ describe('Thunk middleware', function() {
     expect(spy).toHaveBeenCalledWith(action, repo)
   })
 
-  // TODO: Is this an issue? next does not get called for prior "next"
-  // statuses
-  it.skip('passes a next update before completing', async () => {
+  it('passes a next update before completing', async () => {
     let repo = new Microcosm()
     let next = jest.fn()
 

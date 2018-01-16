@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Microcosm, Subject } from 'microcosm'
+import { Microcosm } from 'microcosm'
 import { ActionForm, Presenter } from 'microcosm-react'
 import { mount } from 'enzyme'
 
@@ -99,7 +99,7 @@ describe('context', function() {
       </Presenter>
     )
 
-    el.find('form').simulate('submit')
+    el.simulate('submit')
 
     expect(onComplete).toHaveBeenCalledWith({}, { origin: el.instance().repo })
   })

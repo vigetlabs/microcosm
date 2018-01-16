@@ -27,7 +27,7 @@ describe('Domain::register', function() {
       getInitialState: () => 0
     })
 
-    expect(repo).toHaveState('test', 0)
+    expect(repo.state.test).toBe(0)
   })
 
   it('counts', function() {
@@ -61,6 +61,6 @@ describe('Domain::register', function() {
 
     await repo.push('test')
 
-    expect(repo).toHaveState('test', 'test')
+    expect(repo.state.test).toBe('test')
   })
 })

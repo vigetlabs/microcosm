@@ -1,22 +1,21 @@
 // @flow
 
+import { tag } from './tag'
 import { Subject } from './subject'
-import { Warehouse } from './warehouse'
 import { Tree } from './data'
 import { getSymbol } from './symbols'
 import coroutine from './coroutine'
 
 class History {
   constructor(options) {
-    this._active = new Set()
-    this._stream = new Tree()
-    this._db = new Warehouse()
-
     this.root = null
     this.head = null
+    this.updates = new Subject()
 
-    this.debug = Boolean(options ? options.debug : false)
-    this.updates = new Subject('updater')
+    this._active = new Set()
+    this._stream = new Tree()
+
+    this._debug = options ? options.debug : false
   }
 
   get size() {
@@ -27,42 +26,24 @@ class History {
     return Promise.all(this)
   }
 
-  stash(action, repo, payload) {
-    this._db.set(action, repo, payload)
-  }
-
-  recall(action, repo) {
-    return this._db.get(this._stream.before(action), repo)
-  }
-
-  previous(action) {
-    return this._stream.before(action)
-  }
-
-  next(action) {
-    return this._stream.after(action)
-  }
-
-  current(repo) {
-    return this._db.get(this.head, repo)
-  }
-
   archive() {
-    while (this.root && this.root.closed && this.root !== this.head) {
+    while (this.size > 1 && this.root.closed) {
       let last = this.root
       let next = this._stream.after(this.root)
 
       if (next && next.closed) {
+        // Delete the action from the active list to prevent
+        // dispatch
         this._active.delete(last)
-        this.remove(last, true)
+        this.remove(last)
       } else {
         break
       }
     }
   }
 
-  append(command: string | Command, params, origin: *): Subject {
-    let action = new Subject(command, { origin })
+  append(origin, command, ...params) {
+    let action = new Subject(params[0], { tag: '' + tag(command), origin })
 
     this._active.add(action)
 
@@ -74,15 +55,26 @@ class History {
 
     this.head = action
 
-    action.every(this.updates.next)
+    this.updates.next(action)
 
-    coroutine(action, command, params, origin)
+    if (this._debug === false) {
+      action.subscribe({
+        cleanup: this.archive.bind(this, action)
+      })
+    }
 
-    if (this.debug === false) {
-      action.every(this.archive.bind(this))
+    try {
+      coroutine(action, command, params, origin)
+    } catch (x) {
+      action.error(x)
+      throw x
     }
 
     return action
+  }
+
+  before(action) {
+    return this._stream.before(action)
   }
 
   after(action) {
@@ -97,7 +89,7 @@ class History {
     let isActive = this.isActive(action)
 
     if (this.head === action) {
-      this.head = this._stream.before(action)
+      this.head = this.before(action)
     }
 
     let base = this._stream.remove(action)
@@ -106,21 +98,21 @@ class History {
       this.root = base
     }
 
-    this._db.delete(action)
-    this._active.delete(action)
-
     if (isActive && base) {
+      this._active.delete(action)
       this.updates.next(base)
     }
   }
 
-  toggle(action) {
-    if (this._db.has(action)) {
-      action.toggle()
+  isActive(action) {
+    return !action.disabled && this._active.has(action)
+  }
 
-      if (this.isActive(action)) {
-        this.updates.next(action)
-      }
+  toggle(action) {
+    action.toggle()
+
+    if (this._active.has(action)) {
+      this.updates.next(action)
     }
   }
 
@@ -129,16 +121,9 @@ class History {
       throw new Error(`Unable to checkout ${action} action`)
     }
 
-    let path = this._stream.select(action)
-
     this.head = action
-    this._active = new Set(path)
-
-    this.updates.next(path[0])
-  }
-
-  isActive(action) {
-    return !action.disabled && this._active.has(action)
+    this._active = new Set(this._stream.select(action))
+    this.updates.next(action)
   }
 
   [getSymbol('iterator')]() {
@@ -149,9 +134,9 @@ class History {
     return {
       head: this.head ? this.head.id : null,
       root: this.root ? this.root.id : null,
-      size: this.size,
       list: Array.from(this._active),
-      tree: this._stream.toJS(this.root)
+      tree: this._stream.toJS(this.root),
+      size: this.size
     }
   }
 }

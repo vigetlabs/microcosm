@@ -9,20 +9,19 @@ const FALLBACK = '_action'
  * Uniquely tag a function. This is used to identify actions.
  */
 export function tag(fn: string | Command, name?: string): Command {
+  console.assert(fn != undefined, `Can not tag action. Value is ${fn}.`)
+
   if (typeof fn !== 'function') {
-    return String(fn)
+    return '' + fn
   }
 
   if (fn.hasOwnProperty('toString')) {
     return fn
   }
 
-  const symbol = name || (fn.name || FALLBACK) + '-' + uid++
+  let symbol = name || (fn.name || FALLBACK) + '-' + uid++
 
-  // Cast fn to keep Flow happy
-  let cast: Tagged = fn
+  fn.toString = () => symbol
 
-  cast.toString = () => symbol
-
-  return cast
+  return fn
 }

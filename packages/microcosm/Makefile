@@ -9,12 +9,14 @@ strict: build/package.json
 
 min: build/package.json
 	@ ./bin/bundle --out=build/min --minify
+	@ cp build/package.json build/min
 
 umd: build/package.json
 	@ ./bin/bundle --out=build/umd --format=umd
 
 es: build/package.json
 	@ ./bin/bundle --out=build/es --format=es
+	@ cp build/package.json build/es
 
 docs:
 	@ mkdir -p build
@@ -31,11 +33,10 @@ prerelease: clean all
 	@ npm publish build --tag beta
 
 bench: min
-	@ NODE_ENV=production node --expose-gc bench/history-performance
+	#	@ NODE_ENV=production node --expose-gc bench/history-performance
 	# @ NODE_ENV=production node --expose-gc bench/dispatch-performance
-	# @ NODE_ENV=production node --expose-gc bench/push-performance
+	@ NODE_ENV=production node --expose-gc bench/push-performance
 	# @ NODE_ENV=production node --expose-gc bench/fork-performance
-	# @ NODE_ENV=production node --expose-gc bench/compare-tree-performance
 
 clean:
 	@ rm -rf build/*

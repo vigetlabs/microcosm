@@ -67,7 +67,7 @@ export class ActionButton extends PureComponent {
     let result = this.send(action, params)
 
     if (Observable.isObservable(result)) {
-      let subscriber = result.subscribe({
+      result.subscribe({
         start: this.onChange.bind(this, 'start', result),
         error: this.onChange.bind(this, 'error', result),
         next: this.onChange.bind(this, 'next', result),
@@ -91,7 +91,7 @@ ActionButton.contextTypes = {
 }
 
 ActionButton.defaultProps = {
-  action: null,
+  action: 'no-action',
   onClick: identity,
   onStart: identity,
   onNext: identity,

@@ -1,11 +1,10 @@
 import Microcosm from 'microcosm'
 
 describe('Reconciliation', function() {
-  const action = n => n
-
   it('only iterates over the point of reconciliation', function() {
-    const repo = new Microcosm({ maxHistory: Infinity })
+    const repo = new Microcosm({ debug: true })
     const handler = jest.fn((a, b) => a + b)
+    const action = () => action => {}
 
     repo.addDomain('count', {
       getInitialState() {
@@ -16,28 +15,32 @@ describe('Reconciliation', function() {
       }
     })
 
-    let one = repo.append(action)
-    let two = repo.append(action)
-    let three = repo.append(action)
+    let one = repo.push(action)
+    let two = repo.push(action)
+    let three = repo.push(action)
 
     expect(repo).toHaveState('count', 0)
 
-    one.resolve(1)
+    one.next(1)
+    one.complete()
 
     expect(repo).toHaveState('count', 1)
 
-    two.resolve(2)
+    two.next(2)
+    two.complete()
     expect(repo).toHaveState('count', 3)
 
-    three.resolve(3)
+    three.next(3)
+    three.complete()
     expect(repo).toHaveState('count', 6)
 
     expect(handler).toHaveBeenCalledTimes(3)
   })
 
   it('reapplies future actions if a prior action updates', function() {
-    const repo = new Microcosm({ maxHistory: Infinity })
+    const repo = new Microcosm({ debug: true })
     const handler = jest.fn((a, b) => a + b)
+    const action = () => action => {}
 
     repo.addDomain('count', {
       getInitialState() {
@@ -48,47 +51,37 @@ describe('Reconciliation', function() {
       }
     })
 
-    let one = repo.append(action)
-    let two = repo.append(action)
-    let three = repo.append(action)
+    let one = repo.push(action)
+    let two = repo.push(action)
+    let three = repo.push(action)
 
     expect(repo).toHaveState('count', 0)
 
-    three.resolve(3)
+    three.next(3)
+    three.complete()
     expect(handler).toHaveBeenCalledTimes(1)
     expect(repo).toHaveState('count', 3)
 
-    two.resolve(2)
+    two.next(2)
+    two.complete()
     expect(handler).toHaveBeenCalledTimes(3)
     expect(repo).toHaveState('count', 5)
 
-    one.resolve(1)
+    one.next(1)
+    one.complete()
     expect(handler).toHaveBeenCalledTimes(6)
     expect(repo).toHaveState('count', 6)
   })
 
-  it.dev('archived actions are removed from the archive', function() {
-    const repo = new Microcosm()
-
-    let one = repo.append('one')
-    let two = repo.append('two')
-    let three = repo.append('three')
-
-    three.resolve()
-    two.resolve()
-    one.resolve()
-
-    // Recalling one will find nothing, so the repo returns initial state
-    expect(repo._recall(one)).toEqual(repo.getInitialState())
-
-    // Two is in here because it is the parent of three, which we need as a "base state"
-    expect(repo._recall(two)).toBeDefined()
-    expect(repo._recall(three)).toBeDefined()
-  })
-
   it('pushing actions while the root is "open" does not result in extra invocations', function() {
-    const repo = new Microcosm({ maxHistory: Infinity })
+    const repo = new Microcosm({ debug: true })
     const handler = jest.fn((a, b) => a + b)
+    const action = (payload, close) => action => {
+      if (close) {
+        action.next(payload)
+        action.complete()
+      }
+    }
 
     repo.addDomain('count', {
       getInitialState() {
@@ -99,10 +92,10 @@ describe('Reconciliation', function() {
       }
     })
 
-    repo.append(action)
-    repo.append(action).resolve(1)
-    repo.append(action).resolve(2)
-    repo.append(action).resolve(3)
+    repo.push(action, false)
+    repo.push(action, 1, true)
+    repo.push(action, 2, true)
+    repo.push(action, 3, true)
 
     expect(repo).toHaveState('count', 6)
     expect(handler).toHaveBeenCalledTimes(3)

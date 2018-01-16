@@ -2,7 +2,7 @@
  * @flow
  */
 
-import { Observable, observerHash } from './observable'
+import { Observable } from './observable'
 import { getSymbol } from './symbols'
 
 /**
@@ -36,18 +36,17 @@ function isGeneratorFn(value: any): boolean {
 }
 
 function asGenerator(action: Subject, iterator: GeneratorAction) {
-  function step(payload) {
-    let next = iterator.next(payload)
+  function step() {
+    let next = iterator.next(action.payload)
 
     if (next.done) {
-      action.next(payload)
       action.complete()
     } else {
-      let subject = observerHash(next.value)
+      let subject = Observable.hash(next.value)
 
       let tracker = subject.subscribe({
-        // TODO: next: action.next should work here. Why doesn't it?
-        complete: () => step(subject.payload),
+        next: action.next,
+        complete: step,
         error: action.error,
         unsubscribe: action.unsubscribe
       })

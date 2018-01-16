@@ -1,4 +1,4 @@
-import { Observable } from 'microcosm'
+import { Observable, Subject } from 'microcosm'
 
 describe('Observable', function() {
   describe('.wrap', async () => {
@@ -81,7 +81,9 @@ describe('Observable', function() {
       let next = jest.fn()
       let complete = jest.fn()
 
-      let hash = Observable.hash({ key: Observable.of(1, 1, 1) })
+      let hash = Observable.hash({
+        key: Observable.of(1, 1, 1)
+      })
 
       hash.subscribe({
         next,
@@ -93,6 +95,28 @@ describe('Observable', function() {
       expect(next).toHaveBeenCalledWith({ key: 1 })
       expect(next).toHaveBeenCalledTimes(1)
       expect(complete).toHaveBeenCalledTimes(1)
+    })
+
+    it('works on subjects', async () => {
+      let next = jest.fn()
+      let complete = jest.fn()
+
+      let subject = new Subject()
+
+      subject.next(1)
+
+      let hash = Observable.hash({ key: subject })
+
+      hash.subscribe({ next, complete })
+
+      subject.next(2)
+      subject.complete()
+
+      await hash
+
+      expect(next).toHaveBeenCalledWith({ key: 1 })
+      expect(next).toHaveBeenCalledWith({ key: 2 })
+      expect(complete).toHaveBeenCalled()
     })
   })
 })

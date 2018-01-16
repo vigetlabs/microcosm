@@ -2,8 +2,7 @@ import Microcosm from 'microcosm'
 
 describe('Mutations', function() {
   it('writes to repo state', function() {
-    const identity = function() {}
-    const repo = new Microcosm({ maxHistory: Infinity })
+    const repo = new Microcosm({ debug: true })
 
     repo.addDomain('test', {
       getInitialState() {
@@ -15,12 +14,12 @@ describe('Mutations', function() {
       },
       register() {
         return {
-          [identity]: this.mutate
+          test: this.mutate
         }
       }
     })
 
-    repo.push(identity, true)
+    repo.push('test', true)
 
     expect(repo).toHaveState('test.key', true)
   })

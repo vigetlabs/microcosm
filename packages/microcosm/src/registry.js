@@ -1,7 +1,6 @@
 // @flow
 
 import { EMPTY_ARRAY, EMPTY_OBJECT } from './empty'
-import { COMPLETE } from './lifecycle'
 
 function wrap(value: *): *[] {
   return Array.isArray(value) ? value : [value]
@@ -13,64 +12,41 @@ export function spawn(target: any, options: ?Object, repo: *) {
     : Object.create(target)
 }
 
-export function buildRegistry(entity: *): Object {
-  return entity.register ? entity.register() : EMPTY_OBJECT
-}
-
-export function getHandlers(pool: Object, action: Subject): *[] {
-  let entry = pool[action.tag]
-
-  if (entry) {
-    if (action.status === COMPLETE) {
-      if (Array.isArray(entry) || typeof entry === 'function') {
-        return wrap(entry)
-      }
-    }
-
-    if (entry.hasOwnProperty(action.status)) {
-      return wrap(entry[action.status])
-    }
+function buildRegistry(entity: *, tag: string): Object {
+  if (!entity.register) {
+    return EMPTY_OBJECT
   }
 
-  return EMPTY_ARRAY
-}
+  let handlers = entity.register()[tag] || EMPTY_OBJECT
 
-export function cache(entity) {
-  let registry = new Map()
-
-  return action => {
-    if (registry.has(action.tag) === false) {
-      registry.set(action.tag, buildRegistry(entity))
-    }
-
-    return getHandlers(registry.get(action.tag), action)
+  if (Array.isArray(handlers) || typeof handlers === 'function') {
+    return { complete: handlers }
   }
+
+  return handlers
 }
 
-export function map(repo, entity) {
-  let registry = cache(entity)
-
-  return action => {
-    let handlers = registry(action)
-
-    for (var i = 0, len = handlers.length; i < len; i++) {
-      handlers[i].call(entity, repo, action.payload)
-    }
+export class Cache {
+  constructor(entity, seed) {
+    this._entity = entity
+    this._entries = seed || {}
   }
-}
 
-export function teardown(repo, entity, options) {
-  return () => {
-    if (entity.teardown) {
-      entity.teardown(repo, options)
+  register(action) {
+    let { tag } = action.meta
+
+    if (!this._entries.hasOwnProperty(tag)) {
+      this._entries[tag] = buildRegistry(this._entity, tag)
     }
+
+    return this._entries[tag]
   }
-}
 
-export function setup(repo, entity, options) {
-  return () => {
-    if (entity.setup) {
-      entity.setup(repo, options)
-    }
+  respondsTo(action) {
+    return this.register(action) !== EMPTY_OBJECT
+  }
+
+  resolve(action) {
+    return wrap(this.register(action)[action.meta.status] || EMPTY_ARRAY)
   }
 }

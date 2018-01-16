@@ -122,7 +122,7 @@ describe('Effect::register', function() {
     it('listens to start', async () => {
       let repo = new Microcosm()
       let handler = jest.fn()
-      let action = () => {}
+      let action = () => action => setTimeout(action.complete, 0)
 
       repo.addEffect({
         register() {
@@ -137,7 +137,7 @@ describe('Effect::register', function() {
       await repo.push(action)
 
       expect(handler).toHaveBeenCalledTimes(1)
-      expect(handler).toHaveBeenCalledWith(repo, null)
+      expect(handler).toHaveBeenCalledWith(repo, undefined)
     })
 
     it('listens to next', async () => {
@@ -212,27 +212,6 @@ describe('Effect::register', function() {
       }
 
       expect(handler).toHaveBeenCalledWith(repo, true)
-      expect(handler).toHaveBeenCalledTimes(1)
-    })
-
-    it('listens to unsubscribe', async () => {
-      let repo = new Microcosm()
-      let handler = jest.fn()
-      let action = () => action => setTimeout(action.error)
-
-      repo.addEffect({
-        register() {
-          return {
-            [action]: {
-              unsubscribe: handler
-            }
-          }
-        }
-      })
-
-      repo.push(action).unsubscribe()
-
-      expect(handler).toHaveBeenCalledWith(repo, null)
       expect(handler).toHaveBeenCalledTimes(1)
     })
   })

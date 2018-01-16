@@ -1,115 +1,101 @@
-// @flow
-import { clone, merge } from './data'
-import { spawn, setup, teardown, getHandlers, buildRegistry } from './registry'
-import { RESET, PATCH, COMPLETE } from './lifecycle'
+import { Subject } from './subject'
+import { merge } from './data'
+import { spawn, Cache } from './registry'
+import { RESET, PATCH, INITIAL_STATE } from './lifecycle'
 
-type DomainMap = { key: Domain }
+export function domainEngine(repo, key, entity, domainOptions) {
+  let options = merge(repo.options, entity.defaults, { key }, domainOptions)
+  let domain = spawn(entity, options, repo)
 
-class DomainEngine {
-  _domains: DomainMap
+  let start = domain.getInitialState ? domain.getInitialState() : undefined
+  let ledger = new Map([[INITIAL_STATE, start]])
+  let answer = new Subject(start)
 
-  constructor(repo) {
-    this._domains = {}
-    this._initialState = {}
-  }
-
-  getInitialState() {
-    return this._initialState
-  }
-
-  rollforward(repo, action) {
-    while (action) {
-      let last = repo.history.recall(action, repo) || this.initialState
-      let next = last
-
-      if (action.disabled === false) {
-        next = this.dispatch(repo, action, last)
+  let registry = new Cache(domain, {
+    [RESET]: {
+      complete: (state, data, meta) => {
+        return repo === meta.origin ? patch(key, start, data) : state
       }
-
-      repo.history.stash(action, repo, next)
-
-      action = repo.history.after(action)
+    },
+    [PATCH]: {
+      complete: (state, data, meta) => {
+        return repo === meta.origin ? patch(key, state, data) : state
+      }
     }
-  }
+  })
 
-  add(repo: *, key: string, entity: *, domainOptions?: Object) {
-    let options = merge(repo.options, entity.defaults, { key }, domainOptions)
-    let domain: Domain = spawn(entity, options, repo)
+  // In order to prevent extra overhead, only subscribe to actions within
+  // this domain's registry
+  let tracker = repo.history.updates.subscribe(action => {
+    if (registry.respondsTo(action) === false) {
+      return null
+    }
 
-    this._domains[key] = domain
+    let dispatcher = () => {
+      rollforward(answer, ledger, registry, repo, domain, action)
+    }
 
-    this._initialState[key] = domain.getInitialState
-      ? domain.getInitialState()
-      : null
-
-    repo.subscribe({
-      start: setup(repo, domain, options),
-      complete: teardown(repo, domain, options)
+    return action.subscribe({
+      start: dispatcher,
+      next: dispatcher,
+      complete: dispatcher,
+      error: dispatcher,
+      unsubscribe: dispatcher
     })
+  })
 
-    return domain
-  }
+  repo.subscribe({
+    start() {
+      if (domain.setup) {
+        domain.setup(repo, options)
+      }
+    },
+    cleanup() {
+      tracker.unsubscribe()
 
-  serialize(state) {
-    let next = {}
-
-    for (let key in this._domains) {
-      let domain = this._domains[key]
-
-      if ('serialize' in domain) {
-        next[key] = domain.serialize(state[key])
+      if (domain.teardown) {
+        domain.teardown(repo, options)
       }
     }
+  })
 
-    return next
-  }
-
-  dispatch(repo: *, action: Subject, state: Object) {
-    if (action.meta.origin === repo && action.status === COMPLETE) {
-      if (action.tag === String(RESET)) {
-        return patch(this._domains, action, this._initialState)
-      }
-
-      if (action.tag === String(PATCH)) {
-        return patch(this._domains, action, state)
-      }
-    }
-
-    for (let key in this._domains) {
-      let domain = this._domains[key]
-      let handlers = getHandlers(buildRegistry(domain), action)
-
-      if (key in state === false) {
-        state[key] = this._initialState[key]
-      }
-
-      for (let i = 0; i < handlers.length; i++) {
-        state[key] = handlers[i].call(domain, state[key], action.payload)
-      }
-    }
-
-    return state
-  }
+  return { domain, answer }
 }
 
-function patch(domains, action, state) {
-  let { data, deserialize } = action.payload
+function rollforward(answer, ledger, registry, repo, domain, action) {
+  let prior = repo.history.before(action)
+  let state = ledger.has(prior) ? ledger.get(prior) : ledger.get(INITIAL_STATE)
 
-  let next = clone(state)
+  loop: while (action) {
+    let next = state
 
-  for (var key in domains) {
-    let domain = domains[key]
+    if (!action.disabled) {
+      let handlers = registry.resolve(action)
 
-    if (key in data) {
-      if (deserialize && 'deserialize' in domain) {
-        next[key] = domain.deserialize(data[key])
-      } else {
-        next[key] = data[key]
+      for (var i = 0, len = handlers.length; i < len; i++) {
+        next = handlers[i].call(domain, next, action.payload, action.meta)
+      }
+
+      if (next === state) {
+        break loop
       }
     }
+
+    ledger.set(action, next)
+    action = repo.history.after(action)
+    state = next
   }
 
-  return next
+  answer.next(state)
 }
 
-export default DomainEngine
+function patch(key, start, payload, repo) {
+  let { deserialize, data } = payload
+
+  let value = data[key] === undefined ? start : data[key]
+  if (deserialize && this.deserialize) {
+    return this.deserialize(value)
+  }
+
+  return value
+}
