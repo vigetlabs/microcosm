@@ -1,13 +1,13 @@
 import React from 'react'
 import data from '../data/index.json'
-import { Graphic, SideNav, ToggleContainer } from '../components'
+import { Graphic, SideNav, ToggleContainer, MainContent } from '../components'
 
 export default class IndexPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       currentSection: 0,
-      graphicsMap: [],
+      //graphicsMap: [],
       microcosmView: true,
       numSections: Object.keys(data)
     }
@@ -27,21 +27,21 @@ export default class IndexPage extends React.Component {
       threshold: this.intersectionThreshold
     }
 
-    this.setGraphicsMap()
+    //this.setGraphicsMap()
   }
 
-  setGraphicsMap() {
-    let graphicsMap = [].slice.call(this.graphics).reduce((map, graphic) => {
-      map.push({
-        num: parseInt(graphic.dataset.section),
-        elem: graphic
-      })
+  // setGraphicsMap() {
+  //   let graphicsMap = [].slice.call(this.graphics).reduce((map, graphic) => {
+  //     map.push({
+  //       num: parseInt(graphic.dataset.section),
+  //       elem: graphic
+  //     })
 
-      return map
-    }, [])
+  //     return map
+  //   }, [])
 
-    this.setState({ graphicsMap })
-  }
+  //   this.setState({ graphicsMap })
+  // }
 
   beginObserve() {
     //create new Observer instance
@@ -88,10 +88,10 @@ export default class IndexPage extends React.Component {
 
     return (
       <div className="wrapper">
-        <SideNav
+        {/* <SideNav
           currentSection={this.state.currentSection}
           graphics={this.state.graphicsMap}
-        />
+        /> */}
 
         <section className="section">
           {!bookend ? (
@@ -112,9 +112,9 @@ export default class IndexPage extends React.Component {
                   In {microcosmView ? 'Microcosm' : 'the browser'}
                 </h3>
               ) : null}
-              <p
-                className={'section__content__text ' + bookendClass}
-                dangerouslySetInnerHTML={{ __html: text }}
+              <MainContent
+                bookendClass={bookendClass}
+                text={text}
               />
             </div>
 
