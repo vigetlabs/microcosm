@@ -21,10 +21,9 @@ export default class IndexPage extends React.Component {
   setVars() {
     this.body = document.body
     this.graphics = document.querySelectorAll('[data-module="ObserveGraphic"]')
-    this.intersectionThreshold = 1.0
     this.observeOptions = {
-      rootMargin: '0px 0px 0px',
-      threshold: this.intersectionThreshold
+      rootMargin: '-76px 0px -145px', //include height of nav and footer
+      threshold: [0.33, 0.66, 1]
     }
 
     //this.setGraphicsMap()
@@ -58,14 +57,38 @@ export default class IndexPage extends React.Component {
 
   onIntersection = observed => {
     let entry = observed[0]
-    let section = parseInt(entry.target.dataset.section)
-    let isIntersecting = entry.intersectionRatio >= this.intersectionThreshold
+    let targetEl = entry.target
+    let section = parseInt(targetEl.dataset.section)
+    let intersectionRatio = entry.intersectionRatio
     let notAlreadyVisible = section !== this.state.currentSection
 
-    if (isIntersecting && notAlreadyVisible) {
-      this.changeBgColor(this.state.currentSection, section)
-      this.setState({ currentSection: section })
+    if (intersectionRatio === 1 && notAlreadyVisible) {
+      this.changeSection(section)
     }
+
+    this.fadeGraphic(intersectionRatio, targetEl)
+  }
+
+  fadeGraphic(intersectionRatio, el) {
+    switch (true) {
+      case intersectionRatio < 0.33:
+        el.classList.add('-extreme-fade')
+        el.classList.remove('-slight-fade')
+        break
+
+      case intersectionRatio < 0.66:
+        el.classList.add('-slight-fade')
+        el.classList.remove('-no-fade')
+        break
+
+      default:
+        el.classList.add('-no-fade')
+    }
+  }
+
+  changeSection(section) {
+    this.changeBgColor(this.state.currentSection, section)
+    this.setState({ currentSection: section })
   }
 
   changeBgColor(oldSection, newSection) {

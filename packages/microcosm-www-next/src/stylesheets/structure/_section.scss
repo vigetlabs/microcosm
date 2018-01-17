@@ -156,7 +156,25 @@ $section-top-padding-desktop: $nav-height + 110px;
   margin: 0 auto 80vh;
   max-height: 600px;
   max-width: 600px;
+  opacity: 0.33;
   position: relative;
+  transition: opacity 0.7s;
+
+  &:first-child {
+    opacity: 1;
+  }
+
+  &.-extreme-fade {
+    opacity: 0.33;
+  }
+
+  &.-slight-fade {
+    opacity: 0.66;
+  }
+
+  &.-no-fade {
+    opacity: 1;
+  }
 
   @include breakpoint(large-desktop-up) {
     margin-bottom: 30vh;
