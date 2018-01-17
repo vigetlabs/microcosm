@@ -83,10 +83,13 @@ export class Subject {
     let observer = genObserver(...arguments)
 
     if (this.errored) {
+      observer.start(this.payload)
       observer.error(this.payload)
     } else if (this.cancelled) {
+      observer.start(this.payload)
       observer.unsubscribe(this.payload)
     } else if (this.closed) {
+      observer.start(this.payload)
       observer.next(this.payload)
       observer.complete()
     } else {

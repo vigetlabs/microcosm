@@ -9,7 +9,9 @@ export function domainEngine(repo, key, entity, domainOptions) {
 
   let start = domain.getInitialState ? domain.getInitialState() : undefined
   let ledger = new Map([[INITIAL_STATE, start]])
-  let answer = new Subject(start)
+  let answer = new Subject()
+
+  answer.next(start)
 
   let registry = new Cache(domain, {
     [RESET]: {

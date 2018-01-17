@@ -15,7 +15,7 @@ describe('callbacks', function() {
 
     form.simulate('submit')
 
-    expect(onComplete).toHaveBeenCalledWith(true, { origin: repo })
+    expect(onComplete).toHaveBeenCalledWith(true, repo.history.head.meta)
   })
 
   it('executes onError when that action fails', function() {
@@ -26,7 +26,7 @@ describe('callbacks', function() {
 
     form.simulate('submit')
 
-    expect(onError).toHaveBeenCalledWith('bad', { origin: repo })
+    expect(onError).toHaveBeenCalledWith('bad', repo.history.head.meta)
   })
 
   it('executes onStart when that action opens', function() {
@@ -40,7 +40,7 @@ describe('callbacks', function() {
 
     form.simulate('submit')
 
-    expect(onStart).toHaveBeenCalledWith('open', { origin: repo })
+    expect(onStart).toHaveBeenCalledWith('open', repo.history.head.meta)
   })
 
   it('executes onUpdate when that action sends an update', function() {
@@ -55,7 +55,7 @@ describe('callbacks', function() {
 
     action.next('loading')
 
-    expect(onNext).toHaveBeenCalledWith('loading', { origin: repo })
+    expect(onNext).toHaveBeenCalledWith('loading', repo.history.head.meta)
   })
 
   it('does not execute callbacks if not given an action', function() {
@@ -84,24 +84,25 @@ describe('callbacks', function() {
 
     action.complete()
 
-    expect(action.status).toBe('complete')
+    expect(action.meta.status).toBe('complete')
     expect(onComplete).not.toHaveBeenCalled()
   })
 })
 
 describe('context', function() {
   it('inherits send from context', function() {
+    let repo = new Microcosm()
     let onComplete = jest.fn()
 
     let el = mount(
-      <Presenter>
+      <Presenter repo={repo}>
         <ActionForm action="test" onComplete={onComplete} />
       </Presenter>
     )
 
     el.simulate('submit')
 
-    expect(onComplete).toHaveBeenCalledWith({}, { origin: el.instance().repo })
+    expect(onComplete).toHaveBeenCalledWith({}, repo.history.head.meta)
   })
 
   it('send as a prop overrides context', function() {
@@ -117,7 +118,7 @@ describe('context', function() {
 
     el.find('form').simulate('submit')
 
-    expect(onComplete).toHaveBeenCalledWith('from-prop', { origin: repo })
+    expect(onComplete).toHaveBeenCalledWith('from-prop', repo.history.head.meta)
   })
 })
 
@@ -133,7 +134,7 @@ describe('manual operation', function() {
 
     form.instance().submit()
 
-    expect(onComplete).toHaveBeenCalledWith(true, { origin: repo })
+    expect(onComplete).toHaveBeenCalledWith(true, repo.history.head.meta)
   })
 
   it('can pass in send manually', function() {

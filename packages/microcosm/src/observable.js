@@ -185,6 +185,8 @@ export class Observable {
     let payload = Array.isArray(obj) ? [] : {}
     let jobs = keys.length
 
+    subject.next(payload)
+
     function complete() {
       if (--jobs <= 0) {
         subject.complete()

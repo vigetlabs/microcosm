@@ -1,5 +1,5 @@
 import React from 'react'
-import { Microcosm, patch } from 'microcosm'
+import { Microcosm, Observable, patch } from 'microcosm'
 import { Presenter, ActionButton, withSend } from 'microcosm-react'
 import { mount } from 'enzyme'
 
@@ -38,7 +38,7 @@ describe('::getModel', function() {
     class MyPresenter extends Presenter {
       getModel(repo) {
         return {
-          color: repo.watch('color')
+          color: repo.answers.color
         }
       }
       render() {
@@ -109,7 +109,12 @@ describe('::getModel', function() {
       class Namer extends Presenter {
         getModel(repo, { prefix }) {
           return {
-            name: repo.watch('name', name => prefix + ' ' + name)
+            // TODO: We should add Observable.map
+            name: new Observable(observer => {
+              return repo.answers.name.subscribe(name => {
+                observer.next(prefix + ' ' + name)
+              })
+            })
           }
         }
         render() {
@@ -208,7 +213,7 @@ describe('::setup', function() {
 
     class MyPresenter extends Presenter {
       setup() {
-        expect(this.model).toEqual(undefined)
+        expect(this.model).toEqual({})
       }
       getModel() {
         return { foo: 'bar' }
@@ -244,7 +249,7 @@ describe('::setup', function() {
 
       getModel(repo) {
         return {
-          prop: repo.watch('prop')
+          prop: repo.answers.prop
         }
       }
 
@@ -301,7 +306,7 @@ describe('::ready', function() {
 
       getModel(repo) {
         return {
-          test: repo.watch('test')
+          test: repo.answers.test
         }
       }
     }
@@ -412,7 +417,7 @@ describe('::teardown', function() {
     let wrapper = mount(<Test repo={repo} />)
 
     wrapper.unmount()
-    repo.shutdown()
+    repo.complete()
 
     expect(spy).toHaveBeenCalledTimes(1)
   })
@@ -436,17 +441,21 @@ describe('::teardown', function() {
   })
 
   it('unsubscribes from an unforked repo', function() {
-    let spy = jest.fn()
     let repo = new Microcosm()
+    let renders = 0
 
     class Test extends Presenter {
       getModel() {
         return {
-          test: repo.watch('test', spy)
+          test: repo.answers.test
         }
       }
       getRepo(repo) {
         return repo
+      }
+      render() {
+        renders += 1
+        return <p>Test</p>
       }
     }
 
@@ -457,23 +466,32 @@ describe('::teardown', function() {
     })
 
     // Once: for the initial calculation
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(renders).toBe(1)
   })
 
   it('changes during teardown do not cause a recalculation', function() {
-    let spy = jest.fn(value => value)
+    let renders = 0
 
     class Test extends Presenter {
-      getModel(repo) {
-        return { test: repo.watch('test', spy) }
-      }
-      teardown(repo) {
+      setup(repo) {
         repo.addDomain('test', {
           getInitialState: () => true
         })
       }
-      getRepo(repo) {
-        return repo
+
+      getModel(repo) {
+        return {
+          test: repo.answers.test
+        }
+      }
+
+      teardown(repo) {
+        repo.push(patch, { test: false })
+      }
+
+      render() {
+        renders += 1
+        return <p>Test</p>
       }
     }
 
@@ -482,7 +500,7 @@ describe('::teardown', function() {
     mount(<Test repo={repo} />).unmount()
 
     // Once: for the initial calculation
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(renders).toBe(1)
   })
 })
 
@@ -495,7 +513,7 @@ describe('purity', function() {
 
     class Namer extends Presenter {
       getModel(repo) {
-        return { name: repo.watch('name') }
+        return { name: repo.answers.name }
       }
 
       render() {
@@ -553,7 +571,7 @@ describe('Efficiency', function() {
 
     let model = jest.fn(repo => {
       return {
-        color: repo.watch('color')
+        color: repo.answers.color
       }
     })
 
@@ -877,7 +895,7 @@ describe('intercepting actions', function() {
 
     mount(<MyPresenter repo={repo} />).simulate('click')
 
-    expect(repo.history.head.tag).toEqual('test')
+    expect(Array.from(repo.history).toString()).toEqual('test')
   })
 
   it('send bubbles up to parent presenters', function() {
@@ -1045,45 +1063,59 @@ describe('intercepting actions', function() {
 
 describe('forks', function() {
   it('nested presenters fork in the correct order', function() {
+    expect.assertions(9)
+
     class Top extends Presenter {
       setup(repo) {
-        repo.name = 'top'
+        repo.addDomain('top', {
+          getInitialState() {
+            return 'top'
+          }
+        })
+
+        expect(repo.answers).not.toHaveProperty('middle')
+        expect(repo.answers).not.toHaveProperty('bottom')
       }
     }
 
     class Middle extends Presenter {
       setup(repo) {
-        repo.name = 'middle'
+        repo.addDomain('middle', {
+          getInitialState() {
+            return 'middle'
+          }
+        })
+
+        // State should exist, but the fork should not manage these keys:
+        expect(repo.state.top).toBe('top')
+        expect(repo.answers).not.toHaveProperty('bottom')
+        expect(repo.answers).not.toHaveProperty('top')
       }
     }
 
     class Bottom extends Presenter {
       setup(repo) {
-        repo.name = 'bottom'
-      }
+        repo.addDomain('bottom', {
+          getInitialState() {
+            return 'bottom'
+          }
+        })
 
-      render() {
-        let names = []
-        let repo = this.repo
-
-        while (repo) {
-          names.push(repo.name)
-          repo = repo.parent
-        }
-
-        return <p>{names.join(', ')}</p>
+        // State should exist, but the fork should not manage these keys:
+        expect(repo.state.top).toBe('top')
+        expect(repo.answers).not.toHaveProperty('top')
+        expect(repo.state.middle).toBe('middle')
+        expect(repo.answers).not.toHaveProperty('middle')
       }
     }
 
-    let text = mount(
+    mount(
       <Top>
         <Middle>
           <Bottom />
         </Middle>
       </Top>
-    ).text()
-
-    expect(text).toEqual('bottom, middle, top')
+    )
   })
 })
 

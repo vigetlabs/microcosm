@@ -1,5 +1,5 @@
 import { createElement, PureComponent } from 'react'
-import { Observable, Subject, merge } from 'microcosm'
+import { Subject, merge } from 'microcosm'
 import { identity, noop } from './utilities'
 
 export class ActionButton extends PureComponent {
@@ -66,7 +66,7 @@ export class ActionButton extends PureComponent {
     let params = prepare(value)
     let result = this.send(action, params)
 
-    if (Observable.isObservable(result)) {
+    if (result && 'subscribe' in result) {
       result.subscribe({
         start: this.onChange.bind(this, 'start', result),
         error: this.onChange.bind(this, 'error', result),

@@ -29,7 +29,7 @@ export class Presenter extends PureComponent {
   }
 
   get model() {
-    return this.mediator.model.payload
+    return this.mediator.model.payload || {}
   }
 
   get repo() {
@@ -78,7 +78,7 @@ export class Presenter extends PureComponent {
     this.teardown(this.repo, this.props, this.state)
 
     if (this.didFork) {
-      this.repo.shutdown()
+      this.repo.complete()
     }
   }
 

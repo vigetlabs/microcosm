@@ -1,6 +1,6 @@
-import { createElement, PureComponent } from 'react'
 import serialize from 'form-serialize'
-import { Observable, Subject, merge } from 'microcosm'
+import { createElement, PureComponent } from 'react'
+import { Subject, merge } from 'microcosm'
 import { identity, noop } from './utilities'
 
 export class ActionForm extends PureComponent {
@@ -67,7 +67,7 @@ export class ActionForm extends PureComponent {
     let params = prepare(serializer(this.form))
     let result = this.send(action, params)
 
-    if (Observable.isObservable(result)) {
+    if (result && 'subscribe' in result) {
       result.subscribe({
         start: this.onChange.bind(this, 'start', result),
         error: this.onChange.bind(this, 'error', result),

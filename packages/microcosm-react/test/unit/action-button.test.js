@@ -26,7 +26,7 @@ describe('callbacks', function() {
 
     button.simulate('click')
 
-    expect(onStart).toHaveBeenCalledWith(true, { origin: repo })
+    expect(onStart).toHaveBeenCalledWith(true, repo.history.head.meta)
   })
 
   it('executes onComplete when that action completes', function() {
@@ -38,7 +38,7 @@ describe('callbacks', function() {
       <ActionButton action="test" send={send} onComplete={onComplete} />
     ).simulate('click')
 
-    expect(onComplete).toHaveBeenCalledWith(true, { origin: repo })
+    expect(onComplete).toHaveBeenCalledWith(true, repo.history.head.meta)
   })
 
   it('executes onError when that action completes', function() {
@@ -50,7 +50,7 @@ describe('callbacks', function() {
 
     button.simulate('click')
 
-    expect(onError).toHaveBeenCalledWith('bad', { origin: repo })
+    expect(onError).toHaveBeenCalledWith('bad', repo.history.head.meta)
   })
 
   it('executes onNext when that action sends an update', function() {
@@ -64,7 +64,7 @@ describe('callbacks', function() {
 
     action.next('loading')
 
-    expect(onNext).toHaveBeenCalledWith('loading', { origin: repo })
+    expect(onNext).toHaveBeenCalledWith('loading', repo.history.head.meta)
   })
 
   it('executes onUnsubscribe when that action is cancelled', function() {
@@ -78,7 +78,10 @@ describe('callbacks', function() {
 
     button.simulate('click')
 
-    expect(onUnsubscribe).toHaveBeenCalledWith(null, { origin: repo })
+    expect(onUnsubscribe).toHaveBeenCalledWith(
+      undefined,
+      repo.history.head.meta
+    )
   })
 
   it('passes along onClick', function() {
