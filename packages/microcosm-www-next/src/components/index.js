@@ -1,6 +1,7 @@
 import Graphic from './graphic'
+import Header from './header'
+import MainContent from './main-content'
 import SideNav from './side-nav'
 import ToggleContainer from './toggle-container'
-import MainContent from './main-content'
 
-export { Graphic, SideNav, ToggleContainer, MainContent }
+export { Graphic, SideNav, ToggleContainer, MainContent, Header }

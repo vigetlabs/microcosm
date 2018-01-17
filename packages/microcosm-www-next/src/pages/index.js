@@ -1,6 +1,6 @@
 import React from 'react'
 import data from '../data/index.json'
-import { Graphic, SideNav, ToggleContainer, MainContent } from '../components'
+import { Graphic, SideNav, ToggleContainer, MainContent, Header } from '../components'
 
 export default class IndexPage extends React.Component {
   constructor(props) {
@@ -126,10 +126,11 @@ export default class IndexPage extends React.Component {
           ) : null}
           <div className="section__content">
             <div className="text-container">
-              <h2 className="section__content__heading">
-                <span className={bookendClass}>{sectionData.num}</span>
-                {sectionData.heading}
-              </h2>
+              <Header
+                bookendClass={bookendClass}
+                number={sectionData.num}
+                text={sectionData.heading}
+              />
               {!bookend ? (
                 <h3 className="section__content__subheading">
                   In {microcosmView ? 'Microcosm' : 'the browser'}
