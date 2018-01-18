@@ -34,7 +34,7 @@ var results = SIZES.map(function(SIZE) {
    */
   global.gc()
 
-  var repo = new Microcosm({ maxHistory: Infinity })
+  var repo = new Microcosm({ debug: true })
 
   /**
    * Add the domain at multiple keys. This is a better simulation of actual

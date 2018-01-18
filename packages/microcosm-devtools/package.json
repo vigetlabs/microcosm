@@ -18,7 +18,7 @@
     "babel-loader": "^7.0.0",
     "circular-json-es6": "^2.0.1",
     "classnames": "^2.2.5",
-    "css-loader": "^0.28.4",
+    "css-loader": "^0.28.9",
     "file-loader": "^1.1.6",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "microcosm": "^12.9.0",
@@ -30,6 +30,6 @@
     "style-loader": "^0.19.1",
     "url-loader": "^0.6.2",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.9.7"
+    "webpack-dev-server": "^2.11.0"
   }
 }

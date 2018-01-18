@@ -11,6 +11,8 @@ export function domainEngine(repo, key, entity, domainOptions) {
   let ledger = new Map([[INITIAL_STATE, start]])
   let answer = new Subject()
 
+  // Push an initial iteration in case this state is subscribed to
+  // before an action fires
   answer.next(start)
 
   let registry = new Cache(domain, {
@@ -26,6 +28,12 @@ export function domainEngine(repo, key, entity, domainOptions) {
     }
   })
 
+  function clean (action) {
+    if (!repo.options.debug) {
+      ledger.delete(repo.history.before(action))
+    }
+  }
+
   // In order to prevent extra overhead, only subscribe to actions within
   // this domain's registry
   let tracker = repo.history.updates.subscribe(action => {
@@ -34,7 +42,11 @@ export function domainEngine(repo, key, entity, domainOptions) {
     }
 
     let dispatcher = () => {
-      rollforward(answer, ledger, registry, repo, domain, action)
+      let next = rollforward(answer, ledger, registry, repo, domain, action)
+
+      if (next !== answer.payload) {
+        answer.next(next)
+      }
     }
 
     return action.subscribe({
@@ -42,7 +54,11 @@ export function domainEngine(repo, key, entity, domainOptions) {
       next: dispatcher,
       complete: dispatcher,
       error: dispatcher,
-      unsubscribe: dispatcher
+      unsubscribe: dispatcher,
+      // TODO: This is necessary so that revisions are removed from
+      // the ledger, avoiding a memory leak. Is there a way that we
+      // could do this without cleaning both the ledger and history?
+      cleanup: clean.bind(null, action)
     })
   })
 
@@ -88,7 +104,7 @@ function rollforward(answer, ledger, registry, repo, domain, action) {
     state = next
   }
 
-  answer.next(state)
+  return state
 }
 
 function patch(key, start, payload, repo) {

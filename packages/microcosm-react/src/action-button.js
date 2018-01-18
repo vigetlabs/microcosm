@@ -1,8 +1,8 @@
-import { createElement, PureComponent } from 'react'
+import React from 'react'
 import { Subject, merge } from 'microcosm'
 import { identity, noop } from './utilities'
 
-export class ActionButton extends PureComponent {
+export class ActionButton extends React.PureComponent {
   constructor() {
     super(...arguments)
 
@@ -36,7 +36,7 @@ export class ActionButton extends PureComponent {
       props.type = 'button'
     }
 
-    return createElement(this.props.tag, props)
+    return React.createElement(this.props.tag, props)
   }
 
   onChange(status, result) {

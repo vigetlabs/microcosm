@@ -15,11 +15,12 @@ describe('Shutting down a microcosm', function() {
     const listener = jest.fn()
 
     repo.answers.colors.subscribe(listener)
-    repo.complete()
+    listener.mockReset()
 
+    repo.complete()
     repo.push('setColor', 'blue')
 
-    expect(listener).not.toHaveBeenCalled()
+    expect(listener).toHaveBeenCalledTimes(0)
   })
 
   it('calls teardown on domains', function() {

@@ -11,7 +11,6 @@ class History {
     this.root = null
     this.head = null
     this.updates = new Subject()
-
     this._active = new Set()
     this._stream = new Tree()
 

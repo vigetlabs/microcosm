@@ -15,7 +15,7 @@ describe('History::wait', function() {
   })
 
   it('fails when an action rejects', async function() {
-    const repo = new Microcosm({ maxHistory: Infinity })
+    const repo = new Microcosm({ debug: true })
 
     repo.push(delay, 0)
     repo.push(delay, 0)
@@ -29,7 +29,7 @@ describe('History::wait', function() {
   })
 
   it('ignores cancelled actions', function() {
-    const repo = new Microcosm({ maxHistory: Infinity })
+    const repo = new Microcosm({ debug: true })
 
     repo.push(delay)
     let two = repo.push(delay)

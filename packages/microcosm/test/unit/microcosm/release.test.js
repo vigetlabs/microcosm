@@ -17,9 +17,9 @@ describe('Microcosm::release', function() {
 
     repo.answers.test.subscribe(spy)
 
+    expect(spy).toHaveBeenCalledTimes(1)
     repo.push(identity, 0)
-
-    expect(spy).not.toHaveBeenCalled()
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 
   it('will emit a change if state is not shallowly equal', function() {
@@ -38,16 +38,16 @@ describe('Microcosm::release', function() {
 
     repo.answers.test.subscribe(spy)
 
-    repo.push(identity, 1)
-
     expect(spy).toHaveBeenCalledTimes(1)
+    repo.push(identity, 1)
+    expect(spy).toHaveBeenCalledTimes(2)
   })
 
   it('children have the latest state when their parents change', function() {
     expect.assertions(2)
 
     let step = n => n
-    let repo = new Microcosm({ maxHistory: Infinity })
+    let repo = new Microcosm({ debug: true })
     let fork = repo.fork()
 
     repo.addDomain('count', {
@@ -59,9 +59,9 @@ describe('Microcosm::release', function() {
       }
     })
 
-    repo.answers.count.subscribe(() => {
-      expect(repo.state.count).toBe(1)
-      expect(fork.state.count).toBe(1)
+    // This will fire twice:
+    fork.answers.count.subscribe(() => {
+      expect(fork.state.count).toBe(repo.state.count)
     })
 
     repo.push(step, 1)

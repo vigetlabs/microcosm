@@ -987,8 +987,8 @@ describe('intercepting actions', function() {
   })
 
   it('actions do not bubble to different repo types', function() {
-    let top = new Microcosm({ maxHistory: Infinity })
-    let bottom = new Microcosm({ maxHistory: Infinity })
+    let top = new Microcosm({ debug: true })
+    let bottom = new Microcosm({ debug: true })
 
     mount(
       <Presenter repo={top}>
@@ -1009,8 +1009,8 @@ describe('intercepting actions', function() {
       }
     }
 
-    let top = new Microcosm({ maxHistory: Infinity })
-    let bottom = new Microcosm({ maxHistory: Infinity })
+    let top = new Microcosm({ debug: true })
+    let bottom = new Microcosm({ debug: true })
 
     mount(
       <Parent repo={top}>

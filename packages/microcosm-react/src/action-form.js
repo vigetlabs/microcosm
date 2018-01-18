@@ -1,9 +1,9 @@
+import React from 'react'
 import serialize from 'form-serialize'
-import { createElement, PureComponent } from 'react'
 import { Subject, merge } from 'microcosm'
 import { identity, noop } from './utilities'
 
-export class ActionForm extends PureComponent {
+export class ActionForm extends React.PureComponent {
   constructor() {
     super(...arguments)
 
@@ -37,7 +37,7 @@ export class ActionForm extends PureComponent {
     delete props.onError
     delete props.send
 
-    return createElement(this.props.tag, props)
+    return React.createElement(this.props.tag, props)
   }
 
   onChange(status, result) {

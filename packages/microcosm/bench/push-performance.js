@@ -7,7 +7,7 @@
 
 const { Microcosm, tag } = require('../build/min')
 
-const SIZES = [1000, 10000, 50000, 100000]
+const SIZES = [10, 100, 1000, 10000]
 
 console.log('\nConducting push benchmark...\n')
 

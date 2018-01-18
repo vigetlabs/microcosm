@@ -2,7 +2,7 @@
  * Connect a component to the presenter tree
  */
 
-import { createElement } from 'react'
+import React from 'react'
 import { merge } from 'microcosm'
 import { noop } from './utilities'
 
@@ -12,7 +12,7 @@ const CONTEXT_TYPES = {
 
 export function withSend(Component) {
   function Sender(props, context) {
-    return createElement(Component, merge({ send: context.send }, props))
+    return React.createElement(Component, merge({ send: context.send }, props))
   }
 
   let name = Component.displayName || Component.name || 'Component'

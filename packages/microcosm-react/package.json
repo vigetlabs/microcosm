@@ -16,9 +16,12 @@
     "form-serialize": "^0.7.1"
   },
   "devDependencies": {
-    "jest": "^22.0.1",
-    "microbundle": "^0.2.4",
+    "jest": "^22.1.2",
+    "microbundle": "~0.2.4",
     "react": "^16.0.0",
     "react-dom": "^16.0.0"
+  },
+  "mangle": {
+    "regex": "^_"
   }
 }

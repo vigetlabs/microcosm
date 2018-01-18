@@ -1,9 +1,9 @@
-import { createElement, PureComponent } from 'react'
+import React from 'react'
 import { Microcosm, Observable, tag } from 'microcosm'
 import { advice, noop } from './utilities'
 
 function renderMediator() {
-  return createElement(PresenterMediator, {
+  return React.createElement(PresenterMediator, {
     repo: this.props.repo,
     presenter: this,
     __props: this.props,
@@ -11,7 +11,7 @@ function renderMediator() {
   })
 }
 
-export class Presenter extends PureComponent {
+export class Presenter extends React.PureComponent {
   constructor() {
     super(...arguments)
 
@@ -104,7 +104,7 @@ export class Presenter extends PureComponent {
   }
 }
 
-class PresenterMediator extends PureComponent {
+class PresenterMediator extends React.PureComponent {
   constructor() {
     super(...arguments)
 

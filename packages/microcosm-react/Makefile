@@ -1,7 +1,7 @@
 all: build docs
 
 build: build/package.json
-	@ yarn microbundle --output=build --strict
+	@ yarn microbundle --output=build --strict --jsx React.createElement
 
 docs:
 	@ mkdir -p build

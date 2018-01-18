@@ -15,7 +15,7 @@ describe('Microcosm::fork', function() {
   })
 
   it('recieve upstream state updates when they push actions', () => {
-    const parent = new Microcosm({ maxHistory: Infinity })
+    const parent = new Microcosm({ debug: true })
     const child = parent.fork()
 
     const add = n => n

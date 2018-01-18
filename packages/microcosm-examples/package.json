@@ -7,7 +7,7 @@
     "axios": "^0.17.1",
     "babel-loader": "^7.1.2",
     "body-parser": "^1.17.2",
-    "console.table": "^0.9.1",
+    "console.table": "^0.10.0",
     "elizabot": "^0.0.2",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^2.30.1",
@@ -16,6 +16,6 @@
     "react-router-dom": "^4.2.2",
     "uid": "^0.0.2",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.9.7"
+    "webpack-dev-server": "^2.11.0"
   }
 }
