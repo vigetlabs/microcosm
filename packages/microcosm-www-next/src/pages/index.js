@@ -1,13 +1,19 @@
 import React from 'react'
 import data from '../data/index.json'
-import { Graphic, SideNav, ToggleContainer, MainContent, Header } from '../components'
+import {
+  Graphic,
+  Header,
+  MainContent,
+  SideNav,
+  ToggleContainer
+} from '../components'
 
 export default class IndexPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       currentSection: 0,
-      //graphicsMap: [],
+      graphicsMap: [],
       microcosmView: true,
       numSections: Object.keys(data)
     }
@@ -26,21 +32,21 @@ export default class IndexPage extends React.Component {
       threshold: [0.33, 0.66, 1]
     }
 
-    //this.setGraphicsMap()
+    this.setGraphicsMap()
   }
 
-  // setGraphicsMap() {
-  //   let graphicsMap = [].slice.call(this.graphics).reduce((map, graphic) => {
-  //     map.push({
-  //       num: parseInt(graphic.dataset.section),
-  //       elem: graphic
-  //     })
+  setGraphicsMap() {
+    let graphicsMap = [].slice.call(this.graphics).reduce((map, graphic) => {
+      map.push({
+        num: parseInt(graphic.dataset.section),
+        elem: graphic
+      })
 
-  //     return map
-  //   }, [])
+      return map
+    }, [])
 
-  //   this.setState({ graphicsMap })
-  // }
+    this.setState({ graphicsMap })
+  }
 
   beginObserve() {
     //create new Observer instance
@@ -66,10 +72,10 @@ export default class IndexPage extends React.Component {
       this.changeSection(section)
     }
 
-    this.fadeGraphic(intersectionRatio, targetEl)
+    this.fadeInOutGraphic(intersectionRatio, targetEl)
   }
 
-  fadeGraphic(intersectionRatio, el) {
+  fadeInOutGraphic(intersectionRatio, el) {
     switch (true) {
       case intersectionRatio < 0.33:
         el.classList.add('-extreme-fade')
@@ -111,10 +117,10 @@ export default class IndexPage extends React.Component {
 
     return (
       <div className="wrapper">
-        {/* <SideNav
+        <SideNav
           currentSection={this.state.currentSection}
           graphics={this.state.graphicsMap}
-        /> */}
+        />
 
         <section className="section">
           {!bookend ? (
@@ -136,10 +142,7 @@ export default class IndexPage extends React.Component {
                   In {microcosmView ? 'Microcosm' : 'the browser'}
                 </h3>
               ) : null}
-              <MainContent
-                bookendClass={bookendClass}
-                text={text}
-              />
+              <MainContent bookendClass={bookendClass} text={text} />
             </div>
 
             {!bookend ? (
