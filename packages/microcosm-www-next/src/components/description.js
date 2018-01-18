@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default class MainContent extends React.Component {
+export default class Description extends React.Component {
   componentDidMount() {
     this.el = document.getElementById('fade-in-text')
     this.listenForAnimationEnd(this.el)

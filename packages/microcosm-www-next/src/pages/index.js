@@ -1,9 +1,9 @@
 import React from 'react'
 import data from '../data/index.json'
 import {
+  Description,
   Graphic,
   Header,
-  MainContent,
   SideNav,
   ToggleContainer
 } from '../components'
@@ -28,7 +28,7 @@ export default class IndexPage extends React.Component {
     this.body = document.body
     this.graphics = document.querySelectorAll('[data-module="ObserveGraphic"]')
     this.observeOptions = {
-      rootMargin: '-76px 0px -145px', //include height of nav and footer
+      rootMargin: '-76px 0px -145px', //account for height of nav and footer
       threshold: [0.33, 0.66, 1]
     }
 
@@ -142,7 +142,7 @@ export default class IndexPage extends React.Component {
                   In {microcosmView ? 'Microcosm' : 'the browser'}
                 </h3>
               ) : null}
-              <MainContent bookendClass={bookendClass} text={text} />
+              <Description bookendClass={bookendClass} text={text} />
             </div>
 
             {!bookend ? (
