@@ -28,7 +28,7 @@ export function domainEngine(repo, key, entity, domainOptions) {
     }
   })
 
-  function clean (action) {
+  function clean(action) {
     if (!repo.options.debug) {
       ledger.delete(repo.history.before(action))
     }
@@ -84,7 +84,7 @@ function rollforward(answer, ledger, registry, repo, domain, action) {
   let prior = repo.history.before(action)
   let state = ledger.has(prior) ? ledger.get(prior) : ledger.get(INITIAL_STATE)
 
-  loop: while (action) {
+  while (action) {
     let next = state
 
     if (!action.disabled) {
@@ -95,7 +95,7 @@ function rollforward(answer, ledger, registry, repo, domain, action) {
       }
 
       if (next === state) {
-        break loop
+        break
       }
     }
 

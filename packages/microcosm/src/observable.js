@@ -135,11 +135,8 @@ export class Observable {
 
   static of() {
     return new Observable(observer => {
-      let last = undefined
-
       for (var i = 0; i < arguments.length; ++i) {
-        last = arguments[i]
-        observer.next(last)
+        observer.next(arguments[i])
       }
 
       observer.complete()
