@@ -12,8 +12,10 @@ export default class Header extends React.Component {
     })
   }
 
-  componentWillUpdate() {
-    this.el.classList.add('fade-in')
+  componentWillUpdate(nextProps) {
+    if (nextProps.text !== this.props.text) {
+      this.el.classList.add('fade-in')
+    }
   }
 
   render() {

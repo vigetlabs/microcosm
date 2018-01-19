@@ -28,8 +28,8 @@ export default class IndexPage extends React.Component {
     this.body = document.body
     this.graphics = document.querySelectorAll('[data-module="ObserveGraphic"]')
     this.observeOptions = {
-      rootMargin: '-76px 0px -145px', //account for height of nav and footer
-      threshold: [0.33, 0.66, 1]
+      rootMargin: '-70px 0px -100px', //account for height of nav and footer
+      threshold: [0, 0.45, 1]
     }
 
     this.setGraphicsMap()
@@ -65,31 +65,26 @@ export default class IndexPage extends React.Component {
     let entry = observed[0]
     let targetEl = entry.target
     let section = parseInt(targetEl.dataset.section)
-    let intersectionRatio = entry.intersectionRatio
     let notAlreadyVisible = section !== this.state.currentSection
 
-    if (intersectionRatio === 1 && notAlreadyVisible) {
-      this.changeSection(section)
-    }
+    if (entry.intersectionRatio >= 0.45) {
+      this.fadeInGraphic(targetEl)
 
-    this.fadeInOutGraphic(intersectionRatio, targetEl)
+      if (notAlreadyVisible) {
+        this.changeSection(section)
+      }
+    }
+    else {
+      this.fadeOutGraphic(targetEl)
+    }
   }
 
-  fadeInOutGraphic(intersectionRatio, el) {
-    switch (true) {
-      case intersectionRatio < 0.33:
-        el.classList.add('-extreme-fade')
-        el.classList.remove('-slight-fade')
-        break
+  fadeInGraphic(el) {
+    el.classList.add('-no-fade')
+  }
 
-      case intersectionRatio < 0.66:
-        el.classList.add('-slight-fade')
-        el.classList.remove('-no-fade')
-        break
-
-      default:
-        el.classList.add('-no-fade')
-    }
+  fadeOutGraphic(el) {
+    el.classList.remove('-no-fade')
   }
 
   changeSection(section) {

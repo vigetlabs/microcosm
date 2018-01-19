@@ -159,18 +159,6 @@ $section-top-padding-desktop: $nav-height + 110px;
   position: relative;
   transition: opacity 0.7s;
 
-  &:first-child {
-    opacity: 1;
-  }
-
-  &.-extreme-fade {
-    opacity: 0.33;
-  }
-
-  &.-slight-fade {
-    opacity: 0.66;
-  }
-
   &.-no-fade {
     opacity: 1;
   }
