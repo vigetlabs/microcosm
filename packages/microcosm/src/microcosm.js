@@ -10,9 +10,7 @@ import { EMPTY_OBJECT } from './empty'
 
 const DEFAULTS = {
   debug: false,
-  _state: EMPTY_OBJECT,
-  _domains: EMPTY_OBJECT,
-  _answers: EMPTY_OBJECT
+  parent: null
 }
 
 class Microcosm extends Subject {
@@ -20,21 +18,31 @@ class Microcosm extends Subject {
     super()
 
     let options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
+    let parent = options.parent
 
-    this.history = options._history || new History(options)
-    this.state = options._state ? Object.create(options._state) : {}
-    this.domains = options._domains ? Object.create(options._domains) : {}
-    this.answers = options._answers ? Object.create(options._answers) : {}
+    this.history = parent ? parent.history : new History(options)
+    this.domains = parent ? Object.create(parent.domains) : {}
+    this.answers = parent ? Object.create(parent.answers) : {}
     this.options = options
-
-    if (options.debug) {
-      installDevtools(this)
-    }
 
     this.subscribe({
       start: this.setup.bind(this, this.options),
       cleanup: this.teardown.bind(this, this.options)
     })
+
+    if (options.debug) {
+      installDevtools(this)
+    }
+  }
+
+  get state() {
+    let value = {}
+
+    for (let key in this.answers) {
+      value[key] = this.answers[key].payload
+    }
+
+    return value
   }
 
   setup(options?: Object) {
@@ -47,7 +55,7 @@ class Microcosm extends Subject {
 
   addDomain(key, config, options) {
     console.assert(
-      key in this.state === false,
+      key in this.domains === false,
       'Can not add domain for "' + key + '". This state is already managed.'
     )
 
@@ -57,11 +65,6 @@ class Microcosm extends Subject {
 
     this.domains[key] = domain
     this.answers[key] = answer
-
-    Object.defineProperty(this.state, key, {
-      enumerable: true,
-      get: () => answer.payload
-    })
 
     return domain
   }
@@ -83,7 +86,7 @@ class Microcosm extends Subject {
 
     for (var key in this.domains) {
       if (this.domains[key].serialize) {
-        json[key] = this.domains[key].serialize(this.state[key])
+        json[key] = this.domains[key].serialize(this.answers[key].payload)
       }
     }
 
@@ -92,10 +95,7 @@ class Microcosm extends Subject {
 
   fork() {
     return new Microcosm({
-      _state: this.state,
-      _domains: this.domains,
-      _answers: this.answers,
-      _history: this.history
+      parent: this
     })
   }
 }
