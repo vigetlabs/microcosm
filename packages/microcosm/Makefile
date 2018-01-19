@@ -36,7 +36,7 @@ bench: min
 	#	@ NODE_ENV=production node --expose-gc bench/history-performance
 	# @ NODE_ENV=production node --expose-gc bench/dispatch-performance
 	@ NODE_ENV=production node --expose-gc bench/push-performance
-	# @ NODE_ENV=production node --expose-gc bench/fork-performance
+	@ NODE_ENV=production node --expose-gc bench/fork-performance
 
 clean:
 	@ rm -rf build/*
