@@ -1,9 +1,9 @@
 // @flow
 
-import { tag } from './tag'
 import { Subject } from './subject'
 import { Tree } from './data'
 import { getSymbol } from './symbols'
+import { tag } from './tag'
 import coroutine from './coroutine'
 
 class History {
@@ -11,14 +11,13 @@ class History {
     this.root = null
     this.head = null
     this.updates = new Subject()
-    this._active = new Set()
-    this._stream = new Tree()
-
+    this._branch = new Set()
+    this._tree = new Tree()
     this._debug = options ? options.debug : false
   }
 
   get size() {
-    return this._active.size
+    return this._branch.size
   }
 
   then(pass?: *, fail?: *): Promise<*> {
@@ -28,12 +27,12 @@ class History {
   archive() {
     while (this.size > 1 && this.root.closed) {
       let last = this.root
-      let next = this._stream.after(this.root)
+      let next = this._tree.after(this.root)
 
       if (next && next.closed) {
         // Delete the action from the active list to prevent
         // dispatch
-        this._active.delete(last)
+        this._branch.delete(last)
         this.remove(last)
       } else {
         break
@@ -44,10 +43,10 @@ class History {
   append(origin, command, ...params) {
     let action = new Subject(params[0], { tag: '' + tag(command), origin })
 
-    this._active.add(action)
+    this._branch.add(action)
 
     if (this.head) {
-      this._stream.point(this.head, action)
+      this._tree.point(this.head, action)
     } else {
       this.root = action
     }
@@ -73,11 +72,11 @@ class History {
   }
 
   before(action) {
-    return this._stream.before(action)
+    return this._tree.before(action)
   }
 
   after(action) {
-    return action === this.head ? undefined : this._stream.after(action)
+    return action === this.head ? undefined : this._tree.after(action)
   }
 
   wait() {
@@ -91,26 +90,26 @@ class History {
       this.head = this.before(action)
     }
 
-    let base = this._stream.remove(action)
+    let base = this._tree.remove(action)
 
     if (this.root === action) {
       this.root = base
     }
 
     if (isActive && base) {
-      this._active.delete(action)
+      this._branch.delete(action)
       this.updates.next(base)
     }
   }
 
   isActive(action) {
-    return !action.disabled && this._active.has(action)
+    return !action.disabled && this._branch.has(action)
   }
 
   toggle(action) {
     action.toggle()
 
-    if (this._active.has(action)) {
+    if (this._branch.has(action)) {
       this.updates.next(action)
     }
   }
@@ -121,20 +120,20 @@ class History {
     }
 
     this.head = action
-    this._active = new Set(this._stream.select(action))
+    this._branch = new Set(this._tree.select(action))
     this.updates.next(action)
   }
 
   [getSymbol('iterator')]() {
-    return this._active[getSymbol('iterator')]()
+    return this._branch[getSymbol('iterator')]()
   }
 
   toJSON() {
     return {
       head: this.head ? this.head.id : null,
       root: this.root ? this.root.id : null,
-      list: Array.from(this._active),
-      tree: this._stream.toJS(this.root),
+      list: Array.from(this._branch),
+      tree: this._tree.toJS(this.root),
       size: this.size
     }
   }
