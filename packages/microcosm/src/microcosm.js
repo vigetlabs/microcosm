@@ -6,7 +6,6 @@ import { effectEngine } from './effect-engine'
 import { domainEngine } from './domain-engine'
 import { merge } from './data'
 import { version } from '../package.json'
-import { EMPTY_OBJECT } from './empty'
 
 const DEFAULTS = {
   debug: false,
