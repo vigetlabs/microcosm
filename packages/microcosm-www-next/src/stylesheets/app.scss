@@ -2,6 +2,7 @@
 @import 'setup/breakpoints';
 @import 'setup/dimensions';
 @import 'setup/colors';
+@import 'setup/fade-in';
 @import 'setup/focus';
 @import 'setup/fonts';
 @import 'setup/grid';
@@ -14,7 +15,6 @@
 @import 'base/elements';
 
 // utility (generic utility classes)
-@import 'utility/fade-in';
 @import 'utility/screenreader';
 @import 'utility/wrapper';
 

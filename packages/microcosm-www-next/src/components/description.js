@@ -1,29 +1,34 @@
 import React from 'react'
 
 export default class Description extends React.Component {
-  componentDidMount() {
-    this.el = document.getElementById('fade-in-text')
-    this.listenForAnimationEnd(this.el)
+  constructor(props) {
+    super(props)
+    this.state = { runFadeAnim: '' }
   }
 
-  listenForAnimationEnd(el) {
-    el.addEventListener('animationend', () => {
-      el.classList.remove('fade-in')
-    })
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.text !== this.props.text) {
+      this.setState({ runFadeAnim: ' -run-fade' })
+      this.stopAnimation()
+    }
   }
 
-  componentWillUpdate() {
-    this.el.classList.add('fade-in')
+  stopAnimation() {
+    setTimeout(() => {
+      this.setState({ runFadeAnim: '' })
+    }, 700)
   }
 
   render() {
     return (
-      <div id="fade-in-text">
-        <p
-          className={'section__content__text ' + this.props.bookendClass}
-          dangerouslySetInnerHTML={{ __html: this.props.text }}
-        />
-      </div>
+      <p
+        className={
+          'section__content__text ' +
+          this.props.bookendClass +
+          this.state.runFadeAnim
+        }
+        dangerouslySetInnerHTML={{ __html: this.props.text }}
+      />
     )
   }
 }

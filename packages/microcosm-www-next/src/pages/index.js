@@ -5,6 +5,7 @@ import {
   Graphic,
   Header,
   SideNav,
+  Subheading,
   ToggleContainer
 } from '../components'
 
@@ -73,8 +74,7 @@ export default class IndexPage extends React.Component {
       if (notAlreadyVisible) {
         this.changeSection(section)
       }
-    }
-    else {
+    } else {
       this.fadeOutGraphic(targetEl)
     }
   }
@@ -133,9 +133,12 @@ export default class IndexPage extends React.Component {
                 text={sectionData.heading}
               />
               {!bookend ? (
-                <h3 className="section__content__subheading">
-                  In {microcosmView ? 'Microcosm' : 'the browser'}
-                </h3>
+                <Subheading
+                  browserText="the browser"
+                  microcosmText="Microcosm"
+                  microcosmView={microcosmView}
+                  text="In"
+                />
               ) : null}
               <Description bookendClass={bookendClass} text={text} />
             </div>

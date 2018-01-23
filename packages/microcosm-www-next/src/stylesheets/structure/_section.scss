@@ -57,9 +57,11 @@ $section-top-padding-desktop: $nav-height + 110px;
 // CONTENT - elements
 
 .section__content__heading {
+  @include fade-in;
   font-size: rem(30);
   margin-bottom: rem(40);
   position: relative;
+  transition: transition(color);
 
   @for $i from 1 through $section-count {
     .bg-color-#{$i} & {
@@ -89,6 +91,7 @@ $section-top-padding-desktop: $nav-height + 110px;
 }
 
 .section__content__subheading {
+  @include fade-in;
   @include font-family-medium;
   color: color(secondary-1);
   margin-bottom: 0.5rem;
@@ -103,6 +106,7 @@ $section-top-padding-desktop: $nav-height + 110px;
 }
 
 .section__content__text {
+  @include fade-in;
   color: color(text);
   font-size: rem(18);
   line-height: rem(27);
@@ -113,6 +117,7 @@ $section-top-padding-desktop: $nav-height + 110px;
 }
 
 .section__toggle-btn {
+  @include fade-in;
   background-color: color(secondary-1);
   border-radius: 10px;
   color: color(bg-1-footer);
