@@ -1,10 +1,7 @@
 import React from 'react'
 
 export default class Header extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { runFadeAnim: '' }
-  }
+  state = { runFadeAnim: '' }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.text !== this.props.text) {
