@@ -9,7 +9,10 @@ const Graphic = ({ section, microcosmView }) => (
     data-section={section}
   >
     <div
-      className={"flip-container" + (microcosmView ? "" : " -flipped")}
+      className={
+        'flip-container' +
+        (microcosmView || section === 0 || section == 9 ? '' : ' -flipped')
+      }
     >
       <div className="flipper">
         <div className="flipper__front">
