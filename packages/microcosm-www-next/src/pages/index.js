@@ -1,6 +1,13 @@
 import React from 'react'
 import data from '../data/index.json'
-import { Graphic, SideNav, ToggleContainer } from '../components'
+import {
+  Description,
+  Graphic,
+  Header,
+  SideNav,
+  Subheading,
+  ToggleContainer
+} from '../components'
 
 export default class IndexPage extends React.Component {
   constructor(props) {
@@ -21,10 +28,9 @@ export default class IndexPage extends React.Component {
   setVars() {
     this.body = document.body
     this.graphics = document.querySelectorAll('[data-module="ObserveGraphic"]')
-    this.intersectionThreshold = 1.0
     this.observeOptions = {
-      rootMargin: '0px 0px 0px',
-      threshold: this.intersectionThreshold
+      rootMargin: '-70px 0px -100px', //account for height of nav and footer
+      threshold: [0, 0.45, 1]
     }
 
     this.setGraphicsMap()
@@ -58,14 +64,32 @@ export default class IndexPage extends React.Component {
 
   onIntersection = observed => {
     let entry = observed[0]
-    let section = parseInt(entry.target.dataset.section)
-    let isIntersecting = entry.intersectionRatio >= this.intersectionThreshold
+    let targetEl = entry.target
+    let section = parseInt(targetEl.dataset.section)
     let notAlreadyVisible = section !== this.state.currentSection
 
-    if (isIntersecting && notAlreadyVisible) {
-      this.changeBgColor(this.state.currentSection, section)
-      this.setState({ currentSection: section })
+    if (entry.intersectionRatio >= 0.45) {
+      this.fadeInGraphic(targetEl)
+
+      if (notAlreadyVisible) {
+        this.changeSection(section)
+      }
+    } else {
+      this.fadeOutGraphic(targetEl)
     }
+  }
+
+  fadeInGraphic(el) {
+    el.classList.add('-no-fade')
+  }
+
+  fadeOutGraphic(el) {
+    el.classList.remove('-no-fade')
+  }
+
+  changeSection(section) {
+    this.changeBgColor(this.state.currentSection, section)
+    this.setState({ currentSection: section })
   }
 
   changeBgColor(oldSection, newSection) {
@@ -103,19 +127,20 @@ export default class IndexPage extends React.Component {
           ) : null}
           <div className="section__content">
             <div className="text-container">
-              <h2 className="section__content__heading">
-                <span className={bookendClass}>{sectionData.num}</span>
-                {sectionData.heading}
-              </h2>
-              {!bookend ? (
-                <h3 className="section__content__subheading">
-                  In {microcosmView ? 'Microcosm' : 'the browser'}
-                </h3>
-              ) : null}
-              <p
-                className={'section__content__text ' + bookendClass}
-                dangerouslySetInnerHTML={{ __html: text }}
+              <Header
+                bookendClass={bookendClass}
+                number={sectionData.num}
+                text={sectionData.heading}
               />
+              {!bookend ? (
+                <Subheading
+                  browserText="the browser"
+                  microcosmText="Microcosm"
+                  microcosmView={microcosmView}
+                  text="In"
+                />
+              ) : null}
+              <Description bookendClass={bookendClass} text={text} />
             </div>
 
             {!bookend ? (

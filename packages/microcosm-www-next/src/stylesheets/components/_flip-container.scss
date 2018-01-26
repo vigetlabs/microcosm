@@ -1,0 +1,45 @@
+.flip-container {
+  perspective: 1000px;  //zoom out scene so we can see 3D flip happening from 1000px away
+}
+
+.flip-container {
+  height: inherit;
+  max-height: inherit;
+  max-width: inherit;
+  width: inherit;
+}
+
+.flipper,
+.flipper__front,
+.flipper__back {
+  height: 100%;
+  width: 100%;
+}
+
+.flipper {
+  position: relative;
+  transform-style: preserve-3d;  //make sure its children are positioned in 3D space
+  transition: 0.65s cubic-bezier(0.565,1.65,0.765,0.88);
+
+  .flip-container.-flipped & {
+    transform: rotateY(-180deg);
+  }
+}
+
+.flipper__front,
+.flipper__back {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+.flipper__front {
+  transform: rotateY(0deg);
+  z-index: 2;
+}
+
+.flipper__back {
+  transform: rotateY(180deg);
+}

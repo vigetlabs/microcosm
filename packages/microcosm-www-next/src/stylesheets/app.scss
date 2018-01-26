@@ -2,6 +2,7 @@
 @import 'setup/breakpoints';
 @import 'setup/dimensions';
 @import 'setup/colors';
+@import 'setup/fade-in';
 @import 'setup/focus';
 @import 'setup/fonts';
 @import 'setup/grid';
@@ -25,6 +26,7 @@
 
 // components (page level blocks and components)
 @import 'components/browser-graphic';
+@import 'components/flip-container';
 @import 'components/lazy-load';
 @import 'components/side-nav';
 @import 'components/toggle-container';

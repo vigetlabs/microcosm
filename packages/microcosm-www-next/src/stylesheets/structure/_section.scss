@@ -57,10 +57,10 @@ $section-top-padding-desktop: $nav-height + 110px;
 // CONTENT - elements
 
 .section__content__heading {
+  @include fade-in;
   font-size: rem(30);
   margin-bottom: rem(40);
   position: relative;
-  transition: transition(color);
 
   @for $i from 1 through $section-count {
     .bg-color-#{$i} & {
@@ -90,6 +90,7 @@ $section-top-padding-desktop: $nav-height + 110px;
 }
 
 .section__content__subheading {
+  @include fade-in;
   @include font-family-medium;
   color: color(secondary-1);
   margin-bottom: 0.5rem;
@@ -104,6 +105,7 @@ $section-top-padding-desktop: $nav-height + 110px;
 }
 
 .section__content__text {
+  @include fade-in;
   color: color(text);
   font-size: rem(18);
   line-height: rem(27);
@@ -114,6 +116,7 @@ $section-top-padding-desktop: $nav-height + 110px;
 }
 
 .section__toggle-btn {
+  @include fade-in;
   background-color: color(secondary-1);
   border-radius: 10px;
   color: color(bg-1-footer);
@@ -153,10 +156,18 @@ $section-top-padding-desktop: $nav-height + 110px;
 }
 
 .section__graphic__figure {
-  margin: 0 auto 80vh;
+  height: calc(100vw - (#{$page-gutter-mobile} * 2 + 15px));
   max-height: 600px;
   max-width: 600px;
+  margin: 0 auto 80vh;
+  opacity: 0.33;
   position: relative;
+  transition: opacity 0.7s;
+  width: calc(100vw - (#{$page-gutter-mobile} * 2 + 15px));
+
+  &.-no-fade {
+    opacity: 1;
+  }
 
   @include breakpoint(large-desktop-up) {
     margin-bottom: 30vh;
@@ -180,10 +191,5 @@ $section-top-padding-desktop: $nav-height + 110px;
         content: ''
       }
     }
-  }
-
-  .microcosm-graphic {
-    height: 100%;
-    width: 100%;
   }
 }
