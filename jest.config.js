@@ -7,7 +7,6 @@ module.exports = {
     './packages/microcosm-preact',
     './packages/microcosm-react',
     './packages/microcosm-graphql',
-    './packages/microcosm-react-router',
     './packages/microcosm-http'
   ],
   modulePathIgnorePatterns: ['example', 'build'],

@@ -53,7 +53,6 @@
     "packages/microcosm-http",
     "packages/microcosm-preact",
     "packages/microcosm-react",
-    "packages/microcosm-react-router",
     "packages/microcosm-www"
   ]
 }
