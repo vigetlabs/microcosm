@@ -5,20 +5,15 @@
 import { h } from 'preact'
 import { merge } from 'microcosm'
 
-export function displayName(Component) {
-  return Component.name || 'Component'
-}
-
-export default function withSend(Component) {
-  function withSend(props, context) {
-    let send = props.send || context.send
-
-    return h(Component, merge({ send }, props))
+export function withSend(Component) {
+  function Sender(props, context) {
+    return h(Component, merge({ send: context.send }, props))
   }
 
-  withSend.displayName = 'withSend(' + displayName(Component) + ')'
+  let name = Component.displayName || Component.name || 'Component'
 
-  withSend.WrappedComponent = Component
+  Sender.displayName = `withSend(${name})`
+  Sender.WrappedComponent = Component
 
-  return withSend
+  return Sender
 }

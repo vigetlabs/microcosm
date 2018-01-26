@@ -1,5 +1,4 @@
-// Place setup behavior here
-// Force sync rendering in Preact
-const { options } = require('preact')
+import { configure } from 'enzyme'
+import Adapter from 'enzyme-adapter-react-16'
 
-options.debounceRendering = update => update()
+configure({ adapter: new Adapter() })

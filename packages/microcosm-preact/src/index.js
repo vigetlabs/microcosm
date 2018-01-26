@@ -1,6 +1,4 @@
-import ActionForm from './action-form'
-import ActionButton from './action-button'
-import Presenter from './presenter'
-import withSend from './with-send'
-
-export { ActionForm, ActionButton, Presenter, withSend }
+export { withSend } from './with-send'
+export { Presenter } from './presenter'
+export { ActionForm } from './action-form'
+export { ActionButton } from './action-button'

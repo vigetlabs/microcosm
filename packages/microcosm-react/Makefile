@@ -1,7 +1,8 @@
 all: build docs
 
 build: build/package.json
-	@ yarn microbundle --output=build --strict --jsx React.createElement
+	@ ./bin/bundle --format cjs --out build
+	@ ./bin/bundle --format umd --out build/umd
 
 docs:
 	@ mkdir -p build

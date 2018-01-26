@@ -34,17 +34,17 @@
     "console.table": "^0.10.0",
     "enzyme": "^3.0.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "jest": "^22.1.2",
+    "jest": "^22.1.4",
     "minimist": "^1.2.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-test-renderer": "^16.0.0",
-    "rollup": "^0.54.1",
+    "rollup": "^0.55.1",
     "rollup-plugin-buble": "^0.18.0",
     "rollup-plugin-flow": "^1.1.1",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-strip": "^1.1.1",
-    "rollup-plugin-uglify": "^2.0.1"
+    "rollup-plugin-uglify": "^3.0.0"
   }
 }

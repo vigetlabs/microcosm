@@ -32,18 +32,19 @@ async function build() {
       }),
       filesize()
     ],
-    external: ['preact', 'microcosm', 'form-serialize']
+    external: ['react', 'react-dom', 'microcosm', 'form-serialize']
   })
 
   await bundle.write({
     globals: {
-      preact: 'Preact',
+      react: 'React',
+      'react-dom': 'ReactDOM',
       microcosm: 'Microcosm',
       'form-serialize': 'FormSerialize'
     },
     file: path.resolve(options.out, 'index.js'),
     format: options.format,
-    name: 'MicrocosmPreact',
+    name: 'MicrocosmReact',
     sourcemap: true
   })
 }

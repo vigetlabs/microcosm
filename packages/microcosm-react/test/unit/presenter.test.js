@@ -175,32 +175,33 @@ describe('::getModel', function() {
     })
 
     it('recalculates the model when state changes', function() {
-      let wrapper = mount(<Namer name="Colonel" />)
+      class Test extends Namer {
+        ready() {
+          this.setState({ greeting: 'Salutations' })
+        }
+      }
 
-      wrapper.setState({
-        greeting: 'Salutations'
-      })
+      let wrapper = mount(<Test name="Colonel" />)
 
       expect(wrapper.text()).toEqual('Salutations, Colonel')
     })
 
     it('does not recalculate the model when state is the same', function() {
-      let spy = jest.fn(() => {
-        return {}
-      })
+      let spy = jest.fn()
 
       class TrackedNamer extends Namer {
         getModel = spy
+
+        ready() {
+          this.setState({ greeting: 'Hello' })
+        }
+
         render() {
           return <p>Test</p>
         }
       }
 
-      let wrapper = mount(<TrackedNamer name="Colonel" />)
-
-      wrapper.setState({
-        greeting: 'Hello'
-      })
+      mount(<TrackedNamer name="Colonel" />)
 
       expect(spy).toHaveBeenCalledTimes(1)
     })
@@ -601,13 +602,17 @@ describe('Efficiency', function() {
     let spy = jest.fn()
 
     class Test extends Presenter {
+      ready() {
+        this.setState({ test: true })
+      }
+
       render() {
         spy()
         return null
       }
     }
 
-    mount(<Test />).setState({ test: true })
+    mount(<Test />)
 
     expect(spy).toHaveBeenCalledTimes(2)
   })
@@ -648,7 +653,7 @@ describe('Efficiency', function() {
     class Test extends Presenter {
       getModel() {
         return {
-          anything: state => Math.random()
+          anything: Math.random()
         }
       }
 
@@ -808,46 +813,31 @@ describe('intercepting actions', function() {
   it('receives intent events', function() {
     let test = jest.fn()
 
-    class MyPresenter extends Presenter {
+    class Test extends Presenter {
       intercept() {
         return { test }
       }
-
       render() {
         return <View />
       }
     }
 
-    let presenter = mount(<MyPresenter />)
+    mount(<Test />).simulate('click')
 
-    presenter.simulate('click')
-
-    expect(test).toHaveBeenCalledWith(presenter.instance().repo, true)
+    expect(test).toHaveBeenCalled()
   })
 
   it('actions do not bubble to different repo types', function() {
-    class Child extends Presenter {
-      render() {
-        return <View />
-      }
-    }
-
-    class Parent extends Presenter {
-      render() {
-        return <div>{this.props.children}</div>
-      }
-    }
-
     let top = new Microcosm({ debug: true })
     let bottom = new Microcosm({ debug: true })
 
-    let wrapper = mount(
-      <Parent repo={top}>
-        <Child repo={bottom} />
-      </Parent>
-    )
-
-    wrapper.find(View).simulate('click')
+    mount(
+      <Presenter repo={top}>
+        <Presenter repo={bottom}>
+          <View />
+        </Presenter>
+      </Presenter>
+    ).simulate('click')
 
     expect(top.history.size).toBe(0)
     expect(bottom.history.size).toBe(1)

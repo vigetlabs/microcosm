@@ -18,8 +18,8 @@
   "devDependencies": {
     "babel-eslint": "^8.0.3",
     "buble": "^0.18.0",
-    "eslint": "^4.13.1",
+    "eslint": "^4.16.0",
     "history": "^4.6.3",
-    "rollup": "^0.54.1"
+    "rollup": "^0.55.1"
   }
 }

@@ -1,34 +1,11 @@
-import { Observable, Subject } from 'microcosm'
-import { h } from 'preact'
+import { h, Component } from 'preact'
+import { Microcosm } from 'microcosm'
+import { ActionButton } from 'microcosm-preact'
 import { mount, unmount } from '../helpers'
-import { ActionButton, Presenter } from '../../src/index'
-
-describe('context', function() {
-  it('collects send from a presenter', function() {
-    expect.assertions(1)
-
-    const test = jest.fn()
-
-    class TestCase extends Presenter {
-      intercept() {
-        return { test }
-      }
-
-      render() {
-        return <ActionButton action="test" />
-      }
-    }
-
-    mount(<TestCase />).click()
-
-    expect(test).toHaveBeenCalled()
-  })
-})
 
 describe('actions', function() {
   it('passes the value property as parameters into the action', function() {
     let send = jest.fn()
-
     let button = mount(<ActionButton action="test" value={true} send={send} />)
 
     button.click()
@@ -38,117 +15,104 @@ describe('actions', function() {
 })
 
 describe('callbacks', function() {
-  it('executes onStart when that action completes', function() {
+  it('executes onStart when that action starts', function() {
+    let repo = new Microcosm()
+    let send = action => repo.push(action, true)
     let onStart = jest.fn()
-    let send = () => Observable.of(true)
+
     let button = mount(
-      <ActionButton action="test" send={send} onStart={onStart} />
+      <ActionButton action="test" onStart={onStart} send={send} />
     )
 
     button.click()
 
-    expect(onStart).toHaveBeenCalledWith(true)
+    expect(onStart).toHaveBeenCalledWith(true, repo.history.head.meta)
   })
 
-  it('executes onDone when that action completes', function() {
-    let onDone = jest.fn()
-    let send = () => {
-      let subject = new Subject()
+  it('executes onComplete when that action completes', function() {
+    let repo = new Microcosm()
+    let send = action => repo.push(action, true)
+    let onComplete = jest.fn()
 
-      subject.resolve(true)
+    mount(
+      <ActionButton action="test" send={send} onComplete={onComplete} />
+    ).click()
 
-      return subject
-    }
-
-    let button = mount(
-      <ActionButton action="test" onDone={onDone} send={send} />
-    )
-
-    button.click()
-
-    expect(onDone).toHaveBeenCalledWith(true)
+    expect(onComplete).toHaveBeenCalledWith(true, repo.history.head.meta)
   })
 
   it('executes onError when that action completes', function() {
+    let repo = new Microcosm()
+    let send = () => repo.push(() => action => action.error('bad'))
     let onError = jest.fn()
-    let send = () => new Subject().error(true)
-    let button = mount(
-      <ActionButton action="test" onError={onError} send={send} />
-    )
+
+    let button = mount(<ActionButton send={send} onError={onError} />)
 
     button.click()
 
-    expect(onError).toHaveBeenCalledWith(true)
+    expect(onError).toHaveBeenCalledWith('bad', repo.history.head.meta)
   })
 
-  it('executes onUpdate when that action sends an update', function() {
-    let onUpdate = jest.fn()
-    let action = new Subject()
-    let send = () => action
-    let button = mount(
-      <ActionButton action="test" onUpdate={onUpdate} send={send} />
-    )
+  it('executes onNext when that action sends an update', function() {
+    let repo = new Microcosm()
+    let onNext = jest.fn()
+    let action = repo.push(() => action => {})
+
+    let button = mount(<ActionButton onNext={onNext} send={() => action} />)
 
     button.click()
 
-    action.update('loading')
+    action.next('loading')
 
-    expect(onUpdate).toHaveBeenCalledWith('loading')
+    expect(onNext).toHaveBeenCalledWith('loading', repo.history.head.meta)
   })
 
-  it('does not execute onDone if not given an action', function() {
-    let onDone = jest.fn()
-    let send = () => true
+  it('executes onUnsubscribe when that action is cancelled', function() {
+    let repo = new Microcosm()
+    let onUnsubscribe = jest.fn()
+    let send = () => repo.push(() => action => action.unsubscribe())
+
     let button = mount(
-      <ActionButton action="test" onDone={onDone} send={send} />
+      <ActionButton send={send} onUnsubscribe={onUnsubscribe} />
     )
 
     button.click()
 
-    expect(onDone).not.toHaveBeenCalled()
-  })
-
-  it('does not execute onError if not given an action', function() {
-    let onError = jest.fn()
-    let send = () => true
-    let button = mount(
-      <ActionButton action="test" onError={onError} send={send} />
+    expect(onUnsubscribe).toHaveBeenCalledWith(
+      undefined,
+      repo.history.head.meta
     )
-
-    button.click()
-
-    expect(onError).not.toHaveBeenCalled()
-  })
-
-  it('does not execute onUpdate if not given an action', function() {
-    let onUpdate = jest.fn()
-    let send = () => true
-    let button = mount(
-      <ActionButton action="test" onUpdate={onUpdate} send={send} />
-    )
-
-    button.click()
-
-    expect(onUpdate).not.toHaveBeenCalled()
   })
 
   it('passes along onClick', function() {
     let handler = jest.fn()
     let send = () => {}
-    let button = mount(<ActionButton onClick={handler} send={send} />)
+
+    let button = mount(<ActionButton send={send} onClick={handler} />)
 
     button.click()
 
     expect(handler).toHaveBeenCalled()
   })
 
-  it('removes action callbacks when the component unmounts', async function() {
-    const action = new Subject()(() => Promise.resolve(true))
-    const send = jest.fn(() => action)
-    const onDone = jest.fn()
+  it('executes prepare with the event and value before pushing the action', function() {
+    let handler = jest.fn()
+    let send = () => {}
+    let button = mount(<ActionButton prepare={handler} send={send} />)
 
-    const button = mount(
-      <ActionButton action="test" onDone={onDone} send={send} />
+    button.click()
+
+    expect(handler).toHaveBeenCalled()
+  })
+
+  it('removes action callbacks when the component unmounts', function() {
+    let repo = new Microcosm()
+    let action = repo.push(() => action => {})
+    let send = jest.fn(() => action)
+    let onComplete = jest.fn()
+
+    let button = mount(
+      <ActionButton action="test" onComplete={onComplete} send={send} />
     )
 
     button.click()
@@ -156,40 +120,16 @@ describe('callbacks', function() {
     expect(send).toHaveBeenCalled()
 
     unmount(button)
+    action.complete(true)
 
-    await action.execute([])
-
-    expect(action.status).toBe('resolve')
-    expect(onDone).not.toHaveBeenCalled()
-  })
-
-  it('does not invoke send if there is no action', function() {
-    const send = jest.fn()
-    const button = mount(<ActionButton send={send} />)
-
-    button.click()
-
-    expect(send).not.toHaveBeenCalled()
+    expect(onComplete).not.toHaveBeenCalled()
   })
 })
 
 describe('manual operation', function() {
-  it('click can be called directly on the component instance', function() {
-    let onDone = jest.fn()
-    let send = () => new Subject().resolve(true)
-
-    let button = mount(
-      <ActionButton action="test" onDone={onDone} send={send} />
-    )
-
-    button.click()
-
-    expect(onDone).toHaveBeenCalledWith(true)
-  })
-
   it('can pass in send manually', function() {
-    const send = jest.fn()
-    const button = mount(<ActionButton action="test" send={send} />)
+    let send = jest.fn()
+    let button = mount(<ActionButton action="test" send={send} />)
 
     button.click()
 
@@ -197,22 +137,22 @@ describe('manual operation', function() {
   })
 })
 
-describe('mounting', function() {
-  it('can mount with another tag name', function() {
-    let link = mount(<ActionButton tag="a" action="wut" />)
+describe('rendering', function() {
+  it('can render with another tag name', function() {
+    let wrapper = mount(<ActionButton tag="a" action="wut" />)
 
-    expect(link.tagName).toBe('A')
+    expect(wrapper.tagName).toBe('A')
   })
 
   it('uses the button type when set as a button', function() {
-    let button = mount(<ActionButton action="wut" />)
+    let wrapper = mount(<ActionButton action="wut" />)
 
-    expect(button.type).toBe('button')
+    expect(wrapper.type).toBe('button')
   })
 
   it('does not pass the type attribute for non-buttons', function() {
-    let link = mount(<ActionButton tag="a" action="wut" />)
+    let wrapper = mount(<ActionButton tag="a" action="wut" />)
 
-    expect(link.getAttribute('type')).toBe(null)
+    expect(wrapper.getAttribute('type')).toBe(null)
   })
 })

@@ -63,9 +63,7 @@ describe('Display name', function() {
       return <button type="button" />
     })
 
-    let wrapper = mount(<Button send={jest.fn()} />)
-
-    expect(wrapper.find('withSend(Button)')).toHaveLength(1)
+    expect(Button.displayName).toEqual('withSend(Button)')
   })
 
   it('sets the correct display name for stateful components', function() {
@@ -77,8 +75,6 @@ describe('Display name', function() {
       }
     )
 
-    let wrapper = mount(<Button send={jest.fn()} />)
-
-    expect(wrapper.find('withSend(Button)')).toHaveLength(1)
+    expect(Button.displayName).toEqual('withSend(Button)')
   })
 })

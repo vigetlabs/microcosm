@@ -1,118 +1,102 @@
-import { h, Component } from 'preact'
 import serialize from 'form-serialize'
-import { Action, merge } from 'microcosm'
-import ActionQueue from 'microcosm/addons/action-queue'
+import { h, Component } from 'preact'
+import { Subject, merge } from 'microcosm'
+import { identity } from './utilities'
 
-class ActionForm extends Component {
-  constructor(props, context) {
-    super(props, context)
+export class ActionForm extends Component {
+  constructor() {
+    super(...arguments)
 
-    this.send = this.props.send || this.context.send
-    this._onSubmit = this._onSubmit.bind(this)
-    this._queue = new ActionQueue(this)
+    this.queue = new Subject('action-form')
+    this.submit = this.submit.bind(this)
+  }
 
-    this._assignForm = el => {
-      this._form = el
-    }
+  get send() {
+    return this.props.send || this.context.send
   }
 
   componentWillUnmount() {
-    this._queue.empty()
+    this.queue.unsubscribe()
   }
 
   render() {
     let props = merge(this.props, {
-      ref: this._assignForm,
-      onSubmit: this._onSubmit
+      onSubmit: this.submit,
+      ref: el => (this.form = el)
     })
 
-    // Remove invalid props to prevent React warnings
+    delete props.tag
     delete props.action
     delete props.prepare
     delete props.serializer
-    delete props.onOpen
-    delete props.onDone
-    delete props.onUpdate
-    delete props.onCancel
+    delete props.onStart
+    delete props.onNext
+    delete props.onComplete
+    delete props.onNext
+    delete props.onUnsubscribe
     delete props.onError
     delete props.send
 
-    return h('form', props)
+    return h(this.props.tag, props)
+  }
+
+  onChange(status, result) {
+    switch (status) {
+      case 'start':
+        this.props.onStart(result.payload, result.meta)
+        break
+      case 'next':
+        this.props.onNext(result.payload, result.meta)
+        break
+      case 'complete':
+        this.props.onComplete(result.payload, result.meta)
+        break
+      case 'error':
+        this.props.onError(result.payload, result.meta)
+        break
+      case 'unsubscribe':
+        this.props.onUnsubscribe(result.payload, result.meta)
+        break
+      default:
+    }
   }
 
   submit(event) {
     const { onSubmit, prepare, serializer, action } = this.props
 
-    let form = this._form
+    let params = prepare(serializer(this.form))
+    let result = this.send(action, params)
 
-    console.assert(
-      form,
-      'ActionForm has no form reference and can not submit. This can happen',
-      'if submit() is called after the parent component has unmounted.'
-    )
+    if (result && 'subscribe' in result) {
+      result.subscribe({
+        start: this.onChange.bind(this, 'start', result),
+        error: this.onChange.bind(this, 'error', result),
+        next: this.onChange.bind(this, 'next', result),
+        complete: this.onChange.bind(this, 'complete', result),
+        unsubscribe: this.onChange.bind(this, 'unsubscribe', result)
+      })
 
-    if (action) {
-      let result = this.send(action, prepare(serializer(form)))
-
-      if (result instanceof Action) {
-        this._queue.push(result, {
-          onNext: this._onNext,
-          onOpen: this._onOpen,
-          onUpdate: this._onUpdate,
-          onDone: this._onDone,
-          onError: this._onError,
-          onCancel: this._onCancel
-        })
-      }
+      this.queue.subscribe(result)
     }
 
-    onSubmit(event, action)
-  }
+    if (event) {
+      onSubmit(event, result)
+    }
 
-  /* Private ------------------------------------------------------ */
-
-  _onSubmit(event) {
-    event.preventDefault()
-    this.submit(event)
-  }
-
-  _onNext(action) {
-    this.props.onNext(action, this._form)
-  }
-
-  _onOpen(payload) {
-    this.props.onOpen(payload, this._form)
-  }
-
-  _onUpdate(payload) {
-    this.props.onUpdate(payload, this._form)
-  }
-
-  _onError(payload) {
-    this.props.onError(payload, this._form)
-  }
-
-  _onDone(payload) {
-    this.props.onDone(payload, this._form)
-  }
-
-  _onCancel(payload) {
-    this.props.onCancel(payload, this._form)
+    return result
   }
 }
-
-const identity = n => n
 
 ActionForm.defaultProps = {
-  onCancel: identity,
-  onDone: identity,
-  onError: identity,
-  onNext: identity,
-  onOpen: identity,
+  action: 'no-action',
   onSubmit: identity,
-  onUpdate: identity,
+  onStart: identity,
+  onNext: identity,
+  onComplete: identity,
+  onError: identity,
+  onUnsubscribe: identity,
   prepare: identity,
+  send: null,
+  tag: 'form',
   serializer: form => serialize(form, { hash: true, empty: true })
 }
-
-export default ActionForm

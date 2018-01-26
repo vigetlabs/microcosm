@@ -16,12 +16,13 @@
     "form-serialize": "^0.7.1"
   },
   "devDependencies": {
-    "jest": "^22.1.2",
-    "microbundle": "~0.2.4",
+    "jest": "^22.1.4",
     "react": "^16.0.0",
-    "react-dom": "^16.0.0"
-  },
-  "mangle": {
-    "regex": "^_"
+    "react-dom": "^16.0.0",
+    "rollup": "^0.55.1",
+    "rollup-plugin-buble": "^0.18.0",
+    "rollup-plugin-filesize": "^1.5.0",
+    "rollup-plugin-node-resolve": "^3.0.2",
+    "rollup-plugin-uglify": "^3.0.0"
   }
 }
