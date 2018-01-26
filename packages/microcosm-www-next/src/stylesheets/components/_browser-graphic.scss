@@ -10,9 +10,9 @@ $left-padding-lg: rem(40);
   border-radius: 10px;
   border-style: solid;
   border-width: 40px 20px 20px;
-  height: 76vw;
-  max-height: inherit;
+  height: 100%;
   text-transform: uppercase;
+  width: 100%;
 
   &::before {
     color: #bebebe;

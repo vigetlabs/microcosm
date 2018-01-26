@@ -156,12 +156,14 @@ $section-top-padding-desktop: $nav-height + 110px;
 }
 
 .section__graphic__figure {
-  margin: 0 auto 80vh;
+  height: calc(100vw - (#{$page-gutter-mobile} * 2 + 15px));
   max-height: 600px;
   max-width: 600px;
+  margin: 0 auto 80vh;
   opacity: 0.33;
   position: relative;
   transition: opacity 0.7s;
+  width: calc(100vw - (#{$page-gutter-mobile} * 2 + 15px));
 
   &.-no-fade {
     opacity: 1;
@@ -189,10 +191,5 @@ $section-top-padding-desktop: $nav-height + 110px;
         content: ''
       }
     }
-  }
-
-  .microcosm-graphic {
-    height: 100%;
-    width: 100%;
   }
 }
