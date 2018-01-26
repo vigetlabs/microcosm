@@ -358,9 +358,7 @@ describe('::update', function() {
     let before = { test: 'foo' }
     let after = { test: 'foo' }
 
-    let el = mount(
-      <PropsTransition component={Test} before={before} after={after} />
-    )
+    mount(<PropsTransition component={Test} before={before} after={after} />)
 
     await delay()
 
@@ -379,9 +377,7 @@ describe('::update', function() {
     let before = { color: 'red' }
     let after = { color: 'blue' }
 
-    let el = mount(
-      <PropsTransition component={Test} before={before} after={after} />
-    )
+    mount(<PropsTransition component={Test} before={before} after={after} />)
 
     await delay()
 
@@ -405,9 +401,7 @@ describe('::update', function() {
     let before = { test: 'one' }
     let after = { test: 'two' }
 
-    let el = mount(
-      <PropsTransition component={Test} before={before} after={after} />
-    )
+    mount(<PropsTransition component={Test} before={before} after={after} />)
 
     await delay()
 
@@ -658,8 +652,6 @@ describe('Efficiency', function() {
   })
 
   it('should re-render when a property is removed', async function() {
-    let renders = 0
-
     class Test extends Presenter {
       render() {
         return <span>{this.props.text || ''}</span>
@@ -705,36 +697,6 @@ describe('Efficiency', function() {
 
     // The frame should have been cancelled, so render is called once
     expect(renders).toBe(1)
-  })
-
-  it('batches pending updates', function() {
-    let renders = 0
-
-    class Test extends Presenter {
-      getModel() {
-        return {
-          anything: Math.random()
-        }
-      }
-      render() {
-        renders += 1
-        return null
-      }
-    }
-
-    let repo = new Repo()
-    let el = mount(<Test repo={repo} />)
-
-    // Cause a change
-    repo.push(patch, { color: 'teal' })
-
-    // Now send new properties in, which forces a render
-    el = remount(<Test repo={repo} foo="bar" />, el)
-    el = remount(<Test repo={repo} foo="baz" />, el)
-
-    // The frame should have been cancelled, so render is called three times:
-    // for the initial render, and the two property injections
-    expect(renders).toBe(3)
   })
 })
 
@@ -1208,9 +1170,7 @@ describe('::children', function() {
     let before = { children: <span>1</span> }
     let after = { children: <span>1</span> }
 
-    let el = mount(
-      <PropsTransition component={Test} before={before} after={after} />
-    )
+    mount(<PropsTransition component={Test} before={before} after={after} />)
 
     expect(spy).toHaveBeenCalledTimes(1)
   })

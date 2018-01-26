@@ -1,4 +1,4 @@
-import { h, Component } from 'preact'
+import { h } from 'preact'
 import { Microcosm } from 'microcosm'
 import { ActionButton } from 'microcosm-preact'
 import { mount, unmount } from '../helpers'
