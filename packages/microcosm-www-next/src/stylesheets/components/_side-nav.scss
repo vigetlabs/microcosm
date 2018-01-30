@@ -6,13 +6,13 @@
   position: fixed;
   z-index: 1;
 
-  @include breakpoint(large-desktop-up) {
+  @include breakpoint(medium-desktop-up) {
     display: none;
   }
 }
 
 .side-nav__list__link {
-  @include breakpoint(medium-desktop-down) {
+  @include breakpoint(small-desktop-down) {
     border-radius: 2px;
     border: 1px solid white;
     height: 10px;

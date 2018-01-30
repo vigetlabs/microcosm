@@ -1,12 +1,7 @@
 .flip-container {
-  perspective: 1000px;  //zoom out scene so we can see 3D flip happening from 1000px away
-}
-
-.flip-container {
   height: inherit;
   max-height: inherit;
-  max-width: inherit;
-  width: inherit;
+  perspective: 1000px;  //zoom out scene so we can see 3D flip happening from 1000px away
 }
 
 .flipper,

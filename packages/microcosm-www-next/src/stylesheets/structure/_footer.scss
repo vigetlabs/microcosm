@@ -30,7 +30,7 @@ $cta-bottom-padding: 6px;
     }
   }
 
-  @include breakpoint(large-desktop-up) {  //from desktop up, if there isn't enough space, make footer absolute so it goes over content and doesn't move elems around
+  @include breakpoint(medium-desktop-up) {  //from desktop up, if there isn't enough space, make footer absolute so it goes over content and doesn't move elems around
     @media (max-height: 900px) {
       position: absolute;
     }
@@ -43,7 +43,7 @@ $cta-bottom-padding: 6px;
     height: 100%;
     justify-content: center;
 
-    @include breakpoint(large-desktop-up) {
+    @include breakpoint(medium-desktop-up) {
       flex-direction: row;
     }
   }
@@ -51,7 +51,7 @@ $cta-bottom-padding: 6px;
   .viget-logo {
     margin-bottom: rem(10);
 
-    @include breakpoint(large-desktop-up) {
+    @include breakpoint(medium-desktop-up) {
       margin-bottom: 0;
       margin-right: rem(30);
     }

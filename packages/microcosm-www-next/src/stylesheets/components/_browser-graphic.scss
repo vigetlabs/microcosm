@@ -12,7 +12,6 @@ $left-padding-lg: rem(40);
   border-width: 40px 20px 20px;
   height: 100%;
   text-transform: uppercase;
-  width: 100%;
 
   &::before {
     color: #bebebe;
@@ -69,30 +68,36 @@ $left-padding-lg: rem(40);
   }
 
   .content__list {
+    list-style-position: inside;
     list-style-type: upper-alpha;
-    padding-left: $left-padding-sm * 2;
+    padding-left: $left-padding-sm;
 
     @include breakpoint(small-tablet-up) {
-      padding-left: $left-padding-lg * 2;
+      padding-left: $left-padding-lg;
     }
 
     li {
       color: #646464;
-      margin: rem(10) 0;
+      margin: 1em 0;
 
       @media screen and (min-width: 472px) {
         font-size: rem(23);
-        margin: rem(20) 0;
       }
 
       @include breakpoint(small-tablet-up) {
         font-size: rem(30);
-        margin: rem(30) 0;
       }
 
-      @include breakpoint(large-tablet-up) {
+      @include breakpoint(medium-desktop-up) {
+        font-size: rem(23);
+      }
+
+      @media screen and (min-width: 1075px) {
+        font-size: rem(30);
+      }
+
+      @include breakpoint(large-desktop-up) {
         font-size: rem(34);
-        padding-left: rem(20);
       }
     }
   }

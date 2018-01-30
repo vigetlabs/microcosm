@@ -1,5 +1,5 @@
 .toggle-container.-mobile {
-  @include breakpoint(medium-desktop-down) {
+  @include breakpoint(small-desktop-down) {
     align-items: center;
     bottom: 0;
     display: flex;
@@ -19,12 +19,12 @@
     }
   }
 
-  @include breakpoint(large-desktop-up) {
+  @include breakpoint(medium-desktop-up) {
     display: none;
   }
 
   .section__content__subheading {
-    @include breakpoint(medium-desktop-down) {
+    @include breakpoint(small-desktop-down) {
       margin-right: 4%;
       padding-left: rem(40);
       position: relative;
@@ -42,7 +42,7 @@
 .toggle-container.-desktop {
   display: none;
 
-  @include breakpoint(large-desktop-up) {
+  @include breakpoint(medium-desktop-up) {
     display: block;
   }
 

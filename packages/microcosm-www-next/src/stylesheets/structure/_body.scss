@@ -16,7 +16,7 @@ body {
     width: 100%;
     z-index: -1;
 
-    @include breakpoint(large-desktop-up) {
+    @include breakpoint(medium-desktop-up) {
       height: $split-bg-height-desktop;
     }
   }
