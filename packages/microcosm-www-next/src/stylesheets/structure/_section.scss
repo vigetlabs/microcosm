@@ -7,10 +7,10 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   padding-top: $section-top-padding-mobile;
 
   @include breakpoint(medium-desktop-up) {
-    display: flex;
     padding-top: $section-top-padding-desktop;
 
     @supports (position: sticky) or (position: -webkit-sticky) {
+      display: flex;
       justify-content: space-between;
     }
   }
@@ -23,18 +23,21 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   max-width: 533px;
   padding-right: 20px;
   position: fixed;
-  width: 100%;
 
   @include breakpoint(small-desktop-down) {
+    left: 20px;
     margin: 0 auto rem(50);
     padding-left: rem(40);
+    right: 20px;
+    width: 100%;
   }
 
   @include breakpoint(medium-desktop-up) {
-    flex-basis: $content-width;
+    left: calc(55vw - #{$page-gutter-desktop});
   }
 
   @supports (position: sticky) or (position: -webkit-sticky) {
+    flex-basis: $content-width;
     padding-right: 0;
     position: -webkit-sticky;
     position: sticky;
@@ -52,7 +55,6 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
 
 .text-container {
   margin-bottom: rem(50);
-  max-width: 550px;
 }
 
 
@@ -119,6 +121,7 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
 
 .section__toggle-btn {
   @include fade-in;
+  align-items: center;
   background-color: color(secondary-1);
   border-radius: 10px;
   color: color(bg-1-footer);
@@ -149,7 +152,11 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   }
 
   @include breakpoint(medium-desktop-up) {
-    flex-basis: $graphic-width;
+    width: $graphic-width;
+
+    @supports (position: sticky) or (position: -webkit-sticky) {
+      flex-basis: $graphic-width;
+    }
   }
 
   @supports (position: sticky) or (position: -webkit-sticky) {

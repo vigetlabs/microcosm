@@ -12,13 +12,7 @@
 }
 
 .flipper {
-  position: relative;
   transform-style: preserve-3d;  //make sure its children are positioned in 3D space
-  transition: 0.65s cubic-bezier(0.565,1.65,0.765,0.88);
-
-  .flip-container.-flipped & {
-    transform: rotateY(-180deg);
-  }
 }
 
 .flipper__front,
@@ -28,13 +22,22 @@
   left: 0;
   position: absolute;
   top: 0;
+  transition: 0.65s cubic-bezier(0.565,1.65,0.765,0.88);
 }
 
 .flipper__front {
   transform: rotateY(0deg);
   z-index: 2;
+
+  .-flipped & {
+    transform: rotateY(-180deg);
+  }
 }
 
 .flipper__back {
   transform: rotateY(180deg);
+
+  .-flipped & {
+    transform: rotateY(0deg);
+  }
 }
