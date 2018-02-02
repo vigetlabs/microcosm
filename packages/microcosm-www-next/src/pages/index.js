@@ -26,12 +26,15 @@ export default class IndexPage extends React.Component {
 
   setVars() {
     this.body = document.body
-    this.setSectionPositions(document.querySelectorAll('[data-module="ObserveGraphic"]'))
+    this.setSectionPositions(
+      document.querySelectorAll('[data-module="ObserveGraphic"]')
+    )
   }
 
   setSectionPositions(graphics) {
     this.sectionPositions = [].slice.call(graphics).reduce((map, graphic) => {
-      map[graphic.dataset.section] = graphic.offsetTop + (graphic.offsetHeight / 2)
+      map[graphic.dataset.section] =
+        graphic.offsetTop + graphic.offsetHeight / 2
       return map
     }, {})
   }
@@ -41,8 +44,8 @@ export default class IndexPage extends React.Component {
   }
 
   checkPosition() {
-    return debounce((e) => {
-      let scrollPosition = e.target.scrollingElement.scrollTop;
+    return debounce(e => {
+      let scrollPosition = e.target.scrollingElement.scrollTop
 
       for (let key in this.sectionPositions) {
         let section = parseInt(key)
@@ -56,7 +59,7 @@ export default class IndexPage extends React.Component {
             this.changeSection(section)
           }
 
-          break;
+          break
         }
       }
     }, 50)
@@ -87,7 +90,6 @@ export default class IndexPage extends React.Component {
 
     return (
       <div className="wrapper">
-
         <section className="section">
           {!bookend ? (
             <ToggleContainer
