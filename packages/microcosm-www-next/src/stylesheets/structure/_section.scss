@@ -171,7 +171,7 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   max-width: 600px;
   opacity: 0.33;
   position: relative;
-  transition: opacity 0.7s;
+  transition: transition(opacity);
 
   &.-no-fade {
     opacity: 1;
