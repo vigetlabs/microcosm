@@ -10,10 +10,10 @@ const BrowserGraphic = ({ imageAlt }) => (
     <main>
       <div className="content">
         <ol className="content__list">
-          <li>Cool</li>
-          <li>Curious</li>
-          <li>Calm</li>
-          <li>Cautious</li>
+          <li className="content__list__item">Cool</li>
+          <li className="content__list__item">Curious</li>
+          <li className="content__list__item">Calm</li>
+          <li className="content__list__item">Cautious</li>
         </ol>
       </div>
       <div className="graphic">

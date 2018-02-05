@@ -70,34 +70,94 @@ $left-padding-lg: rem(40);
   .content__list {
     list-style-position: inside;
     list-style-type: upper-alpha;
+    width: 100%;
+  }
+
+  .content__list__item {
+    color: #646464;
+    margin: 1em 0;
     padding-left: $left-padding-sm;
 
+    &:first-child {
+      position: relative;
+
+      &::before {
+        content: '';
+        background: rgba(83, 225, 187, 0.5);
+        width: 100%;
+        position: absolute;
+        height: 100%;
+        left: 0;
+      }
+    }
+
+    @media screen and (min-width: 472px) {
+      font-size: rem(23);
+    }
+
     @include breakpoint(small-tablet-up) {
+      font-size: rem(30);
       padding-left: $left-padding-lg;
     }
 
-    li {
-      color: #646464;
-      margin: 1em 0;
+    @include breakpoint(medium-desktop-up) {
+      font-size: rem(23);
+    }
 
-      @media screen and (min-width: 472px) {
-        font-size: rem(23);
+    @media screen and (min-width: 1075px) {
+      font-size: rem(30);
+    }
+
+    @include breakpoint(large-desktop-up) {
+      font-size: rem(34);
+    }
+  }
+
+  &.-section-2 {
+    .content__list__item:first-child::after {
+      content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAVCAYAAACQcBTNAAAA0ElEQVQokZXRMUoDURAG4E+0EiVgCAQEK9ucIHZpPEIaLbxACq9g7UFEsAzkAIJWYiCk8gCBRCFYCJJnsW9VllVmp3nM8DE85odzDWqJQRS/4RXHUZwwRyuKE8bYjuKE6yY44aIJ/sBJFCcscBTFCc/YjeKEO2xFccLVf3iFF7znfoPhTuX/U/SwVsS/wR4O8/u9+VER90PuT/863RMOcj/K+LYO36Pzq+/iUxFMp4rbNQsmeftl3fZqnWU8i+B9P2frl8Pq6cpa40aR3KocfgH1Pl0E6oN4JAAAAABJRU5ErkJggg==);
+      position: absolute;
+      right: 20%;
+      top: 50%;
+    }
+  }
+
+  &.-section-1,
+  &.-section-6,
+  &.-section-7 {
+    .content__list__item:first-child::before {
+      background: none;
+    }
+  }
+
+  &.-section-6,
+  &.-section-7 {
+    main {
+      position: relative;
+
+      &::before {
+        align-items: center;
+        background: rgba(34, 35, 40, 0.8);
+        content: url('../images/loading.png');
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
       }
 
-      @include breakpoint(small-tablet-up) {
-        font-size: rem(30);
-      }
-
-      @include breakpoint(medium-desktop-up) {
-        font-size: rem(23);
-      }
-
-      @media screen and (min-width: 1075px) {
-        font-size: rem(30);
-      }
-
-      @include breakpoint(large-desktop-up) {
-        font-size: rem(34);
+      &::after {
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAAcUlEQVR4AZWSAQbAMAxFB3rB7FrdMbbuiCtkeRTEfq3lh/zkaVrZ3L2EzpCFyJWoX/ST3CFOn4D4z+hrGDuAAhPQyTE1OIDsU1BgVRMQFOhqZELWkaCKP4Ns9SZbfZP8vS9fA0iAeiM02DAK4M/do6+8BvNDPMuaalkAAAAASUVORK5CYII=);
+        background-position: right;
+        background-repeat: no-repeat;
+        color: white;
+        content: 'Close';
+        padding-right: rem(25);
+        position: absolute;
+        right: rem(10);
+        top: rem(10);
+        z-index: 1;
       }
     }
   }
