@@ -21,7 +21,7 @@ export default class IndexPage extends React.Component {
 
   componentDidMount() {
     this.setVars()
-    this.bindEvents()
+    document.addEventListener('scroll', this.checkPosition())
   }
 
   setVars() {
@@ -37,10 +37,6 @@ export default class IndexPage extends React.Component {
         graphic.offsetTop + graphic.offsetHeight / 2
       return map
     }, {})
-  }
-
-  bindEvents() {
-    document.addEventListener('scroll', this.checkPosition())
   }
 
   checkPosition() {
@@ -131,6 +127,7 @@ export default class IndexPage extends React.Component {
                 key={num}
                 fadeClass={this.state.currentSection == num ? '-no-fade' : ''}
                 section={parseInt(num)}
+                imageAlt={sectionData.heading}
                 microcosmView={microcosmView}
               />
             ))}
