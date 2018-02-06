@@ -180,9 +180,11 @@ $left-padding-lg: rem(40);
 #graphic-8 {
   .flipper__front::before {
     animation: 2s $bounce-timing-function 1s forwards;
+    background-image: url('../images/checkmark.svg');
+    background-repeat: no-repeat;
     border-radius: 100px;
     border: 7px solid transparent;
-    content: url('../images/checkmark.svg');
+    content: '';
     height: 10%;
     left: 18%;
     opacity: 0;
