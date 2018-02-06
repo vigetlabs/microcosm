@@ -3,9 +3,7 @@ import { cat } from '../images'
 
 const BrowserGraphic = ({ imageAlt }) => (
   <div className="browser-graphic">
-    <span className="screenreader-only">
-      Browser View: {imageAlt}
-    </span>
+    <span className="screenreader-only">Browser View: {imageAlt}</span>
     <header>
       <p>Quizzfeed</p>
     </header>

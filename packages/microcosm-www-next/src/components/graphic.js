@@ -13,10 +13,20 @@ export default class Graphic extends React.Component {
     }
   }
 
+  shouldGraphicFlip() {
+    let inMicrocosmView = this.props.microcosmView
+    let atBookends = this.props.section === 0 || this.props.section == 9
+
+    if (inMicrocosmView || atBookends) {
+      return ''
+    } else {
+      return ' -flipped'
+    }
+  }
+
   render() {
     let section = this.props.section
-    let inMicrocosmView = this.props.microcosmView
-    let atBookends = section === 0 || section == 9
+    let flippedClass = this.shouldGraphicFlip()
 
     return (
       <figure
@@ -25,9 +35,7 @@ export default class Graphic extends React.Component {
         data-module="ObserveGraphic"
         data-section={section}
       >
-        <div
-          className={'flip-container' + (inMicrocosmView || atBookends ? '' : ' -flipped')}
-        >
+        <div className={'flip-container' + flippedClass}>
           <div className="flipper">
             <div className="flipper__front">
               <img
