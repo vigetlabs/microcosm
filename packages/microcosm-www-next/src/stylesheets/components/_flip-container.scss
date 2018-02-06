@@ -22,7 +22,7 @@
   left: 0;
   position: absolute;
   top: 0;
-  transition: 0.65s cubic-bezier(0.565,1.65,0.765,0.88);
+  transition: 0.65s $bounce-timing-function;
 }
 
 .flipper__front {
