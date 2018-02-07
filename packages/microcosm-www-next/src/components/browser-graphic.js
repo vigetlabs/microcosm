@@ -1,8 +1,9 @@
 import React from 'react'
 import { cat } from '../images'
 
-const BrowserGraphic = () => (
+const BrowserGraphic = ({ imageAlt }) => (
   <div className="browser-graphic">
+    <span className="screenreader-only">Browser View: {imageAlt}</span>
     <header>
       <p>Quizzfeed</p>
     </header>
@@ -16,7 +17,7 @@ const BrowserGraphic = () => (
         </ol>
       </div>
       <div className="graphic">
-        <img src={cat} className="graphic__img" alt="TODO" />
+        <img src={cat} className="graphic__img" alt="" />
       </div>
     </main>
   </div>

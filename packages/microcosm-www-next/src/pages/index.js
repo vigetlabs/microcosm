@@ -1,10 +1,10 @@
 import React from 'react'
+import debounce from 'lodash.debounce'
 import data from '../data/index.json'
 import {
   Description,
   Graphic,
   Header,
-  SideNav,
   Subheading,
   ToggleContainer
 } from '../components'
@@ -14,7 +14,6 @@ export default class IndexPage extends React.Component {
     super(props)
     this.state = {
       currentSection: 0,
-      graphicsMap: [],
       microcosmView: true,
       numSections: Object.keys(data)
     }
@@ -22,69 +21,44 @@ export default class IndexPage extends React.Component {
 
   componentDidMount() {
     this.setVars()
-    this.beginObserve()
+    document.addEventListener('scroll', this.checkPosition())
   }
 
   setVars() {
     this.body = document.body
-    this.graphics = document.querySelectorAll('[data-module="ObserveGraphic"]')
-    this.observeOptions = {
-      rootMargin: '-70px 0px -100px', //account for height of nav and footer
-      threshold: [0, 0.45, 1]
-    }
-
-    this.setGraphicsMap()
-  }
-
-  setGraphicsMap() {
-    let graphicsMap = [].slice.call(this.graphics).reduce((map, graphic) => {
-      map.push({
-        num: parseInt(graphic.dataset.section),
-        elem: graphic
-      })
-
-      return map
-    }, [])
-
-    this.setState({ graphicsMap })
-  }
-
-  beginObserve() {
-    //create new Observer instance
-    let observer = new IntersectionObserver(
-      this.onIntersection,
-      this.observeOptions
+    this.setSectionPositions(
+      document.querySelectorAll('[data-module="ObserveGraphic"]')
     )
-
-    //start observing each graphic
-    for (let i = 0; i < this.graphics.length; i++) {
-      observer.observe(this.graphics[i])
-    }
   }
 
-  onIntersection = observed => {
-    let entry = observed[0]
-    let targetEl = entry.target
-    let section = parseInt(targetEl.dataset.section)
-    let notAlreadyVisible = section !== this.state.currentSection
+  setSectionPositions(graphics) {
+    this.sectionPositions = [].slice.call(graphics).reduce((map, graphic) => {
+      map[graphic.dataset.section] =
+        graphic.offsetTop + graphic.offsetHeight / 2
+      return map
+    }, {})
+  }
 
-    if (entry.intersectionRatio >= 0.45) {
-      this.fadeInGraphic(targetEl)
+  checkPosition() {
+    return debounce(e => {
+      let scrollPosition = e.target.scrollingElement.scrollTop
 
-      if (notAlreadyVisible) {
-        this.changeSection(section)
+      for (let key in this.sectionPositions) {
+        let section = parseInt(key)
+        let graphicInViewport = scrollPosition < this.sectionPositions[section]
+        let atPageEnd = section === 9
+
+        if (graphicInViewport || atPageEnd) {
+          let notAlreadyVisible = section !== this.state.currentSection
+
+          if (notAlreadyVisible) {
+            this.changeSection(section)
+          }
+
+          break
+        }
       }
-    } else {
-      this.fadeOutGraphic(targetEl)
-    }
-  }
-
-  fadeInGraphic(el) {
-    el.classList.add('-no-fade')
-  }
-
-  fadeOutGraphic(el) {
-    el.classList.remove('-no-fade')
+    }, 50)
   }
 
   changeSection(section) {
@@ -112,11 +86,6 @@ export default class IndexPage extends React.Component {
 
     return (
       <div className="wrapper">
-        <SideNav
-          currentSection={this.state.currentSection}
-          graphics={this.state.graphicsMap}
-        />
-
         <section className="section">
           {!bookend ? (
             <ToggleContainer
@@ -156,7 +125,9 @@ export default class IndexPage extends React.Component {
             {this.state.numSections.map(num => (
               <Graphic
                 key={num}
+                fadeClass={this.state.currentSection == num ? '-no-fade' : ''}
                 section={parseInt(num)}
+                imageAlt={sectionData.heading}
                 microcosmView={microcosmView}
               />
             ))}

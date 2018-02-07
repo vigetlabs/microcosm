@@ -9,23 +9,24 @@ $cta-bottom-padding: 6px;
   width: 100%;
   z-index: 2;
 
-  @for $i from 1 through $section-count {
-    .bg-color-#{$i} & {
-      background-color: color(bg-#{$i}-footer);
-
-      .viget-logo svg {
-        fill: color(secondary-#{$i});
-      }
-
-      .footer__cta {
-        color: color(secondary-#{$i});
-      }
-    }
-  }
-
   @include breakpoint(medium-desktop-up) {  //from tablet up, if the screen is long enough (i.e. enough space), fix footer to bottom
     @media (min-height: 901px) {
+      bottom: 0;
       position: fixed;
+
+      @for $i from 1 through $section-count {
+        .bg-color-#{$i} & {
+          background-color: color(bg-#{$i}-footer);
+
+          .viget-logo svg {
+            fill: color(secondary-#{$i});
+          }
+
+          .footer__cta {
+            color: color(secondary-#{$i});
+          }
+        }
+      }
     }
   }
 
