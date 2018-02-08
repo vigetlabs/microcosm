@@ -3652,7 +3652,7 @@ form-data@~2.3.1:
     combined-stream "^1.0.5"
     mime-types "^2.1.12"
 
-form-serialize@^0.7.2:
+form-serialize@^0.7.1, form-serialize@^0.7.2:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/form-serialize/-/form-serialize-0.7.2.tgz#b0a2ff0c22026fb6d3d15c9d33f6de6a432e4732"
 
@@ -6982,6 +6982,10 @@ postcss@^6.0.1, postcss@^6.0.16:
     source-map "^0.6.1"
     supports-color "^5.1.0"
 
+preact@^8.2.7:
+  version "8.2.7"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-8.2.7.tgz#316249fb678cd5e93e7cee63cea7bfb62dbd6814"
+
 prelude-ls@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
@@ -7722,7 +7726,7 @@ rollup-plugin-es3@^1.1.0:
   dependencies:
     magic-string "^0.22.4"
 
-rollup-plugin-filesize@^1.4.2:
+rollup-plugin-filesize@^1.4.2, rollup-plugin-filesize@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/rollup-plugin-filesize/-/rollup-plugin-filesize-1.5.0.tgz#bb5841242d88be57f231c9e8a3a541925392178b"
   dependencies:

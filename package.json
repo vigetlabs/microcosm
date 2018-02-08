@@ -51,8 +51,7 @@
     "packages/microcosm-examples",
     "packages/microcosm-graphql",
     "packages/microcosm-http",
-    "packages/microcosm-preact",
-    "packages/microcosm-react",
+    "packages/microcosm-dom",
     "packages/microcosm-www"
   ]
 }
