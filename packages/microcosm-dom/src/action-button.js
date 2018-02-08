@@ -41,22 +41,22 @@ export function generateActionButton(createElement, Component) {
 
     onChange(status, result) {
       switch (status) {
-      case 'start':
-        this.props.onStart(result.payload, result.meta)
-        break
-      case 'next':
-        this.props.onNext(result.payload, result.meta)
-        break
-      case 'complete':
-        this.props.onComplete(result.payload, result.meta)
-        break
-      case 'error':
-        this.props.onError(result.payload, result.meta)
-        break
-      case 'cancel':
-        this.props.onCancel(result.payload, result.meta)
-        break
-      default:
+        case 'start':
+          this.props.onStart(result.payload, result.meta)
+          break
+        case 'next':
+          this.props.onNext(result.payload, result.meta)
+          break
+        case 'complete':
+          this.props.onComplete(result.payload, result.meta)
+          break
+        case 'error':
+          this.props.onError(result.payload, result.meta)
+          break
+        case 'cancel':
+          this.props.onCancel(result.payload, result.meta)
+          break
+        default:
       }
     }
 
