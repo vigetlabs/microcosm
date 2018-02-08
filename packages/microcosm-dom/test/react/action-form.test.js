@@ -1,7 +1,9 @@
-import { h } from 'preact'
+/* @jsx React.createElement */
+
+import React, { Component } from 'react'
 import { Microcosm } from 'microcosm'
-import { ActionForm, Presenter } from 'microcosm-preact'
-import { mount, unmount, submit } from '../helpers'
+import { ActionForm, Presenter } from 'microcosm-dom/react'
+import { mount } from 'enzyme'
 
 describe('callbacks', function() {
   it('executes onComplete when that action completes', function() {
@@ -13,7 +15,7 @@ describe('callbacks', function() {
       <ActionForm action="test" onComplete={onComplete} send={reply} />
     )
 
-    submit(form)
+    form.simulate('submit')
 
     expect(onComplete).toHaveBeenCalledWith(true, repo.history.head.meta)
   })
@@ -24,7 +26,7 @@ describe('callbacks', function() {
     let onError = jest.fn()
     let form = mount(<ActionForm onError={onError} send={reply} />)
 
-    submit(form)
+    form.simulate('submit')
 
     expect(onError).toHaveBeenCalledWith('bad', repo.history.head.meta)
   })
@@ -38,7 +40,7 @@ describe('callbacks', function() {
       <ActionForm action="test" onStart={onStart} send={reply} />
     )
 
-    submit(form)
+    form.simulate('submit')
 
     expect(onStart).toHaveBeenCalledWith('open', repo.history.head.meta)
   })
@@ -51,7 +53,7 @@ describe('callbacks', function() {
 
     let form = mount(<ActionForm action="test" onNext={onNext} send={reply} />)
 
-    submit(form)
+    form.simulate('submit')
 
     action.next('loading')
 
@@ -63,7 +65,7 @@ describe('callbacks', function() {
 
     let form = mount(<ActionForm onComplete={onComplete} send={() => null} />)
 
-    submit(form)
+    form.simulate('submit')
 
     expect(onComplete).not.toHaveBeenCalled()
   })
@@ -76,11 +78,11 @@ describe('callbacks', function() {
 
     let form = mount(<ActionForm onComplete={onComplete} send={send} />)
 
-    submit(form)
+    form.simulate('submit')
 
     expect(send).toHaveBeenCalled()
 
-    unmount(form)
+    form.unmount()
 
     action.complete()
 
@@ -94,13 +96,13 @@ describe('context', function() {
     let repo = new Microcosm()
     let onComplete = jest.fn()
 
-    submit(
-      mount(
-        <Presenter repo={repo}>
-          <ActionForm action="test" onComplete={onComplete} />
-        </Presenter>
-      )
+    let el = mount(
+      <Presenter repo={repo}>
+        <ActionForm action="test" onComplete={onComplete} />
+      </Presenter>
     )
+
+    el.simulate('submit')
 
     expect(onComplete).toHaveBeenCalledWith({}, repo.history.head.meta)
   })
@@ -110,25 +112,63 @@ describe('context', function() {
     let reply = action => repo.push(action, 'from-prop')
     let onComplete = jest.fn()
 
-    submit(
-      mount(
-        <Presenter>
-          <ActionForm action="test" onComplete={onComplete} send={reply} />
-        </Presenter>
-      )
+    let el = mount(
+      <Presenter>
+        <ActionForm action="test" onComplete={onComplete} send={reply} />
+      </Presenter>
     )
+
+    el.find('form').simulate('submit')
 
     expect(onComplete).toHaveBeenCalledWith('from-prop', repo.history.head.meta)
   })
 })
 
 describe('manual operation', function() {
+  it('submit can be called directly on the component instance', function() {
+    let repo = new Microcosm()
+    let reply = action => repo.push(action, true)
+    let onComplete = jest.fn()
+
+    let form = mount(
+      <ActionForm action="test" onComplete={onComplete} send={reply} />
+    )
+
+    form.instance().submit()
+
+    expect(onComplete).toHaveBeenCalledWith(true, repo.history.head.meta)
+  })
+
   it('can pass in send manually', function() {
     let send = jest.fn()
     let form = mount(<ActionForm action="test" send={send} />)
 
-    submit(form)
+    form.instance().submit()
 
     expect(send).toHaveBeenCalled()
+  })
+})
+
+describe('refs', function() {
+  it('can be referenced as a ref', function() {
+    let send = jest.fn()
+
+    class Test extends Component {
+      render() {
+        return (
+          <ActionForm
+            ref={form => (this.form = form)}
+            action="test"
+            send={send}
+          />
+        )
+      }
+    }
+
+    let el = mount(<Test />)
+
+    el.instance().form.submit()
+
+    expect(send).toHaveBeenCalledWith('test', {})
   })
 })

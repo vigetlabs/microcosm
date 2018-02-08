@@ -4,20 +4,16 @@ module.exports = {
   testEnvironment: 'node',
   projects: [
     './packages/microcosm',
-    './packages/microcosm-preact',
-    './packages/microcosm-react',
+    './packages/microcosm-dom',
     './packages/microcosm-graphql',
     './packages/microcosm-http'
   ],
   modulePathIgnorePatterns: ['example', 'build'],
   moduleNameMapper: {
     '^microcosm$': `<rootDir>/../microcosm/${isBundled ? 'build/min' : 'src'}`,
-    '^microcosm-preact$': `<rootDir>/../microcosm-preact/${
+    '^microcosm-dom(.*)$': `<rootDir>/../microcosm-dom/${
       isBundled ? 'build' : 'src'
-    }`,
-    '^microcosm-react$': `<rootDir>/../microcosm-react/${
-      isBundled ? 'build' : 'src'
-    }`,
+    }$1`,
     '^microcosm-http$': `<rootDir>/../microcosm-http/src/http.js`
   }
 }

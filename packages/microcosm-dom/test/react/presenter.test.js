@@ -1,6 +1,8 @@
+/* @jsx React.createElement */
+
 import React from 'react'
 import { Microcosm, Observable, patch } from 'microcosm'
-import { Presenter, ActionButton, withSend } from 'microcosm-react'
+import { Presenter, ActionButton, withSend } from 'microcosm-dom/react'
 import { mount } from 'enzyme'
 
 let View = () => <ActionButton action="test" value={true} />

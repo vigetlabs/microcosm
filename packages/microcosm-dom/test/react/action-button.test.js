@@ -1,14 +1,16 @@
-import { h } from 'preact'
+/* @jsx React.createElement */
+
+import React from 'react'
 import { Microcosm } from 'microcosm'
-import { ActionButton } from 'microcosm-preact'
-import { mount, unmount } from '../helpers'
+import { ActionButton } from 'microcosm-dom/react'
+import { mount } from 'enzyme'
 
 describe('actions', function() {
   it('passes the value property as parameters into the action', function() {
     let send = jest.fn()
     let button = mount(<ActionButton action="test" value={true} send={send} />)
 
-    button.click()
+    button.simulate('click')
 
     expect(send).toHaveBeenCalledWith('test', true)
   })
@@ -24,7 +26,7 @@ describe('callbacks', function() {
       <ActionButton action="test" onStart={onStart} send={send} />
     )
 
-    button.click()
+    button.simulate('click')
 
     expect(onStart).toHaveBeenCalledWith(true, repo.history.head.meta)
   })
@@ -36,7 +38,7 @@ describe('callbacks', function() {
 
     mount(
       <ActionButton action="test" send={send} onComplete={onComplete} />
-    ).click()
+    ).simulate('click')
 
     expect(onComplete).toHaveBeenCalledWith(true, repo.history.head.meta)
   })
@@ -48,7 +50,7 @@ describe('callbacks', function() {
 
     let button = mount(<ActionButton send={send} onError={onError} />)
 
-    button.click()
+    button.simulate('click')
 
     expect(onError).toHaveBeenCalledWith('bad', repo.history.head.meta)
   })
@@ -60,7 +62,7 @@ describe('callbacks', function() {
 
     let button = mount(<ActionButton onNext={onNext} send={() => action} />)
 
-    button.click()
+    button.simulate('click')
 
     action.next('loading')
 
@@ -74,7 +76,7 @@ describe('callbacks', function() {
 
     let button = mount(<ActionButton send={send} onCancel={onCancel} />)
 
-    button.click()
+    button.simulate('click')
 
     expect(onCancel).toHaveBeenCalledWith(undefined, repo.history.head.meta)
   })
@@ -85,7 +87,7 @@ describe('callbacks', function() {
 
     let button = mount(<ActionButton send={send} onClick={handler} />)
 
-    button.click()
+    button.simulate('click')
 
     expect(handler).toHaveBeenCalled()
   })
@@ -95,7 +97,7 @@ describe('callbacks', function() {
     let send = () => {}
     let button = mount(<ActionButton prepare={handler} send={send} />)
 
-    button.click()
+    button.simulate('click')
 
     expect(handler).toHaveBeenCalled()
   })
@@ -110,11 +112,11 @@ describe('callbacks', function() {
       <ActionButton action="test" onComplete={onComplete} send={send} />
     )
 
-    button.click()
+    button.simulate('click')
 
     expect(send).toHaveBeenCalled()
 
-    unmount(button)
+    button.unmount()
     action.complete(true)
 
     expect(onComplete).not.toHaveBeenCalled()
@@ -122,11 +124,29 @@ describe('callbacks', function() {
 })
 
 describe('manual operation', function() {
+  it('click can be called directly on the component instance', function() {
+    let repo = new Microcosm()
+    let onComplete = jest.fn()
+
+    let button = mount(
+      <ActionButton action="test" onComplete={n => onComplete(n)} />,
+      {
+        context: {
+          send: action => repo.push(action, true)
+        }
+      }
+    )
+
+    button.instance().click()
+
+    expect(onComplete).toHaveBeenCalledWith(true)
+  })
+
   it('can pass in send manually', function() {
     let send = jest.fn()
     let button = mount(<ActionButton action="test" send={send} />)
 
-    button.click()
+    button.simulate('click')
 
     expect(send).toHaveBeenCalled()
   })
@@ -136,18 +156,42 @@ describe('rendering', function() {
   it('can render with another tag name', function() {
     let wrapper = mount(<ActionButton tag="a" action="wut" />)
 
-    expect(wrapper.tagName).toBe('A')
+    expect(wrapper.getDOMNode().tagName).toBe('A')
   })
 
   it('uses the button type when set as a button', function() {
     let wrapper = mount(<ActionButton action="wut" />)
 
-    expect(wrapper.type).toBe('button')
+    expect(wrapper.getDOMNode().type).toBe('button')
   })
 
   it('does not pass the type attribute for non-buttons', function() {
     let wrapper = mount(<ActionButton tag="a" action="wut" />)
 
-    expect(wrapper.getAttribute('type')).toBe(null)
+    expect(wrapper.getDOMNode().getAttribute('type')).toBe(null)
+  })
+})
+
+describe('refs', function() {
+  it('can be referenced as a ref', function() {
+    let send = jest.fn()
+
+    class Test extends React.Component {
+      render() {
+        return (
+          <ActionButton
+            ref={button => (this.button = button)}
+            action="test"
+            send={send}
+          />
+        )
+      }
+    }
+
+    let el = mount(<Test />)
+
+    el.instance().button.click()
+
+    expect(send).toHaveBeenCalledWith('test', null)
   })
 })
