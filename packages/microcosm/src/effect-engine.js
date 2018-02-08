@@ -27,8 +27,7 @@ export function effectEngine(repo, entity, effectOptions) {
       start: dispatcher,
       next: dispatcher,
       complete: dispatcher,
-      error: dispatcher,
-      unsubscribe: dispatcher
+      error: dispatcher
     })
   })
 

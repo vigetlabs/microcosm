@@ -1,22 +1,95 @@
-import { Subject } from 'microcosm'
+import { Subject, Observable } from 'microcosm'
 
 describe('Subject', function() {
-  it('triggers the start hook when subscribed to', () => {
-    let subject = new Subject()
-    let start = jest.fn()
+  describe('toString', () => {
+    it('stringifies to its tag name', () => {
+      expect(`${new Subject(null, { tag: 'foobar' })}`).toBe('foobar')
+    })
 
-    subject.subscribe({ start })
+    it('stringifies to "Subject" when given no tag', () => {
+      expect(`${new Subject(null)}`).toBe('Subject')
+    })
+  })
 
-    expect(start).toHaveBeenCalledTimes(1)
+  describe('toJSON', function() {
+    it('generates a POJO', () => {
+      let subject = new Subject(true, { tag: 'foobar' })
+
+      subject.complete()
+
+      expect(subject.toJSON()).toEqual({
+        payload: true,
+        status: 'complete',
+        tag: 'foobar'
+      })
+    })
+  })
+
+  describe('Symbol("observable")', () => {
+    it('returns itself', () => {
+      let subject = new Subject()
+
+      expect(Observable.wrap(subject)).toBe(subject)
+    })
+  })
+
+  describe('start', function() {
+    it('triggers the start hook when subscribed to', () => {
+      let subject = new Subject()
+      let start = jest.fn()
+
+      subject.subscribe({ start })
+
+      expect(start).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('next', function() {
-    it('does not trigger after being completed', () => {
+    it('emits an update', () => {
       let subject = new Subject()
       let next = jest.fn()
 
       subject.subscribe({ next })
+      subject.next(1)
+      subject.next(2)
+
+      expect(next).toHaveBeenCalledTimes(2)
+      expect(next).toHaveBeenCalledWith(1)
+      expect(next).toHaveBeenCalledWith(2)
+    })
+
+    it('can be subscribed to mid-update', () => {
+      let subject = new Subject()
+      let next = jest.fn()
+
+      subject.next(1)
+      subject.subscribe({ next })
+      subject.next(2)
+
+      expect(next).toHaveBeenCalledTimes(2)
+      expect(next).toHaveBeenCalledWith(1)
+      expect(next).toHaveBeenCalledWith(2)
+    })
+
+    it('does not update the payload if given null', () => {
+      let subject = new Subject()
+      let next = jest.fn()
+
+      subject.subscribe({ next })
+      subject.next(1)
+      subject.next(null)
+
+      expect(next).toHaveBeenCalledTimes(2)
+      expect(next).toHaveBeenCalledWith(1)
+      expect(next).toHaveBeenCalledWith(1)
+    })
+
+    it('does not trigger after being completed', () => {
+      let subject = new Subject()
+      let next = jest.fn()
+
       subject.complete()
+      subject.subscribe({ next })
       subject.next(true)
 
       expect(next).toHaveBeenCalledTimes(0)
@@ -26,8 +99,19 @@ describe('Subject', function() {
       let subject = new Subject()
       let next = jest.fn()
 
-      subject.subscribe({ next })
       subject.error()
+      subject.subscribe({ next })
+      subject.next(true)
+
+      expect(next).toHaveBeenCalledTimes(0)
+    })
+
+    it('does not trigger after cancelling', () => {
+      let subject = new Subject()
+      let next = jest.fn()
+
+      subject.cancel()
+      subject.subscribe({ next })
       subject.next(true)
 
       expect(next).toHaveBeenCalledTimes(0)
@@ -44,7 +128,7 @@ describe('Subject', function() {
       subject.complete()
       subject.complete()
 
-      expect(subject).toHaveProperty('closed', true)
+      expect(subject.closed).toBe(true)
       expect(complete).toHaveBeenCalledTimes(1)
     })
 
@@ -55,7 +139,7 @@ describe('Subject', function() {
       subject.complete()
       subject.subscribe({ complete })
 
-      expect(subject).toHaveProperty('closed', true)
+      expect(subject.closed).toBe(true)
       expect(complete).toHaveBeenCalledTimes(1)
     })
 
@@ -67,55 +151,6 @@ describe('Subject', function() {
       subject.complete(true)
 
       expect(unsubscribe).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('unsubscribe', function() {
-    it('invokes the unsubscribe subscription', () => {
-      let subject = new Subject()
-      let unsubscribe = jest.fn()
-
-      subject.subscribe({ unsubscribe })
-
-      subject.unsubscribe()
-
-      expect(unsubscribe).toHaveBeenCalled()
-    })
-
-    it('can listen to another unsubscribe command', () => {
-      let subject = new Subject()
-      let other = new Subject()
-      let unsubscribe = jest.fn()
-
-      subject.subscribe(other)
-      other.subscribe({ unsubscribe })
-      subject.unsubscribe()
-
-      expect(unsubscribe).toHaveBeenCalled()
-    })
-
-    it('does not trigger on error', () => {
-      let subject = new Subject()
-      let unsubscribe = jest.fn()
-      let error = jest.fn()
-
-      subject.subscribe({ error, unsubscribe })
-      subject.error(true)
-
-      expect(unsubscribe).not.toHaveBeenCalled()
-      expect(error).toHaveBeenCalledWith(true)
-    })
-
-    it('does not trigger on complete', () => {
-      let subject = new Subject()
-      let unsubscribe = jest.fn()
-      let complete = jest.fn()
-
-      subject.subscribe({ complete, unsubscribe })
-      subject.complete()
-
-      expect(unsubscribe).not.toHaveBeenCalled()
-      expect(complete).toHaveBeenCalled()
     })
   })
 
@@ -139,6 +174,60 @@ describe('Subject', function() {
       subject.error()
 
       expect(error).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('cancel', function() {
+    it('calls the clean up function of observables when it is cancelled', function() {
+      let subject = new Subject()
+      let cleanup = jest.fn()
+
+      subject.subscribe({ cleanup })
+      subject.cancel()
+
+      expect(cleanup).toHaveBeenCalledTimes(1)
+    })
+
+    it('becomes closed when cancelled', function() {
+      let subject = new Subject()
+
+      subject.cancel()
+
+      expect(subject.closed).toBe(true)
+    })
+
+    it('cancel is a one time binding', function() {
+      let subject = new Subject()
+      let cancel = jest.fn()
+
+      subject.subscribe({ cancel })
+
+      subject.cancel()
+      subject.cancel()
+
+      expect(cancel).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('then', function() {
+    it('resolves when completed', async () => {
+      let subject = new Subject()
+
+      setTimeout(() => subject.complete(true))
+
+      expect(await subject).toEqual(true)
+    })
+
+    it('rejects when it fails', async () => {
+      let subject = new Subject()
+
+      setTimeout(() => subject.error('sorry'))
+
+      try {
+        await subject
+      } catch (error) {
+        expect(error).toBe('sorry')
+      }
     })
   })
 })

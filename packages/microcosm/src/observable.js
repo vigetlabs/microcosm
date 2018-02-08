@@ -1,6 +1,5 @@
 /**
- * Taken from zen-observable, with specific implimentation notes for Microcosm
- * @flow
+ * Inspired by zen-observable, with specific notes for Microcosm
  */
 
 import { getSymbol } from './symbols'
@@ -63,7 +62,7 @@ export class SubscriptionObserver {
     this.next = handleNext.bind(null, subscription)
     this.complete = handleComplete.bind(null, subscription)
     this.error = handleError.bind(null, subscription)
-    this.unsubscribe = subscription.unsubscribe
+    this.cancel = handleCancel.bind(null, subscription)
   }
 }
 
@@ -77,7 +76,7 @@ export function genObserver(config) {
     next: noop,
     error: noop,
     complete: noop,
-    unsubscribe: noop,
+    cancel: noop,
     cleanup: noop
   }
 
@@ -102,11 +101,6 @@ export function genObserver(config) {
   return observer
 }
 
-function purge(subscriptions) {
-  subscriptions.forEach(s => s.unsubscribe())
-  subscriptions.length = 0
-}
-
 export class Observable {
   constructor(subscriber) {
     this._subscriber = subscriber
@@ -125,8 +119,8 @@ export class Observable {
     return subscription
   }
 
-  get unsubscribe() {
-    return purge.bind(null, this._subscriptions)
+  get cancel() {
+    return reason => this._subscriptions.forEach(s => handleCancel(s, reason))
   }
 
   [getSymbol('observable')]() {
@@ -145,8 +139,10 @@ export class Observable {
 
   static wrap(source) {
     if (source && typeof source === 'object') {
-      if (getObservable(source)) {
-        return source
+      let builder = getObservable(source)
+
+      if (builder) {
+        return builder.call(source)
       }
 
       if (typeof source.then === 'function') {
@@ -275,10 +271,17 @@ function handleUnsubscribe(subscription) {
 
   subscription._observer = undefined
 
-  observer.unsubscribe()
   observer.cleanup()
 
   cleanupSubscription(subscription)
+}
+
+function handleCancel(subscription, value) {
+  if (subscription._observer) {
+    subscription._observer.cancel(value)
+  }
+
+  handleUnsubscribe(subscription)
 }
 
 function fromPromise(promise) {
