@@ -1,7 +1,7 @@
 import { h, Component } from 'preact'
 import { Microcosm, Observable, patch } from 'microcosm'
 import { Presenter, ActionButton, withSend } from 'microcosm-preact'
-import { delay, mount, unmount, remount, PropsTransition } from '../helpers'
+import { delay, mount, unmount, PropsTransition } from '../helpers'
 
 let View = () => <ActionButton action="test" value={true} />
 
