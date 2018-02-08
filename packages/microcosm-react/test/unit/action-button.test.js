@@ -72,16 +72,11 @@ describe('callbacks', function() {
     let onCancel = jest.fn()
     let send = () => repo.push(() => action => action.cancel())
 
-    let button = mount(
-      <ActionButton send={send} onCancel={onCancel} />
-    )
+    let button = mount(<ActionButton send={send} onCancel={onCancel} />)
 
     button.simulate('click')
 
-    expect(onCancel).toHaveBeenCalledWith(
-      undefined,
-      repo.history.head.meta
-    )
+    expect(onCancel).toHaveBeenCalledWith(undefined, repo.history.head.meta)
   })
 
   it('passes along onClick', function() {
