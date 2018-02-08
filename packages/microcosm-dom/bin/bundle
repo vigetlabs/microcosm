@@ -16,9 +16,9 @@ const options = minimist(process.argv.slice(2), {
   }
 })
 
-async function build() {
+async function build(config) {
   let bundle = await rollup.rollup({
-    input: path.resolve('src/index.js'),
+    input: config.entry,
     plugins: [
       buble(),
       uglify({
@@ -32,21 +32,35 @@ async function build() {
       }),
       filesize()
     ],
-    external: ['react', 'react-dom', 'microcosm', 'form-serialize']
+    external: ['react', 'react-dom', 'preact', 'microcosm', 'form-serialize']
   })
 
   await bundle.write({
     globals: {
       react: 'React',
       'react-dom': 'ReactDOM',
+      preact: 'Preact',
       microcosm: 'Microcosm',
       'form-serialize': 'FormSerialize'
     },
-    file: path.resolve(options.out, 'index.js'),
+    file: config.output,
     format: options.format,
-    name: 'MicrocosmReact',
+    name: config.name,
     sourcemap: true
   })
 }
 
-build()
+const packages = [
+  {
+    name: 'MicrocosmReact',
+    entry: path.resolve('src/react.js'),
+    output: path.resolve(options.out, 'react.js')
+  },
+  {
+    name: 'MicrocosmPreact',
+    entry: path.resolve('src/preact.js'),
+    output: path.resolve(options.out, 'preact.js')
+  }
+]
+
+packages.forEach(build)

@@ -1,6 +1,8 @@
-import React from 'react'
-import { Presenter, withSend } from 'microcosm-react'
-import { mount } from 'enzyme'
+/* @jsx h */
+
+import { h, Component } from 'preact'
+import { Presenter, withSend } from 'microcosm-dom/preact'
+import { mount } from '../preact-helpers'
 
 it('exposes the wrapped component as a static property', function() {
   function Button({ send }) {
@@ -36,13 +38,13 @@ it('extracts send from context', function() {
     }
   }
 
-  mount(<Test />).simulate('click')
+  mount(<Test />).click()
 
   expect(handler).toHaveBeenCalled()
 })
 
 it('allows send to be overridden by a prop', function() {
-  let send = jest.fn()
+  let override = jest.fn()
 
   let Button = withSend(function({ send }) {
     return (
@@ -52,9 +54,9 @@ it('allows send to be overridden by a prop', function() {
     )
   })
 
-  mount(<Button send={send} />).simulate('click')
+  mount(<Button send={override} />).click()
 
-  expect(send).toHaveBeenCalledWith('action')
+  expect(override).toHaveBeenCalledWith('action')
 })
 
 describe('Display name', function() {
@@ -68,7 +70,7 @@ describe('Display name', function() {
 
   it('sets the correct display name for stateful components', function() {
     let Button = withSend(
-      class Button extends React.Component {
+      class Button extends Component {
         render() {
           return <button type="button" />
         }

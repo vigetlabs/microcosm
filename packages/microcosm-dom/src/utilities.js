@@ -2,6 +2,10 @@ export function identity(n) {
   return n
 }
 
+export function noop() {
+  return null
+}
+
 export function advice(instance, method) {
   let proto = Object.getPrototypeOf(instance)
   let before = proto[method]
