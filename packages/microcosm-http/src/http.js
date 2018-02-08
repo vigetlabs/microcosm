@@ -6,7 +6,7 @@ function trackUploads(action) {
     const { loaded, total, lengthComputable } = progressEvent
 
     if (lengthComputable) {
-      action.update({
+      action.next({
         uploading: true,
         downloading: false,
         loaded: loaded,
@@ -22,7 +22,7 @@ function trackDownloads(action) {
     const { loaded, total, lengthComputable } = progressEvent
 
     if (lengthComputable) {
-      action.update({
+      action.next({
         uploading: false,
         downloading: true,
         loaded: loaded,
@@ -45,8 +45,6 @@ export default function http(args) {
   return function(action) {
     let source = CancelToken.source()
 
-    action.open(args)
-
     // https://github.com/mzabriskie/axios#request-config
     let options = merge(args, {
       cancelToken: source.token,
@@ -55,12 +53,13 @@ export default function http(args) {
     })
 
     axios(options)
-      .then(response => action.resolve(response.data))
-      .catch(error => {
-        return action.reject(formatErrors(error))
+      .then(response => {
+        action.next(response.data)
+        action.complete()
       })
+      .catch(error => action.error(formatErrors(error)))
 
-    action.onCancel(source.cancel, source)
+    action.subscribe({ unsubscribe: source.cancel.bind(source) })
   }
 }
 
