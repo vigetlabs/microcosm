@@ -92,7 +92,7 @@ describe('Generator Middleware', function() {
     expect.assertions(1)
 
     let stepper = n => action => action.complete(n + 1)
-    let cancel = n => action => action.unsubscribe('cancelled')
+    let cancel = n => action => action.cancel('cancelled')
     let repo = new Microcosm()
 
     let sequence = repo.push(function() {
@@ -110,7 +110,7 @@ describe('Generator Middleware', function() {
       error() {
         throw new Error('Sequence should not have rejected')
       },
-      unsubscribe(result) {
+      cancel(result) {
         expect(result).toEqual('cancelled')
       }
     })

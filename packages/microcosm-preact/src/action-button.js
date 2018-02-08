@@ -15,7 +15,7 @@ export class ActionButton extends Component {
   }
 
   componentWillUnmount() {
-    this.queue.unsubscribe()
+    this.queue.cancel()
   }
 
   render() {
@@ -28,7 +28,7 @@ export class ActionButton extends Component {
     delete props.onNext
     delete props.onComplete
     delete props.onError
-    delete props.onUnsubscribe
+    delete props.onCancel
     delete props.send
     delete props.prepare
 
@@ -53,8 +53,8 @@ export class ActionButton extends Component {
       case 'error':
         this.props.onError(result.payload, result.meta)
         break
-      case 'unsubscribe':
-        this.props.onUnsubscribe(result.payload, result.meta)
+      case 'cancel':
+        this.props.onCancel(result.payload, result.meta)
         break
       default:
     }
@@ -72,7 +72,7 @@ export class ActionButton extends Component {
         error: this.onChange.bind(this, 'error', result),
         next: this.onChange.bind(this, 'next', result),
         complete: this.onChange.bind(this, 'complete', result),
-        unsubscribe: this.onChange.bind(this, 'unsubscribe', result)
+        cancel: this.onChange.bind(this, 'cancel', result)
       })
 
       this.queue.subscribe(result)
@@ -93,7 +93,7 @@ ActionButton.defaultProps = {
   onNext: identity,
   onComplete: identity,
   onError: identity,
-  onUnsubscribe: identity,
+  onCancel: identity,
   prepare: identity,
   send: null,
   tag: 'button',

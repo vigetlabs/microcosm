@@ -16,7 +16,7 @@ export class ActionForm extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    this.queue.unsubscribe()
+    this.queue.cancel()
   }
 
   render() {
@@ -33,7 +33,7 @@ export class ActionForm extends React.PureComponent {
     delete props.onNext
     delete props.onComplete
     delete props.onNext
-    delete props.onUnsubscribe
+    delete props.onCancel
     delete props.onError
     delete props.send
 
@@ -54,8 +54,8 @@ export class ActionForm extends React.PureComponent {
       case 'error':
         this.props.onError(result.payload, result.meta)
         break
-      case 'unsubscribe':
-        this.props.onUnsubscribe(result.payload, result.meta)
+      case 'cancel':
+        this.props.onCancel(result.payload, result.meta)
         break
       default:
     }
@@ -73,7 +73,7 @@ export class ActionForm extends React.PureComponent {
         error: this.onChange.bind(this, 'error', result),
         next: this.onChange.bind(this, 'next', result),
         complete: this.onChange.bind(this, 'complete', result),
-        unsubscribe: this.onChange.bind(this, 'unsubscribe', result)
+        cancel: this.onChange.bind(this, 'cancel', result)
       })
 
       this.queue.subscribe(result)
@@ -98,7 +98,7 @@ ActionForm.defaultProps = {
   onNext: identity,
   onComplete: identity,
   onError: identity,
-  onUnsubscribe: identity,
+  onCancel: identity,
   prepare: identity,
   send: null,
   tag: 'form',

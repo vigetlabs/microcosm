@@ -1,38 +1,6 @@
 import { Subject, Observable } from 'microcosm'
 
 describe('Subject', function() {
-  describe('toString', () => {
-    it('stringifies to its tag name', () => {
-      expect(`${new Subject(null, { tag: 'foobar' })}`).toBe('foobar')
-    })
-
-    it('stringifies to "Subject" when given no tag', () => {
-      expect(`${new Subject(null)}`).toBe('Subject')
-    })
-  })
-
-  describe('toJSON', function() {
-    it('generates a POJO', () => {
-      let subject = new Subject(true, { tag: 'foobar' })
-
-      subject.complete()
-
-      expect(subject.toJSON()).toEqual({
-        payload: true,
-        status: 'complete',
-        tag: 'foobar'
-      })
-    })
-  })
-
-  describe('Symbol("observable")', () => {
-    it('returns itself', () => {
-      let subject = new Subject()
-
-      expect(Observable.wrap(subject)).toBe(subject)
-    })
-  })
-
   describe('start', function() {
     it('triggers the start hook when subscribed to', () => {
       let subject = new Subject()
@@ -84,12 +52,24 @@ describe('Subject', function() {
       expect(next).toHaveBeenCalledWith(1)
     })
 
+    it('triggers if next only once after being completed', () => {
+      let subject = new Subject()
+      let next = jest.fn()
+
+      subject.complete(1)
+      subject.subscribe({ next })
+      subject.next(2)
+
+      expect(next).toHaveBeenCalledTimes(1)
+      expect(next).toHaveBeenCalledWith(1)
+    })
+
     it('does not trigger after being completed', () => {
       let subject = new Subject()
       let next = jest.fn()
 
-      subject.complete()
       subject.subscribe({ next })
+      subject.complete()
       subject.next(true)
 
       expect(next).toHaveBeenCalledTimes(0)
@@ -228,6 +208,38 @@ describe('Subject', function() {
       } catch (error) {
         expect(error).toBe('sorry')
       }
+    })
+  })
+
+  describe('toString', function() {
+    it('stringifies to its tag name', () => {
+      expect(`${new Subject(null, { tag: 'foobar' })}`).toBe('foobar')
+    })
+
+    it('stringifies to "Subject" when given no tag', () => {
+      expect(`${new Subject(null)}`).toBe('Subject')
+    })
+  })
+
+  describe('toJSON', function() {
+    it('generates a POJO', () => {
+      let subject = new Subject(true, { tag: 'foobar' })
+
+      subject.complete()
+
+      expect(subject.toJSON()).toEqual({
+        payload: true,
+        status: 'complete',
+        tag: 'foobar'
+      })
+    })
+  })
+
+  describe('Symbol("observable")', function() {
+    it('returns itself', () => {
+      let subject = new Subject()
+
+      expect(Observable.wrap(subject)).toBe(subject)
     })
   })
 })

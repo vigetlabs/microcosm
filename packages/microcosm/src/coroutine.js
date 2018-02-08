@@ -48,10 +48,10 @@ function asGenerator(action: Subject, iterator: GeneratorAction) {
         next: action.next,
         complete: step,
         error: action.error,
-        unsubscribe: action.unsubscribe
+        cancel: action.cancel
       })
 
-      action.subscribe(tracker)
+      action.subscribe({ cancel: tracker.unsubscribe })
     }
   }
 
