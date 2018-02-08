@@ -97,15 +97,14 @@ export class Subject {
   subscribe() {
     let observer = genObserver(...arguments)
 
-    if (this.errored) {
+    if (this.closed) {
       observer.start(this.payload)
-      observer.error(this.payload)
-    } else if (this.cancelled) {
-      observer.start(this.payload)
-      observer.cancel(this.payload)
-    } else if (this.completed) {
-      observer.start(this.payload)
-      observer.complete(this.payload)
+
+      if (this.completed) {
+        observer.next(this.payload)
+      }
+
+      observer[this.status](this.payload)
     } else {
       return new Observable(observer => {
         if (this.meta.status === 'next') {
@@ -122,7 +121,8 @@ export class Subject {
     return new Promise((resolve, reject) => {
       this.subscribe({
         complete: () => resolve(this.payload),
-        error: () => reject(this.payload)
+        error: () => reject(this.payload),
+        cancel: () => resolve(this.payload)
       })
     }).then(pass, fail)
   }

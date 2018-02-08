@@ -22,14 +22,14 @@ describe('History::archive', function() {
     expect(repo.history.size).toBe(1)
   })
 
-  it('cleans up actions that unsubscribe', async () => {
+  it('cleans up actions that cancels', async () => {
     const repo = new Microcosm()
 
     repo.push('one')
     let action = repo.push(() => new Promise(n => n))
     repo.push('two')
 
-    action.unsubscribe()
+    action.cancel()
 
     await repo.history.wait
 

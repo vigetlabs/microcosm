@@ -74,7 +74,7 @@ export class Presenter extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    this.mediator.model.unsubscribe()
+    this.mediator.model.cancel()
     this.teardown(this.repo, this.props, this.state)
 
     if (this.didFork) {
@@ -138,7 +138,7 @@ class PresenterMediator extends React.PureComponent {
   }
 
   updateModel(props, state) {
-    this.model.unsubscribe()
+    this.model.cancel()
 
     this.model = Observable.hash(
       this.presenter.getModel(this.repo, props, state)

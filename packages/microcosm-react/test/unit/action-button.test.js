@@ -67,18 +67,18 @@ describe('callbacks', function() {
     expect(onNext).toHaveBeenCalledWith('loading', repo.history.head.meta)
   })
 
-  it('executes onUnsubscribe when that action is cancelled', function() {
+  it('executes onCancel when that action is cancelled', function() {
     let repo = new Microcosm()
-    let onUnsubscribe = jest.fn()
-    let send = () => repo.push(() => action => action.unsubscribe())
+    let onCancel = jest.fn()
+    let send = () => repo.push(() => action => action.cancel())
 
     let button = mount(
-      <ActionButton send={send} onUnsubscribe={onUnsubscribe} />
+      <ActionButton send={send} onCancel={onCancel} />
     )
 
     button.simulate('click')
 
-    expect(onUnsubscribe).toHaveBeenCalledWith(
+    expect(onCancel).toHaveBeenCalledWith(
       undefined,
       repo.history.head.meta
     )

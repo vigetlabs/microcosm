@@ -35,7 +35,7 @@ describe('History::wait', function() {
     let two = repo.push(delay)
     repo.push(delay)
 
-    two.unsubscribe()
+    two.cancel()
 
     // This will fail if the promise returned from `wait()` rejects, and
     // it will only pass when the promise resolves.

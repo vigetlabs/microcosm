@@ -74,7 +74,7 @@ export function genObserver(config) {
   let observer = {
     start: noop,
     next: noop,
-    error: noop,
+    error: noop, // TODO : Should this be a configurable fallback handler?
     complete: noop,
     cancel: noop,
     cleanup: noop
@@ -107,9 +107,9 @@ export class Observable {
     this._subscriptions = new Set()
   }
 
-  subscribe(config) {
+  subscribe() {
     let subscription = new Subscription(
-      genObserver(config),
+      genObserver(...arguments),
       this._subscriber,
       this
     )
@@ -235,6 +235,9 @@ function handleError(subscription, value) {
   let observer = subscription._observer
 
   if (observer === undefined) {
+    // TODO: this doesn't feel right. If a user double errors() we
+    // should warn, but not raise. It should mean that they did
+    // something wrong
     throw value
   }
 
@@ -276,9 +279,9 @@ function handleUnsubscribe(subscription) {
   cleanupSubscription(subscription)
 }
 
-function handleCancel(subscription, value) {
+function handleCancel(subscription, reason) {
   if (subscription._observer) {
-    subscription._observer.cancel(value)
+    subscription._observer.cancel(reason)
   }
 
   handleUnsubscribe(subscription)
