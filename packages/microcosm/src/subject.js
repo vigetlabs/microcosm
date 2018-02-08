@@ -5,21 +5,14 @@ import { getSymbol } from './symbols'
 import { noop, EMPTY_SUBSCRIPTION } from './empty'
 
 function send(observers, message, value) {
-  observers.forEach(observer => {
-    if (!observer.closed) {
-      observer[message](value)
-    }
-  })
+  observers.forEach(observer => observer[message](value))
 }
 
 export class Subject {
   constructor(payload, meta) {
     this.meta = meta || {}
     this.payload = payload
-    this.closed = false
-    this.errored = false
     this.disabled = false
-    this.cancelled = false
 
     this.meta.status = 'start'
 
@@ -31,32 +24,56 @@ export class Subject {
     })
   }
 
+  get status() {
+    return this.meta.status
+  }
+
+  get completed() {
+    return this.status === 'complete'
+  }
+
+  get cancelled() {
+    return this.status === 'cancel'
+  }
+
+  get closed() {
+    return this.errored || this.completed || this.cancelled
+  }
+
+  get errored() {
+    return this.status === 'error'
+  }
+
   get next() {
     if (this.closed) {
       return noop
     }
 
     return value => {
-      this.payload = value
       this.meta.status = 'next'
+
+      if (value != null) {
+        this.payload = value
+      }
 
       send(this._observers, 'next', value)
     }
   }
 
   get complete() {
-    return () => {
-      this.closed = true
+    return value => {
       this.meta.status = 'complete'
 
-      send(this._observers, 'complete')
+      if (value != null) {
+        this.payload = value
+      }
+
+      send(this._observers, 'complete', value)
     }
   }
 
   get error() {
     return error => {
-      this.closed = true
-      this.errored = true
       this.payload = error
       this.meta.status = 'error'
 
@@ -64,14 +81,12 @@ export class Subject {
     }
   }
 
-  get unsubscribe() {
+  get cancel() {
     return reason => {
-      this.closed = true
-      this.cancelled = true
       this.payload = reason
-      this.meta.status = 'unsubscribe'
+      this.meta.status = 'cancel'
 
-      this._observable.unsubscribe()
+      send(this._observers, 'cancel', reason)
     }
   }
 
@@ -87,11 +102,10 @@ export class Subject {
       observer.error(this.payload)
     } else if (this.cancelled) {
       observer.start(this.payload)
-      observer.unsubscribe(this.payload)
-    } else if (this.closed) {
+      observer.cancel(this.payload)
+    } else if (this.completed) {
       observer.start(this.payload)
-      observer.next(this.payload)
-      observer.complete()
+      observer.complete(this.payload)
     } else {
       return new Observable(observer => {
         if (this.meta.status === 'next') {
@@ -108,8 +122,7 @@ export class Subject {
     return new Promise((resolve, reject) => {
       this.subscribe({
         complete: () => resolve(this.payload),
-        error: reject,
-        unsubscribe: resolve
+        error: () => reject(this.payload)
       })
     }).then(pass, fail)
   }
@@ -119,14 +132,14 @@ export class Subject {
   }
 
   toString() {
-    return this.meta.tag || 'subject'
+    return this.meta.tag || 'Subject'
   }
 
   toJSON() {
     return {
       payload: this.payload,
       status: this.meta.status,
-      tag: this.meta.tag
+      tag: this.toString()
     }
   }
 }

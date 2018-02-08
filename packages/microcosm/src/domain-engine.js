@@ -54,7 +54,6 @@ export function domainEngine(repo, key, entity, domainOptions) {
       next: dispatcher,
       complete: dispatcher,
       error: dispatcher,
-      unsubscribe: dispatcher,
       // TODO: This is necessary so that revisions are removed from
       // the ledger, avoiding a memory leak. Is there a way that we
       // could do this without cleaning both the ledger and history?
