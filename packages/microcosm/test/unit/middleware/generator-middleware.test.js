@@ -254,7 +254,7 @@ describe('Generator Middleware', function() {
   })
 
   describe('when yielding an object', function() {
-    it('waits for all items to complete', function() {
+    it('waits for all items to complete', async function() {
       expect.assertions(2)
 
       let add = n => n
@@ -277,11 +277,10 @@ describe('Generator Middleware', function() {
         }
       }
 
-      repo.push(testReturnValue).onDone(payload => {
-        expect(repo).toHaveState('count', 3)
+      let payload = await repo.push(testReturnValue)
+      expect(repo).toHaveState('count', 3)
 
-        expect(payload).toEqual({ one: 1, two: 2 })
-      })
+      expect(payload).toEqual({ one: 1, two: 2 })
     })
   })
 })
