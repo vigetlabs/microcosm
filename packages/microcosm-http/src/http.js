@@ -59,7 +59,7 @@ export default function http(args) {
       })
       .catch(error => action.error(formatErrors(error)))
 
-    action.subscribe({ unsubscribe: source.cancel.bind(source) })
+    action.subscribe(source)
   }
 }
 

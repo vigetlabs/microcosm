@@ -24,12 +24,12 @@ it('cancels', () => {
 
   let action = repo.push(getPosts)
 
-  action.unsubscribe()
+  action.cancel()
 
   // TODO: Should the initial payload be this?
   // expect(action.payload).toEqual({
   //   url: 'https://jsonplaceholder.typicode.com/posts'
   // })
 
-  expect(action.meta.status).toBe('unsubscribe')
+  expect(action.meta.status).toBe('cancel')
 })
