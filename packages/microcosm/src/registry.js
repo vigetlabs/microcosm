@@ -46,6 +46,10 @@ export class Cache {
     return this.register(action) !== EMPTY_OBJECT
   }
 
+  respondsToStatus(action, status) {
+    return this.register(action)[status] !== EMPTY_ARRAY
+  }
+
   resolve(action) {
     return wrap(this.register(action)[action.meta.status] || EMPTY_ARRAY)
   }

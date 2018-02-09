@@ -1,8 +1,8 @@
 /**
  * This test covers a bug where the state gets out of sync when an
  * action is pushed within another action. We first encountered this
- * on a project where we wanted to remove a "focused" state when saving
- * data using another action.
+ * on a project where we wanted to remove a "focused" state when
+ * saving data using another action.
  */
 
 import Microcosm, { update, patch } from 'microcosm'

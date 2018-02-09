@@ -229,7 +229,7 @@ describe('rollbacks', function() {
 
     expect(repo).toHaveState('styles.color', 'red')
 
-    action.unsubscribe()
+    action.cancel()
 
     expect(repo).toHaveState('styles.color', 'blue')
   })

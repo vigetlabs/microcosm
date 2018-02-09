@@ -9,6 +9,7 @@ const buble = require('rollup-plugin-buble')
 const uglify = require('rollup-plugin-uglify')
 const node = require('rollup-plugin-node-resolve')
 const json = require('rollup-plugin-json')
+const filesize = require('rollup-plugin-filesize')
 
 const path = require('path')
 const minimist = require('minimist')
@@ -30,7 +31,8 @@ const plugins = [
   buble(),
   node({
     preferBuiltins: true
-  })
+  }),
+  filesize()
 ]
 
 if (options.minify) {
@@ -102,7 +104,6 @@ for (let name in configs) {
       file: file,
       format: options.format,
       name: name,
-      moduleID: path.basename(input, '.js'),
       sourcemap: true
     })
   })

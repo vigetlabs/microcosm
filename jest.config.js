@@ -5,7 +5,7 @@ module.exports = {
   projects: [
     './packages/microcosm',
     './packages/microcosm-dom',
-    './packages/microcosm-graphql',
+    //    './packages/microcosm-graphql',
     './packages/microcosm-http'
   ],
   modulePathIgnorePatterns: ['example', 'build'],

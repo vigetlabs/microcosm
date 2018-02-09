@@ -77,8 +77,8 @@ describe('Efficiency', function() {
     const one = repo.push(action)
     const two = repo.push(action)
 
-    two.complete()
-    one.complete()
+    two.complete(1)
+    one.complete(2)
 
     expect(handler).toHaveBeenCalledTimes(2)
   })

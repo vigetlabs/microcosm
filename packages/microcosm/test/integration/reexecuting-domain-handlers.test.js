@@ -43,11 +43,9 @@ describe('Re-executing domain handlers', function() {
     let one = repo.push(addOne)
     let two = repo.push(addTwo)
 
-    two.next(2)
-    two.complete()
+    two.complete(2)
 
-    one.next(1)
-    one.complete()
+    one.complete(1)
 
     expect(counterOneCalls).toBe(1)
     expect(counterTwoCalls).toBe(1)
@@ -93,11 +91,8 @@ describe('Re-executing domain handlers', function() {
     let one = parent.push(test)
     let two = parent.push(test)
 
-    two.next(2)
-    two.complete()
-
-    one.next(1)
-    one.complete()
+    two.complete(2)
+    one.complete(1)
 
     // The parent should get updates, but not state managed by a child
     expect(parent).toHaveState('counterOne', 3)

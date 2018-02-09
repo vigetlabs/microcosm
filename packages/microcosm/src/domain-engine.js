@@ -8,7 +8,9 @@ export function domainEngine(repo, key, entity, domainOptions) {
   let domain = spawn(entity, options, repo)
 
   let start = domain.getInitialState ? domain.getInitialState() : undefined
-  let ledger = new Map([[INITIAL_STATE, start]])
+  let ledger = new Map([
+    [INITIAL_STATE, { state: start, status: 'complete', payload: null }]
+  ])
   let answer = new Subject()
 
   // Push an initial iteration in case this state is subscribed to
@@ -42,7 +44,7 @@ export function domainEngine(repo, key, entity, domainOptions) {
     }
 
     let dispatcher = () => {
-      let next = rollforward(answer, ledger, registry, repo, domain, action)
+      let next = rollforward(ledger, registry, repo, domain, action)
 
       if (next !== answer.payload) {
         answer.next(next)
@@ -54,6 +56,7 @@ export function domainEngine(repo, key, entity, domainOptions) {
       next: dispatcher,
       complete: dispatcher,
       error: dispatcher,
+      cancel: dispatcher,
       // TODO: This is necessary so that revisions are removed from
       // the ledger, avoiding a memory leak. Is there a way that we
       // could do this without cleaning both the ledger and history?
@@ -79,28 +82,52 @@ export function domainEngine(repo, key, entity, domainOptions) {
   return { domain, answer }
 }
 
-function rollforward(answer, ledger, registry, repo, domain, action) {
-  let prior = repo.history.before(action)
-  let state = ledger.has(prior) ? ledger.get(prior) : ledger.get(INITIAL_STATE)
+function recall(ledger, repo, action) {
+  while (action) {
+    if (ledger.has(action)) {
+      return ledger.get(action)
+    }
+
+    action = repo.history.before(action)
+  }
+
+  return ledger.get(INITIAL_STATE)
+}
+
+function rollforward(ledger, registry, repo, domain, action) {
+  let revision = recall(ledger, repo, repo.history.before(action))
+  let state = revision.state
 
   while (action) {
-    let next = state
+    let current = recall(ledger, repo, action)
+
+    // Optimization: Prevent dispatch if params did not change
+    if (
+      // If the reference to the prior state is the same
+      state === current.state &&
+      // And the payload is the same
+      current.payload === action.payload &&
+      // And the status is the same
+      current.status === action.status
+    ) {
+      // Pure functions mean nothing will change
+      break
+    }
 
     if (!action.disabled) {
       let handlers = registry.resolve(action)
-
       for (var i = 0, len = handlers.length; i < len; i++) {
-        next = handlers[i].call(domain, next, action.payload, action.meta)
-      }
-
-      if (next === state) {
-        break
+        state = handlers[i].call(domain, state, action.payload, action.meta)
       }
     }
 
-    ledger.set(action, next)
+    ledger.set(action, {
+      state: state,
+      status: action.status,
+      payload: action.payload
+    })
+
     action = repo.history.after(action)
-    state = next
   }
 
   return state

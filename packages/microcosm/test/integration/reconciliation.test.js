@@ -57,18 +57,15 @@ describe('Reconciliation', function() {
 
     expect(repo).toHaveState('count', 0)
 
-    three.next(3)
-    three.complete()
+    three.complete(3)
     expect(handler).toHaveBeenCalledTimes(1)
     expect(repo).toHaveState('count', 3)
 
-    two.next(2)
-    two.complete()
+    two.complete(2)
     expect(handler).toHaveBeenCalledTimes(3)
     expect(repo).toHaveState('count', 5)
 
-    one.next(1)
-    one.complete()
+    one.complete(1)
     expect(handler).toHaveBeenCalledTimes(6)
     expect(repo).toHaveState('count', 6)
   })
