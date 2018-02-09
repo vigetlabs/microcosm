@@ -28,8 +28,12 @@ module.exports = {
     }
   },
   extends: ['eslint:recommended', 'plugin:flowtype/recommended'],
-  plugins: ['react', 'flowtype', 'flowtype-errors'],
+  plugins: ['react', 'flowtype', 'flowtype-errors', 'prettier'],
   rules: {
+    'no-use-before-define': [
+      'error',
+      { functions: false, classes: false, variables: true }
+    ],
     'sort-vars': 0,
     'no-console': 0,
     'no-unused-vars': [
@@ -39,6 +43,7 @@ module.exports = {
         varsIgnorePattern: '^h$'
       }
     ],
+    'prettier/prettier': 'error',
     'react/jsx-equals-spacing': ['warn', 'never'],
     'react/jsx-no-duplicate-props': [
       'warn',
