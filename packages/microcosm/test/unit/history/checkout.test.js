@@ -40,7 +40,7 @@ describe('History::checkout', function() {
     try {
       repo.history.checkout()
     } catch (x) {
-      expect(x.message).toContain('Unable to checkout undefined action')
+      expect(x.message).toContain('Unable to checkout missing action')
     }
   })
 
