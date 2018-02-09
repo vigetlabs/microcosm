@@ -72,7 +72,7 @@ for (let key in repo.mutations) {
     let method = methodMap[operation]
 
     app[method](resource.toLowerCase(), (req, res) => {
-      var action = repo.push(action, req.body)
+      var action = repo.push(name, req.body)
       action.then(data => res.json(data), res.error)
     })
   })
