@@ -4,6 +4,7 @@
     "node": ">= 6.10"
   },
   "scripts": {
+    "bootstrap": "yarn install && lerna bootstrap",
     "deploy": "./bin/deploy",
     "bootstrap": "yarn install && lerna bootstrap",
     "format": "prettier --write './packages/**/*.js'",
