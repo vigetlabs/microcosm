@@ -10,7 +10,7 @@ jobs:
       - restore_cache:
           keys:
             - yarn-cache-{{ checksum "yarn.lock" }}
-      - run: yarn install
+      - run: yarn bootstrap
       - save_cache:
           paths:
             - node_modules
