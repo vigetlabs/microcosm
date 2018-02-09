@@ -9,7 +9,6 @@
  */
 declare type Command = (...args: *[]) => *
 
- */
 declare type Status =
   | 'start'
   | 'next'

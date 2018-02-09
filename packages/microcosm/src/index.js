@@ -1,4 +1,4 @@
-export { default, default as Microcosm } from './microcosm'
+export { Microcosm, Microcosm as default } from './microcosm'
 
 // Observables libraries
 export { Observable } from './observable'

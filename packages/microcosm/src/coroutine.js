@@ -2,14 +2,21 @@
  * @flow
  */
 
+import { Microcosm } from './microcosm'
 import { Observable } from './observable'
+import { type Subject } from './subject'
 import { getSymbol } from './symbols'
 
 /**
  * Coroutine is used by an action to determine how it should resolve
  * the body of their associated command.
  */
-export default function coroutine(action, job, params: *[], repo: any): void {
+export function coroutine(
+  action: Subject,
+  job: any,
+  params: any[],
+  repo: Microcosm
+): void {
   if (typeof job !== 'function') {
     action.next(params.length ? params[0] : undefined)
     action.complete()
@@ -35,7 +42,7 @@ function isGeneratorFn(value: any): boolean {
   return value && value[getSymbol('toStringTag')] === 'GeneratorFunction'
 }
 
-function asGenerator(action: Subject, iterator: GeneratorAction) {
+function asGenerator(action: Subject, iterator: Iterator<*>) {
   function step() {
     let next = iterator.next(action.payload)
 

@@ -1,5 +1,6 @@
 // @flow
 
+import { type Subject } from './subject'
 import { EMPTY_ARRAY, EMPTY_OBJECT } from './empty'
 
 function wrap(value: *): *[] {
@@ -27,12 +28,15 @@ function buildRegistry(entity: *, tag: string): Object {
 }
 
 export class Cache {
-  constructor(entity, seed) {
+  _entity: *
+  _entries: *
+
+  constructor(entity: *, seed: *) {
     this._entity = entity
     this._entries = seed || {}
   }
 
-  register(action) {
+  register(action: Subject) {
     let { tag } = action.meta
 
     if (!this._entries.hasOwnProperty(tag)) {
@@ -42,15 +46,11 @@ export class Cache {
     return this._entries[tag]
   }
 
-  respondsTo(action) {
+  respondsTo(action: Subject): boolean {
     return this.register(action) !== EMPTY_OBJECT
   }
 
-  respondsToStatus(action, status) {
-    return this.register(action)[status] !== EMPTY_ARRAY
-  }
-
-  resolve(action) {
+  resolve(action: Subject) {
     return wrap(this.register(action)[action.meta.status] || EMPTY_ARRAY)
   }
 }

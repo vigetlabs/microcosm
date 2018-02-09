@@ -2,7 +2,6 @@
 
 exports[`History::toJSON serializes the tree of actions 1`] = `
 Object {
-  "head": undefined,
   "list": Array [
     Object {
       "payload": true,
@@ -20,7 +19,6 @@ Object {
       "tag": "four",
     },
   ],
-  "root": undefined,
   "size": 3,
   "tree": Object {
     "children": Array [

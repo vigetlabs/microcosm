@@ -1,4 +1,5 @@
 // @flow
+
 import { EMPTY_ARRAY } from './empty'
 import { Subject } from './subject'
 

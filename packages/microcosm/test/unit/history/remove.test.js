@@ -78,8 +78,8 @@ describe('History::remove', function() {
       repo.history.remove(three)
 
       expect(repo.history.after(one)).toBe(two)
-      expect(repo.history.after(two)).toBe(undefined)
-      expect(repo.history.after(three)).toBe(undefined)
+      expect(repo.history.after(two)).toBe(null)
+      expect(repo.history.after(three)).toBe(null)
     })
   })
 

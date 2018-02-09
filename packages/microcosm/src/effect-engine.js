@@ -5,7 +5,11 @@
 import { spawn, Cache } from './registry'
 import { merge } from './data'
 
-export function effectEngine(repo, entity, effectOptions) {
+export function effectEngine(
+  repo: Microcosm,
+  entity: any,
+  effectOptions: ?Object
+) {
   let options = merge(repo.options, entity.defaults, effectOptions)
   let effect = spawn(entity, options, repo)
   let registry = new Cache(effect)

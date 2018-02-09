@@ -9,8 +9,14 @@ function send(observers, message, value) {
 }
 
 export class Subject {
-  constructor(payload, meta) {
-    this.meta = meta || {}
+  meta: { tag: *, status: string }
+  payload: *
+  disabled: boolean
+  _observers: Set<*>
+  _observable: Observable
+
+  constructor(payload?: *, meta?: *) {
+    this.meta = meta || { tag: null, status: 'unstarted' }
     this.payload = payload
     this.disabled = false
 
@@ -24,27 +30,27 @@ export class Subject {
     })
   }
 
-  get status() {
+  get status(): string {
     return this.meta.status
   }
 
-  get completed() {
+  get completed(): boolean {
     return this.status === 'complete'
   }
 
-  get cancelled() {
+  get cancelled(): boolean {
     return this.status === 'cancel'
   }
 
-  get closed() {
+  get closed(): boolean {
     return this.errored || this.completed || this.cancelled
   }
 
-  get errored() {
+  get errored(): boolean {
     return this.status === 'error'
   }
 
-  get next() {
+  get next(): * {
     if (this.closed) {
       return noop
     }
@@ -60,7 +66,7 @@ export class Subject {
     }
   }
 
-  get complete() {
+  get complete(): * {
     return value => {
       this.meta.status = 'complete'
 
@@ -72,7 +78,7 @@ export class Subject {
     }
   }
 
-  get error() {
+  get error(): * {
     return error => {
       this.payload = error
       this.meta.status = 'error'
@@ -81,7 +87,7 @@ export class Subject {
     }
   }
 
-  get cancel() {
+  get cancel(): * {
     return reason => {
       this.payload = reason
       this.meta.status = 'cancel'
@@ -94,7 +100,7 @@ export class Subject {
     this.disabled = !this.disabled
   }
 
-  subscribe() {
+  subscribe(next: *) {
     let observer = genObserver(...arguments)
 
     if (this.closed) {
@@ -117,7 +123,7 @@ export class Subject {
     return EMPTY_SUBSCRIPTION
   }
 
-  then(pass, fail) {
+  then(pass: *, fail: *): Promise<*> {
     return new Promise((resolve, reject) => {
       this.subscribe({
         complete: () => resolve(this.payload),
@@ -127,15 +133,16 @@ export class Subject {
     }).then(pass, fail)
   }
 
+  // $FlowFixMe - Flow doesn't understand computed keys :-/
   [getSymbol('observable')]() {
     return this
   }
 
-  toString() {
+  toString(): string {
     return this.meta.tag || 'Subject'
   }
 
-  toJSON() {
+  toJSON(): Object {
     return {
       payload: this.payload,
       status: this.meta.status,

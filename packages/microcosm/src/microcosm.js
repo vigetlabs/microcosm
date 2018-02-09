@@ -12,7 +12,15 @@ const DEFAULTS = {
   parent: null
 }
 
-class Microcosm extends Subject {
+export class Microcosm extends Subject {
+  history: History
+  domains: { [string]: * }
+  answers: { [string]: Subject }
+  options: Object
+
+  static defaults: Object
+  static version: string
+
   constructor(preOptions?: ?Object) {
     super()
 
@@ -34,7 +42,7 @@ class Microcosm extends Subject {
     }
   }
 
-  get state() {
+  get state(): Object {
     let value = {}
 
     for (let key in this.answers) {
@@ -48,11 +56,11 @@ class Microcosm extends Subject {
     // NOOP
   }
 
-  teardown() {
+  teardown(options?: Object) {
     // NOOP
   }
 
-  addDomain(key, config, options) {
+  addDomain(key: string, config: any, options?: Object) {
     console.assert(
       key in this.domains === false,
       'Can not add domain for "' + key + '". This state is already managed.'
@@ -68,7 +76,7 @@ class Microcosm extends Subject {
     return domain
   }
 
-  addEffect(config, options) {
+  addEffect(config: any, options?: Object) {
     return effectEngine(this, config, options)
   }
 
@@ -100,5 +108,3 @@ class Microcosm extends Subject {
 }
 
 Microcosm.version = version
-
-export default Microcosm
