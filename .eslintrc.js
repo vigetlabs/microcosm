@@ -27,7 +27,11 @@ module.exports = {
       onlyFilesWithFlowAnnotation: true
     }
   },
-  extends: ['eslint:recommended', 'plugin:flowtype/recommended'],
+  extends: [
+    'eslint:recommended',
+    'plugin:flowtype/recommended',
+    'plugin:react/recommended'
+  ],
   plugins: ['react', 'flowtype', 'flowtype-errors', 'prettier'],
   rules: {
     'no-use-before-define': [
@@ -40,32 +44,10 @@ module.exports = {
       2,
       {
         args: 'none',
-        varsIgnorePattern: '^h$'
+        varsIgnorePattern: '^_'
       }
     ],
     'prettier/prettier': 'error',
-    'react/jsx-equals-spacing': ['warn', 'never'],
-    'react/jsx-no-duplicate-props': [
-      'warn',
-      {
-        ignoreCase: true
-      }
-    ],
-    'react/jsx-no-undef': 'error',
-    'react/jsx-pascal-case': [
-      'warn',
-      {
-        allowAllCaps: true,
-        ignore: []
-      }
-    ],
-    'react/jsx-uses-react': 'warn',
-    'react/jsx-uses-vars': 'warn',
-    'react/no-danger-with-children': 'warn',
-    'react/no-deprecated': 'warn',
-    'react/no-direct-mutation-state': 'warn',
-    'react/no-is-mounted': 'warn',
-    'react/require-render-return': 'warn',
-    'react/style-prop-object': 'warn'
+    'react/prop-types': 0
   }
 }

@@ -1,7 +1,6 @@
 // @flow
 
 import { EMPTY_ARRAY } from './empty'
-import { Subject } from './subject'
 
 type KeyPath = Array<string>
 type MixedObject = { [key: string]: mixed }

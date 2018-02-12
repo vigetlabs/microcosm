@@ -1,4 +1,5 @@
 module.exports = {
   collectCoverageFrom: ['src/**/*.js'],
-  projects: ['test/engines/preact.config.js', 'test/engines/react.config.js']
+  modulePathIgnorePatterns: ['build'],
+  projects: ['./jest.preact.config.js', './jest/react.config.js']
 }

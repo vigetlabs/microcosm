@@ -1,5 +1,5 @@
 import { Microcosm, Observable, tag } from 'microcosm'
-import { advice, noop, shallowDiffers } from './utilities'
+import { advice, noop } from './utilities'
 
 export function generatePresenter(createElement, Component) {
   function renderMediator() {

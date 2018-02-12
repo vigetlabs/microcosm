@@ -4,8 +4,10 @@ module.exports = {
   testEnvironment: 'node',
   projects: [
     './packages/microcosm',
-    './packages/microcosm-dom',
-    //    './packages/microcosm-graphql',
+    './packages/microcosm-dom/jest.preact.config.js',
+    './packages/microcosm-dom/jest.react.config.js',
+    // TODO: This project needs to be updated with Microcosm 13.x changes
+    // './packages/microcosm-graphql',
     './packages/microcosm-http'
   ],
   modulePathIgnorePatterns: ['example', 'build'],

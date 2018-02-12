@@ -7,7 +7,7 @@ class Conversation extends React.PureComponent {
   }
 
   componentDidUpdate() {
-    let el = this.refs.list
+    let el = this.list
 
     el.scrollTop = el.scrollHeight
   }
@@ -20,7 +20,7 @@ class Conversation extends React.PureComponent {
     const { messages } = this.props
 
     return (
-      <ol className="conversation" ref="list">
+      <ol className="conversation" ref={el => (this.list = el)}>
         {messages.map(this.getMessage, this)}
       </ol>
     )
