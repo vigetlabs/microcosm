@@ -1,11 +1,11 @@
-/*
+/**
  * @flow
  */
 
 import { Microcosm } from './microcosm'
 import { Observable } from './observable'
 import { type Subject } from './subject'
-import { getSymbol } from './symbols'
+import { toStringTag } from './symbols'
 
 /**
  * Coroutine is used by an action to determine how it should resolve
@@ -24,13 +24,13 @@ export function coroutine(
   }
 
   if (isGeneratorFn(job)) {
-    return asGenerator(action, job(repo, ...params))
+    return asGenerator(action, job(repo, ...params), repo)
   }
 
   let body = job.apply(null, params)
 
   if (isGeneratorFn(body)) {
-    asGenerator(action, body(repo, action))
+    asGenerator(action, body(repo, action), repo)
   } else if (typeof body === 'function' && params.indexOf(body) < 0) {
     body(action, repo)
   } else {
@@ -39,17 +39,18 @@ export function coroutine(
 }
 
 function isGeneratorFn(value: any): boolean {
-  return value && value[getSymbol('toStringTag')] === 'GeneratorFunction'
+  return value && value[toStringTag] === 'GeneratorFunction'
 }
 
-function asGenerator(action: Subject, iterator: Iterator<*>) {
+function asGenerator(action: Subject, iterator: Iterator<*>, repo) {
   function step() {
     let next = iterator.next(action.payload)
+    let value = next.value
 
     if (next.done) {
       action.complete()
     } else {
-      let subject = Observable.hash(next.value)
+      let subject = Observable.hash(value)
 
       let tracker = subject.subscribe({
         next: action.next,

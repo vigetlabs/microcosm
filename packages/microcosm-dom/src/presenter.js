@@ -1,5 +1,5 @@
 import { Microcosm, Observable, tag } from 'microcosm'
-import { advice, noop } from './utilities'
+import { advice, noop, shallowDiffers } from './utilities'
 
 export function generatePresenter(createElement, Component) {
   function renderMediator() {
@@ -56,8 +56,8 @@ export function generatePresenter(createElement, Component) {
       return {}
     }
 
-    getRepo(inherited) {
-      return inherited ? inherited.fork() : new Microcosm()
+    getRepo(repo) {
+      return repo.fork()
     }
 
     getModel(repo, presenterProps, presenterState) {
@@ -109,13 +109,14 @@ export function generatePresenter(createElement, Component) {
   }
 
   class PresenterMediator extends Component {
-    constructor() {
-      super(...arguments)
+    constructor(props, context) {
+      super(props, context)
 
       this.model = Observable.of({})
-      this.presenter = this.props.presenter
+      this.presenter = props.presenter
 
-      let prepo = this.props.repo || this.context.repo
+      let prepo = props.repo || context.repo || new Microcosm()
+
       this.repo = this.presenter.getRepo(prepo)
 
       this.presenter.mediator = this

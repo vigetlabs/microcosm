@@ -1,5 +1,5 @@
 import { Subject, merge } from 'microcosm'
-import { identity, noop } from './utilities'
+import { identity, noop, toCallbackName } from './utilities'
 
 export function generateActionButton(createElement, Component) {
   class ActionButton extends Component {
@@ -7,7 +7,7 @@ export function generateActionButton(createElement, Component) {
       super(...arguments)
 
       this.queue = new Subject('action-button')
-      this.click = this.click.bind(this)
+      this._onClick = this._onClick.bind(this)
     }
 
     get send() {
@@ -19,7 +19,7 @@ export function generateActionButton(createElement, Component) {
     }
 
     render() {
-      let props = merge(this.props, { onClick: this.click })
+      let props = merge(this.props, { onClick: this._onClick })
 
       delete props.tag
       delete props.action
@@ -39,50 +39,36 @@ export function generateActionButton(createElement, Component) {
       return createElement(this.props.tag, props)
     }
 
-    onChange(status, result) {
-      switch (status) {
-        case 'start':
-          this.props.onStart(result.payload, result.meta)
-          break
-        case 'next':
-          this.props.onNext(result.payload, result.meta)
-          break
-        case 'complete':
-          this.props.onComplete(result.payload, result.meta)
-          break
-        case 'error':
-          this.props.onError(result.payload, result.meta)
-          break
-        case 'cancel':
-          this.props.onCancel(result.payload, result.meta)
-          break
-        default:
-      }
-    }
-
-    click(event) {
-      let { action, onClick, prepare, value } = this.props
+    click() {
+      let { action, prepare, value } = this.props
 
       let params = prepare(value)
       let result = this.send(action, params)
 
       if (result && 'subscribe' in result) {
         result.subscribe({
-          start: this.onChange.bind(this, 'start', result),
-          error: this.onChange.bind(this, 'error', result),
-          next: this.onChange.bind(this, 'next', result),
-          complete: this.onChange.bind(this, 'complete', result),
-          cancel: this.onChange.bind(this, 'cancel', result)
+          start: this._onChange.bind(this, 'start', result),
+          error: this._onChange.bind(this, 'error', result),
+          next: this._onChange.bind(this, 'next', result),
+          complete: this._onChange.bind(this, 'complete', result),
+          cancel: this._onChange.bind(this, 'cancel', result)
         })
 
         this.queue.subscribe(result)
       }
 
-      if (event) {
-        onClick(event, result)
-      }
-
       return result
+    }
+
+    // Private --------------------------------------------------- //
+
+    _onChange(status, result) {
+      this.props[toCallbackName(status)](result.payload, result.meta)
+    }
+
+    _onClick(event) {
+      event.preventDefault()
+      this.props.onClick(event, this.click())
     }
   }
 

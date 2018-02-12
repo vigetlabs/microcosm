@@ -2,13 +2,13 @@
  * Inspired by zen-observable, with specific notes for Microcosm
  */
 
-import { getSymbol } from './symbols'
 import { Subject } from './subject'
+import { observable } from './symbols'
 import { set } from './data'
 import { noop } from './empty'
 
 function getObservable(obj) {
-  return obj && obj[getSymbol('observable')]
+  return obj && obj[observable]
 }
 
 export class Subscription {
@@ -19,7 +19,7 @@ export class Subscription {
 
     observer.start(this)
 
-    if (this._observer === undefined) {
+    if (this._observer == undefined) {
       return
     }
 
@@ -123,7 +123,7 @@ export class Observable {
     return reason => this._subscriptions.forEach(s => handleCancel(s, reason))
   }
 
-  [getSymbol('observable')]() {
+  [observable]() {
     return this
   }
 

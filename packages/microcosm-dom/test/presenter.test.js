@@ -1,9 +1,7 @@
-/* @jsx h */
-
-import { h, Component } from 'preact'
+import React from 'react'
 import { Microcosm, Observable, patch } from 'microcosm'
-import { Presenter, ActionButton, withSend } from 'microcosm-dom/preact'
-import { delay, mount, unmount, PropsTransition } from '../preact-helpers'
+import { Presenter, ActionButton, withSend } from 'microcosm-dom/react'
+import { delay, mount, unmount, PropsTransition } from './helpers'
 
 let View = () => <ActionButton action="test" value={true} />
 
@@ -326,6 +324,23 @@ describe('::ready', function() {
 
     mount(<MyPresenter />)
   })
+
+  it('supports ::ready even when componentDidMount is defined', async function() {
+    let callback = jest.fn()
+
+    class Test extends Presenter {
+      ready(repo) {
+        callback()
+      }
+      componentDidMount() {
+        // noop
+      }
+    }
+
+    mount(<Test />)
+
+    expect(callback).toHaveBeenCalledWith()
+  })
 })
 
 describe('::update', function() {
@@ -410,6 +425,28 @@ describe('::update', function() {
     expect(test).toHaveBeenCalledTimes(1)
     expect(test).toHaveBeenCalledWith('two')
   })
+
+  it('supports ::update even when componentWillUpdate is defined', async function() {
+    let callback = jest.fn()
+
+    class Test extends Presenter {
+      update(repo, { color }) {
+        callback(this.props.color, color)
+      }
+      componentWillUpdate() {
+        // noop
+      }
+    }
+
+    let before = { color: 'red' }
+    let after = { color: 'blue' }
+
+    mount(<PropsTransition component={Test} before={before} after={after} />)
+
+    await delay()
+
+    expect(callback).toHaveBeenCalledWith('red', 'blue')
+  })
 })
 
 describe('::teardown', function() {
@@ -445,6 +482,10 @@ describe('::teardown', function() {
 
       getRepo(repo) {
         return repo
+      }
+
+      render() {
+        return <p>Test</p>
       }
     }
 
@@ -565,12 +606,15 @@ describe('purity', function() {
 })
 
 describe('unmounting', function() {
-  it('ignores an repo when it unmounts', function() {
+  it('ignores a repo when it unmounts', function() {
     let complete = jest.fn()
 
     class Test extends Presenter {
       setup(repo) {
         repo.subscribe({ complete })
+      }
+      render() {
+        return <p>Test</p>
       }
     }
 
@@ -641,8 +685,8 @@ describe('Efficiency', function() {
       }
     }
 
-    let before = {}
-    let after = { text: 'test' }
+    let before = { children: '1' }
+    let after = { children: '1', text: 'test' }
 
     let el = mount(
       <PropsTransition component={Test} before={before} after={after} />
@@ -914,13 +958,12 @@ describe('intercepting actions', function() {
     let a = function a() {}
     let b = function a() {}
 
-    class TestView extends Component {
-      static contextTypes = {
-        send: () => {}
-      }
-      render() {
-        return <button id="button" onClick={() => this.context.send(b, true)} />
-      }
+    const TestView = (props, context) => (
+      <button id="button" onClick={() => context.send(b, true)} />
+    )
+
+    TestView.contextTypes = {
+      send: () => {}
     }
 
     class Test extends Presenter {
@@ -1162,15 +1205,15 @@ describe('::children', function() {
     expect(el.textContent).toEqual('2')
   })
 
-  it('does not recalculate the model when receiving new children', function() {
+  it('does not recalculate the model when receives the same children', function() {
     let spy = jest.fn()
 
     class Test extends Presenter {
       getModel = spy
     }
 
-    let before = { children: <span>1</span> }
-    let after = { children: <span>1</span> }
+    let before = { children: 1 }
+    let after = { children: 1 }
 
     mount(<PropsTransition component={Test} before={before} after={after} />)
 

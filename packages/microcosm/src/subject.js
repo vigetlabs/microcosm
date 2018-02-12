@@ -1,8 +1,9 @@
 // @flow
 
 import { Observable, genObserver } from './observable'
-import { getSymbol } from './symbols'
+import { observable } from './symbols'
 import { noop, EMPTY_SUBSCRIPTION } from './empty'
+import { merge } from 'data'
 
 function send(observers, message, value) {
   observers.forEach(observer => observer[message](value))
@@ -16,7 +17,7 @@ export class Subject {
   _observable: Observable
 
   constructor(payload?: *, meta?: *) {
-    this.meta = meta || { tag: null, status: 'unstarted' }
+    this.meta = merge({ tag: null, status: 'unstarted' }, meta)
     this.payload = payload
     this.disabled = false
 
@@ -134,7 +135,7 @@ export class Subject {
   }
 
   // $FlowFixMe - Flow doesn't understand computed keys :-/
-  [getSymbol('observable')]() {
+  [observable]() {
     return this
   }
 

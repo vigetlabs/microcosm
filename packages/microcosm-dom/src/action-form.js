@@ -1,6 +1,6 @@
 import serialize from 'form-serialize'
 import { Subject, merge } from 'microcosm'
-import { identity, noop } from './utilities'
+import { identity, noop, toCallbackName } from './utilities'
 
 export function generateActionForm(createElement, Component) {
   class ActionForm extends Component {
@@ -8,7 +8,7 @@ export function generateActionForm(createElement, Component) {
       super(...arguments)
 
       this.queue = new Subject('action-form')
-      this.submit = this.submit.bind(this)
+      this._onSubmit = this._onSubmit.bind(this)
     }
 
     get send() {
@@ -21,8 +21,8 @@ export function generateActionForm(createElement, Component) {
 
     render() {
       let props = merge(this.props, {
-        onSubmit: this.submit,
-        ref: el => (this.form = el)
+        onSubmit: this._onSubmit,
+        ref: el => (this._form = el)
       })
 
       delete props.tag
@@ -40,50 +40,36 @@ export function generateActionForm(createElement, Component) {
       return createElement(this.props.tag, props)
     }
 
-    onChange(status, result) {
-      switch (status) {
-        case 'start':
-          this.props.onStart(result.payload, result.meta)
-          break
-        case 'next':
-          this.props.onNext(result.payload, result.meta)
-          break
-        case 'complete':
-          this.props.onComplete(result.payload, result.meta)
-          break
-        case 'error':
-          this.props.onError(result.payload, result.meta)
-          break
-        case 'cancel':
-          this.props.onCancel(result.payload, result.meta)
-          break
-        default:
-      }
-    }
-
     submit(event) {
-      const { onSubmit, prepare, serializer, action } = this.props
+      const { prepare, serializer, action } = this.props
 
-      let params = prepare(serializer(this.form))
+      let params = prepare(serializer(this._form))
       let result = this.send(action, params)
 
       if (result && 'subscribe' in result) {
         result.subscribe({
-          start: this.onChange.bind(this, 'start', result),
-          error: this.onChange.bind(this, 'error', result),
-          next: this.onChange.bind(this, 'next', result),
-          complete: this.onChange.bind(this, 'complete', result),
-          cancel: this.onChange.bind(this, 'cancel', result)
+          start: this._onChange.bind(this, 'start', result),
+          error: this._onChange.bind(this, 'error', result),
+          next: this._onChange.bind(this, 'next', result),
+          complete: this._onChange.bind(this, 'complete', result),
+          cancel: this._onChange.bind(this, 'cancel', result)
         })
 
         this.queue.subscribe(result)
       }
 
-      if (event) {
-        onSubmit(event, result)
-      }
-
       return result
+    }
+
+    // Private --------------------------------------------------- //
+
+    _onChange(status, result) {
+      this.props[toCallbackName(status)](result.payload, result.meta)
+    }
+
+    _onSubmit(event) {
+      event.preventDefault()
+      this.props.onSubmit(event, this.submit())
     }
   }
 

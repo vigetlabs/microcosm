@@ -1,26 +1,31 @@
-import { render, h, Component } from 'preact'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 export function delay(n = 10) {
   return new Promise(resolve => setTimeout(resolve, 10))
 }
 
 export function unmount(el) {
-  return render('', el, el)
+  if (el) {
+    ReactDOM.unmountComponentAtNode(el.parentElement)
+  }
 }
 
-export function mount(...args) {
-  return render(...args)
-}
+export function mount(dom) {
+  let el = document.createElement('div')
 
-export function remount(component, el) {
-  return mount(component, el, el.firstChild)
+  document.body.appendChild(el)
+
+  ReactDOM.render(dom, el)
+
+  return el.firstChild
 }
 
 export function submit(form) {
   return form.dispatchEvent(new Event('submit'))
 }
 
-export class PropsTransition extends Component {
+export class PropsTransition extends React.Component {
   static defaultProps = {
     updater(presenter) {
       presenter.setState(presenter.props.after)
@@ -37,6 +42,6 @@ export class PropsTransition extends Component {
   }
 
   render() {
-    return h(this.props.component, this.state)
+    return React.createElement(this.props.component, this.state)
   }
 }

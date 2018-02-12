@@ -1,9 +1,4 @@
-const { moduleNameMapper } = require('../../jest.config')
-
 module.exports = {
-  setupTestFrameworkScriptFile: './test/setup.js',
-  setupFiles: ['raf/polyfill'],
-  testEnvironment: 'jsdom',
-  modulePathIgnorePatterns: ['build'],
-  moduleNameMapper: moduleNameMapper
+  collectCoverageFrom: ['src/**/*.js'],
+  projects: ['test/engines/preact.config.js', 'test/engines/react.config.js']
 }

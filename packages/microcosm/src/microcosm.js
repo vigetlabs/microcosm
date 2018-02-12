@@ -14,7 +14,7 @@ const DEFAULTS = {
 
 export class Microcosm extends Subject {
   history: History
-  domains: { [string]: * }
+  domains: { [string]: Domain }
   answers: { [string]: Subject }
   options: Object
 

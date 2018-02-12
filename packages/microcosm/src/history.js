@@ -3,26 +3,32 @@
  */
 
 import { Subject } from './subject'
-import { Tree } from './data'
-import { getSymbol } from './symbols'
+import { Tree } from './tree'
 import { tag } from './tag'
 import { coroutine } from './coroutine'
+import { iterator } from './symbols'
 
-const iterator = getSymbol('iterator')
+function simplify(tree: Tree<Subject>, subject: Subject) {
+  let base = subject.toJSON()
+
+  base.children = tree.children(subject).map(simplify.bind(null, tree))
+
+  return base
+}
 
 class History {
   root: ?Subject
   head: ?Subject
   updates: Subject
   _branch: Set<Subject>
-  _tree: Tree
+  _tree: Tree<Subject>
   _debug: boolean
 
   constructor(options: Object) {
     this.root = null
     this.head = null
-    this.updates = new Subject()
     this._branch = new Set()
+    this.updates = new Subject()
     this._tree = new Tree()
     this._debug = options ? options.debug : false
   }
@@ -42,8 +48,6 @@ class History {
       let next = this._tree.after(this.root)
 
       if (next && next.closed) {
-        // Delete the action from the active list to prevent
-        // dispatch
         this._branch.delete(last)
         this.remove(last)
       } else {
@@ -138,13 +142,13 @@ class History {
 
   // $FlowFixMe
   [iterator]() {
-    return this._branch[getSymbol('iterator')]()
+    return this._branch[iterator]()
   }
 
   toJSON() {
     return {
       list: Array.from(this._branch),
-      tree: this._tree.toJS(this.root),
+      tree: this.root ? simplify(this._tree, this.root) : null,
       size: this.size
     }
   }

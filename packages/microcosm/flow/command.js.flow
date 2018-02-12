@@ -8,10 +8,3 @@
  * represent the resolution of that command.
  */
 declare type Command = (...args: *[]) => *
-
-declare type Status =
-  | 'start'
-  | 'next'
-  | 'complete'
-  | 'error'
-  | 'unsubscribe'

@@ -11,3 +11,5 @@ export { RESET as reset, PATCH as patch } from './lifecycle'
 export { get, set, merge, update } from './data'
 
 export { tag } from './tag'
+
+export { Action } from './action'

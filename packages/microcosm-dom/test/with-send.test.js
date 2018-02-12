@@ -1,8 +1,6 @@
-/* @jsx h */
-
-import { h, Component } from 'preact'
-import { Presenter, withSend } from 'microcosm-dom/preact'
-import { mount } from '../preact-helpers'
+import React from 'react'
+import { Presenter, withSend } from 'microcosm-dom/react'
+import { mount } from './helpers'
 
 it('exposes the wrapped component as a static property', function() {
   function Button({ send }) {
@@ -68,9 +66,9 @@ describe('Display name', function() {
     expect(Button.displayName).toEqual('withSend(Button)')
   })
 
-  it('sets the correct display name for stateful components', function() {
+  it('sets the correct display name for class components', function() {
     let Button = withSend(
-      class Button extends Component {
+      class Button extends React.Component {
         render() {
           return <button type="button" />
         }
