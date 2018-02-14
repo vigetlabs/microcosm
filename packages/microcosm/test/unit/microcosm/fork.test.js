@@ -1,7 +1,7 @@
 import Microcosm, { patch } from 'microcosm'
 
 describe('Microcosm::fork', function() {
-  it('forks can not manage state owned by parents', () => {
+  it.dev('forks can not manage state owned by parents', () => {
     const parent = new Microcosm()
     const child = parent.fork()
 

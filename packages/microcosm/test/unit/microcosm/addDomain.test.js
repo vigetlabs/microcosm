@@ -117,7 +117,7 @@ describe('Microcosm::addDomain', function() {
       expect(repo).not.toHaveState('b')
     })
 
-    it('can not add domains to keys managed by parents', function() {
+    it.dev('can not add domains to keys managed by parents', function() {
       let repo = new Microcosm()
       let fork = repo.fork()
 
