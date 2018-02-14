@@ -12,7 +12,7 @@ module.exports = {
   ],
   modulePathIgnorePatterns: ['example', 'build'],
   moduleNameMapper: {
-    '^microcosm$': `<rootDir>/../microcosm/${isBundled ? 'build/min' : 'src'}`,
+    '^microcosm$': `<rootDir>/../microcosm/${isBundled ? 'build' : 'src'}`,
     '^microcosm-http$': `<rootDir>/../microcosm-http/src/http.js`
   }
 }

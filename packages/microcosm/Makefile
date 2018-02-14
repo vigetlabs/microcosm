@@ -1,15 +1,11 @@
-all: build strict min umd es docs
+all: build strict umd es docs
 
 build: build/package.json
-	@ ./bin/bundle --out=build
+	@ ./bin/bundle --out=build --minify
 
 strict: build/package.json
 	@ ./bin/bundle --out=build/strict --strict
 	@ cp build/package.json build/strict
-
-min: build/package.json
-	@ ./bin/bundle --out=build/min --minify
-	@ cp build/package.json build/min
 
 umd: build/package.json
 	@ ./bin/bundle --out=build/umd --format=umd

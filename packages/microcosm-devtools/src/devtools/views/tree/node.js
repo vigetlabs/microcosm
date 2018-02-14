@@ -1,6 +1,6 @@
 import React from 'react'
 import humanize from '../../utils/humanize'
-import ActionButton from 'microcosm/addons/action-button'
+import { ActionButton } from 'microcosm-dom'
 import css from './tree.css'
 import colors from '../../colors'
 

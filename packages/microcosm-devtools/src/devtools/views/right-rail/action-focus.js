@@ -1,5 +1,5 @@
 import React from 'react'
-import Presenter from 'microcosm/addons/presenter'
+import { Presenter } from 'microcosm-dom'
 import DataView from './data-view'
 import css from './right-rail.css'
 

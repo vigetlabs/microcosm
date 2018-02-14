@@ -1,5 +1,5 @@
 import React from 'react'
-import Presenter from 'microcosm/addons/presenter'
+import { Presenter } from 'microcosm-dom'
 import ActionFocus from './action-focus'
 import DataView from './data-view'
 import Resizable from '../resizable'

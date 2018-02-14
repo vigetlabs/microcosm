@@ -22,6 +22,7 @@
     "file-loader": "^1.1.6",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "microcosm": "^12.9.0",
+    "microcosm-dom": "^13.0.0",
     "paths-js": "^0.4.5",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
