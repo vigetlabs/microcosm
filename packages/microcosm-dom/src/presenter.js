@@ -1,5 +1,6 @@
-import { Microcosm, Observable, tag } from 'microcosm'
+import { Microcosm, Observable } from 'microcosm'
 import { advice, noop } from './utilities'
+import { intercept } from './intercept'
 
 export function generatePresenter(createElement, Component) {
   function renderMediator() {
@@ -15,7 +16,6 @@ export function generatePresenter(createElement, Component) {
     constructor() {
       super(...arguments)
 
-      this.send = this.send.bind(this)
       this.state = {}
 
       // Ensure key lifecycle methods are protected by first applying
@@ -90,21 +90,8 @@ export function generatePresenter(createElement, Component) {
       return this.props.children || null
     }
 
-    send(intent, ...params) {
-      let mediator = this.mediator
-      let taggedIntent = tag(intent)
-
-      while (mediator) {
-        let handler = mediator.presenter.intercept()[taggedIntent]
-
-        if (handler) {
-          return handler.call(mediator.presenter, mediator.repo, ...params)
-        }
-
-        mediator = mediator.context.parent
-      }
-
-      return this.repo.push(taggedIntent, ...params)
+    get send() {
+      return intercept.bind(null, this.mediator)
     }
   }
 
