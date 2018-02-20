@@ -4,7 +4,7 @@ jobs:
   build:
     working_directory: /home/circleci/microcosm
     docker:
-      - image: circleci/node:8.0
+      - image: circleci/node:8.9
     steps:
       - checkout
       - restore_cache:
