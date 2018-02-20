@@ -1066,6 +1066,27 @@ describe('intercepting actions', function() {
       </Parent>
     ).click()
   })
+
+  it('can handle multiple intercepts', function() {
+    let one = jest.fn()
+    let two = jest.fn()
+
+    class Test extends Presenter {
+      intercept() {
+        return {
+          test: [one, two]
+        }
+      }
+      render() {
+        return <ActionButton action="test" />
+      }
+    }
+
+    mount(<Test />).click()
+
+    expect(one).toHaveBeenCalled()
+    expect(two).toHaveBeenCalled()
+  })
 })
 
 describe('forks', function() {

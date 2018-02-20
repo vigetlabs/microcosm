@@ -35,3 +35,7 @@ const cache = {
 export function toCallbackName(status) {
   return cache[status]
 }
+
+export function ensureArray(value) {
+  return Array.isArray(value) ? value : [].concat(value)
+}
