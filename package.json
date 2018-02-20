@@ -13,7 +13,7 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:prod": "yarn build && BUNDLED=true jest",
-    "lint": "yarn eslint packages --cache",
+    "lint": "eslint packages --cache",
     "flow": "flow",
     "clean": "git clean -Xdf",
     "report-coverage": "codecov coverage/lcov.info"
