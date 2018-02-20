@@ -31,25 +31,24 @@ query string parameter of the URL. Recall our `Location` effect:
 
 ```javascript
 import url from 'url'
-import {patch} from '../actions/query'
+import { patch } from '../actions/query'
 
 class Location {
-
-  updateQuery (repo) {
+  updateQuery(repo) {
     const { origin, hash } = window.location
 
     const location = url.format({
-      host  : origin,
-      query : repo.state.query,
-      hash  : hash
+      host: origin,
+      query: repo.state.query,
+      hash: hash
     })
 
     window.history.pushState(null, null, location)
   }
 
-  register () {
+  register() {
     return {
-      [patchQuery] : this.updateQuery
+      [patchQuery]: this.updateQuery
     }
   }
 }
@@ -64,7 +63,7 @@ might look something like:
 ```javascript
 import Microcosm from 'microcosm'
 import Location from './effects/location'
-import {patchQuery} from './actions/query'
+import { patchQuery } from './actions/query'
 
 let repo = new Microcosm()
 
@@ -108,9 +107,9 @@ The simplest thing would be to just reproduce our usage example as a test:
 ```javascript
 import Microcosm from 'microcosm'
 import Location from './effects/location'
-import {patchQuery} from './actions/query'
+import { patchQuery } from './actions/query'
 
-describe('Location Effect', function () {
+describe('Location Effect', function() {
   it('it updates the URL when a repo is sent patchQuery', function() {
     let repo = new Microcosm()
 
@@ -137,10 +136,10 @@ bit of work before every test runs. We can use it to set up our test:
 ```javascript
 import Microcosm from 'microcosm'
 import Location from './effects/location'
-import {patchQuery} from './actions/query'
+import { patchQuery } from './actions/query'
 
-describe('Location Effect', function () {
-  beforeEach(function () {
+describe('Location Effect', function() {
+  beforeEach(function() {
     window.location.search = ''
   })
 

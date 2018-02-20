@@ -17,8 +17,8 @@ From there, it can be used exactly like the standard addons:
 import Presenter from 'microcosm-preact/presenter'
 
 class MyPresenter extends Presenter {
-  view () {
+  view() {
     return <p>All set</p>
-  }  
+  }
 }
 ```

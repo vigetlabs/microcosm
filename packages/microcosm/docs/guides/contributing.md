@@ -9,11 +9,11 @@ We want to make contributing to Microcosm as easy as possible for anyone, here a
 1. [Create an issue on Github](https://github.com/vigetlabs/microcosm/issues). We've provided an issue template that will help us categorize and prioritize the issue. (You will see the template when creating a new issue)
 2. Comment on issues. Let us know your thoughts on [open issues](https://github.com/vigetlabs/microcosm/issues)
 3. Create a pull request (PR) that fixes an issue. We've created a PR template to help you describe what your PR is doing and help us check that it works. PRs can be opened for:
-    - Documentation
-    - Improving Microcosm code
-    - Changes to the site
-    - Improving or adding examples
-    - Improving tooling
+   * Documentation
+   * Improving Microcosm code
+   * Changes to the site
+   * Improving or adding examples
+   * Improving tooling
 4. Spread the word. On twitter you can use the hashtag `#microcosmJS`. You can also tweet @[viget](https://twitter.com/viget) or @[natehunzaker](https://twitter.com/natehunzaker) with your Microcosm questions or comments
 
 ## Get set up:

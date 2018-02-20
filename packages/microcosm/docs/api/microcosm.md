@@ -38,7 +38,7 @@ Microcosm supports the following options:
    using
    [`requestIdleCallback`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback). Defaults
    to false. **Important:** this makes change events asynchronous.
-2. `updater:function`: `batch:true` should be sufficient for nearly
+3. `updater:function`: `batch:true` should be sufficient for nearly
    all use cases. However this option overrides the default batch
    behavior if it proves problematic for your app. See
    the [Batch Updates](../recipes/batch-updates.md) recipe for more
@@ -49,11 +49,9 @@ you provide to Microcosm are passed into the `setup` lifecycle method:
 
 ```javascript
 class Repo extends Microcosm {
-
-  setup (options) {
+  setup(options) {
     console.log(options) // { autosave: true }
   }
-
 }
 
 let repo = new Repo({ autosave: true })
@@ -69,7 +67,7 @@ behavior. Instantiation options are passed in as the first argument.
 
 ```javascript
 class SolarSystem extends Microcosm {
-  setup (options) {
+  setup(options) {
     this.addDomain('planets', Planets)
   }
 }
@@ -163,21 +161,21 @@ with the provided options and associated repo.
 
 ```javascript
 class Domain {
-  setup (repo, options) {
+  setup(repo, options) {
     // Run startup behavior
   }
-  teardown (repo) {
+  teardown(repo) {
     // Clean up any setup behavior
   }
-  handleAction (state, payload) {
+  handleAction(state, payload) {
     // Old state in, new state out...
     let newState = { ...state, prop: payload.prop }
 
     return newState
   }
-  register () {
+  register() {
     return {
-      [action] : this.handleAction
+      [action]: this.handleAction
     }
   }
 }
@@ -196,18 +194,18 @@ options and associated repo.
 
 ```javascript
 class Effect {
-  setup (repo, options) {
+  setup(repo, options) {
     // Run starting behavior
   }
-  teardown (repo) {
+  teardown(repo) {
     // Clean up
   }
-  handleAction (repo, payload) {
+  handleAction(repo, payload) {
     // Respond once to an action changing states
   }
-  register () {
+  register() {
     return {
-      [action] : this.handleAction
+      [action]: this.handleAction
     }
   }
 }
@@ -259,9 +257,9 @@ Change the current focal point of the history data structure used by
 Microcosm. This is useful for undo/redo, or for debugging purposes:
 
 ```javascript
-const red = repo.push(changeColor, "red")
-const green = repo.push(changeColor, "green")
-const blue = repo.push(changeColor, "blue")
+const red = repo.push(changeColor, 'red')
+const green = repo.push(changeColor, 'green')
+const blue = repo.push(changeColor, 'blue')
 
 console.log(repo.state.color) // "blue"
 
@@ -287,7 +285,7 @@ actions. Try setting `maxHistory` to a specific value, like `10` or `100`.
 Adds an event listener to a Microcosm instance. Currently, these events
 are:
 
-- `change`: The Microcosm instance updated state
+* `change`: The Microcosm instance updated state
 
 ```javascript
 const repo = new Microcosm()
@@ -303,8 +301,6 @@ Remove an event listener.
 // Remove a callback
 repo.off('change', callback)
 ```
-
-
 
 ### `fork()`
 
@@ -338,12 +334,9 @@ actions resolve, their respective payloads will be available in the
 `onDone` callback:
 
 ```javascript
-let group = repo.parallel([
-  repo.push(actionOne),
-  repo.push(actionTwo)
-])
+let group = repo.parallel([repo.push(actionOne), repo.push(actionTwo)])
 
-group.onDone(function ([answer1, answer2]) {
+group.onDone(function([answer1, answer2]) {
   console.log('hurrah!', answer1, answer2)
 })
 ```
@@ -360,7 +353,7 @@ class Repo extends Microcosm {
     saveInterval: 5000
   }
 
-  setup ({ saveInterval }) {
+  setup({ saveInterval }) {
     // ...
     this.addEffect(Autosave, { saveInterval })
   }

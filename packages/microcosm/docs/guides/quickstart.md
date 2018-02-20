@@ -72,8 +72,7 @@ Let's update it, open `src/views/layout.js`
 // src/views/layout.js
 import React from 'react'
 
-export default function Layout ({children}) {
-
+export default function Layout({ children }) {
   return (
     <div>
       <h1>Solar System</h1>
@@ -100,7 +99,7 @@ Crack open `src/routes.js` and edit it to look like:
 ```javascript
 // src/routes.js
 import React from 'react'
-import {Route, IndexRoute} from 'react-router'
+import { Route, IndexRoute } from 'react-router'
 
 import App from './presenters/application'
 import Planets from './presenters/planets'
@@ -145,8 +144,7 @@ import React from 'react'
 import Presenter from 'microcosm/addons/presenter'
 
 class Planets extends Presenter {
-
-  render () {
+  render() {
     return (
       <ul>
         <li>Mercury</li>
@@ -161,7 +159,6 @@ class Planets extends Presenter {
       </ul>
     )
   }
-
 }
 
 export default Planets
@@ -179,8 +176,7 @@ a new React component at `src/views/planet-list.js`:
 // src/views/planet-list.js
 import React from 'react'
 
-export default function PlanetList () {
-
+export default function PlanetList() {
   return (
     <ul>
       <li>Mercury</li>
@@ -206,15 +202,12 @@ import Presenter from 'microcosm/addons/presenter'
 import PlanetList from '../views/planet-list'
 
 class Planets extends Presenter {
-
-  render () {
+  render() {
     return <PlanetList />
   }
-
 }
 
 export default Planets
-
 ```
 
 Awesome. Well, not _really_. Now the `PlanetList` component knows
@@ -231,19 +224,27 @@ import Presenter from 'microcosm/addons/presenter'
 import PlanetList from '../views/planet-list'
 
 class Planets extends Presenter {
-
-  getModel () {
+  getModel() {
     return {
-      planets: () => ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto']
+      planets: () => [
+        'Mercury',
+        'Venus',
+        'Earth',
+        'Mars',
+        'Jupiter',
+        'Saturn',
+        'Uranus',
+        'Neptune',
+        'Pluto'
+      ]
     }
   }
 
-  render () {
+  render() {
     const { planets } = this.model
 
     return <PlanetList planets={planets} />
   }
-
 }
 
 export default Planets
@@ -255,13 +256,8 @@ And in our PlanetList:
 // src/views/planet-list.js
 import React from 'react'
 
-export default function PlanetList ({ planets = [] }) {
-
-  return (
-    <ul>
-      { planets.map(p => <li key={p}>{p}</li>)}
-    </ul>
-  )
+export default function PlanetList({ planets = [] }) {
+  return <ul>{planets.map(p => <li key={p}>{p}</li>)}</ul>
 }
 ```
 
@@ -277,15 +273,19 @@ file at `./src/domains/planets.js`:
 ```javascript
 // src/domains/planets.js
 const Planets = {
-
   getInitialState() {
     return [
-      'Mercury', 'Venus', 'Earth', 'Mars',
-      'Jupiter', 'Saturn', 'Uranus', 'Neptune',
+      'Mercury',
+      'Venus',
+      'Earth',
+      'Mars',
+      'Jupiter',
+      'Saturn',
+      'Uranus',
+      'Neptune',
       'Pluto'
     ]
   }
-
 }
 
 export default Planets
@@ -300,11 +300,9 @@ import Microcosm from 'microcosm'
 import Planets from './domains/planets'
 
 class Repo extends Microcosm {
-
-  setup () {
+  setup() {
     this.addDomain('planets', Planets)
   }
-
 }
 
 export default Repo
@@ -322,20 +320,18 @@ import Presenter from 'microcosm/addons/presenter'
 import PlanetList from '../views/planet-list'
 
 class Planets extends Presenter {
-
-  getModel () {
+  getModel() {
     return {
       // I'm new. Pull planets out of the repo's state
       planets: state => state.planets
     }
   }
 
-  render () {
+  render() {
     const { planets } = this.model
 
     return <PlanetList planets={planets} />
   }
-
 }
 
 export default Planets
@@ -359,13 +355,18 @@ state. Let's move the data inside of planets out into an action:
 ```javascript
 // src/actions/planets.js
 export function getPlanets() {
-
   // This isn't *really* an AJAX request, but it
   // accomplishes what we want...
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     resolve([
-      'Mercury', 'Venus', 'Earth', 'Mars',
-      'Jupiter', 'Saturn', 'Uranus', 'Neptune',
+      'Mercury',
+      'Venus',
+      'Earth',
+      'Mars',
+      'Jupiter',
+      'Saturn',
+      'Uranus',
+      'Neptune',
       'Pluto'
     ])
   })
@@ -377,19 +378,19 @@ function:
 
 ```javascript
 // src/domains/planets.js
-import {getPlanets} from '../actions/planets'
+import { getPlanets } from '../actions/planets'
 
 const Planets = {
-  getInitialState () {
+  getInitialState() {
     // Remember, we put the planets data into the action
     return []
   },
 
-  append (planets, data) {
+  append(planets, data) {
     return planets.concat(data)
   },
 
-  register () {
+  register() {
     return {
       // Curious? This works because Microcosm assigns a unique
       // toString() method to each action pushed into it. That means
@@ -414,26 +415,24 @@ the presenter specifically for this purpose:
 import React from 'react'
 import Presenter from 'microcosm/addons/presenter'
 import PlanetList from '../views/planet-list'
-import {getPlanets} from '../actions/planets'
+import { getPlanets } from '../actions/planets'
 
 class Planets extends Presenter {
-
-  setup (repo) {
+  setup(repo) {
     repo.push(getPlanets)
   }
 
-  getModel () {
+  getModel() {
     return {
       planets: state => state.planets
     }
   }
 
-  render () {
+  render() {
     const { planets } = this.model
 
     return <PlanetList planets={planets} />
   }
-
 }
 
 export default Planets
@@ -458,15 +457,12 @@ addon. Let's modify our View layer to pull that in:
 ```javascript
 import React from 'react'
 import ActionButton from 'microcosm/addons/action-button'
-import {addPlanet} from '../actions/planets'
+import { addPlanet } from '../actions/planets'
 
-export default function PlanetList ({ planets = [] }) {
-
+export default function PlanetList({ planets = [] }) {
   return (
     <div>
-      <ul>
-        { planets.map(p => <li key={p}>{p}</li>)}
-      </ul>
+      <ul>{planets.map(p => <li key={p}>{p}</li>)}</ul>
 
       <ActionButton action={addPlanet} value="Alpha Centauri">
         Add Planet
@@ -482,7 +478,7 @@ exist. Let's create that action and subscribe our Domain to it:
 
 ```javascript
 // add to src/actions/planets.js
-export function addPlanet (planet) {
+export function addPlanet(planet) {
   return planet
 }
 ```

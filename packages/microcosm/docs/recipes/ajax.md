@@ -20,21 +20,21 @@ var request = require('superagent')
 
 var repo = new Microcosm()
 
-function getSite () {
+function getSite() {
   return request.get('http://code.viget.com/microcosm')
 }
 
-repo.addDomain('site', function () {
+repo.addDomain('site', function() {
   return {
     [getSite]: {
-      open  : () => 'loading',
-      error : () => 'error',
-      done  : () => 'done'
+      open: () => 'loading',
+      error: () => 'error',
+      done: () => 'done'
     }
   }
 })
 
-repo.on('change', function (state) {
+repo.on('change', function(state) {
   console.log(state.site) // loading, done
 })
 
@@ -100,31 +100,33 @@ var request = require('superagent')
 
 var repo = new Microcosm()
 
-function getSite () {
-  return function (action) {
+function getSite() {
+  return function(action) {
     action.open()
 
-    request.get('http://code.viget.com/microcosm').end(function(error, payload) {
-      if (error) {
-        action.reject(error)
-      } else {
-        action.resolve(payload)
-      }
-    })
+    request
+      .get('http://code.viget.com/microcosm')
+      .end(function(error, payload) {
+        if (error) {
+          action.reject(error)
+        } else {
+          action.resolve(payload)
+        }
+      })
   }
 }
 
-repo.addDomain('site', function () {
+repo.addDomain('site', function() {
   return {
     [getSite]: {
-      open  : () => 'loading',
-      error : () => 'error',
-      done  : () => 'done'
+      open: () => 'loading',
+      error: () => 'error',
+      done: () => 'done'
     }
   }
 })
 
-repo.on('change', function (state) {
+repo.on('change', function(state) {
   console.log(state.site)
 })
 

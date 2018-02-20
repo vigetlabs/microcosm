@@ -16,9 +16,9 @@ easy:
 ```javascript
 import React from 'react'
 import MyForm from 'somewhere'
-import {mount} from 'enzyme'
+import { mount } from 'enzyme'
 
-it('broadcasts an action when submitted', function () {
+it('broadcasts an action when submitted', function() {
   // You could use any testing library as long as your testing
   // environment has spies. We're using Jest here
   const send = jest.fn()
@@ -44,8 +44,8 @@ keep this in a test helper to reduce boilerplate:
 ```javascript
 import React from 'react'
 
-  // Any spy library should do, we're using Jest
-export default function mockSend (send = jest.fn()) {
+// Any spy library should do, we're using Jest
+export default function mockSend(send = jest.fn()) {
   send.context = { send }
 
   send.childContextTypes = {
@@ -62,9 +62,9 @@ Then include the helper when testing:
 import React from 'react'
 import MyForm from 'somewhere'
 import mockSend from '../helpers/mock-send'
-import {mount} from 'enzyme'
+import { mount } from 'enzyme'
 
-it('broadcasts an action when submitted', function () {
+it('broadcasts an action when submitted', function() {
   const send = mockSend()
 
   const wrapper = mount(<MyForm />, send)

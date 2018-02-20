@@ -24,8 +24,8 @@ additional features and a custom test runner. A test may look
 something like:
 
 ```javascript
-describe('Suite name', function () {
-  it("test name", function () {
+describe('Suite name', function() {
+  it('test name', function() {
     let answer = 2 + 2
 
     // This is an assertion. If the result here is not what we expect,
@@ -48,12 +48,12 @@ interacting with it, and then asserting some value:
 
 ```javascript
 import React from 'react'
-import {mount} from 'enzyme'
+import { mount } from 'enzyme'
 
 import Hello from '../components/hello-world'
 
-describe('<Hello />', function () {
-  it('it greets a user at a given name', function () {
+describe('<Hello />', function() {
+  it('it greets a user at a given name', function() {
     let wrapper = mount(<Hello name="Bill" />)
     let text = wrapper.text()
 
