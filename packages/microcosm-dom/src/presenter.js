@@ -19,7 +19,7 @@ export function generatePresenter(createElement, Component) {
       this.state = {}
 
       // Ensure key lifecycle methods are protected by first applying
-      // prototype behavior, thenany extended behavior
+      // prototype behavior, then any extended behavior
       advice(Presenter, this, 'componentWillUpdate')
       advice(Presenter, this, 'componentDidMount')
 
