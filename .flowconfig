@@ -5,7 +5,6 @@
 # TODO: Remove these
 .*/packages/microcosm-devtools/.*
 .*/packages/microcosm-graphql/.*
-.*/packages/microcosm-react-router/.*
 .*/packages/microcosm-www/.*
 .*/packages/microcosm-www-next/.*
 
@@ -14,3 +13,6 @@ packages/microcosm/src
 
 [libs]
 packages/microcosm/flow
+
+[lints]
+all=warn
