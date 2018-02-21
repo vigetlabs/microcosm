@@ -10,15 +10,13 @@ jobs:
       - restore_cache:
           keys:
             - yarn-cache-{{ checksum "yarn.lock" }}
-      - run: yarn bootstrap
+      - run: yarn install
       - save_cache:
           paths:
             - node_modules
           key: yarn-cache-{{ checksum "yarn.lock" }}
       - run: yarn flow
       - run: yarn lint
-      - run: sudo apt-get -y -qq install awscli
-      - run: yarn deploy
       - run: yarn test:cov --ci
-      - run: yarn report-coverage
+      - run: yarn codecov coverage/lcov.info
       - run: yarn test:prod --ci
