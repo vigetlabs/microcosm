@@ -16,19 +16,19 @@ function simplify(tree: Tree<Subject>, subject: Subject) {
   return base
 }
 
-class History {
+class History extends Subject {
   root: ?Subject
   head: ?Subject
-  updates: Subject
   _branch: Set<Subject>
   _tree: Tree<Subject>
   _debug: boolean
 
   constructor(options: Object) {
+    super()
+
     this.root = null
     this.head = null
     this._branch = new Set()
-    this.updates = new Subject()
     this._tree = new Tree()
     this._debug = options ? options.debug : false
   }
@@ -69,11 +69,13 @@ class History {
 
     this.head = action
 
-    this.updates.next(action)
+    this.next(action)
 
     if (this._debug === false) {
       action.subscribe({
-        cleanup: this.archive.bind(this)
+        error: this.archive.bind(this),
+        complete: this.archive.bind(this),
+        cancel: this.archive.bind(this)
       })
     }
 
@@ -87,7 +89,7 @@ class History {
     return action
   }
 
-  before(action: Subject) {
+  before(action: Subject): ?Subject {
     return this._tree.before(action)
   }
 
@@ -114,7 +116,7 @@ class History {
 
     if (isActive && base) {
       this._branch.delete(action)
-      this.updates.next(base)
+      this.next(base)
     }
   }
 
@@ -123,10 +125,10 @@ class History {
   }
 
   toggle(action: Subject) {
-    action.toggle()
+    action.disabled = !action.disabled
 
     if (this._branch.has(action)) {
-      this.updates.next(action)
+      this.next(action)
     }
   }
 
@@ -137,7 +139,7 @@ class History {
 
     this.head = action
     this._branch = new Set(this._tree.select(action))
-    this.updates.next(action)
+    this.next(action)
   }
 
   // $FlowFixMe

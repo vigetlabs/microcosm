@@ -52,7 +52,7 @@ describe('History::checkout', function() {
 
     let handler = jest.fn()
 
-    repo.history.updates.subscribe(handler)
+    repo.history.subscribe(handler)
 
     repo.history.checkout(one)
 

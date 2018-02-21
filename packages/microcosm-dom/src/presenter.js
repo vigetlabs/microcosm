@@ -1,4 +1,4 @@
-import { Microcosm, Observable } from 'microcosm'
+import { Microcosm, Observable, Subject } from 'microcosm'
 import { advice, noop } from './utilities'
 import { intercept } from './intercept'
 
@@ -136,7 +136,7 @@ export function generatePresenter(createElement, Component) {
     updateModel(props, state) {
       this.model.cancel()
 
-      this.model = Observable.hash(
+      this.model = Subject.hash(
         this.presenter.getModel(this.repo, props, state)
       )
 

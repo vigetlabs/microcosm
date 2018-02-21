@@ -31,7 +31,7 @@ describe('History::remove', function() {
       let action = repo.push('two')
       let handler = jest.fn()
 
-      repo.history.updates.subscribe(handler)
+      repo.history.subscribe(handler)
       // Initial subscription fires to provide the current action
       expect(handler).toHaveBeenCalledTimes(1)
 
@@ -147,7 +147,7 @@ describe('History::remove', function() {
       let two = repo.push('two')
       let three = repo.push('three')
 
-      repo.history.updates.subscribe(next)
+      repo.history.subscribe(next)
       repo.history.remove(two)
 
       expect(next).toHaveBeenCalledWith(three)
@@ -164,7 +164,7 @@ describe('History::remove', function() {
 
       repo.history.checkout(two)
 
-      repo.history.updates.subscribe(next)
+      repo.history.subscribe(next)
       repo.history.remove(two)
 
       expect(next).toHaveBeenCalledWith(three)
@@ -180,7 +180,7 @@ describe('History::remove', function() {
       let three = repo.push('three')
 
       repo.history.checkout(two)
-      repo.history.updates.subscribe(next)
+      repo.history.subscribe(next)
       // Initial subscription
       expect(next).toHaveBeenCalledTimes(1)
 

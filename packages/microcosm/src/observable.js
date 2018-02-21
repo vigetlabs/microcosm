@@ -1,40 +1,95 @@
 /**
  * Inspired by zen-observable, with specific notes for Microcosm
+ * @flow
  */
 
-import { Subject } from './subject'
 import { observable } from './symbols'
-import { set } from './data'
-import { noop } from './empty'
+import { noop, EMPTY_OBJECT } from './empty'
 
-function getObservable(obj) {
-  return obj && obj[observable]
+interface Unsubscribable {
+  unsubscribe(): any;
 }
 
-export class Subscription {
-  constructor(observer, subscriber, origin) {
+type Cleanup = Unsubscribable | (() => any)
+type Subscriber = (observer: *) => ?Cleanup
+
+export class Observer {
+  _config: Object
+
+  constructor(next: *, error?: *, complete?: *) {
+    if (typeof next === 'function') {
+      this._config = { next, error, complete }
+    } else {
+      console.assert(next, 'Unable to subscribe to ' + String(next))
+      this._config = next || EMPTY_OBJECT
+    }
+  }
+
+  get next(): (payload?: *) => any {
+    return this._config.next || noop
+  }
+
+  get error(): (error?: *) => any {
+    return this._config.error || noop
+  }
+
+  get complete(): () => any {
+    return this._config.complete || noop
+  }
+
+  get cancel(): (reason?: *) => any {
+    return this._config.cancel || noop
+  }
+}
+
+const ClosedObserver = new Observer({})
+
+export class SubscriptionObserver {
+  _subscription: Subscription
+
+  constructor(subscription: Subscription) {
+    this._subscription = subscription
+  }
+
+  get next(): (value?: *) => void {
+    return handleNext.bind(null, this._subscription)
+  }
+
+  get complete(): () => void {
+    return handleComplete.bind(null, this._subscription)
+  }
+
+  get error(): (error?: *) => void {
+    return handleError.bind(null, this._subscription)
+  }
+
+  get cancel(): (reason?: *) => void {
+    return handleCancel.bind(null, this._subscription)
+  }
+}
+
+export class Subscription implements Unsubscribable {
+  _cleanup: ?() => void
+  _observer: Observer
+  _origin: *
+
+  constructor(observer: Observer, subscriber: Subscriber, origin: any) {
     this._cleanup = undefined
     this._observer = observer
     this._origin = origin
 
-    observer.start(this)
-
-    if (this._observer == undefined) {
-      return
-    }
-
-    observer = new SubscriptionObserver(this)
+    var subscriptionObserver = new SubscriptionObserver(this)
 
     try {
       // Call the subscriber function
-      let cleanup = subscriber.call(undefined, observer)
+      let cleanup = subscriber.call(undefined, subscriptionObserver)
 
       // The return value must be undefined, null, a subscription object, or a function
       if (cleanup != null) {
         if (typeof cleanup.unsubscribe === 'function') {
           cleanup = cleanup.unsubscribe
         } else if (typeof cleanup !== 'function') {
-          throw new TypeError(cleanup + ' is not a function')
+          throw new TypeError(String(cleanup) + ' is not a function')
         }
 
         this._cleanup = cleanup
@@ -42,74 +97,43 @@ export class Subscription {
     } catch (error) {
       // If an error occurs during startup, then attempt to send the error
       // to the observer
-      observer.error(error)
-      return
-    }
-
-    // If the stream is already finished, then perform cleanup
-    if (this._observer === undefined) {
-      cleanupSubscription(this)
-    }
-  }
-
-  get unsubscribe() {
-    return handleUnsubscribe.bind(null, this)
-  }
-}
-
-export class SubscriptionObserver {
-  constructor(subscription) {
-    this.next = handleNext.bind(null, subscription)
-    this.complete = handleComplete.bind(null, subscription)
-    this.error = handleError.bind(null, subscription)
-    this.cancel = handleCancel.bind(null, subscription)
-  }
-}
-
-export function genObserver(config) {
-  if (config == null) {
-    throw new TypeError('Unable to subscribe via ' + config)
-  }
-
-  let observer = {
-    start: noop,
-    next: noop,
-    error: noop, // TODO : Should this be a configurable fallback handler?
-    complete: noop,
-    cancel: noop,
-    cleanup: noop
-  }
-
-  if (typeof config === 'function') {
-    observer.next = arguments[0]
-
-    if (arguments.length > 1) {
-      observer.error = arguments[1]
-    }
-
-    if (arguments.length > 2) {
-      observer.complete = arguments[2]
-    }
-  } else {
-    for (var key in observer) {
-      if (config[key]) {
-        observer[key] = config[key]
+      subscriptionObserver.error(error)
+    } finally {
+      if (this.closed) {
+        cleanupSubscription(this)
       }
     }
   }
 
-  return observer
+  close(): void {
+    this._observer = ClosedObserver
+  }
+
+  get closed(): boolean {
+    return this._observer == ClosedObserver
+  }
+
+  get unsubscribe(): * {
+    return handleUnsubscribe.bind(null, this)
+  }
 }
 
 export class Observable {
-  constructor(subscriber) {
+  _subscriber: Function
+  _subscriptions: Set<Subscription>
+
+  constructor(subscriber: Subscriber) {
     this._subscriber = subscriber
     this._subscriptions = new Set()
   }
 
-  subscribe() {
+  subscribe(
+    next: Object | Function,
+    error?: Function,
+    complete?: Function
+  ): Subscription {
     let subscription = new Subscription(
-      genObserver(...arguments),
+      new Observer(next, error, complete),
       this._subscriber,
       this
     )
@@ -119,10 +143,13 @@ export class Observable {
     return subscription
   }
 
-  get cancel() {
-    return reason => this._subscriptions.forEach(s => handleCancel(s, reason))
+  get cancel(): (reason?: *) => void {
+    return reason => {
+      this._subscriptions.forEach(s => handleCancel(s, reason))
+    }
   }
 
+  // $FlowFixMe - Flow does not support computed keys
   [observable]() {
     return this
   }
@@ -137,7 +164,7 @@ export class Observable {
     })
   }
 
-  static wrap(source) {
+  static wrap(source: *): Observable {
     if (source && typeof source === 'object') {
       let builder = getObservable(source)
 
@@ -146,7 +173,7 @@ export class Observable {
       }
 
       if (typeof source.then === 'function') {
-        return fromPromise(source)
+        return Observable.fromPromise(source)
       }
     }
 
@@ -156,58 +183,18 @@ export class Observable {
     })
   }
 
-  static hash(obj) {
-    if (getObservable(obj)) {
-      return obj
-    }
-
-    let subject = new Subject()
-
-    if (obj == null || typeof obj !== 'object') {
-      subject.next(obj)
-      subject.complete()
-      return subject
-    }
-
-    if (typeof obj.then === 'function') {
-      subject.subscribe(fromPromise(obj).subscribe(subject))
-      return subject
-    }
-
-    let keys = Object.keys(obj)
-    let payload = Array.isArray(obj) ? [] : {}
-    let jobs = keys.length
-
-    subject.next(payload)
-
-    function complete() {
-      if (--jobs <= 0) {
-        subject.complete()
-      }
-    }
-
-    function assign(key, value) {
-      payload = set(payload, key, value)
-
-      if (payload !== subject.payload) {
-        subject.next(payload)
-      }
-    }
-
-    for (var i = 0, len = keys.length; i < len; i++) {
-      let key = keys[i]
-
-      let subscription = Observable.wrap(obj[key]).subscribe({
-        next: assign.bind(null, key),
-        complete: complete,
-        error: subject.error
-      })
-
-      subject.subscribe(subscription)
-    }
-
-    return subject
+  static fromPromise(promise: Promise<*>): Observable {
+    return new Observable(observer => {
+      promise
+        .then(observer.next)
+        .then(observer.complete)
+        .catch(observer.error)
+    })
   }
+}
+
+export function getObservable(obj: any) {
+  return obj && obj[observable]
 }
 
 function cleanupSubscription(subscription) {
@@ -225,73 +212,52 @@ function cleanupSubscription(subscription) {
   }
 }
 
-function handleNext(subscription, value) {
+function handleNext(subscription: Subscription, value?: *) {
   if (subscription._observer) {
-    return subscription._observer.next(value)
+    subscription._observer.next(value)
   }
 }
 
-function handleError(subscription, value) {
+function handleComplete(subscription: Subscription): void {
   let observer = subscription._observer
 
-  if (observer === undefined) {
+  subscription.close()
+
+  observer.complete()
+
+  cleanupSubscription(subscription)
+}
+
+function handleError(subscription: Subscription, error?: *): void {
+  if (subscription.closed) {
     // TODO: this doesn't feel right. If a user double errors() we
     // should warn, but not raise. It should mean that they did
     // something wrong
-    throw value
+    throw error
   }
 
-  subscription._observer = undefined
+  let observer = subscription._observer
 
-  observer.error(value)
-  observer.cleanup()
+  subscription.close()
+
+  observer.error(error)
 
   cleanupSubscription(subscription)
 }
 
-function handleComplete(subscription) {
-  let observer = subscription._observer
-
-  // If the stream is closed, then return undefined
-  if (observer === undefined) {
-    return undefined
-  }
-
-  subscription._observer = undefined
-
-  observer.complete()
-  observer.cleanup()
-
-  cleanupSubscription(subscription)
-}
-
-function handleUnsubscribe(subscription) {
-  let observer = subscription._observer
-
-  if (observer === undefined) {
+function handleUnsubscribe(subscription: Subscription): void {
+  if (subscription.closed) {
     return
   }
 
-  subscription._observer = undefined
-
-  observer.cleanup()
-
+  subscription.close()
   cleanupSubscription(subscription)
 }
 
-function handleCancel(subscription, reason) {
+function handleCancel(subscription: Subscription, reason: ?*): void {
   if (subscription._observer) {
     subscription._observer.cancel(reason)
   }
 
   handleUnsubscribe(subscription)
-}
-
-function fromPromise(promise) {
-  return new Observable(observer => {
-    promise
-      .then(observer.next)
-      .then(observer.complete)
-      .catch(observer.error)
-  })
 }

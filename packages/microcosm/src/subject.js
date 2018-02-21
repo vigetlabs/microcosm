@@ -1,16 +1,12 @@
 // @flow
 
-import { Observable, genObserver } from './observable'
+import { Observable, Observer, getObservable } from './observable'
 import { observable } from './symbols'
 import { noop, EMPTY_SUBSCRIPTION } from './empty'
-import { merge } from './data'
-
-function send(observers, message, value) {
-  observers.forEach(observer => observer[message](value))
-}
+import { set, merge } from './data'
 
 export class Subject {
-  meta: { tag: *, status: string }
+  meta: { tag: *, status: string, origin: Microcosm }
   payload: *
   disabled: boolean
   _observers: Set<*>
@@ -61,7 +57,7 @@ export class Subject {
         this.payload = value
       }
 
-      send(this._observers, 'next', value)
+      this._observers.forEach(observer => observer.next(value))
     }
   }
 
@@ -73,7 +69,7 @@ export class Subject {
         this.payload = value
       }
 
-      send(this._observers, 'complete', value)
+      this._observers.forEach(observer => observer.complete())
     }
   }
 
@@ -82,7 +78,7 @@ export class Subject {
       this.payload = error
       this.meta.status = 'error'
 
-      send(this._observers, 'error', error)
+      this._observers.forEach(observer => observer.error(error))
     }
   }
 
@@ -91,30 +87,26 @@ export class Subject {
       this.payload = reason
       this.meta.status = 'cancel'
 
-      send(this._observers, 'cancel', reason)
+      this._observers.forEach(observer => observer.cancel(reason))
     }
   }
 
-  toggle() {
-    this.disabled = !this.disabled
-  }
-
   subscribe(next: *) {
-    let observer = genObserver(...arguments)
+    let observer = new Observer(...arguments)
 
     if (this.closed) {
-      observer.start(this.payload)
-
       if (this.completed) {
         observer.next(this.payload)
       }
 
+      // $FlowFixMe - Dynamic keys
       observer[this.status](this.payload)
     } else {
       return new Observable(observer => {
         if (this.meta.status === 'next') {
           observer.next(this.payload)
         }
+
         return this._observable.subscribe(observer)
       }).subscribe(observer)
     }
@@ -147,5 +139,59 @@ export class Subject {
       status: this.meta.status,
       tag: this.toString()
     }
+  }
+
+  static hash(obj: *): Subject {
+    if (getObservable(obj)) {
+      return obj
+    }
+
+    let subject = new Subject()
+
+    if (obj == null || typeof obj !== 'object') {
+      subject.next(obj)
+      subject.complete()
+      return subject
+    }
+
+    if (typeof obj.then === 'function') {
+      subject.subscribe(Observable.fromPromise(obj).subscribe(subject))
+      return subject
+    }
+
+    let keys = Object.keys(obj)
+    let payload = Array.isArray(obj) ? [] : {}
+    let jobs = keys.length
+
+    subject.next(payload)
+
+    function complete() {
+      if (--jobs <= 0) {
+        subject.complete()
+      }
+    }
+
+    function assign(key: string, value: *): void {
+      // $FlowFixMe - Signature of set() is too strict
+      payload = set(payload, key, value)
+
+      if (payload !== subject.payload) {
+        subject.next(payload)
+      }
+    }
+
+    for (var i = 0, len = keys.length; i < len; i++) {
+      let key = keys[i]
+
+      let subscription = Observable.wrap(obj[key]).subscribe({
+        next: value => assign(key, value),
+        complete: complete,
+        error: subject.error
+      })
+
+      subject.subscribe(subscription)
+    }
+
+    return subject
   }
 }

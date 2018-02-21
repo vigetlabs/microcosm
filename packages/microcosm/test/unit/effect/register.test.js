@@ -119,27 +119,6 @@ describe('Effect::register', function() {
   })
 
   describe('statuses', function() {
-    it('listens to start', async () => {
-      let repo = new Microcosm()
-      let handler = jest.fn()
-      let action = () => action => setTimeout(action.complete, 0)
-
-      repo.addEffect({
-        register() {
-          return {
-            [action]: {
-              start: handler
-            }
-          }
-        }
-      })
-
-      await repo.push(action)
-
-      expect(handler).toHaveBeenCalledTimes(1)
-      expect(handler).toHaveBeenCalledWith(repo, undefined)
-    })
-
     it('listens to next', async () => {
       let repo = new Microcosm()
       let handler = jest.fn()

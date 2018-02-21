@@ -1,4 +1,4 @@
-import { Observable, get } from 'microcosm'
+import { Subject, Observable, get } from 'microcosm'
 import { createFinder } from './default-resolvers'
 import { getName } from './utilities'
 import { parseArguments } from './arguments'
@@ -117,7 +117,7 @@ export class Question {
 
     if (this.field.isList) {
       return result.flatMap(list => {
-        return Observable.hash(list.map(i => this.trickle(i, context)))
+        return Subject.hash(list.map(i => this.trickle(i, context)))
       })
     }
 
@@ -138,7 +138,7 @@ export class Question {
       answer[key] = this.edges[key].push(root, context)
     }
 
-    return Observable.hash(answer)
+    return Subject.hash(answer)
   }
 
   pipe(key, question) {
