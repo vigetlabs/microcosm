@@ -194,7 +194,7 @@ describe('Observable', function() {
       expect(cleaned).toBe(true)
     })
 
-    it('raises if cleanup is not a function', () => {
+    it.dev('raises if cleanup is not a function', () => {
       expect.assertions(1)
 
       let observable = new Observable(observer => {
