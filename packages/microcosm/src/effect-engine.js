@@ -14,7 +14,7 @@ export function effectEngine(
   let effect = spawn(entity, options, repo)
   let registry = new Cache(effect)
 
-  let tracker = repo.history.updates.subscribe(action => {
+  let tracker = repo.history.subscribe(action => {
     if (registry.respondsTo(action) === false) {
       return null
     }
@@ -28,20 +28,19 @@ export function effectEngine(
     }
 
     return action.subscribe({
-      start: dispatcher,
       next: dispatcher,
       complete: dispatcher,
-      error: dispatcher
+      error: dispatcher,
+      cancel: dispatcher
     })
   })
 
+  if (effect.setup) {
+    effect.setup(repo, options)
+  }
+
   repo.subscribe({
-    start() {
-      if (effect.setup) {
-        effect.setup(repo, options)
-      }
-    },
-    cleanup() {
+    complete() {
       tracker.unsubscribe()
 
       if (effect.teardown) {
