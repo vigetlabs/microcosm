@@ -1,5 +1,5 @@
 // @flow
-
+import { type Microcosm } from './microcosm'
 import { Observable, Observer, getObservable } from './observable'
 import { observable } from './symbols'
 import { noop, EMPTY_SUBSCRIPTION } from './empty'
@@ -12,7 +12,7 @@ export class Subject {
   _observers: Set<*>
   _observable: Observable
 
-  constructor(payload?: *, meta?: *) {
+  constructor(payload?: *, meta?: Object) {
     this.meta = merge({ tag: null, status: 'start' }, meta)
     this.payload = payload
     this.disabled = false

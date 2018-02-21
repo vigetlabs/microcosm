@@ -1,21 +1,17 @@
-import Microcosm from 'microcosm'
+import { Microcosm, Domain } from 'microcosm'
 
 describe('Domain::setup', function() {
   it('is invoked with a reference to the repo and options', function() {
-    const repo = new Microcosm()
-    const test = jest.fn()
+    expect.assertions(2)
+    let repo = new Microcosm()
 
-    class Counter {
-      get setup() {
-        return test
+    class Counter extends Domain {
+      setup(givenRepo, options) {
+        expect(givenRepo).toBe(repo)
+        expect(options).toMatchObject({ test: true })
       }
     }
 
     repo.addDomain('count', Counter, { test: true })
-
-    expect(test).toHaveBeenCalledWith(
-      repo,
-      expect.objectContaining({ test: true })
-    )
   })
 })

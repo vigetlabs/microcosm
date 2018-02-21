@@ -1,9 +1,9 @@
 // @flow
-import History from './history'
-import installDevtools from './install-devtools'
+import { installDevtools } from './install-devtools'
+import { History } from './history'
 import { Subject } from './subject'
-import { effectEngine } from './effect-engine'
-import { domainEngine } from './domain-engine'
+import { Domain } from './domain'
+import { Effect } from './effect'
 import { merge } from './data'
 import { version } from '../package.json'
 
@@ -14,7 +14,7 @@ const DEFAULTS = {
 
 export class Microcosm extends Subject {
   history: History
-  domains: { [string]: Domain }
+  domains: { [string]: Domain<*> }
   answers: { [string]: Subject }
   options: Object
 
@@ -32,11 +32,11 @@ export class Microcosm extends Subject {
     this.answers = parent ? Object.create(parent.answers) : {}
     this.options = options
 
-    this.setup(this.options)
-
     this.subscribe({
       complete: this.teardown.bind(this, this.options)
     })
+
+    this.setup(this.options)
 
     if (options.debug) {
       installDevtools(this)
@@ -61,7 +61,7 @@ export class Microcosm extends Subject {
     // NOOP
   }
 
-  addDomain(key: string, config: any, options?: Object) {
+  addDomain(key: string, blueprint: *, config?: *): Domain<*> {
     console.assert(
       key in this.domains === false,
       'Can not add domain for "' + key + '". This state is already managed.'
@@ -69,16 +69,21 @@ export class Microcosm extends Subject {
 
     console.assert(key && key.length > 0, 'Can not add domain to root level.')
 
-    let { domain, answer } = domainEngine(this, key, config, options)
+    let options = merge(this.options, blueprint.defaults, { key }, config)
+    let Entity = Domain.from(blueprint)
+    let domain = new Entity(this, options)
 
     this.domains[key] = domain
-    this.answers[key] = answer
+    this.answers[key] = domain.stream
 
     return domain
   }
 
-  addEffect(config: any, options?: Object) {
-    return effectEngine(this, config, options)
+  addEffect(blueprint: *, config?: *): Effect {
+    let options = merge(this.options, blueprint.defaults, config)
+    let Entity = Effect.from(blueprint)
+
+    return new Entity(this, options)
   }
 
   push() {

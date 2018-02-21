@@ -17,8 +17,7 @@ export function coroutine(
   repo: *
 ): void {
   if (typeof job !== 'function') {
-    action.next(params.length ? params[0] : undefined)
-    action.complete()
+    action.complete(params.length ? params[0] : undefined)
     return
   }
 
@@ -33,7 +32,7 @@ export function coroutine(
   } else if (typeof body === 'function' && params.indexOf(body) < 0) {
     body(action, repo)
   } else {
-    action.subscribe(Observable.wrap(body).subscribe(action))
+    Observable.wrap(body).subscribe(action)
   }
 }
 

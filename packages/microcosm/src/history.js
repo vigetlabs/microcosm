@@ -2,6 +2,7 @@
  * @flow
  */
 
+import { type Microcosm } from './microcosm'
 import { Subject } from './subject'
 import { Tree } from './tree'
 import { tag } from './tag'
@@ -16,7 +17,7 @@ function simplify(tree: Tree<Subject>, subject: Subject) {
   return base
 }
 
-class History extends Subject {
+export class History extends Subject {
   root: ?Subject
   head: ?Subject
   _branch: Set<Subject>
@@ -56,7 +57,15 @@ class History extends Subject {
     }
   }
 
-  append(origin: Microcosm, command: Command, ...params: *[]) {
+  dispatch(action: Subject): void {
+    this.next(action)
+
+    if (action.closed && !this._debug) {
+      this.archive()
+    }
+  }
+
+  append(origin: Microcosm, command: Command, ...params: *[]): Subject {
     let action = new Subject(params[0], { tag: String(tag(command)), origin })
 
     this._branch.add(action)
@@ -69,15 +78,14 @@ class History extends Subject {
 
     this.head = action
 
-    this.next(action)
+    let dispatch = this.dispatch.bind(this, action)
 
-    if (this._debug === false) {
-      action.subscribe({
-        error: this.archive.bind(this),
-        complete: this.archive.bind(this),
-        cancel: this.archive.bind(this)
-      })
-    }
+    action.subscribe({
+      next: dispatch,
+      error: dispatch,
+      complete: dispatch,
+      cancel: dispatch
+    })
 
     try {
       coroutine(action, command, params, origin)
@@ -93,7 +101,7 @@ class History extends Subject {
     return this._tree.before(action)
   }
 
-  after(action: Subject) {
+  after(action: Subject): ?Subject {
     return action === this.head ? null : this._tree.after(action)
   }
 
@@ -155,5 +163,3 @@ class History extends Subject {
     }
   }
 }
-
-export default History
