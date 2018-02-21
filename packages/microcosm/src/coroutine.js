@@ -4,7 +4,7 @@
 
 import { Microcosm } from './microcosm'
 import { Observable } from './observable'
-import { type Subject } from './subject'
+import { Subject } from './subject'
 import { toStringTag } from './symbols'
 
 /**
@@ -50,7 +50,7 @@ function asGenerator(action: Subject, iterator: Iterator<*>, repo) {
     if (next.done) {
       action.complete()
     } else {
-      let subject = Observable.hash(value)
+      let subject = Subject.hash(value)
 
       let tracker = subject.subscribe({
         next: action.next,

@@ -8,7 +8,7 @@ describe('History updater', function() {
 
     repo.addDomain('test', {})
 
-    repo.history.updates.subscribe(spy)
+    repo.history.subscribe(spy)
 
     repo.push('one', 1)
     repo.push('two', 2)

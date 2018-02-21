@@ -38,7 +38,7 @@ export function domainEngine(repo, key, entity, domainOptions) {
 
   // In order to prevent extra overhead, only subscribe to actions within
   // this domain's registry
-  let tracker = repo.history.updates.subscribe(action => {
+  let tracker = repo.history.subscribe(action => {
     if (registry.respondsTo(action) === false) {
       return null
     }
@@ -49,28 +49,26 @@ export function domainEngine(repo, key, entity, domainOptions) {
       if (next !== answer.payload) {
         answer.next(next)
       }
+
+      if (action.closed) {
+        clean(action)
+      }
     }
 
     return action.subscribe({
-      start: dispatcher,
       next: dispatcher,
       complete: dispatcher,
       error: dispatcher,
-      cancel: dispatcher,
-      // TODO: This is necessary so that revisions are removed from
-      // the ledger, avoiding a memory leak. Is there a way that we
-      // could do this without cleaning both the ledger and history?
-      cleanup: clean.bind(null, action)
+      cancel: dispatcher
     })
   })
 
+  if (domain.setup) {
+    domain.setup(repo, options)
+  }
+
   repo.subscribe({
-    start() {
-      if (domain.setup) {
-        domain.setup(repo, options)
-      }
-    },
-    cleanup() {
+    complete() {
       tracker.unsubscribe()
 
       if (domain.teardown) {

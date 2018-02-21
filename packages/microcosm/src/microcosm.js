@@ -32,9 +32,10 @@ export class Microcosm extends Subject {
     this.answers = parent ? Object.create(parent.answers) : {}
     this.options = options
 
+    this.setup(this.options)
+
     this.subscribe({
-      start: this.setup.bind(this, this.options),
-      cleanup: this.teardown.bind(this, this.options)
+      complete: this.teardown.bind(this, this.options)
     })
 
     if (options.debug) {

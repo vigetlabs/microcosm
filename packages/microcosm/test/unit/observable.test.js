@@ -1,23 +1,6 @@
-import { Observable, Subject } from 'microcosm'
+import { Observable } from 'microcosm'
 
 describe('Observable', function() {
-  describe('start', function() {
-    it('can be unsubscribed on start', () => {
-      let executed = false
-
-      let observable = new Observable(observer => {
-        executed = true
-        observer.complete()
-      })
-
-      observable.subscribe({
-        start: sub => sub.unsubscribe()
-      })
-
-      expect(executed).toBe(false)
-    })
-  })
-
   describe('subscriber', function() {
     it('fires the error callback errors if the subscriber raises an exception', () => {
       expect.assertions(1)
@@ -153,7 +136,7 @@ describe('Observable', function() {
       try {
         observable.subscribe(null)
       } catch (x) {
-        expect(x.message).toBe('Unable to subscribe via null')
+        expect(x.message).toBe('Unable to subscribe to null')
       }
     })
 
@@ -253,16 +236,14 @@ describe('Observable', function() {
         return () => clearTimeout(timer)
       })
 
-      let cleanup = jest.fn()
       let complete = jest.fn()
 
-      observer.subscribe({ cleanup, complete })
+      observer.subscribe({ complete })
 
       observer.cancel('Nevermind')
 
       await new Promise(resolve => setTimeout(resolve, 10))
 
-      expect(cleanup).toHaveBeenCalledTimes(1)
       expect(complete).toHaveBeenCalledTimes(0)
     })
   })
@@ -294,95 +275,6 @@ describe('Observable', function() {
       })
 
       await wrapped
-    })
-  })
-
-  describe('.hash', function() {
-    it('works on promises', async () => {
-      expect.assertions(1)
-
-      let hash = Observable.hash({ key: Promise.resolve(true) })
-
-      hash.subscribe({
-        complete: () => {
-          expect(hash.payload).toEqual({ key: true })
-        }
-      })
-
-      await hash
-    })
-
-    it('works on primitive values', async () => {
-      expect.assertions(1)
-
-      let hash = Observable.hash({ key: true })
-
-      hash.subscribe({
-        next: value => {
-          expect(value).toEqual({ key: true })
-        }
-      })
-
-      await hash
-    })
-
-    it('works on other observables', async () => {
-      let next = jest.fn()
-      let complete = jest.fn()
-
-      let hash = Observable.hash({ key: Observable.of(1, 2, 3) })
-
-      hash.subscribe({
-        next,
-        complete
-      })
-
-      await hash
-
-      expect(next).toHaveBeenCalledWith({ key: 3 })
-      expect(complete).toHaveBeenCalled()
-    })
-
-    it('does not send updates if the value did not change', async () => {
-      let next = jest.fn()
-      let complete = jest.fn()
-
-      let hash = Observable.hash({
-        key: Observable.of(1, 1, 1)
-      })
-
-      hash.subscribe({
-        next,
-        complete
-      })
-
-      await hash
-
-      expect(next).toHaveBeenCalledWith({ key: 1 })
-      expect(next).toHaveBeenCalledTimes(1)
-      expect(complete).toHaveBeenCalledTimes(1)
-    })
-
-    it('works on subjects', async () => {
-      let next = jest.fn()
-      let complete = jest.fn()
-
-      let subject = new Subject()
-
-      subject.next(1)
-
-      let hash = Observable.hash({ key: subject })
-
-      hash.subscribe({ next, complete })
-
-      subject.next(2)
-      subject.complete()
-
-      await hash
-
-      expect(next).toHaveBeenCalledWith({ key: 1 })
-      expect(next).toHaveBeenCalledWith({ key: 2 })
-      expect(complete).toHaveBeenCalled()
     })
   })
 })

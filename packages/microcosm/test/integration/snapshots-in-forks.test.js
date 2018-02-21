@@ -38,7 +38,7 @@ describe('Snapshots', function() {
 
     let action = parent.push(wait)
 
-    expect(action.meta.status).toBe('start')
+    expect(action.meta.status).toBe('unstarted')
 
     action.next(2)
     action.complete()
