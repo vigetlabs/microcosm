@@ -2,22 +2,10 @@
 
 import { type Subject } from './subject'
 import { EMPTY_ARRAY, EMPTY_OBJECT } from './empty'
+import { type Domain } from './domain'
+import { type Effect } from './effect'
 
-function wrap(value: *): *[] {
-  return Array.isArray(value) ? value : [value]
-}
-
-export function spawn(target: any, options: ?Object, repo: *) {
-  return typeof target === 'function'
-    ? new target(options, repo)
-    : Object.create(target)
-}
-
-function buildRegistry(entity: *, tag: string): Object {
-  if (!entity.register) {
-    return EMPTY_OBJECT
-  }
-
+function buildRegistry(entity: Domain<*> | Effect, tag: string): Object {
   let handlers = entity.register()[tag] || EMPTY_OBJECT
 
   if (Array.isArray(handlers) || typeof handlers === 'function') {
@@ -27,30 +15,24 @@ function buildRegistry(entity: *, tag: string): Object {
   return handlers
 }
 
-export class Cache {
+export class Registry {
   _entity: *
   _entries: *
 
-  constructor(entity: *, seed: *) {
+  constructor(entity: Domain<*> | Effect) {
     this._entity = entity
-    this._entries = seed || {}
+    this._entries = {}
   }
 
-  register(action: Subject) {
-    let { tag } = action.meta
+  resolve(action: Subject): Function[] {
+    let tag = action.toString()
 
     if (!this._entries.hasOwnProperty(tag)) {
       this._entries[tag] = buildRegistry(this._entity, tag)
     }
 
-    return this._entries[tag]
-  }
+    let handlers = this._entries[tag][action.status] || EMPTY_ARRAY
 
-  respondsTo(action: Subject): boolean {
-    return this.register(action) !== EMPTY_OBJECT
-  }
-
-  resolve(action: Subject) {
-    return wrap(this.register(action)[action.meta.status] || EMPTY_ARRAY)
+    return Array.isArray(handlers) ? handlers : [handlers]
   }
 }

@@ -1,19 +1,18 @@
-import Microcosm from 'microcosm'
+import { Microcosm, Effect } from 'microcosm'
 
 describe('Effect::setup', function() {
   it('an effect is setup with options', function() {
-    const repo = new Microcosm()
-    const spy = jest.fn()
+    expect.assertions(2)
 
-    class Effect {
-      setup = spy
+    let repo = new Microcosm()
+
+    class Test extends Effect {
+      setup(givenRepo, options) {
+        expect(givenRepo).toBe(repo)
+        expect(options).toMatchObject({ test: true })
+      }
     }
 
-    repo.addEffect(Effect, { test: true })
-
-    expect(spy).toHaveBeenCalledWith(
-      repo,
-      expect.objectContaining({ test: true })
-    )
+    repo.addEffect(Test, { test: true })
   })
 })

@@ -1,6 +1,6 @@
 const key = '__MICROCOSM_DEVTOOLS_GLOBAL_HOOK__'
 
-export default function installDevtools(repo) {
+export function installDevtools(repo) {
   let namespace =
     typeof global === 'undefined' ? /* istanbul ignore next */ window : global
   let hook = namespace[key]

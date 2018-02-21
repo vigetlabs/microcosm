@@ -1,24 +1,19 @@
-import Microcosm from 'microcosm'
+import { Microcosm, Effect } from 'microcosm'
 
 describe('Effect::teardown', function() {
-  it('is torn down with the repo', function() {
-    const repo = new Microcosm()
-    const spy = jest.fn()
+  it('is invoked with a reference to the repo and options', function() {
+    expect.assertions(2)
 
-    class Effect {
-      teardown = spy
+    let repo = new Microcosm()
+
+    class Test extends Effect {
+      teardown(givenRepo, options) {
+        expect(givenRepo).toBe(repo)
+        expect(options).toMatchObject({ test: true })
+      }
     }
 
-    repo.addEffect(Effect)
-
-    repo.complete()
-
-    expect(spy).toHaveBeenCalledWith(repo, repo.options)
-  })
-
-  it('does not need to implement teardown', function() {
-    const repo = new Microcosm()
-    repo.addEffect(class Effect {})
+    repo.addEffect(Test, { test: true })
     repo.complete()
   })
 })
