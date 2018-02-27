@@ -17,11 +17,9 @@ export class Subject {
   _observable: Observable
 
   constructor(payload?: *, meta?: *) {
-    this.meta = merge({ tag: null, status: 'unstarted' }, meta)
+    this.meta = merge({ tag: null, status: 'start' }, meta)
     this.payload = payload
     this.disabled = false
-
-    this.meta.status = 'start'
 
     this._observers = new Set()
 

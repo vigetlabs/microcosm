@@ -47,8 +47,9 @@ export function generateActionForm(createElement, Component) {
       let result = this.send(action, params)
 
       if (result && 'subscribe' in result) {
+        this._onChange('start', result)
+
         result.subscribe({
-          start: this._onChange.bind(this, 'start', result),
           error: this._onChange.bind(this, 'error', result),
           next: this._onChange.bind(this, 'next', result),
           complete: this._onChange.bind(this, 'complete', result),
