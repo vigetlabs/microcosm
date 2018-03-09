@@ -1,5 +1,4 @@
 coverage
-stats.json
 node_modules
 build
 !bin/build
@@ -11,5 +10,4 @@ tmp
 lerna-debug.log
 npm-debug.log
 *.zip
-packages/*/yarn.lock
 .eslintcache

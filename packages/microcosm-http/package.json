@@ -4,7 +4,7 @@
   "main": "src/http.js",
   "private": true,
   "dependencies": {
-    "axios": "^0.17.1"
+    "axios": "^0.18.0"
   },
   "scripts": {
     "start": "webpack-dev-server"
