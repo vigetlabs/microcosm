@@ -5,7 +5,7 @@
 
 'use strict'
 
-const { Microcosm, tag } = require('../build/min')
+const { Microcosm, tag } = require('../build')
 
 const SIZES = [10, 100, 1000, 10000]
 

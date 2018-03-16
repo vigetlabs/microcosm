@@ -4,7 +4,7 @@
 
 'use strict'
 
-const { History } = require('../build/min')
+const { History } = require('../build')
 
 const SIZES = [1000, 10000, 25000]
 

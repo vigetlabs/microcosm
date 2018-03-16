@@ -28,7 +28,7 @@ release: clean all
 prerelease: clean all
 	@ npm publish build --tag beta
 
-bench: min
+bench: build
 	#	@ NODE_ENV=production node --expose-gc bench/history-performance
 	# @ NODE_ENV=production node --expose-gc bench/dispatch-performance
 	@ NODE_ENV=production node --expose-gc bench/push-performance
