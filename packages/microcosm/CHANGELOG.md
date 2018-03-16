@@ -1,8 +1,8 @@
-# Changelog 
+# Changelog
 
 ## Master (13.x)
 
-- Moved internal state tree diffing tool to addon. 
+- Moved internal state tree diffing tool to addon.
 - Removed support for root level domains, forks can not add keys managed by parents. Repos can not add domains to the same key name.
 - Removed feature to instantiate a Microcosm with an initial state using the second argument of the constructor.
 
@@ -16,15 +16,15 @@
 
 - Properly externalize ReactDOM in build
 
-## 12.13.1 
+## 12.13.1
 
 - Fix issue where refs passed to ActionForm would raise warning in React
 
 ## 12.13.0
 
-- In batching mode, Presenter model updates are asynchronous. 
+- In batching mode, Presenter model updates are asynchronous.
 - Warn when a non-POJO is passed as effect/domain options
-- Added lifecycle method for when a Presenter model changes: `modelDidUpdate`. See the docs for more information.
+- Added lifecycle method for when a Presenter model changes: `modelWillUpdate`. See the docs for more information.
 
 ## 12.12.4
 
@@ -82,7 +82,7 @@
   the same behavior as `repo.parallel`
 - `Presenter::getModel` assignments
   accept [Observables](https://github.com/tc39/proposal-observable).
-- Do not warn in strict mode when attempting to change a complete 
+- Do not warn in strict mode when attempting to change a complete
   action. This allows for use cases like, "Cancel this action, but
   only if it hasn't finished yet."
 - History and Action now serialize to JSON. This supports a new
