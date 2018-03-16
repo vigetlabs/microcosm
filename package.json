@@ -10,7 +10,7 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:prod": "yarn build && BUNDLED=true jest",
-    "lint": "eslint packages --cache",
+    "lint": "eslint packages --cache --cache-location=node_modules/",
     "flow": "flow",
     "clean": "git clean -Xdf"
   },
