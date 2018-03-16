@@ -126,7 +126,7 @@ describe('Observable', function() {
   })
 
   describe('subscribe', function() {
-    it('raises if not given an observer', () => {
+    it.dev('raises if not given an observer', () => {
       expect.assertions(1)
 
       let observable = new Observable(observer => {
