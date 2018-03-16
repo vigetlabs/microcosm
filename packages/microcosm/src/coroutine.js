@@ -2,7 +2,6 @@
  * @flow
  */
 
-import { Microcosm } from './microcosm'
 import { Observable } from './observable'
 import { Subject } from './subject'
 import { toStringTag } from './symbols'
@@ -15,7 +14,7 @@ export function coroutine(
   action: Subject,
   job: any,
   params: any[],
-  repo: Microcosm
+  repo: *
 ): void {
   if (typeof job !== 'function') {
     action.next(params.length ? params[0] : undefined)
