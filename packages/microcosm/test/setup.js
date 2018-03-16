@@ -1,10 +1,4 @@
-import { configure } from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16'
 import '../src/addons/jest-matchers'
-
-configure({ adapter: new Adapter() })
-
-jest.setTimeout(1000)
 
 // Make a strict-only test flag
 it.dev = function(description, test) {
