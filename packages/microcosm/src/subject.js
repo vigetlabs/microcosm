@@ -145,6 +145,10 @@ export class Subject {
     }
   }
 
+  valueOf() {
+    return this.payload
+  }
+
   map(fn: (*) => *, scope: any): Observable {
     return new Observable(observer => {
       if (this.started) {
@@ -160,11 +164,12 @@ export class Subject {
   }
 
   static hash(obj: *): Subject {
-    if (getObservable(obj)) {
-      return obj
-    }
-
     let subject = new Subject()
+
+    if (getObservable(obj)) {
+      obj.subscribe(subject)
+      return subject
+    }
 
     if (obj == null || typeof obj !== 'object') {
       subject.next(obj)

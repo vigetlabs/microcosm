@@ -192,11 +192,11 @@ describe('Subject', function() {
 
   describe('toString', function() {
     it('stringifies to its tag name', () => {
-      expect(`${new Subject(null, { tag: 'foobar' })}`).toBe('foobar')
+      expect(new Subject(null, { tag: 'foobar' }).toString()).toBe('foobar')
     })
 
     it('stringifies to "Subject" when given no tag', () => {
-      expect(`${new Subject(null)}`).toBe('Subject')
+      expect(new Subject(null).toString()).toBe('Subject')
     })
   })
 

@@ -48,10 +48,10 @@ describe('History::archive', function() {
 
     repo.history.archive()
 
-    expect(`${repo.history.root}`).toBe('second')
+    expect(repo.history.root.toString()).toBe('second')
 
     // This is two because we checked out two earlier
-    expect(`${repo.history.head}`).toBe('second')
+    expect(repo.history.head.toString()).toBe('second')
   })
 
   it('builds up back-pressure', function() {
