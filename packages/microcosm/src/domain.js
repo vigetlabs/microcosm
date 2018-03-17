@@ -126,10 +126,6 @@ export class Domain<State: mixed = null> extends Subject {
     return this.serialize(this.valueOf())
   }
 
-  valueOf() {
-    return this.payload
-  }
-
   _resolve(action: Subject): DomainHandler<State>[] {
     switch (action.toString()) {
       case String(RESET):

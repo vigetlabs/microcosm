@@ -1,4 +1,4 @@
-import Microcosm, { reset } from 'microcosm'
+import { Microcosm, Observable, reset } from 'microcosm'
 
 describe('Microcosm::addDomain', function() {
   it('adding a domain backfills the initial state', function() {
@@ -28,6 +28,19 @@ describe('Microcosm::addDomain', function() {
     expect(() => repo.addDomain('', {})).toThrow(
       'Can not add domain to root level.'
     )
+  })
+
+  it('can add observables as domains', function() {
+    let repo = new Microcosm()
+
+    repo.addDomain(
+      'test',
+      new Observable(observer => {
+        observer.next('test')
+      })
+    )
+
+    expect(repo.domains.test.valueOf()).toEqual('test')
   })
 
   describe('forks', function() {

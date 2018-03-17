@@ -2,6 +2,7 @@
 import { installDevtools } from './install-devtools'
 import { History } from './history'
 import { Subject } from './subject'
+import { Observable } from './observable'
 import { Domain } from './domain'
 import { Effect } from './effect'
 import { merge } from './data'
@@ -14,7 +15,7 @@ const DEFAULTS = {
 
 export class Microcosm extends Subject {
   history: History
-  domains: { [string]: Domain<*> }
+  domains: { [string]: Subject }
   options: Object
 
   static defaults: Object
@@ -59,7 +60,7 @@ export class Microcosm extends Subject {
     // NOOP
   }
 
-  addDomain(key: string, blueprint: *, config?: *): Domain<*> {
+  addDomain(key: string, blueprint: *, config?: *): Subject {
     console.assert(
       key in this.domains === false,
       'Can not add domain for "' + key + '". This state is already managed.'
@@ -67,13 +68,17 @@ export class Microcosm extends Subject {
 
     console.assert(key && key.length > 0, 'Can not add domain to root level.')
 
-    let options = merge(this.options, blueprint.defaults, { key }, config)
-    let Entity = Domain.from(blueprint)
-    let domain = new Entity(this, options)
+    if (blueprint instanceof Observable) {
+      this.domains[key] = Subject.hash(blueprint)
+      this.subscribe({ complete: this.domains[key].complete })
+    } else {
+      let options = merge(this.options, blueprint.defaults, { key }, config)
+      let Entity = Domain.from(blueprint)
 
-    this.domains[key] = domain
+      this.domains[key] = new Entity(this, options)
+    }
 
-    return domain
+    return this.domains[key]
   }
 
   addEffect(blueprint: *, config?: *): Effect {
