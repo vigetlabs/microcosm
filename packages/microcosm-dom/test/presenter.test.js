@@ -1,5 +1,5 @@
 import React from 'react'
-import { Microcosm, Observable, patch } from 'microcosm'
+import { Microcosm, patch } from 'microcosm'
 import { Presenter, ActionButton, withSend } from 'microcosm-dom/react'
 import { delay, mount, unmount, PropsTransition } from './helpers'
 
@@ -111,12 +111,7 @@ describe('::getModel', function() {
       class Namer extends Presenter {
         getModel(repo, { prefix }) {
           return {
-            // TODO: We should add Observable.map
-            name: new Observable(observer => {
-              return repo.domains.name.subscribe(name => {
-                observer.next(prefix + ' ' + name)
-              })
-            })
+            name: repo.domains.name.map(name => prefix + ' ' + name)
           }
         }
         render() {

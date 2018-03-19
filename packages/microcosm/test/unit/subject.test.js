@@ -310,4 +310,65 @@ describe('Subject', function() {
       expect(complete).toHaveBeenCalled()
     })
   })
+
+  describe('.map', () => {
+    it('works like observable.map', () => {
+      let subject = new Subject()
+
+      let double = subject.map(value => value * 2)
+      let answers = []
+
+      double.subscribe(value => answers.push(value))
+
+      for (var i = 0; i < 5; i++) {
+        subject.next(i)
+      }
+
+      expect(answers).toEqual([0, 2, 4, 6, 8])
+    })
+
+    it('starts with the current value', () => {
+      let subject = new Subject()
+
+      let double = subject.map(value => value * 2)
+      let answers = []
+
+      subject.next(5)
+
+      double.subscribe(value => answers.push(value))
+
+      expect(answers).toEqual([10])
+    })
+
+    it('only maps over the current and new iterations', () => {
+      let subject = new Subject()
+
+      let double = subject.map(value => value * 2)
+      let answers = []
+
+      subject.next(0)
+      subject.next(1)
+      double.subscribe(value => answers.push(value))
+      subject.next(2)
+      subject.next(3)
+
+      expect(answers).toEqual([2, 4, 6])
+    })
+
+    it('only emits the final value when it completes', () => {
+      let subject = new Subject()
+
+      let double = subject.map(value => value * 2)
+      let answers = []
+
+      subject.next(0)
+      subject.next(1)
+      subject.complete()
+      double.subscribe(value => answers.push(value))
+      subject.next(2)
+      subject.next(3)
+
+      expect(answers).toEqual([2])
+    })
+  })
 })

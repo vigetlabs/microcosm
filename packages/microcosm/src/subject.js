@@ -25,6 +25,10 @@ export class Subject {
     })
   }
 
+  get started(): boolean {
+    return this.status !== 'start'
+  }
+
   get status(): string {
     return this.meta.status
   }
@@ -139,6 +143,20 @@ export class Subject {
       status: this.meta.status,
       tag: this.toString()
     }
+  }
+
+  map(fn: (*) => *, scope: any): Observable {
+    return new Observable(observer => {
+      if (this.started) {
+        observer.next(fn.call(scope, this.payload))
+      }
+
+      if (this.closed) {
+        observer.complete()
+      } else {
+        return this._observable.map(fn, scope).subscribe(observer)
+      }
+    })
   }
 
   static hash(obj: *): Subject {

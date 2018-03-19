@@ -149,6 +149,27 @@ export class Observable {
     }
   }
 
+  map(fn: (*) => *, scope: any): Observable {
+    if (typeof fn !== 'function') {
+      throw new TypeError(fn + ' is not a function')
+    }
+
+    return new Observable(observer => {
+      return this.subscribe({
+        next(value) {
+          try {
+            value = fn.call(scope, value)
+          } catch (e) {
+            return observer.error(e)
+          }
+          observer.next(value)
+        },
+        error: observer.error,
+        complete: observer.complete
+      })
+    })
+  }
+
   // $FlowFixMe - Flow does not support computed keys
   [observable]() {
     return this
