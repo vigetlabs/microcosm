@@ -47,4 +47,12 @@ export class Ledger<State> {
   set(action: Subject, state: *): void {
     this._versions.set(action, state)
   }
+
+  toJSON() {
+    return this.valueOf()
+  }
+
+  valueOf() {
+    return this.recall(this._history.head)
+  }
 }

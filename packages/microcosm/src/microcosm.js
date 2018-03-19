@@ -15,7 +15,6 @@ const DEFAULTS = {
 export class Microcosm extends Subject {
   history: History
   domains: { [string]: Domain<*> }
-  answers: { [string]: Subject }
   options: Object
 
   static defaults: Object
@@ -29,7 +28,6 @@ export class Microcosm extends Subject {
 
     this.history = parent ? parent.history : new History(options)
     this.domains = parent ? Object.create(parent.domains) : {}
-    this.answers = parent ? Object.create(parent.answers) : {}
     this.options = options
 
     this.subscribe({
@@ -46,8 +44,8 @@ export class Microcosm extends Subject {
   get state(): Object {
     let value = {}
 
-    for (let key in this.answers) {
-      value[key] = this.answers[key].payload
+    for (let key in this.domains) {
+      value[key] = this.domains[key].valueOf()
     }
 
     return value
@@ -74,7 +72,6 @@ export class Microcosm extends Subject {
     let domain = new Entity(this, options)
 
     this.domains[key] = domain
-    this.answers[key] = domain.stream
 
     return domain
   }
@@ -95,15 +92,7 @@ export class Microcosm extends Subject {
   }
 
   toJSON() {
-    let json = {}
-
-    for (var key in this.domains) {
-      if (this.domains[key].serialize) {
-        json[key] = this.domains[key].serialize(this.answers[key].payload)
-      }
-    }
-
-    return json
+    return merge({}, this.domains)
   }
 
   fork() {

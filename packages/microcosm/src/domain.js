@@ -1,7 +1,6 @@
 /**
  * @flow
  */
-
 import { type Microcosm } from './microcosm'
 import { Subject } from './subject'
 import { Registry } from './registry'
@@ -11,10 +10,9 @@ import { Ledger } from './ledger'
 
 type DomainHandler<State> = (state: State, payload?: *, meta?: *) => State
 
-export class Domain<State: mixed = null> {
+export class Domain<State: mixed = null> extends Subject {
   repo: Microcosm
   options: Object
-  stream: Subject
   _registry: Registry
   _ledger: Ledger<State>
 
@@ -41,9 +39,10 @@ export class Domain<State: mixed = null> {
   }
 
   constructor(repo: Microcosm, options: Object) {
+    super(null, { tag: options.key })
+
     this.repo = repo
     this.options = options
-    this.stream = new Subject()
 
     this.setup(repo, options)
 
@@ -52,13 +51,13 @@ export class Domain<State: mixed = null> {
     this._registry = new Registry(this)
     this._ledger = new Ledger(start, repo.history, options.debug)
 
-    this.stream.next(start)
+    this.next(start)
 
     let tracker = repo.history.subscribe(action => {
       let next = this._rollforward(action)
 
-      if (next !== this.stream.payload) {
-        this.stream.next(next)
+      if (next !== this.payload) {
+        this.next(next)
       }
 
       // TODO: This could probably be a generic storage solution
@@ -103,9 +102,7 @@ export class Domain<State: mixed = null> {
    * To prevent accidental data transfer, this method is "opt-in",
    * returning `undefined` by default.
    */
-  serialize(state: State): ?mixed {
-    return undefined
-  }
+  serialize(state: State): ?mixed {}
 
   /**
    * Allows data to be transformed into a valid shape before it enters a
@@ -124,6 +121,14 @@ export class Domain<State: mixed = null> {
   }
 
   // Private -------------------------------------------------- //
+
+  toJSON() {
+    return this.serialize(this.valueOf())
+  }
+
+  valueOf() {
+    return this.payload
+  }
 
   _resolve(action: Subject): DomainHandler<State>[] {
     switch (action.toString()) {

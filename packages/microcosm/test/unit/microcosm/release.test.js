@@ -1,4 +1,4 @@
-import Microcosm from 'microcosm'
+import { Microcosm } from 'microcosm'
 
 describe('Microcosm::release', function() {
   it('will not emit a change if state is shallowly equal', function() {
@@ -6,7 +6,7 @@ describe('Microcosm::release', function() {
     const identity = n => n
     const spy = jest.fn()
 
-    repo.addDomain('test', {
+    const test = repo.addDomain('test', {
       getInitialState() {
         return 0
       },
@@ -15,7 +15,7 @@ describe('Microcosm::release', function() {
       }
     })
 
-    repo.answers.test.subscribe(spy)
+    test.subscribe(spy)
 
     expect(spy).toHaveBeenCalledTimes(1)
     repo.push(identity, 0)
@@ -27,7 +27,7 @@ describe('Microcosm::release', function() {
     const identity = n => n
     const spy = jest.fn()
 
-    repo.addDomain('test', {
+    const test = repo.addDomain('test', {
       getInitialState() {
         return 0
       },
@@ -36,7 +36,7 @@ describe('Microcosm::release', function() {
       }
     })
 
-    repo.answers.test.subscribe(spy)
+    test.subscribe(spy)
 
     expect(spy).toHaveBeenCalledTimes(1)
     repo.push(identity, 1)
@@ -60,8 +60,8 @@ describe('Microcosm::release', function() {
     })
 
     // This will fire twice:
-    fork.answers.count.subscribe(() => {
-      expect(fork.state.count).toBe(repo.state.count)
+    fork.domains.count.subscribe(() => {
+      expect(fork.state).toEqual(repo.state)
     })
 
     repo.push(step, 1)
