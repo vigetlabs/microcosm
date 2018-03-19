@@ -38,7 +38,7 @@ describe('::getModel', function() {
     class MyPresenter extends Presenter {
       getModel(repo) {
         return {
-          color: repo.answers.color
+          color: repo.domains.color
         }
       }
       render() {
@@ -113,7 +113,7 @@ describe('::getModel', function() {
           return {
             // TODO: We should add Observable.map
             name: new Observable(observer => {
-              return repo.answers.name.subscribe(name => {
+              return repo.domains.name.subscribe(name => {
                 observer.next(prefix + ' ' + name)
               })
             })
@@ -260,7 +260,7 @@ describe('::setup', function() {
 
       getModel(repo) {
         return {
-          prop: repo.answers.prop
+          prop: repo.domains.prop
         }
       }
 
@@ -317,7 +317,7 @@ describe('::ready', function() {
 
       getModel(repo) {
         return {
-          test: repo.answers.test
+          test: repo.domains.test
         }
       }
     }
@@ -523,7 +523,7 @@ describe('::teardown', function() {
     class Test extends Presenter {
       getModel() {
         return {
-          test: repo.answers.test
+          test: repo.domains.test
         }
       }
       getRepo(repo) {
@@ -557,7 +557,7 @@ describe('::teardown', function() {
 
       getModel(repo) {
         return {
-          test: repo.answers.test
+          test: repo.domains.test
         }
       }
 
@@ -589,7 +589,7 @@ describe('purity', function() {
 
     class Namer extends Presenter {
       getModel(repo) {
-        return { name: repo.answers.name }
+        return { name: repo.domains.name }
       }
 
       render() {
@@ -650,7 +650,7 @@ describe('Efficiency', function() {
 
     let model = jest.fn(repo => {
       return {
-        color: repo.answers.color
+        color: repo.domains.color
       }
     })
 
@@ -1101,8 +1101,8 @@ describe('forks', function() {
           }
         })
 
-        expect(repo.answers).not.toHaveProperty('middle')
-        expect(repo.answers).not.toHaveProperty('bottom')
+        expect(repo.domains).not.toHaveProperty('middle')
+        expect(repo.domains).not.toHaveProperty('bottom')
       }
     }
 
@@ -1116,8 +1116,8 @@ describe('forks', function() {
 
         // State should exist, but the fork should not manage these keys:
         expect(repo.state.top).toBe('top')
-        expect(repo.answers).not.toHaveProperty('bottom')
-        expect(repo.answers).not.toHaveProperty('top')
+        expect(repo.domains).not.toHaveProperty('bottom')
+        expect(repo.domains).not.toHaveProperty('top')
       }
     }
 
@@ -1131,9 +1131,9 @@ describe('forks', function() {
 
         // State should exist, but the fork should not manage these keys:
         expect(repo.state.top).toBe('top')
-        expect(repo.answers).not.toHaveProperty('top')
+        expect(repo.domains).not.toHaveProperty('top')
         expect(repo.state.middle).toBe('middle')
-        expect(repo.answers).not.toHaveProperty('middle')
+        expect(repo.domains).not.toHaveProperty('middle')
       }
     }
 

@@ -1,10 +1,12 @@
 import Microcosm from 'microcosm'
 
+const reconstitute = obj => JSON.parse(JSON.stringify(obj))
+
 describe('Domain::serialize', function() {
   it('runs through serialize methods on domains', function() {
     const repo = new Microcosm()
 
-    repo.addDomain('serialize-test', {
+    repo.addDomain('test', {
       getInitialState() {
         return 'this will not display'
       },
@@ -13,7 +15,7 @@ describe('Domain::serialize', function() {
       }
     })
 
-    expect(repo.toJSON()['serialize-test']).toBe('this is a test')
+    expect(reconstitute(repo)).toHaveProperty('test', 'this is a test')
   })
 
   it('only includes keys that impliment serialize', function() {
@@ -34,10 +36,10 @@ describe('Domain::serialize', function() {
       }
     })
 
-    let json = repo.toJSON()
+    let json = reconstitute(repo)
 
-    expect(json.included).toEqual('HOWDY')
-    expect(json.missing).not.toBeDefined()
+    expect(json).toHaveProperty('included', 'HOWDY')
+    expect(json).not.toHaveProperty('missing')
   })
 
   describe('forks', function() {
@@ -55,7 +57,7 @@ describe('Domain::serialize', function() {
         serialize: word => word.toUpperCase()
       })
 
-      expect(child.toJSON()).toEqual({ fiz: 'FIZ', buzz: 'BUZZ' })
+      expect(reconstitute(child)).toEqual({ fiz: 'FIZ', buzz: 'BUZZ' })
     })
   })
 })

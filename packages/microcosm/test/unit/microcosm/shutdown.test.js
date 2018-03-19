@@ -14,7 +14,7 @@ describe('Shutting down a microcosm', function() {
 
     const listener = jest.fn()
 
-    repo.answers.colors.subscribe(listener)
+    repo.domains.colors.subscribe(listener)
     listener.mockReset()
 
     repo.complete()
