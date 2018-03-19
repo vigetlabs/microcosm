@@ -25,9 +25,6 @@
     "flux"
   ],
   "license": "MIT",
-  "dependencies": {
-    "form-serialize": "^0.7.2"
-  },
   "devDependencies": {
     "asciitree": "^1.0.2",
     "buble": "^0.18.0",
