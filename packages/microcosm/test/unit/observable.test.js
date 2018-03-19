@@ -277,4 +277,45 @@ describe('Observable', function() {
       await wrapped
     })
   })
+
+  describe('.map', () => {
+    it('operates like array.map over a stream of values', () => {
+      let observable = new Observable(observer => {
+        for (var i = 0; i < 5; i++) {
+          observer.next(i)
+        }
+        observer.complete()
+      })
+
+      let double = observable.map(value => value * 2)
+      let answers = []
+
+      double.subscribe(value => answers.push(value))
+
+      expect(answers).toEqual([0, 2, 4, 6, 8])
+    })
+
+    it('can configure scope', () => {
+      let scope = {
+        degree: 2,
+        multiply(value) {
+          return value * this.degree
+        }
+      }
+
+      let observable = new Observable(observer => {
+        for (var i = 0; i < 5; i++) {
+          observer.next(i)
+        }
+        observer.complete()
+      })
+
+      let double = observable.map(scope.multiply, scope)
+      let answers = []
+
+      double.subscribe(value => answers.push(value))
+
+      expect(answers).toEqual([0, 2, 4, 6, 8])
+    })
+  })
 })
