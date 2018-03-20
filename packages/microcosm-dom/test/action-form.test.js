@@ -157,4 +157,42 @@ describe('ActionForm', function() {
       expect(send).toHaveBeenCalled()
     })
   })
+
+  describe('value prop', function() {
+    it('sends a value prop when provided', function() {
+      let send = jest.fn()
+      let form = mount(<ActionForm action="test" send={send} value={true} />)
+
+      submit(form)
+
+      expect(send).toHaveBeenCalledWith('test', true)
+    })
+
+    it('sends null when the value prop is null', function() {
+      let send = jest.fn()
+      let form = mount(<ActionForm action="test" send={send} value={null} />)
+
+      submit(form)
+
+      expect(send).toHaveBeenCalledWith('test', null)
+    })
+
+    it('calls prepare on the value', function() {
+      let send = jest.fn()
+      let prepare = jest.fn(value => value.toUpperCase())
+      let form = mount(
+        <ActionForm
+          action="action"
+          send={send}
+          prepare={prepare}
+          value="test"
+        />
+      )
+
+      submit(form)
+
+      expect(prepare).toHaveBeenCalledWith('test')
+      expect(send).toHaveBeenCalledWith('action', 'TEST')
+    })
+  })
 })
