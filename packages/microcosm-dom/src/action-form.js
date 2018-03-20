@@ -36,15 +36,13 @@ export function generateActionForm(createElement, Component) {
       delete props.onCancel
       delete props.onError
       delete props.send
+      delete props.value
 
       return createElement(this.props.tag, props)
     }
 
     submit(event) {
-      const { prepare, serializer, action } = this.props
-
-      let params = prepare(serializer(this._form))
-      let result = this.send(action, params)
+      let result = this.send(this.props.action, this._parameterize())
 
       if (result && 'subscribe' in result) {
         this._onChange('start', result)
@@ -63,6 +61,14 @@ export function generateActionForm(createElement, Component) {
     }
 
     // Private --------------------------------------------------- //
+
+    _parameterize() {
+      let { value, prepare, serializer } = this.props
+
+      return value !== undefined
+        ? prepare(value)
+        : prepare(serializer(this._form))
+    }
 
     _onChange(status, result) {
       this.props[toCallbackName(status)](result.payload, result.meta)
