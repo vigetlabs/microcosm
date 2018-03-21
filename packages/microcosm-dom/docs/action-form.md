@@ -1,8 +1,8 @@
 # ActionForm
 
-1. [Overview](#overview)
-2. [Usage](#usage)
-3. [Props](#props)
+1.  [Overview](#overview)
+2.  [Usage](#usage)
+3.  [Props](#props)
 
 ## Overview
 
@@ -11,26 +11,28 @@ ActionForm is a wrapper around a standard `form` tag that provides a method of b
 ```javascript
 import React from 'react'
 import DOM from 'react-dom'
-import Microcosm from 'microcosm'
+import { Microcosm, Domain } from 'microcosm'
 import { ActionForm, Presenter } from 'microcosm-dom'
 
 const repo = new Microcosm()
 
 const increaseCount = n => n
 
-repo.addDomain('count', {
+class Count extends Domain {
   getInitialState() {
     return 0
-  },
+  }
   increase(count, { amount }) {
     return count + amount
-  },
+  }
   register() {
     return {
       [increaseCount]: this.increase
     }
   }
-})
+}
+
+repo.addDomain('count', Count)
 
 function StepperForm({ count }) {
   return (
@@ -42,9 +44,9 @@ function StepperForm({ count }) {
 }
 
 class CountPresenter extends Presenter {
-  getModel() {
+  getModel(repo) {
     return {
-      count: state => state.count
+      count: repo.domains.count
     }
   }
 
@@ -66,6 +68,46 @@ ActionForm inputs are serialized to JSON upon submission using
 ### action
 
 A string value to send to Presenters. If a Presenter is registered to that string via its `intercept()` method, it will execute the associated callback.
+
+## value
+
+Optional. When provided, instead of serializing form inputs into an object, ActionForm will pass this value when it dispatches its action.
+
+```javascript
+import { login } from '../actions/session'
+
+class Login extends React.Component {
+  state = {
+    email: '',
+    password: ''
+  }
+
+  render() {
+    let { email, password } = this.state
+
+    return (
+      <ActionForm action={login} value={this.state}>
+        <input
+          type="email"
+          name="email"
+          value={email}
+          onChange={this.setField}
+        />
+        <input
+          type="password"
+          name="password"
+          value={password}
+          onChange={this.setField}
+        />
+      </ActionForm>
+    )
+  }
+
+  setField = event => {
+    this.setState({ [event.target.name]: [event.target.value] })
+  }
+}
+```
 
 ### serializer(form)
 
