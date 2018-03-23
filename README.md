@@ -1,6 +1,6 @@
 # [![Microcosm](http://code.viget.com/microcosm/assets/microcosm.svg)](http://code.viget.com/microcosm/)
 
-[![CircleCI](https://img.shields.io/circleci/project/vigetlabs/microcosm.svg?maxAge=2592000)](https://circleci.com/gh/vigetlabs/microcosm)
+[![CircleCI](https://img.shields.io/circleci/project/vigetlabs/microcosm.svg?maxAge=1000)](https://circleci.com/gh/vigetlabs/microcosm)
 [![codecov](https://codecov.io/gh/vigetlabs/microcosm/branch/master/graph/badge.svg)](https://codecov.io/gh/vigetlabs/microcosm)
 [![npm](https://img.shields.io/npm/v/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
 [![npm](https://img.shields.io/npm/dm/microcosm.svg?maxAge=2592000)](https://www.npmjs.com/package/microcosm)
