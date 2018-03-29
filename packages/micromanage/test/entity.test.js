@@ -1,44 +1,41 @@
 import { Entity } from 'micromanage'
 
-it('must define a schema', () => {
-  class NoSQL extends Entity {}
-
-  expect(() => new NoSQL()).toThrow(/Entity "NoSQL" needs a schema./)
-})
-
-it('filters out keys outside of the schema', () => {
+it('fails when a property is missing a type', () => {
   class Planet extends Entity {
     static schema = {
-      name: String
-    }
-  }
-
-  let earth = new Planet({ name: 'Earth', color: 'blue' })
-
-  expect(earth).toHaveProperty('name', 'Earth')
-  expect(earth).not.toHaveProperty('color')
-})
-
-it('fails when a parameter does not match the schema', () => {
-  class Planet extends Entity {
-    static schema = {
-      name: String
+      properties: {
+        name: {}
+      }
     }
   }
 
   expect(() => new Planet({ name: 2 })).toThrow(
-    'Entity "Planet" expected a String for key "name". Instead found Number.'
+    'Planet must define a type for property "name".'
   )
 })
 
-it('fails when a parameter is null', () => {
+it('fails when it can not recognize a type and there is no default', () => {
   class Planet extends Entity {
     static schema = {
-      name: String
+      properties: {
+        name: { type: 'other' }
+      }
     }
   }
 
-  expect(() => new Planet({ name: null })).toThrow(
-    'Entity "Planet" expected a String for key "name". Instead found null.'
+  expect(() => new Planet()).toThrow(
+    'Unable to determine default value for property "name". Please use a recognized type or provide a default value.'
   )
+})
+
+it('can set defaults', () => {
+  class Planet extends Entity {
+    static schema = {
+      properties: {
+        name: { type: 'string', default: 'planet' }
+      }
+    }
+  }
+
+  expect(new Planet()).toHaveProperty('name', 'planet')
 })
