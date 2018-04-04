@@ -4,12 +4,43 @@ $content-width: calc(45vw - #{$page-gutter-desktop});
 $graphic-width: calc(50vw - #{$page-gutter-desktop});
 
 .section {
+  box-shadow: 0 0 30px rgba(0,0,0,.3);
+  background-color: color(bg-0-bottom);
+  // position: relative;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
   padding-top: $section-top-padding-mobile;
+
+  &::before {  //top of half split bg
+    background-color: color(bg-0-top);
+    content: '';
+    height: $split-bg-height-mobile;
+    position: absolute;
+    top: 0;
+    transition: transition(background-color);
+    width: 100%;
+    z-index: -1;
+
+    @include breakpoint(medium-desktop-up) {
+      height: $split-bg-height-desktop;
+    }
+  }
+
+  @for $i from 1 through $section-count {
+    &.-bg-#{$i} {
+      background-color: color(bg-#{$i}-bottom);
+
+      &::before {
+        background-color: color(bg-#{$i}-top);
+      }
+    }
+  }
 
   @include breakpoint(medium-desktop-up) {
     padding-top: $section-top-padding-desktop;
 
-    @supports (position: sticky) or (position: -webkit-sticky) {
+    .wrapper {
       display: flex;
       justify-content: space-between;
     }
@@ -22,7 +53,7 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   height: 100%;
   max-width: 533px;
   padding-right: 20px;
-  position: fixed;
+  // position: fixed;
 
   @include breakpoint(small-desktop-down) {
     left: 20px;
@@ -39,9 +70,9 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   @supports (position: sticky) or (position: -webkit-sticky) {
     flex-basis: $content-width;
     padding-right: 0;
-    position: -webkit-sticky;
-    position: sticky;
-    top: $section-top-padding-mobile;
+    // position: -webkit-sticky;
+    // position: sticky;
+    // top: $section-top-padding-mobile;
 
     @include breakpoint(medium-desktop-up) {
       order: 2;
@@ -67,7 +98,7 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   position: relative;
 
   @for $i from 1 through $section-count {
-    .bg-color-#{$i} & {
+    .-bg-#{$i} & {
       color: color(primary-#{$i});
     }
   }
@@ -102,14 +133,14 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   transition: transition(color);
 
   @for $i from 2 through $section-count {
-    .bg-color-#{$i} & {
+    .-bg-#{$i} & {
       color: color(secondary-#{$i});
     }
   }
 }
 
 .section__content__text {
-  @include fade-in;
+  // @include fade-in;
   color: color(text);
   font-size: rem(18);
   line-height: rem(27);
@@ -135,7 +166,7 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   width: 217px;
 
   @for $i from 2 through $section-count {
-    .bg-color-#{$i} & {
+    .-bg-#{$i} & {
       background-color: color(secondary-#{$i});
       color: color(bg-#{$i}-footer);
       fill: color(bg-#{$i}-footer);
@@ -169,13 +200,13 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   margin: 0 auto 80vh;
   max-height: 600px;
   max-width: 600px;
-  opacity: 0.33;
+  // opacity: 0.33;
   position: relative;
-  transition: transition(opacity);
+  // transition: transition(opacity);
 
-  &.-no-fade {
-    opacity: 1;
-  }
+  // &.-no-fade {
+  //   opacity: 1;
+  // }
 
   @include breakpoint(medium-desktop-up) {
     height: $graphic-width;

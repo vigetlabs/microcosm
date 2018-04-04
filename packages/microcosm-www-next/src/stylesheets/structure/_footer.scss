@@ -2,7 +2,7 @@ $cta-border-height: 3px;
 $cta-bottom-padding: 6px;
 
 .footer {
-  background-color: color(bg-0-footer);
+  //background-color: color(bg-0-footer);
   height: $footer-height;
   position: relative;
   transition: transition(background-color);
@@ -14,19 +14,19 @@ $cta-bottom-padding: 6px;
       bottom: 0;
       position: fixed;
 
-      @for $i from 1 through $section-count {
-        .bg-color-#{$i} & {
-          background-color: color(bg-#{$i}-footer);
+      // @for $i from 1 through $section-count {
+      //   .bg-color-#{$i} & {
+      //     background-color: color(bg-#{$i}-footer);
 
-          .viget-logo svg {
-            fill: color(secondary-#{$i});
-          }
+      //     .viget-logo svg {
+      //       fill: color(secondary-#{$i});
+      //     }
 
-          .footer__cta {
-            color: color(secondary-#{$i});
-          }
-        }
-      }
+      //     .footer__cta {
+      //       color: color(secondary-#{$i});
+      //     }
+      //   }
+      // }
     }
   }
 

@@ -20,8 +20,8 @@ export default class IndexPage extends React.Component {
   }
 
   componentDidMount() {
-    this.setVars()
-    document.addEventListener('scroll', this.checkPosition())
+    // this.setVars()
+    // document.addEventListener('scroll', this.checkPosition())
   }
 
   setVars() {
@@ -85,54 +85,65 @@ export default class IndexPage extends React.Component {
       : sectionData.browserText
 
     return (
-      <div className="wrapper">
-        <section className="section">
-          {!bookend ? (
-            <ToggleContainer
-              typeClass="-mobile"
-              microcosmView={microcosmView}
-              switchView={this.switchView}
-            />
-          ) : null}
-          <div className="section__content">
-            <div className="text-container">
-              <Header
-                bookendClass={bookendClass}
-                number={sectionData.num}
-                text={sectionData.heading}
-              />
-              {!bookend ? (
-                <Subheading
-                  browserText="the browser"
-                  microcosmText="Microcosm"
-                  microcosmView={microcosmView}
-                  text="In"
-                />
-              ) : null}
-              <Description bookendClass={bookendClass} text={text} />
-            </div>
+      <div className="">
+        {this.state.numSections.map(num => {
+          let sectionNum = parseInt(num);
 
-            {!bookend ? (
-              <ToggleContainer
-                typeClass="-desktop"
-                microcosmView={microcosmView}
-                switchView={this.switchView}
-              />
-            ) : null}
-          </div>
+          return (
+            <section
+              className={'section -bg-' + sectionNum}
+              id={'graphic-' + sectionNum}
+              data-module="ObserveGraphic"
+              data-section={sectionNum}
+            >
+              <div className="wrapper">
+                {!data[sectionNum].bookend ? (
+                  <ToggleContainer
+                    typeClass="-mobile"
+                    microcosmView={microcosmView}
+                    switchView={this.switchView}
+                  />
+                ) : null}
+                <div className="section__content">
+                  <div className="text-container">
+                    <Header
+                      bookendClass={bookendClass}
+                      number={data[sectionNum].num}
+                      text={data[sectionNum].heading}
+                    />
+                    {!data[sectionNum].bookend ? (
+                      <Subheading
+                        browserText="the browser"
+                        microcosmText="Microcosm"
+                        microcosmView={microcosmView}
+                        text="In"
+                      />
+                    ) : null}
+                    <Description num={sectionNum} text={data[sectionNum].microcosmText} />
+                  </div>
 
-          <div className="section__graphic">
-            {this.state.numSections.map(num => (
-              <Graphic
-                key={num}
-                fadeClass={this.state.currentSection == num ? '-no-fade' : ''}
-                section={parseInt(num)}
-                imageAlt={sectionData.heading}
-                microcosmView={microcosmView}
-              />
-            ))}
-          </div>
-        </section>
+                  {!data[sectionNum].bookend ? (
+                    <ToggleContainer
+                      typeClass="-desktop"
+                      microcosmView={microcosmView}
+                      switchView={this.switchView}
+                    />
+                  ) : null}
+                </div>
+
+                <div className="section__graphic">
+                  <Graphic
+                    key={sectionNum}
+                    fadeClass={this.state.currentSection == num ? '-no-fade' : ''}
+                    section={sectionNum}
+                    imageAlt={data[sectionNum].heading}
+                    microcosmView={microcosmView}
+                  />
+                </div>
+              </div>
+            </section>
+          )
+        })}
       </div>
     )
   }

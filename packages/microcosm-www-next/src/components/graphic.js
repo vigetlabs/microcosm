@@ -30,10 +30,7 @@ export default class Graphic extends React.Component {
 
     return (
       <figure
-        id={'graphic-' + section}
         className={'section__graphic__figure ' + this.props.fadeClass}
-        data-module="ObserveGraphic"
-        data-section={section}
       >
         <div className={'flip-container' + flippedClass}>
           <div className="flipper">
