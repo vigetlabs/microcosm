@@ -169,8 +169,9 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   margin: 0 auto 80vh;
   max-height: 600px;
   max-width: 600px;
-  opacity: 0.33;
-  position: relative;
+  // opacity: 0.33;
+  position: sticky;
+  top: $section-top-padding-desktop;
   transition: transition(opacity);
 
   &.-no-fade {
@@ -179,7 +180,7 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
 
   @include breakpoint(medium-desktop-up) {
     height: $graphic-width;
-    margin: 0 0 30vh;
+    margin: 0 0 50vh;
 
     &::after {
       bottom: -17vh;
