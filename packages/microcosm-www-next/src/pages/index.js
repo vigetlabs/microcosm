@@ -34,7 +34,7 @@ export default class IndexPage extends React.Component {
   setSectionPositions(graphics) {
     this.sectionPositions = [].slice.call(graphics).reduce((map, graphic) => {
       map[graphic.dataset.section] =
-        graphic.offsetTop + graphic.offsetHeight / 2
+        graphic.offsetTop + graphic.offsetHeight + 200
       return map
     }, {})
   }
