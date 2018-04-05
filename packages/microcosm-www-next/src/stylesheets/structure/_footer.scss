@@ -30,11 +30,11 @@ $cta-bottom-padding: 6px;
     }
   }
 
-  @include breakpoint(medium-desktop-up) {  //from desktop up, if there isn't enough space, make footer absolute so it goes over content and doesn't move elems around
-    @media (max-height: 900px) {
-      position: absolute;
-    }
-  }
+  // @include breakpoint(medium-desktop-up) {  //from desktop up, if there isn't enough space, make footer absolute so it goes over content and doesn't move elems around
+  //   @media (max-height: 900px) {
+  //     position: absolute;
+  //   }
+  // }
 
   .wrapper {
     align-items: center;
