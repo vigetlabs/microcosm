@@ -1,52 +1,27 @@
 import React from 'react'
 import BrowserGraphic from './browser-graphic'
 
-export default class Graphic extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    let fadeClassChanged = nextProps.fadeClass !== this.props.fadeClass
-    let viewChanged = nextProps.microcosmView !== this.props.microcosmView
+const Graphic = ({ microcosmView, atBookend, section, imageAlt }) => {
+  let flippedClass = (microcosmView || atBookend) ? '' : ' -flipped'
 
-    if (fadeClassChanged || viewChanged) {
-      return true
-    } else {
-      return false
-    }
-  }
-
-  shouldGraphicFlip() {
-    let inMicrocosmView = this.props.microcosmView
-    let atBookends = this.props.section === 0 || this.props.section == 9
-
-    if (inMicrocosmView || atBookends) {
-      return ''
-    } else {
-      return ' -flipped'
-    }
-  }
-
-  render() {
-    let section = this.props.section
-    let flippedClass = this.shouldGraphicFlip()
-
-    return (
-      <figure
-        className={'section__graphic__figure ' + this.props.fadeClass}
-      >
-        <div className={'flip-container' + flippedClass}>
-          <div className="flipper">
-            <div className="flipper__front">
-              <img
-                data-src={`/${section}-microcosm.png`}
-                className="lazyload microcosm-graphic"
-                alt={`Microcosm View: ${this.props.imageAlt}`}
-              />
-            </div>
-            <div className="flipper__back">
-              <BrowserGraphic imageAlt={this.props.imageAlt} />
-            </div>
+  return (
+    <figure className='section__graphic__figure'>
+      <div className={'flip-container' + flippedClass}>
+        <div className="flipper">
+          <div className="flipper__front">
+            <img
+              data-src={`/${section}-microcosm.png`}
+              className="lazyload microcosm-graphic"
+              alt={`Microcosm View: ${imageAlt}`}
+            />
+          </div>
+          <div className="flipper__back">
+            <BrowserGraphic imageAlt={imageAlt} />
           </div>
         </div>
-      </figure>
-    )
-  }
+      </div>
+    </figure>
+  )
 }
+
+export default Graphic

@@ -2,10 +2,8 @@ $cta-border-height: 3px;
 $cta-bottom-padding: 6px;
 
 .footer {
-  //background-color: color(bg-0-footer);
   height: $footer-height;
   position: relative;
-  transition: transition(background-color);
   width: 100%;
   z-index: 2;
 
@@ -13,20 +11,6 @@ $cta-bottom-padding: 6px;
     @media (min-height: 901px) {
       bottom: 0;
       position: fixed;
-
-      // @for $i from 1 through $section-count {
-      //   .bg-color-#{$i} & {
-      //     background-color: color(bg-#{$i}-footer);
-
-      //     .viget-logo svg {
-      //       fill: color(secondary-#{$i});
-      //     }
-
-      //     .footer__cta {
-      //       color: color(secondary-#{$i});
-      //     }
-      //   }
-      // }
     }
   }
 
@@ -57,18 +41,15 @@ $cta-bottom-padding: 6px;
     }
 
     svg {
-      fill: color(secondary-0);
-      transition: transition(fill);
+      fill: #fff;
     }
   }
 }
 
 .footer__cta {
   border-bottom: $cta-border-height solid;
-  color: color(secondary-0);
   font-size: rem(14);
   padding-bottom: $cta-bottom-padding;
   text-decoration: none;
   text-transform: uppercase;
-  transition: transition(color);
 }

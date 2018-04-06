@@ -1,5 +1,4 @@
 import React from 'react'
-import debounce from 'lodash.debounce'
 import data from '../data/index.json'
 import {
   Description,
@@ -13,62 +12,9 @@ export default class IndexPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentSection: 0,
       microcosmView: true,
-      numSections: Object.keys(data)
+      numSections: Object.keys(data).map(key => parseInt(key))
     }
-  }
-
-  componentDidMount() {
-    // this.setVars()
-    // document.addEventListener('scroll', this.checkPosition())
-  }
-
-  setVars() {
-    this.body = document.body
-    this.setSectionPositions(
-      document.querySelectorAll('[data-module="ObserveGraphic"]')
-    )
-  }
-
-  setSectionPositions(graphics) {
-    this.sectionPositions = [].slice.call(graphics).reduce((map, graphic) => {
-      map[graphic.dataset.section] =
-        graphic.offsetTop + graphic.offsetHeight / 2
-      return map
-    }, {})
-  }
-
-  checkPosition() {
-    return debounce(e => {
-      let scrollPosition = e.target.scrollingElement.scrollTop
-
-      for (let key in this.sectionPositions) {
-        let section = parseInt(key)
-        let graphicInViewport = scrollPosition < this.sectionPositions[section]
-        let atPageEnd = section === 9
-
-        if (graphicInViewport || atPageEnd) {
-          let notAlreadyVisible = section !== this.state.currentSection
-
-          if (notAlreadyVisible) {
-            this.changeSection(section)
-          }
-
-          break
-        }
-      }
-    }, 50)
-  }
-
-  changeSection(section) {
-    this.changeBgColor(this.state.currentSection, section)
-    this.setState({ currentSection: section })
-  }
-
-  changeBgColor(oldSection, newSection) {
-    this.body.classList.remove(`bg-color-${oldSection}`)
-    this.body.classList.add(`bg-color-${newSection}`)
   }
 
   switchView = () => {
@@ -77,41 +23,32 @@ export default class IndexPage extends React.Component {
 
   render() {
     let microcosmView = this.state.microcosmView
-    let sectionData = data[this.state.currentSection]
-    let bookend = sectionData.bookend
-    let bookendClass = bookend ? '-end' : ''
-    let text = microcosmView
-      ? sectionData.microcosmText
-      : sectionData.browserText
 
     return (
-      <div className="">
+      <main>
         {this.state.numSections.map(num => {
-          let sectionNum = parseInt(num);
+          let bookend         = num === 0 || num === 9;
+          let sectionData     = data[num];
+          let text = microcosmView ? sectionData.microcosmText : sectionData.browserText
 
           return (
-            <section
-              className={'section -bg-' + sectionNum}
-              id={'graphic-' + sectionNum}
-              data-module="ObserveGraphic"
-              data-section={sectionNum}
-            >
+            <section className={'section -bg-' + num}>
               <div className="wrapper">
-                {!data[sectionNum].bookend ? (
+                {/* {!bookend ? (
                   <ToggleContainer
                     typeClass="-mobile"
                     microcosmView={microcosmView}
                     switchView={this.switchView}
                   />
-                ) : null}
+                ) : null} */}
                 <div className="section__content">
                   <div className="text-container">
                     <Header
-                      bookendClass={bookendClass}
-                      number={data[sectionNum].num}
-                      text={data[sectionNum].heading}
+                      bookendClass={bookend ? '-end' : ''}
+                      number={sectionData.num}
+                      text={sectionData.heading}
                     />
-                    {!data[sectionNum].bookend ? (
+                    {!bookend ? (
                       <Subheading
                         browserText="the browser"
                         microcosmText="Microcosm"
@@ -119,12 +56,13 @@ export default class IndexPage extends React.Component {
                         text="In"
                       />
                     ) : null}
-                    <Description num={sectionNum} text={data[sectionNum].microcosmText} />
+                    <Description
+                      text={text}
+                      microcosmView={microcosmView}
+                    />
                   </div>
-
-                  {!data[sectionNum].bookend ? (
+                  {!bookend ? (
                     <ToggleContainer
-                      typeClass="-desktop"
                       microcosmView={microcosmView}
                       switchView={this.switchView}
                     />
@@ -133,10 +71,9 @@ export default class IndexPage extends React.Component {
 
                 <div className="section__graphic">
                   <Graphic
-                    key={sectionNum}
-                    fadeClass={this.state.currentSection == num ? '-no-fade' : ''}
-                    section={sectionNum}
-                    imageAlt={data[sectionNum].heading}
+                    atBookend={bookend ? true : false}
+                    section={num}
+                    imageAlt={sectionData.heading}
                     microcosmView={microcosmView}
                   />
                 </div>
@@ -144,7 +81,7 @@ export default class IndexPage extends React.Component {
             </section>
           )
         })}
-      </div>
+      </main>
     )
   }
 }

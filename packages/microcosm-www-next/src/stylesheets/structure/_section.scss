@@ -2,15 +2,25 @@ $section-top-padding-mobile: $nav-height + 49px;
 $section-top-padding-desktop: $nav-height + 110px;
 $content-width: calc(45vw - #{$page-gutter-desktop});
 $graphic-width: calc(50vw - #{$page-gutter-desktop});
+$split-bg-height-mobile: 471px;
+$split-bg-height-desktop: 291px;
 
 .section {
-  box-shadow: 0 0 30px rgba(0,0,0,.3);
   background-color: color(bg-0-bottom);
-  // position: relative;
+  box-shadow: 0 0 30px rgba(0,0,0,.3);
+  padding-top: $section-top-padding-mobile;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
-  padding-top: $section-top-padding-mobile;
+
+  @include breakpoint(medium-desktop-up) {
+    padding-top: $section-top-padding-desktop;
+
+    .wrapper {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
 
   &::before {  //top of half split bg
     background-color: color(bg-0-top);
@@ -18,7 +28,6 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
     height: $split-bg-height-mobile;
     position: absolute;
     top: 0;
-    transition: transition(background-color);
     width: 100%;
     z-index: -1;
 
@@ -36,15 +45,6 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
       }
     }
   }
-
-  @include breakpoint(medium-desktop-up) {
-    padding-top: $section-top-padding-desktop;
-
-    .wrapper {
-      display: flex;
-      justify-content: space-between;
-    }
-  }
 }
 
 // CONTENT
@@ -52,8 +52,9 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
 .section__content {
   height: 100%;
   max-width: 533px;
-  padding-right: 20px;
-  // position: fixed;
+  // padding-right: 20px;
+  flex-basis: $content-width;
+  padding-right: 0;
 
   @include breakpoint(small-desktop-down) {
     left: 20px;
@@ -65,19 +66,8 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
 
   @include breakpoint(medium-desktop-up) {
     left: calc(55vw - #{$page-gutter-desktop});
-  }
-
-  @supports (position: sticky) or (position: -webkit-sticky) {
-    flex-basis: $content-width;
-    padding-right: 0;
-    // position: -webkit-sticky;
-    // position: sticky;
-    // top: $section-top-padding-mobile;
-
-    @include breakpoint(medium-desktop-up) {
-      order: 2;
-      top: $section-top-padding-desktop;
-    }
+    order: 2;
+    top: $section-top-padding-desktop;
   }
 }
 
@@ -130,7 +120,6 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   color: color(secondary-1);
   margin-bottom: 0.5rem;
   text-transform: uppercase;
-  transition: transition(color);
 
   @for $i from 2 through $section-count {
     .-bg-#{$i} & {
@@ -140,7 +129,7 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
 }
 
 .section__content__text {
-  // @include fade-in;
+  @include fade-in;
   color: color(text);
   font-size: rem(18);
   line-height: rem(27);
@@ -162,7 +151,6 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   height: 57px;
   justify-content: center;
   text-transform: uppercase;
-  transition: transition(all);
   width: 217px;
 
   @for $i from 2 through $section-count {
@@ -200,13 +188,7 @@ $graphic-width: calc(50vw - #{$page-gutter-desktop});
   margin: 0 auto 80vh;
   max-height: 600px;
   max-width: 600px;
-  // opacity: 0.33;
   position: relative;
-  // transition: transition(opacity);
-
-  // &.-no-fade {
-  //   opacity: 1;
-  // }
 
   @include breakpoint(medium-desktop-up) {
     height: $graphic-width;

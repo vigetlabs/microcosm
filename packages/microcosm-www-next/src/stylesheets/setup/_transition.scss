@@ -1,5 +1,1 @@
 $bounce-timing-function: cubic-bezier(0.565,1.65,0.765,0.88);
-
-@function transition($prop) {
-  @return $prop 0.5s ease-out;
-}

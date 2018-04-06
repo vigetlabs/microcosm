@@ -1,4 +1,4 @@
-.toggle-container.-mobile {
+.toggle-container {
   @include breakpoint(small-desktop-down) {
     align-items: center;
     bottom: 0;
@@ -39,8 +39,8 @@
   }
 }
 
-.toggle-container.-desktop {
-  display: none;
+.toggle-container {
+  //display: none;
 
   @include breakpoint(medium-desktop-up) {
     display: block;
@@ -50,3 +50,6 @@
     margin-bottom: rem(30);
   }
 }
+
+//NEED TO DO MOBILE VIEW
+//NEED TO DO "STICK ON CONTENT END"

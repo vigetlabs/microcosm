@@ -8,7 +8,6 @@ import '../stylesheets/app.scss'
 const isBrowser = typeof window !== 'undefined'
 
 if (isBrowser) {
-  require('intersection-observer') //IntersectionObserver polyfill
   require('lazysizes') //lazy loading images
 }
 
@@ -55,7 +54,7 @@ const PageWrapper = ({ children }) => (
 
     <Navigation />
 
-    <main>{children()}</main>
+    {children()}
 
     <Footer />
   </div>
