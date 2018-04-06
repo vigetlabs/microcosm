@@ -17,6 +17,17 @@ export default class IndexPage extends React.Component {
     }
   }
 
+  componentDidMount = () => {
+    let sections = document.querySelectorAll('[data-section]')
+    let windowHeight = window.innerHeight
+
+    sections.forEach(elem => {
+      if (windowHeight < elem.clientHeight) {
+        elem.style.top = windowHeight - elem.clientHeight + 'px'
+      }
+    })
+  }
+
   switchView = () => {
     this.setState({ microcosmView: !this.state.microcosmView })
   }
@@ -32,7 +43,11 @@ export default class IndexPage extends React.Component {
           let text = microcosmView ? sectionData.microcosmText : sectionData.browserText
 
           return (
-            <section className={'section -bg-' + num}>
+            <section
+              key={num}
+              className={'section -bg-' + num}
+              data-section
+            >
               <div className="wrapper">
                 {/* {!bookend ? (
                   <ToggleContainer

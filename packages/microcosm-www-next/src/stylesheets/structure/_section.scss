@@ -9,9 +9,11 @@ $split-bg-height-desktop: 291px;
   background-color: color(bg-0-bottom);
   box-shadow: 0 0 30px rgba(0,0,0,.3);
   padding-top: $section-top-padding-mobile;
+  padding-bottom: 50px;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
+  min-height: 100vh;
 
   @include breakpoint(medium-desktop-up) {
     padding-top: $section-top-padding-desktop;
@@ -185,33 +187,14 @@ $split-bg-height-desktop: 291px;
 
 .section__graphic__figure {
   height: calc(100vw - (#{$page-gutter-mobile} * 2) - 15px);
-  margin: 0 auto 80vh;
+  margin: 0 auto;
   max-height: 600px;
   max-width: 600px;
   position: relative;
 
   @include breakpoint(medium-desktop-up) {
     height: $graphic-width;
-    margin: 0 0 30vh;
-
-    &::after {
-      bottom: -17vh;
-      content: url('../images/arrow.svg');
-      left: 0;
-      margin: 0 auto;
-      position: absolute;
-      right: 0;
-      width: 17px;
-    }
-  }
-
-  &:last-child {
-    @include breakpoint(medium-desktop-up) {
-      margin-bottom: 60vh;
-
-      &::after {
-        content: ''
-      }
-    }
+    margin-left: 0;
+    margin-right: 0;
   }
 }
