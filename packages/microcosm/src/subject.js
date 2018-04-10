@@ -6,14 +6,14 @@ import { noop, EMPTY_SUBSCRIPTION } from './empty'
 import { set, merge } from './data'
 
 export class Subject {
-  meta: { tag: *, status: string, origin: Microcosm }
+  meta: { key: string, status: string, origin: Microcosm }
   payload: *
   disabled: boolean
   _observers: Set<*>
   _observable: Observable
 
   constructor(payload?: *, meta?: Object) {
-    this.meta = merge({ tag: null, status: 'start' }, meta)
+    this.meta = merge({ key: 'Subject', status: 'start' }, meta)
     this.payload = payload
     this.disabled = false
 
@@ -134,14 +134,14 @@ export class Subject {
   }
 
   toString(): string {
-    return this.meta.tag || 'Subject'
+    return this.meta.key
   }
 
   toJSON(): Object {
     return {
       payload: this.payload,
       status: this.meta.status,
-      tag: this.toString()
+      key: this.toString()
     }
   }
 

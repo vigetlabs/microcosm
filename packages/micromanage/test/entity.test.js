@@ -39,3 +39,18 @@ it('can set defaults', () => {
 
   expect(new Planet()).toHaveProperty('name', 'planet')
 })
+
+it('an entity that updates with the same parameters is the same', () => {
+  class Planet extends Entity {
+    static schema = {
+      properties: {
+        name: { type: 'string', default: 'planet' }
+      }
+    }
+  }
+
+  let a = new Planet()
+  let b = a.update({ name: 'planet' })
+
+  expect(a).toBe(b)
+})

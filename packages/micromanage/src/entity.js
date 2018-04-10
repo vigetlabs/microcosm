@@ -34,6 +34,7 @@ export class Entity {
 
   constructor(params = {}) {
     let schema = this.constructor.schema
+    let proto = this.constructor.prototype
 
     this._params = params
 
@@ -42,13 +43,32 @@ export class Entity {
 
       assert(prop.type != null, errors.noType(nameOf(this), key))
 
-      this[key] = params[key] == null ? useDefault(key, prop) : params[key]
+      this._params[key] =
+        params[key] == null ? useDefault(key, prop) : params[key]
+
+      /** @todo Is this slow? **/
+      if (proto.hasOwnProperty(key) === false) {
+        Object.defineProperty(proto, key, {
+          get() {
+            return this._params[key]
+          },
+          set() {
+            throw new Error("Do not directly modify Entities. Instead use update().")
+          }
+        })
+      }
     }
 
     this._id = params.id
   }
 
   update(params) {
-    return new this.constructor(merge(this._params, params))
+    let next = merge(this._params, params)
+
+    if (next === this._params) {
+      return this
+    }
+
+    return new this.constructor(next)
   }
 }

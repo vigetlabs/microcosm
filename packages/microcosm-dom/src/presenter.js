@@ -137,7 +137,7 @@ export function generatePresenter(createElement, Component) {
       this.model.cancel()
 
       this.model = Subject.hash(
-        this.presenter.getModel(this.repo, props, state)
+        this.presenter.getModel(this.repo.domains, props, state)
       )
 
       this.model.subscribe(this.setState.bind(this))

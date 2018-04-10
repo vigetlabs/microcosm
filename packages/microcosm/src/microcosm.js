@@ -22,7 +22,7 @@ export class Microcosm extends Subject {
   static version: string
 
   constructor(preOptions?: ?Object) {
-    super()
+    super(null, { key: 'repo' })
 
     let options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
     let parent = options.parent

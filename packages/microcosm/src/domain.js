@@ -1,76 +1,33 @@
 /**
  * @flow
  */
+
 import { type Microcosm } from './microcosm'
 import { Subject } from './subject'
 import { Registry } from './registry'
 import { EMPTY_OBJECT } from './empty'
 import { RESET, PATCH } from './lifecycle'
 import { Ledger } from './ledger'
+import { Agent } from './agent'
 
 type DomainHandler<State> = (state: State, payload?: *, meta?: *) => State
 
-export class Domain<State: mixed = null> extends Subject {
+export class Domain<State: mixed = null> extends Agent {
   repo: Microcosm
-  options: Object
-  _registry: Registry
+  registry: Registry
   _ledger: Ledger<State>
 
   static defaults: ?Object
 
-  static from(config: *): Class<Domain<*>> {
-    if (typeof config === 'function') {
-      return config
-    }
-
-    function NewEntity(repo: Microcosm, options?: Object) {
-      // $FlowFixMe
-      Domain.prototype.constructor.call(this, repo, options)
-    }
-
-    NewEntity.prototype = Object.create(Domain.prototype)
-
-    for (var key in config) {
-      NewEntity.prototype[key] = config[key]
-    }
-
-    // $FlowFixMe
-    return NewEntity
-  }
-
   constructor(repo: Microcosm, options: Object) {
-    super(null, { tag: options.key })
-
-    this.repo = repo
-    this.options = options
-
-    this.setup(repo, options)
+    super(repo, options)
 
     let start = this.getInitialState()
 
-    this._registry = new Registry(this)
-    this._ledger = new Ledger(start, repo.history, options.debug)
-
     this.next(start)
 
-    let tracker = repo.history.subscribe(action => {
-      let next = this._rollforward(action)
-
-      if (next !== this.payload) {
-        this.next(next)
-      }
-
-      // TODO: This could probably be a generic storage solution
-      // that cleaned up keys as actions completed
-      this._ledger.clean(action)
-    })
-
-    repo.subscribe({
-      complete: () => {
-        tracker.unsubscribe()
-        this.teardown(repo, options)
-      }
-    })
+    this.registry = new Registry(this)
+    this._ledger = new Ledger(start, repo.history, options.debug)
   }
 
   /**
@@ -79,20 +36,6 @@ export class Domain<State: mixed = null> extends Subject {
   getInitialState(): ?State {
     return null
   }
-
-  /**
-   * Setup runs right after a domain is added to a Microcosm, but
-   * before it runs getInitialState. This is useful for one-time setup
-   * instructions.
-   */
-  setup(repo?: Microcosm, options?: Object): void {}
-
-  /**
-   * Runs whenever a Microcosm is torn down. This usually happens when
-   * a Presenter component unmounts. Useful for cleaning up work done
-   * in `setup()`.
-   */
-  teardown(repo?: Microcosm, options?: Object): void {}
 
   /**
    * Allows a domain to transform state into a JavaScript primitive
@@ -120,6 +63,18 @@ export class Domain<State: mixed = null> extends Subject {
     return EMPTY_OBJECT
   }
 
+  receive(action) {
+    let next = this._rollforward(action)
+
+    if (next !== this.payload) {
+      this.next(next)
+    }
+
+    // TODO: This could probably be a generic storage solution
+    // that cleaned up keys as actions completed
+    this._ledger.clean(action)
+  }
+
   // Private -------------------------------------------------- //
 
   toJSON() {
@@ -132,7 +87,7 @@ export class Domain<State: mixed = null> extends Subject {
       case String(PATCH):
         return [this._patch]
       default:
-        return this._registry.resolve(action)
+        return this.registry.resolve(action)
     }
   }
 
@@ -174,5 +129,26 @@ export class Domain<State: mixed = null> extends Subject {
     let value = key in data ? data[key] : this.getInitialState()
 
     return deserialize ? this.deserialize(value) : value
+  }
+
+  static from(config: *): Class<Domain<*>> {
+    if (typeof config === 'function') {
+      return config
+    }
+
+    function NewEntity(repo: Microcosm, options?: Object) {
+      // $FlowFixMe
+      Domain.prototype.constructor.call(this, repo, options)
+    }
+
+    NewEntity.prototype = Object.create(Domain.prototype)
+
+    for (var key in config) {
+      NewEntity.prototype[key] = config[key]
+    }
+
+    // $FlowFixMe
+
+    return NewEntity
   }
 }
