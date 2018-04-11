@@ -7,6 +7,7 @@ import { Domain } from './domain'
 import { Effect } from './effect'
 import { merge } from './data'
 import { version } from '../package.json'
+import { inherit } from './proto'
 
 const DEFAULTS = {
   debug: false,
@@ -22,7 +23,7 @@ export class Microcosm extends Subject {
   static version: string
 
   constructor(preOptions?: ?Object) {
-    super()
+    super(null, { key: 'repo' })
 
     let options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
     let parent = options.parent
@@ -60,7 +61,7 @@ export class Microcosm extends Subject {
     // NOOP
   }
 
-  addDomain(key: string, blueprint: *, config?: *): Subject {
+  addDomain(key: string, blueprint: *, options?: *): Subject {
     console.assert(
       key in this.domains === false,
       'Can not add domain for "' + key + '". This state is already managed.'
@@ -72,18 +73,16 @@ export class Microcosm extends Subject {
       this.domains[key] = Subject.hash(blueprint)
       this.subscribe({ complete: this.domains[key].complete })
     } else {
-      let options = merge(this.options, blueprint.defaults, { key }, config)
-      let Entity = Domain.from(blueprint)
+      let Entity = inherit(blueprint, Domain)
 
-      this.domains[key] = new Entity(this, options)
+      this.domains[key] = new Entity(this, merge({ key }, options))
     }
 
     return this.domains[key]
   }
 
-  addEffect(blueprint: *, config?: *): Effect {
-    let options = merge(this.options, blueprint.defaults, config)
-    let Entity = Effect.from(blueprint)
+  addEffect(blueprint: *, options?: *): Effect {
+    let Entity = inherit(blueprint, Effect)
 
     return new Entity(this, options)
   }

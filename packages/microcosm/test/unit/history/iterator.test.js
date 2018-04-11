@@ -9,7 +9,7 @@ describe('History @@iterator', function() {
 
     let list = Array.from(repo.history)
 
-    expect(list.map(i => i.meta.tag)).toEqual(['one', 'two'])
+    expect(list.map(i => i.meta.key)).toEqual(['one', 'two'])
   })
 
   it('works with for...of', function() {
@@ -21,7 +21,7 @@ describe('History @@iterator', function() {
     let list = []
 
     for (var action of repo.history) {
-      list.push(action.meta.tag)
+      list.push(action.meta.key)
     }
 
     expect(list).toEqual(['one', 'two'])

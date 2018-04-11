@@ -5,8 +5,8 @@ import { EMPTY_ARRAY, EMPTY_OBJECT } from './empty'
 import { type Domain } from './domain'
 import { type Effect } from './effect'
 
-function buildRegistry(entity: Domain<*> | Effect, tag: string): Object {
-  let handlers = entity.register()[tag] || EMPTY_OBJECT
+function buildRegistry(entity: Domain<*> | Effect, key: string): Object {
+  let handlers = entity.register()[key] || EMPTY_OBJECT
 
   if (Array.isArray(handlers) || typeof handlers === 'function') {
     return { complete: handlers }
@@ -25,13 +25,13 @@ export class Registry {
   }
 
   resolve(action: Subject): Function[] {
-    let tag = action.toString()
+    let key = action.toString()
 
-    if (!this._entries.hasOwnProperty(tag)) {
-      this._entries[tag] = buildRegistry(this._entity, tag)
+    if (!this._entries.hasOwnProperty(key)) {
+      this._entries[key] = buildRegistry(this._entity, key)
     }
 
-    let handlers = this._entries[tag][action.status] || EMPTY_ARRAY
+    let handlers = this._entries[key][action.status] || EMPTY_ARRAY
 
     return Array.isArray(handlers) ? handlers : [handlers]
   }

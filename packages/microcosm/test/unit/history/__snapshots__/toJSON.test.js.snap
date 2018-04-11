@@ -4,19 +4,19 @@ exports[`History::toJSON serializes the tree of actions 1`] = `
 Object {
   "list": Array [
     Object {
+      "key": "one",
       "payload": true,
       "status": "complete",
-      "tag": "one",
     },
     Object {
+      "key": "two",
       "payload": true,
       "status": "complete",
-      "tag": "two",
     },
     Object {
+      "key": "four",
       "payload": true,
       "status": "complete",
-      "tag": "four",
     },
   ],
   "size": 3,
@@ -26,25 +26,25 @@ Object {
         "children": Array [
           Object {
             "children": Array [],
+            "key": "three",
             "payload": true,
             "status": "complete",
-            "tag": "three",
           },
           Object {
             "children": Array [],
+            "key": "four",
             "payload": true,
             "status": "complete",
-            "tag": "four",
           },
         ],
+        "key": "two",
         "payload": true,
         "status": "complete",
-        "tag": "two",
       },
     ],
+    "key": "one",
     "payload": true,
     "status": "complete",
-    "tag": "one",
   },
 }
 `;

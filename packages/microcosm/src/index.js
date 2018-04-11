@@ -14,3 +14,4 @@ export { tag } from './tag'
 
 export { Domain } from './domain'
 export { Effect } from './effect'
+export { Agent } from './agent'

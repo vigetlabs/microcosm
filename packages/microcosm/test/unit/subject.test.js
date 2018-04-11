@@ -191,25 +191,25 @@ describe('Subject', function() {
   })
 
   describe('toString', function() {
-    it('stringifies to its tag name', () => {
-      expect(new Subject(null, { tag: 'foobar' }).toString()).toBe('foobar')
+    it('stringifies to its key name', () => {
+      expect(new Subject(null, { key: 'foobar' }).toString()).toBe('foobar')
     })
 
-    it('stringifies to "Subject" when given no tag', () => {
-      expect(new Subject(null).toString()).toBe('Subject')
+    it('stringifies to "subject" when given no key', () => {
+      expect(new Subject(null).toString()).toBe('subject')
     })
   })
 
   describe('toJSON', function() {
     it('generates a POJO', () => {
-      let subject = new Subject(true, { tag: 'foobar' })
+      let subject = new Subject(true, { key: 'foobar' })
 
       subject.complete()
 
       expect(subject.toJSON()).toEqual({
         payload: true,
         status: 'complete',
-        tag: 'foobar'
+        key: 'foobar'
       })
     })
   })

@@ -66,7 +66,7 @@ export class History extends Subject {
   }
 
   append(origin: Microcosm, command: Command, ...params: *[]): Subject {
-    let action = new Subject(params[0], { tag: String(tag(command)), origin })
+    let action = new Subject(params[0], { key: String(tag(command)), origin })
 
     this._branch.add(action)
 

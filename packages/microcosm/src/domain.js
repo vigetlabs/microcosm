@@ -7,70 +7,30 @@ import { Registry } from './registry'
 import { EMPTY_OBJECT } from './empty'
 import { RESET, PATCH } from './lifecycle'
 import { Ledger } from './ledger'
+import { Agent } from './agent'
 
 type DomainHandler<State> = (state: State, payload?: *, meta?: *) => State
 
-export class Domain<State: mixed = null> extends Subject {
-  repo: Microcosm
-  options: Object
+type DomainRegistry<State> = {
+  [string]: DomainHandler<State>
+}
+
+export class Domain<State: mixed = null> extends Agent {
   _registry: Registry
   _ledger: Ledger<State>
 
-  static defaults: ?Object
-
-  static from(config: *): Class<Domain<*>> {
-    if (typeof config === 'function') {
-      return config
-    }
-
-    function NewEntity(repo: Microcosm, options?: Object) {
-      // $FlowFixMe
-      Domain.prototype.constructor.call(this, repo, options)
-    }
-
-    NewEntity.prototype = Object.create(Domain.prototype)
-
-    for (var key in config) {
-      NewEntity.prototype[key] = config[key]
-    }
-
-    // $FlowFixMe
-    return NewEntity
-  }
-
-  constructor(repo: Microcosm, options: Object) {
-    super(null, { tag: options.key })
-
-    this.repo = repo
-    this.options = options
-
-    this.setup(repo, options)
-
-    let start = this.getInitialState()
+  constructor(repo: Microcosm, options?: Object) {
+    super(repo, options)
 
     this._registry = new Registry(this)
-    this._ledger = new Ledger(start, repo.history, options.debug)
 
-    this.next(start)
+    this._ledger = new Ledger(
+      this.getInitialState(),
+      this.repo.history,
+      this.options.debug
+    )
 
-    let tracker = repo.history.subscribe(action => {
-      let next = this._rollforward(action)
-
-      if (next !== this.payload) {
-        this.next(next)
-      }
-
-      // TODO: This could probably be a generic storage solution
-      // that cleaned up keys as actions completed
-      this._ledger.clean(action)
-    })
-
-    repo.subscribe({
-      complete: () => {
-        tracker.unsubscribe()
-        this.teardown(repo, options)
-      }
-    })
+    this.next(this._ledger.valueOf())
   }
 
   /**
@@ -79,20 +39,6 @@ export class Domain<State: mixed = null> extends Subject {
   getInitialState(): ?State {
     return null
   }
-
-  /**
-   * Setup runs right after a domain is added to a Microcosm, but
-   * before it runs getInitialState. This is useful for one-time setup
-   * instructions.
-   */
-  setup(repo?: Microcosm, options?: Object): void {}
-
-  /**
-   * Runs whenever a Microcosm is torn down. This usually happens when
-   * a Presenter component unmounts. Useful for cleaning up work done
-   * in `setup()`.
-   */
-  teardown(repo?: Microcosm, options?: Object): void {}
 
   /**
    * Allows a domain to transform state into a JavaScript primitive
@@ -116,8 +62,20 @@ export class Domain<State: mixed = null> extends Subject {
    * Returns an object mapping actions to methods on the domain. This is the
    * communication point between a domain and the rest of the system.
    */
-  register(): { [string]: (last?: State, next?: *) => State } {
+  register(): DomainRegistry<State> {
     return EMPTY_OBJECT
+  }
+
+  receive(action: Subject): void {
+    let next = this._rollforward(action)
+
+    if (next !== this.payload) {
+      this.next(next)
+    }
+
+    // TODO: This could probably be a generic storage solution
+    // that cleaned up keys as actions completed
+    this._ledger.clean(action)
   }
 
   // Private -------------------------------------------------- //
