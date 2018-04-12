@@ -20,6 +20,30 @@ describe('Microcosm::patch', function() {
     expect(badPatch).toThrow()
   })
 
+  it('uses the deserialize method on domains', function() {
+    const repo = new Microcosm()
+
+    repo.addDomain('caps', {
+      deserialize(data) {
+        return data.toUpperCase()
+      }
+    })
+
+    repo.push(patch, JSON.stringify({ caps: 'hello' }), true)
+
+    expect(repo.state.caps).toEqual('HELLO')
+  })
+
+  it('just passes data through if no serialization method is provided', function() {
+    const repo = new Microcosm()
+
+    repo.addDomain('count', {})
+
+    repo.push(patch, JSON.stringify({ count: 0 }), true)
+
+    expect(repo.state.count).toEqual(0)
+  })
+
   describe('forks', function() {
     it('deeply inherits state', function() {
       const grandparent = new Microcosm()

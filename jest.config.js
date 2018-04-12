@@ -9,6 +9,7 @@ module.exports = {
     // './packages/microcosm-graphql',
     './packages/microcosm-http'
   ],
+  collectCoverageFrom: ['**/src/**/*.js'],
   modulePathIgnorePatterns: ['example', 'build'],
   moduleNameMapper: {
     '^microcosm$': `<rootDir>/../microcosm/${isBundled ? 'build' : 'src'}`,

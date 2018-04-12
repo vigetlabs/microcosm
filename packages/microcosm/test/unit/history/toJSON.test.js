@@ -45,4 +45,10 @@ describe('History::toJSON', function() {
 
     expect(repo.history).toMatchSnapshot()
   })
+
+  it('accommodates an empty tree', function() {
+    const repo = new Microcosm({ debug: true })
+
+    expect(repo.history).toMatchSnapshot()
+  })
 })

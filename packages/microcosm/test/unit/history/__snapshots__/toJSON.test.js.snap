@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`History::toJSON accommodates an empty tree 1`] = `
+Object {
+  "list": Array [],
+  "size": 0,
+  "tree": null,
+}
+`;
+
 exports[`History::toJSON serializes the tree of actions 1`] = `
 Object {
   "list": Array [

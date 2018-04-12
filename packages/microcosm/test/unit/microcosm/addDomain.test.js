@@ -141,4 +141,12 @@ describe('Microcosm::addDomain', function() {
       )
     })
   })
+
+  it.dev('will not add a null domain', () => {
+    let repo = new Microcosm()
+
+    expect(() => repo.addDomain('test', null)).toThrow(
+      'Unable to create domain using addDomain("test", null).'
+    )
+  })
 })

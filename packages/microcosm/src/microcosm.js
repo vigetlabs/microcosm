@@ -69,6 +69,14 @@ export class Microcosm extends Subject {
 
     console.assert(key && key.length > 0, 'Can not add domain to root level.')
 
+    console.assert(
+      blueprint != null,
+      `Unable to create domain using ` +
+        `addDomain("${key}", ${String(blueprint)}). ` +
+        `This often happens if you forget to add the second argument to ` +
+        `addDomain, or if you imported the wrong namespace from a module.`
+    )
+
     if (blueprint instanceof Observable) {
       this.domains[key] = Subject.hash(blueprint)
       this.subscribe({ complete: this.domains[key].complete })
@@ -82,6 +90,14 @@ export class Microcosm extends Subject {
   }
 
   addEffect(blueprint: *, options?: *): Effect {
+    console.assert(
+      blueprint != null,
+      `Unable to create effect using ` +
+        `addEffect(${String(blueprint)}). ` +
+        `This often happens if you forget to add the second argument to ` +
+        `addEffect, or if you imported the wrong namespace from a module.`
+    )
+
     let Entity = inherit(blueprint, Effect)
 
     return new Entity(this, options)

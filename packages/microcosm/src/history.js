@@ -31,7 +31,7 @@ export class History extends Subject {
     this.head = null
     this._branch = new Set()
     this._tree = new Tree()
-    this._debug = options ? options.debug : false
+    this._debug = !!options.debug
   }
 
   get size(): number {
