@@ -38,7 +38,13 @@ export default class IndexPage extends React.Component {
   onResize = () => debounce(e => this.setStickySectionTop(), 150)
 
   switchView = () => {
-    this.setState({ microcosmView: !this.state.microcosmView })
+    this.setState({ microcosmView: !this.state.microcosmView }, this.onViewSwitch)
+  }
+
+  onViewSwitch = () => {
+    if (window.innerWidth < 960) {
+      this.setStickySectionTop()
+    }
   }
 
   render() {
