@@ -1,0 +1,10 @@
+@for $i from 1 through ($section-count + 1) {
+  body.active-section-#{$i} {
+    section.-bg-#{($i - 1)}::after {
+      opacity: 0.6;
+      transform: scale(1);
+      transition: opacity 0.5s;
+    }
+  }
+}
+

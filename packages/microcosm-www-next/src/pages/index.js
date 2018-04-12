@@ -19,10 +19,16 @@ export default class IndexPage extends React.Component {
   }
 
   componentDidMount = () => {
-    this.sections = document.querySelectorAll('[data-section]')
+    this.setVars()
     this.setStickySectionTop();
+    this.bindEvents()
+  }
 
-    window.addEventListener('resize', this.onResize())
+  setVars = () => {
+    this.threshold = 0.2;
+    this.currentSection = 0;
+    this.body = document.body
+    this.sections = document.querySelectorAll('[data-section]')
   }
 
   setStickySectionTop = () => {
@@ -35,7 +41,44 @@ export default class IndexPage extends React.Component {
     })
   }
 
+  bindEvents = () => {
+    this.beginObserve()
+    window.addEventListener('resize', this.onResize())
+  }
+
+  beginObserve = () => {
+    let observer = new IntersectionObserver(
+      this.onIntersection,
+      {threshold: this.threshold}
+    )
+
+    this.sections.forEach(section => observer.observe(section))
+  }
+
   onResize = () => debounce(e => this.setStickySectionTop(), 150)
+
+  onIntersection = observed => {
+    let entry = observed[0]
+    let section = parseInt(entry.target.dataset.section)
+    let passedThreshold = entry.intersectionRatio >= this.threshold
+
+    if (passedThreshold) {
+      this.changeActiveSection(section)
+    }
+    else {
+      this.changeActiveSection(section - 1)
+    }
+  }
+
+  changeActiveSection(section) {
+    let oldSection = this.currentSection
+    let newSection = section
+
+    this.body.classList.remove(`active-section-${oldSection}`)
+    this.body.classList.add(`active-section-${newSection}`)
+
+    this.currentSection = newSection;
+  }
 
   switchView = () => {
     this.setState({ microcosmView: !this.state.microcosmView }, this.onViewSwitch)
@@ -61,7 +104,7 @@ export default class IndexPage extends React.Component {
             <section
               key={num}
               className={'section -bg-' + num}
-              data-section
+              data-section={num}
             >
               <div className="wrapper">
                 <div className="section__content">
