@@ -84,6 +84,10 @@ This project uses [Lerna](https://github.com/lerna/lerna), a way to manage multi
 
 Be sure to check out our [contributing guide](./CONTRIBUTING.md) for instructions on getting started.
 
+## License
+
+Microcosm and [all related packages](./packages/microcosm) are [licensed under MIT](./LICENSE).
+
 ---
 
 <a href="http://code.viget.com">
