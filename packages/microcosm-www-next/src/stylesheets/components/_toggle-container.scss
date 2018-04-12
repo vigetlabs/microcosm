@@ -1,29 +1,20 @@
 .toggle-container {
   @include breakpoint(small-desktop-down) {
-    align-items: center;
     bottom: 0;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     left: 0;
-    margin-bottom: rem(30);
+    margin: 0 auto;
+    max-width: 500px;
     padding: 0 rem(20);
-    position: fixed;
-    width: 100%;
-    z-index: 1;
-  }
-
-  @include breakpoint(medium-desktop-up) {
-    @media (min-height: 901px) {
-      margin-bottom: $footer-height + 45px;
-    }
-  }
-
-  @include breakpoint(medium-desktop-up) {
-    display: none;
+    position: absolute;
+    right: 0;
   }
 
   .section__content__subheading {
+    margin-bottom: rem(30);
+
     @include breakpoint(small-desktop-down) {
       margin-right: 4%;
       padding-left: rem(40);
@@ -38,18 +29,3 @@
     }
   }
 }
-
-.toggle-container {
-  //display: none;
-
-  @include breakpoint(medium-desktop-up) {
-    display: block;
-  }
-
-  .section__content__subheading {
-    margin-bottom: rem(30);
-  }
-}
-
-//NEED TO DO MOBILE VIEW
-//NEED TO DO "STICK ON CONTENT END"

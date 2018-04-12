@@ -9,7 +9,7 @@ $split-bg-height-desktop: 291px;
   background-color: color(bg-0-bottom);
   box-shadow: 0 0 30px rgba(0,0,0,.3);
   padding-top: $section-top-padding-mobile;
-  padding-bottom: 50px;
+  padding-bottom: 60px;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
@@ -17,11 +17,6 @@ $split-bg-height-desktop: 291px;
 
   @include breakpoint(medium-desktop-up) {
     padding-top: $section-top-padding-desktop;
-
-    .wrapper {
-      display: flex;
-      justify-content: space-between;
-    }
   }
 
   &::before {  //top of half split bg
@@ -47,6 +42,18 @@ $split-bg-height-desktop: 291px;
       }
     }
   }
+
+  .wrapper {
+    @include breakpoint(small-desktop-down) {
+      padding-bottom: 180px;
+      position: relative;
+    }
+
+    @include breakpoint(medium-desktop-up) {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
 }
 
 // CONTENT
@@ -60,7 +67,7 @@ $split-bg-height-desktop: 291px;
 
   @include breakpoint(small-desktop-down) {
     left: 20px;
-    margin: 0 auto rem(50);
+    margin: 0 auto;
     padding-left: rem(40);
     right: 20px;
     width: 100%;

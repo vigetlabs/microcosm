@@ -1,4 +1,5 @@
 import React from 'react'
+import debounce from 'lodash.debounce'
 import data from '../data/index.json'
 import {
   Description,
@@ -18,15 +19,23 @@ export default class IndexPage extends React.Component {
   }
 
   componentDidMount = () => {
-    let sections = document.querySelectorAll('[data-section]')
+    this.sections = document.querySelectorAll('[data-section]')
+    this.setStickySectionTop();
+
+    window.addEventListener('resize', this.onResize())
+  }
+
+  setStickySectionTop = () => {
     let windowHeight = window.innerHeight
 
-    sections.forEach(elem => {
+    this.sections.forEach(elem => {
       if (windowHeight < elem.clientHeight) {
         elem.style.top = windowHeight - elem.clientHeight + 'px'
       }
     })
   }
+
+  onResize = () => debounce(e => this.setStickySectionTop(), 150)
 
   switchView = () => {
     this.setState({ microcosmView: !this.state.microcosmView })
@@ -49,13 +58,6 @@ export default class IndexPage extends React.Component {
               data-section
             >
               <div className="wrapper">
-                {/* {!bookend ? (
-                  <ToggleContainer
-                    typeClass="-mobile"
-                    microcosmView={microcosmView}
-                    switchView={this.switchView}
-                  />
-                ) : null} */}
                 <div className="section__content">
                   <div className="text-container">
                     <Header
