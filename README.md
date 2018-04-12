@@ -75,10 +75,10 @@ Checkout the [installation guide](http://code.viget.com/microcosm/guides/install
 This project uses [Lerna](https://github.com/lerna/lerna), a way to manage multiple JavaScript projects in the same repo. Projects include:
 
 - [microcosm](./packages/microcosm) - The core project
-- [microcosm-preact](./packages/microcosm-preact) - [Preact](https://github.com/developit/preact/) bindings
+- [microcosm-dom](./packages/microcosm-dom) - Architecture components for [React](https://github.com/facebook/react) and [Preact](https://github.com/developit/preact/)
 - [microcosm-devtools](./packages/microcosm-devtools) - Developer tools
 - [microcosm-graphql](./packages/microcosm-graphql) - Experimental [GraphQL](https://graphql.org) support
-- [microcosm-react-router](./packages/microcosm-react-router) - Experimental [ReactRouter](https://github.com/ReactTraining/react-router) support
+- [microcosm-http](./packages/microcosm-http) - An experimental HTTP library for Microcosm actions
 - [microcosm-www](./packages/microcosm-www) - The [website](http://code.viget.com/microcosm)
 - [microcosm-www-next](./packages/microcosm-www-next) - Ongoing work on the next website
 
