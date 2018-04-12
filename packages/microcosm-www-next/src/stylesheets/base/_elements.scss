@@ -10,6 +10,7 @@
 
 body {
   @include font-family-regular;
+  background-color: color(bg-0-bottom);
   letter-spacing: 0.02em;
 }
 
