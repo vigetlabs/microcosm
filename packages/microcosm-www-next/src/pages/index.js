@@ -1,5 +1,4 @@
 import React from 'react'
-import debounce from 'lodash.debounce'
 import data from '../data/index.json'
 import {
   Description,
@@ -21,7 +20,7 @@ export default class IndexPage extends React.Component {
   componentDidMount = () => {
     this.setVars()
     this.setStickySectionTop();
-    this.bindEvents()
+    this.beginObserve()
   }
 
   setVars = () => {
@@ -41,21 +40,14 @@ export default class IndexPage extends React.Component {
     })
   }
 
-  bindEvents = () => {
-    this.beginObserve()
-    //window.addEventListener('resize', this.onResize())
-  }
-
   beginObserve = () => {
     let observer = new IntersectionObserver(
       this.onIntersection,
-      {threshold: this.threshold}
+      {threshold: this.threshold, rootMargin: '0px 0px -145px'}
     )
 
     this.sections.forEach(section => observer.observe(section))
   }
-
-  onResize = () => debounce(e => this.setStickySectionTop(), 150)
 
   onIntersection = observed => {
     let entry = observed[0]
