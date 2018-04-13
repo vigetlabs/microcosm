@@ -42,7 +42,7 @@ function formatErrors(error) {
 }
 
 export default function http(args) {
-  return function(action) {
+  return action => {
     let source = CancelToken.source()
 
     // https://github.com/mzabriskie/axios#request-config
@@ -57,9 +57,11 @@ export default function http(args) {
         action.next(response.data)
         action.complete()
       })
-      .catch(error => action.error(formatErrors(error)))
+      .catch(error => {
+        action.error(formatErrors(error))
+      })
 
-    action.subscribe(source)
+    action.subscribe({ cancel: source.cancel })
   }
 }
 

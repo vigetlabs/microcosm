@@ -1,7 +1,7 @@
 const { moduleNameMapper } = require('../../jest.config')
 
 module.exports = {
-  testEnvironment: 'node',
-  modulePathIgnorePatterns: ['<rootDir/build/'],
+  modulePathIgnorePatterns: ['<rootDir>/build/'],
+  collectCoverageFrom: ['src/**/*.js'],
   moduleNameMapper: moduleNameMapper
 }
