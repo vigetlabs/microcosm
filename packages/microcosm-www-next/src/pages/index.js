@@ -17,20 +17,20 @@ export default class IndexPage extends React.Component {
     }
   }
 
-  componentDidMount = () => {
+  componentDidMount() {
     this.setVars()
     this.setStickySectionTop()
     this.beginObserve()
   }
 
-  setVars = () => {
+  setVars() {
     this.threshold = 0.1
     this.currentSection = 0
     this.body = document.body
     this.sections = document.querySelectorAll('[data-section]')
   }
 
-  setStickySectionTop = () => {
+  setStickySectionTop() {
     let windowHeight = window.innerHeight
 
     this.sections.forEach(elem => {
@@ -40,7 +40,7 @@ export default class IndexPage extends React.Component {
     })
   }
 
-  beginObserve = () => {
+  beginObserve() {
     let observer = new IntersectionObserver(this.onIntersection, {
       threshold: this.threshold,
       rootMargin: '0px 0px -145px'
@@ -61,7 +61,7 @@ export default class IndexPage extends React.Component {
     }
   }
 
-  changeActiveSection(section) {
+  changeActiveSection = section => {
     let oldSection = this.currentSection
     let newSection = section
 

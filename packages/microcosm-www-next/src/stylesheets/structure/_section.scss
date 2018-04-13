@@ -32,7 +32,7 @@ $split-bg-height-desktop: 291px;
     }
   }
 
-  &::after {
+  &::after {  //fade to dark as sections scroll
     background: #000;
     content: '';
     height: 100%;
