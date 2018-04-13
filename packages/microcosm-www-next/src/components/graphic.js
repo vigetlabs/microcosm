@@ -2,10 +2,10 @@ import React from 'react'
 import BrowserGraphic from './browser-graphic'
 
 const Graphic = ({ microcosmView, atBookend, section, imageAlt }) => {
-  let flippedClass = (microcosmView || atBookend) ? '' : ' -flipped'
+  let flippedClass = microcosmView || atBookend ? '' : ' -flipped'
 
   return (
-    <figure className='section__graphic__figure'>
+    <figure className="section__graphic__figure">
       <div className={'flip-container' + flippedClass}>
         <div className="flipper">
           <div className="flipper__front">

@@ -26,9 +26,7 @@ expect.extend({
     return {
       pass: pass,
       message: () => {
-        return `Expected action ${operator} be '${status}'. Instead got ${
-          action.status
-        }.`
+        return `Expected action ${operator} be '${status}'. Instead got ${action.status}.`
       }
     }
   },

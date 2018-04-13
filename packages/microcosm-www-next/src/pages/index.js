@@ -19,13 +19,13 @@ export default class IndexPage extends React.Component {
 
   componentDidMount = () => {
     this.setVars()
-    this.setStickySectionTop();
+    this.setStickySectionTop()
     this.beginObserve()
   }
 
   setVars = () => {
-    this.threshold = 0.1;
-    this.currentSection = 0;
+    this.threshold = 0.1
+    this.currentSection = 0
     this.body = document.body
     this.sections = document.querySelectorAll('[data-section]')
   }
@@ -41,10 +41,10 @@ export default class IndexPage extends React.Component {
   }
 
   beginObserve = () => {
-    let observer = new IntersectionObserver(
-      this.onIntersection,
-      {threshold: this.threshold, rootMargin: '0px 0px -145px'}
-    )
+    let observer = new IntersectionObserver(this.onIntersection, {
+      threshold: this.threshold,
+      rootMargin: '0px 0px -145px'
+    })
 
     this.sections.forEach(section => observer.observe(section))
   }
@@ -56,8 +56,7 @@ export default class IndexPage extends React.Component {
 
     if (passedThreshold) {
       this.changeActiveSection(section)
-    }
-    else {
+    } else {
       this.changeActiveSection(section - 1)
     }
   }
@@ -69,11 +68,14 @@ export default class IndexPage extends React.Component {
     this.body.classList.remove(`active-section-${oldSection}`)
     this.body.classList.add(`active-section-${newSection}`)
 
-    this.currentSection = newSection;
+    this.currentSection = newSection
   }
 
   switchView = () => {
-    this.setState({ microcosmView: !this.state.microcosmView }, this.onViewSwitch)
+    this.setState(
+      { microcosmView: !this.state.microcosmView },
+      this.onViewSwitch
+    )
   }
 
   onViewSwitch = () => {
@@ -88,9 +90,11 @@ export default class IndexPage extends React.Component {
     return (
       <main>
         {this.state.numSections.map(num => {
-          let bookend         = num === 0 || num === 9;
-          let sectionData     = data[num];
-          let text = microcosmView ? sectionData.microcosmText : sectionData.browserText
+          let bookend = num === 0 || num === 9
+          let sectionData = data[num]
+          let text = microcosmView
+            ? sectionData.microcosmText
+            : sectionData.browserText
 
           return (
             <section
@@ -114,10 +118,7 @@ export default class IndexPage extends React.Component {
                         text="In"
                       />
                     ) : null}
-                    <Description
-                      text={text}
-                      microcosmView={microcosmView}
-                    />
+                    <Description text={text} microcosmView={microcosmView} />
                   </div>
                   {!bookend ? (
                     <ToggleContainer
