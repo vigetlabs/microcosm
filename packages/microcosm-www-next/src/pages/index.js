@@ -25,7 +25,7 @@ export default class IndexPage extends React.Component {
   }
 
   setVars = () => {
-    this.threshold = 0.2;
+    this.threshold = 0.1;
     this.currentSection = 0;
     this.body = document.body
     this.sections = document.querySelectorAll('[data-section]')
