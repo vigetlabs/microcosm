@@ -70,10 +70,9 @@ $split-bg-height-desktop: 291px;
 // CONTENT
 
 .section__content {
+  flex-basis: $content-width;
   height: 100%;
   max-width: 533px;
-  // padding-right: 20px;
-  flex-basis: $content-width;
   padding-right: 0;
 
   @include breakpoint(small-desktop-down) {
