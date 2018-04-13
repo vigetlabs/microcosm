@@ -43,7 +43,7 @@ export default class IndexPage extends React.Component {
 
   bindEvents = () => {
     this.beginObserve()
-    window.addEventListener('resize', this.onResize())
+    //window.addEventListener('resize', this.onResize())
   }
 
   beginObserve = () => {
