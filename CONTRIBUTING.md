@@ -23,13 +23,10 @@ All commands should be run using yarn. If you haven't switched to [yarn](https:/
 
 > If you are familiar with npm then using yarn should be a breeze. You can keep using npm if you'd prefer but you will miss out on the safety and security of yarn
 
-Microcosm must manage multiple projects. To do that, we use [Lerna](https://lernajs.io). After [installing Lerna globally](https://lernajs.io/#getting-started), setup the project with:
 
-```bash
-lerna bootstrap
-```
+The Microcosm repo manages multiple projects using [yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/). Each project lives within a sub-folder of the `./packages` directory.
 
-This will install dependencies for all packages in this repo.
+To install dependencies for all projects, run `yarn install` from the repo root.
 
 ### Docs
 
@@ -53,7 +50,7 @@ This will run `prettier` on all relevant fils in the repo.
 
 ## Testing
 
-A few of our packages depend on the built output of other packages. For example, `microcosm-preact` depends on a production build of `microcosm`. When working locally, incrementally build all packages by running the `watch` command. 
+A few of our packages depend on the built output of other packages. For example, `microcosm-preact` depends on a production build of `microcosm`. When working locally, incrementally build all packages by running the `watch` command.
 
 First make sure you have fswatch:
 
