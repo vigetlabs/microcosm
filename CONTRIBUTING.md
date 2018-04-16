@@ -23,10 +23,10 @@ All commands should be run using yarn. If you haven't switched to [yarn](https:/
 
 > If you are familiar with npm then using yarn should be a breeze. You can keep using npm if you'd prefer but you will miss out on the safety and security of yarn
 
-Microcosm must manage multiple projects. To do that, we use [Lerna](https://lernajs.io). Setup the project with:
+Microcosm must manage multiple projects. To do that, we use [Lerna](https://lernajs.io). After [installing Lerna globally](https://lernajs.io/#getting-started), setup the project with:
 
 ```bash
-yarn bootstrap
+lerna bootstrap
 ```
 
 This will install dependencies for all packages in this repo.
