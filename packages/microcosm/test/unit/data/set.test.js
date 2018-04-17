@@ -72,6 +72,31 @@ describe('Utils.set', function() {
     expect(next.root).toEqual({ segment: true })
   })
 
+  it('removes undefined keys', function() {
+    let next = set({ prop: true }, 'prop', undefined)
+
+    expect(next).not.toHaveProperty('root')
+  })
+
+  it('removes deeply nested keys', function() {
+    let next = set({ a: { b: true } }, 'a.b', undefined)
+
+    expect(next).not.toHaveProperty('a.b')
+  })
+
+  it('respects other keys keys', function() {
+    let next = set({ a: { b: true, c: true } }, 'a.b', undefined)
+
+    expect(next).not.toHaveProperty('a.b')
+    expect(next).toHaveProperty('a.c')
+  })
+
+  it('does not create garbage when setting a value to undefined', function() {
+    let next = set({}, 'a.b.c', undefined)
+
+    expect(next).not.toHaveProperty('a')
+  })
+
   describe('arrays', function() {
     it('can operate on arrays', function() {
       let list = ['a', 'b', 'c']

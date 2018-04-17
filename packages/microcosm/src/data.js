@@ -50,6 +50,11 @@ export function update(
  * value is the same, don't do anything. Otherwise return a new object.
  */
 export function set(object: Object, key: *, value: *): any {
+  console.assert(
+    key != null,
+    `Expected key to be defined. Instead got ${key.toString()}`
+  )
+
   // Ensure we're working with a key path, like: ['a', 'b', 'c']
   let path = castPath(key)
 
@@ -79,17 +84,33 @@ export function set(object: Object, key: *, value: *): any {
         next = clone(node[key])
       } else {
         // Otherwise assign an object so that we can keep drilling down
+        if (value == undefined) {
+          break
+        }
         next = {}
       }
     }
 
-    // Assign the value, then continue on to the next iteration of the loop
-    // using the next step down
-    node[key] = next
-    node = node[key]
+    // If the value is defined
+    if (next !== undefined) {
+      // Assign the value, then continue on to the next iteration of the loop
+      // using the next step down
+      node[key] = next
+      node = node[key]
+    } else {
+      // Otherwise clear the value from the object
+      delete node[key]
+    }
   }
 
   return root
+}
+
+/**
+ * Remove a key from an object
+ */
+export function remove(object: Object, key: *): any {
+  return set(object, key, undefined)
 }
 
 /**
