@@ -1,11 +1,11 @@
 // @flow
 
-import { EMPTY_ARRAY } from './empty'
+import { EMPTY_OBJECT, EMPTY_ARRAY } from './empty'
 
-type KeyPath = Array<string>
-type MixedObject = { [key: string]: mixed }
+type KeyList = Array<string>
+type Path = string | KeyList
 
-function castPath(value: string | KeyPath): KeyPath {
+function pathToKeyList(value: Path): KeyList {
   if (Array.isArray(value)) {
     return value
   }
@@ -20,51 +20,44 @@ function castPath(value: string | KeyPath): KeyPath {
     .split('.')
 }
 
-function isObject(value: *) {
+function isObject(value: *): boolean {
   return value !== null && typeof value === 'object'
 }
 
 /**
  * A helper combination of get and set
  */
-export function update(
-  state: *,
-  keyPath: string | KeyPath,
-  updater: *,
-  fallback?: *
-) {
-  let path = castPath(keyPath)
-
+export function update(state: *, path: Path, updater: *, fallback?: *) {
   if (typeof updater !== 'function') {
     return set(state, path, updater)
   }
 
-  let last = get(state, path, fallback)
-  let next = updater(last)
+  let keyPath = pathToKeyList(path)
+  let last = get(state, keyPath, fallback)
 
-  return set(state, path, next)
+  return set(state, keyPath, updater(last))
 }
 
 /**
  * Non-destructively assign a value to a provided object at a given key. If the
  * value is the same, don't do anything. Otherwise return a new object.
  */
-export function set(object: Object, key: *, value: *): any {
+export function set(object: Object, path: Path, value: *): * {
   console.assert(
-    key != null,
-    `Expected key to be defined. Instead got ${key.toString()}`
+    path != null,
+    `Expected path to be defined. Instead got ${String(path)}`
   )
 
   // Ensure we're working with a key path, like: ['a', 'b', 'c']
-  let path = castPath(key)
+  let keyList = pathToKeyList(path)
 
-  let len = path.length
+  let len = keyList.length
 
   if (len <= 0) {
     return value
   }
 
-  if (get(object, path) === value) {
+  if (get(object, keyList) === value) {
     return object
   }
 
@@ -73,7 +66,7 @@ export function set(object: Object, key: *, value: *): any {
 
   // For each key in the path...
   for (var i = 0; i < len; i++) {
-    let key = path[i]
+    let key = keyList[i]
     let next = value
 
     // Are we at the end?
@@ -107,26 +100,26 @@ export function set(object: Object, key: *, value: *): any {
 }
 
 /**
- * Remove a key from an object
+ * Immutably remove a key from an object.
  */
-export function remove(object: Object, key: *): any {
-  return set(object, key, undefined)
+export function remove(target: *, path: Path): * {
+  return set(target, path, undefined)
 }
 
 /**
  * Retrieve a value from an object. If no key is provided, just return
  * the object.
  */
-export function get(object: ?Object, keyPath: *, fallback?: *) {
-  let path = castPath(keyPath)
+export function get(object: ?Object, path: Path, fallback?: *) {
+  let keyList = pathToKeyList(path)
   let value = object
 
-  for (var i = 0, len = path.length; i < len; i++) {
+  for (var i = 0, len = keyList.length; i < len; i++) {
     if (value == null) {
       break
     }
 
-    value = value[path[i]]
+    value = value[keyList[i]]
   }
 
   if (value === undefined || value === null) {
@@ -138,25 +131,28 @@ export function get(object: ?Object, keyPath: *, fallback?: *) {
 
 /**
  * Merge any number of objects into a provided object.
+ * $FlowFixMe This function enumerates on variable arguments
  */
-export function merge(...args: Array<?Object>): Object {
-  let copy = null
-  let subject = null
+export function merge(): Object {
+  let cloned = false
+  let copy = EMPTY_OBJECT
 
-  for (var i = 0, len = args.length; i < len; i++) {
-    if (isObject(args[i]) === false) {
+  for (var i = 0, len = arguments.length; i < len; i++) {
+    var next = arguments[i]
+
+    if (isObject(next) === false) {
       continue
     }
 
-    copy = copy || args[i] || {}
+    if (copy === EMPTY_OBJECT) {
+      copy = next || EMPTY_OBJECT
+    }
 
-    subject = subject || copy
-
-    var next = args[i]
     for (var key in next) {
       if (copy[key] !== next[key]) {
-        if (copy === subject) {
-          copy = clone(subject)
+        if (cloned === false) {
+          copy = clone(copy)
+          cloned = true
         }
 
         copy[key] = next[key]
@@ -164,23 +160,23 @@ export function merge(...args: Array<?Object>): Object {
     }
   }
 
-  return copy || {}
+  return copy
 }
 
 /**
  * Shallow copy an object
  */
-export function clone<T: MixedObject>(target: T): $Shape<T> {
+export function clone<T: Object>(target: T): $Shape<T> {
   if (Array.isArray(target)) {
     return target.slice(0)
-  } else if (isObject(target) === false) {
-    return {}
   }
 
   let copy = {}
 
-  for (let key in target) {
-    copy[key] = target[key]
+  if (isObject(target)) {
+    for (var key in target) {
+      copy[key] = target[key]
+    }
   }
 
   return copy
