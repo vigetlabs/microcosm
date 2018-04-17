@@ -77,9 +77,6 @@ export function set(object: Object, path: Path, value: *): * {
         next = clone(node[key])
       } else {
         // Otherwise assign an object so that we can keep drilling down
-        if (value == undefined) {
-          break
-        }
         next = {}
       }
     }
