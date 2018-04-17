@@ -6,7 +6,7 @@ build: build/package.json
 
 docs:
 	@ mkdir -p build
-	@ cp -r CHANGELOG.md README.md LICENSE.md build
+	@ cp -r CHANGELOG.md README.md LICENSE build
 
 build/package.json: package.json
 	@ mkdir -p build
