@@ -2,10 +2,10 @@
 
 import { EMPTY_OBJECT, EMPTY_ARRAY } from './empty'
 
-type KeyList = Array<string>
-type Path = string | KeyList
+type Path = string | Array<string>
+type NormalizedPath = Array<string>
 
-function pathToKeyList(value: Path): KeyList {
+function normalizePath(value: Path): NormalizedPath {
   if (Array.isArray(value)) {
     return value
   }
@@ -32,10 +32,11 @@ export function update(state: *, path: Path, updater: *, fallback?: *) {
     return set(state, path, updater)
   }
 
-  let keyPath = pathToKeyList(path)
-  let last = get(state, keyPath, fallback)
+  path = normalizePath(path)
 
-  return set(state, keyPath, updater(last))
+  let last = get(state, path, fallback)
+
+  return set(state, path, updater(last))
 }
 
 /**
@@ -48,16 +49,15 @@ export function set(object: Object, path: Path, value: *): * {
     `Expected path to be defined. Instead got ${String(path)}`
   )
 
-  // Ensure we're working with a key path, like: ['a', 'b', 'c']
-  let keyList = pathToKeyList(path)
+  path = normalizePath(path)
 
-  let len = keyList.length
+  let len = path.length
 
   if (len <= 0) {
     return value
   }
 
-  if (get(object, keyList) === value) {
+  if (get(object, path) === value) {
     return object
   }
 
@@ -66,7 +66,7 @@ export function set(object: Object, path: Path, value: *): * {
 
   // For each key in the path...
   for (var i = 0; i < len; i++) {
-    let key = keyList[i]
+    let key = path[i]
     let next = value
 
     // Are we at the end?
@@ -111,15 +111,16 @@ export function remove(target: *, path: Path): * {
  * the object.
  */
 export function get(object: ?Object, path: Path, fallback?: *) {
-  let keyList = pathToKeyList(path)
+  path = normalizePath(path)
+
   let value = object
 
-  for (var i = 0, len = keyList.length; i < len; i++) {
+  for (var i = 0, len = path.length; i < len; i++) {
     if (value == null) {
       break
     }
 
-    value = value[keyList[i]]
+    value = value[path[i]]
   }
 
   if (value === undefined || value === null) {
