@@ -136,11 +136,7 @@ export function merge(): Object {
   let copy = EMPTY_OBJECT
 
   for (var i = 0, len = arguments.length; i < len; i++) {
-    var next = arguments[i]
-
-    if (isObject(next) === false) {
-      continue
-    }
+    var next = isObject(arguments[i]) ? arguments[i] : null
 
     if (copy === EMPTY_OBJECT) {
       copy = next || EMPTY_OBJECT
