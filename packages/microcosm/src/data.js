@@ -154,7 +154,7 @@ export function merge(): Object {
     }
   }
 
-  return copy
+  return copy == EMPTY_OBJECT ? {} : copy
 }
 
 /**

@@ -26,6 +26,11 @@ describe('Utils.merge', function() {
     })
   })
 
+  it('returns an extensible object - not the EMPTY_OBJECT constant', function() {
+    let answer = merge()
+    expect(Object.isExtensible(answer)).toBe(true)
+  })
+
   it('returns a new copy when the left most value is an empty object', function() {
     const a = {}
     const b = { foo: 'bar' }
