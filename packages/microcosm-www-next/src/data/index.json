@@ -2,64 +2,63 @@
   "0": {
     "num": "Introduction",
     "heading": "Welcome to Microcosm",
-    "microcosmText": "Intro lorem ipsum",
-    "browserText": "Intro lorem ipsum",
+    "microcosmText": "This guide is meant to give a high level view of how Microcosm works. Each section shows what Microcosm is does internally as a user interacts with an app. Make sure to toggle between the browser view and microcosm view on each slide.<br><br>You may also want to visit <a target='_blank' href='http://code.viget.com/microcosm/'>the full Mircrocosm API and guide</a> or <a href='https://github.com/vigetlabs/microcosm'>check out the Microcosm github repo.</a> to learn more.",
+    "browserText": "This guide is meant to give a high level view of how Microcosm works. Each section shows what Microcosm is does internally as a user interacts with an app. Make sure to toggle between the browser view and microcosm view on each slide.<br><br>You may also want to visit <a target='_blank' href='http://code.viget.com/microcosm/'>the full Mircrocosm API and guide</a> or <a href='https://github.com/vigetlabs/microcosm'>check out the Microcosm github repo.</a> to learn more.",
     "bookend": true
   },
   "1": {
     "num": "01.",
     "heading": "Rendering a View",
-    "microcosmText": "The <a href='TODO'>Domains</a> are in charge of keeping state organized, and provide whatever data is necessary to the Presenter. A Presenter at its core is a React Component, so it uses the data it pulls from the Domains to render the appropriate view.",
-    "browserText": "A user fires up the browser to take a quiz."
+    "microcosmText": "The <a target='_blank' href='http://code.viget.com/microcosm/api/domains.html'>Domains</a> are in charge of keeping state organized, and provide whatever data is necessary to the <a href='http://code.viget.com/microcosm/api/presenter.html' target='_blank'>Presenter</a>. A Presenter at its core is a React Component, so it uses the data it pulls from the Domains to render the appropriate view.",
+    "browserText": "A user fires up the browser to take a quiz. The user sees the four options that the 'cat' Domain is keeping track of rendered by the Presenter."
   },
   "2": {
     "num": "02.",
     "heading": "Creating an Action",
-    "microcosmText": "The <a href='TODO'>Presenter</a> creates a new <a href='TODO'>Action</a> in response to the user's click. This particular Action's job will be to fetch some data from an external API on cats. Cool cats.",
-    "browserText": "A user selects an option from the quiz list."
+    "microcosmText": "The <a target='_blank' href='http://code.viget.com/microcosm/api/presenter.html'>Presenter</a> creates a new <a target='_blank' href='http://code.viget.com/microcosm/api/actions.html'>Action</a> in response to the user's click. This particular Action's job will be to fetch some data from an external API on cats. Cool cats.",
+    "browserText": "A user clicks an option from the quiz list. The 'Cool' option."
   },
   "3": {
     "num": "03.",
     "heading": "The Repository",
-    "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with actions, history, and state. The Repo knows which domains care about what actions, and also has access to the History of actions. Let's see what that looks like... ",
-    "browserText": "Lorem Ipsum."
+    "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with Actions, History, and State. The Repo knows which Domains care about what Actions, and also has access to the History of Actions. Let's see what that looks like... ",
+    "browserText": "Nothing has changed yet, the Action hasn't sent any upadates for the Domain to react to."
   },
   "4": {
     "num": "04.",
     "heading": "The Action Begins",
-    "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with actions, history, and state. The Repo knows which domains care about what actions, and also has access to the History of actions. Let's see what that looks like... ",
-    "browserText": "Lorem Ipsum."
+    "microcosmText": "An Action goes out an attempts to fulfill its mission of getting cool cat data for the user. During this time an action will go through states, the first of these being 'open'. Our Domains <a href='http://code.viget.com/microcosm/api/domains.html#subscribing-to-different-action-states' target='_blank'>register</a> the different states an Action goes through. In this case, as soon as the Action is 'open' our 'modal' Domain will update it's state to <code>modalOpen:true</code> and <code>modalLoading:true</code>",
+    "browserText": "The user can see the modal and a loading graphic indicating that our Action has started and we are waiting for a response from our API."
   },
   "5": {
     "num": "05.",
-    "heading": "History's Job",
-    "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with actions, history, and state. The Repo knows which domains care about what actions, and also has access to the History of actions. Let's see what that looks like... ",
-    "browserText": "Lorem Ipsum."
+    "heading": "Action States",
+    "microcosmText": "Actions go through various states as they resolve. Domains can register these states and change their internal state just like we saw above with the 'modal' Domain. An action can move to the 'update' state to show some progress, it can move to the 'done' state to signal it is finished, or it can move to the 'error' state to signal something has gone wrong. Later we'll see another possibility: a user cancelling an action.",
+    "browserText": "Our action hasn't sent any updates, it isn't done, and it hasn't errored out. The user is still looking at this loading graphic on a modal."
   },
   "6": {
     "num": "06.",
     "heading": "Domains Update the State",
-    "microcosmText": "As guardians of the application data, Domains are in charge of updating their state whenever an Action changes status. Here, they're alerted that the Cool Cat Action is now Open. The Modal Domain reacts by updating their state to specify that the modal is open but in a loading state. The Cat’s Domain doesn't care so they just sit there.",
-    "browserText": "The modal opens!"
+    "microcosmText":  "As guardians of the application data, Domains are in charge of updating their state whenever an Action changes states. Earlier we saw these two domains being alerted that the Cool Cat Action was 'open'. The modal Domain reacted by updating their state to specify that the modal is open but in a loading state. The Cat’s Domain didn't need to do anything, so it just sat there. But what happens when a user cancels an action?",
+    "browserText": "Our user has been waiting for some 'cool' cat data for a while now and decides to give up and just close the modal. Perhaps they are on a slow internet connection."
   },
   "7": {
     "num": "07.",
-    "heading": "Needs a Name",
-    "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with actions, history, and state. The Repo knows which domains care about what actions, and also has access to the History of actions. Let's see what that looks like... ",
-    "browserText": "Lorem Ipsum."
+    "heading": "Cancelled Actions",
+    "microcosmText": "The Presenter tells the action that the user wants to cancel everything. The Action then changes to the 'cancelled' state. The 'modal' Domain is subscribed to this change and updates it's state too <code>modalOpen:false</code>, effectively closing the modal. The Action will not continue to try to fetch data.",
+    "browserText": "The user is back where they started when they first fired up the browser, ready to select a different option or try the quiz later."
   },
   "8": {
     "num": "08.",
     "heading": "History Keeps Track of the Actions",
-    "microcosmText": "Clicking the 'X' triggers the action process all over again. The Presenter sends a new Action up to the Repo. The Action is immediately appended to History and gets to work on it's task. This time however, it doesn't have a slow API to work with like our Cool Cat Action (which is still waiting), it just has a simple message: 'Close the Modal!'. Since the Action is so straightforward, it skips the open step and jumps it's status straight to resolve. The Domains are alerted of the new activity - Close Modal Action is Resolved, and the Modal Domain adjusts it's state accordingly. Yet again, the Cats Domain doesn't care.",
-    "browserText": "Lorem Ipsum."
+    "microcosmText": "A history of all actions is kept by Microcosm. By default Microcosm will only hold on to unsresolved actions. This can be changed by setting the <code>maxHistory</code> when creating a Repo. This is useful for debugging problems in your application.",
+    "browserText": "Using Microcosm dev tools you can step through Actions to easily find and squash bugs."
   },
   "9": {
     "num": "Conclusion",
     "heading": "Conclusion",
-    "microcosmText": "So that's a quick recap of Microcosm's players and how they work together. How Presenters push Actions up the hierarchy, how History watches over the Actions as they move through their status lifecycle, how Repos/Domains respond to keep state up to date, and how Presenters (completing the cycle) consume that state.<br>This is one of the simplest explanations of the functionality available when using Microcosm. Check out the documentation for examples and explanations of some of the more powerful features.<br>Under the hood there are loads of performance optimizations to ensure duplicate calculations are kept to a minimum, helping your application run as quickly as possible, leaving you to worry about the business logic. We have big plans for the future of Microcosm along these lines, aiming to maintain a strong balance between hyper-optimized and easy-to-use.",
-    "browserText": "So that's a quick recap of Microcosm's players and how they work together. How Presenters push Actions up the hierarchy, how History watches over the Actions as they move through their status lifecycle, how Repos/Domains respond to keep state up to date, and how Presenters (completing the cycle) consume that state.<br>This is one of the simplest explanations of the functionality available when using Microcosm. Check out the documentation for examples and explanations of some of the more powerful features.<br>Under the hood there are loads of performance optimizations to ensure duplicate calculations are kept to a minimum, helping your application run as quickly as possible, leaving you to worry about the business logic. We have big plans for the future of Microcosm along these lines, aiming to maintain a strong balance between hyper-optimized and easy-to-use.",
+    "microcosmText": "So that's a quick recap of Microcosm's players and how they work together. Presenters use Domains to render UIs and create Actions based on user inputs, Domains subscribe to the different states of Actions and update themselves triggering changes in the UI by the Presenter. The Repo oversees all this and keep things organized.<br><br>Under the hood there are loads of performance optimizations to ensure duplicate calculations are kept to a minimum, helping your application run as quickly as possible, leaving you to worry about the business logic.<br><br>This is a high level view of Microcosm, for more click the link on the footer, visit the <a href='https://github.com/vigetlabs/microcosm' target='_blank'>github repo</a>, or reach out to us <a href='https://twitter.com/viget' target='_blank'>@viget</a>",
+    "browserText": "So that's a quick recap of Microcosm's players and how they work together. Presenters use Domains to render UIs and create Actions based on user inputs, Domains subscribe to the different states of Actions and update themselves triggering changes in the UI by the Presenter. The Repo oversees all this and keep things organized.<br><br>Under the hood there are loads of performance optimizations to ensure duplicate calculations are kept to a minimum, helping your application run as quickly as possible, leaving you to worry about the business logic.<br><br>This is a high level view of Microcosm, for more click the link on the footer, visit the <a href='https://github.com/vigetlabs/microcosm' target='_blank'>github repo</a>, or reach out to us <a href='https://twitter.com/viget' target='_blank'>@viget</a>",
     "bookend": true
   }
 }
-

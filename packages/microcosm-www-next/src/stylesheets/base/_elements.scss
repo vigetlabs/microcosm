@@ -47,3 +47,9 @@ html {
 *, *:before, *:after {
   box-sizing: inherit;
 }
+
+code {
+  font-size: 90%;
+  font-family: Menlo, "DejaVu Sans Mono", "Bitstream Vera Sans Mono", Courier, monospace;
+  padding: 2px 3px;
+}

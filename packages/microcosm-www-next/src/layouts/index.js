@@ -20,7 +20,10 @@ const Navigation = () => (
         <img src={microcosmLogo} alt="" />
       </h1>
 
-      <img src={menu} alt="menu" />
+      {/*
+        @TODO add menu back in later
+        <img src={menu} alt="menu" />
+      */}
     </div>
   </nav>
 )
