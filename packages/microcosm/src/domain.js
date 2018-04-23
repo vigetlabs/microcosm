@@ -18,7 +18,7 @@ type DomainRegistry<State> = {
 const RESET_KEY = RESET.toString()
 const PATCH_KEY = PATCH.toString()
 
-export class Domain<State: mixed = null> extends Agent {
+export class Domain<State: any = Object> extends Agent {
   _registry: Registry
   _ledger: Ledger<State>
 
@@ -39,8 +39,8 @@ export class Domain<State: mixed = null> extends Agent {
   /**
    * Generate the starting value for the domain.
    */
-  getInitialState(): ?State {
-    return null
+  getInitialState(): State {
+    return EMPTY_OBJECT
   }
 
   /**
