@@ -118,11 +118,10 @@ export class Domain<State: mixed = null> extends Agent {
     let focus = action
 
     while (focus) {
-      if (!focus.disabled) {
+      if (!focus.disabled && focus.status !== 'start') {
         state = this._dispatch(state, focus)
+        this._ledger.set(focus, state)
       }
-
-      this._ledger.set(focus, state)
 
       focus = this.repo.history.after(focus)
     }
