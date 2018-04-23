@@ -50,9 +50,27 @@ const PageWrapper = ({ children }) => (
   <div>
     <Helmet
       title="Microcosm"
+      link={[
+        {
+          rel: 'icon',
+          href: '/favicon.ico',
+          type: 'image/x-icon'
+        }
+      ]}
       meta={[
-        { name: 'description', content: 'Sample' },
-        { name: 'keywords', content: 'sample, something' }
+        {
+          name: 'og:title',
+          content: 'Welcome to Microcosm'
+        },
+        {
+          name: 'og:description',
+          content:
+            'Microcosm is Flux with actions at center stage. Write optimistic updates, cancel requests, and track changes with ease.'
+        },
+        {
+          name: 'og:image',
+          content: 'http://code.viget.com/microcosm/asset.png'
+        }
       ]}
     />
 
