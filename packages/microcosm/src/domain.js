@@ -4,7 +4,7 @@
 import { type Microcosm } from './microcosm'
 import { Subject } from './subject'
 import { Registry } from './registry'
-import { EMPTY_OBJECT } from './empty'
+import { EMPTY_OBJECT, EMPTY_ARRAY } from './empty'
 import { RESET, PATCH } from './lifecycle'
 import { Ledger } from './ledger'
 import { Agent } from './agent'
@@ -14,6 +14,9 @@ type DomainHandler<State> = (state: State, payload?: *, meta?: *) => State
 type DomainRegistry<State> = {
   [string]: DomainHandler<State>
 }
+
+const RESET_KEY = RESET.toString()
+const PATCH_KEY = PATCH.toString()
 
 export class Domain<State: mixed = null> extends Agent {
   _registry: Registry
@@ -74,7 +77,7 @@ export class Domain<State: mixed = null> extends Agent {
     }
 
     // TODO: This could probably be a generic storage solution
-    // that cleaned up keys as actions completed
+    // that cleaned up keys as actions completed.
     this._ledger.clean(action)
   }
 
@@ -85,10 +88,16 @@ export class Domain<State: mixed = null> extends Agent {
   }
 
   _resolve(action: Subject): DomainHandler<State>[] {
-    switch (action.toString()) {
-      case String(RESET):
-      case String(PATCH):
-        return [this._patch]
+    switch (action.meta.key) {
+      case RESET_KEY:
+      case PATCH_KEY:
+        // If a domain's state is patched, the state of all prior actions
+        // will always be overridden. There is no reason to process them.
+        // Unfortunately we can't do anything about this until Domains manage
+        // their own history (assuming this is a good idea)
+        // TODO: Should domains manage their own history?
+        // https://github.com/vigetlabs/microcosm/issues/507
+        return action.status === 'complete' ? [this._patch] : EMPTY_ARRAY
       default:
         return this._registry.resolve(action)
     }
@@ -129,8 +138,22 @@ export class Domain<State: mixed = null> extends Agent {
     let { deserialize, data } = payload
     let { key } = this.options
 
-    let value = key in data ? data[key] : this.getInitialState()
+    console.assert(
+      meta.status === 'complete',
+      'Unable to reset or patch from incomplete action. This is an internal Microcosm error.'
+    )
 
-    return deserialize ? this.deserialize(value) : value
+    console.assert(
+      data,
+      'Unable to reset or patch, no data provided. This is an internal Microcosm error.'
+    )
+
+    let value = data[key]
+
+    if (value != null) {
+      return deserialize ? this.deserialize(value) : value
+    }
+
+    return this.getInitialState()
   }
 }
