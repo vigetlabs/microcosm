@@ -39,15 +39,13 @@
     "semi": false,
     "singleQuote": true
   },
-  "workspaces": {
-    "packages": [
-      "packages/microcosm",
-      "packages/microcosm-devtools",
-      "packages/microcosm-dom",
-      "packages/microcosm-graphql",
-      "packages/microcosm-http",
-      "packages/microcosm-www",
-      "packages/examples/*"
-    ]
-  }
+  "workspaces": [
+    "packages/microcosm",
+    "packages/microcosm-devtools",
+    "packages/microcosm-dom",
+    "packages/microcosm-graphql",
+    "packages/microcosm-http",
+    "packages/microcosm-www",
+    "packages/examples/*"
+  ]
 }
