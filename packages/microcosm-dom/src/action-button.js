@@ -6,7 +6,7 @@ export function generateActionButton(createElement, Component) {
     constructor() {
       super(...arguments)
 
-      this.queue = new Subject('action-button')
+      this.queue = this.props.queue || new Subject()
       this._onClick = this._onClick.bind(this)
     }
 
@@ -15,7 +15,7 @@ export function generateActionButton(createElement, Component) {
     }
 
     componentWillUnmount() {
-      this.queue.cancel()
+      this.queue.complete()
     }
 
     render() {
@@ -24,47 +24,45 @@ export function generateActionButton(createElement, Component) {
       delete props.tag
       delete props.action
       delete props.value
-      delete props.onStart
+      delete props.onSend
       delete props.onNext
       delete props.onComplete
+      delete props.onChange
       delete props.onError
       delete props.onCancel
       delete props.send
       delete props.prepare
 
-      if (this.props.tag === 'button' && props.type == null) {
-        props.type = 'button'
-      }
-
       return createElement(this.props.tag, props)
     }
 
     click() {
-      let { action, prepare, value } = this.props
+      let result = this.send(this.props.action, this._parameterize())
+      let action = Subject.hash(result)
 
-      let params = prepare(value)
-      let result = this.send(action, params)
+      this.props.onSend(action)
 
-      if (result && 'subscribe' in result) {
-        this._onChange('start', result)
+      let tracker = action.every(this._onChange, this)
 
-        result.subscribe({
-          error: this._onChange.bind(this, 'error', result),
-          next: this._onChange.bind(this, 'next', result),
-          complete: this._onChange.bind(this, 'complete', result),
-          cancel: this._onChange.bind(this, 'cancel', result)
-        })
+      this.queue.subscribe({
+        error: tracker.unsubscribe,
+        complete: tracker.unsubscribe,
+        cancel: action.cancel
+      })
 
-        this.queue.subscribe(result)
-      }
-
-      return result
+      return action
     }
 
     // Private --------------------------------------------------- //
 
-    _onChange(status, result) {
-      this.props[toCallbackName(status)](result.payload, result.meta)
+    _parameterize() {
+      let { value, prepare } = this.props
+
+      return prepare(value)
+    }
+
+    _onChange(action) {
+      this.props[toCallbackName(action.status)](action)
     }
 
     _onClick(event) {
@@ -80,12 +78,14 @@ export function generateActionButton(createElement, Component) {
   ActionButton.defaultProps = {
     action: 'no-action',
     onClick: identity,
-    onStart: identity,
+    onSend: identity,
     onNext: identity,
     onComplete: identity,
     onError: identity,
+    onChange: identity,
     onCancel: identity,
     prepare: identity,
+    queue: null,
     send: null,
     tag: 'button',
     value: null

@@ -13,18 +13,18 @@ describe('ActionButton', function() {
     expect(send).toHaveBeenCalledWith('test', true)
   })
 
-  it('executes onStart when that action starts', function() {
+  it('executes onSend when that action starts', function() {
     let repo = new Microcosm()
     let send = action => repo.push(action, true)
-    let onStart = jest.fn()
+    let onSend = jest.fn()
 
     let button = mount(
-      <ActionButton action="test" onStart={onStart} send={send} />
+      <ActionButton action="test" onSend={onSend} send={send} />
     )
 
     button.click()
 
-    expect(onStart).toHaveBeenCalledWith(true, repo.history.head.meta)
+    expect(onSend).toHaveBeenCalledWith(repo.history.head)
   })
 
   it('executes onComplete when that action completes', function() {
@@ -36,7 +36,7 @@ describe('ActionButton', function() {
       <ActionButton action="test" send={send} onComplete={onComplete} />
     ).click()
 
-    expect(onComplete).toHaveBeenCalledWith(true, repo.history.head.meta)
+    expect(onComplete).toHaveBeenCalledWith(repo.history.head)
   })
 
   it('executes onError when that action completes', function() {
@@ -48,7 +48,7 @@ describe('ActionButton', function() {
 
     button.click()
 
-    expect(onError).toHaveBeenCalledWith('bad', repo.history.head.meta)
+    expect(onError).toHaveBeenCalledWith(repo.history.head)
   })
 
   it('executes onNext when that action sends an update', function() {
@@ -62,7 +62,7 @@ describe('ActionButton', function() {
 
     action.next('loading')
 
-    expect(onNext).toHaveBeenCalledWith('loading', repo.history.head.meta)
+    expect(onNext).toHaveBeenCalledWith(repo.history.head)
   })
 
   it('executes onCancel when that action is cancelled', function() {
@@ -74,7 +74,7 @@ describe('ActionButton', function() {
 
     button.click()
 
-    expect(onCancel).toHaveBeenCalledWith(undefined, repo.history.head.meta)
+    expect(onCancel).toHaveBeenCalledWith(repo.history.head)
   })
 
   it('passes along onClick', function() {
@@ -152,18 +152,6 @@ describe('ActionButton', function() {
     let wrapper = mount(<ActionButton tag="a" action="wut" />)
 
     expect(wrapper.tagName).toBe('A')
-  })
-
-  it('uses the button type when set as a button', function() {
-    let wrapper = mount(<ActionButton action="wut" />)
-
-    expect(wrapper.type).toBe('button')
-  })
-
-  it('does not pass the type attribute for non-buttons', function() {
-    let wrapper = mount(<ActionButton tag="a" action="wut" />)
-
-    expect(wrapper.getAttribute('type')).toBe(null)
   })
 
   it('inherits send from context', function() {

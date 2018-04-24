@@ -540,7 +540,7 @@ describe('::teardown', function() {
     expect(renders).toBe(1)
   })
 
-  it('changes during teardown do not cause a recalculation', function() {
+  it('changes during teardown do not cause a recalculation', async function() {
     let renders = 0
 
     class Test extends Presenter {
@@ -569,6 +569,8 @@ describe('::teardown', function() {
     let repo = new Microcosm()
 
     unmount(mount(<Test repo={repo} />))
+
+    await delay()
 
     // Once: for the initial calculation
     expect(renders).toBe(1)
@@ -665,9 +667,7 @@ describe('Efficiency', function() {
 
     let el = mount(<Parent repo={repo} />)
 
-    repo.push(patch, { color: 'green' })
-
-    await delay()
+    await repo.push(patch, { color: 'green' })
 
     expect(model).toHaveBeenCalledTimes(1)
     expect(el.textContent).toEqual('green')

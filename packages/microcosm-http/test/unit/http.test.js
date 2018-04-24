@@ -1,6 +1,6 @@
-import Microcosm from 'microcosm'
+import { Microcosm } from 'microcosm'
 import http from 'microcosm-http'
-import { delay, testAdapter } from '../test-helpers'
+import { testAdapter } from '../test-helpers'
 
 it('fetches', async () => {
   let repo = new Microcosm()
@@ -16,7 +16,7 @@ it('fetches', async () => {
   expect(Array.isArray(posts)).toBe(true)
 })
 
-it('cancels', async () => {
+it('cancels', () => {
   let repo = new Microcosm()
 
   let getPosts = http.prepare({
@@ -25,25 +25,28 @@ it('cancels', async () => {
 
   let action = repo.push(getPosts)
 
-  await delay(0)
-
-  action.cancel('nevermind')
+  action.cancel()
 
   expect(action).toHaveProperty('meta.status', 'cancel')
-  expect(action).toHaveProperty('payload', 'nevermind')
 })
 
 it('errors', async () => {
+  expect.assertions(3)
+
   let repo = new Microcosm()
 
-  let getPosts = () =>
-    http({
-      adapter: testAdapter({ status: 400 })
-    })
+  let getPosts = http.prepare({
+    adapter: testAdapter({ status: 400 })
+  })
 
   let action = repo.push(getPosts)
 
-  await delay(0)
+  try {
+    await action
+  } catch (error) {
+    expect(error.status).toEqual(400)
+    expect(error.message).toContain('Request failed with status code 400')
+  }
 
   expect(action).toHaveProperty('meta.status', 'error')
 })
