@@ -1,4 +1,4 @@
-import { Microcosm, Observable, Subject } from 'microcosm'
+import { Microcosm, Subject } from 'microcosm'
 import { advice, noop, shallowDiffers } from './utilities'
 import { intercept } from './intercept'
 
@@ -82,7 +82,6 @@ export function generatePresenter(createElement, Component) {
     }
 
     componentWillUnmount() {
-      this.mediator.model.cancel()
       this.teardown(this.repo, this.props, this.state)
 
       if (this.didFork) {
@@ -107,7 +106,7 @@ export function generatePresenter(createElement, Component) {
     constructor(props, context) {
       super(props, context)
 
-      this.model = Observable.of({})
+      this.model = new Subject({})
       this.presenter = props.presenter
 
       let prepo = props.repo || context.repo || new Microcosm()
@@ -135,6 +134,10 @@ export function generatePresenter(createElement, Component) {
         this.presenter.state
       )
       this.updateModel(this.presenter.props, this.presenter.state)
+    }
+
+    componentWillUnmount() {
+      this.model.cancel()
     }
 
     render() {

@@ -16,7 +16,7 @@ describe('ActionForm', function() {
 
       submit(form)
 
-      expect(onComplete).toHaveBeenCalledWith(true, repo.history.head.meta)
+      expect(onComplete).toHaveBeenCalledWith(repo.history.head)
     })
 
     it('executes onError when that action fails', function() {
@@ -27,24 +27,24 @@ describe('ActionForm', function() {
 
       submit(form)
 
-      expect(onError).toHaveBeenCalledWith('bad', repo.history.head.meta)
+      expect(onError).toHaveBeenCalledWith(repo.history.head)
     })
 
-    it('executes onStart when that action opens', function() {
+    it('executes onSend when that action opens', function() {
       let repo = new Microcosm()
       let reply = () => repo.push(() => action => action.next('open'))
-      let onStart = jest.fn()
+      let onSend = jest.fn()
 
       let form = mount(
-        <ActionForm action="test" onStart={onStart} send={reply} />
+        <ActionForm action="test" onSend={onSend} send={reply} />
       )
 
       submit(form)
 
-      expect(onStart).toHaveBeenCalledWith('open', repo.history.head.meta)
+      expect(onSend).toHaveBeenCalledWith(repo.history.head)
     })
 
-    it('executes onUpdate when that action sends an update', function() {
+    it('executes onNext when that action sends an update', function() {
       let repo = new Microcosm()
       let action = repo.push(() => action => {})
       let reply = () => action
@@ -58,17 +58,17 @@ describe('ActionForm', function() {
 
       action.next('loading')
 
-      expect(onNext).toHaveBeenCalledWith('loading', repo.history.head.meta)
+      expect(onNext).toHaveBeenCalledWith(repo.history.head)
     })
 
-    it('does not execute callbacks if not given an action', function() {
+    it('gracefully executes callbacks if not given an action', function() {
       let onComplete = jest.fn()
 
       let form = mount(<ActionForm onComplete={onComplete} send={() => null} />)
 
       submit(form)
 
-      expect(onComplete).not.toHaveBeenCalled()
+      expect(onComplete).toHaveBeenCalled()
     })
 
     it('removes action callbacks when the component unmounts', function() {
@@ -105,7 +105,7 @@ describe('ActionForm', function() {
         )
       )
 
-      expect(onComplete).toHaveBeenCalledWith({}, repo.history.head.meta)
+      expect(onComplete).toHaveBeenCalled()
     })
 
     it('send as a prop overrides context', function() {
@@ -121,10 +121,7 @@ describe('ActionForm', function() {
         )
       )
 
-      expect(onComplete).toHaveBeenCalledWith(
-        'from-prop',
-        repo.history.head.meta
-      )
+      expect(onComplete).toHaveBeenCalled()
     })
   })
 

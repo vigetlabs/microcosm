@@ -168,6 +168,30 @@ describe('Subject', function() {
     })
   })
 
+  describe('clear', function() {
+    it('resets the usbject', function() {
+      let subject = new Subject()
+
+      subject.next(true)
+      subject.clear()
+
+      expect(subject.status).toBe('start')
+      expect(subject.payload).toBe(null)
+      expect(subject.closed).toBe(false)
+    })
+
+    it('cancels observers', function() {
+      let subject = new Subject()
+      let cancel = jest.fn()
+
+      subject.subscribe({ cancel })
+
+      subject.clear()
+
+      expect(cancel).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('then', function() {
     it('resolves when completed', async () => {
       let subject = new Subject()

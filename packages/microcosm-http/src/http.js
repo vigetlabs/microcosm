@@ -44,7 +44,6 @@ function formatErrors(error) {
 export default function http(args) {
   return action => {
     let source = CancelToken.source()
-
     // https://github.com/mzabriskie/axios#request-config
     let options = merge(args, {
       cancelToken: source.token,
@@ -54,11 +53,14 @@ export default function http(args) {
 
     axios(options)
       .then(response => {
-        action.next(response.data)
-        action.complete()
+        action.complete(response.data)
       })
       .catch(error => {
-        action.error(formatErrors(error))
+        if (axios.isCancel(error)) {
+          action.cancel()
+        } else {
+          action.error(formatErrors(error))
+        }
       })
 
     action.subscribe({ cancel: source.cancel })

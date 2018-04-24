@@ -3,20 +3,11 @@
   "version": "0.0.0",
   "main": "src/http.js",
   "private": true,
+  "scripts": {
+    "test": "jest"
+  },
   "dependencies": {
     "axios": "^0.18.0",
     "microcosm": "^13.0.0-alpha"
-  },
-  "scripts": {
-    "start": "webpack-dev-server"
-  },
-  "devDependencies": {
-    "body-parser": "^1.18.1",
-    "html-webpack-plugin": "^3.2.0",
-    "multer": "^1.3.0",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
-    "webpack": "^4.6.0",
-    "webpack-dev-server": "^3.1.3"
   }
 }

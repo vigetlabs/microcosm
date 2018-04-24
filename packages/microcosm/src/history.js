@@ -78,14 +78,7 @@ export class History extends Subject {
 
     this.head = action
 
-    let dispatch = this.dispatch.bind(this, action)
-
-    action.subscribe({
-      next: dispatch,
-      error: dispatch,
-      complete: dispatch,
-      cancel: dispatch
-    })
+    action.every(this.dispatch, this)
 
     try {
       coroutine(action, command, params, origin)

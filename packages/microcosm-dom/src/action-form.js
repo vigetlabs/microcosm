@@ -7,7 +7,7 @@ export function generateActionForm(createElement, Component) {
     constructor() {
       super(...arguments)
 
-      this.queue = new Subject('action-form')
+      this.queue = this.props.queue || new Subject()
       this._onSubmit = this._onSubmit.bind(this)
     }
 
@@ -16,7 +16,7 @@ export function generateActionForm(createElement, Component) {
     }
 
     componentWillUnmount() {
-      this.queue.cancel()
+      this.queue.complete()
     }
 
     render() {
@@ -29,7 +29,7 @@ export function generateActionForm(createElement, Component) {
       delete props.action
       delete props.prepare
       delete props.serializer
-      delete props.onStart
+      delete props.onSend
       delete props.onNext
       delete props.onComplete
       delete props.onNext
@@ -43,21 +43,19 @@ export function generateActionForm(createElement, Component) {
 
     submit(event) {
       let result = this.send(this.props.action, this._parameterize())
+      let action = Subject.hash(result)
 
-      if (result && 'subscribe' in result) {
-        this._onChange('start', result)
+      this.props.onSend(action)
 
-        result.subscribe({
-          error: this._onChange.bind(this, 'error', result),
-          next: this._onChange.bind(this, 'next', result),
-          complete: this._onChange.bind(this, 'complete', result),
-          cancel: this._onChange.bind(this, 'cancel', result)
-        })
+      let tracker = action.every(this._onChange, this)
 
-        this.queue.subscribe(result)
-      }
+      this.queue.subscribe({
+        error: tracker.unsubscribe,
+        complete: tracker.unsubscribe,
+        cancel: action.cancel
+      })
 
-      return result
+      return action
     }
 
     // Private --------------------------------------------------- //
@@ -70,8 +68,8 @@ export function generateActionForm(createElement, Component) {
         : prepare(serializer(this._form))
     }
 
-    _onChange(status, result) {
-      this.props[toCallbackName(status)](result.payload, result.meta)
+    _onChange(action) {
+      this.props[toCallbackName(action.status)](action)
     }
 
     _onSubmit(event) {
@@ -87,12 +85,14 @@ export function generateActionForm(createElement, Component) {
   ActionForm.defaultProps = {
     action: 'no-action',
     onSubmit: identity,
-    onStart: identity,
+    onSend: identity,
     onNext: identity,
     onComplete: identity,
+    onChange: identity,
     onError: identity,
     onCancel: identity,
     prepare: identity,
+    queue: null,
     send: null,
     tag: 'form',
     serializer: form => serialize(form, { hash: true, empty: true })

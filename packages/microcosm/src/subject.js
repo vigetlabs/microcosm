@@ -95,7 +95,16 @@ export class Subject {
     }
   }
 
-  subscribe(next: *) {
+  get clear(): * {
+    return () => {
+      this.payload = null
+      this.meta.status = 'start'
+
+      this._observers.forEach(observer => observer.cancel())
+    }
+  }
+
+  subscribe(next: *): * {
     let observer = new Observer(...arguments)
 
     if (this.closed) {
@@ -163,7 +172,22 @@ export class Subject {
     })
   }
 
+  every(fn: (subject: this) => void, scope: any): * {
+    let dispatch = fn.bind(scope, this)
+
+    return this.subscribe({
+      next: dispatch,
+      error: dispatch,
+      complete: dispatch,
+      cancel: dispatch
+    })
+  }
+
   static hash(obj: *): Subject {
+    if (obj instanceof Subject) {
+      return obj
+    }
+
     let subject = new Subject()
 
     if (getObservable(obj)) {
