@@ -1,5 +1,8 @@
-// @flow
+/**
+ * @flow
+ */
 
+import assert from 'assert'
 import { EMPTY_OBJECT, EMPTY_ARRAY } from './empty'
 
 type Path = string | Array<string>
@@ -44,7 +47,7 @@ export function update(state: *, path: Path, updater: *, fallback?: *) {
  * value is the same, don't do anything. Otherwise return a new object.
  */
 export function set(object: Object, path: Path, value: *): * {
-  console.assert(
+  assert(
     path != null,
     `Expected path to be defined. Instead got ${String(path)}`
   )

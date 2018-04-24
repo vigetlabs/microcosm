@@ -4,7 +4,7 @@
 
 const rollup = require('rollup')
 const flow = require('rollup-plugin-flow')
-const strip = require('rollup-plugin-strip')
+const unassert = require('rollup-plugin-unassert')
 const buble = require('rollup-plugin-buble')
 const uglify = require('rollup-plugin-uglify')
 const node = require('rollup-plugin-node-resolve')
@@ -57,16 +57,10 @@ const configs = {
 }
 
 if (!options.strict) {
-  plugins.push(
-    strip({
-      debugger: true,
-      functions: ['console.assert', 'assert'],
-      sourceMap: true
-    })
-  )
+  plugins.push(unassert())
 }
 
-const external = ['react', 'react-dom', 'form-serialize', 'symbol-observable']
+const external = ['react', 'react-dom', 'form-serialize', 'symbol-observable', 'assert']
 
 const globals = {
   react: 'React',

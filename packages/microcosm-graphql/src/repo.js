@@ -1,3 +1,4 @@
+import assert from 'assert'
 import Microcosm from 'microcosm'
 import { getQueries } from './schema'
 import { compile } from './execute'
@@ -9,14 +10,8 @@ class GraphMicrocosm extends Microcosm {
   }
 
   compile(document) {
-    console.assert(
-      document.definitions.length,
-      'This GraphQL document has no queries.'
-    )
-    console.assert(
-      document.definitions.length <= 1,
-      'Too many query definitions.'
-    )
+    assert(document.definitions.length, 'This GraphQL document has no queries.')
+    assert(document.definitions.length <= 1, 'Too many query definitions.')
 
     return compile(this.schema, document.definitions[0], this.queries())
   }

@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { Subject, Observable, get } from 'microcosm'
 import { createFinder } from './default-resolvers'
 import { getName } from './utilities'
@@ -47,10 +48,7 @@ export class Knowledge {
   }
 
   resolve(key, definition, field) {
-    console.assert(
-      field,
-      `Missing "${key}". \n\nIs ${key} defined in your schema?`
-    )
+    assert(field, `Missing "${key}". \n\nIs ${key} defined in your schema?`)
 
     if (key in this.answers === false) {
       let existing = get(this.resolvers, [definition.name, field.name], null)

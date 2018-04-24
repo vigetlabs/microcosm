@@ -4,8 +4,8 @@
 
 const rollup = require('rollup')
 const buble = require('rollup-plugin-buble')
-const strip = require('rollup-plugin-strip')
 const uglify = require('rollup-plugin-uglify')
+const unassert = require('rollup-plugin-unassert')
 const node = require('rollup-plugin-node-resolve')
 const flow = require('rollup-plugin-flow')
 const filesize = require('rollup-plugin-filesize')
@@ -37,13 +37,7 @@ const configs = {
 }
 
 if (!options.strict) {
-  plugins.push(
-    strip({
-      debugger: true,
-      functions: ['console.assert', 'assert'],
-      sourceMap: true
-    })
-  )
+  plugins.push(unassert())
 }
 
 if (options.minify) {
@@ -66,7 +60,7 @@ if (options.minify) {
   )
 }
 
-const external = ['microcosm', 'microcosm-http', 'zen-observable']
+const external = ['microcosm', 'microcosm-http', 'assert']
 
 const globals = {
   microcosm: 'Microcosm',

@@ -1,4 +1,8 @@
-// @flow
+/**
+ * @flow
+ */
+
+import assert from 'assert'
 import { installDevtools } from './install-devtools'
 import { History } from './history'
 import { Subject } from './subject'
@@ -61,14 +65,14 @@ export class Microcosm extends Subject {
   }
 
   addDomain(key: string, blueprint: *, options?: *): Subject {
-    console.assert(
+    assert(
       key in this.domains === false,
       'Can not add domain for "' + key + '". This state is already managed.'
     )
 
-    console.assert(key && key.length > 0, 'Can not add domain to root level.')
+    assert(key && key.length > 0, 'Can not add domain to root level.')
 
-    console.assert(
+    assert(
       blueprint != null,
       `Unable to create domain using ` +
         `addDomain("${key}", ${String(blueprint)}). ` +
@@ -89,7 +93,7 @@ export class Microcosm extends Subject {
   }
 
   addEffect(blueprint: *, options?: *): Effect {
-    console.assert(
+    assert(
       blueprint != null,
       `Unable to create effect using ` +
         `addEffect(${String(blueprint)}). ` +

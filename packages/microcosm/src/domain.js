@@ -1,6 +1,8 @@
 /**
  * @flow
  */
+
+import assert from 'assert'
 import { type Microcosm } from './microcosm'
 import { Subject } from './subject'
 import { Registry } from './registry'
@@ -137,12 +139,12 @@ export class Domain<State: any = Object> extends Agent {
     let { deserialize, data } = payload
     let { key } = this.options
 
-    console.assert(
+    assert(
       meta.status === 'complete',
       'Unable to reset or patch from incomplete action. This is an internal Microcosm error.'
     )
 
-    console.assert(
+    assert(
       data,
       'Unable to reset or patch, no data provided. This is an internal Microcosm error.'
     )

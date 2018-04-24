@@ -1,4 +1,4 @@
-import { Subject } from 'microcosm'
+import { Subject, set } from 'microcosm'
 import { groupBy } from 'lodash'
 import uid from 'uid'
 import Collection from './collection'

@@ -2,6 +2,8 @@
  * @flow
  */
 
+import assert from 'assert'
+
 export function matches(item, matchers) {
   for (var key in matchers) {
     if (item.hasOwnProperty(key) === false || item[key] !== matchers[key]) {
@@ -13,19 +15,19 @@ export function matches(item, matchers) {
 }
 
 export function filter(list, matchers) {
-  console.assert(Array.isArray(list), 'Filter requires an array, got', list)
+  assert(Array.isArray(list), 'Filter requires an array, got', list)
 
   return list.filter(item => matches(item, matchers))
 }
 
 export function reject(list, matchers) {
-  console.assert(Array.isArray(list), 'Reject requires an array, got', list)
+  assert(Array.isArray(list), 'Reject requires an array, got', list)
 
   return list.filter(item => !matches(item, matchers))
 }
 
 export function find(list, matchers) {
-  console.assert(Array.isArray(list), 'Find requires an array, got', list)
+  assert(Array.isArray(list), 'Find requires an array, got', list)
 
   for (var i = 0, len = list.length; i < len; i++) {
     let item = list[i]

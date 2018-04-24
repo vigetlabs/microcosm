@@ -3,6 +3,7 @@
  * @flow
  */
 
+import assert from 'assert'
 import { observable } from './symbols'
 import { noop, EMPTY_OBJECT } from './empty'
 
@@ -20,7 +21,7 @@ export class Observer {
     if (typeof next === 'function') {
       this._config = { next, error, complete }
     } else {
-      console.assert(next, 'Unable to subscribe to ' + String(next))
+      assert(next, 'Unable to subscribe to ' + String(next))
       this._config = next || EMPTY_OBJECT
     }
   }

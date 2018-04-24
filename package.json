@@ -44,6 +44,7 @@
       "packages/microcosm",
       "packages/microcosm-devtools",
       "packages/microcosm-dom",
+      "packages/microcosm-graphql",
       "packages/microcosm-http",
       "packages/microcosm-www",
       "packages/examples/*"

@@ -71,18 +71,3 @@ module.exports = {
 
   devtool: process.env.NODE_ENV !== 'production' ? '#inline-source-map' : false
 }
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports.plugins = [
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    })
-  ]
-}

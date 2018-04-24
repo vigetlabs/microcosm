@@ -4,6 +4,7 @@
   "main": "src/http.js",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "microcosm": "^13.0.0-alpha"
   },
   "scripts": {
