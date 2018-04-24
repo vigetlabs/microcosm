@@ -169,7 +169,7 @@ describe('Subject', function() {
   })
 
   describe('clear', function() {
-    it('resets the usbject', function() {
+    it('resets the subject', function() {
       let subject = new Subject()
 
       subject.next(true)
