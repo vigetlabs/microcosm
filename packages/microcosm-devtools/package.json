@@ -20,17 +20,17 @@
     "classnames": "^2.2.5",
     "css-loader": "^0.28.9",
     "file-loader": "^1.1.6",
-    "friendly-errors-webpack-plugin": "^1.6.1",
-    "microcosm": "^12.9.0",
-    "microcosm-dom": "^13.0.0",
+    "friendly-errors-webpack-plugin": "^1.7.0",
+    "microcosm": "^13.0.0-alpha",
+    "microcosm-dom": "^13.0.0-alpha",
     "paths-js": "^0.4.5",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
-    "react-hot-loader": "3.1.3",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-hot-loader": "4.1.1",
     "react-json-tree": "^0.11.0",
-    "style-loader": "^0.20.1",
-    "url-loader": "^0.6.2",
-    "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.11.1"
+    "style-loader": "^0.21.0",
+    "url-loader": "^1.0.1",
+    "webpack": "^4.6.0",
+    "webpack-dev-server": "^3.1.3"
   }
 }

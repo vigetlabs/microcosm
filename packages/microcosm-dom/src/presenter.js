@@ -1,5 +1,5 @@
 import { Microcosm, Observable, Subject } from 'microcosm'
-import { advice, noop } from './utilities'
+import { advice, noop, shallowDiffers } from './utilities'
 import { intercept } from './intercept'
 
 export function generatePresenter(createElement, Component) {
@@ -68,9 +68,17 @@ export function generatePresenter(createElement, Component) {
       this.ready(this.repo, this.props, this.state)
     }
 
+    shouldModelUpdate(props, state) {
+      return (
+        shallowDiffers(this.props, props) || shallowDiffers(state, this.state)
+      )
+    }
+
     componentWillUpdate(props, state) {
-      this.mediator.updateModel(props, state)
-      this.update(this.repo, props, state)
+      if (this.shouldModelUpdate(props, state)) {
+        this.mediator.updateModel(props, state)
+        this.update(this.repo, props, state)
+      }
     }
 
     componentWillUnmount() {

@@ -6,7 +6,6 @@ import { Observable } from './observable'
 import { Domain } from './domain'
 import { Effect } from './effect'
 import { merge } from './data'
-import { version } from '../package.json'
 import { inherit } from './proto'
 
 const DEFAULTS = {
@@ -121,5 +120,3 @@ export class Microcosm extends Subject {
     })
   }
 }
-
-Microcosm.version = version

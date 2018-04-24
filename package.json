@@ -11,13 +11,12 @@
     "test:cov": "jest --coverage",
     "test:prod": "yarn build && BUNDLED=true jest",
     "lint": "eslint packages --cache --cache-location=node_modules/",
-    "flow": "flow",
     "clean": "git clean -Xdf"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.1",
-    "babel-jest": "^22.2.0",
+    "babel-eslint": "^8.2.3",
+    "babel-jest": "^22.4.3",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.0",
@@ -25,27 +24,29 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "codecov": "^3.0.0",
-    "eslint": "^4.17.0",
-    "eslint-plugin-flowtype": "^2.43.0",
+    "eslint": "^4.19.1",
+    "eslint-plugin-flowtype": "^2.46.3",
     "eslint-plugin-flowtype-errors": "^3.3.1",
-    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.6.1",
-    "flow-bin": "^0.65.0",
-    "jest": "^22.2.1",
-    "lerna": "^2.8.0",
-    "prettier": "^1.10.2"
+    "flow-bin": "^0.70.0",
+    "jest": "^22.4.3",
+    "lerna": "^2.10.2",
+    "prettier": "^1.12.1"
   },
   "prettier": {
     "semi": false,
     "singleQuote": true
   },
-  "workspaces": [
-    "packages/microcosm",
-    "packages/microcosm-devtools",
-    "packages/microcosm-examples",
-    "packages/microcosm-dom",
-    "packages/microcosm-http",
-    "packages/microcosm-www"
-  ]
+  "workspaces": {
+    "packages": [
+      "packages/microcosm",
+      "packages/microcosm-devtools",
+      "packages/microcosm-dom",
+      "packages/microcosm-http",
+      "packages/microcosm-www",
+      "packages/examples/*"
+    ]
+  }
 }
