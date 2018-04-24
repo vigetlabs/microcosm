@@ -1,4 +1,3 @@
-var webpack = require('webpack')
 var alias = require('../alias')
 
 module.exports = {
