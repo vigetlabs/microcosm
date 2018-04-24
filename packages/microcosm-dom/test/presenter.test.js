@@ -131,7 +131,7 @@ describe('::getModel', function() {
       expect(el.textContent).toEqual('Captain Kurtz')
     })
 
-    it('does not recalculate the view model if the props are the same', function() {
+    it('does not recalculate when changes during teardown occur', function() {
       let spy = jest.fn()
 
       class Namer extends Presenter {
