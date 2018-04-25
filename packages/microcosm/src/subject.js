@@ -1,140 +1,119 @@
-// @flow
+/**
+ * @fileoverview A subject is a type of observable that is useful when:
+ *
+ * 1. You need a value right away.
+ * 2. A job should run only once, but be subscribed to many times.
+ *
+ * Unlike Observables, when you subscribe to a Subject you immediately
+ * receive a "next" callback with the current payload. This is important
+ * for a couple of use cases that require immediate access to state:
+ *
+ * 1. Domains
+ * 2. Actions
+ * 3. Presenter view models
+ *
+ * @flow
+ */
+import assert from 'assert'
 import { type Microcosm } from './microcosm'
-import { Observable, Observer, getObservable } from './observable'
+import {
+  Observable,
+  type SubscriptionObserver,
+  type Cleanup
+} from './observable'
 import { observable } from './symbols'
-import { noop, EMPTY_SUBSCRIPTION } from './empty'
 import { set, merge } from './data'
+import { isPromise, isObservable, isObject, isPlainObject } from './type-checks'
 
-export class Subject {
+export class Subject extends Observable {
   meta: { key: *, status: string, origin: Microcosm }
-  payload: *
+  payload: any
   disabled: boolean
-  _observers: Set<*>
-  _observable: Observable
+
+  _observers: SubscriptionObserver[]
+  _subscriber: SubscriptionObserver => ?Cleanup
 
   constructor(payload?: *, meta?: Object) {
+    super()
+
     this.meta = merge({ key: 'subject', status: 'start' }, meta)
     this.payload = payload
     this.disabled = false
 
-    this._observers = new Set()
-
-    this._observable = new Observable(observer => {
-      this._observers.add(observer)
-      return () => this._observers.delete(observer)
-    })
+    this._subscriber = this._multicast
+    this._observers = []
   }
 
-  get started(): boolean {
-    return this.status !== 'start'
+  _multicast(observer: SubscriptionObserver): Cleanup {
+    this._observers.push(observer)
+
+    switch (this.status) {
+      case 'next':
+        observer.next(this.payload)
+        break
+      case 'complete':
+        observer.next(this.payload)
+        observer.complete()
+        break
+      case 'error':
+        observer.error(this.payload)
+        break
+      case 'cancel':
+        observer.cancel()
+        break
+    }
+
+    return remove.bind(null, this._observers, observer)
   }
 
   get status(): string {
     return this.meta.status
   }
 
-  get completed(): boolean {
-    return this.status === 'complete'
-  }
-
-  get cancelled(): boolean {
-    return this.status === 'cancel'
-  }
-
   get closed(): boolean {
-    return this.errored || this.completed || this.cancelled
-  }
-
-  get errored(): boolean {
-    return this.status === 'error'
-  }
-
-  get next(): * {
-    if (this.closed) {
-      return noop
-    }
-
-    return value => {
-      this.meta.status = 'next'
-
-      if (value != null) {
-        this.payload = value
-      }
-
-      this._observers.forEach(observer => observer.next(value))
+    switch (this.status) {
+      case 'error':
+      case 'complete':
+      case 'cancel':
+        return true
+      default:
+        return false
     }
   }
 
-  get complete(): * {
-    return value => {
-      this.meta.status = 'complete'
-
-      if (value != null) {
-        this.payload = value
-      }
-
-      this._observers.forEach(observer => observer.complete())
-    }
+  get next() {
+    return update.bind(null, this, 'next')
   }
 
-  get error(): * {
-    return error => {
-      this.payload = error
-      this.meta.status = 'error'
-
-      this._observers.forEach(observer => observer.error(error))
-    }
+  get complete() {
+    return update.bind(null, this, 'complete')
   }
 
-  get cancel(): * {
-    return reason => {
-      this.payload = reason
-      this.meta.status = 'cancel'
-
-      this._observers.forEach(observer => observer.cancel(reason))
-    }
+  get error() {
+    return update.bind(null, this, 'error')
   }
 
-  get clear(): * {
+  get cancel() {
+    return update.bind(null, this, 'cancel')
+  }
+
+  get clear() {
     return () => {
-      this.payload = null
       this.meta.status = 'start'
+      this.payload = null
 
-      this._observers.forEach(observer => observer.cancel())
-    }
-  }
-
-  subscribe(next: *): * {
-    let observer = new Observer(...arguments)
-
-    if (this.closed) {
-      if (this.completed) {
-        observer.next(this.payload)
+      for (var i = 0; i < this._observers.length; i++) {
+        this._observers[i].unsubscribe()
       }
-
-      // $FlowFixMe - Dynamic keys
-      observer[this.status](this.payload)
-    } else {
-      return new Observable(observer => {
-        if (this.meta.status === 'next') {
-          observer.next(this.payload)
-        }
-
-        return this._observable.subscribe(observer)
-      }).subscribe(observer)
     }
-
-    return EMPTY_SUBSCRIPTION
   }
 
   then(pass: *, fail: *): Promise<*> {
     return new Promise((resolve, reject) => {
-      this.subscribe({
-        complete: () => resolve(this.payload),
-        error: () => reject(this.payload),
-        cancel: () => resolve(this.payload)
-      })
-    }).then(pass, fail)
+      this.subscribe(null, reject, resolve, resolve)
+    })
+      .then(() => this.payload)
+      .then(pass, fail)
   }
 
   // $FlowFixMe - Flow doesn't understand computed keys :-/
@@ -158,63 +137,24 @@ export class Subject {
     return this.payload
   }
 
-  map(fn: (*) => *, scope: any): Observable {
-    return new Observable(observer => {
-      if (this.started) {
-        observer.next(fn.call(scope, this.payload))
-      }
-
-      if (this.closed) {
-        observer.complete()
-      } else {
-        return this._observable.map(fn, scope).subscribe(observer)
-      }
-    })
-  }
-
-  every(fn: (subject: this) => void, scope: any): * {
-    let dispatch = fn.bind(scope, this)
-
-    return this.subscribe({
-      next: dispatch,
-      error: dispatch,
-      complete: dispatch,
-      cancel: dispatch
-    })
-  }
-
   static hash(obj: *): Subject {
-    if (obj instanceof Subject) {
-      return obj
+    let isArray = Array.isArray(obj)
+    let isPojo = isPlainObject(obj)
+
+    if (!isArray && !isPojo) {
+      return Subject.from(obj)
     }
 
-    let subject = new Subject()
+    let payload = isArray ? [] : {}
+    let subject = new Subject(payload)
+    let building = true
+    let jobs = 0
 
-    if (getObservable(obj)) {
-      obj.subscribe(subject)
-      return subject
-    }
-
-    if (obj == null || typeof obj !== 'object') {
-      subject.next(obj)
-      subject.complete()
-      return subject
-    }
-
-    if (typeof obj.then === 'function') {
-      subject.subscribe(Observable.fromPromise(obj).subscribe(subject))
-      return subject
-    }
-
-    let keys = Object.keys(obj)
-    let payload = Array.isArray(obj) ? [] : {}
-    let jobs = keys.length
-
-    subject.next(payload)
-
-    function complete() {
+    function taskFinished() {
       if (--jobs <= 0) {
-        subject.complete()
+        if (!building) {
+          subject.complete(payload)
+        }
       }
     }
 
@@ -227,18 +167,121 @@ export class Subject {
       }
     }
 
-    for (var i = 0, len = keys.length; i < len; i++) {
-      let key = keys[i]
+    for (var key in obj) {
+      let value = obj[key]
 
-      let subscription = Observable.wrap(obj[key]).subscribe({
-        next: value => assign(key, value),
-        complete: complete,
-        error: subject.error
+      if (!isObject(value)) {
+        payload = set(payload, key, value)
+        continue
+      }
+
+      jobs += 1
+
+      if (value instanceof Subject) {
+        payload = set(payload, key, value.payload)
+      }
+
+      let subscription = Subject.hash(value).subscribe({
+        next: assign.bind(null, key),
+        error: subject.error,
+        complete: taskFinished,
+        cancel: taskFinished
       })
 
-      subject.subscribe(subscription)
+      subject.subscribe({ cancel: subscription.unsubscribe })
+    }
+
+    if (payload !== subject.payload) {
+      subject.next(payload)
+    }
+
+    building = false
+
+    if (jobs <= 0) {
+      subject.complete()
     }
 
     return subject
   }
+
+  static from(source: *): Subject {
+    if (source instanceof Subject) {
+      return source
+    }
+
+    if (isObservable(source)) {
+      return fromObservable(source)
+    }
+
+    if (isPromise(source)) {
+      return fromPromise(source)
+    }
+
+    return Subject.of(source)
+  }
+
+  // $FlowFixMe This function enumerates on variable arguments
+  static of() {
+    let subject = new Subject()
+
+    for (var i = 0; i < arguments.length; i++) {
+      subject.next(arguments[i])
+    }
+
+    subject.complete()
+
+    return subject
+  }
+}
+
+function fromPromise(promise: Promise<*>): Subject {
+  let subject = new Subject()
+
+  promise
+    .then(subject.next)
+    .then(() => subject.complete())
+    .catch(subject.error)
+
+  return subject
+}
+
+function fromObservable(observable: Observable): Subject {
+  let subject = new Subject()
+  observable.subscribe(subject)
+  return subject
+}
+
+function remove(list: *[], item: *): void {
+  let index = list.indexOf(item)
+
+  if (index >= 0) {
+    list.splice(index, -1)
+  } else {
+    assert(false, 'Attempted to remove an observer that was never added.')
+  }
+}
+
+function update(subject: Subject, status: string, value: *): void {
+  if (subject.closed) {
+    return
+  }
+
+  subject.meta.status = status
+
+  if (arguments.length > 2) {
+    subject.payload = value
+  }
+
+  subject._observers.forEach(observer => {
+    switch (status) {
+      case 'next':
+        return observer.next(subject.payload)
+      case 'error':
+        return observer.error(subject.payload)
+      case 'complete':
+        return observer.complete()
+      case 'cancel':
+        return observer.cancel()
+    }
+  })
 }
