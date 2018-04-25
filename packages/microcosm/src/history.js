@@ -5,9 +5,9 @@
 import { type Microcosm } from './microcosm'
 import { Subject } from './subject'
 import { Tree } from './tree'
-import { tag } from './tag'
 import { coroutine } from './coroutine'
 import { iterator } from './symbols'
+import { tag } from './tag'
 
 function simplify(tree: Tree<Subject>, subject: Subject) {
   let base = subject.toJSON()
@@ -40,7 +40,7 @@ export class History extends Subject {
 
   then(pass?: *, fail?: *): Promise<*> {
     // $FlowFixMe
-    return Promise.all(this[iterator]())
+    return Promise.all(this[iterator]()).then(pass, fail)
   }
 
   archive() {
@@ -66,7 +66,10 @@ export class History extends Subject {
   }
 
   append(origin: Microcosm, command: Command, ...params: *[]): Subject {
-    let action = new Subject(params[0], { key: String(tag(command)), origin })
+    let action = new Subject(undefined, {
+      key: tag(command).toString(),
+      origin
+    })
 
     this._branch.add(action)
 
