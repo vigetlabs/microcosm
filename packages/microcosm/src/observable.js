@@ -5,45 +5,52 @@
 
 import assert from 'assert'
 import { observable } from './symbols'
-import { noop, EMPTY_OBJECT } from './empty'
+import { noop } from './empty'
+import { scheduler } from './scheduler'
+import { isObject } from './type-checks'
 
-interface Unsubscribable {
+// A subscription has no work in progress
+const IDLE = 0
+// A subscription will send, but the scheduler is not ready for it.
+const BUFFERING = 1
+// A subscription is processing
+const WORKING = 2
+// A subscription is done
+const CLOSED = 4
+
+const NEXT = 'next'
+const ERROR = 'error'
+const COMPLETE = 'complete'
+const CANCEL = 'cancel'
+
+export interface Unsubscribable {
   unsubscribe(): any;
 }
 
-type Cleanup = Unsubscribable | (() => any)
-type Subscriber = (observer: *) => ?Cleanup
+export type Cleanup = Unsubscribable | (() => any)
+export type Subscriber = (observer: *) => ?Cleanup
+export type Queue = { type: string, value: * }[]
 
-export class Observer {
-  _config: Object
+class Observer {
+  next: any => void
+  error: any => void
+  complete: () => void
+  cancel: () => void
 
-  constructor(next: *, error?: *, complete?: *) {
-    if (typeof next === 'function') {
-      this._config = { next, error, complete }
+  constructor(next: *, error?: *, complete?: *, cancel?: *) {
+    if (isObject(next)) {
+      this.next = next.next || noop
+      this.error = next.error || noop
+      this.complete = next.complete || noop
+      this.cancel = next.cancel || noop
     } else {
-      assert(next, 'Unable to subscribe to ' + String(next))
-      this._config = next || EMPTY_OBJECT
+      this.next = next || noop
+      this.error = error || noop
+      this.complete = complete || noop
+      this.cancel = cancel || noop
     }
   }
-
-  get next(): (payload?: *) => any {
-    return this._config.next || noop
-  }
-
-  get error(): (error?: *) => any {
-    return this._config.error || noop
-  }
-
-  get complete(): () => any {
-    return this._config.complete || noop
-  }
-
-  get cancel(): (reason?: *) => any {
-    return this._config.cancel || noop
-  }
 }
-
-const ClosedObserver = new Observer({})
 
 export class SubscriptionObserver {
   _subscription: Subscription
@@ -51,103 +58,69 @@ export class SubscriptionObserver {
   constructor(subscription: Subscription) {
     this._subscription = subscription
   }
-
-  get next(): (value?: *) => void {
-    return handleNext.bind(null, this._subscription)
+  get next() {
+    return onNotify.bind(null, this._subscription, NEXT)
   }
-
-  get complete(): () => void {
-    return handleComplete.bind(null, this._subscription)
+  get error() {
+    return onNotify.bind(null, this._subscription, ERROR)
   }
-
-  get error(): (error?: *) => void {
-    return handleError.bind(null, this._subscription)
+  get complete() {
+    return onNotify.bind(null, this._subscription, COMPLETE)
   }
-
-  get cancel(): (reason?: *) => void {
-    return handleCancel.bind(null, this._subscription)
+  get cancel() {
+    return onNotify.bind(null, this._subscription, CANCEL)
+  }
+  get unsubscribe() {
+    return this._subscription.unsubscribe
   }
 }
 
 export class Subscription implements Unsubscribable {
-  _cleanup: ?() => void
+  _cleanup: Cleanup
   _observer: Observer
-  _origin: *
+  _state: number
+  _queue: Queue
 
-  constructor(observer: Observer, subscriber: Subscriber, origin: any) {
-    this._cleanup = undefined
+  constructor(observer: Observer, subscriber: Subscriber, origin: *) {
+    this._state = IDLE
+    this._cleanup = noop
+    this._queue = []
     this._observer = observer
-    this._origin = origin
 
-    var subscriptionObserver = new SubscriptionObserver(this)
+    let subscriptionObserver = new SubscriptionObserver(this)
 
     try {
       // Call the subscriber function
-      let cleanup = subscriber.call(undefined, subscriptionObserver)
-
-      // The return value must be undefined, null, a subscription object, or a function
-      if (cleanup != null) {
-        if (typeof cleanup.unsubscribe === 'function') {
-          cleanup = cleanup.unsubscribe
-        } else if (typeof cleanup !== 'function') {
-          throw new TypeError(String(cleanup) + ' is not a function')
-        }
-
-        this._cleanup = cleanup
-      }
+      this._cleanup = subscriber.call(origin, subscriptionObserver) || noop
     } catch (error) {
-      // If an error occurs during startup, then attempt to send the error
-      // to the observer
       subscriptionObserver.error(error)
-    } finally {
-      if (this.closed) {
-        cleanupSubscription(this)
-      }
+    }
+
+    if (this._state === IDLE) {
+      this._state = WORKING
     }
   }
 
-  close(): void {
-    this._observer = ClosedObserver
-  }
-
   get closed(): boolean {
-    return this._observer == ClosedObserver
+    return this._state === CLOSED
   }
 
   get unsubscribe(): * {
-    return handleUnsubscribe.bind(null, this)
+    return disposeSubscription.bind(null, this)
   }
 }
 
 export class Observable {
-  _subscriber: Function
-  _subscriptions: Set<Subscription>
+  _subscriber: SubscriptionObserver => ?Cleanup
 
-  constructor(subscriber: Subscriber) {
-    this._subscriber = subscriber
-    this._subscriptions = new Set()
+  constructor(subscriber?: Subscriber) {
+    this._subscriber = subscriber || noop
   }
 
-  subscribe(
-    next: Object | Function,
-    error?: Function,
-    complete?: Function
-  ): Subscription {
-    let subscription = new Subscription(
-      new Observer(next, error, complete),
-      this._subscriber,
-      this
-    )
+  subscribe(next: *, error?: *, complete?: *, cancel?: *): Subscription {
+    let observer = new Observer(next, error, complete, cancel)
 
-    this._subscriptions.add(subscription)
-
-    return subscription
-  }
-
-  get cancel(): (reason?: *) => void {
-    return reason => {
-      this._subscriptions.forEach(s => handleCancel(s, reason))
-    }
+    return new Subscription(observer, this._subscriber, this)
   }
 
   map(fn: (*) => *, scope: any): Observable {
@@ -156,18 +129,23 @@ export class Observable {
     }
 
     return new Observable(observer => {
-      return this.subscribe({
-        next(value) {
-          try {
-            value = fn.call(scope, value)
-          } catch (e) {
-            return observer.error(e)
-          }
-          observer.next(value)
-        },
-        error: observer.error,
-        complete: observer.complete
-      })
+      return this.subscribe(
+        value => observer.next(fn.call(scope, value)),
+        observer.error,
+        observer.complete,
+        observer.cancel
+      )
+    })
+  }
+
+  every(fn: (subject: this) => void, scope: any): * {
+    let dispatch = fn.bind(scope, this)
+
+    return this.subscribe({
+      next: dispatch,
+      error: dispatch,
+      complete: dispatch,
+      cancel: dispatch
     })
   }
 
@@ -181,105 +159,136 @@ export class Observable {
       for (var i = 0; i < arguments.length; ++i) {
         observer.next(arguments[i])
       }
-
       observer.complete()
-    })
-  }
-
-  static wrap(source: *): Observable {
-    if (source && typeof source === 'object') {
-      let builder = getObservable(source)
-
-      if (builder) {
-        return builder.call(source)
-      }
-
-      if (typeof source.then === 'function') {
-        return Observable.fromPromise(source)
-      }
-    }
-
-    return new Observable(observer => {
-      observer.next(source)
-      observer.complete()
-    })
-  }
-
-  static fromPromise(promise: Promise<*>): Observable {
-    return new Observable(observer => {
-      promise
-        .then(observer.next)
-        .then(observer.complete)
-        .catch(observer.error)
     })
   }
 }
 
-export function getObservable(obj: any) {
-  return obj && obj[observable]
+function disposeSubscription(subscription: Subscription) {
+  closeSubscription(subscription)
+  cleanupSubscription(subscription)
 }
 
-function cleanupSubscription(subscription) {
+function cleanupSubscription(subscription: Subscription): void {
   let cleanup = subscription._cleanup
 
-  subscription._origin._subscriptions.delete(subscription)
+  // Drop the reference to the cleanup function so that we won't call it
+  // more than once
+  subscription._cleanup = noop
 
-  if (cleanup) {
-    // Drop the reference to the cleanup function so that we won't call it
-    // more than once
-    subscription._cleanup = undefined
-
-    // Call the cleanup function
+  if (typeof cleanup === 'function') {
     cleanup()
+  } else if (cleanup instanceof Subscription) {
+    cleanup.unsubscribe()
   }
 }
 
-function handleNext(subscription: Subscription, value?: *) {
-  if (subscription._observer) {
-    subscription._observer.next(value)
-  }
+const ClosedObserver = new Observer()
+
+function closeSubscription(subscription: Subscription): void {
+  subscription._observer = ClosedObserver
+  subscription._queue.length = 0
+  subscription._state = CLOSED
 }
 
-function handleComplete(subscription: Subscription): void {
+function flushSubscription(subscription: Subscription): void {
+  let queue = subscription._queue
+
+  subscription._queue = []
+  subscription._state = WORKING
+
+  for (let i = 0; i < queue.length; ++i) {
+    if (subscription.closed) {
+      break
+    }
+
+    notifySubscription(subscription, queue[i].type, queue[i].value)
+  }
+
+  subscription._state = IDLE
+}
+
+function notifySubscription(subscription: *, type: *, value: *) {
   let observer = subscription._observer
 
-  subscription.close()
+  // This is what triggers subscription callbacks
+  try {
+    switch (type) {
+      case NEXT:
+        observer.next(value)
+        break
+      case ERROR:
+        closeSubscription(subscription)
+        observer.error(value)
+        break
+      case COMPLETE:
+        closeSubscription(subscription)
+        observer.complete()
+        break
+      case CANCEL:
+        closeSubscription(subscription)
+        observer.cancel()
+        break
+      default:
+        assert(
+          false,
+          `Unrecognized type ${type}. This is an error internal to Microcosm. ` +
+            `Please file an issue: https://github.com/vigetlabs/microcosm/issues`
+        )
+    }
+  } catch (e) {
+    scheduler().raise(e)
+  }
 
-  observer.complete()
-
-  cleanupSubscription(subscription)
-}
-
-function handleError(subscription: Subscription, error?: *): void {
   if (subscription.closed) {
-    // TODO: this doesn't feel right. If a user double errors() we
-    // should warn, but not raise. It should mean that they did
-    // something wrong
-    throw error
+    cleanupSubscription(subscription)
   }
-
-  let observer = subscription._observer
-
-  subscription.close()
-
-  observer.error(error)
-
-  cleanupSubscription(subscription)
 }
 
-function handleUnsubscribe(subscription: Subscription): void {
-  if (subscription.closed) {
-    return
+function onNotify(subscription: Subscription, type: string, value: *) {
+  // On cancel, empty out the queue for subscriptions
+  if (type === CANCEL) {
+    subscription._queue.length = 0
   }
 
-  subscription.close()
-  cleanupSubscription(subscription)
-}
+  switch (subscription._state) {
+    case CLOSED:
+      // If closed, do nothing
+      break
+    case BUFFERING:
+      // Until the scheduler is ready to send out an update, push
+      // notifications into a backlog
+      subscription._queue.push({ type, value })
+      break
+    case WORKING:
+      // Go ahead and send messages that result from subscription
+      // callbacks while the subscription is processing
+      notifySubscription(subscription, type, value)
+      break
+    case IDLE:
+      // For any other phase, we are now buffering. Initiate a new
+      // queue and push a job to flush it eventually.
+      assert(
+        subscription._queue.length <= 0,
+        'This subscription has outstanding work, however it is trying ' +
+          'to begin buffering. This is an error internal to Microcosm. ' +
+          `Please file an issue: https://github.com/vigetlabs/microcosm/issues`
+      )
 
-function handleCancel(subscription: Subscription, reason: ?*): void {
-  if (subscription._observer) {
-    subscription._observer.cancel(reason)
+      subscription._state = BUFFERING
+      subscription._queue.push({ type, value })
+      scheduler().push(flushSubscription.bind(undefined, subscription))
+      break
+    default:
+      // There are two cases for which we can get into this state:
+      //   1. A subscription is closed
+      //   2. We've made a mistake and assigned an invalid state.
+      // Both are exceptions. Throw in strict mode
+      assert(
+        false,
+        `Observable subscription is in an invalid state.` +
+          'This is an error internal to Microcosm. ' +
+          `Please file an issue: https://github.com/vigetlabs/microcosm/issues`
+      )
   }
-
-  handleUnsubscribe(subscription)
 }

@@ -1,4 +1,4 @@
-import { Observable } from 'microcosm'
+import { Observable, scheduler } from 'microcosm'
 
 describe('Observable', function() {
   describe('subscriber', function() {
@@ -14,10 +14,28 @@ describe('Observable', function() {
           expect(reason).toEqual('Terrible things')
         }
       })
+
+      scheduler().flush()
+    })
+
+    it('cleans ups any enqueued tasks on unsubscribe', () => {
+      expect.assertions(1)
+
+      let observable = new Observable(observer => {
+        throw 'Terrible things'
+      })
+
+      observable.subscribe({
+        error(reason) {
+          expect(reason).toEqual('Terrible things')
+        }
+      })
+
+      scheduler().flush()
     })
   })
 
-  describe('duplicate closers', function() {
+  describe('duplicate completion', function() {
     it('can not double complete', function() {
       let complete = jest.fn()
 
@@ -27,6 +45,8 @@ describe('Observable', function() {
       })
 
       observable.subscribe({ complete })
+
+      scheduler().flush()
 
       expect(complete).toHaveBeenCalledTimes(1)
     })
@@ -42,60 +62,10 @@ describe('Observable', function() {
 
       observable.subscribe({ next, complete })
 
+      scheduler().flush()
+
       expect(next).toHaveBeenCalledTimes(0)
       expect(complete).toHaveBeenCalledTimes(1)
-    })
-
-    it('can not double cancel', function() {
-      let cancel = jest.fn()
-
-      let observable = new Observable(observer => {
-        observer.cancel()
-        observer.cancel()
-      })
-
-      observable.subscribe({ cancel })
-
-      expect(cancel).toHaveBeenCalledTimes(1)
-    })
-
-    it('raises on the second error call', function() {
-      expect.assertions(3)
-
-      let error = jest.fn()
-
-      let observable = new Observable(observer => {
-        observer.error('one')
-        observer.error('two')
-      })
-
-      try {
-        observable.subscribe({ error })
-      } catch (x) {
-        expect(x).toBe('two')
-      }
-
-      expect(error).toHaveBeenCalledTimes(1)
-      expect(error).toHaveBeenCalledWith('one')
-    })
-
-    it('raises if erroring after completion', function() {
-      expect.assertions(2)
-
-      let error = jest.fn()
-
-      let observable = new Observable(observer => {
-        observer.complete()
-        observer.error('Bad news')
-      })
-
-      try {
-        observable.subscribe({ error })
-      } catch (x) {
-        expect(x).toBe('Bad news')
-      }
-
-      expect(error).toHaveBeenCalledTimes(0)
     })
 
     it('can not complete after erroring', function() {
@@ -108,38 +78,13 @@ describe('Observable', function() {
 
       observable.subscribe({ complete })
 
+      scheduler().flush()
+
       expect(complete).toHaveBeenCalledTimes(0)
-    })
-
-    it('can not cancel after erroring', function() {
-      let cancel = jest.fn()
-
-      let observable = new Observable(observer => {
-        observer.error()
-        observer.cancel()
-      })
-
-      observable.subscribe({ cancel })
-
-      expect(cancel).toHaveBeenCalledTimes(0)
     })
   })
 
   describe('subscribe', function() {
-    it.dev('raises if not given an observer', () => {
-      expect.assertions(1)
-
-      let observable = new Observable(observer => {
-        throw 'Terrible things'
-      })
-
-      try {
-        observable.subscribe(null)
-      } catch (x) {
-        expect(x.message).toBe('Unable to subscribe to null')
-      }
-    })
-
     it('subscribes to next as the first argument', () => {
       let next = jest.fn()
 
@@ -150,10 +95,41 @@ describe('Observable', function() {
 
       observable.subscribe(next)
 
+      scheduler().flush()
+
       expect(next).toHaveBeenCalledWith(2)
     })
 
+    it('next can be null', () => {
+      let complete = jest.fn()
+
+      let observable = new Observable(observer => {
+        observer.next(2)
+        observer.complete()
+      })
+
+      observable.subscribe(null, null, complete)
+
+      scheduler().flush()
+
+      expect(complete).toHaveBeenCalledTimes(1)
+    })
+
     it('subscribes to error as the second argument', () => {
+      let error = jest.fn()
+
+      let observable = new Observable(observer => {
+        observer.error('Exceptional!')
+      })
+
+      observable.subscribe(() => {}, error)
+
+      scheduler().flush()
+
+      expect(error).toHaveBeenCalledWith('Exceptional!')
+    })
+
+    it('triggers error() when the subscription observer throws', () => {
       let error = jest.fn()
 
       let observable = new Observable(observer => {
@@ -161,6 +137,8 @@ describe('Observable', function() {
       })
 
       observable.subscribe(() => {}, error)
+
+      scheduler().flush()
 
       expect(error).toHaveBeenCalledWith('Exceptional!')
     })
@@ -174,123 +152,118 @@ describe('Observable', function() {
 
       observable.subscribe(() => {}, () => {}, complete)
 
+      scheduler().flush()
+
       expect(complete).toHaveBeenCalled()
     })
   })
 
   describe('cleanup', function() {
-    it('executes a clean up method when cancelled', () => {
-      let cleaned = false
+    it('executes a clean up method when completed', () => {
+      let cleaned = jest.fn()
 
       let observable = new Observable(observer => {
         observer.complete()
-        return () => {
-          cleaned = true
-        }
+        return cleaned
       })
 
       observable.subscribe(n => n)
 
-      expect(cleaned).toBe(true)
+      scheduler().flush()
+
+      expect(cleaned).toHaveBeenCalled()
     })
 
-    it.dev('raises if cleanup is not a function', () => {
-      expect.assertions(1)
-
+    it('noops if not given a function', () => {
       let observable = new Observable(observer => {
         observer.complete()
         return true
       })
 
+      observable.subscribe(n => n)
+
+      expect(() => scheduler().flush()).not.toThrow()
+    })
+
+    it('the scheduler covers cases when cleanup fails', () => {
+      expect.assertions(1)
+
+      let observable = new Observable(observer => {
+        observer.complete()
+
+        return () => {
+          throw 'Exceptional!'
+        }
+      })
+
+      observable.subscribe(n => n)
+
       try {
-        observable.subscribe(n => n)
-      } catch (x) {
-        expect(x.message).toEqual('true is not a function')
+        scheduler().flush()
+      } catch (error) {
+        expect(error.message).toContain('Exceptional!')
+      }
+    })
+
+    it('unsubscribes subscriptions', () => {
+      let unsubscribe = jest.fn()
+
+      let range = new Observable(observer => {
+        observer.next(1)
+        observer.next(2)
+        observer.next(3)
+        observer.complete()
+
+        return unsubscribe
+      })
+
+      let observable = new Observable(observer => {
+        return range.subscribe(observer)
+      })
+
+      observable.subscribe(jest.fn())
+
+      scheduler().flush()
+
+      expect(unsubscribe).toHaveBeenCalled()
+    })
+
+    it('the scheduler covers cases when a nested cleanup method fails', () => {
+      expect.assertions(1)
+
+      let range = new Observable(observer => {
+        observer.next(1)
+        observer.next(2)
+        observer.next(3)
+        observer.complete()
+
+        return () => {
+          throw 'Exceptional!'
+        }
+      })
+
+      let observable = new Observable(observer => {
+        return range.subscribe(observer)
+      })
+
+      observable.subscribe(jest.fn())
+
+      try {
+        scheduler().flush()
+      } catch (error) {
+        expect(error.message).toContain('Exceptional!')
       }
     })
   })
 
-  describe('cancellation', function() {
-    it('can kill all active subscriptions', function() {
-      let observer = new Observable(observer => {
-        observer.next(2)
-      })
-
-      let cancel = jest.fn()
-
-      observer.subscribe({ cancel })
-      observer.subscribe({ cancel })
-
-      observer.cancel('Nevermind')
-
-      expect(cancel).toHaveBeenCalledTimes(2)
-      expect(cancel).toHaveBeenCalledWith('Nevermind')
-    })
-
-    it('invokes cleanup', async function() {
-      let observer = new Observable(observer => {
-        observer.next(2)
-
-        let timer = setTimeout(observer.complete, 0)
-
-        return () => clearTimeout(timer)
-      })
-
-      let complete = jest.fn()
-
-      observer.subscribe({ complete })
-
-      observer.cancel('Nevermind')
-
-      await new Promise(resolve => setTimeout(resolve, 10))
-
-      expect(complete).toHaveBeenCalledTimes(0)
-    })
-  })
-
-  describe('.wrap', async () => {
-    it('wraps promises', async () => {
-      expect.assertions(1)
-
-      let wrapped = Observable.wrap(Promise.resolve(true))
-
-      wrapped.subscribe({
-        next: value => {
-          expect(value).toBe(true)
-        }
-      })
-
-      await wrapped
-    })
-
-    it('wraps primitive values', async () => {
-      expect.assertions(1)
-
-      let wrapped = Observable.wrap(true)
-
-      wrapped.subscribe({
-        next: value => {
-          expect(value).toBe(true)
-        }
-      })
-
-      await wrapped
-    })
-  })
-
-  describe('.map', () => {
+  describe('::map', () => {
     it('operates like array.map over a stream of values', () => {
-      let observable = new Observable(observer => {
-        for (var i = 0; i < 5; i++) {
-          observer.next(i)
-        }
-        observer.complete()
-      })
-
-      let double = observable.map(value => value * 2)
+      let double = Observable.of(0, 1, 2, 3, 4).map(value => value * 2)
       let answers = []
 
       double.subscribe(value => answers.push(value))
+
+      scheduler().flush()
 
       expect(answers).toEqual([0, 2, 4, 6, 8])
     })
@@ -303,19 +276,37 @@ describe('Observable', function() {
         }
       }
 
-      let observable = new Observable(observer => {
-        for (var i = 0; i < 5; i++) {
-          observer.next(i)
-        }
-        observer.complete()
-      })
-
-      let double = observable.map(scope.multiply, scope)
+      let double = Observable.of(0, 1, 2, 3, 4).map(scope.multiply, scope)
       let answers = []
 
       double.subscribe(value => answers.push(value))
 
+      scheduler().flush()
+
       expect(answers).toEqual([0, 2, 4, 6, 8])
+    })
+
+    it('passes along errors', () => {
+      let observable = new Observable(observer => {
+        for (var i = 0; i < 5; i++) {
+          observer.next(i)
+        }
+        throw 'Exceptional!'
+      })
+
+      let error = jest.fn()
+
+      observable.map(n => n).subscribe({ error })
+
+      scheduler().flush()
+
+      expect(error).toHaveBeenCalledWith('Exceptional!')
+    })
+
+    it('raises if not given a function', () => {
+      expect(() => Observable.of(0, 1, 2, 3, 4).map()).toThrow(
+        'undefined is not a function'
+      )
     })
   })
 })

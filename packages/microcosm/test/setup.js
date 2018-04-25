@@ -1,5 +1,9 @@
-import { get } from 'microcosm'
+import { get, scheduler } from 'microcosm'
 import expect from 'expect'
+
+scheduler().onError(error => {
+  throw error instanceof Error ? error : new Error(error)
+})
 
 // Make a strict-only test flag
 it.dev = function(description, test) {
