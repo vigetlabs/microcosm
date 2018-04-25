@@ -46,7 +46,7 @@ export function update(state: *, path: Path, updater: *, fallback?: *) {
  * Non-destructively assign a value to a provided object at a given key. If the
  * value is the same, don't do anything. Otherwise return a new object.
  */
-export function set(object: Object, path: Path, value: *): * {
+export function set(object: *, path: Path, value: any): * {
   assert(
     path != null,
     `Expected path to be defined. Instead got ${String(path)}`
@@ -86,13 +86,21 @@ export function set(object: Object, path: Path, value: *): * {
 
     // If the value is defined
     if (next !== undefined) {
+      if (Array.isArray(node)) {
+        key = parseInt(key)
+      }
+
       // Assign the value, then continue on to the next iteration of the loop
       // using the next step down
       node[key] = next
-      node = node[key]
+      node = next
     } else {
       // Otherwise clear the value from the object
-      delete node[key]
+      if (Array.isArray(node)) {
+        node.splice(+key, -1)
+      } else {
+        delete node[key]
+      }
     }
   }
 
@@ -110,7 +118,7 @@ export function remove(target: *, path: Path): * {
  * Retrieve a value from an object. If no key is provided, just return
  * the object.
  */
-export function get(object: ?Object, path: Path, fallback?: *) {
+export function get(object: *, path: Path, fallback?: *) {
   path = normalizePath(path)
 
   let value = object
@@ -120,7 +128,13 @@ export function get(object: ?Object, path: Path, fallback?: *) {
       break
     }
 
-    value = value[path[i]]
+    let key = path[i]
+
+    if (Array.isArray(value)) {
+      value = value[+key]
+    } else {
+      value = value[key]
+    }
   }
 
   if (value === undefined || value === null) {
@@ -163,7 +177,7 @@ export function merge(): Object {
 /**
  * Shallow copy an object
  */
-export function clone<T: Object>(target: T): $Shape<T> {
+export function clone<T: *>(target: T): $Shape<T> {
   if (Array.isArray(target)) {
     return target.slice(0)
   }
