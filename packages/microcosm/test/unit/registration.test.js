@@ -29,7 +29,7 @@ describe('getRegistration', function() {
     expect(handler).toHaveBeenCalled()
   })
 
-  it('can chain domain handlers', function() {
+  it('can chain domain handlers', async () => {
     let format = text => text
 
     let repo = new Microcosm()
@@ -46,12 +46,12 @@ describe('getRegistration', function() {
       }
     })
 
-    repo.push(format, 'test-string')
+    await repo.push(format, 'test-string')
 
     expect(repo).toHaveState('word', 'TEST')
   })
 
-  it('can chain effect handlers', function() {
+  it('can chain effect handlers', async () => {
     let a = jest.fn()
     let b = jest.fn()
 
@@ -65,7 +65,7 @@ describe('getRegistration', function() {
       }
     })
 
-    repo.push('test', 'foobar')
+    await repo.push('test', 'foobar')
 
     expect(a).toHaveBeenCalledWith(repo, 'foobar')
     expect(b).toHaveBeenCalledWith(repo, 'foobar')

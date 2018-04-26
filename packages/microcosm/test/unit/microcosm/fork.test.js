@@ -14,7 +14,7 @@ describe('Microcosm::fork', function() {
     )
   })
 
-  it('recieve upstream state updates when they push actions', () => {
+  it('receive upstream state updates when they push actions', async () => {
     const parent = new Microcosm({ debug: true })
     const child = parent.fork()
 
@@ -31,18 +31,19 @@ describe('Microcosm::fork', function() {
       }
     })
 
-    child.push(add, 2)
-    child.push(add, 4)
+    await child.push(add, 2)
+    await child.push(add, 4)
 
     expect(parent).toHaveState('counter', 6)
     expect(child).toHaveState('counter', 6)
   })
 
-  it('forks handle cases where they are lost during a reconcilation', function() {
+  it('forks handle cases where they are lost during a reconcilation', async () => {
     const parent = new Microcosm()
     const child = parent.fork()
 
-    parent.subscribe(() => child.teardown())
-    parent.push(patch, { test: true })
+    parent.subscribe(child.teardown)
+
+    await parent.push(patch, { test: true })
   })
 })

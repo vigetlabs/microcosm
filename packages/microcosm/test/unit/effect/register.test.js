@@ -1,7 +1,7 @@
 import { Microcosm } from 'microcosm'
 
 describe('Effect::register', function() {
-  it('invokes when an action completes', function() {
+  it('invokes when an action completes', async () => {
     const repo = new Microcosm()
     const test = n => n
 
@@ -16,12 +16,12 @@ describe('Effect::register', function() {
 
     repo.addEffect(Effect)
 
-    repo.push(test, true)
+    await repo.push(test, true)
 
     expect(Effect.handler).toHaveBeenCalledWith(repo, true)
   })
 
-  it('invokes within the scope of the effect', function() {
+  it('invokes within the scope of the effect', async () => {
     const repo = new Microcosm()
     const test = n => n
     const spy = jest.fn()
@@ -40,7 +40,7 @@ describe('Effect::register', function() {
 
     repo.addEffect(Effect)
 
-    repo.push(test, true)
+    await repo.push(test, true)
 
     expect(spy).toHaveBeenCalledWith(true)
   })
@@ -83,7 +83,7 @@ describe('Effect::register', function() {
     repo.push('missing', true)
   })
 
-  it('repo state should be up to date by the time of effect dispatch', function() {
+  it('repo state should be up to date by the time of effect dispatch', async function() {
     expect.assertions(1)
 
     const repo = new Microcosm()
@@ -115,7 +115,7 @@ describe('Effect::register', function() {
 
     repo.addEffect(Effect)
 
-    repo.push(test, true)
+    await repo.push(test, true)
   })
 
   describe('statuses', function() {

@@ -1,7 +1,7 @@
 import { Microcosm } from 'microcosm'
 
 describe('Microcosm::release', function() {
-  it('will not emit a change if state is shallowly equal', function() {
+  it('will not emit a change if state is shallowly equal', async () => {
     const repo = new Microcosm()
     const identity = n => n
     const spy = jest.fn()
@@ -17,12 +17,16 @@ describe('Microcosm::release', function() {
 
     test.subscribe(spy)
 
+    await repo.push(identity, 0)
+
     expect(spy).toHaveBeenCalledTimes(1)
-    repo.push(identity, 0)
+
+    await repo.push(identity, 0)
+
     expect(spy).toHaveBeenCalledTimes(1)
   })
 
-  it('will emit a change if state is not shallowly equal', function() {
+  it('will emit a change if state is not shallowly equal', async () => {
     const repo = new Microcosm()
     const identity = n => n
     const spy = jest.fn()
@@ -38,12 +42,16 @@ describe('Microcosm::release', function() {
 
     test.subscribe(spy)
 
+    await repo.push(identity, 0)
+
     expect(spy).toHaveBeenCalledTimes(1)
-    repo.push(identity, 1)
+
+    await repo.push(identity, 1)
+
     expect(spy).toHaveBeenCalledTimes(2)
   })
 
-  it('children have the latest state when their parents change', function() {
+  it('children have the latest state when their parents change', async () => {
     expect.assertions(2)
 
     let step = n => n
@@ -64,6 +72,6 @@ describe('Microcosm::release', function() {
       expect(fork.state).toEqual(repo.state)
     })
 
-    repo.push(step, 1)
+    await repo.push(step, 1)
   })
 })

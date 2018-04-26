@@ -2,9 +2,9 @@
  * @flow
  */
 
-import { Observable } from './observable'
 import { Subject } from './subject'
 import { toStringTag } from './symbols'
+import { isPromise } from './type-checks'
 
 /**
  * Coroutine is used by an action to determine how it should resolve
@@ -12,35 +12,43 @@ import { toStringTag } from './symbols'
  */
 export function coroutine(
   action: Subject,
-  job: any,
+  command: any,
   params: any[],
-  repo: *
-): void {
-  if (typeof job !== 'function') {
-    action.complete(params.length ? params[0] : undefined)
+  origin: *
+) {
+  if (typeof command !== 'function') {
+    action.complete(params[0])
     return
   }
 
-  if (isGeneratorFn(job)) {
-    return asGenerator(action, job(repo, ...params), repo)
+  if (isGeneratorFn(command)) {
+    asGenerator(action, command(origin, ...params))
+    return
   }
 
-  let body = job.apply(null, params)
+  let body = command.apply(null, params)
 
-  if (isGeneratorFn(body)) {
-    asGenerator(action, body(repo, action), repo)
-  } else if (typeof body === 'function' && params.indexOf(body) < 0) {
-    body(action, repo)
-  } else {
-    Observable.wrap(body).subscribe(action)
+  if (typeof body === 'function' && params.indexOf(body) < 0) {
+    body(action, origin)
+    return
   }
+
+  if (isPromise(body)) {
+    body
+      .then(action.next)
+      .then(() => action.complete())
+      .catch(action.error)
+    return
+  }
+
+  action.complete(body)
 }
 
 function isGeneratorFn(value: any): boolean {
   return value && value[toStringTag] === 'GeneratorFunction'
 }
 
-function asGenerator(action: Subject, iterator: Iterator<*>, repo) {
+function asGenerator(action: Subject, iterator: Iterator<*>) {
   function step() {
     let next = iterator.next(action.payload)
     let value = next.value
@@ -50,14 +58,18 @@ function asGenerator(action: Subject, iterator: Iterator<*>, repo) {
     } else {
       let subject = Subject.hash(value)
 
-      let tracker = subject.subscribe({
-        next: action.next,
-        complete: step,
-        error: action.error,
-        cancel: action.cancel
-      })
+      subject.subscribe(
+        // next
+        action.next,
+        // error
+        action.error,
+        //complete
+        step,
+        // cancel
+        action.cancel
+      )
 
-      action.subscribe({ cancel: tracker.unsubscribe })
+      action.subscribe({ cancel: subject.cancel })
     }
   }
 

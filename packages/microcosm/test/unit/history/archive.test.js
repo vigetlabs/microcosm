@@ -1,4 +1,4 @@
-import Microcosm from 'microcosm'
+import { Microcosm } from 'microcosm'
 
 const never = () => new Promise(() => {})
 const noop = () => {}
@@ -31,7 +31,7 @@ describe('History::archive', function() {
 
     action.cancel()
 
-    await repo.history.wait
+    await repo.history
 
     // Note: We always hold on to at least the last action for
     // rollbacks

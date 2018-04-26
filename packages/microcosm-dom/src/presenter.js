@@ -106,7 +106,7 @@ export function generatePresenter(createElement, Component) {
     constructor(props, context) {
       super(props, context)
 
-      this.model = new Subject({})
+      this.model = new Subject.hash({})
       this.presenter = props.presenter
 
       let prepo = props.repo || context.repo || new Microcosm()
@@ -133,11 +133,12 @@ export function generatePresenter(createElement, Component) {
         this.presenter.props,
         this.presenter.state
       )
+
       this.updateModel(this.presenter.props, this.presenter.state)
     }
 
     componentWillUnmount() {
-      this.model.cancel()
+      this.model.clear()
     }
 
     render() {
@@ -145,7 +146,7 @@ export function generatePresenter(createElement, Component) {
     }
 
     updateModel(props, state) {
-      this.model.cancel()
+      this.model.clear()
 
       this.model = Subject.hash(
         this.presenter.getModel(this.repo, props, state)

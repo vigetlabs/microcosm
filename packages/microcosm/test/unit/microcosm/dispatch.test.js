@@ -1,7 +1,7 @@
 import Microcosm from 'microcosm'
 
 describe('Microcosm::dispatch', function() {
-  it('does not mutate base state on prior dispatches', function() {
+  it('does not mutate base state on prior dispatches', async () => {
     const repo = new Microcosm()
     const mutation = () => true
 
@@ -22,20 +22,20 @@ describe('Microcosm::dispatch', function() {
       }
     })
 
-    repo.push(mutation)
+    await repo.push(mutation)
     expect(repo.history.size).toEqual(1)
     expect(repo).toHaveState('ui.toggled', true)
 
-    repo.push(mutation)
+    await repo.push(mutation)
     expect(repo.history.size).toEqual(1)
     expect(repo).toHaveState('ui.toggled', false)
 
-    repo.push(mutation)
+    await repo.push(mutation)
     expect(repo.history.size).toEqual(1)
     expect(repo).toHaveState('ui.toggled', true)
   })
 
-  it('does not retroactively apply old state to subsequent domain handlers', function() {
+  it('does not retroactively apply old state to subsequent domain handlers', async () => {
     expect.assertions(2)
 
     var repo = new Microcosm()
@@ -63,7 +63,7 @@ describe('Microcosm::dispatch', function() {
       }
     })
 
-    repo.push('test', 'purple')
+    await repo.push('test', 'purple')
 
     expect(repo).toHaveState('color', 'purple')
   })

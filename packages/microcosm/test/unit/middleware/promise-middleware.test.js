@@ -36,7 +36,9 @@ describe('Promise middleware', function() {
   it('handles successful chains', async function() {
     const repo = new Microcosm()
 
-    let payload = await repo.push(n => Promise.resolve().then(() => n), true)
+    let payload = await repo.push(function asPromised(value) {
+      return Promise.resolve().then(() => value)
+    }, true)
 
     expect(payload).toBe(true)
   })

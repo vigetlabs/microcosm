@@ -33,14 +33,15 @@ describe('Shutting down a microcosm', function() {
     expect(teardown).toHaveBeenCalled()
   })
 
-  it('stops dispatching to domains', function() {
+  it('stops dispatching to domains', async function() {
     const repo = new Microcosm()
     const register = jest.fn(n => ({}))
 
     repo.addDomain('test', { register })
 
     repo.complete()
-    repo.push('test')
+
+    await repo.push('test')
 
     expect(register).toHaveBeenCalledTimes(0)
   })
@@ -58,13 +59,13 @@ describe('Shutting down a microcosm', function() {
   })
 
   describe('forks', function() {
-    it('tearing down eliminates parent subscriptions', function() {
+    it('tearing down eliminates parent subscriptions', async function() {
       const parent = new Microcosm()
       const child = parent.fork()
 
       parent.addDomain('color', {})
 
-      parent.push(patch, { color: 'red' })
+      await parent.push(patch, { color: 'red' })
 
       child.subscribe(() => {
         throw new Error('Should not have changed')
@@ -72,12 +73,12 @@ describe('Shutting down a microcosm', function() {
 
       child.complete()
 
-      parent.push(patch, { color: 'blue' })
+      await parent.push(patch, { color: 'blue' })
 
-      expect(parent.state.color).toEqual('blue')
+      expect(parent.state).toHaveProperty('color', 'blue')
 
       // Despite not sending out a change, state should be in sync
-      expect(child.state.color).toEqual('blue')
+      expect(child.state).toHaveProperty('color', 'blue')
     })
   })
 })

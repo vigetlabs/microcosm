@@ -511,7 +511,7 @@ describe('::teardown', function() {
     expect(spy).toHaveBeenCalledTimes(0)
   })
 
-  it('unsubscribes from an unforked repo', function() {
+  it('unsubscribes from an unforked repo', async function() {
     let repo = new Microcosm()
     let renders = 0
 
@@ -535,6 +535,8 @@ describe('::teardown', function() {
     repo.addDomain('test', {
       getInitialState: () => true
     })
+
+    await delay(100)
 
     // Once: for the initial calculation
     expect(renders).toBe(1)

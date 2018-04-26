@@ -1,12 +1,12 @@
 import Microcosm, { patch } from 'microcosm'
 
 describe('Microcosm::patch', function() {
-  it('only patches within managed keys', function() {
+  it('only patches within managed keys', async () => {
     const repo = new Microcosm()
 
     repo.addDomain('colors', {})
 
-    repo.push(patch, { shapes: ['square', 'triangle', 'circle'] })
+    await repo.push(patch, { shapes: ['square', 'triangle', 'circle'] })
 
     expect(repo).not.toHaveState('shapes')
   })
@@ -20,7 +20,7 @@ describe('Microcosm::patch', function() {
     expect(badPatch).toThrow()
   })
 
-  it('uses the deserialize method on domains', function() {
+  it('uses the deserialize method on domains', async () => {
     const repo = new Microcosm()
 
     repo.addDomain('caps', {
@@ -29,27 +29,28 @@ describe('Microcosm::patch', function() {
       }
     })
 
-    repo.push(patch, JSON.stringify({ caps: 'hello' }), true)
+    await repo.push(patch, JSON.stringify({ caps: 'hello' }), true)
 
     expect(repo.state.caps).toEqual('HELLO')
   })
 
-  it('just passes data through if no serialization method is provided', function() {
+  it('just passes data through if no serialization method is provided', async () => {
     const repo = new Microcosm()
 
     repo.addDomain('count', {})
 
-    repo.push(patch, JSON.stringify({ count: 0 }), true)
+    await repo.push(patch, JSON.stringify({ count: 0 }), true)
 
     expect(repo.state.count).toEqual(0)
   })
 
   describe('forks', function() {
-    it('deeply inherits state', function() {
+    it('deeply inherits state', async () => {
       const grandparent = new Microcosm()
 
       grandparent.addDomain('color', {})
-      grandparent.push(patch, { color: 'red' })
+
+      await grandparent.push(patch, { color: 'red' })
 
       const parent = grandparent.fork()
       const child = parent.fork()
@@ -58,7 +59,7 @@ describe('Microcosm::patch', function() {
       expect(child).toHaveState('color', 'red')
     })
 
-    it('does not cause forks to revert state', function() {
+    it('does not cause forks to revert state', async () => {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -70,10 +71,9 @@ describe('Microcosm::patch', function() {
         }
       })
 
-      child.push(patch, { count: 2 })
-
-      child.push('add', 1)
-      child.push('add', 1)
+      await child.push(patch, { count: 2 })
+      await child.push('add', 1)
+      await child.push('add', 1)
 
       // Forks inherit state. If a parent repo's state contains a key, it will
       // pass the associated value down to a child. This allows state to flow
@@ -85,7 +85,7 @@ describe('Microcosm::patch', function() {
       expect(child.state.count).toEqual(4)
     })
 
-    it('does not strip away parent inherited state', function() {
+    it('does not strip away parent inherited state', async () => {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -94,13 +94,14 @@ describe('Microcosm::patch', function() {
           return true
         }
       })
+
       child.addDomain('bottom', {
         getInitialState() {
           return false
         }
       })
 
-      child.push(patch, { bottom: true })
+      await child.push(patch, { bottom: true })
 
       expect(parent.state.top).toBe(true)
       expect(parent.state).not.toHaveProperty('bottom')
@@ -109,7 +110,7 @@ describe('Microcosm::patch', function() {
       expect(child.state.bottom).toEqual(true)
     })
 
-    it('does not strip away parent inherited state when the parent patches', function() {
+    it('does not strip away parent inherited state when the parent patches', async () => {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -125,13 +126,13 @@ describe('Microcosm::patch', function() {
         }
       })
 
-      parent.push(patch, { top: true })
+      await parent.push(patch, { top: true })
 
       expect(parent).toHaveState('top', true)
       expect(child).toHaveState('top', true)
     })
 
-    it('patching on a parent does not reset state of children', function() {
+    it('patching on a parent does not reset state of children', async () => {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -147,7 +148,7 @@ describe('Microcosm::patch', function() {
         }
       })
 
-      parent.push(patch, { bottom: true })
+      await parent.push(patch, { bottom: true })
 
       expect(parent).not.toHaveState('bottom')
       expect(child).toHaveState('bottom', false)

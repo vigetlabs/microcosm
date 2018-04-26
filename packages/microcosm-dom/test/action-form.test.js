@@ -1,11 +1,11 @@
 import React from 'react'
-import { Microcosm } from 'microcosm'
+import { Microcosm, scheduler } from 'microcosm'
 import { ActionForm, Presenter } from 'microcosm-dom/react'
 import { mount, unmount, submit } from './helpers'
 
 describe('ActionForm', function() {
   describe('callbacks', function() {
-    it('executes onComplete when that action completes', function() {
+    it('executes onComplete when that action completes', async function() {
       let repo = new Microcosm()
       let reply = action => repo.push(action, true)
       let onComplete = jest.fn()
@@ -16,16 +16,24 @@ describe('ActionForm', function() {
 
       submit(form)
 
+      await repo.history
+
       expect(onComplete).toHaveBeenCalledWith(repo.history.head)
     })
 
-    it('executes onError when that action fails', function() {
+    it('executes onError when that action fails', async function() {
       let repo = new Microcosm()
       let reply = () => repo.push(() => action => action.error('bad'))
       let onError = jest.fn()
       let form = mount(<ActionForm onError={onError} send={reply} />)
 
       submit(form)
+
+      try {
+        await repo.history
+      } catch (error) {
+        expect(error).toEqual('bad')
+      }
 
       expect(onError).toHaveBeenCalledWith(repo.history.head)
     })
@@ -61,12 +69,14 @@ describe('ActionForm', function() {
       expect(onNext).toHaveBeenCalledWith(repo.history.head)
     })
 
-    it('gracefully executes callbacks if not given an action', function() {
+    it('gracefully executes callbacks if not given an action', async function() {
       let onComplete = jest.fn()
 
       let form = mount(<ActionForm onComplete={onComplete} send={() => null} />)
 
       submit(form)
+
+      await scheduler()
 
       expect(onComplete).toHaveBeenCalled()
     })
@@ -93,7 +103,7 @@ describe('ActionForm', function() {
   })
 
   describe('context', function() {
-    it('inherits send from context', function() {
+    it('inherits send from context', async function() {
       let repo = new Microcosm()
       let onComplete = jest.fn()
 
@@ -105,10 +115,12 @@ describe('ActionForm', function() {
         )
       )
 
+      await repo.history
+
       expect(onComplete).toHaveBeenCalled()
     })
 
-    it('send as a prop overrides context', function() {
+    it('send as a prop overrides context', async function() {
       let repo = new Microcosm()
       let reply = action => repo.push(action, 'from-prop')
       let onComplete = jest.fn()
@@ -120,6 +132,8 @@ describe('ActionForm', function() {
           </Presenter>
         )
       )
+
+      await repo.history
 
       expect(onComplete).toHaveBeenCalled()
     })

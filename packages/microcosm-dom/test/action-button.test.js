@@ -27,7 +27,7 @@ describe('ActionButton', function() {
     expect(onSend).toHaveBeenCalledWith(repo.history.head)
   })
 
-  it('executes onComplete when that action completes', function() {
+  it('executes onComplete when that action completes', async function() {
     let repo = new Microcosm()
     let send = action => repo.push(action, true)
     let onComplete = jest.fn()
@@ -36,10 +36,12 @@ describe('ActionButton', function() {
       <ActionButton action="test" send={send} onComplete={onComplete} />
     ).click()
 
+    await repo.history
+
     expect(onComplete).toHaveBeenCalledWith(repo.history.head)
   })
 
-  it('executes onError when that action completes', function() {
+  it('executes onError when that action completes', async function() {
     let repo = new Microcosm()
     let send = () => repo.push(() => action => action.error('bad'))
     let onError = jest.fn()
@@ -47,6 +49,12 @@ describe('ActionButton', function() {
     let button = mount(<ActionButton send={send} onError={onError} />)
 
     button.click()
+
+    try {
+      await repo.history
+    } catch (error) {
+      expect(error).toBe('bad')
+    }
 
     expect(onError).toHaveBeenCalledWith(repo.history.head)
   })
@@ -65,7 +73,7 @@ describe('ActionButton', function() {
     expect(onNext).toHaveBeenCalledWith(repo.history.head)
   })
 
-  it('executes onCancel when that action is cancelled', function() {
+  it('executes onCancel when that action is cancelled', async function() {
     let repo = new Microcosm()
     let onCancel = jest.fn()
     let send = () => repo.push(() => action => action.cancel())
@@ -73,6 +81,8 @@ describe('ActionButton', function() {
     let button = mount(<ActionButton send={send} onCancel={onCancel} />)
 
     button.click()
+
+    await repo.history
 
     expect(onCancel).toHaveBeenCalledWith(repo.history.head)
   })

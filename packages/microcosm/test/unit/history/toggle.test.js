@@ -1,4 +1,4 @@
-import Microcosm from 'microcosm'
+import { Microcosm, scheduler } from 'microcosm'
 
 describe('History::toggle', function() {
   it('replaces history, skipping disabled actions', function() {
@@ -23,7 +23,7 @@ describe('History::toggle', function() {
     expect(repo.state.test).toBe(2)
   })
 
-  it('does not replay inactive branches', function() {
+  it('does not replay inactive branches', async function() {
     let repo = new Microcosm({ debug: true })
 
     repo.addDomain('test', {
@@ -50,12 +50,21 @@ describe('History::toggle', function() {
     // * indicates active branch
     expect(repo.state.test).toBe(4) // one + three
 
-    repo.domains.test.subscribe(() => {
-      throw 'Repo should not have changed'
-    })
+    let changed = jest.fn()
+
+    repo.domains.test.subscribe({ next: changed })
+
+    // Subscribing to test will immediately fire a change event. This
+    // is subjects are eager.
+    await scheduler()
+    changed.mockClear()
 
     repo.history.toggle(two)
 
     expect(repo.state.test).toBe(4) // one + three
+
+    await scheduler()
+
+    expect(changed).toHaveBeenCalledTimes(0)
   })
 })

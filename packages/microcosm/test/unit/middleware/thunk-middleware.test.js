@@ -1,10 +1,12 @@
 import Microcosm from 'microcosm'
 
 describe('Thunk middleware', function() {
-  it('passes the action and repo as arguments', function() {
-    let spy = jest.fn()
+  it('passes the action and repo as arguments', async () => {
+    let spy = jest.fn(action => action.complete())
     let repo = new Microcosm()
     let action = repo.push(n => spy)
+
+    await action
 
     expect(spy).toHaveBeenCalledWith(action, repo)
   })

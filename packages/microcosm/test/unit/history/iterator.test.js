@@ -1,22 +1,22 @@
-import Microcosm, { Observable } from 'microcosm'
+import { Microcosm, Observable, scheduler } from 'microcosm'
 
-describe('History @@iterator', function() {
-  it('works with Array.from', function() {
+describe('History @@iterator', () => {
+  it('works with Array.from', async () => {
     let repo = new Microcosm({ debug: true })
 
-    repo.push('one')
-    repo.push('two')
+    await repo.push('one')
+    await repo.push('two')
 
     let list = Array.from(repo.history)
 
     expect(list.map(i => i.meta.key)).toEqual(['one', 'two'])
   })
 
-  it('works with for...of', function() {
+  it('works with for...of', async () => {
     let repo = new Microcosm({ debug: true })
 
-    repo.push('one')
-    repo.push('two')
+    await repo.push('one')
+    await repo.push('two')
 
     let list = []
 
@@ -27,12 +27,11 @@ describe('History @@iterator', function() {
     expect(list).toEqual(['one', 'two'])
   })
 
-  it('works with Promise.all', async function() {
+  it('works with Promise.all', async () => {
     let repo = new Microcosm({ debug: true })
 
-    repo.push(() => Promise.resolve('one'))
-    repo.push(() => Promise.resolve('two'))
-
+    await repo.push(() => Promise.resolve('one'))
+    await repo.push(() => Promise.resolve('two'))
     await Promise.all(repo.history)
 
     expect(repo.history.size).toBe(2)
@@ -42,14 +41,16 @@ describe('History @@iterator', function() {
     }
   })
 
-  it('works with Observable.of', function() {
+  it('works with Observable.of', async () => {
     let repo = new Microcosm({ debug: true })
-
-    repo.push(() => Promise.resolve('one'))
-    repo.push(() => Promise.resolve('two'))
     let complete = jest.fn()
 
+    await repo.push(() => Promise.resolve('one'))
+    await repo.push(() => Promise.resolve('two'))
+
     Observable.of(repo.history).subscribe({ complete })
+
+    await scheduler()
 
     expect(complete).toHaveBeenCalled()
   })

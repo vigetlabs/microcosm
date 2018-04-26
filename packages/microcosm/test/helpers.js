@@ -9,3 +9,5 @@ export function asTree(history) {
 
   return asciitree(dig(history.toJSON().tree))
 }
+
+export const delay = n => new Promise(resolve => setTimeout(resolve, n))

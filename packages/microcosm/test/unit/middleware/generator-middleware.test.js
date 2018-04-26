@@ -1,4 +1,4 @@
-import Microcosm from 'microcosm'
+import { Microcosm, scheduler } from 'microcosm'
 
 describe('Generator Middleware', function() {
   it('can push generators', async () => {
@@ -25,13 +25,11 @@ describe('Generator Middleware', function() {
     let stepper = n => n + 1
     let repo = new Microcosm()
 
-    function range(start, end) {
-      return function*(repo) {
-        let value = start
+    function* range(repo, start, end) {
+      let value = start
 
-        while (value < end) {
-          value = yield repo.push(stepper, value)
-        }
+      while (value < end) {
+        value = yield repo.push(stepper, value)
       }
     }
 
@@ -46,11 +44,9 @@ describe('Generator Middleware', function() {
     let repo = new Microcosm()
     let step = n => n
 
-    function test() {
-      return function*(repo) {
-        yield repo.push(step, 1)
-        yield true
-      }
+    function* test(repo) {
+      yield repo.push(step, 1)
+      yield true
     }
 
     let result = await repo.push(test)
@@ -64,12 +60,10 @@ describe('Generator Middleware', function() {
     let stepper = n => n + 1
     let repo = new Microcosm()
 
-    let sequence = repo.push(function() {
-      return function*(repo) {
-        yield repo.push(stepper, 0)
-        yield repo.push(() => Promise.reject('failure'))
-        yield repo.push(stepper)
-      }
+    let sequence = repo.push(function*(repo) {
+      yield repo.push(stepper, 0)
+      yield repo.push(() => Promise.reject('failure'))
+      yield repo.push(stepper)
     })
 
     sequence.subscribe({
@@ -88,20 +82,20 @@ describe('Generator Middleware', function() {
     }
   })
 
-  it('a cancelled step halts the chain', () => {
+  it('a cancelled step halts the chain', async () => {
     expect.assertions(1)
 
     let stepper = n => action => action.complete(n + 1)
-    let cancel = n => action => action.cancel('cancelled')
+    let cancel = n => action => action.cancel()
     let repo = new Microcosm()
 
-    let sequence = repo.push(function() {
-      return function*(repo) {
-        yield repo.push(stepper, 0)
-        yield repo.push(cancel)
-        yield repo.push(stepper)
-      }
+    let sequence = repo.push(function*(repo) {
+      yield repo.push(stepper, 0)
+      yield repo.push(cancel, 1)
+      yield repo.push(stepper)
     })
+
+    let cancelled = jest.fn()
 
     sequence.subscribe({
       complete() {
@@ -110,10 +104,12 @@ describe('Generator Middleware', function() {
       error() {
         throw new Error('Sequence should not have rejected')
       },
-      cancel(result) {
-        expect(result).toEqual('cancelled')
-      }
+      cancel: cancelled
     })
+
+    await sequence
+
+    expect(cancelled).toHaveBeenCalled()
   })
 
   it('waits for an async action to finish before moving on', async () => {
@@ -123,11 +119,9 @@ describe('Generator Middleware', function() {
       return new Promise(resolve => setTimeout(() => resolve(true), time))
     }
 
-    let payload = await repo.push(function() {
-      return function*(repo) {
-        yield repo.push(sleep, 1)
-        yield repo.push(sleep, 1)
-      }
+    let payload = await repo.push(function*(repo) {
+      yield repo.push(sleep, 1)
+      yield repo.push(sleep, 1)
     })
 
     expect(payload).toEqual(true)
@@ -143,18 +137,14 @@ describe('Generator Middleware', function() {
       }
     }
 
-    function dream(time) {
-      return function*(repo) {
-        yield repo.push(sleep, time)
-        yield repo.push(sleep, time)
-      }
+    function* dream(repo, time) {
+      yield repo.push(sleep, time)
+      yield repo.push(sleep, time)
     }
 
-    let result = await repo.push(function() {
-      return function*(repo) {
-        yield repo.push(dream, 1)
-        yield repo.push(dream, 1)
-      }
+    let result = await repo.push(function*(repo) {
+      yield repo.push(dream, 1)
+      yield repo.push(dream, 1)
     })
 
     expect(result).toEqual(true)
@@ -167,18 +157,14 @@ describe('Generator Middleware', function() {
       return action => setTimeout(action.complete, time)
     }
 
-    function dream(time) {
-      return function*(repo) {
-        yield repo.push(sleep, time)
-        yield repo.push(sleep, time)
-      }
+    function* dream(repo, time) {
+      yield repo.push(sleep, time)
+      yield repo.push(sleep, time)
     }
 
-    function dream10() {
-      return function*(repo) {
-        yield repo.push(dream, 1)
-        yield repo.push(dream, 1)
-      }
+    function* dream10(repo) {
+      yield repo.push(dream, 1)
+      yield repo.push(dream, 1)
     }
 
     await Promise.all([repo.push(dream10), repo.push(dream10)])
@@ -191,12 +177,10 @@ describe('Generator Middleware', function() {
       return action => setTimeout(action.complete, time)
     }
 
-    function dream(time) {
-      return function*(repo) {
-        yield repo.push(sleep, time)
-        yield repo.push(sleep, time)
-        yield repo.push(sleep, time)
-      }
+    function* dream(repo, time) {
+      yield repo.push(sleep, time)
+      yield repo.push(sleep, time)
+      yield repo.push(sleep, time)
     }
 
     repo.push(dream, 1)
@@ -210,12 +194,9 @@ describe('Generator Middleware', function() {
     let stepper = n => n + 1
     let repo = new Microcosm()
 
-    function testReturnValue() {
-      return function*(repo) {
-        yield repo.push(stepper, 1)
-
-        return repo.push(stepper, 2)
-      }
+    function* testReturnValue(repo) {
+      yield repo.push(stepper, 1)
+      return repo.push(stepper, 2)
     }
 
     let result = await repo.push(testReturnValue)
@@ -241,13 +222,11 @@ describe('Generator Middleware', function() {
         }
       })
 
-      function testReturnValue() {
-        return function*(repo) {
-          yield [repo.push(add, 1), repo.push(add, 1)]
-        }
-      }
+      repo.push(function*(repo) {
+        yield [repo.push(add, 1), repo.push(add, 1)]
+      })
 
-      await repo.push(testReturnValue)
+      await scheduler()
 
       expect(repo).toHaveState('count', 2)
     })
@@ -255,8 +234,6 @@ describe('Generator Middleware', function() {
 
   describe('when yielding an object', function() {
     it('waits for all items to complete', async function() {
-      expect.assertions(2)
-
       let add = n => n
       let repo = new Microcosm()
 
@@ -271,15 +248,11 @@ describe('Generator Middleware', function() {
         }
       })
 
-      function testReturnValue() {
-        return function*(repo) {
-          yield { one: repo.push(add, 1), two: repo.push(add, 2) }
-        }
-      }
+      let payload = await repo.push(function*(repo) {
+        yield { one: repo.push(add, 1), two: repo.push(add, 2) }
+      })
 
-      let payload = await repo.push(testReturnValue)
       expect(repo).toHaveState('count', 3)
-
       expect(payload).toEqual({ one: 1, two: 2 })
     })
   })

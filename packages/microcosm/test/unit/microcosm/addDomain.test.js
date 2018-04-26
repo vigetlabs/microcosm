@@ -1,4 +1,5 @@
 import { Microcosm, Observable, reset } from 'microcosm'
+import { delay } from '../../helpers'
 
 describe('Microcosm::addDomain', function() {
   it('adding a domain backfills the initial state', function() {
@@ -30,7 +31,7 @@ describe('Microcosm::addDomain', function() {
     )
   })
 
-  it('can add observables as domains', function() {
+  it('can add observables as domains', async () => {
     let repo = new Microcosm()
 
     repo.addDomain(
@@ -39,6 +40,8 @@ describe('Microcosm::addDomain', function() {
         observer.next('test')
       })
     )
+
+    await delay()
 
     expect(repo.domains.test.valueOf()).toEqual('test')
   })
@@ -59,7 +62,7 @@ describe('Microcosm::addDomain', function() {
       expect(fork).toHaveState('a', 0)
     })
 
-    it('adding a domain to a fork does not reset all state', function() {
+    it('adding a domain to a fork does not reset all state', async () => {
       let repo = new Microcosm()
 
       repo.addDomain('a', {
@@ -68,7 +71,7 @@ describe('Microcosm::addDomain', function() {
         }
       })
 
-      repo.push(reset, { a: 1 })
+      await repo.push(reset, { a: 1 })
 
       expect(repo).toHaveState('a', 1)
 
@@ -84,7 +87,7 @@ describe('Microcosm::addDomain', function() {
       expect(fork).toHaveState('b', 2)
     })
 
-    it('adding a domain to a parent sends initial state to forks', function() {
+    it('adding a domain to a parent sends initial state to forks', async () => {
       let repo = new Microcosm()
       let fork = repo.fork()
 
@@ -94,7 +97,7 @@ describe('Microcosm::addDomain', function() {
         }
       })
 
-      repo.push(reset, { a: 1 })
+      await repo.push(reset, { a: 1 })
 
       expect(repo).toHaveState('a', 1)
       expect(fork).toHaveState('a', 1)
@@ -104,6 +107,7 @@ describe('Microcosm::addDomain', function() {
           return 2
         }
       })
+
       expect(repo).toHaveState('a', 1)
       expect(fork).toHaveState('a', 1)
 

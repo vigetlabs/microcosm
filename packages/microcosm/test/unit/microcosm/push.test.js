@@ -25,7 +25,7 @@ describe('Microcosm::push', function() {
     expect(command).toHaveBeenCalledTimes(1)
   })
 
-  it('can push an action, resolving it into state', () => {
+  it('can push an action, resolving it into state', async () => {
     let repo = new Microcosm()
     let step = jest.fn(n => n)
 
@@ -42,8 +42,8 @@ describe('Microcosm::push', function() {
       }
     })
 
-    repo.push(step, 1)
-    repo.push(step, 3)
+    await repo.push(step, 1)
+    await repo.push(step, 3)
 
     expect(repo).toHaveState('count', 4)
   })
@@ -62,7 +62,7 @@ describe('Microcosm::push', function() {
   })
 
   describe('forks', function() {
-    it('pushing actions on the child float up to the parent', function() {
+    it('pushing actions on the child float up to the parent', async () => {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -93,8 +93,8 @@ describe('Microcosm::push', function() {
 
       expect(child.state.shape).toEqual('triangle')
 
-      child.push(setShape, 'square')
-      child.push(setColor, 'blue')
+      await child.push(setShape, 'square')
+      await child.push(setColor, 'blue')
 
       expect(parent.state.color).toEqual('blue')
       expect(parent.state.shape).toEqual(undefined)
@@ -102,7 +102,7 @@ describe('Microcosm::push', function() {
       expect(child.state.shape).toEqual('square')
     })
 
-    it('pushing actions on the parent sink down to children', function() {
+    it('pushing actions on the parent sink down to children', async () => {
       const parent = new Microcosm()
       const child = parent.fork()
 
@@ -132,8 +132,8 @@ describe('Microcosm::push', function() {
       expect(child.state.color).toEqual('red')
       expect(child.state.shape).toEqual('triangle')
 
-      parent.push(setShape, 'square')
-      parent.push(setColor, 'blue')
+      await parent.push(setShape, 'square')
+      await parent.push(setColor, 'blue')
 
       expect(parent.state.color).toEqual('blue')
       expect(parent.state.shape).toEqual(undefined)
@@ -141,7 +141,7 @@ describe('Microcosm::push', function() {
       expect(child.state.shape).toEqual('square')
     })
 
-    it('forks from the same parent propagate', function() {
+    it('forks from the same parent propagate', async () => {
       const parent = new Microcosm()
       const left = parent.fork()
       const right = parent.fork()
@@ -157,7 +157,7 @@ describe('Microcosm::push', function() {
         }
       })
 
-      parent.push(setColor, 'blue')
+      await parent.push(setColor, 'blue')
 
       expect(parent.state.color).toEqual('blue')
       expect(right.state.color).toEqual('blue')

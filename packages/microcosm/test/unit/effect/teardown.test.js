@@ -1,7 +1,7 @@
-import { Microcosm, Effect } from 'microcosm'
+import { Microcosm, Effect, scheduler } from 'microcosm'
 
 describe('Effect::teardown', function() {
-  it('is invoked with a reference to the repo and options', function() {
+  it('is invoked with a reference to the repo and options', async function() {
     expect.assertions(2)
 
     let repo = new Microcosm()
@@ -15,5 +15,7 @@ describe('Effect::teardown', function() {
 
     repo.addEffect(Test, { test: true })
     repo.complete()
+
+    await scheduler()
   })
 })

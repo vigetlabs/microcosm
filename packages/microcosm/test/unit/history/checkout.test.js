@@ -1,4 +1,5 @@
 import Microcosm from 'microcosm'
+import { delay } from '../../helpers'
 
 describe('History::checkout', function() {
   const action = n => n
@@ -44,7 +45,7 @@ describe('History::checkout', function() {
     }
   })
 
-  it('reconciles on the supplied action if it is active', function() {
+  it('reconciles on the supplied action if it is active', async () => {
     let repo = new Microcosm()
     let one = repo.push(action)
 
@@ -56,10 +57,12 @@ describe('History::checkout', function() {
 
     repo.history.checkout(one)
 
+    await delay()
+
     expect(handler).toHaveBeenCalledWith(one)
   })
 
-  it('reconciles on the most recent shared node if hopping branches', function() {
+  it('reconciles on the most recent shared node if hopping branches', async () => {
     let repo = new Microcosm({ debug: true })
 
     repo.addDomain('test', {
@@ -74,7 +77,9 @@ describe('History::checkout', function() {
     let two = repo.push(action, 2)
 
     repo.history.checkout(one)
-    repo.push(action, 3)
+
+    await repo.push(action, 3)
+
     repo.history.checkout(two)
 
     expect(repo).toHaveState('test', 2)
