@@ -169,6 +169,14 @@ function disposeSubscription(subscription: Subscription) {
   cleanupSubscription(subscription)
 }
 
+const ClosedObserver = new Observer()
+
+function closeSubscription(subscription: Subscription): void {
+  subscription._observer = ClosedObserver
+  subscription._queue.length = 0
+  subscription._state = CLOSED
+}
+
 function cleanupSubscription(subscription: Subscription): void {
   let cleanup = subscription._cleanup
 
@@ -181,14 +189,6 @@ function cleanupSubscription(subscription: Subscription): void {
   } else if (cleanup instanceof Subscription) {
     cleanup.unsubscribe()
   }
-}
-
-const ClosedObserver = new Observer()
-
-function closeSubscription(subscription: Subscription): void {
-  subscription._observer = ClosedObserver
-  subscription._queue.length = 0
-  subscription._state = CLOSED
 }
 
 function flushSubscription(subscription: Subscription): void {
