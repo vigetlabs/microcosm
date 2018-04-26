@@ -83,12 +83,7 @@ export class History extends Subject {
 
     action.every(this.dispatch, this)
 
-    try {
-      coroutine(action, command, params, origin)
-    } catch (x) {
-      action.error(x)
-      throw x
-    }
+    coroutine(action, command, params, origin)
 
     return action
   }

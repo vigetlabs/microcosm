@@ -14,7 +14,7 @@ export function tag(fn: string | Command, name?: string): * {
   assert(fn != undefined, `Can not tag action. Value is ${String(fn)}.`)
 
   if (typeof fn !== 'function') {
-    return String(fn)
+    return fn.toString()
   }
 
   if (fn.hasOwnProperty('toString')) {

@@ -21,7 +21,6 @@ import {
   type SubscriptionObserver,
   type Cleanup
 } from './observable'
-import { observable } from './symbols'
 import { set, merge } from './data'
 import { isPromise, isObservable, isObject, isPlainObject } from './type-checks'
 
@@ -114,11 +113,6 @@ export class Subject extends Observable {
     })
       .then(() => this.payload)
       .then(pass, fail)
-  }
-
-  // $FlowFixMe - Flow doesn't understand computed keys :-/
-  [observable]() {
-    return this
   }
 
   toString(): string {
