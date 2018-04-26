@@ -197,7 +197,7 @@ function flushSubscription(subscription: Subscription): void {
   subscription._queue = []
   subscription._state = WORKING
 
-  for (let i = 0; i < queue.length; ++i) {
+  for (let i = 0; i < queue.length; i++) {
     if (subscription.closed) {
       break
     }
