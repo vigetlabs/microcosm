@@ -19,7 +19,8 @@ import { type Microcosm } from './microcosm'
 import {
   Observable,
   type SubscriptionObserver,
-  type Cleanup
+  type Cleanup,
+  type Subscriber
 } from './observable'
 import { set, merge } from './data'
 import { isPromise, isObservable, isObject, isPlainObject } from './type-checks'
@@ -30,7 +31,7 @@ export class Subject extends Observable {
   disabled: boolean
 
   _observers: SubscriptionObserver[]
-  _subscriber: SubscriptionObserver => ?Cleanup
+  _subscriber: Subscriber
 
   constructor(payload?: *, meta?: Object) {
     super()
