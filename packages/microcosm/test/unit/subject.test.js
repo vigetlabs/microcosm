@@ -1,4 +1,4 @@
-import { Subject, Observable, scheduler } from 'microcosm'
+import { Subject } from 'microcosm'
 
 describe('Subject', function() {
   describe('next', function() {
@@ -9,8 +9,9 @@ describe('Subject', function() {
       subject.subscribe({ next })
       subject.next(1)
       subject.next(2)
+      subject.complete()
 
-      await scheduler()
+      await subject
 
       expect(next).toHaveBeenCalledTimes(2)
       expect(next).toHaveBeenCalledWith(1)
@@ -24,8 +25,9 @@ describe('Subject', function() {
       subject.next(1)
       subject.subscribe({ next })
       subject.next(2)
+      subject.complete()
 
-      await scheduler()
+      await subject
 
       expect(next).toHaveBeenCalledTimes(2)
       expect(next).toHaveBeenCalledWith(1)
@@ -39,8 +41,9 @@ describe('Subject', function() {
       subject.subscribe({ next })
       subject.next(1)
       subject.next(null)
+      subject.complete()
 
-      await scheduler()
+      await subject
 
       expect(next).toHaveBeenCalledTimes(2)
       expect(next).toHaveBeenCalledWith(1)
@@ -55,7 +58,7 @@ describe('Subject', function() {
       subject.subscribe({ next })
       subject.next(2)
 
-      await scheduler()
+      await subject
 
       expect(next).toHaveBeenCalledTimes(1)
       expect(next).toHaveBeenCalledWith(1)
@@ -69,7 +72,7 @@ describe('Subject', function() {
       subject.complete()
       subject.next(true)
 
-      await scheduler()
+      await subject
 
       expect(next).toHaveBeenCalledTimes(0)
     })
@@ -78,11 +81,15 @@ describe('Subject', function() {
       let subject = new Subject()
       let next = jest.fn()
 
-      subject.error()
+      subject.error('reason')
       subject.subscribe({ next })
       subject.next(true)
 
-      await scheduler()
+      try {
+        await subject
+      } catch (error) {
+        expect(error).toEqual('reason')
+      }
 
       expect(next).toHaveBeenCalledTimes(0)
     })
@@ -95,7 +102,7 @@ describe('Subject', function() {
       subject.subscribe({ next })
       subject.next(true)
 
-      await scheduler()
+      await subject
 
       expect(next).toHaveBeenCalledTimes(0)
     })
@@ -111,7 +118,7 @@ describe('Subject', function() {
       subject.complete()
       subject.complete()
 
-      await scheduler()
+      await subject
 
       expect(subject.closed).toBe(true)
       expect(complete).toHaveBeenCalledTimes(1)
@@ -124,7 +131,7 @@ describe('Subject', function() {
       subject.complete()
       subject.subscribe({ complete })
 
-      await scheduler()
+      await subject
 
       expect(subject.closed).toBe(true)
       expect(complete).toHaveBeenCalledTimes(1)
@@ -137,7 +144,7 @@ describe('Subject', function() {
       subject.subscribe({ unsubscribe })
       subject.complete(true)
 
-      await scheduler()
+      await subject
 
       expect(unsubscribe).not.toHaveBeenCalled()
     })
@@ -148,12 +155,17 @@ describe('Subject', function() {
       let subject = new Subject()
       let error = jest.fn()
 
-      subject.error()
+      subject.error('reason')
       subject.subscribe({ error })
 
-      await scheduler()
+      try {
+        await subject
+      } catch (error) {
+        expect(error).toEqual('reason')
+      }
 
-      expect(error).toHaveBeenCalled()
+      expect(error).toHaveBeenCalledTimes(1)
+      expect(error).toHaveBeenCalledWith('reason')
     })
 
     it('does not invoke the error if already completed', async () => {
@@ -164,7 +176,7 @@ describe('Subject', function() {
       subject.complete()
       subject.error()
 
-      await scheduler()
+      await subject
 
       expect(error).not.toHaveBeenCalled()
     })
@@ -176,7 +188,7 @@ describe('Subject', function() {
 
       subject.cancel()
 
-      await scheduler()
+      await subject
 
       expect(subject.closed).toBe(true)
     })
@@ -260,94 +272,6 @@ describe('Subject', function() {
     })
   })
 
-  describe('.hash', function() {
-    it('works on promises', async () => {
-      expect.assertions(1)
-
-      let hash = Subject.hash({ key: Promise.resolve(true) })
-
-      hash.subscribe({
-        complete: () => {
-          expect(hash.payload).toEqual({ key: true })
-        }
-      })
-
-      await scheduler()
-    })
-
-    it('works on primitive values', async () => {
-      expect.assertions(1)
-
-      let hash = Subject.hash({ key: true })
-
-      hash.subscribe({
-        next: value => {
-          expect(value).toEqual({ key: true })
-        }
-      })
-
-      await scheduler()
-    })
-
-    it('works on other observables', async () => {
-      let next = jest.fn()
-      let complete = jest.fn()
-
-      let hash = Subject.hash({ key: Observable.of(1, 2, 3) })
-
-      hash.subscribe({
-        next,
-        complete
-      })
-
-      await scheduler()
-
-      expect(next).toHaveBeenCalledWith({ key: 3 })
-      expect(complete).toHaveBeenCalled()
-    })
-
-    it('does not send updates if the value did not change', async () => {
-      let next = jest.fn()
-      let complete = jest.fn()
-
-      let hash = Subject.hash({
-        key: Observable.of(1, 1, 1)
-      })
-
-      hash.subscribe({ next, complete })
-
-      await scheduler()
-
-      expect(next).toHaveBeenCalledWith({ key: 1 })
-      expect(next).toHaveBeenCalledTimes(1)
-      expect(complete).toHaveBeenCalledTimes(1)
-    })
-
-    it('works on subjects', async () => {
-      let next = jest.fn()
-      let complete = jest.fn()
-
-      let subject = new Subject()
-
-      subject.next(1)
-
-      let hash = Subject.hash({ key: subject })
-
-      hash.subscribe({ next, complete })
-
-      subject.next(2)
-      subject.complete()
-
-      await scheduler()
-
-      expect(hash.payload).toEqual({ key: 2 })
-
-      expect(next).toHaveBeenCalledWith({ key: 1 })
-      expect(next).toHaveBeenCalledWith({ key: 2 })
-      expect(complete).toHaveBeenCalled()
-    })
-  })
-
   describe('.map', () => {
     it('works like observable.map', async () => {
       let subject = new Subject()
@@ -361,7 +285,9 @@ describe('Subject', function() {
         subject.next(i)
       }
 
-      await scheduler()
+      subject.complete()
+
+      await subject
 
       expect(answers).toEqual([0, 2, 4, 6, 8])
     })
@@ -376,7 +302,9 @@ describe('Subject', function() {
 
       double.subscribe(value => answers.push(value))
 
-      await scheduler()
+      subject.complete()
+
+      await subject
 
       expect(answers).toEqual([10])
     })
@@ -392,8 +320,9 @@ describe('Subject', function() {
       double.subscribe(value => answers.push(value))
       subject.next(2)
       subject.next(3)
+      subject.complete()
 
-      await scheduler()
+      await subject
 
       expect(answers).toEqual([2, 4, 6])
     })
@@ -401,19 +330,19 @@ describe('Subject', function() {
     it('only emits the final value when it completes', async () => {
       let subject = new Subject()
 
-      let double = subject.map(value => value * 2)
+      let reflect = subject.map(value => value)
       let answers = []
 
       subject.next(0)
       subject.next(1)
       subject.complete()
-      double.subscribe(value => answers.push(value))
+      reflect.subscribe(value => answers.push(value))
       subject.next(2)
       subject.next(3)
 
-      await scheduler()
+      await subject
 
-      expect(answers).toEqual([2])
+      expect(answers).toEqual([1])
     })
   })
 })

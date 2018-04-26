@@ -1,4 +1,4 @@
-import { Subject, set } from 'microcosm'
+import { SubjectHash, set } from 'microcosm'
 import { groupBy } from 'lodash'
 import uid from 'uid'
 import Collection from './collection'
@@ -20,7 +20,7 @@ class Lists extends Collection {
   }
 
   withCounts(items) {
-    return Subject.hash({ items, lists: this }).map(next => {
+    return new SubjectHash({ items, lists: this }).map(next => {
       let groups = groupBy(items, 'list')
 
       return next.lists.map(list => {

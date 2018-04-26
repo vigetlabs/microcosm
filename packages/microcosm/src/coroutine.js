@@ -2,7 +2,8 @@
  * @flow
  */
 
-import { Subject } from './subject'
+import { type Subject } from './subject'
+import { SubjectMap } from './subject-map'
 import { toStringTag } from './symbols'
 import { isPromise } from './type-checks'
 
@@ -56,7 +57,7 @@ function asGenerator(action: Subject, iterator: Iterator<*>) {
     if (next.done) {
       action.complete()
     } else {
-      let subject = Subject.hash(value)
+      let subject = new SubjectMap(value)
 
       subject.subscribe(
         // next

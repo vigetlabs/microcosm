@@ -1,4 +1,4 @@
-import { Subject, merge } from 'microcosm'
+import { Subject, SubjectMap, merge } from 'microcosm'
 import { identity, noop, toCallbackName } from './utilities'
 
 export function generateActionButton(createElement, Component) {
@@ -38,7 +38,7 @@ export function generateActionButton(createElement, Component) {
 
     click() {
       let result = this.send(this.props.action, this._parameterize())
-      let action = Subject.hash(result)
+      let action = new SubjectMap(result)
 
       this.props.onSend(action)
 
