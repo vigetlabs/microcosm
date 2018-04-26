@@ -111,7 +111,7 @@ export class Subscription implements Unsubscribable {
 }
 
 export class Observable {
-  _subscriber: SubscriptionObserver => ?Cleanup
+  _subscriber: Subscriber
 
   constructor(subscriber?: Subscriber) {
     this._subscriber = subscriber || noop

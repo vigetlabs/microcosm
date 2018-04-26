@@ -14,22 +14,21 @@
  *
  * @flow
  */
-import assert from 'assert'
+
 import {
   Observable,
   type SubscriptionObserver,
-  type Cleanup,
   type Subscriber
 } from './observable'
-import { set, merge } from './data'
-import { isPromise, isObservable, isObject, isPlainObject } from './type-checks'
+import { merge } from './data'
+import { isPromise, isObservable } from './type-checks'
 
 export class Subject extends Observable {
   meta: { key: *, status: string, origin: * }
   payload: any
   disabled: boolean
 
-  _observers: SubscriptionObserver[]
+  _observers: Set<SubscriptionObserver>
   _subscriber: Subscriber
 
   constructor(payload?: *, meta?: Object) {
@@ -40,11 +39,11 @@ export class Subject extends Observable {
     this.disabled = false
 
     this._subscriber = this._multicast
-    this._observers = []
+    this._observers = new Set()
   }
 
-  _multicast(observer: SubscriptionObserver): Cleanup {
-    this._observers.push(observer)
+  _multicast(observer: SubscriptionObserver) {
+    this._observers.add(observer)
 
     switch (this.status) {
       case 'next':
@@ -62,7 +61,7 @@ export class Subject extends Observable {
         break
     }
 
-    return remove.bind(null, this._observers, observer)
+    return this._observers.delete.bind(this._observers, observer)
   }
 
   get status(): string {
@@ -100,19 +99,18 @@ export class Subject extends Observable {
     return () => {
       this.meta.status = 'start'
       this.payload = null
-
-      for (var i = 0; i < this._observers.length; i++) {
-        this._observers[i].unsubscribe()
-      }
+      this._observers.forEach(observer => observer.unsubscribe())
     }
   }
 
   then(pass: *, fail: *): Promise<*> {
     return new Promise((resolve, reject) => {
-      this.subscribe(null, reject, resolve, resolve)
-    })
-      .then(() => this.payload)
-      .then(pass, fail)
+      this.subscribe({
+        error: reject,
+        complete: () => resolve(this.payload),
+        cancel: () => resolve(this.payload)
+      })
+    }).then(pass, fail)
   }
 
   toString(): string {
@@ -129,73 +127,6 @@ export class Subject extends Observable {
 
   valueOf() {
     return this.payload
-  }
-
-  static hash(obj: *): Subject {
-    let isArray = Array.isArray(obj)
-    let isPojo = isPlainObject(obj)
-
-    if (!isArray && !isPojo) {
-      return Subject.from(obj)
-    }
-
-    let payload = isArray ? [] : {}
-    let subject = new Subject(payload)
-    let building = true
-    let jobs = 0
-
-    function taskFinished() {
-      if (--jobs <= 0) {
-        if (!building) {
-          subject.complete(payload)
-        }
-      }
-    }
-
-    function assign(key: string, value: *): void {
-      // $FlowFixMe - Signature of set() is too strict
-      payload = set(payload, key, value)
-
-      if (payload !== subject.payload) {
-        subject.next(payload)
-      }
-    }
-
-    for (var key in obj) {
-      let value = obj[key]
-
-      if (!isObject(value)) {
-        payload = set(payload, key, value)
-        continue
-      }
-
-      jobs += 1
-
-      if (value instanceof Subject) {
-        payload = set(payload, key, value.payload)
-      }
-
-      let subscription = Subject.hash(value).subscribe({
-        next: assign.bind(null, key),
-        error: subject.error,
-        complete: taskFinished,
-        cancel: taskFinished
-      })
-
-      subject.subscribe({ cancel: subscription.unsubscribe })
-    }
-
-    if (payload !== subject.payload) {
-      subject.next(payload)
-    }
-
-    building = false
-
-    if (jobs <= 0) {
-      subject.complete()
-    }
-
-    return subject
   }
 
   static from(source: *): Subject {
@@ -243,16 +174,6 @@ function fromObservable(observable: Observable): Subject {
   let subject = new Subject()
   observable.subscribe(subject)
   return subject
-}
-
-function remove(list: *[], item: *): void {
-  let index = list.indexOf(item)
-
-  if (index >= 0) {
-    list.splice(index, -1)
-  } else {
-    assert(false, 'Attempted to remove an observer that was never added.')
-  }
 }
 
 function update(subject: Subject, status: string, value: *): void {

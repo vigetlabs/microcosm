@@ -1,4 +1,4 @@
-import { Microcosm, Subject } from 'microcosm'
+import { Microcosm, Subject, SubjectMap } from 'microcosm'
 import { advice, noop, shallowDiffers } from './utilities'
 import { intercept } from './intercept'
 
@@ -106,7 +106,7 @@ export function generatePresenter(createElement, Component) {
     constructor(props, context) {
       super(props, context)
 
-      this.model = Subject.hash({})
+      this.model = Subject.of({})
       this.presenter = props.presenter
 
       let prepo = props.repo || context.repo || new Microcosm()
@@ -148,7 +148,7 @@ export function generatePresenter(createElement, Component) {
     updateModel(props, state) {
       this.model.clear()
 
-      this.model = Subject.hash(
+      this.model = new SubjectMap(
         this.presenter.getModel(this.repo, props, state)
       )
 

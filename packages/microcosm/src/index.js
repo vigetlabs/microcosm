@@ -3,6 +3,7 @@ export { Microcosm, Microcosm as default } from './microcosm'
 // Observables libraries
 export { Observable } from './observable'
 export { Subject } from './subject'
+export { SubjectMap } from './subject-map'
 
 // Actions for performing key lifecycle actions
 export { RESET as reset, PATCH as patch } from './lifecycle'
