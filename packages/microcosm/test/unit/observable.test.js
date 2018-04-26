@@ -18,7 +18,7 @@ describe('Observable', function() {
       scheduler().flush()
     })
 
-    it('cleans ups any enqueued tasks on unsubscribe', () => {
+    it('cleans up any enqueued tasks on unsubscribe', () => {
       expect.assertions(1)
 
       let observable = new Observable(observer => {
