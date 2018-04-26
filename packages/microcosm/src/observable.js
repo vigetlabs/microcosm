@@ -16,7 +16,7 @@ const BUFFERING = 1
 // A subscription is processing
 const WORKING = 2
 // A subscription is done
-const CLOSED = 4
+const CLOSED = 3
 
 const NEXT = 'next'
 const ERROR = 'error'
