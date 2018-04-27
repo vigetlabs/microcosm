@@ -2,7 +2,6 @@
  * @flow
  */
 
-import { type Microcosm } from './microcosm'
 import { Subject } from './subject'
 import { Tree } from './tree'
 import { coroutine } from './coroutine'
@@ -65,7 +64,7 @@ export class History extends Subject {
     }
   }
 
-  append(origin: Microcosm, command: Command, ...params: *[]): Subject {
+  append(origin: *, command: Command, ...params: *[]): Subject {
     let action = new Subject(undefined, {
       key: tag(command).toString(),
       origin

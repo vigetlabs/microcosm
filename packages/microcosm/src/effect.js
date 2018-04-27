@@ -2,20 +2,19 @@
  * @flow
  */
 
-import { type Microcosm } from '../src/microcosm'
 import { type Subject } from './subject'
 import { Registry } from './registry'
 import { EMPTY_OBJECT } from './empty'
 import { Agent } from './agent'
 
 type EffectRegistry = {
-  [any]: (repo: Microcosm, payload?: *) => *
+  [any]: (repo: *, payload?: *) => *
 }
 
 export class Effect extends Agent {
   _registry: Registry
 
-  constructor(repo: Microcosm, options?: Object) {
+  constructor(repo: *, options?: Object) {
     super(repo, options)
 
     this._registry = new Registry(this)

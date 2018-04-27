@@ -3,7 +3,6 @@
  */
 
 import assert from 'assert'
-import { type Microcosm } from './microcosm'
 import { Subject } from './subject'
 import { Registry } from './registry'
 import { EMPTY_OBJECT, EMPTY_ARRAY } from './empty'
@@ -24,7 +23,7 @@ export class Domain<State: any = Object> extends Agent {
   _registry: Registry
   _ledger: Ledger<State>
 
-  constructor(repo: Microcosm, options?: Object) {
+  constructor(repo: *, options?: Object) {
     super(repo, options)
 
     this._registry = new Registry(this)
@@ -53,7 +52,7 @@ export class Domain<State: any = Object> extends Agent {
    * To prevent accidental data transfer, this method is "opt-in",
    * returning `undefined` by default.
    */
-  serialize(state: State): ?mixed {}
+  serialize(state: State): * {}
 
   /**
    * Allows data to be transformed into a valid shape before it enters a

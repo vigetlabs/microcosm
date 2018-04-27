@@ -15,7 +15,6 @@
  * @flow
  */
 import assert from 'assert'
-import { type Microcosm } from './microcosm'
 import {
   Observable,
   type SubscriptionObserver,
@@ -26,7 +25,7 @@ import { set, merge } from './data'
 import { isPromise, isObservable, isObject, isPlainObject } from './type-checks'
 
 export class Subject extends Observable {
-  meta: { key: *, status: string, origin: Microcosm }
+  meta: { key: *, status: string, origin: * }
   payload: any
   disabled: boolean
 

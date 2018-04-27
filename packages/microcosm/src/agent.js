@@ -4,17 +4,16 @@
  * @flow
  */
 
-import { type Microcosm } from '../src/microcosm'
 import { Subject } from './subject'
 import { merge } from './data'
 
 export class Agent extends Subject {
-  repo: Microcosm
+  repo: *
   options: Object
 
   static defaults: ?Object
 
-  constructor(repo: Microcosm, options?: Object) {
+  constructor(repo: *, options?: Object) {
     super(null, options)
 
     this.repo = repo
@@ -36,14 +35,14 @@ export class Agent extends Subject {
    * Setup runs right after an agent is added to a Microcosm. It
    * receives that repo and any options passed as the second argument.
    */
-  setup(repo?: Microcosm, options?: Object): void {}
+  setup(repo?: *, options?: Object): void {}
 
   /**
    * Runs whenever a Microcosm is torn down. This usually happens when
    * a Presenter component unmounts. Useful for cleaning up work done
    * in `setup()`.
    */
-  teardown(repo?: Microcosm, options?: Object): void {}
+  teardown(repo?: *, options?: Object): void {}
 
   /**
    * Called whenever an agent receives a new action

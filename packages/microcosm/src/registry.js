@@ -2,10 +2,8 @@
 
 import { type Subject } from './subject'
 import { EMPTY_ARRAY, EMPTY_OBJECT } from './empty'
-import { type Domain } from './domain'
-import { type Effect } from './effect'
 
-function buildRegistry(entity: Domain<*> | Effect, key: string): Object {
+function buildRegistry(entity: *, key: string): Object {
   let handlers = entity.register()[key] || EMPTY_OBJECT
 
   if (Array.isArray(handlers) || typeof handlers === 'function') {
@@ -19,7 +17,7 @@ export class Registry {
   _entity: *
   _entries: *
 
-  constructor(entity: Domain<*> | Effect) {
+  constructor(entity: *) {
     this._entity = entity
     this._entries = {}
   }
