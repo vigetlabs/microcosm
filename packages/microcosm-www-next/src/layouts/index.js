@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Link from 'gatsby-link'
 import Helmet from 'react-helmet'
@@ -12,21 +12,85 @@ if (isBrowser) {
   require('lazysizes') //lazy loading images
 }
 
-const Navigation = () => (
-  <nav className="navigation">
-    <div className="wrapper">
-      <h1>
-        <span className="screenreader-only">Microcosm</span>
-        <img src={microcosmLogo} alt="" />
-      </h1>
+class Navigation extends Component {
+  constructor(props) {
+    super(props)
 
-      {/*
-        @TODO add menu back in later
-        <img src={menu} alt="menu" />
-      */}
-    </div>
-  </nav>
-)
+    this.state = {
+      hidden: true
+    }
+  }
+
+  handleHamburger = () => {
+    const { hidden } = this.state
+
+    this.setState({
+      hidden: !hidden
+    })
+  }
+
+  closeHamburger = () => {
+    this.setState({
+      hidden: true
+    })
+  }
+
+  render() {
+    const { hidden } = this.state
+
+    return (
+      <nav onMouseLeave={this.closeHamburger} className="navigation">
+        <div className="wrapper">
+          <h1>
+            <span className="screenreader-only">Microcosm</span>
+            <img src={microcosmLogo} alt="" />
+          </h1>
+
+          <button
+            onClick={this.handleHamburger}
+            aria-controls="menu"
+            className="hamburger"
+          >
+            Open Navigation
+          </button>
+          <ul
+            id="menu"
+            aria-hidden={hidden || null}
+            className="hamburger-dropdown"
+          >
+            <li>
+              <a
+                href="http://code.viget.com/microcosm/guides/quickstart.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Microcosm Guides
+              </a>
+            </li>
+            <li>
+              <a
+                href="http://code.viget.com/microcosm/api/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Microcosm API
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/vigetlabs/microcosm"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Microcosm Github
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    )
+  }
+}
 
 const Footer = () => (
   <footer className="footer">

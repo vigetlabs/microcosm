@@ -7,26 +7,12 @@ $split-bg-height-desktop: 291px;
 
 .section {
   background-color: color(bg-0-bottom);
-  min-height: 140vh;
+  min-height: 100vh;
   padding-bottom: 60px;
   padding-top: $section-top-padding-mobile;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
-
-  &:last-child {
-      min-height: 100vh;
-  }
-
-  @include breakpoint(medium-desktop-up) {
-    @media (max-height: 900px) {  //from desktop up, if the screen is long enough (i.e. enough space), fix footer to bottom
-      min-height: 100vh;
-    }
-  }
-
-  @include breakpoint(small-desktop-down) {
-    min-height: 100vh;
-  }
 
   @include breakpoint(medium-desktop-up) {
     padding-top: $section-top-padding-desktop;

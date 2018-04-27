@@ -14,5 +14,54 @@
     display: flex;
     height: inherit;
     justify-content: space-between;
+    position: relative;
+  }
+}
+
+.hamburger {
+  background: none;
+  border-bottom: 3px solid white;
+  border-top: 3px solid white;
+  height: 23px;
+  position: relative;
+  text-indent: -9999px;
+  width: 28px;
+
+  &::after {
+    background: white;
+    border-top: 3px solid white;
+    content: "";
+    display: block;
+    height: 0;
+    left: 0;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -1px);
+    width: 100%;
+  }
+}
+
+.hamburger-dropdown {
+  background: #aaa;
+  border: 1px solid #aaa;
+  position: absolute;
+  right: 0;
+  top: 100%;
+
+  border-top: none;
+
+  &[aria-hidden] {
+    display: none;
+  }
+
+  a {
+    display: block;
+    padding: 20px;
+    text-decoration: none;
+
+    &:hover, &:focus {
+      background: white;
+      color: #aaa;
+    }
   }
 }
