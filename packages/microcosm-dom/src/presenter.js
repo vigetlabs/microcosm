@@ -106,7 +106,7 @@ export function generatePresenter(createElement, Component) {
     constructor(props, context) {
       super(props, context)
 
-      this.model = new Subject.hash({})
+      this.model = Subject.hash({})
       this.presenter = props.presenter
 
       let prepo = props.repo || context.repo || new Microcosm()
