@@ -8,7 +8,6 @@ const unassert = require('rollup-plugin-unassert')
 const buble = require('rollup-plugin-buble')
 const uglify = require('rollup-plugin-uglify')
 const node = require('rollup-plugin-node-resolve')
-const json = require('rollup-plugin-json')
 const filesize = require('rollup-plugin-filesize')
 
 const path = require('path')
@@ -25,9 +24,6 @@ Object.assign(options, minimist(process.argv.slice(2)))
 
 const plugins = [
   flow(),
-  json({
-    preferConst: true
-  }),
   buble(),
   node({
     preferBuiltins: true

@@ -34,7 +34,6 @@
     "rollup": "^0.58.2",
     "rollup-plugin-buble": "^0.19.2",
     "rollup-plugin-flow": "^1.1.1",
-    "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-uglify": "^3.0.0",
     "rollup-plugin-unassert": "^0.2.0"
