@@ -97,7 +97,7 @@ export function set(object: *, path: Path, value: any): * {
     } else {
       // Otherwise clear the value from the object
       if (Array.isArray(node)) {
-        node.splice(+key, -1)
+        node.splice(+key, 1)
       } else {
         delete node[key]
       }

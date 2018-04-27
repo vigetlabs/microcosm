@@ -1,4 +1,7 @@
-// @flow
+/**
+ * @flow
+ */
+
 import { type Subject } from './subject'
 import { type History } from './history'
 
