@@ -72,7 +72,7 @@ Checkout the [installation guide](http://code.viget.com/microcosm/guides/install
 
 ## Contributing
 
-This project uses [Lerna](https://github.com/lerna/lerna), a way to manage multiple JavaScript projects in the same repo. Projects include:
+This project uses [yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) to manage multiple packages from the same repo. Projects include:
 
 - [microcosm](./packages/microcosm) - The core project
 - [microcosm-dom](./packages/microcosm-dom) - Architecture components for [React](https://github.com/facebook/react) and [Preact](https://github.com/developit/preact/)
