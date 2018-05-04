@@ -1,8 +1,8 @@
 import { Microcosm } from 'microcosm'
-import { Planets } from './domains/planets'
+import { Posts } from './domains/posts'
 
 export class Repo extends Microcosm {
   setup() {
-    this.addDomain('planets', Planets)
+    this.addDomain('posts', Posts)
   }
 }

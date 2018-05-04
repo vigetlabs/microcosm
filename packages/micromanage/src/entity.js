@@ -27,26 +27,42 @@ function useDefault(key, property) {
   return null
 }
 
-export class Entity {
-  static schema = {}
+export function Entity(options) {
+  assert(options, 'Please provide a valid schema')
 
-  constructor(params = {}) {
-    let schema = this.constructor.schema
+  let schema = merge({ type: 'object', required: [] }, options)
 
-    this._params = params
+  class EntityDefinition {
+    static schema = schema
 
-    for (var key in schema.properties) {
-      var prop = schema.properties[key]
-
-      assert(prop.type != null, errors.noType(nameOf(this), key))
-
-      this[key] = params[key] == null ? useDefault(key, prop) : params[key]
+    constructor(params = {}) {
+      this._params = params
+      this._age = Date.now()
     }
 
-    this._id = params.id
+    get _identifier() {
+      return this._params.id
+    }
+
+    get _type() {
+      return schema.title
+    }
+
+    update(params) {
+      return new this.constructor(merge(this._params, params))
+    }
   }
 
-  update(params) {
-    return new this.constructor(merge(this._params, params))
-  }
+  Object.keys(schema.properties).forEach(key => {
+    var prop = schema.properties[key]
+    var defaultValue = useDefault(key, prop)
+
+    Object.defineProperty(EntityDefinition.prototype, key, {
+      get() {
+        return this._params[key] == null ? defaultValue : this._params[key]
+      }
+    })
+  })
+
+  return EntityDefinition
 }

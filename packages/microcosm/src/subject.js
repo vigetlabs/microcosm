@@ -17,6 +17,8 @@
 
 import {
   Observable,
+  Observer,
+  Subscription,
   type SubscriptionObserver,
   type Subscriber
 } from './observable'
@@ -38,7 +40,7 @@ export class Subject extends Observable {
     this.payload = payload
     this.disabled = false
 
-    this._subscriber = this._multicast
+    this._subscriber = this._multicast.bind(this)
     this._observers = new Set()
   }
 
@@ -47,10 +49,10 @@ export class Subject extends Observable {
 
     switch (this.status) {
       case 'next':
-        observer.next(this.payload)
+        observer.next(this.payload, true)
         break
       case 'complete':
-        observer.next(this.payload)
+        observer.next(this.payload, true)
         observer.complete()
         break
       case 'error':

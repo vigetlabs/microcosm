@@ -2,9 +2,18 @@ const HtmlPlugin = require('html-webpack-plugin')
 const path = require('path')
 
 module.exports = {
+  devtool: 'sourcemap',
   context: __dirname,
   entry: './src/index.js',
-  plugins: [new HtmlPlugin({ inject: true })],
+  plugins: [
+    new HtmlPlugin({
+      inject: true,
+      template: './public/index.html'
+    })
+  ],
+  output: {
+    publicPath: '/'
+  },
   resolve: {
     alias: {
       'microcosm-dom': path.resolve(

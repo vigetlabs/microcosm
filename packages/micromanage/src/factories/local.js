@@ -9,6 +9,14 @@ export class LocalFactory {
     this.schema = Entity.schema
   }
 
+  all() {
+    throw new Error('Not implemented')
+  }
+
+  find(id) {
+    throw new Error('Not implemented')
+  }
+
   create(params) {
     return { id: uid++, ...params }
   }
