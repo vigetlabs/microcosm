@@ -199,7 +199,7 @@ describe('SubjectMap', function() {
       })
 
       expect(hash).toHaveProperty('payload.now', 1)
-      expect(hash).toHaveProperty('payload.later', undefined)
+      expect(hash).toHaveProperty('payload.later', 1)
 
       await hash
 

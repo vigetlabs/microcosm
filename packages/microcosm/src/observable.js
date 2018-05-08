@@ -9,14 +9,16 @@ import { noop } from './empty'
 import { scheduler } from './scheduler'
 import { isObject } from './type-checks'
 
+// A subscription is constructing
+const START = 0
 // A subscription has no work in progress
-const IDLE = 0
+const IDLE = 1
 // A subscription will send, but the scheduler is not ready for it.
-const BUFFERING = 1
+const BUFFERING = 2
 // A subscription is processing
-const WORKING = 2
+const WORKING = 3
 // A subscription is done
-const CLOSED = 3
+const CLOSED = 4
 
 const NEXT = 'next'
 const ERROR = 'error'
@@ -82,7 +84,7 @@ export class Subscription implements Unsubscribable {
   _queue: Queue
 
   constructor(observer: Observer, subscriber: Subscriber, origin: *) {
-    this._state = IDLE
+    this._state = START
     this._cleanup = noop
     this._queue = []
     this._observer = observer
@@ -94,9 +96,13 @@ export class Subscription implements Unsubscribable {
       this._cleanup = subscriber.call(origin, subscriptionObserver) || noop
     } catch (error) {
       subscriptionObserver.error(error)
+
+      if (observer.error === noop) {
+        scheduler().raise(error)
+      }
     }
 
-    if (this._state === IDLE) {
+    if (this._state === IDLE || this._state === START) {
       this._state = WORKING
     }
   }
@@ -183,7 +189,6 @@ function cleanupSubscription(subscription: Subscription): void {
   // Drop the reference to the cleanup function so that we won't call it
   // more than once
   subscription._cleanup = noop
-
   if (typeof cleanup === 'function') {
     cleanup()
   } else if (cleanup instanceof Subscription) {
@@ -252,18 +257,39 @@ function onNotify(subscription: Subscription, type: string, value: *) {
   }
 
   switch (subscription._state) {
-    case CLOSED:
-      // If closed, do nothing
-      break
-    case BUFFERING:
-      // Until the scheduler is ready to send out an update, push
-      // notifications into a backlog
-      subscription._queue.push({ type, value })
-      break
-    case WORKING:
-      // Go ahead and send messages that result from subscription
-      // callbacks while the subscription is processing
-      notifySubscription(subscription, type, value)
+    case START:
+      // When a subscription starts, immediately fire off the first "next"
+      // callback. This allows features like *.map to immediately emit a
+      // value, which is particularly useful for UI use cases where you
+      // want to immediate pluck a value out of a Domain.
+
+      // No matter what happens, always move into the idle state. All future
+      // updates should be queued asynchronously
+      subscription._state = IDLE
+
+      if (type === NEXT) {
+        // This state occurs if a consumer calls "observer.next" synchronously:
+        //
+        //   new Observable(observer => {
+        //     observer.next(true)
+        //   })
+        notifySubscription(subscription, type, value)
+      } else {
+        // Otherwise, a subscriber closed immediately. We absolutely know that
+        // there will be no other updates
+        //
+        // This state occurs if a consumer calls "observer.complete"
+        // or "observer.error" without any other update:
+        //
+        //   new Observable(observer => {
+        //     observer.complete()
+        //   })
+        //
+        // These must be asynchronous to give the cleanup method space to execute
+        scheduler().push(
+          notifySubscription.bind(null, subscription, type, value)
+        )
+      }
       break
     case IDLE:
       // For any other phase, we are now buffering. Initiate a new
@@ -277,13 +303,25 @@ function onNotify(subscription: Subscription, type: string, value: *) {
 
       subscription._state = BUFFERING
       subscription._queue.push({ type, value })
+
       scheduler().push(flushSubscription.bind(undefined, subscription))
       break
+    case BUFFERING:
+      // Until the scheduler is ready to send out an update, push
+      // notifications into a backlog.
+      subscription._queue.push({ type, value })
+      break
+    case WORKING:
+      // Go ahead and send messages that result from subscription
+      // callbacks while the subscription is processing.
+      notifySubscription(subscription, type, value)
+      break
+    case CLOSED:
+      // If closed, do nothing.
+      break
     default:
-      // There are two cases for which we can get into this state:
-      //   1. A subscription is closed
-      //   2. We've made a mistake and assigned an invalid state.
-      // Both are exceptions. Throw in strict mode
+      // The only way this could occur is if a consumer of Microcosm somehow
+      // messes with the Observable state code. This is a hard failure.
       assert(
         false,
         `Observable subscription is in an invalid state.` +

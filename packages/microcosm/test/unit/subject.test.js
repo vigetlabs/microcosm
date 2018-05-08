@@ -240,26 +240,17 @@ describe('Subject', function() {
     })
   })
 
-  describe('toString', function() {
-    it('stringifies to its key name', () => {
-      expect(new Subject(null, { key: 'foobar' }).toString()).toBe('foobar')
-    })
-
-    it('stringifies to "subject" when given no key', () => {
-      expect(new Subject(null).toString()).toBe('subject')
-    })
-  })
-
   describe('toJSON', function() {
     it('generates a POJO', () => {
-      let subject = new Subject(true, { key: 'foobar' })
+      let subject = new Subject()
 
+      subject.next(true)
       subject.complete()
 
       expect(subject.toJSON()).toEqual({
+        key: 'subject',
         payload: true,
-        status: 'complete',
-        key: 'foobar'
+        status: 'complete'
       })
     })
   })
@@ -292,20 +283,17 @@ describe('Subject', function() {
       expect(answers).toEqual([0, 2, 4, 6, 8])
     })
 
-    it('starts with the current value', async () => {
+    it('starts with the current value', () => {
       let subject = new Subject()
 
       let double = subject.map(value => value * 2)
       let answers = []
 
       subject.next(5)
-
       double.subscribe(value => answers.push(value))
-
       subject.complete()
 
-      await subject
-
+      // Mapping over a subject should be immediate
       expect(answers).toEqual([10])
     })
 

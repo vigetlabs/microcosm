@@ -63,4 +63,38 @@ describe('Domain::register', function() {
 
     expect(repo.state.test).toBe('test')
   })
+
+  it('should have state before an action resolves', async () => {
+    expect.assertions(2)
+
+    let repo = new Microcosm()
+    let action = n => Promise.resolve(n)
+
+    repo.addDomain('test', {
+      getInitialState() {
+        return 'start'
+      },
+      register() {
+        return {
+          [action]: {
+            next: (a, b) => `next: ${b}`,
+            complete: (a, b) => `complete: ${b}`
+          }
+        }
+      }
+    })
+
+    let job = repo.push(action, 2)
+
+    job.subscribe({
+      next() {
+        expect(repo.domains.test.payload).toBe('next: 2')
+      },
+      complete() {
+        expect(repo.domains.test.payload).toBe('complete: 2')
+      }
+    })
+
+    await job
+  })
 })

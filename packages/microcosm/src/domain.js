@@ -71,6 +71,13 @@ export class Domain<State: any = Object> extends Agent {
   }
 
   receive(action: Subject): void {
+    // Avoid a situation where history dispatches before a domain
+    // is fully set up. Domains move into the "next" state when
+    // construction is finished (getInitialState())
+    if (this.status === 'start') {
+      return
+    }
+
     let next = this._rollforward(action)
 
     if (next !== this.payload) {
