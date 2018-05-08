@@ -4,7 +4,7 @@ import assert from 'assert'
 import { shallowDiffers } from './utilities'
 import { RepoContext } from './connection'
 
-export function Request(props) {
+export function Connect(props) {
   return (
     <RepoContext.Consumer>
       {repo => <Fetcher repo={repo} {...props} />}
@@ -29,16 +29,24 @@ class Fetcher extends React.Component {
     let domain = props.repo.domains[key]
 
     assert(domain, `Unable to locate domain for "${key}".`)
-    assert(domain[method], `Domain "${key}" has no method ${method}.`)
+    assert(
+      typeof domain[method] === 'function',
+      `Domain "${key}" has method ${method}.`
+    )
 
     let consumer = new Subject()
-    let provider = domain[method](props.params).subscribe(consumer)
+    let observable = domain[method](props.params)
+
+    assert(observable, `Return an observable from ${key}.${method}`)
+
+    let provider = observable.subscribe(consumer)
 
     if (last.provider) {
       last.provider.unsubscribe()
     }
 
     return {
+      loading: true,
       answer: consumer.payload,
       consumer: consumer,
       params: props.params,
@@ -70,11 +78,22 @@ class Fetcher extends React.Component {
     }
 
     this.sub = this.state.consumer.subscribe(answer =>
-      this.setState({ answer })
+      this.setState({ answer, loading: false })
     )
   }
 
   render() {
-    return this.props.children(this.state.answer)
+    let { repeat, children, success } = this.props
+    let { answer, loading } = this.state
+
+    if (loading) {
+      return <p>Loading...</p>
+    }
+
+    if (repeat) {
+      return [].concat(answer).map(children)
+    }
+
+    return children(answer)
   }
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import Form from 'react-jsonschema-form'
 import { Presenter } from 'microcosm-dom'
 import { Post, Posts } from '../domains/posts'
-import { Request } from './cache'
+import { Connect } from './cache'
 
 export class PostsForm extends Presenter {
   render() {
@@ -10,9 +10,9 @@ export class PostsForm extends Presenter {
       <div>
         <Form schema={Post.schema} onSubmit={this.onSubmit} />
 
-        <Request repo={this.repo} source="posts.all">
+        <Connect repo={this.repo} source="posts.all">
           {posts => this.renderList(posts)}
-        </Request>
+        </Connect>
       </div>
     )
   }

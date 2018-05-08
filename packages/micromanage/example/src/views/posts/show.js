@@ -1,8 +1,7 @@
 import React from 'react'
-import Form from 'react-jsonschema-form'
-import { Presenter } from 'microcosm-dom'
-import { Request } from '../cache'
+import { Connect } from '../cache'
 import { Link } from 'react-router'
+import { Comments } from '../comments/show'
 import TimeAgo from 'react-timeago'
 
 function Article({ post }) {
@@ -29,7 +28,8 @@ export function PostsShow({ match }) {
   const { id } = match.params
 
   return (
-    <Request source="posts.find" params={{ id }}>
+    <main>
+    <Connect source="posts.find" params={{ id }}>
       {post => {
         if (post == null) {
           return <p>Loading...</p>
@@ -37,6 +37,8 @@ export function PostsShow({ match }) {
 
         return <Article post={post} />
       }}
-    </Request>
+    </Connect>
+    <Comments post={id} />
+    </main>
   )
 }

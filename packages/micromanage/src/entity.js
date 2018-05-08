@@ -35,9 +35,9 @@ export function Entity(options) {
   class EntityDefinition {
     static schema = schema
 
-    constructor(params = {}) {
+    constructor(params = {}, age = Date.now()) {
       this._params = params
-      this._age = Date.now()
+      this._age = age
     }
 
     get _identifier() {
@@ -51,6 +51,10 @@ export function Entity(options) {
     update(params) {
       return new this.constructor(merge(this._params, params))
     }
+
+    toJSON() {
+      return this._params
+    }
   }
 
   Object.keys(schema.properties).forEach(key => {
@@ -59,7 +63,16 @@ export function Entity(options) {
 
     Object.defineProperty(EntityDefinition.prototype, key, {
       get() {
-        return this._params[key] == null ? defaultValue : this._params[key]
+        let value = this._params[key] == null ? defaultValue : this._params[key]
+
+        switch (prop.type) {
+          case 'string':
+            return '' + value
+          case 'boolean':
+            return !!value
+          default:
+            return value
+        }
       }
     })
   })

@@ -1,6 +1,7 @@
 import assert from 'assert'
 import { LocalFactory } from './factories/local'
-import { Domain, set } from 'microcosm'
+import { Observable, Domain, set, get, remove } from 'microcosm'
+import { Cache } from './cache'
 
 export function Collection(Entity, Factory = LocalFactory) {
   assert(
@@ -9,6 +10,7 @@ export function Collection(Entity, Factory = LocalFactory) {
   )
 
   let factory = new Factory(Entity)
+  let Empty = new Entity({}, Infinity)
 
   return class EntityCollection extends Domain {
     static create = factory.create
@@ -16,6 +18,11 @@ export function Collection(Entity, Factory = LocalFactory) {
     static find = factory.find
     static update = factory.update
     static destroy = factory.destroy
+
+    constructor() {
+      super(...arguments)
+      this.cache = new Cache()
+    }
 
     getInitialState() {
       return {}
@@ -36,17 +43,13 @@ export function Collection(Entity, Factory = LocalFactory) {
     }
 
     update(state, params) {
-      let entity = state[params.id]
+      let entity = this.get(params.id)
 
-      if (entity) {
-        return set(state, entity._identifier, entity.update(params))
-      }
-
-      return this.insert(state, params)
+      return set(state, entity._identifier, entity.update(params))
     }
 
     remove(state, id) {
-      return set(state, id, undefined)
+      return remove(state, id)
     }
 
     register() {
@@ -57,6 +60,40 @@ export function Collection(Entity, Factory = LocalFactory) {
         [EntityCollection.update]: this.update,
         [EntityCollection.destroy]: this.remove
       }
+    }
+
+    get(id) {
+      return get(this.payload, id, Empty)
+    }
+
+    isExpired(id) {
+      return this.get(id)._age > 30 * 1000
+    }
+
+    realize(payload) {
+      return this.map(state => {
+        if (Array.isArray(payload)) {
+          return payload
+            .map(item => get(state, item.id, Empty))
+            .filter(i => i !== Empty)
+        }
+
+        return get(state, payload.id, Empty)
+      })
+    }
+
+    fetch(action, params) {
+      let existing = this.cache.get(action, params)
+
+      if (existing.age < 30 * 1000) {
+        return existing.valueOf()
+      }
+
+      let job = this.repo.push(action, params).flatMap(this.realize, this)
+
+      this.cache.set(action, params, job)
+
+      return job
     }
   }
 }

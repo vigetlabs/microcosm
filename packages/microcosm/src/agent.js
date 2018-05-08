@@ -19,6 +19,8 @@ export class Agent extends Subject {
     this.repo = repo
     this.options = merge(repo.options, this.constructor.defaults, options)
 
+    this._preHistory()
+
     let tracker = repo.history.subscribe(this.receive.bind(this))
 
     repo.subscribe({
@@ -29,6 +31,10 @@ export class Agent extends Subject {
     })
 
     this.setup(this.repo, this.options)
+  }
+
+  _preHistory() {
+    // NOOP by default
   }
 
   /**

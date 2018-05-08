@@ -25,7 +25,10 @@ export class Domain<State: any = Object> extends Agent {
 
   constructor(repo: *, options?: Object) {
     super(repo, options)
+    this.next(this._ledger.valueOf())
+  }
 
+  _preHistory() {
     this._registry = new Registry(this)
 
     this._ledger = new Ledger(
@@ -33,8 +36,6 @@ export class Domain<State: any = Object> extends Agent {
       this.repo.history,
       this.options.debug
     )
-
-    this.next(this._ledger.valueOf())
   }
 
   /**

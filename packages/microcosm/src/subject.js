@@ -17,7 +17,6 @@
 
 import {
   Observable,
-  Observer,
   Subscription,
   type SubscriptionObserver,
   type Subscriber
@@ -49,10 +48,10 @@ export class Subject extends Observable {
 
     switch (this.status) {
       case 'next':
-        observer.next(this.payload, true)
+        observer.next(this.payload)
         break
       case 'complete':
-        observer.next(this.payload, true)
+        observer.next(this.payload)
         observer.complete()
         break
       case 'error':

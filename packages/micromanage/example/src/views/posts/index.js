@@ -1,9 +1,9 @@
 import React from 'react'
-import { Request } from '../cache'
+import { Connect } from '../cache'
 import { Link } from 'react-router-dom'
 
-function PostList({ posts }) {
-  return posts.map(post => (
+function Post({ post }) {
+  return (
     <article key={post.id} className="home-post">
       <h2>
         <Link to={`/posts/${post.id}`}>{post.title}</Link>
@@ -12,15 +12,15 @@ function PostList({ posts }) {
         <p>{post.body}</p>
       </div>
     </article>
-  ))
+  )
 }
 
 export function PostsIndex() {
   return (
     <div className="home-container">
-      <Request source="posts.all">
-        {posts => <PostList posts={posts} />}
-      </Request>
+      <Connect source="posts.all" repeat={true}>
+        {post => <Post key={post.id} post={post} />}
+      </Connect>
     </div>
   )
 }

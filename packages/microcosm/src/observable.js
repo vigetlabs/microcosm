@@ -33,7 +33,7 @@ export type Cleanup = Unsubscribable | (() => any)
 export type Subscriber = (observer: *) => ?Cleanup
 export type Queue = { type: string, value: * }[]
 
-export class Observer {
+class Observer {
   next: any => void
   error: any => void
   complete: () => void
@@ -83,7 +83,7 @@ export class Subscription implements Unsubscribable {
   _state: number
   _queue: Queue
 
-  constructor(observer: Observer, subscriber: Subscriber) {
+  constructor(observer: Observer, subscriber: Subscriber, origin: *) {
     this._state = START
     this._cleanup = noop
     this._queue = []
@@ -93,7 +93,7 @@ export class Subscription implements Unsubscribable {
 
     try {
       // Call the subscriber function
-      this._cleanup = subscriber(subscriptionObserver) || noop
+      this._cleanup = subscriber.call(origin, subscriptionObserver) || noop
     } catch (error) {
       subscriptionObserver.error(error)
 
@@ -134,7 +134,7 @@ export class Observable {
   subscribe(next: *, error?: *, complete?: *, cancel?: *): Subscription {
     let observer = new Observer(next, error, complete, cancel)
 
-    return new Subscription(observer, this._subscriber)
+    return new Subscription(observer, this._subscriber, this)
   }
 
   map(fn: (*) => *, scope: any): Observable {
@@ -144,7 +144,30 @@ export class Observable {
 
     return new Observable(observer => {
       return this.subscribe(
-        value => observer.next(fn.call(scope, value), true),
+        value => observer.next(fn.call(scope, value)),
+        observer.error,
+        observer.complete,
+        observer.cancel
+      )
+    })
+  }
+
+  flatMap(fn, scope): Observable {
+    if (typeof fn !== 'function') {
+      throw new TypeError(fn + ' is not a function')
+    }
+
+    return new Observable(observer => {
+      let last = null
+
+      return this.subscribe(
+        payload => {
+          if (last) {
+            last.unsubscribe()
+          }
+
+          last = fn.call(scope, payload).subscribe({ next: observer.next })
+        },
         observer.error,
         observer.complete,
         observer.cancel
@@ -258,19 +281,10 @@ function notifySubscription(subscription: *, type: *, value: *) {
   }
 }
 
-function onNotify(
-  subscription: Subscription,
-  type: string,
-  value: *,
-  now?: boolean
-) {
+function onNotify(subscription: Subscription, type: string, value: *) {
   // On cancel, empty out the queue for subscriptions
   if (type === CANCEL) {
     subscription._queue.length = 0
-  }
-
-  if (now) {
-    return notifySubscription(subscription, type, value)
   }
 
   switch (subscription._state) {
