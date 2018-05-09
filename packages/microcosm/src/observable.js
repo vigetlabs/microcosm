@@ -97,6 +97,14 @@ export class Subscription implements Unsubscribable {
     } catch (error) {
       subscriptionObserver.error(error)
 
+      // If an exception is raised in a subscriber and there isn't an
+      // error handler, we raise with the scheduler. This happens for
+      // cases like:
+      //
+      // let obs = new Observable(observer => { throw "Crud" })
+      //
+      // obs.subscribe(next => {}) // Raises an exception with the scheduler
+      // obs.subscribe(next => {}, error => {}) // Doesn't raise
       if (observer.error === noop) {
         scheduler().raise(error)
       }
