@@ -55,6 +55,11 @@ class Fetcher extends React.Component {
     }
   }
 
+  static defaultProps = {
+    loading: () => <p>Loading</p>,
+    failed: ({ error }) => <p>Failed with {error}</p>
+  }
+
   state = Fetcher.getDerivedStateFromProps(this.props, {})
 
   componentDidMount() {
@@ -77,17 +82,22 @@ class Fetcher extends React.Component {
       this.sub.unsubscribe()
     }
 
-    this.sub = this.state.consumer.subscribe(answer =>
-      this.setState({ answer, loading: false })
-    )
+    this.sub = this.state.consumer.subscribe({
+      next: answer => this.setState({ answer, loading: false, failed: false }),
+      error: error => this.setState({ error, loading: false, failed: true })
+    })
   }
 
   render() {
-    let { repeat, children, success } = this.props
-    let { answer, loading } = this.state
+    let { repeat, children } = this.props
+    let { answer, error, loading, failed } = this.state
 
     if (loading) {
-      return <p>Loading...</p>
+      return this.props.loading()
+    }
+
+    if (failed) {
+      return this.props.failed({ error })
     }
 
     if (repeat) {

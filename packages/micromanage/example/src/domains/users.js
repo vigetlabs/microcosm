@@ -1,29 +1,16 @@
-import { Entity, Collection } from 'micromanage'
-import { userSchema, UsersFactory } from '../data/user'
-import { values } from 'lodash'
+import { User } from '../data/user'
+import { Collection, RestFactory } from 'micromanage'
 
-const THIRTY_SECONDS = 30 * 1000
-
-export class User extends Entity(userSchema) {}
-
-export class Users extends Collection(User, UsersFactory) {
-  cached(id) {
-    return id in this.payload && (Date.now() - this.payload[id]._age) < THIRTY_SECONDS
-  }
-
+export class Users extends Collection(User, RestFactory) {
   all() {
-    this.repo.push(Users.all)
+    this.fetch(Users.index)
 
-    return this.map(values)
+    return this.asArray()
   }
 
-  find({ id }) {
-    if (this.cached(id) === false) {
-      this.repo.push(Users.find, id)
-    }
+  find(params) {
+    this.fetch(Users.show, params)
 
-    return this.map(next => {
-      return next[id]
-    })
+    return this.find(params)
   }
 }

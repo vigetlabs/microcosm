@@ -9,11 +9,11 @@ export class LocalFactory {
     this.schema = Entity.schema
   }
 
-  all() {
+  index() {
     throw new Error('Not implemented')
   }
 
-  find(id) {
+  show(id) {
     throw new Error('Not implemented')
   }
 

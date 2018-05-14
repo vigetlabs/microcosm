@@ -2,7 +2,7 @@ import React from 'react'
 import Form from 'react-jsonschema-form'
 import { Presenter } from 'microcosm-dom'
 import { Post, Posts } from '../domains/posts'
-import { Connect } from './cache'
+import { Connect } from './connect'
 
 export class PostsForm extends Presenter {
   render() {

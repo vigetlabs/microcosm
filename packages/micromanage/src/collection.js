@@ -2,22 +2,20 @@ import assert from 'assert'
 import { LocalFactory } from './factories/local'
 import { Observable, Domain, set, get, remove } from 'microcosm'
 import { Cache } from './cache'
+import { Entity } from './entity'
+import { filter, find } from './utilities'
 
-export function Collection(Entity, Factory = LocalFactory) {
-  assert(
-    Entity,
-    `Expected an Entity constructor. Instead got ${String(Entity)}.`
-  )
-
-  let factory = new Factory(Entity)
-  let Empty = new Entity({}, Infinity)
+export function Collection(schema, Factory = LocalFactory) {
+  let Record = typeof schema === 'object' ? Entity(schema) : schema
+  let Empty = new Record({}, Infinity)
+  let factory = new Factory(Record)
 
   return class EntityCollection extends Domain {
-    static create = factory.create
-    static all = factory.all
-    static find = factory.find
-    static update = factory.update
-    static destroy = factory.destroy
+    static create = factory.create.bind(factory)
+    static index = factory.index.bind(factory)
+    static show = factory.show.bind(factory)
+    static update = factory.update.bind(factory)
+    static destroy = factory.destroy.bind(factory)
 
     constructor() {
       super(...arguments)
@@ -33,7 +31,7 @@ export function Collection(Entity, Factory = LocalFactory) {
     }
 
     insert(state, params) {
-      let entity = new Entity(params)
+      let entity = new Record(params)
 
       return set(state, entity._identifier, entity)
     }
@@ -54,8 +52,8 @@ export function Collection(Entity, Factory = LocalFactory) {
 
     register() {
       return {
-        [EntityCollection.all]: this.insertAll,
-        [EntityCollection.find]: this.insert,
+        [EntityCollection.index]: this.insertAll,
+        [EntityCollection.show]: this.insert,
         [EntityCollection.create]: this.insert,
         [EntityCollection.update]: this.update,
         [EntityCollection.destroy]: this.remove
@@ -64,10 +62,6 @@ export function Collection(Entity, Factory = LocalFactory) {
 
     get(id) {
       return get(this.payload, id, Empty)
-    }
-
-    isExpired(id) {
-      return this.get(id)._age > 30 * 1000
     }
 
     realize(payload) {
@@ -82,10 +76,14 @@ export function Collection(Entity, Factory = LocalFactory) {
       })
     }
 
+    cacheable(entry) {
+      return entry.age < 30 * 1000
+    }
+
     fetch(action, params) {
       let existing = this.cache.get(action, params)
 
-      if (existing.age < 30 * 1000) {
+      if (this.cacheable(existing)) {
         return existing.valueOf()
       }
 
@@ -94,6 +92,18 @@ export function Collection(Entity, Factory = LocalFactory) {
       this.cache.set(action, params, job)
 
       return job
+    }
+
+    asArray() {
+      return this.map(Object.values)
+    }
+
+    find(matcher) {
+      return this.asArray().map(values => find(values, matcher))
+    }
+
+    filter(matcher) {
+      return this.asArray().map(values => filter(values, matcher))
     }
   }
 }

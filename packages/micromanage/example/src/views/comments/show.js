@@ -1,5 +1,5 @@
 import React from 'react'
-import { Connect } from '../cache'
+import { Connect } from '../connect'
 
 function Comment({ comment }) {
   let { id, name, email, body } = comment

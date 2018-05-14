@@ -17,12 +17,19 @@ function useDefault(key, property) {
     case 'number':
       return 0
     case 'object':
-      return {}
+      return Object.keys(property.properties).reduce((memo, next) => {
+        memo[next] = useDefault(next, property.properties[next])
+        return memo
+      }, {})
     case 'string':
       return ''
   }
 
-  assert(false, errors.noDefault(key))
+  assert(
+    false,
+    `Unrecognized type "${property.type}" for property "${key}".` +
+      `Please use a recognized type or provide a default value.`
+  )
 
   return null
 }

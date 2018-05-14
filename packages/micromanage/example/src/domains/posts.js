@@ -1,22 +1,12 @@
-import { Entity, Collection } from 'micromanage'
-import { SubjectMap } from 'microcosm'
-import { postSchema, PostsFactory } from '../data/post'
-import { values } from 'lodash'
+import { Post } from '../data/post'
+import { Collection, RestFactory } from 'micromanage'
 
-const THIRTY_SECONDS = 30 * 1000
-
-export class Post extends Entity(postSchema) {}
-
-export class Posts extends Collection(Post, PostsFactory) {
-  all() {
-    return this.fetch(Posts.all)
+export class Posts extends Collection(Post, RestFactory) {
+  all(query) {
+    return this.fetch(Posts.index, query)
   }
 
-  find({ id }) {
-    this.fetch(Posts.find, id)
-
-    return this.map(next => {
-      return next[id]
-    })
+  find(params) {
+    return this.fetch(Posts.show, params)
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Connect } from '../cache'
+import { Connect } from '../connect'
 import { Link } from 'react-router'
 import { Comments } from '../comments/show'
 import TimeAgo from 'react-timeago'
@@ -29,16 +29,16 @@ export function PostsShow({ match }) {
 
   return (
     <main>
-    <Connect source="posts.find" params={{ id }}>
-      {post => {
-        if (post == null) {
-          return <p>Loading...</p>
-        }
+      <Connect source="posts.find" params={{ id }}>
+        {post => {
+           if (post == null) {
+             return <p>Loading...</p>
+           }
 
-        return <Article post={post} />
-      }}
-    </Connect>
-    <Comments post={id} />
+           return <Article post={post} />
+        }}
+      </Connect>
+      <Comments post={id} />
     </main>
   )
 }
