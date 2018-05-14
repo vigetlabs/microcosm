@@ -14,11 +14,8 @@ export function nameOf(value) {
 }
 
 export const errors = {
-  noSchema: string('Entity "%s" needs a schema.'),
-  wrongType: string(
-    'Entity "%s" expected a %s for key "%s". Instead found %s.'
-  ),
-  nullType: string(
-    'Entity "%s" expected a %s for key "%s". Instead found null.'
+  noType: string('%s must define a type for property "%s".'),
+  noDefault: string(
+    'Unable to determine default value for property "%s". Please use a recognized type or provide a default value.'
   )
 }

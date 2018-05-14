@@ -1,32 +1,52 @@
 import assert from 'assert'
 import { errors, nameOf } from './strings'
+import { merge } from 'microcosm'
+
+function useDefault(key, property) {
+  if ('default' in property) {
+    return property.default
+  }
+
+  switch (property.type) {
+    case 'array':
+      return []
+    case 'boolean':
+      return false
+    case 'null':
+      return null
+    case 'number':
+      return 0
+    case 'object':
+      return {}
+    case 'string':
+      return ''
+  }
+
+  assert(false, errors.noDefault(key))
+
+  return null
+}
 
 export class Entity {
   static schema = {}
 
-  constructor(params) {
-    assert(
-      this.constructor.hasOwnProperty('schema'),
-      errors.noSchema(nameOf(this))
-    )
+  constructor(params = {}) {
+    let schema = this.constructor.schema
 
-    for (var key in this.constructor.schema) {
-      if (params.hasOwnProperty(key)) {
-        this._assign(key, params[key])
-      }
+    this._params = params
+
+    for (var key in schema.properties) {
+      var prop = schema.properties[key]
+
+      assert(prop.type != null, errors.noType(nameOf(this), key))
+
+      this[key] = params[key] == null ? useDefault(key, prop) : params[key]
     }
+
+    this._id = params.id
   }
 
-  _assign(key, value) {
-    let type = this.constructor.schema[key]
-
-    assert(value != null, errors.nullType(nameOf(this), nameOf(type), key))
-
-    assert(
-      Object.getPrototypeOf(value) === type.prototype,
-      errors.wrongType(nameOf(this), nameOf(type), key, nameOf(value))
-    )
-
-    this[key] = value
+  update(params) {
+    return new this.constructor(merge(this._params, params))
   }
 }

@@ -1,0 +1,25 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "loose": true,
+        "modules": false
+      }
+    ],
+    "stage-2",
+    "react"
+  ],
+  "plugins": [
+    "lodash"
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        "env",
+        "stage-2",
+        "react"
+      ]
+    }
+  }
+}
