@@ -1,6 +1,5 @@
 import React from 'react'
 import { Connect } from '../connect'
-import { Link } from 'react-router-dom'
 
 function User({ user }) {
   if (user == null) {

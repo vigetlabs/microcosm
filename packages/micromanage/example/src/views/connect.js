@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react'
-import { merge, Subject } from 'microcosm'
+import React from 'react'
 import assert from 'assert'
+import { Subject } from 'microcosm'
 import { shallowDiffers } from './utilities'
 import { RepoContext } from './connection'
 

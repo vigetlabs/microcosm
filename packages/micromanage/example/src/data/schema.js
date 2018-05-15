@@ -3,8 +3,6 @@
  * https://blog.apisyouwonthate.com/getting-started-with-json-hyper-schema-184775b91f
  */
 
-import { Entity, RestFactory } from 'micromanage'
-
 const JSON_PLACEHOLDER_API = 'https://jsonplaceholder.typicode.com'
 
 export const POST = {

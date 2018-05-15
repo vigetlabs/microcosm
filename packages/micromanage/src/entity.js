@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { errors, nameOf } from './strings'
 import { merge } from 'microcosm'
 
 function useDefault(key, property) {

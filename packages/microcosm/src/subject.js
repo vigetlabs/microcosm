@@ -17,7 +17,6 @@
 
 import {
   Observable,
-  Subscription,
   type SubscriptionObserver,
   type Subscriber
 } from './observable'

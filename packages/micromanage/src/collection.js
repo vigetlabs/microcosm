@@ -1,6 +1,5 @@
-import assert from 'assert'
 import { LocalFactory } from './factories/local'
-import { Observable, Domain, set, get, remove } from 'microcosm'
+import { Domain, set, get, remove } from 'microcosm'
 import { Cache } from './cache'
 import { Entity } from './entity'
 import { filter, find } from './utilities'

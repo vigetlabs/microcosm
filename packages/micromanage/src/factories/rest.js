@@ -60,7 +60,7 @@ export class RestFactory {
   }
 
   destroy(id) {
-    let url = parameterize(this.showUrl.href, params)
+    let url = parameterize(this.showUrl.href, { id })
 
     return this.request.delete(url).then(() => id)
   }

@@ -3,4 +3,7 @@ import ReactDOM from 'react-dom'
 import { Application } from './views/application'
 import { Repo } from './repo'
 
-ReactDOM.render(<Application repo={new Repo()} />, document.getElementById('app'))
+ReactDOM.render(
+  <Application repo={new Repo()} />,
+  document.getElementById('app')
+)

@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { SubjectMap } from 'microcosm'
 
 export function query(rules) {
   let ruleKeys = Object.keys(rules)
@@ -25,7 +24,9 @@ export function query(rules) {
             )
 
             partial[propName] =
-              typeof prop === 'function' ? prop.call(record, repo, params) : prop
+              typeof prop === 'function'
+                ? prop.call(record, repo, params)
+                : prop
           })
 
           return partial

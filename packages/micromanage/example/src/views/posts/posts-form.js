@@ -17,7 +17,7 @@ export class PostsForm extends Presenter {
     )
   }
 
-  renderList = (posts = []) => {
+  renderList(posts = []) {
     return <ul>{posts.map(p => <li key={p.id}>{p.title}</li>)}</ul>
   }
 
