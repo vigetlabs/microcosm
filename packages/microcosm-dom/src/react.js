@@ -8,3 +8,6 @@ export const Presenter = generatePresenter(createElement, Component)
 export const ActionForm = generateActionForm(createElement, Component)
 export const ActionButton = generateActionButton(createElement, Component)
 export const withSend = generateWithSend(createElement, Component)
+
+export { Connect } from './connect'
+export { RepoContext } from './repo-provider'

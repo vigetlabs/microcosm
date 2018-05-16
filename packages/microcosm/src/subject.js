@@ -38,7 +38,7 @@ export class Subject extends Observable {
     this.payload = payload
     this.disabled = false
 
-    this._subscriber = this._multicast.bind(this)
+    this._subscriber = this._multicast
     this._observers = new Set()
   }
 
