@@ -15,9 +15,7 @@ function Post({ post }) {
   )
 }
 
-function Posts({ data, headers, params }) {
-  let total = parseInt(headers['x-total-count'])
-  let page = parseInt(params._page)
+function Posts({ data, page, total }) {
   let count = data.length
 
   return (

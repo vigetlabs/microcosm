@@ -1,12 +1,12 @@
 import { Post } from '../data/post'
-import { Collection, RestFactory } from 'micromanage'
+import { Collection } from 'micromanage'
 
-export class Posts extends Collection(Post, RestFactory) {
+export class Posts extends Collection(Post) {
   all(query) {
-    return this.fetch(Posts.index, query)
+    return this.fetch(Post.index, query)
   }
 
   find(params) {
-    return this.fetch(Posts.show, params)
+    return this.fetch(Post.show, params)
   }
 }

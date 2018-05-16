@@ -17,7 +17,7 @@ export function UsersIndex() {
   return (
     <div className="home-container">
       <Connect source="users.all" repeat={true}>
-        {user => <User key={user.id} user={user} />}
+        {({ data }) => data.map(user => <User key={user.id} user={user} />)}
       </Connect>
     </div>
   )

@@ -57,8 +57,8 @@ class Fetcher extends React.Component {
   }
 
   static defaultProps = {
-    loading: () => <p>Loading</p>,
-    failed: ({ error }) => <p>Failed with {error}</p>
+    loading: () => null,
+    failed: ({ error }) => error.message
   }
 
   state = Fetcher.getDerivedStateFromProps(this.props, {})
@@ -90,7 +90,7 @@ class Fetcher extends React.Component {
   }
 
   render() {
-    let { repeat, children, render } = this.props
+    let { children, render } = this.props
     let { answer, error, loading, failed } = this.state
 
     if (loading) {

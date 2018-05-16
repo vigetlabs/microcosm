@@ -5,7 +5,7 @@
       {
         "loose": true,
         "modules": false,
-        "useBuiltIns": "usage",
+        "useBuiltIns": true,
         "targets": {
           "browsers": [
             ">= 0.25%"

@@ -1,21 +1,13 @@
-import { LocalFactory } from './factories/local'
 import { Domain, set, get, remove } from 'microcosm'
 import { Cache } from './cache'
 import { Entity } from './entity'
 import { filter, find } from './utilities'
 
-export function Collection(schema, Factory = LocalFactory) {
+export function Collection(schema) {
   let Record = typeof schema === 'object' ? Entity(schema) : schema
   let Empty = new Record({}, Infinity)
-  let factory = new Factory(Record)
 
   return class EntityCollection extends Domain {
-    static create = factory.create.bind(factory)
-    static index = factory.index.bind(factory)
-    static show = factory.show.bind(factory)
-    static update = factory.update.bind(factory)
-    static destroy = factory.destroy.bind(factory)
-
     constructor() {
       super(...arguments)
       this.cache = new Cache()
@@ -47,11 +39,11 @@ export function Collection(schema, Factory = LocalFactory) {
 
     register() {
       return {
-        [EntityCollection.index]: this.updateAll,
-        [EntityCollection.show]: this.update,
-        [EntityCollection.create]: this.update,
-        [EntityCollection.update]: this.update,
-        [EntityCollection.destroy]: this.remove
+        [Record.index]: this.updateAll,
+        [Record.show]: this.update,
+        [Record.create]: this.update,
+        [Record.update]: this.update,
+        [Record.destroy]: this.remove
       }
     }
 

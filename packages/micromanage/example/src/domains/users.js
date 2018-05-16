@@ -1,16 +1,12 @@
 import { User } from '../data/user'
-import { Collection, RestFactory } from 'micromanage'
+import { Collection } from 'micromanage'
 
-export class Users extends Collection(User, RestFactory) {
+export class Users extends Collection(User) {
   all() {
-    this.fetch(Users.index)
-
-    return this.asArray()
+    return this.fetch(User.index)
   }
 
   find(params) {
-    this.fetch(Users.show, params)
-
-    return this.find(params)
+    return this.fetch(User.show, params)
   }
 }

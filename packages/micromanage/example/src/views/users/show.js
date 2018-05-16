@@ -19,7 +19,7 @@ export function UsersShow({ match }) {
 
   return (
     <Connect source="users.find" params={{ id }}>
-      {user => <User user={user} />}
+      {({ data }) => <User user={data} />}
     </Connect>
   )
 }
