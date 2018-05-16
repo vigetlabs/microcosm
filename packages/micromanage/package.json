@@ -5,21 +5,15 @@
   "license": "MIT",
   "scripts": {
     "start": "webpack-dev-server --config example/webpack.config.js --mode development --history-api-fallback",
-    "start:api": "json-server",
     "test": "jest"
   },
   "devDependencies": {
     "babel-loader": "^7.1.4",
-    "babel-plugin-lodash": "^3.3.2",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.24.1",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^22.4.3",
-    "json-server": "^0.12.2",
     "lodash": "^4.17.5",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
-    "react-jsonschema-form": "^1.0.2",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-timeago": "^4.1.9",
