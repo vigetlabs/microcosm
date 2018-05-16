@@ -5,12 +5,10 @@
       {
         "loose": true,
         "modules": false,
-        "useBuiltIns": true,
+        "useBuiltIns": "usage",
         "targets": {
           "browsers": [
-            "last 2 Chrome versions",
-            "last 2 Firefox versions",
-            "last 2 Safari versions"
+            ">= 0.25%"
           ]
         }
       }
