@@ -6,6 +6,8 @@ export class Post extends Entity(POST) {
     let url = Post.url(params)
     let response = await Post.request(url, { params })
 
+    // TODO: It would be cool to use this to set the cache.
+    // Maybe use the expires header?
     return {
       data: response.data,
       page: Math.max(parseInt(params._page), 1),
