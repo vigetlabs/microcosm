@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react'
 
 export function Range({ count, page, total }) {
-  let upper = count * page
-  let lower = upper - count
+  let upper = Math.max(count, count * page)
+  let lower = upper - count + 1
 
   return (
     <Fragment>
-      Showing items {lower}&hellip;{upper} of {total} posts
+      Showing items {lower} through {upper} of {total} posts
     </Fragment>
   )
 }
