@@ -1,5 +1,5 @@
 import React from 'react'
-import { Connect } from '../connect'
+import { Connect } from 'microcosm-dom'
 import { Link } from 'react-router-dom'
 
 function User({ user }) {

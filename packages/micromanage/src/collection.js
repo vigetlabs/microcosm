@@ -26,23 +26,19 @@ export function Collection(schema, Factory = LocalFactory) {
     }
 
     identify(entity) {
-      return entity._id
+      return entity._identifier
     }
 
-    insert(state, params) {
-      let entity = new Record(params)
-
-      return set(state, entity._identifier, entity)
+    updateAll(state, { data }) {
+      return data.reduce((memo, record) => {
+        return this.update(memo, { data: record })
+      }, state)
     }
 
-    insertAll(state, records) {
-      return [].concat(records).reduce(this.insert.bind(this), state)
-    }
+    update(state, { data }) {
+      let entity = this.get(data.id).update(data)
 
-    update(state, params) {
-      let entity = this.get(params.id)
-
-      return set(state, entity._identifier, entity.update(params))
+      return set(state, this.identify(entity), entity)
     }
 
     remove(state, id) {
@@ -51,9 +47,9 @@ export function Collection(schema, Factory = LocalFactory) {
 
     register() {
       return {
-        [EntityCollection.index]: this.insertAll,
-        [EntityCollection.show]: this.insert,
-        [EntityCollection.create]: this.insert,
+        [EntityCollection.index]: this.updateAll,
+        [EntityCollection.show]: this.update,
+        [EntityCollection.create]: this.update,
         [EntityCollection.update]: this.update,
         [EntityCollection.destroy]: this.remove
       }
@@ -65,13 +61,17 @@ export function Collection(schema, Factory = LocalFactory) {
 
     realize(payload) {
       return this.map(state => {
-        if (Array.isArray(payload)) {
-          return payload
+        let data = null
+
+        if (Array.isArray(payload.data)) {
+          data = payload.data
             .map(item => get(state, item.id, Empty))
             .filter(i => i !== Empty)
+        } else {
+          data = get(state, payload.data.id, Empty)
         }
 
-        return get(state, payload.id, Empty)
+        return { ...payload, data }
       })
     }
 

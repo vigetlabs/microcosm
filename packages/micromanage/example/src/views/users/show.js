@@ -1,5 +1,5 @@
 import React from 'react'
-import { Connect } from '../connect'
+import { Connect } from 'microcosm-dom'
 
 function User({ user }) {
   if (user == null) {

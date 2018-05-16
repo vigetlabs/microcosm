@@ -1,6 +1,8 @@
 import React from 'react'
-import { Connect } from '../connect'
+import { Connect } from 'microcosm-dom'
 import { Link } from 'react-router-dom'
+import { Paginator } from './paginator'
+import { Range } from './range'
 
 function Post({ post }) {
   return (
@@ -8,29 +10,38 @@ function Post({ post }) {
       <h2>
         <Link to={`/posts/${post.id}`}>{post.title}</Link>
       </h2>
-      <div>
-        <p>{post.body}</p>
-      </div>
+      <p>{post.body}</p>
     </article>
   )
 }
 
-export class PostsIndex extends React.Component {
-  state = {
-    page: 1
-  }
+function Posts({ data, headers, params }) {
+  let total = parseInt(headers['x-total-count'])
+  let page = parseInt(params._page)
+  let count = data.length
 
-  render() {
-    let params = new URLSearchParams(this.props.location.search)
-    let _page = parseInt(params.get('_page')) || 1
+  return (
+    <section className="home-container">
+      <header className="home-meta">
+        <Range page={page} total={total} count={count} />
+      </header>
 
-    return (
-      <div className="home-container">
-        <Connect source="posts.all" params={{ _page }} repeat={true}>
-          {post => <Post key={post.id} post={post} />}
-        </Connect>
-        <Link to={`?_page=${_page + 1}`}>Page {_page + 1}</Link>
-      </div>
-    )
-  }
+      {data.map(post => <Post key={post.id} post={post} />)}
+
+      <footer className="home-meta">
+        <Paginator page={page} />
+      </footer>
+    </section>
+  )
+}
+
+export function PostsIndex({ location }) {
+  let params = new URLSearchParams(location.search)
+
+  let _page = parseInt(params.get('_page')) || 1
+  let _limit = parseInt(params.get('_limit')) || 10
+
+  return (
+    <Connect source="posts.all" params={{ _page, _limit }} render={Posts} />
+  )
 }

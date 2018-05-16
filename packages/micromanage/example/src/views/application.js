@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Route, Link } from 'react-router-dom'
-import { RepoContext } from './connection'
+import { RepoContext } from 'microcosm-dom'
 import { PostsIndex } from './posts/index'
 import { PostsShow } from './posts/show'
 import { UsersIndex } from './users/index'

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Connect } from '../connect'
+import { Connect } from 'microcosm-dom'
 import { Comments } from '../comments/show'
 import TimeAgo from 'react-timeago'
 
@@ -29,12 +29,12 @@ export function PostsShow({ match }) {
   return (
     <main>
       <Connect source="posts.find" params={{ id }}>
-        {post => {
-          if (post == null) {
+        {({ data }) => {
+          if (data == null) {
             return <p>Loading...</p>
           }
 
-          return <Article post={post} />
+          return <Article post={data} />
         }}
       </Connect>
       <Comments post={id} />

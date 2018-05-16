@@ -32,7 +32,11 @@ export class RestFactory {
   }
 
   parse(response) {
-    return response.data
+    return {
+      data: response.data,
+      headers: response.headers,
+      params: response.config.params || {}
+    }
   }
 
   index(query) {
@@ -62,6 +66,8 @@ export class RestFactory {
   destroy(id) {
     let url = parameterize(this.showUrl.href, { id })
 
-    return this.request.delete(url).then(() => id)
+    return this.request.delete(url).then(response => {
+      return { data: id, headers: response.headers }
+    })
   }
 }
