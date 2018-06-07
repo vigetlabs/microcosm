@@ -10,12 +10,12 @@ Microcosm is a state management tool for [React](https://github.com/facebook/rea
 ## What you get
 
 - A central place to track all application data
-- [Schedule work with actions](./docs/api/actions.md)
+- [Schedule work with actions](http://code.viget.com/microcosm/api/actions.html)
 - Actions understand Promises out of the box and move through predefined states.
-- Keep loading states out of the data layer. Track action progress using [status callbacks](./docs/api/actions.md#ondonecallback-scope).
-- [Split up application state in large apps](./docs/api/microcosm.md#fork) while still sharing common data
-- [Painless optimistic updates](./docs/recipes/ajax.md)
-- Track changes and handle business logic with [Presenter components](./docs/api/presenter.md)
+- Keep loading states out of the data layer. Track action progress using [status callbacks](http://code.viget.com/microcosm/api/actions.html#ondonecallback-scope).
+- [Split up application state in large apps](http://code.viget.com/microcosm/api/domains.html) while still sharing common data
+- [Painless optimistic updates](http://code.viget.com/microcosm/recipes/ajax.html)
+- Track changes and handle business logic with [Presenter components](http://code.viget.com/microcosm/api/presenter.html)
 - 5.5kb gzipped (~18kb minified)
 
 ## What it looks like
