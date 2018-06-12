@@ -63,7 +63,10 @@ class App extends Presenter {
     return (
       <main>
         <h1>This is a test</h1>
-        <p>This test lives in an iframe. If you are testing the chrome extension, view the <a href="/target.html">target page</a></p>
+        <p>
+          This test lives in an iframe. If you are testing the chrome extension,
+          view the <a href="/target.html">target page</a>
+        </p>
         <p>Count: {this.model.count}</p>
         <footer>
           <ActionButton action={decrease} value={1}>
