@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { ActionButton } from 'microcosm-dom'
+import ActionButton from 'microcosm/addons/action-button'
 import humanize from '../../utils/humanize'
 import css from './left-rail.css'
 import colors from '../../colors'

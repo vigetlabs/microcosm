@@ -1,6 +1,6 @@
 import React from 'react'
 import ActionRegion from './action-region'
-import { Presenter } from 'microcosm-dom'
+import Presenter from 'microcosm/addons/presenter'
 import Item from './item'
 import StickyBar from './sticky-bar'
 import Resizable from '../resizable'

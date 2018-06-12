@@ -1,5 +1,5 @@
 import React from 'react'
-import { Presenter } from 'microcosm-dom'
+import Presenter from 'microcosm/addons/presenter'
 import Layout from '../views/layout'
 
 class Application extends Presenter {

@@ -4,8 +4,8 @@
   "description": "Devtools for Microcosm",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --config shells/dev/webpack.config.js",
-    "dev:chrome": "webpack --watch --hide-modules --config shells/chrome/webpack.config.js",
+    "dev": "webpack-dev-server --config shells/dev/webpack.config.js --mode=development",
+    "dev:chrome": "webpack --watch --hide-modules --config shells/chrome/webpack.config.js  --mode=development",
     "build": "./bin/bundle",
     "release": "yarn build && yarn zip"
   },
@@ -17,20 +17,20 @@
   "dependencies": {
     "babel-loader": "^7.0.0",
     "circular-json-es6": "^2.0.2",
-    "classnames": "^2.2.5",
+    "classnames": "^2.2.6",
     "css-loader": "^0.28.9",
     "file-loader": "^1.1.6",
     "friendly-errors-webpack-plugin": "^1.7.0",
-    "microcosm": "^13.0.0-alpha",
-    "microcosm-dom": "^13.0.0-alpha",
+    "microcosm": "^12.0.0",
     "paths-js": "^0.4.5",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
-    "react-hot-loader": "4.1.1",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-hot-loader": "4.3.1",
     "react-json-tree": "^0.11.0",
     "style-loader": "^0.21.0",
     "url-loader": "^1.0.1",
     "webpack": "^4.6.0",
-    "webpack-dev-server": "^3.1.3"
+    "webpack-cli": "^3.0.4",
+    "webpack-dev-server": "^3.1.4"
   }
 }

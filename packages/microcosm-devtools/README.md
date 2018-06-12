@@ -10,7 +10,7 @@ let repo = new Microcosm({ debug: true })
 
 ## Requirements
 
-1. Microcosm 12.9.0 or higher
+1. Microcosm ^12.0.0 (support for 13.x is still in progress)
 2. Chrome
 
 ## Installation

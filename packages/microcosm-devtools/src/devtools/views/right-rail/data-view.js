@@ -29,6 +29,6 @@ export default function DataView(props) {
 DataView.defaultProps = {
   data: {},
   theme: THEME,
-  sortObjectKeys: true,
+  sortObjectKeys: (a, b) => (a > b ? 1 : 0),
   shouldExpandNode: () => false
 }

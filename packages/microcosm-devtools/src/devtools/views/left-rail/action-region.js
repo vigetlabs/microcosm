@@ -1,5 +1,5 @@
 import React from 'react'
-import { withSend } from 'microcosm-dom'
+import withSend from 'microcosm/addons/with-send'
 
 export default withSend(
   class ActionRegion extends React.Component {

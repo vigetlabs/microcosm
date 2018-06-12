@@ -18,9 +18,7 @@ class Layout extends React.Component {
       <div className={css.container}>
         <main className={css.body}>
           <LeftRail open={leftRail} />
-
           <Tree history={history} />
-
           <RightRail open={rightRail} />
         </main>
       </div>

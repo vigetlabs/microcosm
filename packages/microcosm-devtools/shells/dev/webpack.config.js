@@ -22,6 +22,7 @@ module.exports = {
   },
 
   module: {
+    strictExportPresence: true,
     rules: [
       {
         test: /\.js$/,
@@ -64,16 +65,16 @@ module.exports = {
     ]
   },
 
-  performance: {
-    hints: false
-  },
-
-  devtool: '#cheap-eval-source-map',
-
   devServer: {
     quiet: true,
     contentBase: __dirname
   },
 
-  plugins: [new FriendlyErrorsPlugin()]
+  plugins: [
+    new FriendlyErrorsPlugin({
+      compilationSuccessInfo: {
+        messages: [`Ready on http://localhost:8080 in development`]
+      }
+    })
+  ]
 }

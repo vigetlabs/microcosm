@@ -38,7 +38,7 @@ class Resizable extends Component {
     const { handlePosition } = this.props
     const background =
       handlePosition === 'left'
-        ? 'linear-gradient(#ffffff 70%, #f9f9f9 100%);'
+        ? 'linear-gradient(#ffffff 70%, #f9f9f9 100%)'
         : '#272d3c'
 
     return (

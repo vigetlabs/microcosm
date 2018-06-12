@@ -1,5 +1,5 @@
 import React from 'react'
-import { Presenter } from 'microcosm-dom'
+import Presenter from 'microcosm/addons/presenter'
 import DataView from './data-view'
 import css from './right-rail.css'
 
@@ -18,20 +18,21 @@ class ActionFocus extends Presenter {
         </header>
 
         <ul className={css.revisions}>
-          {action.revisions
-            .map((entry, i) => (
-              <li key={i}>
-                <div className={css.revision}>
-                  <b>{entry.status}</b> at{' '}
-                  {new Date(entry.timestamp).toLocaleTimeString()}
-                </div>
-
-                <DataView data={{ payload: entry.payload }} hideRoot />
-              </li>
-            ))
-            .reverse()}
+          {action.revisions.map(this.renderEntry, this).reverse()}
         </ul>
       </section>
+    )
+  }
+
+  renderEntry({ status, timestamp, payload }, i) {
+    return (
+      <li key={i}>
+        <div className={css.revision}>
+          <b>{status}</b> at {new Date(timestamp).toLocaleTimeString()}
+        </div>
+
+        <DataView data={{ payload }} hideRoot />
+      </li>
     )
   }
 
