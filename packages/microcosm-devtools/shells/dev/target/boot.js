@@ -63,6 +63,7 @@ class App extends Presenter {
     return (
       <main>
         <h1>This is a test</h1>
+        <p>This test lives in an iframe. If you are testing the chrome extension, view the <a href="/target.html">target page</a></p>
         <p>Count: {this.model.count}</p>
         <footer>
           <ActionButton action={decrease} value={1}>
@@ -86,7 +87,7 @@ class App extends Presenter {
 }
 
 export default function render(el) {
-  let repo = new Repo({ devtools: true, debug: true })
+  let repo = new Repo({ debug: true })
 
   DOM.render(<App repo={repo} />, document.querySelector(el))
 

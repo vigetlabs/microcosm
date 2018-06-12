@@ -32,7 +32,7 @@ export default function Node({ action, x, y, index, head }) {
         className={css.clipping}
         y={offsetY - 11}
         x={offsetX}
-        width={16 + label.length * 5.9}
+        width={16 + label.length * 7.0}
         height={22}
         rx="3"
         ry="3"
