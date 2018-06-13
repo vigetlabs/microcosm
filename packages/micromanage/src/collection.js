@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { Domain, set, get, remove } from 'microcosm'
 import { Cache } from './cache'
 import { Entity } from './entity'
@@ -52,6 +53,8 @@ export function Collection(schema) {
     }
 
     realize(payload) {
+      assert('data' in payload, 'Payload from request must have a data key')
+
       return this.map(state => {
         let data = null
 

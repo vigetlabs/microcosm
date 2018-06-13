@@ -4,7 +4,7 @@ import { Subject } from 'microcosm'
 import { shallowDiffers } from './utilities'
 import { RepoContext } from './repo-provider'
 
-export function Connect(props) {
+export function Query(props) {
   return (
     <RepoContext.Consumer>
       {repo => <Fetcher repo={repo} {...props} />}
@@ -48,17 +48,12 @@ class Fetcher extends React.Component {
 
     return {
       loading: true,
-      answer: consumer.payload,
+      result: consumer.payload,
       consumer: consumer,
       params: props.params,
       provider: provider,
       source: props.source
     }
-  }
-
-  static defaultProps = {
-    loading: () => null,
-    failed: ({ error }) => error.message
   }
 
   state = Fetcher.getDerivedStateFromProps(this.props, {})
@@ -84,23 +79,21 @@ class Fetcher extends React.Component {
     }
 
     this.sub = this.state.consumer.subscribe({
-      next: answer => this.setState({ answer, loading: false, failed: false }),
-      error: error => this.setState({ error, loading: false, failed: true })
+      next: result => this.setState({ result, loading: false }),
+      error: error => this.setState({ result: null, error, loading: false })
     })
   }
 
   render() {
     let { children, render } = this.props
-    let { answer, error, loading, failed } = this.state
+    let { result, error, loading, params } = this.state
 
-    if (loading) {
-      return this.props.loading()
-    }
-
-    if (failed) {
-      return this.props.failed({ error })
-    }
-
-    return React.createElement(render || children, answer)
+    return React.createElement(render || children, {
+      data: result ? result.data : null,
+      meta: result ? result.meta : null,
+      error,
+      loading,
+      params
+    })
   }
 }

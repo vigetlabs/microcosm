@@ -10,8 +10,11 @@ export class Post extends Entity(POST) {
     // Maybe use the expires header?
     return {
       data: response.data,
-      page: Math.max(parseInt(params._page), 1),
-      total: parseInt(response.headers['x-total-count'])
+      meta: {
+        page: Math.max(parseInt(params._page), 1),
+        total: parseInt(response.headers['x-total-count']),
+        count: response.data.length
+      }
     }
   }
 }

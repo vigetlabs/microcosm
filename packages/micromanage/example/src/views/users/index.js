@@ -1,5 +1,5 @@
 import React from 'react'
-import { Connect } from 'microcosm-dom'
+import { Query } from 'microcosm-dom'
 import { Link } from 'react-router-dom'
 
 function User({ user }) {
@@ -13,12 +13,20 @@ function User({ user }) {
   )
 }
 
+function Users({ data, loading, error }) {
+  if (loading) {
+    return <p>Loading users...</p>
+  } else if (error) {
+    return <p>Unable to load users</p>
+  }
+
+  return data.map(user => <User key={user.id} user={user} />)
+}
+
 export function UsersIndex() {
   return (
     <div className="home-container">
-      <Connect source="users.all" repeat={true}>
-        {({ data }) => data.map(user => <User key={user.id} user={user} />)}
-      </Connect>
+      <Query source="users.all" render={Users} />
     </div>
   )
 }

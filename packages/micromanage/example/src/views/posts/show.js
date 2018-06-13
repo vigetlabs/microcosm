@@ -1,21 +1,27 @@
 import React from 'react'
-import { Connect } from 'microcosm-dom'
+import { Query } from 'microcosm-dom'
 import { Comments } from '../comments/show'
 import TimeAgo from 'react-timeago'
 
-function Article({ post }) {
+function Article({ data, loading, error }) {
+  if (loading) {
+    return <p>Loading article...</p>
+  } else if (error) {
+    return <p>Failed to load article</p>
+  }
+
   return (
     <article className="post">
       <header>
-        <h1>{post.title}</h1>
+        <h1>{data.title}</h1>
       </header>
 
-      <p>{post.body}</p>
+      <p>{data.body}</p>
 
       <footer>
         <p>
           <i>
-            Last requested <TimeAgo date={post._age} /> seconds ago
+            Last requested <TimeAgo date={data._age} /> seconds ago
           </i>
         </p>
       </footer>
@@ -28,15 +34,7 @@ export function PostsShow({ match }) {
 
   return (
     <main>
-      <Connect source="posts.find" params={{ id }}>
-        {({ data }) => {
-          if (data == null) {
-            return <p>Loading...</p>
-          }
-
-          return <Article post={data} />
-        }}
-      </Connect>
+      <Query source="posts.find" params={{ id }} render={Article} />
       <Comments post={id} />
     </main>
   )

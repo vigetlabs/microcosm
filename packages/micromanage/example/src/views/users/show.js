@@ -1,25 +1,21 @@
 import React from 'react'
-import { Connect } from 'microcosm-dom'
+import { Query } from 'microcosm-dom'
 
-function User({ user }) {
-  if (user == null) {
+function User({ data, loading, error }) {
+  if (loading) {
     return <p>Loading user</p>
+  } else if (error) {
+    return <p>Unable to load user</p>
   }
 
   return (
-    <article key={user.id} className="home-post">
-      <h2>{user.name}</h2>
-      <pre>{JSON.stringify(user, null, 2)}</pre>
+    <article key={data.id} className="home-post">
+      <h2>{data.name}</h2>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </article>
   )
 }
 
 export function UsersShow({ match }) {
-  let { id } = match.params
-
-  return (
-    <Connect source="users.find" params={{ id }}>
-      {({ data }) => <User user={data} />}
-    </Connect>
-  )
+  return <Query source="users.find" params={match.params} render={User} />
 }

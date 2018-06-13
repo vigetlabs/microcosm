@@ -9,5 +9,5 @@ export const ActionForm = generateActionForm(createElement, Component)
 export const ActionButton = generateActionButton(createElement, Component)
 export const withSend = generateWithSend(createElement, Component)
 
-export { Connect } from './connect'
+export { Query } from './query'
 export { RepoContext } from './repo-provider'
