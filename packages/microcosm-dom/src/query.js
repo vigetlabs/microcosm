@@ -56,7 +56,10 @@ class Fetcher extends React.Component {
     }
   }
 
-  state = Fetcher.getDerivedStateFromProps(this.props, {})
+  constructor(props) {
+    super(props)
+    this.state = Fetcher.getDerivedStateFromProps(this.props, {})
+  }
 
   componentDidMount() {
     this.finalize()
