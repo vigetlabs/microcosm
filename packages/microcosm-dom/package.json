@@ -1,6 +1,6 @@
 {
   "name": "microcosm-dom",
-  "version": "13.0.0-alpha",
+  "version": "13.0.0-alpha.1",
   "main": "react.js",
   "private": true,
   "author": "Nathan Hunzaker <nate.hunzaker@viget.com>",
