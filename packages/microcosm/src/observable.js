@@ -152,7 +152,7 @@ export class Observable {
     })
   }
 
-  flatMap(fn, scope): Observable {
+  flatMap(fn: (*) => Observable, scope: any): Observable {
     if (typeof fn !== 'function') {
       throw new TypeError(fn + ' is not a function')
     }
