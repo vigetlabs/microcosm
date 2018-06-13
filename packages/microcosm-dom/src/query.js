@@ -3,11 +3,12 @@ import assert from 'assert'
 import { Subject } from 'microcosm'
 import { shallowDiffers } from './utilities'
 import { RepoContext } from './repo-provider'
+import { merge } from 'microcosm'
 
 export function Query(props) {
   return (
     <RepoContext.Consumer>
-      {repo => <Fetcher repo={repo} {...props} />}
+      {repo => React.createElement(Fetcher, merge({ repo }, props))}
     </RepoContext.Consumer>
   )
 }
