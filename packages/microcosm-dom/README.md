@@ -6,15 +6,17 @@
 - [Preact](https://preactjs.com/).
 
 ```text
-status: unpublished
+status: alpha
 ```
 
 ## Stats
 
 ```text
-1.84 kB: microcosm-dom/react
-1.92 kB: microcosm-dom/preact
+2.35 kB: microcosm-dom/react
+1.94 kB: microcosm-dom/preact
 ```
+
+The react build is a little bigger as it includes some additional components.
 
 ## Requirements
 
@@ -26,7 +28,7 @@ This package replaces `microcosm/addons'`. This was done in Microcosm 13.0.0. Fo
 import { Presenter, ActionForm, ActionButton, withSend } from 'microcosm-dom'
 
 // Uses react by default, also consider:
-import { Presenter, ActionForm, ActionButton, withSend } from 'microcosm-dom/react'
+import { Presenter, ActionForm, ActionButton, withSend, Query } from 'microcosm-dom/react'
 import { Presenter, ActionForm, ActionButton, withSend } from 'microcosm-dom/preact'
 ```
 
