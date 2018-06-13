@@ -1,6 +1,6 @@
 {
   "name": "microcosm-dom",
-  "version": "13.0.0-alpha.2",
+  "version": "13.0.0-alpha.3",
   "main": "react.js",
   "private": true,
   "author": "Nathan Hunzaker <nate.hunzaker@viget.com>",
@@ -12,8 +12,7 @@
   },
   "repository": "https://github.com/vigetlabs/microcosm",
   "dependencies": {
-    "form-serialize": "^0.7.1",
-    "microcosm": "^13.0.0-alpha"
+    "form-serialize": "^0.7.1"
   },
   "devDependencies": {
     "jest": "^22.4.3",
