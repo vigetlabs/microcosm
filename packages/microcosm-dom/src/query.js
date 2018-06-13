@@ -1,5 +1,4 @@
 import React from 'react'
-import assert from 'assert'
 import { Subject } from 'microcosm'
 import { shallowDiffers } from './utilities'
 import { RepoContext } from './repo-provider'
@@ -29,18 +28,8 @@ class Fetcher extends React.Component {
     let [key, method] = props.source.split('.')
     let domain = props.repo.domains[key]
 
-    assert(domain, `Unable to locate domain for "${key}".`)
-
-    assert(
-      typeof domain[method] === 'function',
-      `Domain "${key}" has method ${method}.`
-    )
-
     let consumer = new Subject()
     let observable = domain[method](props.params)
-
-    assert(observable, `Return an observable from ${key}.${method}`)
-
     let provider = observable.subscribe(consumer)
 
     if (last.provider) {
