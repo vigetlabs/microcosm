@@ -134,7 +134,7 @@ export class Observable {
   }
 
   map(fn: (*) => *, scope: any): Observable {
-    assert.equal(typeof fn, 'function', fn + ' is not a function')
+    assert.equal(typeof fn, 'function', `${String(fn)} is not a function`)
 
     return new Observable(observer => {
       return this.subscribe(
@@ -147,7 +147,7 @@ export class Observable {
   }
 
   filter(fn: (*) => boolean, scope: any): Observable {
-    assert.equal(typeof fn, 'function', fn + ' is not a function')
+    assert.equal(typeof fn, 'function', `${String(fn)} is not a function`)
 
     return new Observable(observer => {
       return this.subscribe(
@@ -164,7 +164,7 @@ export class Observable {
   }
 
   flatMap(fn: (*) => Observable, scope: any): Observable {
-    assert.equal(typeof fn, 'function', fn + ' is not a function')
+    assert.equal(typeof fn, 'function', `${String(fn)} is not a function`)
 
     return new Observable(observer => {
       let last = null
