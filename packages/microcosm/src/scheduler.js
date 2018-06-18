@@ -1,6 +1,6 @@
 /**
- * @fileoverview The central scheduler for Microcosm work
- * This is based upon Scheduler from the ChooJS project
+ * @fileoverview The central scheduler for Microcosm work. This is
+ * based upon Scheduler from the ChooJS project:
  * https://github.com/choojs/nanoscheduler/blob/master/index.js
  */
 
@@ -31,11 +31,11 @@ class Scheduler {
   constructor(hasWindow) {
     let hasIdle = hasWindow && 'requestIdleCallback' in root
 
-    this.method = hasIdle ? root.requestIdleCallback.bind(root) : idleFallback
-    this.tick = this.tick.bind(this)
-    this.scheduled = false
-    this.queue = []
-    this.errorCallbacks = []
+    this._method = hasIdle ? root.requestIdleCallback.bind(root) : idleFallback
+    this._tick = this._tick.bind(this)
+    this._scheduled = false
+    this._queue = []
+    this._errorCallbacks = []
   }
 
   push(cb) {
@@ -45,47 +45,42 @@ class Scheduler {
       'scheduler.push: callback should be a function'
     )
 
-    this.queue.push(cb)
-    this.schedule()
-  }
-
-  schedule() {
-    if (this.scheduled) {
-      return
-    }
-
-    this.scheduled = true
-    this.method(this.tick)
-  }
-
-  tick(idleDeadline) {
-    try {
-      while (this.queue.length && idleDeadline.timeRemaining() > 0) {
-        this.queue.shift()()
-      }
-    } catch (error) {
-      this.raise(error)
-    }
-
-    this.scheduled = false
-
-    if (this.queue.length) {
-      this.schedule()
-    }
+    this._queue.push(cb)
+    this._schedule()
   }
 
   flush() {
-    this.tick(untilEmpty)
+    this._tick(untilEmpty)
   }
 
   onError(fn) {
-    this.errorCallbacks.push(fn)
+    this._errorCallbacks.push(fn)
   }
 
-  raise(error) {
-    if (this.errorCallbacks.length) {
-      this.errorCallbacks.forEach(callback => callback(error))
-      this.errorCallbacks.length = 0
+  offError(fn) {
+    let index = this._errorCallbacks.indexOf(fn)
+
+    if (index >= 0) {
+      this._errorCallbacks.splice(index, 1)
+    }
+  }
+
+  then(pass, fail) {
+    return new Promise((resolve, reject) => {
+      this.onError(reject)
+      this.push(() => {
+        resolve()
+        this.offError(reject)
+      })
+    }).then(pass, fail)
+  }
+
+  // Private -------------------------------------------------- //
+
+  _raise(error) {
+    if (this._errorCallbacks.length) {
+      this._errorCallbacks.forEach(callback => callback(error))
+      this._errorCallbacks.length = 0
     } else {
       setTimeout(() => {
         throw error
@@ -93,14 +88,28 @@ class Scheduler {
     }
   }
 
-  then(pass, fail) {
-    return new Promise((resolve, reject) => {
-      this.push(resolve)
-      this.onError(reject)
-    }).then(pass, fail)
+  _schedule() {
+    if (this._scheduled) {
+      return
+    }
+
+    this._scheduled = true
+    this._method(this._tick)
   }
 
-  get size() {
-    return this.queue.length
+  _tick(idleDeadline) {
+    try {
+      while (this._queue.length && idleDeadline.timeRemaining() > 0) {
+        this._queue.shift()()
+      }
+    } catch (error) {
+      this._raise(error)
+    }
+
+    this._scheduled = false
+
+    if (this._queue.length) {
+      this._schedule()
+    }
   }
 }

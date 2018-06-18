@@ -11,6 +11,7 @@ import { Domain } from './domain'
 import { Effect } from './effect'
 import { merge } from './data'
 import { inherit } from './proto'
+import { RESET, PATCH } from './lifecycle'
 
 const DEFAULTS = {
   debug: false,
@@ -23,7 +24,6 @@ export class Microcosm extends Subject {
   options: Object
 
   static defaults: Object
-  static version: string
 
   constructor(preOptions?: ?Object) {
     super(null, { key: 'repo' })
@@ -97,8 +97,8 @@ export class Microcosm extends Subject {
       blueprint != null,
       `Unable to create effect using ` +
         `addEffect(${String(blueprint)}). ` +
-        `This often happens if you forget to add the second argument to ` +
-        `addEffect, or if you imported the wrong namespace from a module.`
+        `This often happens if the wrong namespace from a ` +
+        `module is passed into addEffect.`
     )
 
     let Entity = inherit(blueprint, Effect)
@@ -122,5 +122,19 @@ export class Microcosm extends Subject {
     return new Microcosm({
       parent: this
     })
+  }
+
+  reset(): Subject {
+    console.warn(
+      'repo.reset has been deprecated. Please use repo.push(reset, data)'
+    )
+    return this.push(RESET, ...arguments)
+  }
+
+  patch(): Subject {
+    console.warn(
+      'repo.patch has been deprecated. Please use repo.push(patch, data)'
+    )
+    return this.push(PATCH, ...arguments)
   }
 }

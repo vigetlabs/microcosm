@@ -6,7 +6,7 @@ import assert from 'assert'
 import { Subject } from './subject'
 import { Registry } from './registry'
 import { EMPTY_OBJECT, EMPTY_ARRAY } from './empty'
-import { RESET, PATCH } from './lifecycle'
+import { RESET, PATCH, START } from './lifecycle'
 import { Ledger } from './ledger'
 import { Agent } from './agent'
 
