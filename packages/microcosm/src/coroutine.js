@@ -35,9 +35,7 @@ export function coroutine(
   }
 
   if (isPromise(body)) {
-    body
-      .then(action.complete)
-      .catch(action.error)
+    body.then(action.complete).catch(action.error)
     return
   }
 
