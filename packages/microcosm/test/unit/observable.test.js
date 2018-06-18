@@ -309,4 +309,62 @@ describe('Observable', function() {
       )
     })
   })
+
+  describe('::filter', () => {
+    it('operates like array.filter over a stream of values', () => {
+      let isOdd = n => n % 2
+      let double = Observable.of(0, 1, 2, 3, 4).filter(isOdd)
+      let answers = []
+
+      double.subscribe(value => answers.push(value))
+
+      scheduler().flush()
+
+      expect(answers).toEqual([1, 3])
+    })
+
+    it('can configure scope', () => {
+      let Maths = {
+        threshold: 2,
+        greaterThan(value) {
+          return value > this.threshold
+        }
+      }
+
+      let greaterThan2 = Observable.of(2, 4, 6, 8).filter(
+        Maths.greaterThan,
+        Maths
+      )
+      let answers = []
+
+      greaterThan2.subscribe(value => answers.push(value))
+
+      scheduler().flush()
+
+      expect(answers).toEqual([4, 6, 8])
+    })
+
+    it('passes along errors', () => {
+      let observable = new Observable(observer => {
+        for (var i = 0; i < 5; i++) {
+          observer.next(i)
+        }
+        throw 'Exceptional!'
+      })
+
+      let error = jest.fn()
+
+      observable.filter(n => n).subscribe({ error })
+
+      scheduler().flush()
+
+      expect(error).toHaveBeenCalledWith('Exceptional!')
+    })
+
+    it('raises if not given a function', () => {
+      expect(() => Observable.of(0, 1, 2, 3, 4).filter()).toThrow(
+        'undefined is not a function'
+      )
+    })
+  })
 })

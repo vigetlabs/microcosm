@@ -163,8 +163,7 @@ function fromPromise(promise: Promise<*>): Subject {
   let subject = new Subject()
 
   promise
-    .then(subject.next)
-    .then(() => subject.complete())
+    .then(subject.complete)
     .catch(subject.error)
 
   return subject
@@ -179,6 +178,12 @@ function fromObservable(observable: Observable): Subject {
 function update(subject: Subject, status: string, value: *): void {
   if (subject.closed) {
     return
+  }
+
+  // Allow passing a value to complete. This is a decent compromise
+  // For actions that simply complete
+  if (status === 'complete' && arguments.length > 2) {
+    update(subject, 'next', value)
   }
 
   subject.meta.status = status

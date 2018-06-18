@@ -8,6 +8,7 @@ import { observable } from './symbols'
 import { noop } from './empty'
 import { scheduler } from './scheduler'
 import { isObject } from './type-checks'
+import { NEXT, ERROR, COMPLETE, CANCEL } from './lifecycle'
 
 // A subscription is constructing
 const START = 0
@@ -19,11 +20,6 @@ const BUFFERING = 2
 const WORKING = 3
 // A subscription is done
 const CLOSED = 4
-
-const NEXT = 'next'
-const ERROR = 'error'
-const COMPLETE = 'complete'
-const CANCEL = 'cancel'
 
 export interface Unsubscribable {
   unsubscribe(): any;
@@ -138,9 +134,7 @@ export class Observable {
   }
 
   map(fn: (*) => *, scope: any): Observable {
-    if (typeof fn !== 'function') {
-      throw new TypeError(fn + ' is not a function')
-    }
+    assert.equal(typeof fn, 'function', fn + ' is not a function')
 
     return new Observable(observer => {
       return this.subscribe(
@@ -152,10 +146,25 @@ export class Observable {
     })
   }
 
+  filter(fn: (*) => boolean, scope: any): Observable {
+    assert.equal(typeof fn, 'function', fn + ' is not a function')
+
+    return new Observable(observer => {
+      return this.subscribe(
+        value => {
+          if (fn.call(scope, value)) {
+            observer.next(value)
+          }
+        },
+        observer.error,
+        observer.complete,
+        observer.cancel
+      )
+    })
+  }
+
   flatMap(fn: (*) => Observable, scope: any): Observable {
-    if (typeof fn !== 'function') {
-      throw new TypeError(fn + ' is not a function')
-    }
+    assert.equal(typeof fn, 'function', fn + ' is not a function')
 
     return new Observable(observer => {
       let last = null
@@ -248,32 +257,28 @@ function notifySubscription(subscription: *, type: *, value: *) {
   let observer = subscription._observer
 
   // This is what triggers subscription callbacks
-  try {
-    switch (type) {
-      case NEXT:
-        observer.next(value)
-        break
-      case ERROR:
-        closeSubscription(subscription)
-        observer.error(value)
-        break
-      case COMPLETE:
-        closeSubscription(subscription)
-        observer.complete()
-        break
-      case CANCEL:
-        closeSubscription(subscription)
-        observer.cancel()
-        break
-      default:
-        assert(
-          false,
-          `Unrecognized type ${type}. This is an error internal to Microcosm. ` +
-            `Please file an issue: https://github.com/vigetlabs/microcosm/issues`
-        )
-    }
-  } catch (e) {
-    scheduler().raise(e)
+  switch (type) {
+    case NEXT:
+      observer.next(value)
+      break
+    case ERROR:
+      closeSubscription(subscription)
+      observer.error(value)
+      break
+    case COMPLETE:
+      closeSubscription(subscription)
+      observer.complete()
+      break
+    case CANCEL:
+      closeSubscription(subscription)
+      observer.cancel()
+      break
+    default:
+      assert(
+        false,
+        `Unrecognized type ${type}. This is an error internal to Microcosm. ` +
+          `Please file an issue: https://github.com/vigetlabs/microcosm/issues`
+      )
   }
 
   if (subscription.closed) {

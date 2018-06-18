@@ -13,6 +13,8 @@ describe('History updater', function() {
     await repo.push('one', 1)
     await repo.push('two', 2)
 
-    expect(spy).toHaveBeenCalledTimes(2)
+    // Twice for next
+    // Twice for complete
+    expect(spy).toHaveBeenCalledTimes(4)
   })
 })

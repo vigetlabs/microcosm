@@ -21,7 +21,9 @@ export class Agent extends Subject {
 
     this._preHistory()
 
-    let tracker = repo.history.subscribe(this.receive.bind(this))
+    let tracker = repo.history
+      .filter(this._shouldListenTo, this)
+      .subscribe(this.receive.bind(this))
 
     repo.subscribe({
       complete: () => {
@@ -31,10 +33,6 @@ export class Agent extends Subject {
     })
 
     this.setup(this.repo, this.options)
-  }
-
-  _preHistory() {
-    // NOOP by default
   }
 
   /**
@@ -54,4 +52,14 @@ export class Agent extends Subject {
    * Called whenever an agent receives a new action
    */
   receive(action: Subject): void {}
+
+  // Private -------------------------------------------------- //
+
+  _preHistory() {
+    // NOOP by default
+  }
+
+  _shouldListenTo(action: Subject): boolean {
+    return true
+  }
 }
