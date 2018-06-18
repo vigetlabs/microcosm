@@ -128,6 +128,7 @@ export class Microcosm extends Subject {
     console.warn(
       'repo.reset has been deprecated. Please use repo.push(reset, data)'
     )
+    // $FlowFixMe - Push accepts variable arguments
     return this.push(RESET, ...arguments)
   }
 
@@ -135,6 +136,7 @@ export class Microcosm extends Subject {
     console.warn(
       'repo.patch has been deprecated. Please use repo.push(patch, data)'
     )
+    // $FlowFixMe - Push accepts variable arguments
     return this.push(PATCH, ...arguments)
   }
 }
