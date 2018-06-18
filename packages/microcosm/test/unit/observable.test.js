@@ -316,8 +316,11 @@ describe('Observable', function() {
       let double = Observable.of(0, 1, 2, 3, 4).filter(isOdd)
       let answers = []
 
-      double.subscribe(value => answers.push(value))
+      // Filter is lazy. It shouldn't trigger an iteration until
+      // subscribe is invoked
+      expect(answers).toEqual([])
 
+      double.subscribe(value => answers.push(value))
       scheduler().flush()
 
       expect(answers).toEqual([1, 3])
