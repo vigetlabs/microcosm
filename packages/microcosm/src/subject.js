@@ -22,6 +22,7 @@ import {
 } from './observable'
 import { merge } from './data'
 import { isPromise, isObservable } from './type-checks'
+import { START, NEXT, COMPLETE, ERROR, CANCEL } from './lifecycle'
 
 export class Subject extends Observable {
   meta: { key: *, status: string, origin: * }
@@ -34,7 +35,7 @@ export class Subject extends Observable {
   constructor(payload?: *, meta?: Object) {
     super()
 
-    this.meta = merge({ key: 'subject', status: 'start' }, meta)
+    this.meta = merge({ key: 'subject', status: START }, meta)
     this.payload = payload
     this.disabled = false
 
@@ -46,17 +47,17 @@ export class Subject extends Observable {
     this._observers.add(observer)
 
     switch (this.status) {
-      case 'next':
+      case NEXT:
         observer.next(this.payload)
         break
-      case 'complete':
+      case COMPLETE:
         observer.next(this.payload)
         observer.complete()
         break
-      case 'error':
+      case ERROR:
         observer.error(this.payload)
         break
-      case 'cancel':
+      case CANCEL:
         observer.cancel()
         break
     }
@@ -70,9 +71,9 @@ export class Subject extends Observable {
 
   get closed(): boolean {
     switch (this.status) {
-      case 'error':
-      case 'complete':
-      case 'cancel':
+      case ERROR:
+      case COMPLETE:
+      case CANCEL:
         return true
       default:
         return false
@@ -80,24 +81,24 @@ export class Subject extends Observable {
   }
 
   get next() {
-    return update.bind(null, this, 'next')
+    return update.bind(null, this, NEXT)
   }
 
   get complete() {
-    return update.bind(null, this, 'complete')
+    return update.bind(null, this, COMPLETE)
   }
 
   get error() {
-    return update.bind(null, this, 'error')
+    return update.bind(null, this, ERROR)
   }
 
   get cancel() {
-    return update.bind(null, this, 'cancel')
+    return update.bind(null, this, CANCEL)
   }
 
   get clear() {
     return () => {
-      this.meta.status = 'start'
+      this.meta.status = START
       this.payload = null
       this._observers.forEach(observer => observer.unsubscribe())
     }
@@ -180,8 +181,8 @@ function update(subject: Subject, status: string, value: *): void {
 
   // Allow passing a value to complete. This is a decent compromise
   // For actions that simply complete
-  if (status === 'complete' && arguments.length > 2) {
-    update(subject, 'next', value)
+  if (status === COMPLETE && arguments.length > 2) {
+    update(subject, NEXT, value)
   }
 
   subject.meta.status = status
@@ -192,13 +193,13 @@ function update(subject: Subject, status: string, value: *): void {
 
   subject._observers.forEach(observer => {
     switch (status) {
-      case 'next':
+      case NEXT:
         return observer.next(subject.payload)
-      case 'error':
+      case ERROR:
         return observer.error(subject.payload)
-      case 'complete':
+      case COMPLETE:
         return observer.complete()
-      case 'cancel':
+      case CANCEL:
         return observer.cancel()
     }
   })
