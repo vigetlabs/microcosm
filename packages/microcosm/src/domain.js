@@ -72,13 +72,6 @@ export class Domain<State: any = Object> extends Agent {
   }
 
   receive(action: Subject): void {
-    // Avoid a situation where history dispatches before a domain
-    // is fully set up. Domains move into the "next" state when
-    // construction is finished (getInitialState())
-    if (this.status === 'start') {
-      return
-    }
-
     let next = this._rollforward(action)
 
     if (next !== this.payload) {
@@ -94,6 +87,24 @@ export class Domain<State: any = Object> extends Agent {
 
   toJSON() {
     return this.serialize(this.valueOf())
+  }
+
+  _shouldListenTo(action: Subject): boolean {
+    // Avoid a situation where history dispatches before a domain
+    // is fully set up. Domains move into the "next" state when
+    // construction is finished (getInitialState())
+    if (this.status === START) {
+      return false
+    }
+
+    // If this domain has processed this action previously, the ledger
+    // needs to roll back the state change
+    if (this._ledger.has(action)) {
+      return true
+    }
+
+    // Otherwise, only listen to this action if there are registrations
+    return this._resolve(action).length > 0
   }
 
   _resolve(action: Subject): DomainHandler<State>[] {
@@ -123,11 +134,11 @@ export class Domain<State: any = Object> extends Agent {
   }
 
   _rollforward(action: Subject): State {
-    let state = this._ledger.rebase(action)
     let focus = action
+    let state = this._ledger.rebase(focus)
 
     while (focus) {
-      if (!focus.disabled && focus.status !== 'start') {
+      if (!focus.disabled) {
         state = this._dispatch(state, focus)
         this._ledger.set(focus, state)
       }

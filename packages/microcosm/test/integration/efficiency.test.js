@@ -61,7 +61,7 @@ describe('Efficiency', function() {
     expect(handler).toHaveBeenCalledTimes(1)
   })
 
-  it.skip('actions only dispatch duplicatively to address races', () => {
+  it('actions only dispatch duplicatively to address races', () => {
     const repo = new Microcosm()
     const handler = jest.fn()
     const action = () => () => {}
@@ -80,6 +80,6 @@ describe('Efficiency', function() {
     two.complete(1)
     one.complete(2)
 
-    expect(handler).toHaveBeenCalledTimes(2)
+    expect(handler).toHaveBeenCalledTimes(3)
   })
 })

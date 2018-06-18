@@ -28,6 +28,10 @@ export class Ledger<State> {
     }
   }
 
+  has(action: Subject): boolean {
+    return this._versions.has(action)
+  }
+
   recall(action: ?Subject): State {
     let focus = action
 

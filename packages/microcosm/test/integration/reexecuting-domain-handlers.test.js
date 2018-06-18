@@ -1,7 +1,7 @@
 import { Microcosm } from 'microcosm'
 
 describe('Re-executing domain handlers', function() {
-  it.skip('does not re-invoke a domain handler if it would result in no change', function() {
+  it('does not re-invoke a domain handler if it would result in no change', function() {
     let repo = new Microcosm()
 
     let counterOneCalls = 0

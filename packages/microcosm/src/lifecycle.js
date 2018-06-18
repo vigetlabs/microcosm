@@ -17,16 +17,14 @@ export const RESET = tag(parse.bind(null), '$reset')
 
 export const PATCH = tag(parse.bind(null), '$patch')
 
-export const INITIAL_STATE = '$initialState'
-
-export const INACTIVE = 'inactive'
-
 export const START = 'start'
-
-export const COMPLETE = 'complete'
 
 export const NEXT = 'next'
 
 export const ERROR = 'error'
+
+export const COMPLETE = 'complete'
+
+export const CANCEL = 'cancel'
 
 export const UNSUBSCRIBE = 'unsubscribe'
