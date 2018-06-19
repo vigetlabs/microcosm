@@ -22,6 +22,7 @@ export class History extends Subject {
   _branch: Set<Subject>
   _tree: Tree<Subject>
   _debug: boolean
+  _limit: number
 
   constructor(options: Object) {
     super()
@@ -31,6 +32,7 @@ export class History extends Subject {
     this._branch = new Set()
     this._tree = new Tree()
     this._debug = !!options.debug
+    this._limit = Math.max(options.maxHistory, 0)
   }
 
   get size(): number {
@@ -43,7 +45,7 @@ export class History extends Subject {
   }
 
   archive() {
-    while (this.root && this.size > 1 && this.root.closed) {
+    while (this.root && this.size > this._limit && this.root.closed) {
       let last = this.root
       let next = this._tree.after(this.root)
 

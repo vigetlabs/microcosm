@@ -69,4 +69,17 @@ describe('History::archive', function() {
     //   a rollback to the state of 1
     expect(repo.history.size).toBe(3)
   })
+
+  it('can maintain a specific size', function() {
+    const size = 3
+    const repo = new Microcosm({ maxHistory: size })
+
+    for (var i = 0; i < size * 2; i++) {
+      repo.push(`action-${i}`)
+    }
+
+    repo.history.archive()
+
+    expect(repo.history.size).toBe(size)
+  })
 })
