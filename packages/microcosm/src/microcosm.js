@@ -81,8 +81,9 @@ export class Microcosm extends Subject {
     )
 
     if (blueprint instanceof Observable) {
-      this.domains[key] = Subject.from(blueprint)
-      this.subscribe({ complete: this.domains[key].complete })
+      let domain = Subject.from(blueprint)
+      this.domains[key] = domain
+      this.subscribe({ complete: domain.complete })
     } else {
       let Entity = inherit(blueprint, Domain)
 
