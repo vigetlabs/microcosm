@@ -15,6 +15,7 @@ import { RESET, PATCH } from './lifecycle'
 
 const DEFAULTS = {
   debug: false,
+  maxHistory: 1,
   parent: null
 }
 
