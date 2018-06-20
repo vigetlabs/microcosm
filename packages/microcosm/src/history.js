@@ -17,9 +17,6 @@ function simplify(tree: Tree<Subject>, subject: Subject) {
 }
 
 export class History extends Subject {
-  root: ?Subject
-  head: ?Subject
-  _branch: Set<Subject>
   _tree: Tree<Subject>
   _debug: boolean
   _limit: number
@@ -27,16 +24,21 @@ export class History extends Subject {
   constructor(options: Object) {
     super()
 
-    this.root = null
-    this.head = null
-    this._branch = new Set()
     this._tree = new Tree()
     this._debug = !!options.debug
     this._limit = Math.max(options.maxHistory, 0)
   }
 
+  get head() {
+    return this._tree.head
+  }
+
+  get root() {
+    return this._tree.root
+  }
+
   get size(): number {
-    return this._branch.size
+    return this._tree.size
   }
 
   then(pass?: *, fail?: *): Promise<*> {
@@ -50,8 +52,7 @@ export class History extends Subject {
       let next = this._tree.after(this.root)
 
       if (next && next.closed) {
-        this._branch.delete(last)
-        this.remove(last)
+        this._tree.remove(last)
       } else {
         break
       }
@@ -72,15 +73,7 @@ export class History extends Subject {
       origin
     })
 
-    this._branch.add(action)
-
-    if (this.head) {
-      this._tree.point(this.head, action)
-    } else {
-      this.root = action
-    }
-
-    this.head = action
+    this._tree.append(action)
 
     action.every(this.dispatch, this)
 
@@ -102,54 +95,34 @@ export class History extends Subject {
   }
 
   remove(action: Subject) {
-    let isActive = this.isActive(action)
+    let after = this._tree.remove(action)
 
-    if (this.head === action) {
-      this.head = this.before(action)
+    if (after) {
+      this.next(after)
     }
-
-    let base = this._tree.remove(action)
-
-    if (this.root === action) {
-      this.root = base
-    }
-
-    if (isActive && base) {
-      this._branch.delete(action)
-      this.next(base)
-    }
-  }
-
-  isActive(action: Subject) {
-    return !action.disabled && this._branch.has(action)
   }
 
   toggle(action: Subject) {
     action.disabled = !action.disabled
 
-    if (this._branch.has(action)) {
+    if (this._tree.has(action)) {
       this.next(action)
     }
   }
 
   checkout(action: ?Subject) {
-    if (!action) {
-      throw new Error(`Unable to checkout missing action`)
-    }
-
-    this.head = action
-    this._branch = new Set(this._tree.select(action))
+    this._tree.checkout(action)
     this.next(action)
   }
 
   // $FlowFixMe
   [iterator]() {
-    return this._branch[iterator]()
+    return this._tree[iterator]()
   }
 
   toJSON() {
     return {
-      list: Array.from(this._branch),
+      list: Array.from(this._tree),
       tree: this.root ? simplify(this._tree, this.root) : null,
       size: this.size
     }
