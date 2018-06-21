@@ -123,12 +123,13 @@ export class Tree<Node> {
   checkout(node: Node) {
     assert(node, `Unable to checkout missing action`)
 
-    let path = []
+    this.head = node
+    this._branch = new Set()
 
     while (node) {
       var before = this.before(node)
 
-      path.push(node)
+      this._branch.append(node)
 
       if (before) {
         this.point(before, node)
@@ -137,9 +138,6 @@ export class Tree<Node> {
         break
       }
     }
-
-    this.head = node
-    this._branch = new Set(path.reverse())
   }
 
   children(node: Node): Node[] {
