@@ -4,8 +4,10 @@
  * @flow
  */
 
+import { Registry } from './registry'
 import { Subject } from './subject'
 import { merge } from './data'
+import { EMPTY_OBJECT } from './empty'
 
 export class Agent extends Subject {
   repo: *
@@ -18,18 +20,14 @@ export class Agent extends Subject {
 
     this.repo = repo
     this.options = merge(repo.options, this.constructor.defaults, options)
+    this.registry = new Registry(this)
 
-    this._preHistory()
-
-    let tracker = repo.history
+    this.repo.dispatcher
       .filter(this._shouldListenTo, this)
       .subscribe(this.receive.bind(this))
 
     repo.subscribe({
-      complete: () => {
-        tracker.unsubscribe()
-        this.teardown(this.repo, this.options)
-      }
+      complete: this.teardown.bind(this, this.repo, this.options)
     })
 
     this.setup(this.repo, this.options)
@@ -49,17 +47,21 @@ export class Agent extends Subject {
   teardown(repo?: *, options?: Object): void {}
 
   /**
+   * Returns an object mapping actions to methods on the agent. This is the
+   * communication point between a agentand the rest of the system.
+   */
+  register(): * {
+    return EMPTY_OBJECT
+  }
+
+  /**
    * Called whenever an agent receives a new action
    */
   receive(action: Subject): void {}
 
   // Private -------------------------------------------------- //
 
-  _preHistory() {
-    // NOOP by default
-  }
-
   _shouldListenTo(action: Subject): boolean {
-    return true
+    return this.registry.respondsTo(action)
   }
 }

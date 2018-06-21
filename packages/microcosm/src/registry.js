@@ -22,14 +22,22 @@ export class Registry {
     this._entries = {}
   }
 
-  resolve(action: Subject): Function[] {
-    let key = action.toString()
+  register(action: Subject) {
+    let { key } = action.meta
 
     if (!this._entries.hasOwnProperty(key)) {
       this._entries[key] = buildRegistry(this._entity, key)
     }
 
-    let handlers = this._entries[key][action.status] || EMPTY_ARRAY
+    return this._entries[key]
+  }
+
+  respondsTo(action: Subject): boolean {
+    return this.register(action) != EMPTY_OBJECT
+  }
+
+  resolve(action: Subject): Function[] {
+    let handlers = this.register(action)[action.status] || EMPTY_ARRAY
 
     return Array.isArray(handlers) ? handlers : [handlers]
   }

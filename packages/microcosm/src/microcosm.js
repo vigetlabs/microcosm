@@ -4,7 +4,6 @@
 
 import assert from 'assert'
 import { installDevtools } from './install-devtools'
-import { History } from './history'
 import { Subject } from './subject'
 import { Observable } from './observable'
 import { Domain } from './domain'
@@ -12,6 +11,8 @@ import { Effect } from './effect'
 import { merge } from './data'
 import { inherit } from './proto'
 import { RESET, PATCH } from './lifecycle'
+import { coroutine } from './coroutine'
+import { tag } from './tag'
 
 const DEFAULTS = {
   debug: false,
@@ -20,7 +21,7 @@ const DEFAULTS = {
 }
 
 export class Microcosm extends Subject {
-  history: History
+  dispatcher: Subject
   domains: { [string]: Subject }
   options: Object
 
@@ -32,9 +33,9 @@ export class Microcosm extends Subject {
     let options = merge(DEFAULTS, this.constructor.defaults, preOptions || {})
     let parent = options.parent
 
-    this.history = parent ? parent.history : new History(options)
     this.domains = parent ? Object.create(parent.domains) : {}
     this.options = options
+    this.dispatcher = parent ? parent.dispatcher : new Subject()
 
     this.subscribe({
       complete: this.teardown.bind(this, this.options)
@@ -107,8 +108,17 @@ export class Microcosm extends Subject {
     return new Entity(this, options)
   }
 
-  push() {
-    return this.history.append(this, ...arguments)
+  push(command, ...params) {
+    let action = new Subject(undefined, {
+      key: tag(command).toString(),
+      origin: this
+    })
+
+    this.dispatcher.next(action)
+
+    coroutine(action, command, params, this)
+
+    return action
   }
 
   prepare() {

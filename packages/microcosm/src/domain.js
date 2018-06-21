@@ -4,38 +4,24 @@
 
 import assert from 'assert'
 import { Subject } from './subject'
-import { Registry } from './registry'
 import { EMPTY_OBJECT, EMPTY_ARRAY } from './empty'
-import { RESET, PATCH, START } from './lifecycle'
-import { Ledger } from './ledger'
+import { RESET, PATCH } from './lifecycle'
 import { Agent } from './agent'
+import { Tree } from './tree'
 
 type DomainHandler<State> = (state: State, payload?: *, meta?: *) => State
-
-type DomainRegistry<State> = {
-  [string]: DomainHandler<State>
-}
 
 const RESET_KEY = RESET.toString()
 const PATCH_KEY = PATCH.toString()
 
 export class Domain<State: any = Object> extends Agent {
-  _registry: Registry
-  _ledger: Ledger<State>
+  history: Tree
 
   constructor(repo: *, options?: Object) {
     super(repo, options)
-    this.next(this._ledger.valueOf())
-  }
 
-  _preHistory() {
-    this._registry = new Registry(this)
-
-    this._ledger = new Ledger(
-      this.getInitialState(),
-      this.repo.history,
-      this.options.debug
-    )
+    this.history = new Tree(this.options)
+    this.next(this.getInitialState())
   }
 
   /**
@@ -63,48 +49,19 @@ export class Domain<State: any = Object> extends Agent {
     return data
   }
 
-  /**
-   * Returns an object mapping actions to methods on the domain. This is the
-   * communication point between a domain and the rest of the system.
-   */
-  register(): DomainRegistry<State> {
-    return EMPTY_OBJECT
-  }
+  receive(action): void {
+    this.history.append(action)
 
-  receive(action: Subject): void {
-    let next = this._rollforward(action)
-
-    if (next !== this.payload) {
-      this.next(next)
-    }
-
-    // TODO: This could probably be a generic storage solution
-    // that cleaned up keys as actions completed.
-    this._ledger.clean(action)
+    action
+      .every()
+      .filter(this._shouldRollforward, this)
+      .subscribe(this._rollforward.bind(this))
   }
 
   // Private -------------------------------------------------- //
 
   toJSON() {
     return this.serialize(this.valueOf())
-  }
-
-  _shouldListenTo(action: Subject): boolean {
-    // Avoid a situation where history dispatches before a domain
-    // is fully set up. Domains move into the "next" state when
-    // construction is finished (getInitialState())
-    if (this.status === START) {
-      return false
-    }
-
-    // If this domain has processed this action previously, the ledger
-    // needs to roll back the state change
-    if (this._ledger.has(action)) {
-      return true
-    }
-
-    // Otherwise, only listen to this action if there are registrations
-    return this._resolve(action).length > 0
   }
 
   _resolve(action: Subject): DomainHandler<State>[] {
@@ -119,7 +76,7 @@ export class Domain<State: any = Object> extends Agent {
         // https://github.com/vigetlabs/microcosm/issues/507
         return action.status === 'complete' ? [this._patch] : EMPTY_ARRAY
       default:
-        return this._registry.resolve(action)
+        return this.registry.resolve(action)
     }
   }
 
@@ -133,20 +90,34 @@ export class Domain<State: any = Object> extends Agent {
     return state
   }
 
+  _shouldRollforward(action) {
+    return this.history.hasValue(action) || this._resolve(action).length > 0
+  }
+
   _rollforward(action: Subject): State {
     let focus = action
-    let state = this._ledger.rebase(focus)
+    let state = this.history.recall(action, this.getInitialState())
 
     while (focus) {
       if (!focus.disabled) {
         state = this._dispatch(state, focus)
-        this._ledger.set(focus, state)
+        this.history.set(focus, state)
       }
 
-      focus = this.repo.history.after(focus)
+      if (focus == this.history.head) {
+        break
+      }
+
+      focus = this.history.after(focus)
     }
 
-    return state
+    if (action.complete) {
+      this.history.archive()
+    }
+
+    if (this.payload !== state) {
+      this.next(state)
+    }
   }
 
   _patch(state: State, payload: *, meta: *): State {
@@ -174,5 +145,15 @@ export class Domain<State: any = Object> extends Agent {
     }
 
     return this.getInitialState()
+  }
+
+  _shouldListenTo(action: Subject): boolean {
+    switch (action.meta.key) {
+      case RESET_KEY:
+      case PATCH_KEY:
+        return true
+      default:
+        return this.registry.respondsTo(action)
+    }
   }
 }

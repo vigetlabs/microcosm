@@ -190,14 +190,16 @@ export class Observable {
     })
   }
 
-  every(fn: (subject: this) => void, scope: any): * {
-    let dispatch = fn.bind(scope, this)
+  every(): * {
+    return new Observable(observer => {
+      let dispatch = observer.next.bind(null, this)
 
-    return this.subscribe({
-      next: dispatch,
-      error: dispatch,
-      complete: dispatch,
-      cancel: dispatch
+      return this.subscribe(
+        dispatch, // next
+        dispatch, // error
+        dispatch, // complete
+        dispatch // cancel
+      )
     })
   }
 

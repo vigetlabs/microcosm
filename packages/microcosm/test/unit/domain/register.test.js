@@ -97,4 +97,28 @@ describe('Domain::register', function() {
 
     await job
   })
+
+  it('remembers the execution order', function() {
+    let repo = new Microcosm({ debug: true })
+    let add = () => action => {}
+
+    repo.addDomain('test', {
+      getInitialState: () => 0,
+      register() {
+        return {
+          [add]: (a, b) => {
+            return a + b
+          }
+        }
+      }
+    })
+
+    let one = repo.push(add)
+    let two = repo.push(add)
+
+    two.complete(1)
+    one.complete(1)
+
+    expect(repo.state.test).toBe(2)
+  })
 })
