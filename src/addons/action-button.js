@@ -18,6 +18,7 @@ type Props = {
   onError: ?Callback,
   onOpen: ?Callback,
   onUpdate: ?Callback,
+  confirm: (value?: *, event?: Event) => boolean,
   prepare: (value?: *, event?: Event) => *,
   send: ?Sender,
   tag: string | React$ElementType,
@@ -33,7 +34,8 @@ class ActionButton extends React.PureComponent<Props> {
   static contextTypes: Context
 
   send: Sender
-  click: (event: Event) => Action
+  click: () => void
+  confirm: (event: Event) => void
 
   constructor(props: Props, context: Context) {
     super(props, context)
@@ -42,9 +44,13 @@ class ActionButton extends React.PureComponent<Props> {
     this.click = this.click.bind(this)
   }
 
-  click(event: Event) {
+  click(event) {
     let payload = this.props.prepare(this.props.value, event)
     let action = null
+
+    if (!this.props.confirm(payload, event)) {
+      return
+    }
 
     if (this.props.action) {
       action = this.send(this.props.action, payload)
@@ -77,6 +83,7 @@ class ActionButton extends React.PureComponent<Props> {
     delete props.onError
     delete props.send
     delete props.prepare
+    delete props.confirm
 
     if (this.props.tag === 'button' && props.type == null) {
       props.type = 'button'
@@ -99,6 +106,7 @@ ActionButton.defaultProps = {
   onOpen: null,
   onUpdate: null,
   prepare: identity,
+  confirm: (value, event) => true,
   send: null,
   tag: 'button',
   value: null

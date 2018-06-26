@@ -154,6 +154,42 @@ describe('callbacks', function() {
   })
 })
 
+describe('confirm', () => {
+  it('will not dispatch an action if confirm returns false', function() {
+    let send = jest.fn()
+
+    let wrapper = mount(<ActionButton confirm={() => false} />, {
+      context: { send }
+    })
+
+    wrapper.simulate('click')
+
+    expect(send).not.toHaveBeenCalled()
+  })
+
+  it('confirm receives the result of prepare', function() {
+    let send = jest.fn()
+    let confirm = jest.fn(payload => true)
+    let prepare = string => string.toUpperCase()
+
+    let wrapper = mount(
+      <ActionButton
+        action="action"
+        value="test"
+        prepare={prepare}
+        confirm={confirm}
+      />,
+      {
+        context: { send }
+      }
+    )
+
+    wrapper.simulate('click')
+
+    expect(confirm).toHaveBeenCalledWith('TEST', expect.anything())
+  })
+})
+
 describe('manual operation', function() {
   it('click can be called directly on the component instance', function() {
     let repo = new Microcosm()

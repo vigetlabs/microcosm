@@ -107,6 +107,30 @@ class MyForm extends React.Component {
 }
 ```
 
+### confirm(value, event)
+
+Called right before an ActionForm will dispatch an action. Return `true` or `false` from this callback in order to control whether or not the ActionForm dispatches. This is useful for:
+
+- Asking a user if they want to perform an action
+- Only applying a behavior for specific keyboard input (like if the control key is pressed)
+
+`value` is the result of calling the `prepare` property.
+
+```javascript
+function askUser(value, event) {
+  return confirm('Are you sure you want to do this?')
+}
+
+function ConfirmButton({ user }) {
+  return (
+    <ActionForm action={update} confirm={askUser}>
+      <input name="email" type="email" defaultValue={user.email} />
+      <button>Submit</button>
+    </ActionForm>
+  )
+}
+```
+
 ### onSubmit(event, action)
 
 An event callback executed immediately after the form submits and the

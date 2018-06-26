@@ -20,7 +20,8 @@ type Props = {
   onCancel: ?Callback,
   onDone: ?Callback,
   onSubmit: (event: Event, Action: *) => *,
-  prepare: (data: Object) => Object,
+  confirm: (value?: *, event?: Event) => boolean,
+  prepare: (value?: *, event?: Event) => *,
   send: ?Sender,
   serializer: (form: Element) => Object
 }
@@ -61,6 +62,7 @@ class ActionForm extends React.PureComponent<Props> {
     // Remove invalid props to prevent React warnings
     delete props.action
     delete props.prepare
+    delete props.confirm
     delete props.serializer
     delete props.onOpen
     delete props.onDone
@@ -88,6 +90,10 @@ class ActionForm extends React.PureComponent<Props> {
 
     let params = this.props.prepare(this.props.serializer(form))
     let action = null
+
+    if (!this.props.confirm(params, event)) {
+      return
+    }
 
     if (this.props.action) {
       action = this.send(this.props.action, params)
@@ -119,6 +125,7 @@ ActionForm.defaultProps = {
   onDone: null,
   onSubmit: noop,
   prepare: identity,
+  confirm: (value, event) => true,
   send: null,
   serializer: form => serialize(form, { hash: true, empty: true })
 }
