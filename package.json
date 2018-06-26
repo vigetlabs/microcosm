@@ -9,7 +9,7 @@
   "scripts": {
     "build": "make all",
     "flow": "flow",
-    "lint": "prettier -l './{src,test,examples}/**/*.j' && eslint \"{src,test,examples}/**/*.js\"",
+    "lint": "prettier -l './{src,test,examples}/**/*.js' && eslint './{src,test,examples}/**/*.js'",
     "pretty": "prettier --write './{docs,src,test,examples}/**/*.{md,js,css}' && eslint --fix './{src,test,examples}/**/*.js'",
     "docs": "jsdoc src -c jsdoc/conf.json && jsdoc src -c jsdoc/conf.json --package package.json",
     "test": "jest --config test/dev.config.json --maxWorkers=2",
