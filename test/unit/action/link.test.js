@@ -58,6 +58,6 @@ describe('Action link', function() {
       repo.push(() => 3)
     ])
 
-    expect(action.status).toEqual("reject")
+    expect(action.status).toEqual('reject')
   })
 })
