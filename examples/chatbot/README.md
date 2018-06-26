@@ -28,9 +28,9 @@ const Messages = {
   // ..
   register() {
     return {
-      [send.open]  : Messages.addLoading,
-      [send.done]  : Messages.add,
-      [send.error] : Messages.addError
+      [send.open]: Messages.addLoading,
+      [send.done]: Messages.add,
+      [send.error]: Messages.addError
     }
   }
 }
@@ -44,12 +44,12 @@ creator. Domains can hook into the different states of that action as the
 action creator resolves. These states _loosely_ follow the
 `readyState` property of `XMLHTTPRequest`:
 
-1. **unset**: Nothing has happened yet. The action creator has not
-   started.
-2. **open**: The action creator has started working, such as the opening
-   of an XHR request, however no response has been given.
-3. **loading**: The action creator is partially complete, such as
-   downloading a response from a server.
-4. **done**: The action creator has resolved.
-5. **cancelled**: The action was cancelled, like if an XHR request is
-   aborted.
+1.  **unset**: Nothing has happened yet. The action creator has not
+    started.
+2.  **open**: The action creator has started working, such as the opening
+    of an XHR request, however no response has been given.
+3.  **loading**: The action creator is partially complete, such as
+    downloading a response from a server.
+4.  **done**: The action creator has resolved.
+5.  **cancelled**: The action was cancelled, like if an XHR request is
+    aborted.

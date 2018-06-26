@@ -1,12 +1,12 @@
 # Examples
 
-1. [What's in here](whats-in-here)
-   * [Chatbot](chatbot)
-   * [Painter](painter)
-   * [ReactRouter](reactrouter)
-   * [SimpleSVG](simplesvg)
-2. [Run the examples](run-the-examples)
-3. [Project Structure](project-structure)
+1.  [What's in here](whats-in-here)
+    - [Chatbot](chatbot)
+    - [Painter](painter)
+    - [ReactRouter](reactrouter)
+    - [SimpleSVG](simplesvg)
+2.  [Run the examples](run-the-examples)
+3.  [Project Structure](project-structure)
 
 ## What's in here
 
@@ -32,11 +32,9 @@ An animated SVG example that uses actions to animate the orbiting of
 one circle around another. Demonstrates the thunk usage pattern for
 actions.
 
-
 ## Run the examples
 
-To run these examples, install project dependencies and execute `npm
-start` in any of the directories:
+To run these examples, install project dependencies and execute `npm start` in any of the directories:
 
 ```
 $ git clone https://github.com/vigetlabs/microcosm
