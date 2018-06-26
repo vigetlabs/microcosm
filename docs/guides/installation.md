@@ -1,8 +1,8 @@
 # Installation
 
-1. [Up and running](#up-and-running)
-2. [Strict mode](#strict-mode)
-3. [Optional dependencies](#optional-dependencies)
+1.  [Up and running](#up-and-running)
+2.  [Strict mode](#strict-mode)
+3.  [Optional dependencies](#optional-dependencies)
 
 ## Up and running
 
@@ -48,7 +48,7 @@ module.exports = {
   // ...
   resolve: {
     alias: {
-      "microcosm": "microcosm/strict",
+      microcosm: 'microcosm/strict'
     }
   }
   // ...
@@ -68,7 +68,7 @@ module.exports = {
   // ...
   resolve: {
     alias: {
-      "microcosm": isProduction ? 'microcosm' : "microcosm/strict",
+      microcosm: isProduction ? 'microcosm' : 'microcosm/strict'
     }
   }
   // ...

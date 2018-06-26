@@ -1,7 +1,7 @@
 # Immutability Helpers
 
-1. [Overview](#overview)
-2. [API](#API)
+1.  [Overview](#overview)
+2.  [API](#API)
 
 ## Overview
 
@@ -14,7 +14,7 @@ update a nested key:
 let user = { id: 'Billy', facts: { height: 72, age: 23 } }
 
 // Update the user's age
-let next = {...user, facts: {...facts, age: 24 } }
+let next = { ...user, facts: { ...facts, age: 24 } }
 ```
 
 Spreading can quickly get out of hand, and always copies data even if it hasn't
@@ -102,7 +102,7 @@ let next = set(state, ['planets', 'venus'], { color: 'yellow' })
 console.log(state) // { planets: { venus, earth, mars } }
 
 // Or a string keypath can be used to deeply assign a value
-let next = set(state, 'planet.venus', {color: 'yellow' })
+let next = set(state, 'planet.venus', { color: 'yellow' })
 console.log(state) // { planets: { venus, earth, mars } }
 
 // If the value is the same, no change will occur

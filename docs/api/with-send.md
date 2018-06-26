@@ -1,8 +1,8 @@
 # withSend(Component)
 
-1. [Overview](#overview)
-2. [Testing](#testing)
-3. [Accessing the original component](#accessing-the-original-component)
+1.  [Overview](#overview)
+2.  [Testing](#testing)
+3.  [Accessing the original component](#accessing-the-original-component)
 
 ## Overview
 
@@ -15,12 +15,8 @@ props may otherwise be exhaustive.
 import React from 'react'
 import withSend from 'microcosm/addons/with-send'
 
-const Button = withSend(function ({ send }) {
-  return (
-    <button onClick={() => send('hello-world')}>
-      Say hello!
-    </button>
-  )
+const Button = withSend(function({ send }) {
+  return <button onClick={() => send('hello-world')}>Say hello!</button>
 })
 ```
 

@@ -1,9 +1,9 @@
 # Presenter
 
-1. [Overview](#overview)
-2. [Track changes and compute values](#track-changes-and-compute-values)
-3. [Receiving Actions](#receiving-actions)
-4. [API](#api)
+1.  [Overview](#overview)
+2.  [Track changes and compute values](#track-changes-and-compute-values)
+3.  [Receiving Actions](#receiving-actions)
+4.  [API](#api)
 
 ## Overview
 
@@ -29,25 +29,23 @@ import Microcosm from 'microcosm'
 
 const repo = new Microcosm()
 
-repo.patch({ planets: [ 'Mercury', 'Venus', 'Earth' ]})
+repo.patch({ planets: ['Mercury', 'Venus', 'Earth'] })
 
 class PlanetsPresenter extends Presenter {
-
-  getModel (props, state) {
+  getModel(props, state) {
     return {
       planets: data => data.planets
     }
   }
 
-  render () {
+  render() {
     const { planets } = this.model
 
     return <p>{planets.join(', ')}</p>
   }
-
 }
 
-DOM.render(<PlanetsPresenter repo={ repo } />)
+DOM.render(<PlanetsPresenter repo={repo} />)
 
 // <p>Mercury, Venus, Earth</p>
 ```
@@ -89,46 +87,46 @@ repo.addDomain('count', {
   },
   intercept() {
     return {
-      [increaseCount] : this.increase
+      [increaseCount]: this.increase
     }
   }
 })
 
-function StepperForm ({ count }) {
+function StepperForm({ count }) {
   return (
     <ActionForm action="increment">
       <input type="hidden" name="amount" value="1" />
-      <p>The current count is { count }</p>
+      <p>The current count is {count}</p>
       <button>+ 1</button>
     </ActionForm>
   )
 }
 
 class CountPresenter extends Presenter {
-  getModel () {
+  getModel() {
     return {
       count: data => data.count
     }
   }
 
-  intercept () {
+  intercept() {
     return {
-      "increment": this.increaseCount
+      increment: this.increaseCount
     }
   }
 
-  increaseCount (repo, { amount }) {
+  increaseCount(repo, { amount }) {
     return repo.push(increaseCount, amount)
   }
 
-  render () {
+  render() {
     const { count } = this.model
 
     return <StepperForm count={count} />
   }
 }
 
-DOM.render(<CountPresenter repo={ repo } />, document.getElementById('container'))
+DOM.render(<CountPresenter repo={repo} />, document.getElementById('container'))
 ```
 
 Whenever the form is submitted, an `increaseCount` action will bubble
@@ -142,11 +140,11 @@ parent Presenters. If no Presenter intercepts the action, it will
 dispatch the action to the repo.
 
 ```javascript
-function StepperForm ({ count }) {
+function StepperForm({ count }) {
   return (
-    <Form action={ increaseCount }>
+    <Form action={increaseCount}>
       <input type="hidden" name="amount" value="1" />
-      <p>The current count is { count }</p>
+      <p>The current count is {count}</p>
       <button>+ 1</button>
     </Form>
   )
@@ -164,7 +162,7 @@ before the first `getModel` invocation.
 import { getPlanets } from '../actions/planets'
 
 class PlanetsList extends Presenter {
-  setup (repo, props, state) {
+  setup(repo, props, state) {
     // Important: this.model is not defined yet!
     repo.push(getPlanets)
   }
@@ -182,13 +180,13 @@ start tasks that need access to the model data.
 import { getPlanets } from '../actions/planets'
 
 class PlanetsList extends Presenter {
-  getModel () {
+  getModel() {
     return {
       planets: state => state.planets
     }
   }
-  ready (repo, props, state) {
-    if (this.model.planets.length <=0) {
+  ready(repo, props, state) {
+    if (this.model.planets.length <= 0) {
       repo.push(getPlanets)
     }
   }
@@ -224,7 +222,7 @@ class Planet extends Presenter {
 
 In order for this hook to be useful, we ensure that `update` is executed only after the latest model has been calculated.
 
-**NOTE:** `update` is *not* called every time model changes! It only gets called when the `props` sent to Presenter change or when `state` changes within the Presenter. If this is what you need, see `modelWillUpdate`.
+**NOTE:** `update` is _not_ called every time model changes! It only gets called when the `props` sent to Presenter change or when `state` changes within the Presenter. If this is what you need, see `modelWillUpdate`.
 
 ### `modelWillUpdate(repo, nextModel, changeset)`
 
@@ -259,10 +257,10 @@ subscriptions and other setup behavior.
 
 ```javascript
 class Example extends Presenter {
-  setup () {
+  setup() {
     this.socket = new WebSocket('ws://localhost:3000')
   }
-  teardown () {
+  teardown() {
     this.socket.close()
   }
 }
@@ -275,9 +273,9 @@ an object of key/value pairs.
 
 ```javascript
 class PlanetPresenter extends Presenter {
-  getModel (props, state) {
+  getModel(props, state) {
     return {
-      planet : data => data.planets.find(p => p.id === props.planetId)
+      planet: data => data.planets.find(p => p.id === props.planetId)
     }
   }
   // ...
@@ -330,16 +328,16 @@ Views are passed the `send` method on a Presenter. This provides the
 exact same behavior as `withSend`:
 
 ```javascript
-function Button ({ send }) {
+function Button({ send }) {
   return <button onClick={() => send('test')}>Click me!</button>
 }
 
 class Example extends Presenter {
   view = Button
 
-  intercept () {
+  intercept() {
     return {
-      'test': () => alert("This is a test!")
+      test: () => alert('This is a test!')
     }
   }
 }
@@ -355,15 +353,15 @@ ergonomics of presenter/view communication. Data down, actions up.
 import ActionForm from 'microcosm/addons/action-form'
 
 class HelloWorldPresenter extends Presenter {
-  intercept () {
+  intercept() {
     return {
-      'greet': this.greet
+      greet: this.greet
     }
   }
-  greet (repo, data) {
-    alert("hello world!")
+  greet(repo, data) {
+    alert('hello world!')
   }
-  render () {
+  render() {
     return (
       <ActionForm action="greet">
         <button>Greet</button>
@@ -386,7 +384,7 @@ forking behavior:
 
 ```javascript
 class NoFork extends Presenter {
-  getRepo (repo) {
+  getRepo(repo) {
     return repo
   }
 }
@@ -402,22 +400,18 @@ This works exactly like the `send` property passed into a component
 that is wrapped in the `withSend` higher order component.
 
 ```javascript
-function AlertButton ({ message, send }) {
-  return (
-    <button onClick={() => send('alert', message)}>
-      Click Me
-    </button>
-  )
+function AlertButton({ message, send }) {
+  return <button onClick={() => send('alert', message)}>Click Me</button>
 }
 
 class Example extends Presenter {
-  intercept () {
+  intercept() {
     return {
       alert: message => alert(message)
     }
   }
 
-  render () {
+  render() {
     return <AlertButton message="Hey!" send={this.send} />
   }
 }

@@ -1,17 +1,17 @@
 # Effects
 
-1. [Overview](#overview)
-2. [Creating Effects](#creating-effects)
-3. [A quick example](#a-quick-example---query-strings)
-4. [API](#api)
+1.  [Overview](#overview)
+2.  [Creating Effects](#creating-effects)
+3.  [A quick example](#a-quick-example---query-strings)
+4.  [API](#api)
 
 ## Overview
 
 Not all actions result in updates to application state. For example:
 
-* Writing backup data to `localStorage`
-* Sending analytics events
-* Persisting query information in the URL.
+- Writing backup data to `localStorage`
+- Sending analytics events
+- Persisting query information in the URL.
 
 **Effect handlers fire immediately after Domain handlers and are only
 called once per action state.** This means that a repo's state is up to
@@ -27,18 +27,18 @@ advantage of having a `constructor`.
 
 ```javascript
 class Effect {
-  setup (repo, options) {
+  setup(repo, options) {
     // Run startup behavior
   }
-  teardown (repo) {
+  teardown(repo) {
     // Clean up any setup behavior
   }
-  handleAction (repo, payload) {
+  handleAction(repo, payload) {
     // Respond once to an action
   }
-  register () {
+  register() {
     return {
-      [action] : this.handleAction
+      [action]: this.handleAction
     }
   }
 }
@@ -50,18 +50,18 @@ repo.addEffect(Effect)
 
 ```javascript
 const Effect = {
-  setup (repo, options) {
+  setup(repo, options) {
     // Run starting behavior
   },
-  teardown (repo) {
+  teardown(repo) {
     // Clean up
   },
-  handleAction (repo, payload) {
+  handleAction(repo, payload) {
     // Respond once to an action
   },
-  register () {
+  register() {
     return {
-      [action] : this.handleAction
+      [action]: this.handleAction
     }
   }
 }
@@ -86,25 +86,24 @@ This is a perfect use case for an effect:
 // /src/effects/location.js
 
 import url from 'url'
-import {patchQuery} from '../actions/query'
+import { patchQuery } from '../actions/query'
 
 class Location {
-
-  updateQuery (repo) {
+  updateQuery(repo) {
     const { origin, hash } = window.location
 
     const location = url.format({
-      host  : origin,
-      query : repo.state.query,
-      hash  : hash
+      host: origin,
+      query: repo.state.query,
+      hash: hash
     })
 
     window.history.pushState(null, null, location)
   }
 
-  register () {
+  register() {
     return {
-      [patchQuery] : this.updateQuery
+      [patchQuery]: this.updateQuery
     }
   }
 }
@@ -136,13 +135,13 @@ import { addPlanet } from '../actions/planets'
 
 class Planets {
   //...
-  register () {
+  register() {
     return {
       [addPlanet]: this.alert
     }
   }
 
-  alert (repo, planet) {
+  alert(repo, planet) {
     alert('A planet was added! ' + planet.name)
   }
 }
@@ -171,7 +170,7 @@ class Planets {
   alert (repo, error) {
     alert('There was an issue!)
   }
-  
+
   trackError (repo, error) {
     myLogService.trackError(error)
   }
@@ -193,7 +192,7 @@ class AutoSave {
     saveInterval: 5000
   }
 
-  setup (repo, { saveInterval }) {
+  setup(repo, { saveInterval }) {
     console.log(saveInterval) // 5000
   }
 }
@@ -206,8 +205,8 @@ repo.addEffect(AutoSave) // default saveInterval is 5000
 When instantiated, default options are determined in the following
 order:
 
-1. Microcosm defaults
-2. Microcosm instantiation options
-3. Effect defaults
-4. Instantiation options
-4. Options passed to `repo.addEffect`.
+1.  Microcosm defaults
+2.  Microcosm instantiation options
+3.  Effect defaults
+4.  Instantiation options
+5.  Options passed to `repo.addEffect`.

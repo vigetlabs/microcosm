@@ -1,8 +1,8 @@
 # History
 
-1. [Overview](#overview)
-2. [API](#api)
-3. [Events](#events)
+1.  [Overview](#overview)
+2.  [API](#api)
+3.  [Events](#events)
 
 **Note: This is a work in progress document and feature. History has
 been a private API for a very long time. We're still working through
@@ -77,6 +77,7 @@ similar to a rebase in git.
 Let's say we have four actions pushed to our History, and that three
 of the four are completed `(C)`, but the second action we pushed is
 taking a long time and is still open `(O)`.
+
 ```
 [root] - [one](C) - [two](O) - [three](C) - [four](C)
 ```
@@ -110,7 +111,6 @@ let three = repo.push(action)
 The head of the history tree above is now three. Microcosm will
 calculate state by reconciling `root`, `one,` and `three`.
 
-
 ### toggle([ ...actions ])
 
 Disable a group of actions:
@@ -121,7 +121,7 @@ let repo = new Microcosm({ maxHistory: Infinity })
 let one = repo.push(addUser)
 let two = repo.push(updateUser)
 
-repo.history.toggle([ one, two ])
+repo.history.toggle([one, two])
 ```
 
 In the example above, actions `one` and `two` will be forgotten. The
@@ -133,7 +133,7 @@ toggle a second time, these actions will be re-enabled:
 
 ```javascript
 // Actions disabled in the prior example
-repo.history.toggle([ one, two ])
+repo.history.toggle([one, two])
 // `one` and `two` have been re-enabled
 ```
 
@@ -167,7 +167,7 @@ let one = repo.push(asyncAction)
 let two = repo.push(asyncAction)
 let three = repo.push(asyncAction)
 
-repo.wait().then(function () {
+repo.wait().then(function() {
   // Everything is done
 })
 ```
@@ -180,8 +180,7 @@ test. For example, if we were to write a test with Jest:
 
 ```javascript
 describe('An AJAX behavior', function() {
-
-  it('adds a user', async function () {
+  it('adds a user', async function() {
     let repo = new MyMicrocosm({ maxHistory: Infinity })
 
     repo.push(getUser, 1)
@@ -192,7 +191,6 @@ describe('An AJAX behavior', function() {
 
     expect(repo.users.length).toEqual(3)
   })
-
 })
 ```
 
@@ -224,6 +222,7 @@ You can manage event listeners with the following methods.
 ### `on(event, callback)`
 
 Adds an event listener to a Microcosm History instance.
+
 ```javascript
 const repo = new Microcosm()
 const history = repo.history
@@ -242,6 +241,7 @@ history.off('append', callback)
 ### Event Types
 
 ### `append`
+
 Arguments: `action`
 
 Emitted when an action is pushed onto the History stack.
@@ -257,6 +257,7 @@ repo.push(newAction)
 ```
 
 ### `remove`
+
 Arguments: `action`
 
 Emitted when an action is removed from the History stack.
@@ -273,6 +274,7 @@ history.remove(action)
 ```
 
 ### `update`
+
 Arguments: `action`
 
 Whenever there is an update to an action's status, an `update` event
@@ -297,6 +299,7 @@ application state (see [Reconciling](#reconciling) for more details.)
 For every action in this process, `update` will be emitted.
 
 ### `reconcile`
+
 Arguments: `action`
 
 In response to an action's status changing, History triggers a

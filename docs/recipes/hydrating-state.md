@@ -19,7 +19,7 @@ import Microcosm from 'microcosm'
 let repo = new Microcosm()
 
 repo.addDomain('planets', {
-  getInitialState () {
+  getInitialState() {
     return []
   }
 })
@@ -28,7 +28,7 @@ repo.addDomain('planets', {
 repo.state.planets // []
 
 // Now reset the state with new data
-repo.reset({ planets: [{ name: "Earth" }]})
+repo.reset({ planets: [{ name: 'Earth' }] })
 
 // The repo now contains planets
 repo.state.planets // [{ name: "Earth" }]
@@ -58,16 +58,16 @@ import Immutable from 'immutable'
 let repo = new Microcosm()
 
 repo.addDomain('planets', {
-  getInitialState () {
+  getInitialState() {
     return Immutable.List()
   },
 
-  deserialize (data) {
+  deserialize(data) {
     return Immutable.fromJS(data)
   }
 })
 
-repo.reset({ planets: [{ name: "Earth" }]}, true)
+repo.reset({ planets: [{ name: 'Earth' }] }, true)
 
 // The repo now contains planets
 repo.state.planets // Immutable.List
@@ -86,10 +86,10 @@ import Immutable from 'immutable'
 let repo = new Microcosm()
 
 repo.addDomain('planets', {
-  getInitialState () {
+  getInitialState() {
     return Immutable.List()
   },
-  serialize (list) {
+  serialize(list) {
     return list.toJSON()
   }
 })

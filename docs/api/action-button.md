@@ -1,8 +1,8 @@
 # ActionButton
 
-1. [Overview](#overview)
-2. [Usage](#usage)
-3. [Props](#props)
+1.  [Overview](#overview)
+2.  [Usage](#usage)
+3.  [Props](#props)
 
 ## Overview
 
@@ -22,27 +22,27 @@ const repo = new Microcosm()
 const increaseCount = n => n
 
 repo.addDomain('count', {
-  getInitialState () {
+  getInitialState() {
     return 0
   },
-  increase (count, amount) {
+  increase(count, amount) {
     return count + amount
   },
-  register () {
+  register() {
     return {
-      [increaseCount] : this.increase
+      [increaseCount]: this.increase
     }
   }
 })
 
 class CountPresenter extends Presenter {
-  getModel () {
+  getModel() {
     return {
-      count : state => state.count
+      count: state => state.count
     }
   }
 
-  render ({ count }) {
+  render({ count }) {
     return (
       <ActionButton action={increaseCount} value={1}>
         {count}

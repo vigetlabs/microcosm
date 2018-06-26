@@ -22,13 +22,13 @@ batching, this code would fire 3 change events:
 ```javascript
 let repo = new Microcosm()
 
-let add = (n) => n
+let add = n => n
 
 repo.addDomain('count', {
-  getInitialState () {
+  getInitialState() {
     return 0
   },
-  register () {
+  register() {
     return {
       [add]: (count, n) => count + 1
     }
@@ -63,7 +63,7 @@ update process. For example, if we wanted to batch updates to a 12
 millisecond interval:
 
 ```javascript
-function updater () {
+function updater() {
   // update is a function, executing it will send a request to
   // Microcosm, asking it trigger a change event if anything changed
   return update => setTimeout(update, 12)
@@ -82,7 +82,7 @@ problematic for testing. For example:
 import App from 'src/views/application'
 import { mount } from 'enzyme'
 
-test("it increases the number when the stepper is clicked", function () {
+test('it increases the number when the stepper is clicked', function() {
   let app = mount(<App />)
 
   app.find('#stepper').simulate('click')
@@ -98,8 +98,7 @@ with `App` to update immediately. However, if we configure Microcosm
 to wait a few milliseconds before changing, this won't have happened
 yet.
 
-The easiest way to deal with this problem is to **only pass `batch:
-true` for user facing code**. However you could also lean in
+The easiest way to deal with this problem is to **only pass `batch: true` for user facing code**. However you could also lean in
 `repo.history.wait()`, which introduces a few more elements to the
 test:
 
@@ -108,7 +107,7 @@ import Repo from 'src/repo'
 import App from 'src/views/application'
 import { mount } from 'enzyme'
 
-test("it increases the number when the stepper is clicked", async function () {
+test('it increases the number when the stepper is clicked', async function() {
   let repo = new Repo()
   let app = mount(<App repo={repo} />)
 

@@ -2,8 +2,8 @@
 
 There are two ways to manage asynchronous requests in Microcosm:
 
-1. [Return a Promise](#return-a-promise)
-2. [Tap into the lower-level action API](#tap-into-the-lower-level-action-api)
+1.  [Return a Promise](#return-a-promise)
+2.  [Tap into the lower-level action API](#tap-into-the-lower-level-action-api)
 
 ## Return a Promise
 
@@ -20,21 +20,21 @@ var request = require('superagent')
 
 var repo = new Microcosm()
 
-function getSite () {
+function getSite() {
   return request.get('http://code.viget.com/microcosm')
 }
 
-repo.addDomain('site', function () {
+repo.addDomain('site', function() {
   return {
     [getSite]: {
-      open  : () => 'loading',
-      error : () => 'error',
-      done  : () => 'done'
+      open: () => 'loading',
+      error: () => 'error',
+      done: () => 'done'
     }
   }
 })
 
-repo.on('change', function (state) {
+repo.on('change', function(state) {
   console.log(state.site) // loading, done
 })
 
@@ -46,13 +46,13 @@ repo.push(getSite)
 When Microcosm detects a Promise returned from an action
 creator, it handles it in the following way:
 
-1. Mark the action as `open`. This gives domain handlers a way to
-   subscribe to a loading state. The payload of the action will be
-   the first argument of the parameters passed into `repo.push`.
-2. On resolution, mark the action as `done` and update its payload to
-   that of the resolved Promise.
-3. On failure, mark the action as `error` and update its payload to
-   the associated error.
+1.  Mark the action as `open`. This gives domain handlers a way to
+    subscribe to a loading state. The payload of the action will be
+    the first argument of the parameters passed into `repo.push`.
+2.  On resolution, mark the action as `done` and update its payload to
+    that of the resolved Promise.
+3.  On failure, mark the action as `error` and update its payload to
+    the associated error.
 
 ### Why did my loading state go away when the action completed?
 
@@ -100,31 +100,33 @@ var request = require('superagent')
 
 var repo = new Microcosm()
 
-function getSite () {
-  return function (action) {
+function getSite() {
+  return function(action) {
     action.open()
 
-    request.get('http://code.viget.com/microcosm').end(function(error, payload) {
-      if (error) {
-        action.reject(error)
-      } else {
-        action.resolve(payload)
-      }
-    })
+    request
+      .get('http://code.viget.com/microcosm')
+      .end(function(error, payload) {
+        if (error) {
+          action.reject(error)
+        } else {
+          action.resolve(payload)
+        }
+      })
   }
 }
 
-repo.addDomain('site', function () {
+repo.addDomain('site', function() {
   return {
     [getSite]: {
-      open  : () => 'loading',
-      error : () => 'error',
-      done  : () => 'done'
+      open: () => 'loading',
+      error: () => 'error',
+      done: () => 'done'
     }
   }
 })
 
-repo.on('change', function (state) {
+repo.on('change', function(state) {
   console.log(state.site)
 })
 

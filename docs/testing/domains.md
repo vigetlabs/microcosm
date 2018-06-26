@@ -7,16 +7,16 @@ their own.
 Let's say we have a simple domain that increments a number:
 
 ```javascript
-import {add} from '../actions/counter'
+import { add } from '../actions/counter'
 
-const Counter= {
+const Counter = {
   getInitialState() {
     return 0
   },
-  increase (state, amount) {
+  increase(state, amount) {
     return state + amount
   },
-  register () {
+  register() {
     return {
       [add]: this.increase
     }
@@ -29,7 +29,7 @@ Testing `increase` is simple:
 ```javascript
 import Counter from '../domains/counter'
 
-it('increases the value by a given number', function () {
+it('increases the value by a given number', function() {
   let answer = Counter.increase(2, 2)
 
   expect(answer).toEqual(4)
@@ -44,9 +44,9 @@ the integration point between a Domain and an Action:
 ```javascript
 import Microcosm from 'microcosm'
 import Counter from '../domains/counter'
-import {add} from '../actions/counter'
+import { add } from '../actions/counter'
 
-it('increases the value by a given number', function () {
+it('increases the value by a given number', function() {
   let repo = new Microcosm()
 
   repo.addDomain('count', Counter)
@@ -90,20 +90,20 @@ Using `append` makes it easy to write tests for domain handlers at
 precise moments within an action. Let's assume the following repo:
 
 ```javascript
-function getPlanets () {
+function getPlanets() {
   return ajax.get('/planets')
 }
 
 const PlanetsDomain = {
-  getInitialState () {
+  getInitialState() {
     return { loading: false, records: [] }
   },
 
-  patch (state, records) {
+  patch(state, records) {
     return { ...state, records }
   },
 
-  loading (state) {
+  loading(state) {
     return { ...state, loading: true }
   },
 

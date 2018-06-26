@@ -1,9 +1,9 @@
 # Domains
 
-1. [Overview](#overview)
-2. [Creating Domains](#creating-domains)
-3. [Subscribing to different action states](#subscribing-to-different-action-states)
-4. [API](#api)
+1.  [Overview](#overview)
+2.  [Creating Domains](#creating-domains)
+3.  [Subscribing to different action states](#subscribing-to-different-action-states)
+4.  [API](#api)
 
 ## Overview
 
@@ -34,21 +34,21 @@ take advantage of having a `constructor`.
 
 ```javascript
 class Domain {
-  setup (repo, options) {
+  setup(repo, options) {
     // Run startup behavior
   }
-  teardown (repo) {
+  teardown(repo) {
     // Clean up any setup behavior
   }
-  handleAction (state, payload) {
+  handleAction(state, payload) {
     // Old state in, new state out...
     let newState = { ...state, prop: payload.prop }
 
     return newState
   }
-  register () {
+  register() {
     return {
-      [action] : this.handleAction
+      [action]: this.handleAction
     }
   }
 }
@@ -60,20 +60,20 @@ repo.addDomain('key', Domain)
 
 ```javascript
 const Domain = {
-  setup (repo, options) {
+  setup(repo, options) {
     // Run startup behavior
   },
-  teardown (repo) {
+  teardown(repo) {
     // Clean up any setup behavior
   },
-  handleAction (state, payload) {
+  handleAction(state, payload) {
     let newState = { ...state, prop: payload.prop }
 
     return newState
   },
-  register () {
+  register() {
     return {
-      [action] : this.handleAction
+      [action]: this.handleAction
     }
   }
 }
@@ -92,10 +92,9 @@ listen to:
 
 ```javascript
 const Domain = {
-
   // ... Other domain methods
 
-  register () {
+  register() {
     return {
       [action]: {
         open: this.setLoading,
@@ -122,7 +121,7 @@ it is started.
 
 ```javascript
 var Planets = {
-  getInitialState () {
+  getInitialState() {
     return []
   }
 }
@@ -167,10 +166,10 @@ look like:
 
 ```javascript
 const Planets = {
-  getInitialState () {
+  getInitialState() {
     return Immutable.List()
   },
-  serialize (planets) {
+  serialize(planets) {
     return planets.toJSON()
   }
 }
@@ -184,13 +183,13 @@ the example in `serialize`:
 
 ```javascript
 const Planets = {
-  getInitialState () {
+  getInitialState() {
     return Immutable.List()
   },
-  serialize (planets) {
+  serialize(planets) {
     return planets.toJSON()
   },
-  deserialize (raw) {
+  deserialize(raw) {
     return Immutable.List(raw)
   }
 }
@@ -206,12 +205,12 @@ import { addPlanet } from '../actions/planets'
 
 const Planets = {
   //...
-  register () {
+  register() {
     return {
       [addPlanet]: this.append
     }
   },
-  append (planets, params) {
+  append(planets, params) {
     return planets.concat(params)
   }
 }
@@ -229,15 +228,15 @@ import { sortBy } from 'lodash'
 
 const Planets = {
   //...
-  register () {
+  register() {
     return {
       [addPlanet]: [this.append, this.sort]
     }
   },
-  append (planets, params) {
+  append(planets, params) {
     return planets.concat(params)
   },
-  sort (planets) {
+  sort(planets) {
     return sortBy(planets, 'name')
   }
 }
@@ -259,7 +258,7 @@ class Counter {
     start: 0
   }
 
-  setup (repo, { start }) {
+  setup(repo, { start }) {
     console.log(start) // 0
   }
 }
@@ -272,7 +271,7 @@ repo.addDomain('counter', Counter) // default start is 0
 When instantiated, default options are determined in the following
 order:
 
-1. Microcosm defaults
-2. Microcosm instantiation options
-3. Domain defaults
-4. Options passed to `repo.addDomain`.
+1.  Microcosm defaults
+2.  Microcosm instantiation options
+3.  Domain defaults
+4.  Options passed to `repo.addDomain`.

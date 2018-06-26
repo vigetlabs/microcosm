@@ -1,8 +1,8 @@
 # ActionForm
 
-1. [Overview](#overview)
-2. [Usage](#usage)
-3. [Props](#props)
+1.  [Overview](#overview)
+2.  [Usage](#usage)
+3.  [Props](#props)
 
 ## Overview
 
@@ -24,20 +24,20 @@ const repo = new Microcosm()
 const increaseCount = n => n
 
 repo.addDomain('count', {
-  getInitialState () {
+  getInitialState() {
     return 0
   },
-  increase (count, amount) {
+  increase(count, amount) {
     return count + amount
   },
-  register () {
+  register() {
     return {
-      [increaseCount] : this.increase
+      [increaseCount]: this.increase
     }
   }
 })
 
-function StepperForm ({ count }) {
+function StepperForm({ count }) {
   return (
     <ActionForm action={increaseCount}>
       <input type="hidden" name="amount" value="1" />
@@ -47,18 +47,18 @@ function StepperForm ({ count }) {
 }
 
 class CountPresenter extends Presenter {
-  model () {
+  model() {
     return {
-      count : state => state.count
+      count: state => state.count
     }
   }
 
-  view ({ count }) {
-    return <StepperForm count={ count } />
+  view({ count }) {
+    return <StepperForm count={count} />
   }
 }
 
-DOM.render(<CountPresenter repo={ repo } />, document.getElementById('container'))
+DOM.render(<CountPresenter repo={repo} />, document.getElementById('container'))
 ```
 
 ActionForm inputs are serialized to JSON upon submission using
@@ -86,14 +86,14 @@ other data formats that may come directly from a form input.
 
 ```javascript
 class MyForm extends React.Component {
-  prepare (params) {
+  prepare(params) {
     params.start = new Date(params.start).toISOString()
     params.end = new Date(params.start).toISOString()
 
     return params
   }
 
-  render () {
+  render() {
     return (
       <ActionForm action={actions.create} prepare={this.prepare}>
         <input name="name" />

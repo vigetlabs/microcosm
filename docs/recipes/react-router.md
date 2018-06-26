@@ -35,11 +35,7 @@ import Presenter from 'microcosm/addons/presenter'
 
 class Application extends Presenter {
   render() {
-    return (
-      <Switch>
-        { /* routes */ }
-      </Switch>
-    )
+    return <Switch>{/* routes */}</Switch>
   }
 }
 

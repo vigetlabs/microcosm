@@ -45,10 +45,10 @@ url: http://my-planets-site.dev/planets/1
 
 This URL might map to the following:
 
-1. **Application wide layout.** Global navigation, system wide notifications.
-2. **Planets section layout.** UI specific to the Planets section,
-like a sidebar of all planets.
-3. **Planet specific layout.** A card with specific stats about a planet.
+1.  **Application wide layout.** Global navigation, system wide notifications.
+2.  **Planets section layout.** UI specific to the Planets section,
+    like a sidebar of all planets.
+3.  **Planet specific layout.** A card with specific stats about a planet.
 
 Each Presenter is given the application's instance of Microcosm. We
 call it the `repo`. Since Presenters extend from `React.Component`,
@@ -64,7 +64,7 @@ by extracting information from the data layer, sending that into "passive views"
 class PlanetsIndex extends Presenter {
   view = PlanetsList
 
-  model ()  {
+  model() {
     return {
       planets: state => state.planets
     }
@@ -79,7 +79,7 @@ to be broken up into logical chunks.
 
 ```javascript
 class PlanetsIndex extends Presenter {
-  setup (repo) {
+  setup(repo) {
     repo.addDomain('special', UseCase)
   }
   //...
@@ -95,16 +95,12 @@ possible. This makes them easy to reason about, test, and reuse.
 At their simplest, Views are just React components:
 
 ```javascript
-function PlanetsList ({ planets=[] }) {
+function PlanetsList({ planets = [] }) {
   if (planets.length <= 0) {
     return <p>No Planets</p>
   }
 
-  return (
-    <ul>
-      {planets.map(p => <li key={p.id}>{p.name}</li>)}
-    </ul>
-  )
+  return <ul>{planets.map(p => <li key={p.id}>{p.name}</li>)}</ul>
 }
 ```
 
@@ -125,10 +121,8 @@ that allows them to broadcast Actions.
 import React from 'react'
 import withSend from 'microcosm/addons/with-send'
 
-export default withSend(function DeleteButton ({ send, id }) {
-  return (
-    <button onClick={() => send('delete', id)}>Delete</button>
-  )
+export default withSend(function DeleteButton({ send, id }) {
+  return <button onClick={() => send('delete', id)}>Delete</button>
 })
 ```
 
@@ -137,9 +131,9 @@ these actions, adding intermediary processing or just push an action:
 
 ```javascript
 class PlanetsShow extends Presenter {
-  intercept () {
+  intercept() {
     return {
-      'delete': (repo, id) => repo.push(deletePlanet, id)
+      delete: (repo, id) => repo.push(deletePlanet, id)
     }
   }
 }
@@ -150,12 +144,10 @@ Or, Actions can also take the form of Actions:
 ```javascript
 import React from 'react'
 import withSend from 'microcosm/addons/with-send'
-import {deletePlanet} from 'actions/planets'
+import { deletePlanet } from 'actions/planets'
 
-export default withSend(function DeleteButton ({ send, id }) {
-  return (
-    <button onClick={() => send(deletePlanet, id)}>Delete</button>
-  )
+export default withSend(function DeleteButton({ send, id }) {
+  return <button onClick={() => send(deletePlanet, id)}>Delete</button>
 })
 ```
 
@@ -173,7 +165,7 @@ data.
 // https://github.com/mzabriskie/axios
 import axios from 'axios'
 
-function createPlanet (body) {
+function createPlanet(body) {
   // axios returns a Promise, handled out of the box
   return axios.post('/planets', body)
 }
@@ -193,13 +185,13 @@ Domains implement a `register()` method to subscribe to actions:
 
 ```javascript
 class Planets {
-  getInitialState () {
+  getInitialState() {
     return []
   }
-  append (planets, body)  {
+  append(planets, body) {
     return planets.concat(body)
   }
-  register () {
+  register() {
     return {
       [createPlanet]: this.append
     }
@@ -221,10 +213,10 @@ track, setup and teardown.
 
 ```javascript
 class Logger {
-  trackError (repo, error)  {
+  trackError(repo, error) {
     console.error('Failed to create planet', error)
   }
-  register () {
+  register() {
     return {
       [createPlanet.error]: this.trackError
     }
