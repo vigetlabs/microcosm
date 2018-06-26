@@ -189,6 +189,37 @@ describe('serialization', function() {
   })
 })
 
+describe('confirmation', () => {
+  it('will not dispatch an action if confirm returns false', function() {
+    let send = jest.fn()
+
+    let wrapper = mount(<ActionForm action="test" confirm={() => false} />, {
+      context: { send }
+    })
+
+    wrapper.simulate('submit')
+
+    expect(send).not.toHaveBeenCalled()
+  })
+
+  it('confirm receives the result of prepare', function() {
+    let send = jest.fn()
+    let confirm = jest.fn(payload => true)
+    let prepare = () => 'TEST'
+
+    let wrapper = mount(
+      <ActionForm action="action" prepare={prepare} confirm={confirm} />,
+      {
+        context: { send }
+      }
+    )
+
+    wrapper.simulate('submit')
+
+    expect(confirm).toHaveBeenCalledWith('TEST', expect.anything())
+  })
+})
+
 describe('refs', function() {
   it('can be referenced as a ref', function() {
     let send = jest.fn()

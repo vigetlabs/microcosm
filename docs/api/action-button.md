@@ -82,6 +82,29 @@ Called after the button is clicked but before the action is broadcasted.
 This provides an opportunity to alter the action payload (e.g. based on
 the event object) before it gets dispatched.
 
+### confirm(value, event)
+
+Called right before an ActionButton will dispatch an action. Return `true` or `false` from this callback in order to control whether or not the ActionButton dispatches. This is useful for:
+
+- Asking a user if they want to perform an action
+- Only applying a behavior for specific keyboard input (like if the control key is pressed)
+
+`value` is the result of calling the `prepare` property.
+
+```javascript
+function askUser(value, event) {
+  return confirm('Are you sure you want to do this?')
+}
+
+function ConfirmButton(props) {
+  return (
+    <ActionButton action={deleteItem} confirm={askUser}>
+      Delete Item
+    </ActionButton>
+  )
+}
+```
+
 ### onClick(event, action)
 
 An event callback executed immediately after the button clicks and the
