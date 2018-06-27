@@ -35,15 +35,21 @@ if (options.minify) {
   plugins.push(
     uglify({
       compress: {
-        passes: 2
+        passes: 3,
+        drop_console: true,
+        keep_infinity: true,
+        toplevel: true,
+        warnings: true
       },
       mangle: {
         toplevel: true,
         properties: {
-          regex: /^_/
-        }
+          regex: /^_/,
+          reserved: ['__esModule', '__MICROCOSM_DEVTOOLS_GLOBAL_HOOK__', '__MICROCOSM_SCHEDULER__']
+        },
       },
-      nameCache: {}
+      nameCache: {},
+      warnings: true
     })
   )
 }

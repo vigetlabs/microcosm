@@ -9,14 +9,16 @@ import assert from 'assert'
 const hasWindow = typeof window !== 'undefined'
 const root = hasWindow ? window : global
 
+const key = '__MICROCOSM_SCHEDULER__'
+
 export function scheduler() {
   // TODO: This should probably be based upon the repo. Some sort of
   // root context
-  if (!root.__microcosmScheduler) {
-    root.__microcosmScheduler = new Scheduler(hasWindow)
+  if (!root[key]) {
+    root[key] = new Scheduler(hasWindow)
   }
 
-  return root.__microcosmScheduler
+  return root[key]
 }
 
 const untilEmpty = {
