@@ -371,7 +371,7 @@ describe('Observable', function() {
     })
   })
 
-  describe('scheduler error handling', () => {
+  describe.dev('scheduler error handling', () => {
     let raise = null
 
     beforeEach(() => {
