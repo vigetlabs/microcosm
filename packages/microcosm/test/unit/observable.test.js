@@ -370,4 +370,27 @@ describe('Observable', function() {
       )
     })
   })
+
+  describe('scheduler error handling', () => {
+    let raise = null
+
+    beforeEach(() => {
+      raise = scheduler()._raise
+      scheduler()._raise = jest.fn()
+    })
+
+    afterEach(() => {
+      scheduler()._raise = raise
+    })
+
+    it('raises a scheduler error on unhandled errors', () => {
+      let failure = new Observable(observer => {
+        throw new Error('Oops')
+      })
+
+      failure.subscribe()
+
+      expect(scheduler()._raise).toHaveBeenCalledWith(new Error('Oops'))
+    })
+  })
 })

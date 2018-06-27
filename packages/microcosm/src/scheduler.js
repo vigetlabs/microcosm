@@ -2,16 +2,32 @@
  * @fileoverview The central scheduler for Microcosm work. This is
  * based upon Scheduler from the ChooJS project:
  * https://github.com/choojs/nanoscheduler/blob/master/index.js
+ * @flow
  */
 
 import assert from 'assert'
 
+/**
+ * The scheduler utilizes requestIdleCallback when it can. This
+ * browser API exposes a time allotment to let developers know how
+ * much time they have remaining before they will block the browser.
+ *
+ * Microcosm uses this API to prevent work from interfearing with
+ * critical browser activities.
+ */
+type TimeShare = {
+  timeRemaining: () => number
+}
+
+type Job = (...params: *[]) => void
+
+type ErrorCallback = (error: Error) => void
+
+const key = '__MICROCOSM_SCHEDULER__'
 const hasWindow = typeof window !== 'undefined'
 const root = hasWindow ? window : global
 
-const key = '__MICROCOSM_SCHEDULER__'
-
-export function scheduler() {
+export function scheduler(): Scheduler {
   // TODO: This should probably be based upon the repo. Some sort of
   // root context
   if (!root[key]) {
@@ -21,16 +37,22 @@ export function scheduler() {
   return root[key]
 }
 
-const untilEmpty = {
+const untilEmpty: TimeShare = {
   timeRemaining: () => 1
 }
 
-function idleFallback(callback) {
-  setTimeout(callback, 0, untilEmpty)
+function idleFallback(callback: *): void {
+  setTimeout(callback.bind(null, untilEmpty), 0)
 }
 
 class Scheduler {
-  constructor(hasWindow) {
+  _method: *
+  _tick: *
+  _scheduled: boolean
+  _queue: Job[]
+  _errorCallbacks: ErrorCallback[]
+
+  constructor(hasWindow: boolean) {
     let hasIdle = hasWindow && 'requestIdleCallback' in root
 
     this._method = hasIdle ? root.requestIdleCallback.bind(root) : idleFallback
@@ -40,34 +62,34 @@ class Scheduler {
     this._errorCallbacks = []
   }
 
-  push(cb) {
+  push(job: Job): void {
     assert.equal(
-      typeof cb,
+      typeof job,
       'function',
       'scheduler.push: callback should be a function'
     )
 
-    this._queue.push(cb)
+    this._queue.push(job)
     this._schedule()
   }
 
-  flush() {
+  flush(): void {
     this._tick(untilEmpty)
   }
 
-  onError(fn) {
-    this._errorCallbacks.push(fn)
+  onError(callback: ErrorCallback): void {
+    this._errorCallbacks.push(callback)
   }
 
-  offError(fn) {
-    let index = this._errorCallbacks.indexOf(fn)
+  offError(callback: ErrorCallback): void {
+    let index = this._errorCallbacks.indexOf(callback)
 
     if (index >= 0) {
       this._errorCallbacks.splice(index, 1)
     }
   }
 
-  then(pass, fail) {
+  then(pass: *, fail: *): Promise<void, Error> {
     return new Promise((resolve, reject) => {
       this.onError(reject)
       this.push(() => {
@@ -79,18 +101,18 @@ class Scheduler {
 
   // Private -------------------------------------------------- //
 
-  _raise(error) {
+  _raise(error: Error): void {
     if (this._errorCallbacks.length) {
       this._errorCallbacks.forEach(callback => callback(error))
       this._errorCallbacks.length = 0
     } else {
       setTimeout(() => {
         throw error
-      })
+      }, 0)
     }
   }
 
-  _schedule() {
+  _schedule(): void {
     if (this._scheduled) {
       return
     }
@@ -99,7 +121,7 @@ class Scheduler {
     this._method(this._tick)
   }
 
-  _tick(idleDeadline) {
+  _tick(idleDeadline: TimeShare): void {
     try {
       while (this._queue.length && idleDeadline.timeRemaining() > 0) {
         this._queue.shift()()

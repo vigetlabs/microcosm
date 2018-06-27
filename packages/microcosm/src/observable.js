@@ -102,7 +102,7 @@ export class Subscription implements Unsubscribable {
       // obs.subscribe(next => {}) // Raises an exception with the scheduler
       // obs.subscribe(next => {}, error => {}) // Doesn't raise
       if (observer.error === noop) {
-        scheduler().raise(error)
+        scheduler()._raise(error)
       }
     }
 
