@@ -1,11 +1,6 @@
+var isIntegration = !!process.env.CI
+
 module.exports = {
-  globals: {
-    Promise: true,
-    jest: true,
-    expect: true,
-    // microcosm-devtools
-    chrome: true
-  },
   env: {
     browser: true,
     commonjs: true,
@@ -16,7 +11,6 @@ module.exports = {
   parser: 'babel-eslint',
   parserOptions: {
     ecmaVersion: 7,
-    sourceType: 'module',
     ecmaFeatures: {
       experimentalObjectRestSpread: true,
       jsx: true
@@ -27,27 +21,28 @@ module.exports = {
       onlyFilesWithFlowAnnotation: true
     }
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:flowtype/recommended',
-    'plugin:react/recommended'
-  ],
-  plugins: ['react', 'flowtype', 'flowtype-errors', 'prettier'],
+  extends: ['eslint:recommended', 'plugin:flowtype/recommended'],
+  plugins: ['react', 'jest', 'prettier', 'flowtype', 'flowtype-errors'],
   rules: {
-    'no-use-before-define': [
-      'error',
-      { functions: false, classes: false, variables: true }
-    ],
-    'sort-vars': 0,
-    'no-console': 0,
+    semi: 'off',
+    'no-console': 'off',
+    'no-debugger': isIntegration ? 'error' : 'off',
     'no-unused-vars': [
-      2,
-      {
-        args: 'none',
-        varsIgnorePattern: '^_'
-      }
+      1,
+      { args: 'none', ignoreRestSiblings: true, varsIgnorePattern: '^_' }
     ],
-    'prettier/prettier': 'error',
-    'react/prop-types': 0
+    'no-return-assign': 'error',
+    'react/jsx-no-duplicate-props': ['warn', { ignoreCase: true }],
+    'react/jsx-no-undef': 'error',
+    'react/jsx-uses-react': 'warn',
+    'react/jsx-uses-vars': 'warn',
+    'react/no-danger-with-children': 'warn',
+    'react/no-direct-mutation-state': 'warn',
+    'react/no-is-mounted': 'warn',
+    'react/react-in-jsx-scope': 'error',
+    'react/require-render-return': 'warn',
+    'react/style-prop-object': 'warn',
+    'jest/no-focused-tests': isIntegration ? 'error' : 'warn',
+    'prettier/prettier': isIntegration ? 'error' : 'warn'
   }
 }

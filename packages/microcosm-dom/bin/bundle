@@ -4,7 +4,7 @@
 
 const rollup = require('rollup')
 const buble = require('rollup-plugin-buble')
-const uglify = require('rollup-plugin-uglify')
+const uglify = require('rollup-plugin-uglify').uglify
 const filesize = require('rollup-plugin-filesize')
 const path = require('path')
 const minimist = require('minimist')

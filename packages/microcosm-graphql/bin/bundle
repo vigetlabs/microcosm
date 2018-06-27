@@ -4,7 +4,7 @@
 
 const rollup = require('rollup')
 const buble = require('rollup-plugin-buble')
-const uglify = require('rollup-plugin-uglify')
+const uglify = require('rollup-plugin-uglify').uglify
 const unassert = require('rollup-plugin-unassert')
 const node = require('rollup-plugin-node-resolve')
 const flow = require('rollup-plugin-flow')

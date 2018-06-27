@@ -9,6 +9,6 @@
     "release": "make publish"
   },
   "dependencies": {
-    "browser-sync": "^2.23.7"
+    "browser-sync": "^2.24.5"
   }
 }

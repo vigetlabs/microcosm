@@ -302,7 +302,7 @@ describe('Execute', function() {
     expect(answer.planet.name).toEqual('Venus')
   })
 
-  it.only('can paginate results', async () => {
+  it('can paginate results', async () => {
     let repo = new SolarSystem()
 
     let query = repo.compile(

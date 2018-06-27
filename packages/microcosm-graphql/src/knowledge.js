@@ -77,7 +77,10 @@ export class Knowledge {
       this.plan(selection, this.schema[question.type], question)
     })
 
-    parent.pipe(getName(entry), question)
+    parent.pipe(
+      getName(entry),
+      question
+    )
 
     return question
   }
