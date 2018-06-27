@@ -6,7 +6,7 @@ const rollup = require('rollup')
 const flow = require('rollup-plugin-flow')
 const unassert = require('rollup-plugin-unassert')
 const buble = require('rollup-plugin-buble')
-const uglify = require('rollup-plugin-uglify')
+const uglify = require('rollup-plugin-uglify').uglify
 const node = require('rollup-plugin-node-resolve')
 const filesize = require('rollup-plugin-filesize')
 
@@ -35,15 +35,21 @@ if (options.minify) {
   plugins.push(
     uglify({
       compress: {
-        passes: 2
+        passes: 3,
+        drop_console: true,
+        keep_infinity: true,
+        toplevel: true,
+        warnings: true
       },
       mangle: {
         toplevel: true,
         properties: {
-          regex: /^_/
-        }
+          regex: /^_/,
+          reserved: ['__esModule', '__MICROCOSM_DEVTOOLS_GLOBAL_HOOK__', '__MICROCOSM_SCHEDULER__']
+        },
       },
-      nameCache: {}
+      nameCache: {},
+      warnings: true
     })
   )
 }
@@ -56,13 +62,11 @@ if (!options.strict) {
   plugins.push(unassert())
 }
 
-const external = ['react', 'react-dom', 'form-serialize', 'symbol-observable', 'assert']
+const external = ['react', 'react-dom', 'assert']
 
 const globals = {
   react: 'React',
-  'react-dom': 'ReactDOM',
-  'symbol-observable': '$observable',
-  'form-serialize': 'FormSerialize'
+  'react-dom': 'ReactDOM'
 }
 
 Object.keys(configs).forEach(key => {

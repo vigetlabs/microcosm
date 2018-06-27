@@ -4,7 +4,7 @@
 
 const rollup = require('rollup')
 const buble = require('rollup-plugin-buble')
-const uglify = require('rollup-plugin-uglify')
+const uglify = require('rollup-plugin-uglify').uglify
 const filesize = require('rollup-plugin-filesize')
 const path = require('path')
 const minimist = require('minimist')
@@ -22,13 +22,22 @@ async function build(config) {
     plugins: [
       buble(),
       uglify({
-        compress: true,
+        compress: {
+          passes: 3,
+          drop_console: true,
+          keep_infinity: true,
+          toplevel: true,
+          warnings: true
+        },
         mangle: {
           toplevel: true,
           properties: {
-            regex: /^_/
-          }
-        }
+            regex: /^_/,
+            reserved: ['__esModule', '__MICROCOSM_DEVTOOLS_GLOBAL_HOOK__']
+          },
+        },
+        nameCache: {},
+        warnings: true
       }),
       filesize()
     ],

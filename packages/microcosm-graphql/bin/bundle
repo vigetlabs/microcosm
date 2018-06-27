@@ -4,7 +4,7 @@
 
 const rollup = require('rollup')
 const buble = require('rollup-plugin-buble')
-const uglify = require('rollup-plugin-uglify')
+const uglify = require('rollup-plugin-uglify').uglify
 const unassert = require('rollup-plugin-unassert')
 const node = require('rollup-plugin-node-resolve')
 const flow = require('rollup-plugin-flow')
@@ -44,18 +44,21 @@ if (options.minify) {
   plugins.push(
     uglify({
       compress: {
-        passes: 2
+        passes: 3,
+        drop_console: true,
+        keep_infinity: true,
+        toplevel: true,
+        warnings: true
       },
       mangle: {
         toplevel: true,
         properties: {
           regex: /^_/,
-          cache: {
-            cname: -1,
-            props: new Dictionary()
-          }
-        }
-      }
+          reserved: ['__esModule', '__MICROCOSM_DEVTOOLS_GLOBAL_HOOK__']
+        },
+      },
+      nameCache: {},
+      warnings: true
     })
   )
 }
