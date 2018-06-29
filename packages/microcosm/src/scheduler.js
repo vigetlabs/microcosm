@@ -106,9 +106,7 @@ class Scheduler {
       this._errorCallbacks.forEach(callback => callback(error))
       this._errorCallbacks.length = 0
     } else {
-      setTimeout(() => {
-        throw error
-      }, 0)
+      throw error
     }
   }
 

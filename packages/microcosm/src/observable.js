@@ -263,28 +263,32 @@ function notifySubscription(subscription: *, type: *, value: *) {
   let observer = subscription._observer
 
   // This is what triggers subscription callbacks
-  switch (type) {
-    case NEXT:
-      observer.next(value)
-      break
-    case ERROR:
-      closeSubscription(subscription)
-      observer.error(value)
-      break
-    case COMPLETE:
-      closeSubscription(subscription)
-      observer.complete()
-      break
-    case CANCEL:
-      closeSubscription(subscription)
-      observer.cancel()
-      break
-    default:
-      assert(
-        false,
-        `Unrecognized type ${type}. This is an error internal to Microcosm. ` +
-          `Please file an issue: https://github.com/vigetlabs/microcosm/issues`
-      )
+  try {
+    switch (type) {
+      case NEXT:
+        observer.next(value)
+        break
+      case ERROR:
+        closeSubscription(subscription)
+        observer.error(value)
+        break
+      case COMPLETE:
+        closeSubscription(subscription)
+        observer.complete()
+        break
+      case CANCEL:
+        closeSubscription(subscription)
+        observer.cancel()
+        break
+      default:
+        assert(
+          false,
+          `Unrecognized type ${type}. This is an error internal to Microcosm. ` +
+            `Please file an issue: https://github.com/vigetlabs/microcosm/issues`
+        )
+    }
+  } catch (error) {
+    scheduler()._raise(error)
   }
 
   if (subscription.closed) {

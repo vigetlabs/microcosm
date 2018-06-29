@@ -163,7 +163,7 @@ export class Subject extends Observable {
 function fromPromise(promise: Promise<*>): Subject {
   let subject = new Subject()
 
-  promise.then(subject.complete).catch(subject.error)
+  promise.then(subject.complete, subject.error)
 
   return subject
 }
