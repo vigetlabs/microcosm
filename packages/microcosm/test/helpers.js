@@ -11,3 +11,15 @@ export function asTree(history) {
 }
 
 export const delay = n => new Promise(resolve => setTimeout(resolve, n))
+
+export const withUniqueScheduler = () => {
+  let oldScheduler = global.__MICROCOSM_SCHEDULER__
+
+  beforeEach(function() {
+    global.__MICROCOSM_SCHEDULER__ = null
+  })
+
+  afterEach(function() {
+    global.__MICROCOSM_SCHEDULER__ = oldScheduler
+  })
+}

@@ -1,4 +1,5 @@
-import Microcosm from 'microcosm'
+import { Microcosm, scheduler } from 'microcosm'
+import { withUniqueScheduler } from '../../helpers'
 
 describe('Promise middleware', function() {
   it('completes when a promise resolves', async function() {
@@ -68,5 +69,51 @@ describe('Promise middleware', function() {
     } catch (error) {
       expect(error).toBe('error')
     }
+  })
+
+  describe('promise error trapping', () => {
+    withUniqueScheduler()
+
+    it('does not trap errors in domain handlers', async function() {
+      const repo = new Microcosm()
+      const onError = jest.fn()
+
+      repo.addDomain('test', {
+        register() {
+          return {
+            action: () => {
+              throw 'Oops'
+            }
+          }
+        }
+      })
+
+      scheduler().onError(onError)
+
+      await repo.push('action')
+
+      expect(onError).toHaveBeenCalledWith('Oops')
+    })
+
+    it('does not trap errors in effect handlers', async function() {
+      const repo = new Microcosm()
+      const onError = jest.fn()
+
+      repo.addEffect({
+        register() {
+          return {
+            action: () => {
+              throw 'Oops'
+            }
+          }
+        }
+      })
+
+      scheduler().onError(onError)
+
+      await repo.push('action')
+
+      expect(onError).toHaveBeenCalledWith('Oops')
+    })
   })
 })
