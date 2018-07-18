@@ -1,64 +1,64 @@
 {
   "0": {
-    "num": "Introduction",
+    "num": "Greetings, cool cats.",
     "heading": "Welcome to Microcosm",
-    "microcosmText": "This guide is meant to give a high level view of how Microcosm works. Each section shows what Microcosm is does internally as a user interacts with an app. Make sure to toggle between the browser view and microcosm view on each slide.<br><br>You may also want to visit <a target='_blank' href='http://code.viget.com/microcosm/'>the full Mircrocosm API and guide</a> or <a href='https://github.com/vigetlabs/microcosm'>check out the Microcosm github repo.</a> to learn more.",
-    "browserText": "This guide is meant to give a high level view of how Microcosm works. Each section shows what Microcosm is does internally as a user interacts with an app. Make sure to toggle between the browser view and microcosm view on each slide.<br><br>You may also want to visit <a target='_blank' href='http://code.viget.com/microcosm/'>the full Mircrocosm API and guide</a> or <a href='https://github.com/vigetlabs/microcosm'>check out the Microcosm github repo.</a> to learn more.",
+    "microcosmText": "You're about to get a brief overview of Microcosm — the chillest data layer for React this side of the development galaxy. Each section takes you through what Microcosm is doing internally as a user interacts with an app (in this case, a quiz about cats). Make sure to toggle between the browser view and the microcosm view on each slide.<br>If you're still curious afterwards, head over to <a target='_blank' href='http://code.viget.com/microcosm/'>the full Mircrocosm API and guide</a>, or <a href='https://github.com/vigetlabs/microcosm'>checkout the Microcosm github repo.</a> to learn more.<br> But for now, let it begin.",
+    "browserText": "You're about to get a brief overview of Microcosm — the chillest data layer for React this side of the development galaxy. Each section takes you through what Microcosm is doing internally as a user interacts with an app (in this case, a quiz about cats). Make sure to toggle between the browser view and the microcosm view on each slide.<br>If you're still curious afterwards, head over to <a target='_blank' href='http://code.viget.com/microcosm/'>the full Mircrocosm API and guide</a>, or <a href='https://github.com/vigetlabs/microcosm'>checkout the Microcosm github repo.</a> to learn more.<br> But for now, let it begin.",
     "bookend": true
   },
   "1": {
     "num": "01.",
     "heading": "Rendering a View",
-    "microcosmText": "The <a target='_blank' href='http://code.viget.com/microcosm/api/domains.html'>Domains</a> are in charge of keeping state organized, and provide whatever data is necessary to the <a href='http://code.viget.com/microcosm/api/presenter.html' target='_blank'>Presenter</a>. A Presenter at its core is a React Component, so it uses the data it pulls from the Domains to render the appropriate view.",
-    "browserText": "A user fires up the browser to take a quiz. The user sees the four options that the 'cat' Domain is keeping track of rendered by the Presenter."
+    "microcosmText": "Let's say those pink and purple robots are our <a target='_blank' href='http://code.viget.com/microcosm/api/domains.html'>\"Domains</a>.\" Domains are in charge of keeping a state organized and providing necessary data to the <a href='http://code.viget.com/microcosm/api/presenter.html' target='_blank'>Presenter</a> — the green robot at the bottom. The Presenter is, at its core, a React Component. It uses the data it receives from the Domains to render the appropriate view.",
+    "browserText": "While the robots are hard at work, the user fires up the browser to take a quiz. The user sees the four options that the \"cat\" Domain is keeping track of, and which the Presenter is rendering."
   },
   "2": {
     "num": "02.",
     "heading": "Creating an Action",
-    "microcosmText": "The <a target='_blank' href='http://code.viget.com/microcosm/api/presenter.html'>Presenter</a> creates a new <a target='_blank' href='http://code.viget.com/microcosm/api/actions.html'>Action</a> in response to the user's click. This particular Action's job will be to fetch some data from an external API on cats. Cool cats.",
-    "browserText": "A user clicks an option from the quiz list. The 'Cool' option."
+    "microcosmText": "In response to a user's click, the <a target='_blank' href='http://code.viget.com/microcosm/api/presenter.html'>Presenter</a> creates an <a target='_blank' href='http://code.viget.com/microcosm/api/actions.html'>Action</a> — yep, that little yellow dude. The Action has one job: to fetch the required data from an external API.",
+    "browserText": "The user has made their decision and clicks option A: \"cool.\""
   },
   "3": {
     "num": "03.",
     "heading": "The Repository",
-    "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with Actions, History, and State. The Repo knows which Domains care about what Actions, and also has access to the History of Actions. Let's see what that looks like... ",
-    "browserText": "Nothing has changed yet, the Action hasn't sent any upadates for the Domain to react to."
+    "microcosmText": "The Repository (typically called the Repo) oversees everything that has to do with Actions, History, and State — and does it all while rocking a red, robot mustache. The Repo knows about the Actions that each Domain cares about, and also has access to the History of the Actions.",
+    "browserText": "Nothing has changed just yet — the Action hasn't sent any updates for the Domain to react to. The user is hanging out."
   },
   "4": {
     "num": "04.",
     "heading": "The Action Begins",
-    "microcosmText": "An Action goes out an attempts to fulfill its mission of getting cool cat data for the user. During this time an action will go through states, the first of these being 'open'. Our Domains <a href='http://code.viget.com/microcosm/api/domains.html#subscribing-to-different-action-states' target='_blank'>register</a> the different states an Action goes through. In this case, as soon as the Action is 'open' our 'modal' Domain will update it's state to <code>modalOpen:true</code> and <code>modalLoading:true</code>",
-    "browserText": "The user can see the modal and a loading graphic indicating that our Action has started and we are waiting for a response from our API."
+    "microcosmText": "The Action tries to get cool cat data for the user. During this time, an action will go through states, the first of these being \"open.\" Our Domains <a href='http://code.viget.com/microcosm/api/domains.html#subscribing-to-different-action-states' target='_blank'>registers</a> the different states as the Action goes through them. That means that as soon as the Action is \"open\" or \"modal\" Domain will update its state to <code>modalOpen:true</code> and <code>modalLoading:true</code>",
+    "browserText": "The user can see the modal and a loading graphic, indicating that our Action is hard at work and awaiting a response from the API. Patience, cool cats."
   },
   "5": {
     "num": "05.",
     "heading": "Action States",
-    "microcosmText": "Actions go through various states as they resolve. Domains can register these states and change their internal state just like we saw above with the 'modal' Domain. An action can move to the 'update' state to show some progress, it can move to the 'done' state to signal it is finished, or it can move to the 'error' state to signal something has gone wrong. Later we'll see another possibility: a user cancelling an action.",
-    "browserText": "Our action hasn't sent any updates, it isn't done, and it hasn't errored out. The user is still looking at this loading graphic on a modal."
+    "microcosmText": "Actions go through various States as they resolve. Domains can register these states and change their internal state just like we saw above with the 'modal' Domain. An action can move to the 'update' state to show some progress, it can move to the 'done' state to signal it is finished, or it can move to the 'error' state to signal something has gone wrong. In just a bit, we'll see another possibility: a user cancelling an action.",
+    "browserText": "Still waiting. The Action hasn't sent any updates just yet, so the user is still staring at the loading graphic on the modal. "
   },
   "6": {
     "num": "06.",
     "heading": "Domains Update the State",
-    "microcosmText":  "As guardians of the application data, Domains are in charge of updating their state whenever an Action changes states. Earlier we saw these two domains being alerted that the Cool Cat Action was 'open'. The modal Domain reacted by updating their state to specify that the modal is open but in a loading state. The Cat’s Domain didn't need to do anything, so it just sat there. But what happens when a user cancels an action?",
-    "browserText": "Our user has been waiting for some 'cool' cat data for a while now and decides to give up and just close the modal. Perhaps they are on a slow internet connection."
+    "microcosmText":  "Domains are in charge of updating their state whenever an Action changes states. Remember how the two Domains were alerted that the Cool Cat Action was \"open\"? The modal Domain reacted by updating its state to specify that the modal was open and in a loading state. The Cat's domain didn't need to do anything. It just chilled. But what happens if a user decides to bail?",
+    "browserText": "Our user has been waiting for a long time now. Maybe their internet is slow — maybe their Lyft is going through a tunnel. Either way, they're getting antsy, so they decide to close the modal."
   },
   "7": {
     "num": "07.",
     "heading": "Cancelled Actions",
-    "microcosmText": "The Presenter tells the action that the user wants to cancel everything. The Action then changes to the 'cancelled' state. The 'modal' Domain is subscribed to this change and updates it's state too <code>modalOpen:false</code>, effectively closing the modal. The Action will not continue to try to fetch data.",
-    "browserText": "The user is back where they started when they first fired up the browser, ready to select a different option or try the quiz later."
+    "microcosmText": "The Presenter tells the Action that the user wants to cancel everything. The Action promptly transitions to the \"cancelled\" state. The \"modal\" Domain is alerted to this change and updates its state to <code>modalOpen:false</code>, closing the modal.",
+    "browserText": "With the modal closed, the user is back to where they started when they first fired up the browser."
   },
   "8": {
     "num": "08.",
-    "heading": "History Keeps Track of the Actions",
-    "microcosmText": "A history of all actions is kept by Microcosm. By default Microcosm will only hold on to unsresolved actions. This can be changed by setting the <code>maxHistory</code> when creating a Repo. This is useful for debugging problems in your application.",
-    "browserText": "Using Microcosm dev tools you can step through Actions to easily find and squash bugs."
+    "heading": "Tracking the Action History",
+    "microcosmText": "Microcosm keeps a history of all the Actions. By default, Microcosm will only hold onto unresolved actions, but this can be changed by setting the <code>maxHistory</code> when creating a Repo. This is also a pretty cool way to attack debugging problems in your application.",
+    "browserText": "Yeah, the user is long gone. We just wanted to mention that using Microcosm dev tools you can help you step through Actions to easily find and squash bugs."
   },
   "9": {
     "num": "Conclusion",
-    "heading": "Conclusion",
-    "microcosmText": "So that's a quick recap of Microcosm's players and how they work together. Presenters use Domains to render UIs and create Actions based on user inputs, Domains subscribe to the different states of Actions and update themselves triggering changes in the UI by the Presenter. The Repo oversees all this and keep things organized.<br><br>Under the hood there are loads of performance optimizations to ensure duplicate calculations are kept to a minimum, helping your application run as quickly as possible, leaving you to worry about the business logic.<br><br>This is a high level view of Microcosm, for more click the link on the footer, visit the <a href='https://github.com/vigetlabs/microcosm' target='_blank'>github repo</a>, or reach out to us <a href='https://twitter.com/viget' target='_blank'>@viget</a>",
-    "browserText": "So that's a quick recap of Microcosm's players and how they work together. Presenters use Domains to render UIs and create Actions based on user inputs, Domains subscribe to the different states of Actions and update themselves triggering changes in the UI by the Presenter. The Repo oversees all this and keep things organized.<br><br>Under the hood there are loads of performance optimizations to ensure duplicate calculations are kept to a minimum, helping your application run as quickly as possible, leaving you to worry about the business logic.<br><br>This is a high level view of Microcosm, for more click the link on the footer, visit the <a href='https://github.com/vigetlabs/microcosm' target='_blank'>github repo</a>, or reach out to us <a href='https://twitter.com/viget' target='_blank'>@viget</a>",
+    "heading": "Cool?",
+    "microcosmText": "That's Microcosm. We hope you've enjoyed this quick summary of its primary features. But there's more! Under the hood, we've included lots of performance optimizations to make sure duplicate calculations are kept at a minimum, allowing your application to run as quickly as possible. For more info, visit the <a href='https://github.com/vigetlabs/microcosm' target='_blank'>github repo</a>, or reach out to us <a href='https://twitter.com/viget' target='_blank'>@viget</a>. We'd love to jam.",
+    "browserText": "That's Microcosm. We hope you've enjoyed this quick summary of its primary features. But there's more! Under the hood, we've included lots of performance optimizations to make sure duplicate calculations are kept at a minimum, allowing your application to run as quickly as possible. For more info, visit the <a href='https://github.com/vigetlabs/microcosm' target='_blank'>github repo</a>, or reach out to us <a href='https://twitter.com/viget' target='_blank'>@viget</a>. We'd love to jam.",
     "bookend": true
   }
 }

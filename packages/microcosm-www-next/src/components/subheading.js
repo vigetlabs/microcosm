@@ -19,7 +19,6 @@ export default class Subheading extends React.Component {
   render() {
     return (
       <h3 className={'section__content__subheading' + this.state.runFadeAnim}>
-        {this.props.text}{' '}
         {this.props.microcosmView
           ? this.props.microcosmText
           : this.props.browserText}
