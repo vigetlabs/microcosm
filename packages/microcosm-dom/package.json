@@ -15,15 +15,15 @@
     "form-serialize": "^0.7.1"
   },
   "devDependencies": {
-    "jest": "^23.2.0",
+    "jest": "^23.4.2",
     "preact": "^8.2.9",
     "preact-compat": "^3.18.0",
     "raf": "^3.4.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "rollup": "^0.62.0",
+    "rollup": "^0.63.4",
     "rollup-plugin-buble": "^0.19.2",
-    "rollup-plugin-filesize": "^2.0.0",
+    "rollup-plugin-filesize": "^4.0.1",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-uglify": "^4.0.0"
   }

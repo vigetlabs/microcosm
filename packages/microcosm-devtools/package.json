@@ -15,22 +15,22 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "babel-loader": "^7.0.0",
+    "babel-loader": "^7.1.5",
     "circular-json-es6": "^2.0.2",
     "classnames": "^2.2.6",
-    "css-loader": "^0.28.9",
+    "css-loader": "^1.0.0",
     "file-loader": "^1.1.6",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "microcosm": "^12.14.0",
     "paths-js": "^0.4.5",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-hot-loader": "4.3.3",
+    "react-hot-loader": "4.3.4",
     "react-json-tree": "^0.11.0",
     "style-loader": "^0.21.0",
     "url-loader": "^1.0.1",
-    "webpack": "^4.12.2",
-    "webpack-cli": "^3.0.8",
-    "webpack-dev-server": "^3.1.4"
+    "webpack": "^4.16.3",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5"
   }
 }
