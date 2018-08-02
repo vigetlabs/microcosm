@@ -14,7 +14,9 @@ export default function Canvas({ pixels, height, width, send }) {
         strokeWidth={0.25 / scaleX}
         strokeOpacity="0.2"
       >
-        {pixels.map((row, y) => <Row key={y} cells={row} y={y} />)}
+        {pixels.map((row, y) => (
+          <Row key={y} cells={row} y={y} />
+        ))}
       </g>
     </svg>
   )

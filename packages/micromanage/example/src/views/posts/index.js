@@ -28,7 +28,9 @@ function Posts({ data, meta, loading, error }) {
         <Range page={meta.page} total={meta.total} count={meta.count} />
       </header>
 
-      {data.map(post => <Post key={post.id} post={post} />)}
+      {data.map(post => (
+        <Post key={post.id} post={post} />
+      ))}
 
       <footer className="home-meta">
         <Paginator page={data.page} />
