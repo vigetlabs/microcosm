@@ -1,5 +1,10 @@
 # Changelog
 
+## 12.15.0
+
+* Fixed a bug where toggling actions would not recalculate state
+* Updated dependencies and build process
+
 ## 12.14.0
 
 * Added a `confirm` property to `ActionForm` and `ActionButton`. This
