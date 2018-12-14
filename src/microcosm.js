@@ -13,6 +13,7 @@ import CompareTree from './compare-tree'
 import coroutine from './coroutine'
 import getRegistration from './get-registration'
 import tag from './tag'
+import assert from 'assert'
 import installDevtools from './install-devtools'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
 import { merge, get, set, update } from './utils'
@@ -334,7 +335,7 @@ class Microcosm extends Emitter implements Domain {
 
     coroutine(action, command, params, this)
 
-    console.assert(
+    assert(
       this.active,
       `Pushed "${action.toString()}" action, however this Microcosm has been shutdown. ` +
         "It's possible that an event subscription was not cleaned up."

@@ -7,6 +7,7 @@
 import Emitter, { type Callback } from './emitter'
 import tag from './tag'
 import { uid } from './utils'
+import assert from 'assert'
 
 type ActionUpdater = (payload?: mixed) => *
 type Revision = { status: string, payload: *, timestamp: number }
@@ -167,10 +168,7 @@ class Action extends Emitter {
     if (this.parent) {
       this.parent.parent = null
     } else {
-      console.assert(
-        false,
-        'Unable to prune action. It is already disconnected.'
-      )
+      assert(false, 'Unable to prune action. It is already disconnected.')
     }
   }
 
@@ -207,7 +205,7 @@ class Action extends Emitter {
     if (this.parent) {
       this.parent.abandon(this)
     } else {
-      console.assert(false, 'Action has already been removed.')
+      assert(false, 'Action has already been removed.')
     }
 
     this.removeAllListeners()
@@ -237,7 +235,7 @@ class Action extends Emitter {
    */
   _callOrSubscribeOnce(status: Status, callback: Callback, scope: ?Object) {
     if (callback) {
-      console.assert(
+      assert(
         typeof callback === 'function',
         `Expected a function when subscribing to ${status}` +
           `instead got ${typeof callback}`

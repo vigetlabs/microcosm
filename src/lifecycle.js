@@ -2,8 +2,8 @@
  * @flow
  */
 
+import assert from 'assert'
 import { mergeSame } from './utils'
-
 import type Action from './action'
 import type Microcosm from './microcosm'
 
@@ -34,17 +34,11 @@ export const PATCH = function $patch(data: Object, deserialize: boolean) {
 }
 
 export const BIRTH = function $birth() {
-  console.assert(
-    false,
-    'Birth lifecycle method should never be invoked directly.'
-  )
+  assert(false, 'Birth lifecycle method should never be invoked directly.')
 }
 
 export const START = function $start() {
-  console.assert(
-    false,
-    'Start lifecycle method should never be invoked directly.'
-  )
+  assert(false, 'Start lifecycle method should never be invoked directly.')
 }
 
 export const ADD_DOMAIN = function $addDomain(domain: Domain) {

@@ -2,6 +2,7 @@
  * @flow
  */
 
+import assert from 'assert'
 import React from 'react'
 import DOM from 'react-dom'
 import { Action, merge } from '../microcosm'
@@ -82,7 +83,7 @@ class ActionForm extends React.PureComponent<Props> {
   submit(event: Event) {
     let form = this.form
 
-    console.assert(
+    assert(
       form,
       'ActionForm has no form reference and can not submit. This can happen',
       'if submit() is called after the parent component has unmounted.'

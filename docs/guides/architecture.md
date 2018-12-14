@@ -100,7 +100,13 @@ function PlanetsList({ planets = [] }) {
     return <p>No Planets</p>
   }
 
-  return <ul>{planets.map(p => <li key={p.id}>{p.name}</li>)}</ul>
+  return (
+    <ul>
+      {planets.map(p => (
+        <li key={p.id}>{p.name}</li>
+      ))}
+    </ul>
+  )
 }
 ```
 

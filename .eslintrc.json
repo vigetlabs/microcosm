@@ -23,6 +23,9 @@
   "settings": {
     "flowtype": {
       "onlyFilesWithFlowAnnotation": true
+    },
+    "react": {
+      "version": "15.0"
     }
   },
   "extends": ["eslint:recommended", "plugin:flowtype/recommended"],

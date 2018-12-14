@@ -1,5 +1,6 @@
 // @flow
 import { isObject } from './utils'
+import assert from 'assert'
 
 export const STATUSES = {
   inactive: 'inactive',
@@ -30,8 +31,8 @@ function getRegistration(pool: ?Object, command: Tagged, status: Status) {
 
   let alias = STATUSES[status]
 
-  console.assert(alias, 'Invalid action status ' + status)
-  console.assert(
+  assert(alias, 'Invalid action status ' + status)
+  assert(
     command.__tagged,
     `Unable to register ${command.name || 'action'}(). It has not been tagged.`
   )
@@ -48,12 +49,12 @@ function getRegistration(pool: ?Object, command: Tagged, status: Status) {
     /**
      * Throw in strict mode if a nested registration is undefined. This is usually a typo.
      */
-    console.assert(
+    assert(
       !(alias in nest) || answer !== undefined,
       `The "${alias}" key within a nested registration for ${command.name ||
         'an action'} is ${answer}. Is it being referenced correctly?`
     )
-    console.assert(
+    assert(
       !(status in nest) || answer !== undefined,
       `The "${status}" key within a nested registration for ${command.name ||
         'an action'} is ${answer}. Is it being referenced correctly?`
@@ -64,7 +65,7 @@ function getRegistration(pool: ?Object, command: Tagged, status: Status) {
     /**
      * Similarly, throw in strict mode if a regular registration is undefined. This is usually a typo.
      */
-    console.assert(
+    assert(
       !(type in pool) || answer !== undefined,
       `${command.name ||
         'action'} key within a registration is ${answer}. Is it being referenced correctly?`

@@ -6,6 +6,7 @@
  * @flow
  */
 
+import assert from 'assert'
 import Action from './action'
 import Emitter from './emitter'
 import defaultUpdateStrategy from './default-update-strategy'
@@ -281,8 +282,8 @@ class History extends Emitter {
    * state. This is how Microcosm updates state.
    */
   reconcile(action: Action) {
-    console.assert(this.head, 'History should always have a head node')
-    console.assert(action, 'History should never reconcile ' + typeof action)
+    assert(this.head, 'History should always have a head node')
+    assert(action, 'History should never reconcile ' + typeof action)
 
     let focus = action
     while (focus) {

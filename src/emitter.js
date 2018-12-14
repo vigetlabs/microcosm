@@ -5,6 +5,7 @@
  */
 
 import { isFunction } from './utils'
+import assert from 'assert'
 
 export type Callback = (...args: *[]) => *
 
@@ -30,7 +31,7 @@ class Emitter<Event: string> {
    * Add an event listener.
    */
   on(event: Event, fn: Callback, scope?: any) {
-    console.assert(
+    assert(
       isFunction(fn),
       `Expected ${event} listener to be function, instead got ${typeof fn}`
     )
@@ -47,7 +48,7 @@ class Emitter<Event: string> {
    * automatically removed.
    */
   once(event: Event, fn: Callback, scope?: any) {
-    console.assert(
+    assert(
       isFunction(fn),
       `Expected ${event} listener to be function, instead got ${typeof fn}`
     )

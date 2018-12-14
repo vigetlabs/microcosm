@@ -2,6 +2,8 @@
  * @flow
  */
 
+import assert from 'assert'
+
 let uid = 0
 const FALLBACK = '_action'
 
@@ -9,8 +11,8 @@ const FALLBACK = '_action'
  * Uniquely tag a function. This is used to identify actions.
  */
 export default function tag(fn: Command | Tagged, name?: string): Tagged {
-  console.assert(
-    fn,
+  assert(
+    fn != undefined,
     `Unable to identify ${fn == null ? fn : fn.toString()} action.`
   )
 

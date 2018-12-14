@@ -18,7 +18,7 @@ describe('tag', function() {
   })
 
   it.dev('will not tag an undefined action', function() {
-    expect(() => tag(undefined), /Unable to identify undefined action/)
+    expect(() => tag(undefined)).toThrow(/Unable to identify undefined action/)
   })
 
   it('can have an override name', function() {

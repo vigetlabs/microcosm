@@ -257,7 +257,13 @@ And in our PlanetList:
 import React from 'react'
 
 export default function PlanetList({ planets = [] }) {
-  return <ul>{planets.map(p => <li key={p}>{p}</li>)}</ul>
+  return (
+    <ul>
+      {planets.map(p => (
+        <li key={p}>{p}</li>
+      ))}
+    </ul>
+  )
 }
 ```
 
@@ -462,7 +468,11 @@ import { addPlanet } from '../actions/planets'
 export default function PlanetList({ planets = [] }) {
   return (
     <div>
-      <ul>{planets.map(p => <li key={p}>{p}</li>)}</ul>
+      <ul>
+        {planets.map(p => (
+          <li key={p}>{p}</li>
+        ))}
+      </ul>
 
       <ActionButton action={addPlanet} value="Alpha Centauri">
         Add Planet

@@ -31,25 +31,27 @@ describe('refs', function() {
 
     let wrapper = mount(<MyPresenter />)
 
-    expect(wrapper.ref('container').length).toEqual(1)
+    expect(wrapper.instance().refs).toHaveProperty('container')
   })
 
   it('updates the ref when the component unmounts', function() {
-    var count = 0
-
     class MyPresenter extends Presenter {
+      updateRef = el => {
+        this.foo = el ? true : undefined
+      }
       render() {
-        return <p ref={() => (this.foo = count++)}>Test</p>
+        return <p ref={this.updateRef}>Test</p>
       }
     }
 
     let wrapper = mount(<MyPresenter />)
+    let instance = wrapper.instance()
 
-    expect(wrapper.get(0).foo).toEqual(0)
+    expect(instance.foo).toEqual(true)
 
     wrapper.unmount()
 
-    expect(wrapper.get(0).foo).toEqual(1)
+    expect(instance.foo).toEqual(undefined)
   })
 })
 

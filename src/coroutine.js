@@ -4,6 +4,7 @@
 
 import Action from './action'
 import { isFunction, isPromise, isGeneratorFn } from './utils'
+import assert from 'assert'
 
 /**
  * Provide support for generators, performing a sequence of actions in
@@ -32,7 +33,7 @@ function processGenerator(action: Action, body: GeneratorAction, repo: *) {
       return progress(repo.parallel(subAction))
     }
 
-    console.assert(
+    assert(
       subAction instanceof Action,
       `Iteration of generator expected an Action. Instead got ${typeof subAction}`
     )

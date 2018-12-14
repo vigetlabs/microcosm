@@ -4,7 +4,7 @@
 
 import getRegistration from './get-registration'
 import { get, merge, createOrClone } from './utils'
-
+import assert from 'assert'
 import type Action from './action'
 import type Microcosm from './microcosm'
 
@@ -18,10 +18,10 @@ class EffectEngine {
   }
 
   add(config: Object | Function, options?: Object) {
-    console.assert(
+    assert(
       !options || options.constructor === Object,
-      'addEffect expected a plain object as the second argument. Instead got',
-      get(options, 'constructor.name', 'Unknown')
+      'addEffect expected a plain object as the second argument. Instead got ' +
+        get(options, 'constructor.name', 'Unknown')
     )
 
     let deepOptions = merge(this.repo.options, config.defaults, options)
