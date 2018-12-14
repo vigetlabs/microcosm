@@ -252,4 +252,21 @@ describe('rollbacks', function() {
 
     expect(repo).toHaveState('test', false)
   })
+
+  it('can redo actions', () => {
+    const repo = new Microcosm({ maxHistory: Infinity })
+
+    repo.addDomain('test', {
+      getInitialState() {
+        return true
+      }
+    })
+
+    let action = repo.reset({ test: false })
+
+    action.toggle()
+    expect(repo).toHaveState('test', true)
+    action.toggle()
+    expect(repo).toHaveState('test', false)
+  })
 })

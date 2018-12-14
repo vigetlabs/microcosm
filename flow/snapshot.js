@@ -16,5 +16,8 @@ declare type Snapshot = {
   // Last known status of the action associated with this snapshot.
   status: Status,
   // Last known payload of the action associated with this snapshot.
-  payload: any
+  payload: any,
+  // Is the current action disabled? This is important triggering a
+  // state refresh. Enabled actions should always recalculate
+  disabled: boolean
 }

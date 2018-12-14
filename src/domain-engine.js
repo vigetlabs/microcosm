@@ -126,6 +126,7 @@ class DomainEngine {
         base !== head ||
         // Or the payload is different
         action.payload !== snapshot.payload ||
+        action.disabled !== snapshot.disabled ||
         // or the status is different
         action.status !== snapshot.status
       ) {
