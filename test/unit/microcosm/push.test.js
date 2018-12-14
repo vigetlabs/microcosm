@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Microcosm::push', function() {
   it('the pushed function has no scope', function(done) {

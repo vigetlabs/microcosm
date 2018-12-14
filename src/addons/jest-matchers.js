@@ -1,4 +1,4 @@
-import Microcosm, { Action, tag, get, getRegistration } from '../microcosm'
+import Microcosm, { Action, tag, get, getRegistration } from 'microcosm'
 
 expect.extend({
   toRegister(entity, command, status = 'done') {

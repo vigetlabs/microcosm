@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Effect::teardown', function() {
   it('is torn down with the repo', function() {

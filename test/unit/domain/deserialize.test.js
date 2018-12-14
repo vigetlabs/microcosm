@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Domain::deserialize', function() {
   it('to getInitialState when no deserialize method is provided', function() {

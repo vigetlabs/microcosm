@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('remove', function() {
   it('does not remove non-existent parents', function() {

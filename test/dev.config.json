@@ -11,6 +11,9 @@
     "<rootDir>",
     "<rootDir>/../src"
   ],
+  "moduleNameMapper": {
+    "microcosm": "<rootDir>/../src/index.js"
+  },
   "collectCoverageFrom": [
     "src/**/*.{js,json}",
     "!src/addons/jest-matchers.js"

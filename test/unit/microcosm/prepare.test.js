@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Microcosm::prepare', function() {
   it('partially applies Microcosm::push', function() {

@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Microcosm::addDomain', function() {
   it('adding a domain backfills the initial state', function() {

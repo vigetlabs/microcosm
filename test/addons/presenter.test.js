@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import Microcosm from '../../src/microcosm'
+import Microcosm from 'microcosm'
 import Presenter from '../../src/addons/presenter'
 import ActionButton from '../../src/addons/action-button'
 import withSend from '../../src/addons/with-send'

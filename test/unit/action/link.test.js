@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 function delay(payload, n) {
   return new Promise(resolve => setTimeout(() => resolve(payload), n))

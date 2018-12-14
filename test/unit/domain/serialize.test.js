@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Domain::serialize', function() {
   it('runs through serialize methods on domains', function() {

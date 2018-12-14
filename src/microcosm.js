@@ -90,7 +90,7 @@ const DEFAULTS = {
  * @extends Emitter
  * @tutorial quickstart
  */
-class Microcosm extends Emitter implements Domain {
+export class Microcosm extends Emitter implements Domain {
   static defaults: Object
   static version: String
 
@@ -492,16 +492,4 @@ class Microcosm extends Emitter implements Domain {
 
 Microcosm.version = version
 
-export {
-  Microcosm as default,
-  Microcosm,
-  Action,
-  History,
-  Emitter,
-  tag,
-  get,
-  set,
-  update,
-  merge,
-  getRegistration
-}
+export default Microcosm

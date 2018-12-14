@@ -1,4 +1,4 @@
-import Microcosm from '../../src/microcosm'
+import Microcosm from 'microcosm'
 import Indexing from '../../src/addons/indexing'
 
 Indexing()

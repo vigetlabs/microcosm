@@ -1,4 +1,4 @@
-import Microcosm from '../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Removal', function() {
   it('can remove an action from history', function() {

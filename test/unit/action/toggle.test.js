@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Action::toggle', function() {
   it('it will not dispatch an action disabled at the head', function() {

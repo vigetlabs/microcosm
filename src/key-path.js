@@ -6,12 +6,14 @@
  * @flow
  */
 
-import { isBlank } from './utils'
-
 export type KeyPath = Array<string>
 
 const KEY_DELIMETER = '.'
 const PATH_DELIMETER = ','
+
+function isBlank(value: any): boolean {
+  return value === '' || value === null || value === undefined
+}
 
 /**
  * Ensure a value is a valid key path.

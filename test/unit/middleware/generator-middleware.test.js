@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Generator Middleware', function() {
   it('processes actions sequentially', function() {

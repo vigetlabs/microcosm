@@ -1,4 +1,4 @@
-import Microcosm from '../../src/microcosm'
+import Microcosm from 'microcosm'
 import { STATUSES } from '../../src/get-registration'
 
 const action = n => n

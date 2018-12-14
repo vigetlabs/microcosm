@@ -5,12 +5,11 @@
 const rollup = require('rollup')
 const buble = require('rollup-plugin-buble')
 const flow = require('rollup-plugin-flow')
-const uglify = require('rollup-plugin-uglify')
+const uglify = require('rollup-plugin-uglify').uglify
 const node = require('rollup-plugin-node-resolve')
 const unassert = require('rollup-plugin-unassert')
 const json = require('rollup-plugin-json')
 const filesize = require('rollup-plugin-filesize')
-const { Dictionary } = require('uglify-js')
 
 const path = require('path')
 const minimist = require('minimist')
@@ -30,7 +29,9 @@ const plugins = [
     preferConst: true
   }),
   buble(),
-  node(),
+  node({
+    preferBuiltins: true
+  }),
   filesize()
 ]
 
@@ -39,37 +40,35 @@ const configs = {
   ActionForm: path.resolve('src/addons/action-form.js'),
   Indexing: path.resolve('src/addons/indexing.js'),
   JestMatchers: path.resolve('src/addons/jest-matchers.js'),
-  Microcosm: path.resolve('src/microcosm.js'),
+  Microcosm: path.resolve('src/index.js'),
   Model: path.resolve('src/addons/model.js'),
   Presenter: path.resolve('src/addons/presenter.js'),
   withSend: path.resolve('src/addons/with-send.js')
 }
 
 if (!options.strict) {
-  plugins.push( plugins.push(unassert()))
+  plugins.push(unassert())
 }
 
 if (options.minify) {
   plugins.push(
     uglify({
       compress: {
-        passes: 2
+        passes: 3,
+        drop_console: true,
+        keep_infinity: true,
+        toplevel: true,
+        warnings: true
       },
       mangle: {
-        toplevel: true,
-        properties: {
-          regex: /^_/,
-          cache: {
-            cname: -1,
-            props: new Dictionary()
-          }
-        }
-      }
+        toplevel: true
+      },
+      warnings: true
     })
   )
 }
 
-const external = ['react', 'react-dom', 'form-serialize']
+const external = ['react', 'react-dom', 'form-serialize', 'assert', 'microcosm']
 
 const globals = {
   react: 'React',
@@ -90,7 +89,13 @@ for (let name in configs) {
   let bundler = rollup.rollup({
     input: input,
     plugins: plugins,
-    external: external.filter(path => path !== input)
+    external: external.filter(path => path !== input),
+    onwarn: function(error) {
+      // Do not raise warnings for named exports
+      if (error.code !== 'MIXED_EXPORTS') {
+        console.warn('%s: %s', name, error)
+      }
+    }
   })
 
   let write = bundler.then(bundle => {

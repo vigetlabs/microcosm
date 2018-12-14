@@ -3,7 +3,7 @@
  * This is not for public consumption!
  */
 
-import Microcosm, { get, set } from '../microcosm'
+import Microcosm, { get, set } from 'microcosm'
 import { getKeyPaths } from '../key-path'
 
 /**

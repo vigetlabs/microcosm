@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('History::setLimit', function() {
   it('sets the correct size given Infinity', function() {

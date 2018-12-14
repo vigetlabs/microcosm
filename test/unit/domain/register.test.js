@@ -1,5 +1,4 @@
-import Microcosm from '../../../src/microcosm'
-
+import Microcosm from 'microcosm'
 let action = a => a
 
 describe('Domain::register', function() {

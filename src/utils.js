@@ -173,10 +173,6 @@ export function isFunction(target: any): boolean {
   return !!target && typeof target === 'function'
 }
 
-export function isBlank(value: any): boolean {
-  return value === '' || value === null || value === undefined
-}
-
 /**
  * Get the toStringTag symbol out of an object, with
  * some legacy support.

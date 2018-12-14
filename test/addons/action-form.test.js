@@ -6,7 +6,7 @@ import React from 'react'
 import ActionForm from '../../src/addons/action-form'
 import Presenter from '../../src/addons/presenter'
 import mockSend from '../helpers/mock-send'
-import Microcosm from '../../src/microcosm'
+import Microcosm from 'microcosm'
 import { mount } from 'enzyme'
 
 describe('callbacks', function() {

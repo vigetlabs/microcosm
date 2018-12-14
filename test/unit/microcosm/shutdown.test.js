@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Microcosm::shutdown', function() {
   it('removes all listeners', function() {

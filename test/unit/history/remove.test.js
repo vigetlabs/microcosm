@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('History::remove', function() {
   it('resets when there are no actions left', function() {

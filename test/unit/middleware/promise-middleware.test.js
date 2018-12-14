@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Promise middleware', function() {
   it('opens with the first argument of params', function() {

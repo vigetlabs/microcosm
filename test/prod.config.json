@@ -3,8 +3,7 @@
   "testEnvironment": "node",
   "setupTestFrameworkScriptFile": "./helpers/setup.js",
   "moduleNameMapper": {
-    ".*?/src/(.*)": "<rootDir>/../build/min/$1",
-    "../microcosm": "<rootDir>/../build/min/microcosm"
+    "microcosm": "<rootDir>/../build/min/index"
   },
   "testPathIgnorePatterns": [
     "node_modules",

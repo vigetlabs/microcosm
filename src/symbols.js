@@ -1,10 +1,9 @@
 /**
  * @flow
  */
-import { get, isFunction } from './utils'
 
-const $Symbol = isFunction(Symbol) ? Symbol : {}
+const $Symbol = typeof Symbol === 'function' ? Symbol : {}
 
-export const toStringTag: * = get($Symbol, 'toStringTag', '@@toStringTag')
+export const toStringTag: * = $Symbol.toStringTag || '@@toStringTag'
 
-export const iteratorTag: * = get($Symbol, 'iterator', '@@iterator')
+export const iteratorTag: * = $Symbol.iterator || '@@iterator'

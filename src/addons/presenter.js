@@ -10,7 +10,7 @@
  */
 
 import React from 'react'
-import Microcosm, { merge, tag, getRegistration } from '../microcosm'
+import Microcosm, { merge, tag, getRegistration } from 'microcosm'
 import Model from './model'
 import { requestFrame, cancelFrame } from './frame'
 

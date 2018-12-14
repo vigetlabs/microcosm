@@ -1,4 +1,4 @@
-import Microcosm from '../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Efficiency', function() {
   it('actions are not dispatched twice with 0 history', () => {

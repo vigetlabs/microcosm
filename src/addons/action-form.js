@@ -5,7 +5,7 @@
 import assert from 'assert'
 import React from 'react'
 import DOM from 'react-dom'
-import { Action, merge } from '../microcosm'
+import { Action, merge } from 'microcosm'
 import serialize from 'form-serialize'
 
 /* istanbul ignore next */

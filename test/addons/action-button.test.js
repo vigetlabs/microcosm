@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import Microcosm from '../../src/microcosm'
+import Microcosm from 'microcosm'
 import ActionButton from '../../src/addons/action-button'
 import { mount } from 'enzyme'
 

@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Domain::teardown', function() {
   it('is invoked with a reference to the repo', function() {

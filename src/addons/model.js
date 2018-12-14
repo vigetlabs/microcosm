@@ -4,7 +4,7 @@
  * @flow
  */
 
-import { type Microcosm, Emitter, merge } from '../microcosm'
+import { type Microcosm, Emitter, merge } from 'microcosm'
 
 function isObservable(binding: *): boolean {
   return binding && typeof binding.subscribe === 'function'

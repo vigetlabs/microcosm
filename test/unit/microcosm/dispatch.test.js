@@ -1,4 +1,4 @@
-import Microcosm from '../../../src/microcosm'
+import Microcosm from 'microcosm'
 
 describe('Microcosm::dispatch', function() {
   it('does not mutate base state on prior dispatches', function() {
