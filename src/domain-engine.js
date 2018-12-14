@@ -82,9 +82,7 @@ class DomainEngine {
   add(key: string | KeyPath, config: *, options?: Object) {
     assert(
       !options || options.constructor === Object,
-      'addDomain expected a plain object as the second argument. ' +
-        'Instead got ' +
-        get(options, 'constructor.name', 'Unknown')
+      'addDomain expected a plain object as the second argument.'
     )
 
     let deepOptions = merge(

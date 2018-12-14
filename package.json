@@ -58,7 +58,7 @@
     "eslint-plugin-flowtype": "^3.2.0",
     "eslint-plugin-flowtype-errors": "^3.3.1",
     "eslint-plugin-react": "^7.3.0",
-    "flow-bin": "^0.89.0",
+    "flow-bin": "~0.53.1",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^23.6.0",

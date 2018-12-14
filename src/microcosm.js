@@ -5,18 +5,16 @@
  */
 
 import Action from './action'
-import Emitter from './emitter'
+import Emitter, { type Callback } from './emitter'
 import History from './history'
 import DomainEngine from './domain-engine'
 import EffectEngine from './effect-engine'
 import CompareTree from './compare-tree'
 import coroutine from './coroutine'
-import getRegistration from './get-registration'
-import tag from './tag'
 import assert from 'assert'
 import installDevtools from './install-devtools'
 import { RESET, PATCH, ADD_DOMAIN } from './lifecycle'
-import { merge, get, set, update } from './utils'
+import { merge, set } from './utils'
 import { version } from '../package.json'
 
 /**
@@ -275,7 +273,7 @@ export class Microcosm extends Emitter implements Domain {
     this.changes.update(this.state)
   }
 
-  on(type: *, callback: *, scope?: Object) {
+  on(type: *, callback: *, scope?: Object): this {
     let [event, meta] = type.split(':', 2)
 
     switch (event) {
@@ -289,7 +287,7 @@ export class Microcosm extends Emitter implements Domain {
     return this
   }
 
-  off(type: *, callback: *, scope?: Object) {
+  off(type: string, callback: Callback, scope?: any): this {
     let [event, meta] = type.split(':', 2)
 
     switch (event) {
@@ -366,6 +364,7 @@ export class Microcosm extends Emitter implements Domain {
     let domain = this.domains.add(key, config, options)
     let initial = domain.getInitialState ? domain.getInitialState() : null
 
+    // $FlowFixMe
     this.initial = set(this.initial, key, initial)
 
     this.push(ADD_DOMAIN, domain)

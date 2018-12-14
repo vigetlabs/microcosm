@@ -44,7 +44,7 @@ class ActionButton extends React.PureComponent<Props> {
     this.click = this.click.bind(this)
   }
 
-  click(event) {
+  click(event: Event) {
     let payload = this.props.prepare(this.props.value, event)
     let action = null
 

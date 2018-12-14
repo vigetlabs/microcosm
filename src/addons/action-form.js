@@ -4,7 +4,6 @@
 
 import assert from 'assert'
 import React from 'react'
-import DOM from 'react-dom'
 import { Action, merge } from 'microcosm'
 import serialize from 'form-serialize'
 
@@ -47,17 +46,14 @@ class ActionForm extends React.PureComponent<Props> {
     this.onSubmit = this.onSubmit.bind(this)
   }
 
-  componentDidMount() {
-    this.form = DOM.findDOMNode(this)
-  }
-
-  componentWillUnmount() {
-    this.form = null
+  setForm = (el: Element) => {
+    this.form = el
   }
 
   render() {
     let props = merge(this.props, {
-      onSubmit: this.onSubmit
+      onSubmit: this.onSubmit,
+      ref: this.setForm
     })
 
     // Remove invalid props to prevent React warnings
@@ -85,8 +81,8 @@ class ActionForm extends React.PureComponent<Props> {
 
     assert(
       form,
-      'ActionForm has no form reference and can not submit. This can happen',
-      'if submit() is called after the parent component has unmounted.'
+      'ActionForm has no form reference and can not submit. This can happen ' +
+        'if submit() is called after the parent component has unmounted.'
     )
 
     let params = this.props.prepare(this.props.serializer(form))

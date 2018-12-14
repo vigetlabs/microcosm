@@ -13,3 +13,4 @@ flow/
 [options]
 experimental.const_params=true
 unsafe.enable_getters_and_setters=true
+module.name_mapper='microcosm' -> '<PROJECT_ROOT>/src/index.js'

@@ -30,7 +30,7 @@ class Emitter<Event: string> {
   /**
    * Add an event listener.
    */
-  on(event: Event, fn: Callback, scope?: any) {
+  on(event: Event, fn: Callback, scope?: any): this {
     assert(
       isFunction(fn),
       `Expected ${event} listener to be function, instead got ${typeof fn}`
@@ -64,7 +64,7 @@ class Emitter<Event: string> {
    * Unsubscribe a callback. If no event is provided, removes all callbacks. If
    * no callback is provided, removes all callbacks for the given type.
    */
-  off(event: Event, fn: Callback, scope?: any) {
+  off(event: Event, fn: Callback, scope?: any): this {
     var removeAll = fn == null
 
     let i = 0

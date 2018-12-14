@@ -27,9 +27,7 @@ describe('Effect construction', function() {
     expect(function() {
       let repo = new Microcosm()
       repo.addEffect({}, new Microcosm())
-    }).toThrow(
-      /expected a plain object as the second argument\. Instead got Microcosm/
-    )
+    }).toThrow('expected a plain object as the second argument.')
   })
 
   it('class - with defaults', function() {
