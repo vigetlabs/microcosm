@@ -252,6 +252,7 @@ export class Microcosm extends Emitter implements Domain {
     this.snapshots[action.id] = merge(snap, {
       last,
       status: action.status,
+      disabled: action.disabled,
       payload: action.payload
     })
 
