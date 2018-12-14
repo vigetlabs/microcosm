@@ -228,7 +228,8 @@ export class Microcosm extends Emitter implements Domain {
       last: this.state,
       next: this.state,
       status: 'inactive',
-      payload: undefined
+      payload: undefined,
+      disabled: action.disabled
     }
 
     this.snapshots[action.id] = snapshot
