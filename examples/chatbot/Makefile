@@ -1,4 +1,4 @@
 start:
-	@ $$(npm bin)/webpack-dev-server --config ./webpack.config.js
+	@ $$(npm bin)/webpack-dev-server --config ./webpack.config.js --mode=development
 
 .PHONY: start

@@ -15,10 +15,10 @@ module.exports = function(env) {
 
   process.env.BABEL_ENV = isDev ? 'development' : 'production'
 
-  let config = {
+  return {
     context: root,
 
-    devtool: 'source-map',
+    devtool: isDev ? 'cheap-module-inline-source-map' : 'source-map',
 
     entry: {
       application: ['./app/boot.js']
@@ -38,61 +38,26 @@ module.exports = function(env) {
     },
 
     module: {
-      loaders: [
+      rules: [
         {
-          test: /\.jsx*/,
+          test: /\.js$/,
           loader: 'babel-loader',
           exclude: /node_modules/,
           options: {
-            cacheDirectory: '.babel-cache',
-            plugins: [
-              'react-hot-loader/babel',
-              ['transform-runtime', { polyfill: false }]
-            ]
+            plugins: [['transform-runtime', { polyfill: false }]]
           }
         }
       ]
     },
 
     plugins: [
-      new Webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(
-          isDev ? 'development' : 'production'
-        )
-      }),
       new HtmlWebpackPlugin({
         inject: true,
         template: resolve(root, 'public/index.html')
-      }),
-      new Webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        minChunks: function(module) {
-          var context = module.context
-
-          if (context == null) {
-            return false
-          }
-
-          return (
-            context.includes('node_modules') ||
-            context.includes('microcosm/src')
-          )
-        }
       })
     ],
 
-    node: {
-      global: true,
-      console: false,
-      process: false,
-      Buffer: false,
-      __filename: 'mock',
-      __dirname: 'mock',
-      setImmediate: false
-    },
-
     devServer: {
-      hot: isDev,
       contentBase: resolve(root, 'public'),
       publicPath: '/',
       compress: true,
@@ -100,22 +65,4 @@ module.exports = function(env) {
       port: PORT
     }
   }
-
-  if (isDev) {
-    config.devtool = 'cheap-module-inline-source-map'
-
-    config.entry['application'].unshift('react-hot-loader/patch')
-
-    config.entry['dev'] = [
-      'webpack-dev-server/client?http://localhost:' + PORT,
-      'webpack/hot/only-dev-server'
-    ]
-
-    config.plugins.unshift(
-      new Webpack.HotModuleReplacementPlugin(),
-      new Webpack.NamedModulesPlugin()
-    )
-  }
-
-  return config
 }
