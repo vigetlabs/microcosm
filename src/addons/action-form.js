@@ -37,16 +37,17 @@ class ActionForm extends React.PureComponent<Props> {
   send: Sender
   form: Element
   onSubmit: *
-  assignForm: Element => void
+  setForm: Element => void
 
   constructor(props: Props, context: Context) {
     super(props, context)
 
     this.send = this.props.send || this.context.send
     this.onSubmit = this.onSubmit.bind(this)
+    this.setForm = this.setForm.bind(this)
   }
 
-  setForm = (el: Element) => {
+  setForm(el: Element) {
     this.form = el
   }
 
