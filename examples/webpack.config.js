@@ -3,7 +3,6 @@
  * https://webpack.js.org/guides/hmr-react/
  */
 
-const Webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { resolve } = require('path')
 
