@@ -495,6 +495,8 @@ export function addPlanet(planet) {
 
 ```javascript
 // update register() method in src/domains/planets.js
+import {getPlanets, addPlanet} from '../actions/planets'
+
 register () {
   return {
     [getPlanets]: this.append,
