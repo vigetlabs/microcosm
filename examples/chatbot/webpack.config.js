@@ -7,7 +7,7 @@ module.exports = function(env) {
   let config = base(env)
 
   // Setup the webpack dev server to include our API endpoints
-  config.devServer.setup = server
+  config.devServer.before = server
 
   return config
 }

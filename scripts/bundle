@@ -57,13 +57,11 @@ if (options.minify) {
         passes: 3,
         drop_console: true,
         keep_infinity: true,
-        toplevel: true,
-        warnings: true
+        toplevel: true
       },
       mangle: {
         toplevel: true
-      },
-      warnings: true
+      }
     })
   )
 }

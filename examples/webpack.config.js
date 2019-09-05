@@ -31,7 +31,7 @@ module.exports = function(env) {
 
     resolve: {
       alias: {
-        microcosm$: resolve(__dirname, '../src/microcosm.js'),
+        microcosm$: resolve(__dirname, '../src/index.js'),
         microcosm: resolve(__dirname, '../src/')
       }
     },
