@@ -6,6 +6,12 @@
 
 Microcosm is a state management tool for [React](https://github.com/facebook/react) (and similar libraries). Keep track of user actions, cancel requests, and perform optimistic updates with ease.
 
+## Heads up
+
+**As of July 2019, Microcosm is no longer in active development.** We will continue to maintain it for existing clients, and would be happy to accept contributions to continue support in the future.
+
+It's been a great journey, thanks for taking it with us.
+
 ## What you get
 
 - A central place to track all application data
